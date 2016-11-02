@@ -1,0 +1,11 @@
+{
+    "input": [{
+        "path": "../bedtools/bedtoolsGenomeCov/chunk.bedGraph",
+        "class": "File"
+    }],
+    "output": "./chunk.bedGraph.sorted",
+    "key": [
+        "1,1",
+        "2,2n"
+    ]
+}

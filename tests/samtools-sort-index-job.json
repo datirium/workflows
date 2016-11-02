@@ -1,0 +1,7 @@
+{
+    "sortInput": {
+        "class": "File",
+        "path": "../../star/starAlignReads/Aligned.sortedByCoord.out.bam"
+    },
+    "sortOutputFileName": "index.bam"
+}

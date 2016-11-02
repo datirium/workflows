@@ -1,0 +1,7 @@
+{
+  "genomeFastaFiles":[{"class": "File", "path": "../../data_dm3/dm3_chr4.fa"}],
+  "sjdbGTFfile": {"class": "File", "path":"../../data_dm3/dm3_chr4.gtf"},
+  "runThreadN": 1,
+  "sjdbOverhang":100
+}
+

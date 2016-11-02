@@ -1,0 +1,10 @@
+{
+    "input": {
+        "class": "File",
+        "path": "../../star/starAlignReads/Aligned.sortedByCoord.out.bam"
+    },
+    "scale": 1,
+    "split": true,
+    "dept": "-bg",
+    "genomecoverageout": "./chunk.bedGraph"
+}

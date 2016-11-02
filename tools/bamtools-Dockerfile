@@ -1,0 +1,40 @@
+#################################################################
+# Dockerfile
+#
+# Software:         bamtools
+# Software Version: 2.4.0
+# Description:      Bamtools image for SciDAP
+# Website:          https://github.com/pezmaster31/bamtools, http://scidap.com/
+# Provides:         bamtools
+# Base Image:       scidap/scidap:v0.0.1
+# Build Cmd:        docker build --rm -t scidap/bamtools:v2.4.0 .
+# Pull Cmd:         docker pull scidap/bamtools:v2.4.0
+# Run Cmd:          docker run --rm scidap/bamtools:v2.4.0 bamtools
+#################################################################
+
+### Base Image
+FROM scidap/scidap:v0.0.1
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing bamtools
+
+ENV VERSION 2.4.0
+ENV NAME bamtools
+ENV URL "https://github.com/pezmaster31/bamtools/archive/v${VERSION}.tar.gz"
+
+RUN wget -q -O - $URL | tar -zxv && \
+    cd ${NAME}-${VERSION} && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    make install && \
+    cd ../.. && \
+    cp ./${NAME}-${VERSION}/lib/libbamtools.so.2.4.0 /usr/lib/ && \
+    strip /usr/local/bin/*; true
+

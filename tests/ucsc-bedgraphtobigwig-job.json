@@ -1,0 +1,11 @@
+{
+    "input": {
+        "class": "File",
+        "path": "../../linuxSort/chunk.bedGraph.sorted"
+    },
+    "genomeFile": {
+        "class": "File",
+        "path": "../../star/starGenomeGenerate/chrNameLength.txt"
+    },
+    "bigWig": "./chunk.bigWig"
+}
