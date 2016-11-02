@@ -1,5 +1,5 @@
 {
-  "readFilesIn": [{"class": "File", "path": "../../data_dm3/chunk.fastq"}],
-  "genomeDir": {"class": "Directory", "location": "../starGenomeGenerate"},
+  "readFilesIn": [{"class": "File", "path": "reads.fastq"}],
+  "genomeDir": {"class": "Directory", "location": "."},
   "runThreadN": 1
 }

@@ -4,14 +4,14 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ../../common/envvar-global.yml
+- $import: envvar-global.yml
 - class: InlineJavascriptRequirement
 
 hints:
 - class: DockerRequirement
   dockerPull: scidap/sratoolkit:v2.8.0
   dockerFile: >
-    $import: ../sratoolkit-Dockerfile
+    $import: sratoolkit-Dockerfile
 
 inputs:
 

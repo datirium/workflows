@@ -1,7 +1,7 @@
 {
     "input": {
         "class": "File",
-        "path": "../../star/starAlignReads/Aligned.sortedByCoord.out.bam"
+        "path": "Aligned.sortedByCoord.out.bam"
     },
     "bai": true
 }

@@ -4,7 +4,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ../../common/envvar-global.yml
+- $import: envvar-global.yml
 - class: InlineJavascriptRequirement
 
 hints:
@@ -12,7 +12,7 @@ hints:
     #dockerImageId: scidap/star:v2.5.0b #not yet ready
   dockerPull: scidap/star:v2.5.0b
   dockerFile: >
-    $import: ../STAR-Dockerfile
+    $import: star-Dockerfile
 
 inputs:
   winBinNbits:

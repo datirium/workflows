@@ -50,7 +50,7 @@ outputs:
 
 steps:
   alignReads:
-    run: ../star/starAlignReads/STAR.alignReads.cwl
+    run: ../tools/star-alignreads.cwl
     in:
       readFilesIn: readFilesIn
       genomeDir: starIndex/genomeDir
@@ -67,7 +67,7 @@ steps:
     out: [aligned, alignedLog]
 
   fastxQualitystats:
-    run: ../fastx-toolkit/fastxQualitystats/fastxQualitystats.cwl
+    run: ../tools/fastx-quality-stats.cwl
     in:
       inputFile: readFilesIn
       outputFileDir:
@@ -76,7 +76,7 @@ steps:
     scatter: inputFile
 
   samtoolsSortIndex:
-    run: ../samtools/samtoolsSortIndex/samtools-sort-index.cwl
+    run: ../tools/samtools-sort-index.cwl
     in:
       sortInput: alignReads/aligned
       sortOutputFileName:
@@ -84,13 +84,13 @@ steps:
     out: [bamBaiPair]
 
   bamtoolsStats:
-    run: ../bamtools/bamtoolsStats/bamtoolsStats.cwl
+    run: ../tools/bamtools-stats.cwl
     in:
       inputFiles: samtoolsSortIndex/bamBaiPair
     out: [mappedreads]
 
   bamToBigwig:
-    run: ../bigwigWorkflow/bam-genomecov-bigwig.cwl
+    run: bam-genomecov-bigwig.cwl
     in:
       input: samtoolsSortIndex/bamBaiPair
       genomeFile: chrLengthFile
@@ -100,7 +100,7 @@ steps:
     out: [outfile]
 
   bowtie:
-    run: ../bowtie/bowtie.cwl
+    run: ../tools/bowtie.cwl
     in:
       ebwtFile: bowtieIndex/bowtieEbwtFile
       filelist: readFilesIn

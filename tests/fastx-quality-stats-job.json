@@ -1,4 +1,4 @@
 {
-    "inputFile": {"class": "File", "path": "../../data_dm3/chunk.fastq"},
+    "inputFile": {"class": "File", "path": "reads.fastq"},
     "outputFileDir": "."
 }

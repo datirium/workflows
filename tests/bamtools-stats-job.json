@@ -1,4 +1,3 @@
 {
-    "inputFiles": [{"class": "File", "location": "../../runRNA_workflow/sorted.bam"},
-                   {"class": "File", "location": "../../runRNA_workflow/sorted.bam"}]
+    "inputFiles": [{"class": "File", "location": "sorted.bam"}]
 }

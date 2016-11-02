@@ -4,14 +4,14 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ../../common/envvar-global.yml
+- $import: envvar-global.yml
 - class: InlineJavascriptRequirement
 
 hints:
 - class: DockerRequirement
   dockerPull: scidap/fastx_toolkit:v0.0.14
   dockerFile: >
-    $import: ../fastx-Dockerfile
+    $import: fastx-Dockerfile
 
 inputs:
 

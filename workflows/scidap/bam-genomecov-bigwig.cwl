@@ -10,9 +10,6 @@ class: Workflow
 doc:
   creates genome coverage bigWig file from .bam file
 
-requirements:
-  - $import: ../common/envvar-global.yml
-
 inputs:
   input:
     type: File
@@ -37,8 +34,7 @@ outputs:
     outputSource: bigwig/bigWigOut
 
 steps:
-  genomecov:
-    run: ../bedtools/bedtoolsGenomeCov/bedtools-genomecov.cwl
+  genomecov:tools/bedtools-genomecov.cwl
     in:
       input: input
       genomeFile: genomeFile
@@ -56,7 +52,7 @@ steps:
     out: [genomecoverage]
 
   sort:
-    run: ../linuxSort/linux-sort.cwl
+    run: ../tools/linux-sort.cwl
     in:
       input: genomecov/genomecoverage
       key:
@@ -66,7 +62,7 @@ steps:
     out: [sorted]
 
   bigwig:
-    run: ../ucsc/bedGraphToBigWig/ucsc-bedGraphToBigWig.cwl
+    run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
       input: sort/sorted
       genomeFile: genomeFile

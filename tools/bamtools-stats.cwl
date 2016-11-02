@@ -4,7 +4,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ../../common/envvar-global.yml
+- $import: envvar-global.yml
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 
@@ -12,7 +12,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/bamtools:v2.4.0
   dockerFile: >
-    $import: ../bamtools-Dockerfile
+    $import: bamtools-Dockerfile
 
 inputs:
 

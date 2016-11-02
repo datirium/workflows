@@ -23,13 +23,13 @@ doc: |
 
 requirements:
 - class: InlineJavascriptRequirement
-- $import: ../../common/envvar-global.yml
+- $import: envvar-global.yml
 
 hints:
 - class: DockerRequirement
   dockerPull: scidap/ucsc-userapps:v325
   dockerFile: >
-    $import: ../ucsc-userapps-Dockerfile
+    $import: ucsc-userapps-Dockerfile
 
 
 inputs:
@@ -88,7 +88,7 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:mainEntity:
-  $import: ../ucsc-metadata.yaml
+  $import: ucsc-metadata.yaml
 
 s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/ucsc-bedGraphToBigWig.cwl
 s:codeRepository: https://github.com/common-workflow-language/workflows

@@ -1,6 +1,6 @@
 {
-  "ebwtFile": {"class": "File", "location": "../data_dm3/bowtie_index.1.ebwt"},
-  "filelist": [{"class": "File", "path": "../data_dm3/chunk.fastq"}],
+  "ebwtFile": {"class": "File", "location": "bowtie_index.1.ebwt"},
+  "filelist": [{"class": "File", "path": "reads.fastq"}],
   "filename":"bowtie.sam",
   "sam":true,
   "p": 1,

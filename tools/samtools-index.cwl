@@ -4,7 +4,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ../../common/envvar-global.yml
+- $import: common/envvar-global.yml
 - class: InlineJavascriptRequirement
   expressionLib:
   - var new_ext = function() { var ext=inputs.bai?'.bai':inputs.csi?'.csi':'.bai';
@@ -15,7 +15,7 @@ hints:
   dockerPull: scidap/samtools:v1.2-242-4d56437
     #dockerImageId: scidap/samtools:v1.2-242-4d56437 #not yet ready
   dockerFile: >
-    $import: ../samtools-Dockerfile
+    $import: samtools-Dockerfile
 
 inputs:
   input:
@@ -63,7 +63,7 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:mainEntity:
-  $import: ../samtools-metadata.yaml
+  $import: samtools-metadata.yaml
 
 s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/samtools-index.cwl
 s:codeRepository: https://github.com/common-workflow-language/workflows

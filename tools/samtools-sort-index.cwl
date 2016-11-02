@@ -4,7 +4,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ../../common/envvar-global.yml
+- $import: envvar-global.yml
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
   expressionLib:
@@ -24,7 +24,7 @@ hints:
   dockerPull: scidap/samtools:v1.2-242-4d56437
     #dockerImageId: scidap/samtools:v1.2-242-4d56437 #not yet ready
   dockerFile: >
-    $import: ../samtools-Dockerfile
+    $import: samtools-Dockerfile
 
 inputs:
 
