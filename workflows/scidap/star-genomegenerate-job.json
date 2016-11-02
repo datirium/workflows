@@ -1,0 +1,5 @@
+{
+  "genomeFastaFiles":[{"class": "File", "path": "dm3_chr4.fa"}],
+  "sjdbGTFfile": {"class": "File", "path":"dm3_chr4.gtf"}
+}
+
