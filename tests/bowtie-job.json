@@ -1,5 +1,5 @@
 {
-  "ebwtFile": {"class": "File", "location": "bowtie_index.1.ebwt"},
+  "ebwtFile": {"class": "File", "location": "bowtie_index.1.ebwt", "format": "http://edamontology.org/format_3484"},
   "filelist": [{"class": "File", "path": "reads.fastq"}],
   "filename":"bowtie.sam",
   "sam":true,

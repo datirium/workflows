@@ -1,5 +1,5 @@
 {
-  "readFilesIn": [{"class": "File", "path": "reads.fastq"}],
-  "genomeDir": {"class": "Directory", "location": "."},
+  "readFilesIn": [{"class": "File", "path": "reads.fastq", "format": "http://edamontology.org/format_1931"}],
+  "genomeDir": {"class": "Directory", "location": "../tools/"},
   "runThreadN": 1
 }

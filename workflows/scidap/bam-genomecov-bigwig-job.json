@@ -1,12 +1,12 @@
 {
     "input": {
         "class": "File",
-        "path": "../star/starAlignReads/Aligned.sortedByCoord.out.bam"
+        "path": "../../tools/Aligned.sortedByCoord.out.bam"
     },
     "genomeFile": {
         "class": "File",
-        "path": "../star/starGenomeGenerate/chrNameLength.txt"
+        "path": "../../tools/chrNameLength.txt"
     },
     "scale": 1,
-    "bigWig": "./chunk.bigwig"
+    "bigWig": "./output.bigwig"
 }

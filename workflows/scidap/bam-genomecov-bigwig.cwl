@@ -34,7 +34,8 @@ outputs:
     outputSource: bigwig/bigWigOut
 
 steps:
-  genomecov:tools/bedtools-genomecov.cwl
+  genomecov:
+    run: ../../tools/bedtools-genomecov.cwl
     in:
       input: input
       genomeFile: genomeFile
@@ -52,7 +53,7 @@ steps:
     out: [genomecoverage]
 
   sort:
-    run: ../tools/linux-sort.cwl
+    run: ../../tools/linux-sort.cwl
     in:
       input: genomecov/genomecoverage
       key:
@@ -62,7 +63,7 @@ steps:
     out: [sorted]
 
   bigwig:
-    run: ../tools/ucsc-bedgraphtobigwig.cwl
+    run: ../../tools/ucsc-bedgraphtobigwig.cwl
     in:
       input: sort/sorted
       genomeFile: genomeFile

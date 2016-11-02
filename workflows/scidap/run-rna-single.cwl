@@ -50,7 +50,7 @@ outputs:
 
 steps:
   alignReads:
-    run: ../tools/star-alignreads.cwl
+    run: ../../tools/star-alignreads.cwl
     in:
       readFilesIn: readFilesIn
       genomeDir: starIndex/genomeDir
@@ -67,7 +67,7 @@ steps:
     out: [aligned, alignedLog]
 
   fastxQualitystats:
-    run: ../tools/fastx-quality-stats.cwl
+    run: ../../tools/fastx-quality-stats.cwl
     in:
       inputFile: readFilesIn
       outputFileDir:
@@ -76,7 +76,7 @@ steps:
     scatter: inputFile
 
   samtoolsSortIndex:
-    run: ../tools/samtools-sort-index.cwl
+    run: ../../tools/samtools-sort-index.cwl
     in:
       sortInput: alignReads/aligned
       sortOutputFileName:
@@ -84,7 +84,7 @@ steps:
     out: [bamBaiPair]
 
   bamtoolsStats:
-    run: ../tools/bamtools-stats.cwl
+    run: ../../tools/bamtools-stats.cwl
     in:
       inputFiles: samtoolsSortIndex/bamBaiPair
     out: [mappedreads]
@@ -100,7 +100,7 @@ steps:
     out: [outfile]
 
   bowtie:
-    run: ../tools/bowtie.cwl
+    run: ../../tools/bowtie.cwl
     in:
       ebwtFile: bowtieIndex/bowtieEbwtFile
       filelist: readFilesIn
