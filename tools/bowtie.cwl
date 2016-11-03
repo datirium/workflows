@@ -65,7 +65,11 @@ inputs:
       }
 
   filelist:
-    type: File[]?
+    type:
+      - "null"
+      - File
+      - type: array
+        items: File
     doc: |
       {-1 <m1> -2 <m2> | --12 <r> | <s>}
       <m1>    Comma-separated list of files containing upstream mates (or the
@@ -81,7 +85,11 @@ inputs:
       position: 83
 
   filelist_mates:
-    type: File[]?
+    type:
+      - "null"
+      - File
+      - type: array
+        items: File
     inputBinding:
       itemSeparator: ","
       position: 85
