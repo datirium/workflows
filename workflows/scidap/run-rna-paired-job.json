@@ -5,5 +5,6 @@
   "clip3pNbases": 0,
   "clip5pNbases": 0,
   "chrLengthFile": {"class": "File", "path": "chrNameLength.txt"},
-  "bowtieEbwtFile": {"class": "File", "location": "bowtie_index.1.ebwt", "format":"http://edamontology.org/format_3484"}
+  "bowtieEbwtFile": {"class": "File", "location": "bowtie_index.1.ebwt", "format":"http://edamontology.org/format_3484"},
+  "annotation": {"class": "File", "path": "chr10_gene_ZWINT.tabdel"}
 }

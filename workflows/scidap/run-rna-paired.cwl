@@ -31,6 +31,9 @@ inputs:
     format:
       - http://edamontology.org/format_3484 # ebwt
       - http://edamontology.org/format_3491 # ebwtl
+#reads-counting.cwl inputs
+  annotation:
+    type: File
 
 outputs:
   outfileBigWig:
@@ -48,7 +51,9 @@ outputs:
   output_bowtie_log:
     type: File
     outputSource: bowtie/output_bowtie_log
-
+  rpkmFile:
+    type: File
+    outputSource: rpkm/rpkmFile
 
 
 steps:
@@ -125,3 +130,16 @@ steps:
       sam:
         default: true
     out: [output_bowtie_log]
+
+  rpkm:
+    run: ../../tools/reads-counting.cwl
+    in:
+      aligned: samtoolsSortIndex/bamBaiPair
+      annotation: annotation
+      rpkm-cutoff:
+        default: 0.001
+      rpkm-cutoff-val:
+        default: 0
+      rnaSeqType:
+        default: RNA
+    out: [rpkmFile]
