@@ -1,0 +1,14 @@
+{
+    "aligned": {
+        "class": "File",
+        "path": "Aligned.sortedByCoord.out.bam"
+    },
+    "annotation": {
+        "class": "File",
+        "path": "chr10_gene_ZWINT.tabdel"
+    },
+    "rpkm-cutoff": 0.001,
+    "rpkm-cutoff-val": 0,
+    "log": "./log",
+    "outputFilename": "./rpkm"
+}
