@@ -9,8 +9,5 @@
     },
     "rpkm-cutoff": 0.001,
     "rpkm-cutoff-val": 0,
-    "log": "./output.log",
-    "outputFilename": "./rpkm.csv",
-    "threads": 4,
     "rnaSeqType": "RNA"
 }

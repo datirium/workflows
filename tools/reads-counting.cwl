@@ -68,6 +68,7 @@ inputs:
       prefix: -threads=
       separate: false
       position: 6
+    default: 1
     doc: |
       Number of threads to run the program
 
@@ -77,25 +78,30 @@ inputs:
       prefix: -log=
       separate: false
       position: 7
+    default: "output.log"
     doc: |
       Path to output log file
 
   rnaSeqType:
-    type: string
+    type:
+      name: "seqType"
+      type: enum
+      symbols: ["dUTP","RNA"]
     inputBinding:
       prefix: -rna_seq=
       separate: false
       position: 8
     doc: |
-      Path to output log file
+      Type of the analysis
 
 
   outputFilename:
-    type: string
+    type: string?
     inputBinding:
       prefix: -out=
       separate: false
       position: 9
+    default: rpkm.csv
     doc: |
       Path to the output rpkm file
 
