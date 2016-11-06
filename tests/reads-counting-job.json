@@ -1,14 +1,16 @@
 {
     "aligned": {
         "class": "File",
-        "path": "Aligned.sortedByCoord.out.bam"
+        "path": "/Users/kot4or/cchmc/geep/testing_data/organized_tests/bio_3659.bam"
     },
     "annotation": {
         "class": "File",
-        "path": "chr10_gene_ZWINT.tabdel"
+        "path": "/Users/kot4or/cchmc/geep/testing_data/set_4/chr10_gene_ZWINT.tabdel"
     },
     "rpkm-cutoff": 0.001,
     "rpkm-cutoff-val": 0,
-    "log": "./log",
-    "outputFilename": "./rpkm"
+    "log": "./output.log",
+    "outputFilename": "./rpkm.csv",
+    "threads": 4,
+    "rnaSeqType": "RNA"
 }

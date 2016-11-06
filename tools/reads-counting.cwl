@@ -62,7 +62,7 @@ inputs:
     doc: |
       Type of converging for density array processing: arithmetic, geometric
 
-  threds:
+  threads:
     type: double?
     inputBinding:
       prefix: -threads=
@@ -74,18 +74,28 @@ inputs:
   log:
     type: string?
     inputBinding:
-      prefix: -logs=
+      prefix: -log=
       separate: false
       position: 7
     doc: |
       Path to output log file
+
+  rnaSeqType:
+    type: string
+    inputBinding:
+      prefix: -rna_seq=
+      separate: false
+      position: 8
+    doc: |
+      Path to output log file
+
 
   outputFilename:
     type: string
     inputBinding:
       prefix: -out=
       separate: false
-      position: 8
+      position: 9
     doc: |
       Path to the output rpkm file
 
