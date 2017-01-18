@@ -16,7 +16,7 @@ hints:
 inputs:
 
   inputFiles:
-    type: File[]
+    type: File
     inputBinding:
       position: 60
     doc: |
@@ -337,10 +337,10 @@ inputs:
       disable multithreading
 
 outputs:
-  outputDir:
-    type: Directory
+  outputFile:
+    type: File
     outputBinding:
-      glob: "."
+      glob: "*.fastq"
 
 doc: |
   Usage
