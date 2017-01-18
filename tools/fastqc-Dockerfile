@@ -1,10 +1,32 @@
-# Dockerfile to build FASTQC container images
-#############################################
+#################################################################
+# Dockerfile
+#
+# Software:         fastqc
+# Software Version: 0.11.2+dfsg-3
+# Description:      fastqc image for SciDAP
+# Website:          http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+# Provides:         Babraham Bioinformatics
+# Base Image:       scidap/scidap:v0.0.1
+# Build Cmd:        docker build --rm -t scidap/fastqc:v0.11.2 .
+# Pull Cmd:         docker pull scidap/fastqc:v0.11.2
+# Run Cmd:          docker run --rm scidap/fastqc:v0.11.2 fastqc
+#################################################################
 
-FROM debian:testing
+### Base Image
+FROM scidap/scidap:v0.0.1
+MAINTAINER Andrey V Kartashov "porter@porter.st"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing fastqc
+
+ENV VERSION 0.11.2+dfsg-3
+ENV NAME fastqc
 
 RUN apt-get update && apt-get --yes upgrade && apt-get install --yes \
-  fastqc \
+  ${NAME}="${VERSION}" \
   libfindbin-libs-perl
 
-CMD ["fastqc"]

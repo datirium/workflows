@@ -7,7 +7,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: genomicpariscentre/fastqc
+  dockerPull: scidap/fastqc:v0.11.2
   dockerFile: >
     $import: fastqc-Dockerfile
 
