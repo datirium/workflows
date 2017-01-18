@@ -1,0 +1,30 @@
+#################################################################
+# Dockerfile
+#
+# Software:         trimmomatic
+# Software Version: 0.33+dfsg-1
+# Description:      trimmomatic image for SciDAP
+# Website:          http://www.usadellab.org/cms/?page=trimmomatic
+# Provides:         usadellab
+# Base Image:       scidap/scidap:v0.0.1
+# Build Cmd:        docker build --rm -t scidap/trimmomatic:v0.33 .
+# Pull Cmd:         docker pull scidap/trimmomatic:v0.33
+# Run Cmd:          docker run --rm scidap/trimmomatic:v0.33
+#################################################################
+
+### Base Image
+FROM scidap/scidap:v0.0.1
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing trimmomatic
+
+ENV VERSION 0.33+dfsg-1
+ENV NAME trimmomatic
+
+RUN apt-get update && apt-get install -y \
+  ${NAME}="${VERSION}"

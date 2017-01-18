@@ -1,0 +1,14 @@
+{
+  "input_read1_fastq_file":
+  {
+    "path":  "/Users/kot4or/cchmc/cwl/data/part1.fastq",
+    "class": "File"
+  },
+  "input_adapters_file":
+  {
+    "path":  "/Users/kot4or/cchmc/cwl/data/illumina_adapters.fa",
+    "class": "File"
+  },
+  "end_mode": "SE",
+  "illuminaclip": "2:30:15"
+}

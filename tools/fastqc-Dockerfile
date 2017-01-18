@@ -14,7 +14,7 @@
 
 ### Base Image
 FROM scidap/scidap:v0.0.1
-MAINTAINER Andrey V Kartashov "porter@porter.st"
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
 ################## BEGIN INSTALLATION ######################
