@@ -1,0 +1,33 @@
+#################################################################
+# Dockerfile
+#
+# Software:         parse_fastqc_results
+# Software Version: 0.0.1
+# Description:      parce_fastqc_resutls script image for SciDAP
+# Website:          https://github.com/michael-kotliar/parse_fastqc_results
+# Provides:         Scidap
+# Base Image:       scidap/scidap:v0.0.1
+# Build Cmd:        docker build --rm -t scidap/parse-fastqc-results:v0.0.1 .
+# Pull Cmd:         docker pull scidap/parse-fastqc-results:v0.0.1
+# Run Cmd:          docker run --rm scidap/parse-fastqc-results:v0.0.1 perl /usr/local/bin/parse_fastqc_results.pl
+#################################################################
+
+### Base Image
+FROM scidap/scidap:v0.0.1
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing parse_fastqc_results
+
+ENV VERSION 0.0.1
+ENV NAME parse_fastqc_results
+ENV URL "https://github.com/michael-kotliar/${NAME}/archive/v${VERSION}.tar.gz"
+
+RUN wget -q -O - $URL | tar -zxv && \
+    cd ${NAME}-${VERSION}/ && \
+    cp ./${NAME}.pl /usr/local/bin/
+
