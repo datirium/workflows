@@ -911,12 +911,12 @@ outputs:
   isoform_results:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".isoforms.result")
+      glob: $(inputs.sample_name + ".isoforms.results")
 
   gene_results:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".gene.result")
+      glob: $(inputs.sample_name + ".genes.results")
 
   alleles_results:
     type: File?
@@ -932,7 +932,7 @@ outputs:
     type: File?
     outputBinding:
       glob: $(inputs.sample_name + ".transcript.sorted.bam")
-    secondaryFiles: $(inputs.sample_name + ".transcript.sorted.bam.bai")
+    secondaryFiles: ${return self.location + ".bai"}
 
   genome_bam:
     type: File?
@@ -943,7 +943,7 @@ outputs:
     type: File?
     outputBinding:
       glob: $(inputs.sample_name + ".genome.sorted.bam")
-    secondaryFiles: $(inputs.sample_name + ".genome.sorted.bam.bai")
+    secondaryFiles: ${return self.location + ".bai"}
 
   time:
     type: File?

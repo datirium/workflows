@@ -1,6 +1,9 @@
 {
-  "upstream_read_file": {"class": "File", "location": "/Users/kot4or/cchmc/cwl/data/part1.fastq"},
-  "reference_name_dir": {"class": "Directory", "location": "/Users/kot4or/cchmc/cwl/data/rsem_ref/"},
+  "upstream_read_file": {"class": "File", "location": "/home/michael_kotliar/temp/part1.fastq"},
+  "reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/workspaces/rsem/output_data/hg19_chr10/ref"},
   "reference_name": "hg19_chr10",
-  "sample_name": "output"
+  "sample_name": "./output",
+  "star": true,
+  "sort_bam_by_coordinate": true,
+  "output_genome_bam": true
 }

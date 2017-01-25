@@ -3,7 +3,7 @@
 #
 # Software:         parse_fastqc_results
 # Software Version: 0.0.1
-# Description:      parce_fastqc_resutls script image for SciDAP
+# Description:      parce_fastqc_resutls script set image for SciDAP
 # Website:          https://github.com/michael-kotliar/parse_fastqc_results
 # Provides:         Scidap
 # Base Image:       scidap/scidap:v0.0.1
@@ -29,5 +29,6 @@ ENV URL "https://github.com/michael-kotliar/${NAME}/archive/v${VERSION}.tar.gz"
 
 RUN wget -q -O - $URL | tar -zxv && \
     cd ${NAME}-${VERSION}/ && \
-    cp ./${NAME}.pl /usr/local/bin/
+    cp ./parse_fastqc_results.pl /usr/local/bin/ && \
+    cp ./fastqc_pass_test_trigger.py /usr/local/bin/
 

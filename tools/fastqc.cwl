@@ -4,6 +4,8 @@ class: CommandLineTool
 
 requirements:
 - $import: envvar-global.yml
+- class: InlineJavascriptRequirement
+
 
 hints:
 - class: DockerRequirement
@@ -13,7 +15,7 @@ hints:
 
 inputs:
   fastqFile:
-    type: File # No reason to accept multiple files as no overall report is generated
+    type: File
     inputBinding:
       position: 1
 
@@ -23,7 +25,14 @@ outputs:
     type: File
     outputBinding:
       glob: '*.zip'
-  report:
-    type: Directory
+#  report_dir:
+#    type: Directory
+#    outputBinding:
+#      glob: .
+  summary_file:
+    type: File
     outputBinding:
-      glob: .
+      glob: |
+        ${
+          return inputs.fastqFile.nameroot + "_fastqc/summary.txt";
+        }

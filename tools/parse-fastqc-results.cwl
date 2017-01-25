@@ -14,29 +14,16 @@ hints:
 
 inputs:
   fastqc_report:
-    type: Directory
+    type: File
     inputBinding:
       position: 1
     doc: >
-      Path to the folder, where fastqc exported its results
+      Path to the summary.txt file, where fastqc exported its results
 
-baseCommand: [perl, /usr/local/bin/parse_fastqc_results.pl]
+baseCommand: [python, /usr/local/bin/fastqc_pass_test_trigger.py]
 
 outputs:
   output:
-    type: boolean
-    outputBinding:
-      loadContents: true
-      glob: "files_with_problem.txt"
-      outputEval: |
-        ${
-          if (self[0].contents.length == 0){
-            return false;
-          } else {
-            return true;
-          }
-        }
-  files_with_problem:
     type: File
     outputBinding:
-      glob: "files_with_problem.txt"
+      glob: "*.txt"
