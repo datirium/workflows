@@ -22,7 +22,7 @@ inputs:
     doc: |
       Input file[s]
 
-  split-spot:
+  split_spot:
     type: boolean?
     inputBinding:
       position: 2
@@ -46,7 +46,7 @@ inputs:
     doc: |
       Maximum spot id
 
-  spot-groups:
+  spot_groups:
     type:
       - "null"
       - type: array
@@ -74,7 +74,7 @@ inputs:
     doc: |
       Filter by sequence length >= <len>
 
-  read-filter:
+  read_filter:
     type:
       - "null"
       - type: enum
@@ -87,7 +87,7 @@ inputs:
       Split into files by READ_FILTER value optionally filter by value: pass|reject|criteria|redacted
 
 
-  qual-filter:
+  qual_filter:
     type: boolean?
     inputBinding:
       position: 9
@@ -95,7 +95,7 @@ inputs:
     doc: |
       Filter used in early 1000 Genomes data: no sequences starting or ending with >= 10N
 
-  qual-filter-1:
+  qual_filter-1:
     type: boolean?
     inputBinding:
       position: 10
@@ -119,7 +119,7 @@ inputs:
     doc: |
       Dump only unaligned sequences
 
-  aligned-region:
+  aligned_region:
     type: string?
     inputBinding:
       position: 13
@@ -130,7 +130,7 @@ inputs:
       (ex:NC_000001.10) or file specific name
       (ex:"chr1" or "1"). "from" and "to" are 1-based coordinates
 
-  matepair-distance:
+  matepair_distance:
     type:
       - "null"
       - type: enum
@@ -145,7 +145,7 @@ inputs:
       between the references. Use from-to to limit
       matepair distance on the same reference
 
-  skip-technical:
+  skip_technical:
     type: boolean?
     inputBinding:
       position: 15
@@ -186,7 +186,7 @@ inputs:
     doc: |
       Compress output using bzip2
 
-  split-files:
+  split_files:
     type: boolean?
     inputBinding:
       position: 20
@@ -195,7 +195,7 @@ inputs:
       Dump each read into separate file.
       Files will receive suffix corresponding to read number
 
-  split-3:
+  split_3:
     type: boolean?
     inputBinding:
       position: 21
@@ -208,7 +208,7 @@ inputs:
       present it is placed in *.fastq Biological
       reads and above are ignored.
 
-  spot-group:
+  spot_group:
     type: boolean?
     inputBinding:
       position: 22
@@ -216,7 +216,7 @@ inputs:
     doc: |
       Split into files by SPOT_GROUP (member name)
 
-  group-in-dirs:
+  group_in_dirs:
     type: boolean?
     inputBinding:
       position: 23
@@ -224,7 +224,7 @@ inputs:
     doc: |
       Split into subdirectories instead of files
 
-  keep-empty-files:
+  keep_empty_files:
     type: boolean?
     inputBinding:
       position: 24
@@ -268,7 +268,7 @@ inputs:
       FASTA only, no qualities, optional line
       wrap width (set to zero for no wrapping)
 
-  suppress-qual-for-cskey:
+  suppress_qual_for_cskey:
     type: boolean?
     inputBinding:
       position: 29
@@ -300,7 +300,7 @@ inputs:
     doc: |
       Helicos style defline
 
-  defline-seq:
+  defline_seq:
     type: string?
     inputBinding:
       position: 33
@@ -308,7 +308,7 @@ inputs:
     doc: |
       Defline format specification for sequence.
 
-  defline-qual:
+  defline_qual:
     type: string?
     inputBinding:
       position: 34
@@ -328,7 +328,7 @@ inputs:
       @$sn[_$rn]/$ri '_$rn' is omitted if name
       is empty
 
-  disable-multithreading:
+  disable_multithreading:
     type: boolean?
     inputBinding:
       position: 35
@@ -340,8 +340,21 @@ outputs:
   outputFile:
     type: File
     outputBinding:
-      glob: "*.fastq"
-
+      glob: |
+        ${
+          if (inputs.split_files == true){
+            return inputs.inputFiles.basename.split(".")[0] + "_1.fastq"
+          } else {
+            return inputs.inputFiles.basename.split(".")[0] + ".fastq"
+          }
+        }
+  outputFile_2:
+    type: File?
+    outputBinding:
+      glob: |
+        ${
+          return inputs.inputFiles.basename.split(".")[0] + "_2.fastq"
+        }
 doc: |
   Usage
   fastq-dump [options] <path> [<path>...]
