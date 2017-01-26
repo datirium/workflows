@@ -1,0 +1,55 @@
+#################################################################
+# Dockerfile
+#
+# Software:         SciDAP base Image
+# Software Version: v0.0.2
+# Description:      Basic image for SciDAP
+# Website:          http://scidap.com/
+# Provides:         autotools-dev|automake|cmake|curl|fuse|git|wget|zip|openjdk-9-jre-headless|build-essential|pkg-config|python|python-dev|python-pip|zlib1g-dev
+# Base Image:       ubuntu:16.04
+# Build Cmd:        docker build --rm -t scidap/scidap:v0.0.2 .
+# Pull Cmd:         docker pull scidap/scidap:v0.0.2
+# Run Cmd:          docker run --rm scidap/scidap:v0.0.2 bash
+#################################################################
+
+### Base Image
+FROM ubuntu:16.04
+MAINTAINER Andrey V Kartashov "porter@porter.st"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+# add apt mirrors
+RUN mv /etc/apt/sources.list /etc/apt/sources.list.bkp && \
+    bash -c 'echo -e "deb mirror://mirrors.ubuntu.com/mirrors.txt precise main restricted universe multiverse\n\
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise-updates main restricted universe multiverse\n\
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise-backports main restricted universe multiverse\n\
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise-security main restricted universe multiverse\n\n" > /etc/apt/sources.list' && \
+    cat /etc/apt/sources.list.bkp >> /etc/apt/sources.list && \
+    cat /etc/apt/sources.list
+
+# apt update and install global requirements
+RUN apt-get clean all &&\
+    apt-get update &&\
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        autotools-dev   \
+        automake        \
+        cmake           \
+        curl            \
+        fuse            \
+        git             \
+        wget            \
+        zip             \
+        unzip           \
+        openjdk-8-jre-headless \
+        build-essential \
+        pkg-config      \
+        python          \
+        python-dev      \
+        python-pip      \
+        zlib1g-dev && \
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
