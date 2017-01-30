@@ -34,16 +34,44 @@ outputs:
   isoforms_tpm_matrix:
     type: File
     outputBinding:
-      glob: $(inputs.prefix_name + "Isoforms_TPM_matrix.txt")
+      glob: |
+        ${
+          if (inputs.prefix_name === "."){
+            return "./" + "Isoforms_TPM_matrix.txt";
+          } else {
+            return inputs.prefix_name + "Isoforms_TPM_matrix.txt";
+          }
+        }
   isoforms_counts_matrix:
     type: File
     outputBinding:
-      glob: $(inputs.prefix_name + "Isoforms_Counts_matrix.txt")
+      glob: |
+        ${
+          if (inputs.prefix_name === "."){
+            return "./" + "Isoforms_Counts_matrix.txt";
+          } else {
+            return inputs.prefix_name + "Isoforms_Counts_matrix.txt";
+          }
+        }
   genes_tpm_matrix:
     type: File
     outputBinding:
-      glob: $(inputs.prefix_name + "Genes_TPM_Matrix.txt")
+      glob: |
+        ${
+          if (inputs.prefix_name === "."){
+            return "./" + "Genes_TPM_Matrix.txt";
+          } else {
+            return inputs.prefix_name + "Genes_TPM_Matrix.txt";
+          }
+        }
   genes_counts_matrix:
     type: File
     outputBinding:
-      glob: $(inputs.prefix_name + "Genes_Counts_Matrix.txt")
+      glob: |
+        ${
+          if (inputs.prefix_name === "."){
+            return "./" + "Genes_Counts_Matrix.txt";
+          } else {
+            return inputs.prefix_name + "Genes_Counts_Matrix.txt";
+          }
+        }

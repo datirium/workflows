@@ -33,6 +33,18 @@ outputs:
   bigwig_outfile:
     type: File[]
     outputSource: rsem_rna_pe/bigwig_outfile
+  isoforms_tpm_matrix:
+    type: File[]
+    outputSource: rsem_rna_pe/isoforms_tpm_matrix
+  isoforms_counts_matrix:
+    type: File[]
+    outputSource: rsem_rna_pe/isoforms_counts_matrix
+  genes_tpm_matrix:
+    type: File[]
+    outputSource: rsem_rna_pe/genes_tpm_matrix
+  genes_counts_matrix:
+    type: File[]
+    outputSource: rsem_rna_pe/genes_counts_matrix
 
 steps:
   rsem_rna_pe:
@@ -46,4 +58,4 @@ steps:
       rsem_bowtie2: rsem_bowtie2
       chrLengthFile: chrLengthFile
     scatter: sra_input_file
-    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile]
+    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]

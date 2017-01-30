@@ -39,6 +39,20 @@ outputs:
     type: File
     outputSource: bamToBigwig/outfile
 
+  isoforms_tpm_matrix:
+    type: File
+    outputSource: gen_matrices/isoforms_tpm_matrix
+  isoforms_counts_matrix:
+    type: File
+    outputSource: gen_matrices/isoforms_counts_matrix
+  genes_tpm_matrix:
+    type: File
+    outputSource: gen_matrices/genes_tpm_matrix
+  genes_counts_matrix:
+    type: File
+    outputSource: gen_matrices/genes_counts_matrix
+
+
 steps:
 
   sra_to_fastq:
@@ -118,3 +132,40 @@ steps:
             return self.basename.split('.')[0]+".bigwig";
           }
     out: [outfile]
+
+  files_to_folder:
+    in:
+      isoform_results: rsem_calculate_expression/isoform_results
+      gene_results: rsem_calculate_expression/gene_results
+    out: [folder]
+    run:
+      class: ExpressionTool
+      id: "files_to_folder"
+      inputs:
+        isoform_results: File
+        gene_results: File
+      outputs:
+        folder: Directory
+      expression: |
+        ${
+          var folder = {
+            "class": "Directory",
+            "basename": "folder",
+            "listing": []
+          }
+          folder.listing.push(inputs.isoform_results);
+          folder.listing.push(inputs.gene_results);
+          return { "folder": folder };
+        }
+
+  gen_matrices:
+    run: ../../tools/tpm_reads_matrix_gen.cwl
+    in:
+      input_directory: files_to_folder/folder
+      prefix_name:
+        source: sra_input_file
+        valueFrom: |
+          ${
+            return self.basename.split('.')[0]+"_";
+          }
+    out: [isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]
