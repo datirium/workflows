@@ -11,7 +11,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/sratoolkit:v2.8.0
   dockerFile: >
-    $import: sratoolkit-Dockerfile
+    $import: ./dockerfiles/sratoolkit-Dockerfile
 
 inputs:
 

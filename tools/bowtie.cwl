@@ -33,7 +33,7 @@ hints:
     #dockerImageId: scidap/bowtie:v1.1.2 #not yet ready
   dockerPull: scidap/bowtie:v1.1.2
   dockerFile: >
-    $import: bowtie-Dockerfile
+    $import: ./dockerfiles/bowtie-Dockerfile
 
 inputs:
 

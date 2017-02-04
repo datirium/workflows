@@ -10,7 +10,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/reads-counting:v0.0.1
   dockerFile: >
-    $import: reads-counting-Dockerfile
+    $import: ./dockerfiles/reads-counting-Dockerfile
 
 inputs:
   aligned:

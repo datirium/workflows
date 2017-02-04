@@ -4,38 +4,83 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: envvar-global.yml
-- class: InlineJavascriptRequirement
-- class: ShellCommandRequirement
+  - $import: envvar-global.yml
+  - class: InlineJavascriptRequirement
+  - class: ShellCommandRequirement
+  - class: InitialWorkDirRequirement
+    listing:
+      - $(inputs.input_read1_fastq_file)
+      - ${
+            if (inputs.input_read2_fastq_file)
+            {
+              return inputs.input_read2_fastq_file;
+            } else {
+              return inputs.input_read1_fastq_file;
+            }
+         }
+  - class: InlineJavascriptRequirement
+    expressionLib:
+    - var getExtension = function() {
+        if (inputs.trigger == true){
+          return '.trimmed.fastq';
+        } else {
+          return '.fastq';
+        }
+      };
 
 hints:
 - class: DockerRequirement
-  dockerPull: dukegcb/trimmomatic
+  dockerPull: scidap/trimmomatic:v0.33
   dockerFile: >
-    $import: trimmomatic-Dockerfile
+    $import: ./dockerfiles/trimmomatic-Dockerfile
 
 inputs:
+  bash_script:
+    type: string?
+    default: |
+      #!/bin/bash
+      if [ "$0" = "run" ]
+      then
+        echo "Run trimmomatic"
+        java "${@:1}"
+      else
+        echo "Skip run trimmomatic"
+      fi
+    inputBinding:
+      position: 1
+    doc: |
+      Bash function to run trimmomatic with all input parameters or skip it if trigger is false
+
+  trigger:
+    type: boolean?
+    default: true
+    inputBinding:
+      prefix: "run"
+      position: 2
+    doc: |
+      If true - run trimmomatic, if false - return input fastq files, previously staged into output directory
+
   phred:
     type: string
     default: '64'
     inputBinding:
       prefix: -phred
       separate: false
-      position: 4
+      position: 7
     doc: |
       "33"|"64"
       -phred33 ("33") or -phred64 ("64") specifies the base quality encoding. Default: -phred64
   tophred64:
     type: boolean?
     inputBinding:
-      position: 12
+      position: 15
       prefix: TOPHRED64
       separate: false
     doc: This (re)encodes the quality part of the FASTQ file to base 64.
   headcrop:
     type: int?
     inputBinding:
-      position: 13
+      position: 16
       prefix: 'HEADCROP:'
       separate: false
     doc: |
@@ -45,7 +90,7 @@ inputs:
   tophred33:
     type: boolean?
     inputBinding:
-      position: 12
+      position: 15
       prefix: TOPHRED33
       separate: false
     doc: This (re)encodes the quality part of the FASTQ file to base 33.
@@ -53,13 +98,13 @@ inputs:
     type: int
     default: 1
     inputBinding:
-      position: 4
+      position: 7
       prefix: -threads
     doc: Number of threads
   minlen:
     type: int?
     inputBinding:
-      position: 100
+      position: 103
       prefix: 'MINLEN:'
       separate: false
     doc: |
@@ -71,13 +116,13 @@ inputs:
   java_opts:
     type: string?
     inputBinding:
-      position: 1
+      position: 4
       shellQuote: false
     doc: JVM arguments should be a quoted, space separated list (e.g. "-Xms128m -Xmx512m")
   leading:
     type: int?
     inputBinding:
-      position: 14
+      position: 17
       prefix: 'LEADING:'
       separate: false
     doc: |
@@ -88,7 +133,7 @@ inputs:
   log_filename:
     type: string?
     inputBinding:
-      position: 4
+      position: 7
       prefix: -trimlog
     doc: |
       <ouptut log file name>
@@ -102,7 +147,7 @@ inputs:
   slidingwindow:
     type: string?
     inputBinding:
-      position: 15
+      position: 18
       prefix: 'SLIDINGWINDOW:'
       separate: false
     doc: |
@@ -138,7 +183,7 @@ inputs:
   crop:
     type: int?
     inputBinding:
-      position: 13
+      position: 16
       prefix: 'CROP:'
       separate: false
     doc: |
@@ -150,17 +195,17 @@ inputs:
   input_read2_fastq_file:
     type: File?
     inputBinding:
-      position: 6
+      position: 9
     doc: FASTQ file for read R2 in Paired End mode
   input_read1_fastq_file:
     type: File
     inputBinding:
-      position: 5
+      position: 8
     doc: FASTQ file for input read (read R1 in Paired End mode)
   avgqual:
     type: int?
     inputBinding:
-      position: 101
+      position: 104
       prefix: 'AVGQUAL:'
       separate: false
     doc: |
@@ -174,7 +219,7 @@ inputs:
   trailing:
     type: int?
     inputBinding:
-      position: 14
+      position: 17
       prefix: 'TRAILING:'
       separate: false
     doc: |
@@ -188,7 +233,7 @@ inputs:
   maxinfo:
     type: string?
     inputBinding:
-      position: 15
+      position: 18
       prefix: 'MAXINFO:'
       separate: false
     doc: |
@@ -205,12 +250,12 @@ inputs:
     type: string
     default: '/usr/share/java/trimmomatic.jar'
     inputBinding:
-      position: 2
+      position: 5
       prefix: -jar
   end_mode:
     type: string
     inputBinding:
-      position: 3
+      position: 6
     doc: |
       SE|PE
       Single End (SE) or Paired End (PE) mode
@@ -218,8 +263,7 @@ outputs:
   output_read1_trimmed_file:
     type: File
     outputBinding:
-      glob: $(inputs.input_read1_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/,
-        '') + '.trimmed.fastq')
+      glob: $(inputs.input_read1_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/,'') + getExtension())
   output_log_file:
     type: File?
     outputBinding:
@@ -241,7 +285,7 @@ outputs:
       glob: |
         ${
           if (inputs.end_mode == "PE" && inputs.input_read2_fastq_file)
-            return inputs.input_read2_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/, '') + '.trimmed.fastq';
+            return inputs.input_read2_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/, '') + getExtension();
           return null;
         }
   output_read2_trimmed_unpaired_file:
@@ -253,34 +297,36 @@ outputs:
             return inputs.input_read2_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/, '') + '.unpaired.trimmed.fastq';
           return null;
         }
-baseCommand: java
+
+baseCommand: [bash, '-c']
+
 arguments:
 - valueFrom: $(inputs.input_read1_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/,
     '') + '.trimmed.fastq')
-  position: 7
+  position: 10
 - valueFrom: |
     ${
       if (inputs.end_mode == "PE" && inputs.input_read2_fastq_file)
         return inputs.input_read1_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/, '') + '.trimmed.unpaired.fastq';
       return null;
     }
-  position: 8
+  position: 11
 - valueFrom: |
     ${
       if (inputs.end_mode == "PE" && inputs.input_read2_fastq_file)
         return inputs.input_read2_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/, '') + '.trimmed.fastq';
       return null;
     }
-  position: 9
+  position: 12
 - valueFrom: |
     ${
       if (inputs.end_mode == "PE" && inputs.input_read2_fastq_file)
         return inputs.input_read2_fastq_file.path.replace(/^.*[\\\/]/, '').replace(/\.[^/.]+$/, '') + '.trimmed.unpaired.fastq';
       return null;
     }
-  position: 10
+  position: 13
 - valueFrom: $("ILLUMINACLIP:" + inputs.input_adapters_file.path + ":"+ inputs.illuminaclip)
-  position: 11
+  position: 14
 
 doc: |
   Trimmomatic is a fast, multithreaded command line tool that can be used to trim and crop

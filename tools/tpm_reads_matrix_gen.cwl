@@ -10,7 +10,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/parse-fastqc-results:v0.0.1
   dockerFile: >
-    $import: parse-fastqc-results-Dockerfile
+    $import: ./dockerfiles/parse-fastqc-results-Dockerfile
 
 inputs:
   input_directory:

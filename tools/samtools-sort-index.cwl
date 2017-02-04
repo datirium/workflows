@@ -24,7 +24,7 @@ hints:
   dockerPull: scidap/samtools:v1.2-242-4d56437
     #dockerImageId: scidap/samtools:v1.2-242-4d56437 #not yet ready
   dockerFile: >
-    $import: samtools-Dockerfile
+    $import: ./dockerfiles/samtools-Dockerfile
 
 inputs:
 

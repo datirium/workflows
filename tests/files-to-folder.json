@@ -1,0 +1,4 @@
+{
+    "input_files": [{"class": "File", "location": "/mnt/data/HOME/michael_kotliar/temp/summary.txt"},
+                    {"class": "File", "location": "/mnt/data/HOME/michael_kotliar/temp/chrLength.txt"}]
+}

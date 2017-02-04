@@ -29,7 +29,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/ucsc-userapps:v325
   dockerFile: >
-    $import: ucsc-userapps-Dockerfile
+    $import: ./dockerfiles/ucsc-userapps-Dockerfile
 
 
 inputs:

@@ -12,7 +12,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/bamtools:v2.4.0
   dockerFile: >
-    $import: bamtools-Dockerfile
+    $import: ./dockerfiles/bamtools-Dockerfile
 
 inputs:
 

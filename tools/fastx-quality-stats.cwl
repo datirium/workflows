@@ -11,7 +11,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/fastx_toolkit:v0.0.14
   dockerFile: >
-    $import: fastx-Dockerfile
+    $import: ./dockerfiles/fastx-Dockerfile
 
 inputs:
 

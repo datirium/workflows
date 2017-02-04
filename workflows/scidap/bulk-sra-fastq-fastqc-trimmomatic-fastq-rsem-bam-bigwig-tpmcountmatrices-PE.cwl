@@ -45,10 +45,17 @@ outputs:
   genes_counts_matrix:
     type: File[]
     outputSource: rsem_rna_pe/genes_counts_matrix
+  upstream_fastq:
+    type: File[]
+    outputSource: rsem_rna_pe/upstream_fastq
+  downstream_fastq:
+    type: File[]
+    outputSource: rsem_rna_pe/downstream_fastq
+
 
 steps:
   rsem_rna_pe:
-    run: rsem-rna-pe.cwl
+    run: sra-fastq-fastqc-trimmomatic-fastq-rsem-bam-bigwig-tpmcountmatrices-PE.cwl
     in:
       sra_input_file: sra_input_files
       illumina_adapters_file: illumina_adapters_file
@@ -58,4 +65,4 @@ steps:
       rsem_bowtie2: rsem_bowtie2
       chrLengthFile: chrLengthFile
     scatter: sra_input_file
-    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]
+    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, upstream_fastq, downstream_fastq]

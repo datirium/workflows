@@ -11,7 +11,7 @@ hints:
 - class: DockerRequirement
   dockerPull: scidap/fastqc:v0.11.2
   dockerFile: >
-    $import: fastqc-Dockerfile
+    $import: ./dockerfiles/fastqc-Dockerfile
 
 inputs:
   fastqFile:

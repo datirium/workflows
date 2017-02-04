@@ -79,7 +79,7 @@ hints:
     #dockerImageId: scidap/star:v2.5.0b #not yet ready
   dockerPull: scidap/bedtools2:v2.25.0-pefs2
   dockerFile: >
-    $import: bedtools-Dockerfile
+    $import: ./dockerfiles/bedtools-Dockerfile
 
 inputs:
   input:
