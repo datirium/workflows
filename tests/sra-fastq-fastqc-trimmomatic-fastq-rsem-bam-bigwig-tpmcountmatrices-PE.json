@@ -1,6 +1,6 @@
 {
-  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/SRR2230080.sra"},
-  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/indices/adapters/TruSeq3-PE-2.fa"},
+  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/SRR2230080.sra", "format": "http://edamontology.org/format_3698"},
+  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/indices/adapters/TruSeq3-PE-2.fa", "format": "http://edamontology.org/format_1929"},
   "rsem_reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/indices/RSEM_TROP_9_Reference_files"},
   "rsem_reference_name": "TROP9",
   "rsem_bowtie2": true,

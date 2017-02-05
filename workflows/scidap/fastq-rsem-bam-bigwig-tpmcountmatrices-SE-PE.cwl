@@ -16,7 +16,8 @@ inputs:
   rsem_reference_name_dir:
     type: Directory
   rsem_reference_name:
-    type: string
+    type: string?
+    default: "ref"
   rsem_star:
     type: boolean?
   rsem_bowtie2:

@@ -11,12 +11,20 @@ requirements:
 inputs:
   sra_input_file:
     type: File
+    label: "SRA archive file"
+    format: "http://edamontology.org/format_3698"
+    doc: "SDLoadFile"
   illumina_adapters_file:
     type: File
+    label: "Illumina adapters file"
+    format: "http://edamontology.org/format_1929"
+    doc: "SDIlluminaAdapters"
   rsem_reference_name_dir:
     type: Directory
-  rsem_reference_name:
-    type: string
+    label: "RSEM references folder"
+    doc: "SDRsemRef"
+#  rsem_reference_name:
+#    type: string?
   rsem_star:
     type: boolean?
   rsem_bowtie2:
@@ -72,7 +80,7 @@ steps:
       upstream_fastq: sra_fastqc_trimmomatic_fastq_PE/upstream_fastq
       downstream_fastq: sra_fastqc_trimmomatic_fastq_PE/downstream_fastq
       rsem_reference_name_dir: rsem_reference_name_dir
-      rsem_reference_name: rsem_reference_name
+#      rsem_reference_name: rsem_reference_name
       rsem_star: rsem_star
       rsem_bowtie2: rsem_bowtie2
       chrLengthFile: chrLengthFile

@@ -11,8 +11,8 @@ inputs:
     type: File
   rsem_reference_name_dir:
     type: Directory
-  rsem_reference_name:
-    type: string
+#  rsem_reference_name:
+#    type: string?
   rsem_star:
     type: boolean?
   rsem_bowtie2:
@@ -56,7 +56,7 @@ steps:
       sra_input_file: sra_input_files
       illumina_adapters_file: illumina_adapters_file
       rsem_reference_name_dir: rsem_reference_name_dir
-      rsem_reference_name: rsem_reference_name
+#      rsem_reference_name: rsem_reference_name
       rsem_star: rsem_star
       rsem_bowtie2: rsem_bowtie2
       chrLengthFile: chrLengthFile
