@@ -23,7 +23,7 @@ doc: |
 
 requirements:
 - class: InlineJavascriptRequirement
-- $import: envvar-global.yml
+- $import: ./metadata/envvar-global.yml
 
 hints:
 - class: DockerRequirement
@@ -88,7 +88,7 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:mainEntity:
-  $import: ucsc-metadata.yaml
+  $import: ./metadata/ucsc-metadata.yaml
 
 s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/ucsc-bedGraphToBigWig.cwl
 s:codeRepository: https://github.com/common-workflow-language/workflows

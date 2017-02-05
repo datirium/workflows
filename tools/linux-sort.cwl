@@ -52,7 +52,7 @@ doap:maintainer:
     foaf:mbox: "mailto:Andrey.Kartashov@cchmc.org"
 
 requirements:
-  - $import: envvar-global.yml
+  - $import: ./metadata/envvar-global.yml
   - class: InlineJavascriptRequirement
 
 hints:
