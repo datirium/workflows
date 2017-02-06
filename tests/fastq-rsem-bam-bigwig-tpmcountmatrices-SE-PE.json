@@ -2,6 +2,6 @@
   "upstream_fastq": {"class": "File", "location": "/mnt/data/HOME/michael_kotliar/temp/part1.fastq"},
   "rsem_reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/workspaces/rsem/output_data/hg19_chr10/ref"},
   "rsem_reference_name": "hg19_chr10",
-  "rsem_star": true,
+  "aligner_type": "star",
   "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/workspaces/rsem/output_data/hg19_chr10/ref/chrNameLength.txt"}
 }

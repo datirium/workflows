@@ -4,6 +4,6 @@
   "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/temp/illumina_not_correct_adapters/illumina_not_correct_adapters.fa"},
   "rsem_reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/workspaces/rsem/output_data/hg19_chr10/ref"},
   "rsem_reference_name": "hg19_chr10",
-  "rsem_star": true,
+  "rsem_aligner_type": "star",
   "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/workspaces/rsem/output_data/hg19_chr10/ref/chrNameLength.txt"}
 }

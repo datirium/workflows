@@ -25,10 +25,11 @@ inputs:
     doc: "SDRsemRef"
 #  rsem_reference_name:
 #    type: string?
-  rsem_star:
-    type: boolean?
-  rsem_bowtie2:
-    type: boolean?
+  rsem_aligner_type:
+    type:
+      name: "aligner_type"
+      type: enum
+      symbols: ["bowtie","star","bowtie2"]
   chrLengthFile:
     type: File
 
@@ -81,7 +82,6 @@ steps:
       downstream_fastq: sra_fastqc_trimmomatic_fastq_PE/downstream_fastq
       rsem_reference_name_dir: rsem_reference_name_dir
 #      rsem_reference_name: rsem_reference_name
-      rsem_star: rsem_star
-      rsem_bowtie2: rsem_bowtie2
+      aligner_type: rsem_aligner_type
       chrLengthFile: chrLengthFile
     out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]

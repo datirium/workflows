@@ -18,13 +18,13 @@ inputs:
   rsem_reference_name:
     type: string?
     default: "ref"
-  rsem_star:
-    type: boolean?
-  rsem_bowtie2:
-    type: boolean?
   chrLengthFile:
     type: File
-
+  aligner_type:
+    type:
+      name: "aligner_type"
+      type: enum
+      symbols: ["bowtie","star","bowtie2"]
 
 outputs:
   rsem_isoform_results:
@@ -63,8 +63,26 @@ steps:
       downstream_read_file: downstream_fastq
       reference_name_dir: rsem_reference_name_dir
       reference_name: rsem_reference_name
-      star: rsem_star
-      bowtie2: rsem_bowtie2
+      star:
+        source: aligner_type
+        valueFrom: |
+          ${
+           if (self == "star"){
+             return true;
+           } else {
+             return false;
+           }
+          }
+      bowtie2:
+        source: aligner_type
+        valueFrom: |
+          ${
+           if (self == "bowtie2"){
+             return true;
+           } else {
+             return false;
+           }
+          }
       sort_bam_by_coordinate:
         default: true
       output_genome_bam:

@@ -13,10 +13,11 @@ inputs:
     type: Directory
 #  rsem_reference_name:
 #    type: string?
-  rsem_star:
-    type: boolean?
-  rsem_bowtie2:
-    type: boolean?
+  rsem_aligner_type:
+    type:
+      name: "aligner_type"
+      type: enum
+      symbols: ["bowtie","star","bowtie2"]
   chrLengthFile:
     type: File
 
@@ -57,8 +58,7 @@ steps:
       illumina_adapters_file: illumina_adapters_file
       rsem_reference_name_dir: rsem_reference_name_dir
 #      rsem_reference_name: rsem_reference_name
-      rsem_star: rsem_star
-      rsem_bowtie2: rsem_bowtie2
+      rsem_aligner_type: rsem_aligner_type
       chrLengthFile: chrLengthFile
     scatter: sra_input_file
     out: [rsem_isoform_results,rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, fastq]
