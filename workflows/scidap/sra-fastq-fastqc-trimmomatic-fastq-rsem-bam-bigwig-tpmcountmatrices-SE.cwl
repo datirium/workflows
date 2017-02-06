@@ -69,6 +69,8 @@ steps:
       upstream_fastq: sra_fastqc_trimmomatic_fastq_SE/fastq
       rsem_reference_name_dir: rsem_reference_name_dir
 #      rsem_reference_name: rsem_reference_name
-      aligner_type: rsem_aligner_type
+      aligner_type:
+        sour: rsem_aligner_type
+        valueFrom: $(self)
       chrLengthFile: chrLengthFile
     out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]

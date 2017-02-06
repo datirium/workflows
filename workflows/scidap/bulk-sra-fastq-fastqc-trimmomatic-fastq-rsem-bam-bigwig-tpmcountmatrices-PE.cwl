@@ -62,7 +62,9 @@ steps:
       illumina_adapters_file: illumina_adapters_file
       rsem_reference_name_dir: rsem_reference_name_dir
 #      rsem_reference_name: rsem_reference_name
-      rsem_aligner_type: rsem_aligner_type
+      rsem_aligner_type:
+        souce: rsem_aligner_type
+        valueFrom: $(self)
       chrLengthFile: chrLengthFile
     scatter: sra_input_file
     out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, upstream_fastq, downstream_fastq]
