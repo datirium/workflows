@@ -53,6 +53,10 @@ outputs:
     type: File
     outputSource: gen_matrices/genes_counts_matrix
 
+  bam_quality_log:
+    type: File
+    outputSource: bamtoolsStats/statsLog
+
 
 steps:
 
@@ -99,7 +103,7 @@ steps:
     run: ../../tools/bamtools-stats.cwl
     in:
       inputFiles: rsem_calculate_expression/genome_sorted_bam_bai_pair
-    out: [mappedreads]
+    out: [mappedreads, statsLog]
 
   bamToBigwig:
     run: bam-genomecov-bigwig.cwl

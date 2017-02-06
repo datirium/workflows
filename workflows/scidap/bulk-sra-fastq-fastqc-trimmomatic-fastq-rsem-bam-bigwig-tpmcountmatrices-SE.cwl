@@ -49,6 +49,9 @@ outputs:
   fastq:
     type: File[]
     outputSource: rsem_rna_se/fastq
+  bam_quality_log:
+    type: File[]
+    outputSource: rsem_rna_se/bam_quality_log
 
 steps:
   rsem_rna_se:
@@ -63,4 +66,4 @@ steps:
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
     scatter: sra_input_file
-    out: [rsem_isoform_results,rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, fastq]
+    out: [rsem_isoform_results,rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, fastq, bam_quality_log]

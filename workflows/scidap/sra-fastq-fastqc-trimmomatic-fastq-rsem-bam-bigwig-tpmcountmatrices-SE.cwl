@@ -53,6 +53,9 @@ outputs:
   fastq:
     type: File
     outputSource: sra_fastqc_trimmomatic_fastq_SE/fastq
+  bam_quality_log:
+    type: File
+    outputSource: fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE/bam_quality_log
 
 steps:
 
@@ -73,4 +76,4 @@ steps:
         sour: rsem_aligner_type
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
-    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]
+    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, bam_quality_log]

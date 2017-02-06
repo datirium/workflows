@@ -52,7 +52,9 @@ outputs:
   downstream_fastq:
     type: File[]
     outputSource: rsem_rna_pe/downstream_fastq
-
+  bam_quality_log:
+    type: File[]
+    outputSource: rsem_rna_pe/bam_quality_log
 
 steps:
   rsem_rna_pe:
@@ -67,4 +69,4 @@ steps:
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
     scatter: sra_input_file
-    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, upstream_fastq, downstream_fastq]
+    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, upstream_fastq, downstream_fastq, bam_quality_log]
