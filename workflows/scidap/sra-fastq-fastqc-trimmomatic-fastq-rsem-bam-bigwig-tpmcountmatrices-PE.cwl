@@ -118,6 +118,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
+s:name: "sra-fastq-fastqc-trimmomatic-fastq-rsem-bam-bigwig-tpmcountmatrices-PE"
 s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/workflows/scidap/sra-fastq-fastqc-trimmomatic-fastq-rsem-bam-bigwig-tpmcountmatrices-PE.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -127,20 +128,32 @@ s:isPartOf:
   s:name: Common Workflow Language
   s:url: http://commonwl.org/
 
-s:author:
-  class: s:Person
-  s:name: Michael Kotliar
-  s:email: mailto:michael.kotliar@cchmc.org
-  s:sameAs:
-  - id: http://orcid.org/0000-0002-6486-3898
-  s:worksFor:
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
   - class: s:Organization
-    s:name: Cincinnati Children's Hospital Medical Center
-    s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
+    s:legalName: "Allergy and Immunology"
     s:department:
     - class: s:Organization
-      s:name: Barski Lab
-doc: |
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:michael.kotliar@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
+s:about: >
   Current workflow should be used only with the paired-end RNA-Seq data obtained from Illumina sequencing machine. It performs the following steps:
   1. Convert input SRA file into the pair of FASTQ files (run fastq-dump)
   3. Check the quality of generated upstream and downstream FASTQ files (run fastqc)
