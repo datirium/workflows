@@ -61,8 +61,8 @@ inputs:
       If true - run trimmomatic, if false - return input fastq files, previously staged into output directory
 
   phred:
-    type: string
-    default: '64'
+    type: string?
+#    default: '64'
     inputBinding:
       prefix: -phred
       separate: false
