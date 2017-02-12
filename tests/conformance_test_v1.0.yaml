@@ -45,3 +45,15 @@
       class: File
       location: output.bam
       size: 50487
+
+- job: ./picard-markduplicates.json
+  tool: ../tools/picard-markduplicates.cwl
+  output:
+    output_file:
+      class: File
+      location: output.bam
+      size: 53678
+    metrics_file:
+     class: File
+     location: output.metrics
+     size: 1242

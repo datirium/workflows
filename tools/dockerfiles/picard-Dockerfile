@@ -1,0 +1,31 @@
+#################################################################
+# Dockerfile
+#
+# Software:         picard
+# Software Version: 2.8.3
+# Description:      picard image for SciDAP
+# Website:          https://broadinstitute.github.io/picard/, http://scidap.com/
+# Provides:         Broad Institute
+# Base Image:       scidap/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t scidap/picard:v2.8.3 .
+# Pull Cmd:         docker pull scidap/picard:v2.8.3
+# Run Cmd:          docker run --rm scidap/picard:v2.8.3 java -jar /usr/local/bin/picard.jar
+#################################################################
+
+### Base Image
+FROM scidap/scidap:v0.0.2
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing picard
+
+ENV VERSION 2.8.3
+ENV NAME picard
+ENV URL "https://github.com/broadinstitute/picard/releases/download/${VERSION}/picard.jar"
+
+RUN wget -q $URL && \
+    mv picard.jar /usr/local/bin/
