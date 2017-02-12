@@ -37,3 +37,11 @@
       class: File
       location: index_basename.log
       size: 23
+
+- job: ./samtools-view.json
+  tool: ../tools/samtools-view.cwl
+  output:
+    output:
+      class: File
+      location: output.bam
+      size: 50487

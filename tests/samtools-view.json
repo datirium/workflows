@@ -1,0 +1,10 @@
+{
+  "input": {
+    "class": "File",
+    "path": "./data/test.bam"
+  },
+  "isbam": true,
+  "readsquality": 1,
+  "threads": 1,
+  "output_name": "./output.bam"
+}

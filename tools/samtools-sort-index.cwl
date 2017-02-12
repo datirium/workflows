@@ -22,7 +22,6 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: scidap/samtools:v1.2-242-4d56437
-    #dockerImageId: scidap/samtools:v1.2-242-4d56437 #not yet ready
   dockerFile: >
     $import: ./dockerfiles/samtools-Dockerfile
 
