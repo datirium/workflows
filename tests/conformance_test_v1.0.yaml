@@ -1,0 +1,39 @@
+- job: ./fastqc.json
+  tool: ../tools/fastqc.cwl
+  output:
+    zippedFile:
+      class: File
+      location: reads_test_fastqc.zip
+      size: 397099
+    summary_file:
+      class: File
+      location: summary.txt
+      size: 494
+
+- job: ./bowtie2-build.json
+  tool: ../tools/bowtie2-build.cwl
+  output:
+    indices:
+      class: File
+      location: index_basename.1.bt2
+      secondaryFiles:
+      - class: File
+        location: index_basename.2.bt2
+        size: 11488
+      - class: File
+        location: index_basename.3.bt2
+        size: 17
+      - class: File
+        location: index_basename.4.bt2
+        size: 11480
+      - class: File
+        location: index_basename.rev.1.bt2
+        size: 4209831
+      - class: File
+        location: index_basename.rev.2.bt2
+        size: 11488
+      size: 4209831
+    output_log:
+      class: File
+      location: index_basename.log
+      size: 23
