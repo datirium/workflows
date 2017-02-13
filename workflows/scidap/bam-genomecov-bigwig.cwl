@@ -6,6 +6,9 @@
 cwlVersion: v1.0
 class: Workflow
 
+requirements:
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
 
 doc:
   creates genome coverage bigWig file from .bam file
@@ -27,11 +30,16 @@ inputs:
     type: string?
   bigWig:
     type: string
+  split:
+    type: boolean?
 
 outputs:
   outfile:
     type: File
     outputSource: bigwig/bigWigOut
+  bed_file:
+    type: File
+    outputSource: genomecov/genomecoverage
 
 steps:
   genomecov:
@@ -44,7 +52,15 @@ steps:
       dept:
         default: "-bg"
       split:
-        default: true
+        source: split
+        valueFrom: |
+          ${
+            if (self == null){
+              return true;
+            } else {
+              return self;
+            }
+          }
       pairchip: pairchip
       fragmentsize: fragmentsize
       scale: scale
