@@ -57,3 +57,15 @@
      class: File
      location: output.metrics
      size: 1242
+
+- job: ./bowtie2.json
+  tool: ../tools/bowtie2.cwl
+  output:
+    output:
+      class: File
+      location: bowtie2.sam
+      size: 1662
+    output_log:
+     class: File
+     location: bowtie2.sam.log
+     size: 190
