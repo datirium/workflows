@@ -69,3 +69,11 @@
      class: File
      location: bowtie2.sam.log
      size: 190
+
+- job: ./bedtools-genomecov.json
+  tool: ../tools/bedtools-genomecov.cwl
+  output:
+    genomecoverage:
+      class: File
+      location: output.bedGraph
+      size: 27256

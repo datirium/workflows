@@ -175,7 +175,7 @@ inputs:
   split:
     type: ["null",boolean]
     doc: |
-      reat "split" BAM or BED12 entries as distinct BED intervals.
+      treat "split" BAM or BED12 entries as distinct BED intervals.
       when computing coverage.
       For BAM files, this uses the CIGAR "N" and "D" operations
       to infer the blocks for computing coverage.

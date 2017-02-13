@@ -1,7 +1,7 @@
 {
     "input": {
         "class": "File",
-        "path": "Aligned.sortedByCoord.out.bam"
+        "path": "./data/test.bam"
     },
     "scale": 1,
     "split": true,
