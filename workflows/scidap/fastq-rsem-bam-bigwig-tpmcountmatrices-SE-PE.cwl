@@ -15,9 +15,6 @@ inputs:
     type: File?
   rsem_reference_name_dir:
     type: Directory
-  rsem_reference_name:
-    type: string?
-    default: "ref"
   chrLengthFile:
     type: File
   aligner_type:
@@ -66,7 +63,6 @@ steps:
       upstream_read_file: upstream_fastq
       downstream_read_file: downstream_fastq
       reference_name_dir: rsem_reference_name_dir
-      reference_name: rsem_reference_name
       star:
         source: aligner_type
         valueFrom: |

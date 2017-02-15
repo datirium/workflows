@@ -23,8 +23,6 @@ inputs:
     type: Directory
     label: "RSEM references folder"
     doc: "SDRsemRef"
-#  rsem_reference_name:
-#    type: string?
   rsem_aligner_type:
     type:
       name: "aligner_type"
@@ -103,7 +101,6 @@ steps:
       upstream_fastq: sra_fastqc_trimmomatic_fastq_PE/upstream_fastq
       downstream_fastq: sra_fastqc_trimmomatic_fastq_PE/downstream_fastq
       rsem_reference_name_dir: rsem_reference_name_dir
-#      rsem_reference_name: rsem_reference_name
       aligner_type:
         source: rsem_aligner_type
         valueFrom: $(self)

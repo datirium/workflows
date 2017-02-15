@@ -70,6 +70,7 @@ inputs:
 
   reference_name:
     type:
+      - "null"
       - string
     inputBinding:
       position: 104
@@ -977,7 +978,21 @@ arguments:
         return null;
       }
     position: 98
-
+# in a case when reference_name is not set, we should get the value automatically from reference_name_dir
+  - valueFrom: |
+      ${
+        if (inputs.reference_name){
+          return null;
+        } else {
+          for (var i = 0; i < inputs.reference_name_dir.listing.length; i++) {
+              if (inputs.reference_name_dir.listing[i].path.split('.').slice(-1)[0] == 'grp'){
+                return inputs.reference_name_dir.listing[i].path.split('.').slice(-2,-1)[0];
+              }
+          }
+          return null;
+        }
+      }
+    position: 104
 
 $namespaces:
   s: http://schema.org/

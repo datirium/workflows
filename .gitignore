@@ -25,6 +25,7 @@ eggs/
 #bioinformatics stuff
 *.bam
 *.sam
+*.bt2
 *.bai
 *.fa
 *.fastq

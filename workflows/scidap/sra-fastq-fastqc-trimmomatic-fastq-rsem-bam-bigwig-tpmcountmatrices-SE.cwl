@@ -15,8 +15,6 @@ inputs:
     type: File
   rsem_reference_name_dir:
     type: Directory
-#  rsem_reference_name:
-#    type: string?
   rsem_aligner_type:
     type:
       name: "aligner_type"
@@ -71,7 +69,6 @@ steps:
     in:
       upstream_fastq: sra_fastqc_trimmomatic_fastq_SE/fastq
       rsem_reference_name_dir: rsem_reference_name_dir
-#      rsem_reference_name: rsem_reference_name
       aligner_type:
         sour: rsem_aligner_type
         valueFrom: $(self)
