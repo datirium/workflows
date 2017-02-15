@@ -9,60 +9,33 @@ requirements:
 - class: EnvVarRequirement
   envDef:
     - envName: "BOWTIE_INDEXES"
-      envValue: $(inputs.ebwtFile.dirname)
+      envValue: $(inputs.indices_folder)
 - class: InlineJavascriptRequirement
-  expressionLib:
-  - var parseEbwtFile = function() {
-
-      var dirname = inputs.ebwtFile.location.split("/").slice(0,-1).join("/");
-      var basename = inputs.ebwtFile.location.split("/").slice(-1)[0];
-      var extname = basename.split(".").slice(-1)[0];
-      var ewbtBasename = "";
-      if ( (/.*\.rev\.\d\.ebwt$/i).test(basename) || (/.*\.rev\.\d\.ebwtl$/i).test(basename) ){
-        ewbtBasename = basename.split(".").slice(0, -3).join (".");
-      } else if ( (/.*\.\d\.ebwt$/i).test(basename) || (/.*\.\d\.ebwtl$/i).test(basename) ){
-        ewbtBasename = basename.split(".").slice(0, -2).join (".");
-      }
-
-      return [dirname, basename, extname, ewbtBasename]
-    };
-
 
 hints:
 - class: DockerRequirement
-    #dockerImageId: scidap/bowtie:v1.1.2 #not yet ready
   dockerPull: scidap/bowtie:v1.1.2
   dockerFile: >
     $import: ./dockerfiles/bowtie-Dockerfile
 
 inputs:
 
-  ebwtFile:
-    type: File
-    format:
-      - http://edamontology.org/format_3484 # ebwt
-      - http://edamontology.org/format_3491 # ebwtl
+  indices_folder:
+    type: Directory
     doc: >
-      One of the index files.
-      OLD:
-        The basename of the index to be searched.
-        The basename is the name of any of the index files up to but not including the final .1.ebwt / .rev.1.ebwt / etc. bowtie looks for
-        the specified index first in the current directory,
-        then in the indexes subdirectory under the directory where the bowtie executable is located,
-        then looks in the directory specified in the BOWTIE_INDEXES environment variable.
+      Folder with indices files
     inputBinding:
       position: 81
-      valueFrom: $(self.secondaryFiles[0].dirname + "/" + parseEbwtFile()[3])
-    secondaryFiles: |
-      ${
-        return [{"class": "File", "location": parseEbwtFile()[0] + "/" + parseEbwtFile()[3] + ".1." + parseEbwtFile()[2]},
-                {"class": "File", "location": parseEbwtFile()[0] + "/" + parseEbwtFile()[3] + ".2." + parseEbwtFile()[2]},
-                {"class": "File", "location": parseEbwtFile()[0] + "/" + parseEbwtFile()[3] + ".3." + parseEbwtFile()[2]},
-                {"class": "File", "location": parseEbwtFile()[0] + "/" + parseEbwtFile()[3] + ".4." + parseEbwtFile()[2]},
-                {"class": "File", "location": parseEbwtFile()[0] + "/" + parseEbwtFile()[3] + ".rev.1." + parseEbwtFile()[2]},
-                {"class": "File", "location": parseEbwtFile()[0] + "/" + parseEbwtFile()[3] + ".rev.2." + parseEbwtFile()[2]},
-        ]
-      }
+      valueFrom: |
+        ${
+            for (var i = 0; i < self.listing.length; i++) {
+                if (self.listing[i].path.split('.').slice(-3).join('.') == 'rev.1.ebwt' ||
+                    self.listing[i].path.split('.').slice(-3).join('.') == 'rev.1.ebwtl'){
+                  return self.listing[i].path.split('.').slice(0,-3).join('.');
+                }
+            }
+            return null;
+        }
 
   filelist:
     type:

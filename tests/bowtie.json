@@ -1,6 +1,6 @@
 {
-  "ebwtFile": {"class": "File", "location": "bowtie_index.1.ebwt", "format": "http://edamontology.org/format_3484"},
-  "filelist": [{"class": "File", "path": "reads.fastq"}],
+  "indices_folder": {"class": "Directory", "location": "/home/michael_kotliar/indices/test_bowtie_indices"},
+  "filelist": [{"class": "File", "location": "/home/michael_kotliar/temp/part1.fastq"}],
   "filename":"bowtie.sam",
   "sam":true,
   "p": 1,
