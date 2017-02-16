@@ -1,0 +1,37 @@
+{
+  "fastq_input_file": {
+    "class": "File",
+    "location": "part1.fastq",
+    "format":"http://edamontology.org/format_1930"
+  },
+
+  "__genome__organism__nucleus__star": {
+    "class": "Directory",
+    "location": "./"
+  },
+
+  "clip_3p_nbases": 0,
+
+  "clip_5p_nbases": 0,
+
+  "__genome__organism__star__chrlength": {
+    "class": "File",
+    "location": "chrNameLength.txt",
+    "format":"http://edamontology.org/format_2330"
+  },
+
+  "__genome__organism__ribosome__bowtie": {
+    "class": "Directory",
+    "location": "./bowtie_index",
+  },
+
+  "__genome__organism__annotation__tsv": {
+    "class": "File",
+    "path": "/home/michael_kotliar/temp/hg19_chr10.tab",
+    "format":"http://edamontology.org/format_3475"
+  },
+
+  "dutp": false,
+
+  "spike": false
+}

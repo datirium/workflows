@@ -22,7 +22,6 @@ inputs:
       prefix: -i
     doc: |
       FASTA/Q input file. If FASTA file is given, only nucleotides distribution is calculated (there's no quality info)
-      If array - takes only first file, ignores all others
 
   outputFileDir:
     type: string

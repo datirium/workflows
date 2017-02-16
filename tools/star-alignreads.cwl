@@ -654,7 +654,10 @@ inputs:
       int: =log2(chrBin), where chrBin is the size of the bins for genome
       storage: each chromosome will occupy an integer number of bins
   readFilesIn:
-    type: File[]?
+    type:
+      - File
+      - type: array
+        items: File
     format:
       - http://edamontology.org/format_1931 # FASTQ-illumina
       - http://edamontology.org/format_1929 # FASTA

@@ -105,6 +105,16 @@ inputs:
     doc: |
       Path to the output rpkm file
 
+  ignore_chrom:
+    type: string?
+    inputBinding:
+      prefix: -sam_ignorechr=
+      separate: false
+      position: 10
+    doc: |
+      Ignore chromosome (in a case of using RNA spike-in)
+
+
 outputs:
   rpkmFile:
     type: File
