@@ -13,9 +13,9 @@ inputs:
     type: File
   illumina_adapters_file:
     type: File
-  bowtie2_indices:
-    type: File
-    doc: "Path to any of the BOWTIE2 index file"
+  bowtie2_indices_folder:
+    type: Directory
+    doc: "Path to BOWTIE2 indices folder"
   samtools_view_reads_quality_cutoff:
     type: int
     doc: Filter out all aligned reads, whch have quality lower then this threshold
@@ -23,9 +23,12 @@ inputs:
     type: File
 
 outputs:
-  fastq:
+  upstream_fastq:
     type: File
-    outputSource: sra_fastqc_trimmomatic_fastq_SE/fastq
+    outputSource: sra_fastqc_trimmomatic_fastq_PE/upstream_fastq
+  downstream_fastq:
+    type: File
+    outputSource: sra_fastqc_trimmomatic_fastq_PE/downstream_fastq
   bowtie2_aligner_log:
     type: File
     outputSource: from_bowtie2_to_bigwig_SE_PE/bowtie2_aligner_log
@@ -44,28 +47,22 @@ outputs:
   bigwig:
     type: File
     outputSource: from_bowtie2_to_bigwig_SE_PE/bigwig
-  output_peak_file_narrow:
-    type: File
-    outputSource: macs2_callpeak_narrow/output_peak_file
-  output_peak_file_broad:
-    type: File
-    outputSource: macs2_callpeak_broad/output_peak_file
-
 
 steps:
 
-  sra_fastqc_trimmomatic_fastq_SE:
-    run: sra-fastq-fastqc-trimmomatic-fastq-SE.cwl
+  sra_fastqc_trimmomatic_fastq_PE:
+    run: sra-fastq-fastqc-trimmomatic-fastq-PE.cwl
     in:
       sra_input_file: sra_input_file
       illumina_adapters_file: illumina_adapters_file
-    out: [fastq]
+    out: [upstream_fastq, downstream_fastq]
 
   from_bowtie2_to_bigwig_SE_PE:
     run: fastq-bowtie2-picard-samtools_sort-bigwig-SE-PE.cwl
     in:
-      upstream_fastq: sra_fastqc_trimmomatic_fastq_SE/fastq
-      bowtie2_indices: bowtie2_indices
+      upstream_fastq: sra_fastqc_trimmomatic_fastq_PE/upstream_fastq
+      downstream_fastq: sra_fastqc_trimmomatic_fastq_PE/downstream_fastq
+      bowtie2_indices_folder: bowtie2_indices_folder
       samtools_view_reads_quality_cutoff: samtools_view_reads_quality_cutoff
       chrLengthFile: chrLengthFile
       split:
@@ -77,21 +74,3 @@ steps:
     - bamtools_stats_log
     - bed
     - bigwig
-
-  macs2_callpeak_narrow:
-    run: ../../tools/macs2-callpeak.cwl
-    in:
-      treatment: from_bowtie2_to_bigwig_SE_PE/bam_file
-      format:
-        default: BAM
-    out: [output_peak_file, output_peak_xls_file, output_peak_summits_file]
-
-  macs2_callpeak_broad:
-    run: ../../tools/macs2-callpeak.cwl
-    in:
-      treatment: from_bowtie2_to_bigwig_SE_PE/bam_file
-      broad:
-        default: true
-      format:
-        default: BAM
-    out: [output_peak_file, output_peak_xls_file, output_peak_summits_file]

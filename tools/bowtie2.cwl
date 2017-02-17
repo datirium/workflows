@@ -9,22 +9,8 @@ requirements:
 - class: EnvVarRequirement
   envDef:
     - envName: "BOWTIE2_INDEXES"
-      envValue: $(inputs.indices_file.dirname)
+      envValue: $(inputs.indices_folder)
 - class: InlineJavascriptRequirement
-  expressionLib:
-  - var parseIndicesFile = function() {
-      var dirname = inputs.indices_file.location.split("/").slice(0,-1).join("/");
-      var basename = inputs.indices_file.location.split("/").slice(-1)[0];
-      var extname = basename.split(".").slice(-1)[0];
-      var indices_basename = "";
-      if ( (/.*\.rev\.\d\.bt2$/i).test(basename) || (/.*\.rev\.\d\.bt2l$/i).test(basename) ){
-        indices_basename = basename.split(".").slice(0, -3).join (".");
-      } else if ( (/.*\.\d\.bt2$/i).test(basename) || (/.*\.\d\.bt2l$/i).test(basename) ){
-        indices_basename = basename.split(".").slice(0, -2).join (".");
-      }
-
-      return [dirname, basename, extname, indices_basename]
-    };
 
 
 hints:
@@ -35,26 +21,24 @@ hints:
 
 inputs:
 
-  indices_file:
-    type: File
+  indices_folder:
+    type: Directory
     doc: >
-      One of the index files:
-      .1.bt2, .2.bt2, .3.bt2, .4.bt2, .rev.1.bt2, and .rev.2.bt2
-      In the case of a large index these suffixes will have a bt2l termination
+      Folder with indices files
     inputBinding:
       position: 81
       prefix: '-x'
-      valueFrom: $(self.secondaryFiles[0].dirname + "/" + parseIndicesFile()[3])
-    secondaryFiles: |
-      ${
-        return [{"class": "File", "location": parseIndicesFile()[0] + "/" + parseIndicesFile()[3] + ".1." + parseIndicesFile()[2]},
-                {"class": "File", "location": parseIndicesFile()[0] + "/" + parseIndicesFile()[3] + ".2." + parseIndicesFile()[2]},
-                {"class": "File", "location": parseIndicesFile()[0] + "/" + parseIndicesFile()[3] + ".3." + parseIndicesFile()[2]},
-                {"class": "File", "location": parseIndicesFile()[0] + "/" + parseIndicesFile()[3] + ".4." + parseIndicesFile()[2]},
-                {"class": "File", "location": parseIndicesFile()[0] + "/" + parseIndicesFile()[3] + ".rev.1." + parseIndicesFile()[2]},
-                {"class": "File", "location": parseIndicesFile()[0] + "/" + parseIndicesFile()[3] + ".rev.2." + parseIndicesFile()[2]},
-        ]
-      }
+      valueFrom: |
+        ${
+            for (var i = 0; i < self.listing.length; i++) {
+                if (self.listing[i].path.split('.').slice(-3).join('.') == 'rev.1.bt2' ||
+                    self.listing[i].path.split('.').slice(-3).join('.') == 'rev.1.bt2l'){
+                  return self.listing[i].path.split('.').slice(0,-3).join('.');
+                }
+            }
+            return null;
+        }
+
 
   filelist:
     type:

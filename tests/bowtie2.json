@@ -1,5 +1,5 @@
 {
-  "indices_file": {"class": "File", "location": "./data/index_basename.1.bt2"},
+  "indices_folder": {"class": "Directory", "location": "./data"},
   "filelist": [{"class": "File", "path": "./data/reads_test.fastq"}],
   "output_filename":"bowtie2.sam",
   "p": 1

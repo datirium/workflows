@@ -13,9 +13,9 @@ inputs:
     type: File
   downstream_fastq:
     type: File?
-  bowtie2_indices:
+  bowtie2_indices_folder:
     type: File
-    doc: "Path to any of the BOWTIE2 index file"
+    doc: "Path to BOWTIE2 indices folder"
   samtools_view_reads_quality_cutoff:
     type: int
     doc: Filter out all aligned reads, whch have quality lower then this threshold
@@ -52,7 +52,7 @@ steps:
     in:
       filelist: upstream_fastq
       filelist_mates: downstream_fastq
-      indices_file: bowtie2_indices
+      indices_folder: bowtie2_indices_folder
       output_filename:
         source: upstream_fastq
         valueFrom: |
