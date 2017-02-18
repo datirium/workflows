@@ -22,6 +22,8 @@ inputs:
       name: "aligner_type"
       type: enum
       symbols: ["bowtie","star","bowtie2"]
+  threads:
+    type: int?
 
 outputs:
   rsem_isoform_results:
@@ -93,6 +95,7 @@ steps:
           ${
             return self.basename.split('.')[0];
           }
+      num_threads: threads
     out: [isoform_results, gene_results, genome_sorted_bam_bai_pair]
 
   bamtoolsStats:

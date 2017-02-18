@@ -13,7 +13,8 @@ inputs:
     type: File
   illumina_adapters_file:
     type: File
-
+  threads:
+    type: int?
 
 outputs:
   upstream_fastq:
@@ -73,4 +74,5 @@ steps:
         default: "PE"
       illuminaclip:
         default: '2:30:15'
+      threads: threads
     out: [output_read1_trimmed_file, output_read2_trimmed_paired_file]

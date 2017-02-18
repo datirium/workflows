@@ -1,7 +1,8 @@
 {
-  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/SRP064167/SRR2515141.sra", "format": "http://edamontology.org/format_3698"},
-  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/indices/adapters/TruSeq3-PE-2.fa", "format": "http://edamontology.org/format_1929"},
+  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/GSE73430/input_data/SRR2517972.sra", "format": "http://edamontology.org/format_3698"},
+  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/indices/adapters/TruSeq3-PE.fa", "format": "http://edamontology.org/format_1929"},
   "rsem_reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/indices/RSEM_LAEVIS_9_1_Reference_files"},
   "rsem_aligner_type": "bowtie2",
-  "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/indices/LAEVIS_TROP_CHROM_SIZE/Laevis_9_1_chrom_sizes.genome"}
+  "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/indices/LAEVIS_TROP_CHROM_SIZE/Laevis_9_1_chrom_sizes.genome"},
+  "threads": 10
 }

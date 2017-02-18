@@ -94,7 +94,7 @@ inputs:
       prefix: TOPHRED33
       separate: false
     doc: This (re)encodes the quality part of the FASTQ file to base 33.
-  nthreads:
+  threads:
     type: int
     default: 1
     inputBinding:

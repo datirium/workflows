@@ -34,6 +34,10 @@ inputs:
     type: File
     label: "Chromosome length file"
     doc: "SDSelectChrLengthFile"
+  threads:
+    type: int?
+    label: "Number of threads to run tools"
+    doc: "SDInput"
 
 outputs:
   rsem_isoform_results:
@@ -93,6 +97,7 @@ steps:
     in:
       sra_input_file: sra_input_file
       illumina_adapters_file: illumina_adapters_file
+      threads: threads
     out: [upstream_fastq, downstream_fastq]
 
   fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE:
@@ -105,6 +110,7 @@ steps:
         source: rsem_aligner_type
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
+      threads: threads
     out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, bam_quality_log]
 
 

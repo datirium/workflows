@@ -13,6 +13,8 @@ inputs:
     type: File
   illumina_adapters_file:
     type: File
+  threads:
+    type: int?
 
 outputs:
   fastq:
@@ -48,5 +50,6 @@ steps:
         default: "SE"
       illuminaclip:
         default: '2:30:15'
+      threads: threads
     out: [output_read1_trimmed_file]
 

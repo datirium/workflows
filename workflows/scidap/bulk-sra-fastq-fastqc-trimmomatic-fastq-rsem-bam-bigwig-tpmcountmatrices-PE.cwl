@@ -1,8 +1,14 @@
-class: Workflow
 cwlVersion: v1.0
+class: Workflow
+
 requirements:
-  - class: ScatterFeatureRequirement
   - class: SubworkflowFeatureRequirement
+  - class: ScatterFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
+
+
 
 inputs:
   sra_input_files:
@@ -11,8 +17,6 @@ inputs:
     type: File
   rsem_reference_name_dir:
     type: Directory
-#  rsem_reference_name:
-#    type: string?
   rsem_aligner_type:
     type:
       name: "aligner_type"
@@ -20,6 +24,8 @@ inputs:
       symbols: ["bowtie","star","bowtie2"]
   chrLengthFile:
     type: File
+  threads:
+    type: int?
 
 outputs:
   rsem_isoform_results:
@@ -57,16 +63,28 @@ outputs:
     outputSource: rsem_rna_pe/bam_quality_log
 
 steps:
+
   rsem_rna_pe:
     run: sra-fastq-fastqc-trimmomatic-fastq-rsem-bam-bigwig-tpmcountmatrices-PE.cwl
     in:
       sra_input_file: sra_input_files
       illumina_adapters_file: illumina_adapters_file
       rsem_reference_name_dir: rsem_reference_name_dir
-#      rsem_reference_name: rsem_reference_name
       rsem_aligner_type:
-        souce: rsem_aligner_type
+        source: rsem_aligner_type
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
+      threads: threads
     scatter: sra_input_file
-    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, upstream_fastq, downstream_fastq, bam_quality_log]
+    out:
+    - rsem_isoform_results
+    - rsem_gene_results
+    - rsem_genome_sorted_bam_bai_pair
+    - bigwig_outfile
+    - isoforms_tpm_matrix
+    - isoforms_counts_matrix
+    - genes_tpm_matrix
+    - genes_counts_matrix
+    - upstream_fastq
+    - downstream_fastq
+    - bam_quality_log

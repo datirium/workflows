@@ -22,6 +22,10 @@ inputs:
       symbols: ["bowtie","star","bowtie2"]
   chrLengthFile:
     type: File
+  threads:
+    type: int?
+    label: "Number of threads to run tools"
+    doc: "SDInput"
 
 outputs:
   rsem_isoform_results:
@@ -62,6 +66,7 @@ steps:
     in:
       sra_input_file: sra_input_file
       illumina_adapters_file: illumina_adapters_file
+      threads: threads
     out: [fastq]
 
   fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE:
@@ -70,7 +75,8 @@ steps:
       upstream_fastq: sra_fastqc_trimmomatic_fastq_SE/fastq
       rsem_reference_name_dir: rsem_reference_name_dir
       aligner_type:
-        sour: rsem_aligner_type
+        source: rsem_aligner_type
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
+      threads: threads
     out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, bam_quality_log]
