@@ -1,0 +1,5 @@
+{
+  "fastqFiles": [
+    {"class": "File", "location": "/mnt/data/HOME/michael_kotliar/workspaces/cwl_ws/workflows/workflows/scidap/SRR2517974_2.fastq"}
+  ]
+}
