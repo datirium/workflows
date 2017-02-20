@@ -14,7 +14,7 @@ outputs:
   trigger: boolean
 expression: |
   ${
-    var criteria_array = inputs.summary.contents.match(/.*Per base sequence quality.*|.*Per sequence quality scores.*|.*Overrepresented sequences.*/g);
+    var criteria_array = inputs.summary.contents.match(/.*Per base sequence quality.*|.*Per sequence quality scores.*|.*Overrepresented sequences.*|.*Adapter Content.*/g);
     if (criteria_array.length > 0){
       if (criteria_array.toString().match(/FAIL/g) != null){
         return { "trigger": true };
