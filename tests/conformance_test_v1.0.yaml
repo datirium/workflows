@@ -97,3 +97,18 @@
         location: test.sorted.bam.bai
         size: 28664
       size: 50487
+
+- job: ./bamtools-stats.json
+  tool: ../tools/bamtools-stats.cwl
+  output:
+    statsLog:
+      class: File
+      location: stats.log
+      size: 322
+    forwardstrand: 581
+    duplicates: 0
+    totalReads: 1204
+    mappedreads: 1204
+    failedQC: 0
+    reversestrand: 623
+    pairedendreads: 0
