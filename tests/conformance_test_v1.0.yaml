@@ -85,3 +85,15 @@
       class: File
       location: reads_test.fastq.statistics
       size: 2167
+
+- job: ./samtools-sort-index.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bamBaiPair:
+      class: File
+      location: test.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: test.sorted.bam.bai
+        size: 28664
+      size: 50487

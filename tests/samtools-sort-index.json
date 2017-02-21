@@ -1,7 +1,6 @@
 {
     "sortInput": {
         "class": "File",
-        "path": "Aligned.sortedByCoord.out.bam"
-    },
-    "sortOutputFileName": "index.bam"
+        "location": "./data/test.bam"
+    }
 }

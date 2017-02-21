@@ -9,13 +9,19 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var ext = function() {
+      if (!inputs.sortOutputFileName){
+        return '.bai';
+      }
       if (inputs.sortOutputFileName.split('.').slice(-1)[0] == 'cram'){
         return '.crai';
       } else if (inputs.indexCsi && !inputs.indexBai){
         return '.csi';
       } else {
-        return '.bai'
+        return '.bai';
       }
+    };
+  - var default_bam = function() {
+      return inputs.sortInput.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".sorted.bam";
     };
 
 
@@ -47,10 +53,19 @@ inputs:
       Sort by read names (i.e., the QNAME field) rather than by chromosomal coordinates
 
   sortOutputFileName:
-    type: string
+    type: string?
     inputBinding:
       position: 3
       prefix: -o
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_bam();
+            } else {
+              return self;
+            }
+        }
+    default: null
     doc: |
       Write the final sorted output to FILE, rather than to standard output.
       Only out.bam|out.cram
@@ -104,7 +119,14 @@ outputs:
   bamBaiPair:
     type: File
     outputBinding:
-      glob: $(inputs.sortOutputFileName)
+      glob: |
+        ${
+            if (!inputs.sortOutputFileName){
+              return default_bam();
+            } else {
+              return inputs.sortOutputFileName;
+            }
+        }
     secondaryFiles: ${return self.location + ext()}
 
 
@@ -127,7 +149,21 @@ arguments:
     # -b - position 9
     # -c - position 10
     # -m - position 11
-  - valueFrom: $(inputs.sortOutputFileName)
+  - valueFrom: |
+      ${
+          if (!inputs.sortOutputFileName){
+            return default_bam();
+          } else {
+            return inputs.sortOutputFileName;
+          }
+      }
     position: 12
-  - valueFrom: $(inputs.sortOutputFileName + ext())
+  - valueFrom: |
+      ${
+          if (!inputs.sortOutputFileName){
+            return default_bam() + ext();
+          } else {
+            return inputs.sortOutputFileName + ext();
+          }
+      }
     position: 13
