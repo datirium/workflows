@@ -44,9 +44,18 @@ inputs:
       position: 3
 
   bigWig:
-    type: string
+    type: string?
     inputBinding:
       position: 4
+      valueFrom: |
+        ${
+            if (self == null){
+              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".bigwig";
+            } else {
+              return self;
+            }
+        }
+    default: null
 
   unc:
     type: boolean?
@@ -77,7 +86,14 @@ outputs:
   bigWigOut:
     type: File
     outputBinding:
-      glob: $(inputs.bigWig)
+      glob: |
+        ${
+            if (inputs.bigWig == null){
+              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".bigwig";
+            } else {
+              return inputs.bigWig;
+            }
+        }
 
 baseCommand: ["bedGraphToBigWig"]
 

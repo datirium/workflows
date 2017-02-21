@@ -1,9 +1,9 @@
 {
     "input": [{
-        "path": "input.bedGraph",
+        "path": "./data/input_unsorted.bedGraph",
         "class": "File"
     }],
-    "output": "input.bedGraph.sorted",
+    "output": "input_sorted.bedGraph",
     "key": [
         "1,1",
         "2,2n"

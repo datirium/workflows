@@ -112,3 +112,19 @@
     failedQC: 0
     reversestrand: 623
     pairedendreads: 0
+
+- job: ./linux-sort.json
+  tool: ../tools/linux-sort.cwl
+  output:
+    sorted:
+      class: File
+      location: input_sorted.bedGraph
+      size: 27256
+
+- job: ./ucsc-bedgraphtobigwig.json
+  tool: ../tools/ucsc-bedgraphtobigwig.cwl
+  output:
+    bigWigOut:
+      class: File
+      location: input_sorted.bigwig
+      size: 43072

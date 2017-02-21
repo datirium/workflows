@@ -29,7 +29,7 @@ inputs:
   strand:
     type: string?
   bigWig:
-    type: string
+    type: string?
   split:
     type: boolean?
 

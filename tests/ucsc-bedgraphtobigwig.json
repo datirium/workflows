@@ -1,11 +1,10 @@
 {
     "input": {
         "class": "File",
-        "path": "input.bedGraph.sorted"
+        "path": "./data/input_sorted.bedGraph"
     },
     "genomeFile": {
         "class": "File",
-        "path": "chrNameLength.txt"
-    },
-    "bigWig": "output.bigWig"
+        "path": "./data/chrNameLength.txt"
+    }
 }
