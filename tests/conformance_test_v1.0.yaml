@@ -77,3 +77,11 @@
       class: File
       location: output.bedGraph
       size: 27256
+
+- job: ./fastx-quality-stats.json
+  tool: ../tools/fastx-quality-stats.cwl
+  output:
+    statistics:
+      class: File
+      location: reads_test.fastq.statistics
+      size: 2167

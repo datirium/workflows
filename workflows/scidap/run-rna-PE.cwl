@@ -16,7 +16,7 @@ inputs:
   readFileInRight:
     type: File
     format: http://edamontology.org/format_1931 #FASTQ-illumina
-  starIndex/genomeDir:
+  genomeDir:
     type: Directory
   clip3pNbases:
     type: int?
@@ -26,7 +26,7 @@ inputs:
   chrLengthFile:
     type: File
 #bowtie.cwl inputs
-  bowtieIndex/bowtieEbwtFile:
+  bowtieEbwtFile:
     type: File
     format:
       - http://edamontology.org/format_3484 # ebwt
@@ -61,7 +61,7 @@ steps:
     run: ../../tools/star-alignreads.cwl
     in:
       readFilesIn: [readFileInLeft, readFileInRight]
-      genomeDir: starIndex/genomeDir
+      genomeDir: genomeDir
       outFilterMultimapNmax:
         default: 1
       outFilterMismatchNmax:
@@ -110,7 +110,7 @@ steps:
   bowtie:
     run: ../../tools/bowtie.cwl
     in:
-      ebwtFile: bowtieIndex/bowtieEbwtFile
+      ebwtFile: bowtieEbwtFile
       filelist: readFileInLeft
       filelist_mates: readFileInRight
       filename:

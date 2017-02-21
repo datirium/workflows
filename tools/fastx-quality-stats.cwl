@@ -36,6 +36,7 @@ inputs:
           }
           return inputs.outputFileDir + spacer + inputs.inputFile.basename + ".statistics"
         }
+    default: '.'
     doc: |
       Output filename formed on the base of outputFileDir and inputFile
 
