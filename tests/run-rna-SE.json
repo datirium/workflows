@@ -5,27 +5,27 @@
     "format":"http://edamontology.org/format_1930"
   },
 
-  "__genome__organism__nucleus__star": {
+  "star_indices": {
     "class": "Directory",
     "location": "./"
   },
 
-  "clip_3p_nbases": 0,
+  "clip_3p_end": 0,
 
-  "clip_5p_nbases": 0,
+  "clip_5p_end": 0,
 
-  "__genome__organism__star__chrlength": {
+  "chrom_length": {
     "class": "File",
     "location": "chrNameLength.txt",
     "format":"http://edamontology.org/format_2330"
   },
 
-  "__genome__organism__ribosome__bowtie": {
+  "bowtie_indices": {
     "class": "Directory",
     "location": "./bowtie_index",
   },
 
-  "__genome__organism__annotation__tsv": {
+  "annotation": {
     "class": "File",
     "path": "/home/michael_kotliar/temp/hg19_chr10.tab",
     "format":"http://edamontology.org/format_3475"
@@ -33,5 +33,5 @@
 
   "dutp": false,
 
-  "spike": false
+  "spike_in": false
 }

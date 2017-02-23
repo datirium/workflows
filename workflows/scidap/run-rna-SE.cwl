@@ -19,28 +19,28 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "SDLoadFile"
 
-  __genome__organism__nucleus__star:
+  star_indices:
     type: Directory
     label: "STAR indices folder"
     doc: "SDSelect"
 
-  clip_3p_nbases:
+  clip_3p_end:
     type: int
     label: "Clip from 3p end"
     doc: "SDInput"
 
-  clip_5p_nbases:
+  clip_5p_end:
     type: int
     label: "Clip from 5p end"
     doc: "SDInput"
 
-  __genome__organism__star__chrlength:
+  chrom_length:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
     doc: "SDSelect"
 
-  __genome__organism__ribosome__bowtie:
+  bowtie_indices:
     type: Directory
     label: "BOWTIE indices folder"
     format:
@@ -48,7 +48,7 @@ inputs:
       - http://edamontology.org/format_3491 # ebwtl
     doc: "SDSelect"
 
-  __genome__organism__annotation__tsv:
+  annotation:
     type: File
     label: "TAB-separated annoation file"
     format: "http://edamontology.org/format_3475"
@@ -59,27 +59,27 @@ inputs:
     label: "dUTP"
     doc: "SDCheckbox"
 
-  spike:
+  spike_in:
     type: boolean
     label: "Use RNA spike-in sequences"
     doc: "SDCheckbox"
 
 outputs:
-  outfile_big_wig:
+  bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "SDVisBigWig"
     outputSource: bam_to_bigwig/outfile
 
-  aligned_log:
+  star_reads_alignment_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "STAR alignment statistics"
+    label: "STAR alignment log"
     doc: "SDVisStarStat"
-    outputSource: star_align_reads/alignedLog
+    outputSource: star_reads_alignment/alignedLog
 
-  fastx_stats:
+  fastx_quality_stats_statistics:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "fastx_quality_stats statistics"
@@ -89,32 +89,32 @@ outputs:
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
-    label: "Coordinate sorted BAM alignment file"
+    label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "SDVisBam"
     outputSource: samtools_sort_index/bamBaiPair
 
-  output_bowtie_log:
+  bowtie_reads_alignment_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
     doc: "SDVisText"  # To display plain text
-    outputSource: bowtie/output_bowtie_log
+    outputSource: bowtie_reads_alignment/output_bowtie_log
 
-  rpkm_file:
+  rpkm_calculation_table:
     type: File
     format:
     - "http://edamontology.org/format_3752" # csv
     - "http://edamontology.org/format_3475" # tsv
-    label: "RPKM list values"
+    label: "RPKM table file"
     doc: "SDVisTable"  # To display csv/tsv file as a table
-    outputSource: rpkm/rpkmFile
+    outputSource: rpkm_calculation/rpkmFile
 
 steps:
-  star_align_reads:
+  star_reads_alignment:
     run: ../../tools/star-alignreads.cwl
     in:
       readFilesIn: fastq_input_file
-      genomeDir: __genome__organism__nucleus__star
+      genomeDir: star_indices
       outFilterMultimapNmax:
         default: 1
       outFilterMismatchNmax:
@@ -123,24 +123,20 @@ steps:
         default: 1
       seedSearchStartLmax:
         default: 15
-      clip3pNbases: clip_3p_nbases
-      clip5pNbases: clip_5p_nbases
+      clip3pNbases: clip_3p_end
+      clip5pNbases: clip_5p_end
     out: [aligned, alignedLog]
 
   fastx_quality_stats:
     run: ../../tools/fastx-quality-stats.cwl
     in:
       inputFile: fastq_input_file
-      outputFileDir:
-        default: "."
     out: [statistics]
 
   samtools_sort_index:
     run: ../../tools/samtools-sort-index.cwl
     in:
-      sortInput: star_align_reads/aligned
-      sortOutputFileName:
-        default: "sorted.bam"
+      sortInput: star_reads_alignment/aligned
     out: [bamBaiPair]
 
   bamtools_stats:
@@ -153,21 +149,23 @@ steps:
     run: bam-genomecov-bigwig.cwl
     in:
       input: samtools_sort_index/bamBaiPair
-      genomeFile: __genome__organism__star__chrlength
+      genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
-      bigWig:
-        default: "output.bigwig"
     out: [outfile]
 
-  bowtie:
+  bowtie_reads_alignment:
     run: ../../tools/bowtie.cwl
     in:
-      indices_folder: __genome__organism__ribosome__bowtie
+      indices_folder: bowtie_indices
       filelist: fastq_input_file
       filename:
-        default: "bowtie"
-      3p: clip_3p_nbases
-      5p: clip_5p_nbases
+        source: fastq_input_file
+        valueFrom: |
+          ${
+            return self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_ribosomal'+'.sam';
+          }
+      3p: clip_3p_end
+      5p: clip_5p_end
       q:
         default: true
       v:
@@ -175,18 +173,18 @@ steps:
       m:
         default: 1
       best:
-        default: true    # should be true only when not-paired mode
+        default: true
       strata:
-        default: true    # should be true only when not-paired mode
+        default: true
       sam:
         default: true
     out: [output_bowtie_log]
 
-  rpkm:
+  rpkm_calculation:
     run: ../../tools/reads-counting.cwl
     in:
       aligned: samtools_sort_index/bamBaiPair
-      annotation: __genome__organism__annotation__tsv
+      annotation: annotation
       rpkm-cutoff:
         default: 0.001
       rpkm-cutoff-val:
@@ -202,7 +200,7 @@ steps:
             }
           }
       ignore_chrom:
-        source: spike
+        source: spike_in
         valueFrom: |
           ${
             if (self){
