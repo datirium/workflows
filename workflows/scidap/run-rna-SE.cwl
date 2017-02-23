@@ -17,28 +17,34 @@ inputs:
     type: File
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
-    doc: "SDLoadFile"
+    doc: "Reads data in a FASTQ format"
 
   star_indices:
     type: Directory
     label: "STAR indices folder"
-    doc: "SDSelect"
+    s:SoftwareApplication:
+      s:isPartOf: "group1"
+      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    doc: "STAR generated indices"
 
   clip_3p_end:
     type: int
     label: "Clip from 3p end"
-    doc: "SDInput"
+    doc: "Number of bases to clip from the 3p end"
 
   clip_5p_end:
     type: int
     label: "Clip from 5p end"
-    doc: "SDInput"
+    doc: "Number of bases to clip from the 5p end"
 
   chrom_length:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    doc: "SDSelect"
+    s:SoftwareApplication:
+      s:isPartOf: "group1"
+      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    doc: "Chromosome length file"
 
   bowtie_indices:
     type: Directory
@@ -46,58 +52,64 @@ inputs:
     format:
       - http://edamontology.org/format_3484 # ebwt
       - http://edamontology.org/format_3491 # ebwtl
-    doc: "SDSelect"
+    s:SoftwareApplication:
+      s:isPartOf: "group2"
+      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/bowtie-index.cwl"
+    doc: "Bowtie generated indices"
 
   annotation:
     type: File
     label: "TAB-separated annoation file"
     format: "http://edamontology.org/format_3475"
-    doc: "SDSelect"
+    s:SoftwareApplication:
+      s:isPartOf: "group1"
+      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    doc: "Tab-separated annotation file"
 
   dutp:
     type: boolean
     label: "dUTP"
-    doc: "SDCheckbox"
+    doc: "Enable strand specific dUTP calculation"
 
   spike_in:
     type: boolean
     label: "Use RNA spike-in sequences"
-    doc: "SDCheckbox"
+    doc: "Enable spike-in sequences reads calculation"
 
 outputs:
   bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
-    doc: "SDVisBigWig"
+    doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/outfile
 
   star_reads_alignment_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "STAR alignment log"
-    doc: "SDVisStarStat"
+    doc: "STAR alignment log file"
     outputSource: star_reads_alignment/alignedLog
 
   fastx_quality_stats_statistics:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "fastx_quality_stats statistics"
-    doc: "SDVisFastxStat"
+    doc: "Fastx statistics file"
     outputSource: fastx_quality_stats/statistics
 
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
-    doc: "SDVisBam"
+    doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_sort_index/bamBaiPair
 
   bowtie_reads_alignment_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
-    doc: "SDVisText"  # To display plain text
+    doc: "Bowtie alignment log file"  # To display plain text
     outputSource: bowtie_reads_alignment/output_bowtie_log
 
   rpkm_calculation_table:
@@ -106,7 +118,7 @@ outputs:
     - "http://edamontology.org/format_3752" # csv
     - "http://edamontology.org/format_3475" # tsv
     label: "RPKM table file"
-    doc: "SDVisTable"  # To display csv/tsv file as a table
+    doc: "Calculated rpkm values"  # To display csv/tsv file as a table
     outputSource: rpkm_calculation/rpkmFile
 
 steps:
