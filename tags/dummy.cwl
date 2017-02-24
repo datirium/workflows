@@ -4,21 +4,19 @@ class: Workflow
 inputs:
   string_input:
     type: string
-    default: "test text"
+    default: "foobar"
 
 outputs: []
 
 steps:
-  echo_step:
+  dummy_step:
     run:
-      class: CommandLineTool
-      inputs:
-        string_input:
-          type: string
-          inputBinding:
-            position: 1
+      class: ExpressionTool
+      requirements:
+        - class: InlineJavascriptRequirement
+      inputs: []
       outputs: []
-      baseCommand: [echo]
-    in:
-      string_input: string_input
+      expression: ${return null}
+    in: []
     out: []
+
