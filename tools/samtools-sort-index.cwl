@@ -70,17 +70,25 @@ inputs:
       Write the final sorted output to FILE, rather than to standard output.
       Only out.bam|out.cram
 
+  threads:
+    type: int?
+    inputBinding:
+      position: 5
+      prefix: -@
+    doc: |
+      Set number of sorting and compression threads [1] (Only for sorting)
+
   sortInput:
     type: File
     inputBinding:
-      position: 5
+      position: 6
     doc: |
       Input only in.sam|in.bam|in.cram
 
   interval:
     type: int?
     inputBinding:
-      position: 11
+      position: 12
       prefix: -m
     doc: |
       Set minimum interval size for CSI indices to 2^INT [14]
@@ -88,7 +96,7 @@ inputs:
   indexCsi:
     type: boolean?
     inputBinding:
-      position: 10
+      position: 11
       prefix: -c
       valueFrom: |
         ${
@@ -103,7 +111,7 @@ inputs:
   indexBai:
     type: boolean?
     inputBinding:
-      position: 9
+      position: 10
       prefix: -b
       valueFrom: |
         ${
@@ -137,18 +145,19 @@ arguments:
     # -l - position 2
     # -o sortOutputFileName - position 3
     # -n - position 4
-    # sortInput - position 5
+    # --threads - position 5
+    # sortInput - position 6
   - valueFrom: ";"
-    position: 6
-    shellQuote: false
-  - valueFrom: samtools
     position: 7
     shellQuote: false
-  - valueFrom: index
+  - valueFrom: samtools
     position: 8
-    # -b - position 9
-    # -c - position 10
-    # -m - position 11
+    shellQuote: false
+  - valueFrom: index
+    position: 9
+    # -b - position 10
+    # -c - position 11
+    # -m - position 12
   - valueFrom: |
       ${
           if (!inputs.sortOutputFileName){
@@ -157,7 +166,7 @@ arguments:
             return inputs.sortOutputFileName;
           }
       }
-    position: 12
+    position: 13
   - valueFrom: |
       ${
           if (!inputs.sortOutputFileName){
@@ -166,4 +175,4 @@ arguments:
             return inputs.sortOutputFileName + ext();
           }
       }
-    position: 13
+    position: 14

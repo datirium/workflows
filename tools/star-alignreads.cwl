@@ -872,7 +872,7 @@ inputs:
       string: type of normalization for the signal
       RPM    ... reads per million of mapped reads
       None   ... no normalization, "raw" counts
-  runThreadN:
+  threads:
     type: int?
     inputBinding:
       position: 1

@@ -582,7 +582,7 @@ inputs:
     inputBinding:
       position: 1
       prefix: '-o'
-  p:
+  threads:
     type:
       - "null"
       - int
