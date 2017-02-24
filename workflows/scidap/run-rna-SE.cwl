@@ -1,10 +1,6 @@
 cwlVersion: v1.0
 class: Workflow
 
-### TODO
-# Add option to set threads number
-
-
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: ScatterFeatureRequirement
@@ -22,9 +18,8 @@ inputs:
   star_indices:
     type: Directory
     label: "STAR indices folder"
-    s:SoftwareApplication:
-      s:isPartOf: "group1"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    s:isPartOf: "group1"
+    s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
     doc: "STAR generated indices"
 
   clip_3p_end:
@@ -41,9 +36,8 @@ inputs:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    s:SoftwareApplication:
-      s:isPartOf: "group1"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    s:isPartOf: "group1"
+    s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
     doc: "Chromosome length file"
 
   bowtie_indices:
@@ -52,18 +46,16 @@ inputs:
     format:
       - http://edamontology.org/format_3484 # ebwt
       - http://edamontology.org/format_3491 # ebwtl
-    s:SoftwareApplication:
-      s:isPartOf: "group2"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/bowtie-index.cwl"
+    s:isPartOf: "group2"
+    s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/bowtie-index.cwl"
     doc: "Bowtie generated indices"
 
   annotation:
     type: File
     label: "TAB-separated annoation file"
     format: "http://edamontology.org/format_3475"
-    s:SoftwareApplication:
-      s:isPartOf: "group1"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    s:isPartOf: "group1"
+    s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
     doc: "Tab-separated annotation file"
 
   dutp:
@@ -75,6 +67,11 @@ inputs:
     type: boolean
     label: "Use RNA spike-in sequences"
     doc: "Enable spike-in sequences reads calculation"
+
+  threads:
+    type: int?
+    label: "Number of threads to run tools"
+    doc: "Number of threads for those steps that support multithreading"
 
 outputs:
   bigwig:
@@ -137,6 +134,7 @@ steps:
         default: 15
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
+      threads: threads
     out: [aligned, alignedLog]
 
   fastx_quality_stats:
@@ -149,6 +147,7 @@ steps:
     run: ../../tools/samtools-sort-index.cwl
     in:
       sortInput: star_reads_alignment/aligned
+      threads: threads
     out: [bamBaiPair]
 
   bamtools_stats:
@@ -190,6 +189,7 @@ steps:
         default: true
       sam:
         default: true
+      threads: threads
     out: [output_bowtie_log]
 
   rpkm_calculation:
@@ -221,6 +221,7 @@ steps:
               return 'control';
             }
           }
+      threads: threads
     out: [rpkmFile]
 
 
