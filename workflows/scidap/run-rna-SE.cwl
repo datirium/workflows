@@ -21,7 +21,7 @@ inputs:
     s:isPartOf: "genome/organism"
     s:isBasedOn:
     - class: s:SoftwareApplication
-      s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
       s:keywords: "outputs/indices_folder"
     doc: "STAR generated indices"
 
@@ -42,7 +42,7 @@ inputs:
     s:isPartOf: "genome/organism"
     s:isBasedOn:
     - class: s:SoftwareApplication
-      s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
       s:keywords: "outputs/chr_length"
     doc: "Chromosome length file"
 
@@ -66,7 +66,7 @@ inputs:
     s:isPartOf: "genome/organism"
     s:isBasedOn:
     - class: s:SoftwareApplication
-      s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
       s:keywords: "inputs/annotation_input_file"
     doc: "Tab-separated annotation file"
 
