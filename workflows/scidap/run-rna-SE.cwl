@@ -22,7 +22,7 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
-      s:keywords: "outputs/indices"
+      s:keywords: "outputs/indices_folder"
     doc: "STAR generated indices"
 
   clip_3p_end:
@@ -43,7 +43,7 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
-      s:keywords: "outputs/chrlength"
+      s:keywords: "outputs/chr_length"
     doc: "Chromosome length file"
 
   bowtie_indices:
@@ -67,7 +67,7 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
-      s:keywords: "inputs/annotation"
+      s:keywords: "inputs/annotation_input_file"
     doc: "Tab-separated annotation file"
 
   dutp:

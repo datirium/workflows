@@ -128,3 +128,131 @@
       class: File
       location: input_sorted.bigwig
       size: 43072
+
+- job: ./star-genomegenerate.json
+  tool: ../tools/star-genomegenerate.cwl
+  output:
+    indices:
+    - class: File
+      location: chrLength.txt
+      size: 6
+    - class: File
+      location: SAindex
+      size: 1565873619
+    - class: File
+      location: sjdbList.out.tab
+      size: 0
+    - class: File
+      location: SA
+      size: 136714
+    - class: File
+      location: Genome
+      size: 262144
+    - class: File
+      location: genomeParameters.txt
+      size: 681
+    - class: File
+      location: sjdbInfo.txt
+      size: 6
+    - class: File
+      location: chrNameLength.txt
+      size: 11
+    - class: File
+      location: sjdbList.fromGTF.out.tab
+      size: 0
+    - class: File
+      location: exonGeTrInfo.tab
+      size: 33
+    - class: File
+      location: geneInfo.tab
+      size: 22
+    - class: File
+      location: chrStart.txt
+      size: 9
+    - class: File
+      location: Log.out
+      size: 15015
+    - class: File
+      location: exonInfo.tab
+      size: 19
+    - class: File
+      location: transcriptInfo.tab
+      size: 63
+    - class: File
+      location: chrName.txt
+      size: 5
+
+- job: ./star-index.json
+  tool: ../workflows/scidap/star-index.cwl
+  output:
+    chr_length:
+      class: File
+      location: chrNameLength.txt
+      size: 11
+    indices_folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: chrLength.txt
+        size: 6
+      - class: File
+        location: SAindex
+        size: 1565873619
+      - class: File
+        location: sjdbList.out.tab
+        size: 0
+      - class: File
+        location: SA
+        size: 136714
+      - class: File
+        location: Genome
+        size: 262144
+      - class: File
+        location: genomeParameters.txt
+        size: 643
+      - class: File
+        location: sjdbInfo.txt
+        size: 6
+      - class: File
+        location: chrNameLength.txt
+        size: 11
+      - class: File
+        location: sjdbList.fromGTF.out.tab
+        size: 0
+      - class: File
+        location: exonGeTrInfo.tab
+        size: 33
+      - class: File
+        location: geneInfo.tab
+        size: 22
+      - class: File
+        location: chrStart.txt
+        size: 9
+      - class: File
+        location: Log.out
+        size: 14771
+      - class: File
+        location: exonInfo.tab
+        size: 19
+      - class: File
+        location: transcriptInfo.tab
+        size: 63
+      - class: File
+        location: chrName.txt
+        size: 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
