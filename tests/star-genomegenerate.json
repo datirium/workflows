@@ -1,6 +1,6 @@
 {
-  "genomeFastaFiles":[{"class": "File", "path": "dm3_chr4.fa"}],
-  "sjdbGTFfile": {"class": "File", "path":"dm3_chr4.gtf"},
+  "genomeFastaFiles":[{"class": "File", "path": "./data/chr10_short.fa"}],
+  "sjdbGTFfile": {"class": "File", "path":"./data/hg19_chr10.gtf"},
   "runThreadN": 1,
   "sjdbOverhang":100
 }

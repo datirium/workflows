@@ -56,7 +56,10 @@ inputs:
       string: path to the directory where genome files are stored
 
   genomeFastaFiles:
-    type: File[]
+    type:
+    - File
+    - type: array
+      items: File
     format:
       - http://edamontology.org/format_1929 # FASTA
     inputBinding:
@@ -190,15 +193,21 @@ inputs:
       - the temp directory will default to outFileNamePrefix_STARtmp
 
 outputs:
-#  indices:
-#    type: Directory
-#    outputBinding:
-##      glob: $(inputs.genomeDir)
-#      glob: "./"
+
   indices:
     type: File[]
     outputBinding:
       glob: "*"
+      outputEval: |
+        ${
+          var output_array = [];
+          for (var i = 0; i < self.length; i++){
+            if (self[i].class == "File"){
+              output_array.push(self[i]);
+            }
+          }
+          return output_array;
+        }
 
 baseCommand: [STAR]
 arguments: ["--runMode", "genomeGenerate"]
