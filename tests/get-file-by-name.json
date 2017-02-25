@@ -1,0 +1,8 @@
+{
+  "input_files": [
+    {"class": "File", "location": "./data/reads_test.fastq"},
+    {"class": "File", "location": "./data/small.fa"},
+    {"class": "File", "location": "./data/test.bam"}
+  ],
+  "basename_regex": "small.fa"
+}
