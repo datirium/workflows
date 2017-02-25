@@ -18,10 +18,10 @@ inputs:
   star_indices:
     type: Directory
     label: "STAR indices folder"
-    s:actionApplication:
-      class: s:SoftwareApplication
-      s:isPartOf: "group1"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    s:isPartOf: "group1"
+    s:isBasedOn:
+    - class: s:SoftwareApplication
+      s:URL: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
     doc: "STAR generated indices"
 
   clip_3p_end:
@@ -38,10 +38,10 @@ inputs:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    s:actionApplication:
-      class: s:SoftwareApplication
-      s:isPartOf: "group1"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    s:isPartOf: "group1"
+    s:isBasedOn:
+    - class: s:SoftwareApplication
+      s:URL: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
     doc: "Chromosome length file"
 
   bowtie_indices:
@@ -50,20 +50,20 @@ inputs:
     format:
       - http://edamontology.org/format_3484 # ebwt
       - http://edamontology.org/format_3491 # ebwtl
-    s:actionApplication:
-      class: s:SoftwareApplication
-      s:isPartOf: "group2"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/bowtie-index.cwl"
+    s:isPartOf: "group2"
+    s:isBasedOn:
+    - class: s:SoftwareApplication
+      s:URL: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/bowtie-index.cwl"
     doc: "Bowtie generated indices"
 
   annotation:
     type: File
     label: "TAB-separated annoation file"
     format: "http://edamontology.org/format_3475"
-    s:actionApplication:
-      class: s:SoftwareApplication
-      s:isPartOf: "group1"
-      s:downloadUrl: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
+    s:isPartOf: "group1"
+    s:isBasedOn:
+    - class: s:SoftwareApplication
+      s:URL: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/star-index.cwl"
     doc: "Tab-separated annotation file"
 
   dutp:
