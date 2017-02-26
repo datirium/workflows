@@ -1,5 +1,11 @@
 {
-  "fastq_input_file": {
+  "fastq_input_file_upstream": {
+    "class": "File",
+    "location": "part1.fastq",
+    "format":"http://edamontology.org/format_1930"
+  },
+
+  "fastq_input_file_downstream": {
     "class": "File",
     "location": "part1.fastq",
     "format":"http://edamontology.org/format_1930"
