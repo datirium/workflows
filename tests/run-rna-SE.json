@@ -8,11 +8,7 @@
   "star_indices": {
     "class": "Directory",
     "location": "./"
-  },
-
-  "clip_3p_end": 0,
-
-  "clip_5p_end": 0,
+  }
 
   "chrom_length": {
     "class": "File",

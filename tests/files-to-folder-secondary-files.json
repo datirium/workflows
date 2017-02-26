@@ -1,0 +1,22 @@
+{
+    "input_files": [
+      {
+        "class": "File",
+        "location": "./data/chrM.fa",
+        "secondaryFiles":[
+          {
+            "class": "File",
+            "location": "./data/small.fa"
+          },
+          {
+            "class": "File",
+            "location": "./data/test.bam"
+          },
+        ]
+      },
+      {
+        "class": "File",
+        "location": "./data/test.bam.bai"
+      }
+    ]
+}

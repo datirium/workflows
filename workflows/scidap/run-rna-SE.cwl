@@ -26,12 +26,12 @@ inputs:
     doc: "STAR generated indices"
 
   clip_3p_end:
-    type: int
+    type: int?
     label: "Clip from 3p end"
     doc: "Number of bases to clip from the 3p end"
 
   clip_5p_end:
-    type: int
+    type: int?
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
@@ -55,20 +55,20 @@ inputs:
     s:isPartOf: "genome/organism"
     s:isBasedOn:
     - class: s:SoftwareApplication
-      s:url: "https://github.com/SciDAP/workflows/blob/master/workflows/scidap/bowtie-index.cwl"
-      s:keywords: "outputs/indices"
+      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/bowtie-index.cwl"
+      s:keywords: "outputs/indices_folder"
     doc: "Bowtie generated indices"
 
   annotation:
     type: File
-    label: "TAB-separated annoation file"
-    format: "http://edamontology.org/format_3475"
+    label: "GTF annotation file"
+    format: "http://edamontology.org/format_2306"
     s:isPartOf: "genome/organism"
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
       s:keywords: "inputs/annotation_input_file"
-    doc: "Tab-separated annotation file"
+    doc: "GTF annotation file"
 
   dutp:
     type: boolean
@@ -285,13 +285,13 @@ s:creator:
 
 s:about: >
   Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
-  1. Uses STAR to align reads from input FASTQ file according to the predefined reference indices; generates unsorted BAM file and alignment statistics file
-  2. Usess fastx_quality_stats to analyze input FASTQ file and generates quality statistics file
-  3. Uses samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)
-  4. Calculates basic statistics for sorted BAM file using bamtools stats. Returns mapped reads number.
-  5. Generates BigWig file on the base of sorted BAM file
-  6. Maps input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; exports resulted statistics to file
-  7. Calculates isoform and gene expression levels for the sorted BAM file and tab-separated annotation file using SciDAP reads-counting utility; exports results to file
+  1. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
+  2. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
+  3. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)
+  4. Calculate basic statistics for sorted BAM file using bamtools stats. Return mapped reads number.
+  5. Generate BigWig file on the base of sorted BAM file
+  6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
+  7. Calculate isoform and gene expression levels for the sorted BAM file and GTF annotation file using SciDAP reads-counting utility; export results to file
   Tasks #2 and #6 are started independently on other workflow steps.
   Workflow doesn't depend on the type of the organism
 
