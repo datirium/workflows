@@ -163,7 +163,8 @@ inputs:
     inputBinding:
       position: 1
       prefix: '-u'
-  5p:
+
+  clip_5p_end:
     type: int?
     doc: |
       --trim5 <int>   trim <int> bases from 5' (left) end of reads
@@ -171,7 +172,7 @@ inputs:
       position: 1
       prefix: '-5'
 
-  3p:
+  clip_3p_end:
     type: int?
     doc: |
       --trim3 <int>   trim <int> bases from 3' (right) end of reads

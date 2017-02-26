@@ -33,7 +33,5 @@
     "format":"http://edamontology.org/format_3475"
   },
 
-  "dutp": false,
-
-  "spike_in": false
+  "dutp": false
 }

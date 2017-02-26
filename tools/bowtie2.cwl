@@ -141,7 +141,7 @@ inputs:
       position: 3
       prefix: '-u'
 
-  5p:
+  clip_5p_end:
     type: int?
     doc: |
       trim <int> bases from 5'/left end of reads (0)
@@ -149,7 +149,7 @@ inputs:
       position: 4
       prefix: '-5'
 
-  3p:
+  clip_3p_end:
     type: int?
     doc: |
       trim <int> bases from 3'/right end of reads (0)

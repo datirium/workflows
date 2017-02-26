@@ -22,7 +22,7 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
-      s:keywords: "outputs/indices_folder"
+      s:locationCreated: "outputs/indices_folder"
     doc: "STAR generated indices"
 
   clip_3p_end:
@@ -43,7 +43,7 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
-      s:keywords: "outputs/chr_length"
+      s:locationCreated: "outputs/chr_length"
     doc: "Chromosome length file"
 
   bowtie_indices:
@@ -56,7 +56,7 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/bowtie-index.cwl"
-      s:keywords: "outputs/indices_folder"
+      s:locationCreated: "outputs/indices_folder"
     doc: "Bowtie generated indices"
 
   annotation:
@@ -67,18 +67,13 @@ inputs:
     s:isBasedOn:
     - class: s:SoftwareApplication
       s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
-      s:keywords: "inputs/annotation_input_file"
+      s:locationCreated: "inputs/annotation_input_file"
     doc: "GTF annotation file"
 
   dutp:
     type: boolean
     label: "dUTP"
     doc: "Enable strand specific dUTP calculation"
-
-  spike_in:
-    type: boolean
-    label: "Use RNA spike-in sequences"
-    doc: "Enable spike-in sequences reads calculation"
 
   threads:
     type: int?
@@ -187,8 +182,8 @@ steps:
           ${
             return self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_ribosomal'+'.sam';
           }
-      3p: clip_3p_end
-      5p: clip_5p_end
+      clip_3p_end: clip_3p_end
+      clip_5p_end: clip_5p_end
       q:
         default: true
       v:
@@ -224,15 +219,7 @@ steps:
             }
           }
       ignore_chrom:
-        source: spike_in
-        valueFrom: |
-          ${
-            if (self){
-              return null;
-            } else {
-              return 'control';
-            }
-          }
+        default: "control"
       threads: threads
     out: [rpkmFile]
 
