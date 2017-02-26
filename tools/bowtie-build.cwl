@@ -17,8 +17,10 @@ hints:
 inputs:
 
   reference_in:
-    type: File[]
-    type: File
+    type:
+      - File
+      - type: array
+        items: File
     doc: >
       comma-separated list of files with ref sequences
     inputBinding:
@@ -26,13 +28,13 @@ inputs:
       position: 25
 
   index_base:
-    type:
-      - string
+    type: string?
     doc: |
       write Ebwt data to files with this dir/basename
     inputBinding:
       position: 26
       shellQuote: false
+    default: bowtie_indices
 
   f:
     type:

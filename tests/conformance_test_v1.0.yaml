@@ -15,27 +15,27 @@
   output:
     indices:
       class: File
-      location: index_basename.1.bt2
+      location: bowtie2_indices.1.bt2
       secondaryFiles:
       - class: File
-        location: index_basename.2.bt2
+        location: bowtie2_indices.2.bt2
         size: 11488
       - class: File
-        location: index_basename.3.bt2
+        location: bowtie2_indices.3.bt2
         size: 17
       - class: File
-        location: index_basename.4.bt2
+        location: bowtie2_indices.4.bt2
         size: 11480
       - class: File
-        location: index_basename.rev.1.bt2
+        location: bowtie2_indices.rev.1.bt2
         size: 4209831
       - class: File
-        location: index_basename.rev.2.bt2
+        location: bowtie2_indices.rev.2.bt2
         size: 11488
       size: 4209831
     output_log:
       class: File
-      location: index_basename.log
+      location: bowtie2_indices.log
       size: 23
 
 - job: ./samtools-view.json
@@ -242,43 +242,91 @@
         location: chrName.txt
         size: 5
 
-
-
 - job: ./bowtie-build.json
   tool: ../tools/bowtie-build.cwl
   output:
     indices:
       class: File
-      location: index_basename.1.ebwt
+      location: bowtie_indices.1.ebwt
       secondaryFiles:
       - class: File
-        location: index_basename.2.ebwt
+        location: bowtie_indices.2.ebwt
         size: 5748
       - class: File
-        location: index_basename.3.ebwt
+        location: bowtie_indices.3.ebwt
         size: 17
       - class: File
-        location: index_basename.4.ebwt
+        location: bowtie_indices.4.ebwt
         size: 11480
       - class: File
-        location: index_basename.rev.1.ebwt
+        location: bowtie_indices.rev.1.ebwt
         size: 4207655
       - class: File
-        location: index_basename.rev.2.ebwt
+        location: bowtie_indices.rev.2.ebwt
         size: 5748
       size: 4207655
     output_log:
       class: File
-      location: index_basename.log
+      location: bowtie_indices.log
       size: 11167
 
 
+- job: ./files-to-folder.json
+  tool: ../expressiontools/files-to-folder.cwl
+  output:
+    folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: test.bam
+        size: 50487
+      - class: File
+        location: test.bam.bai
+        size: 28664
 
+- job: ./files-to-folder-secondary-files.json
+  tool: ../expressiontools/files-to-folder.cwl
+  output:
+    folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: small.fa
+        size: 46500
+      - class: File
+        location: test.bam
+        size: 50487
+      - class: File
+        location: chrM.fa
+        size: 16909
+      - class: File
+        location: test.bam.bai
+        size: 28664
 
-
-
-
-
-
-
-
+- job: ./bowtie-index.json
+  tool: ../workflows/scidap/bowtie-index.cwl
+  output:
+    indices_folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: bowtie_indices.1.ebwt
+        size: 4199206
+      - class: File
+        location: bowtie_indices.2.ebwt
+        size: 2076
+      - class: File
+        location: bowtie_indices.3.ebwt
+        size: 17
+      - class: File
+        location: bowtie_indices.4.ebwt
+        size: 4143
+      - class: File
+        location: bowtie_indices.rev.1.ebwt
+        size: 4199206
+      - class: File
+        location: bowtie_indices.rev.2.ebwt
+        size: 2076

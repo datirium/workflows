@@ -1,0 +1,4 @@
+{
+  "fasta_input_files":[{"class": "File", "location": "./data/chrM.fa"}]
+}
+

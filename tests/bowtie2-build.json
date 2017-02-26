@@ -1,5 +1,4 @@
 {
   "reference_in": {"class": "File", "location": "./data/small.fa"},
-  "bt2_index_base": "./index_basename",
   "threads": 1
 }

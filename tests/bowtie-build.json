@@ -1,5 +1,3 @@
 {
-  "reference_in": {"class": "File", "location": "./data/small.fa"},
-  "index_base": "./index_basename",
-  "threads": 1
+  "reference_in": {"class": "File", "location": "./data/small.fa"}
 }
