@@ -244,7 +244,33 @@
 
 
 
-
+- job: ./bowtie-build.json
+  tool: ../tools/bowtie-build.cwl
+  output:
+    indices:
+      class: File
+      location: index_basename.1.ebwt
+      secondaryFiles:
+      - class: File
+        location: index_basename.2.ebwt
+        size: 5748
+      - class: File
+        location: index_basename.3.ebwt
+        size: 17
+      - class: File
+        location: index_basename.4.ebwt
+        size: 11480
+      - class: File
+        location: index_basename.rev.1.ebwt
+        size: 4207655
+      - class: File
+        location: index_basename.rev.2.ebwt
+        size: 5748
+      size: 4207655
+    output_log:
+      class: File
+      location: index_basename.log
+      size: 11167
 
 
 

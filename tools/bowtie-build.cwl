@@ -10,9 +10,9 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bowtie2:v2.3.0
+  dockerPull: scidap/bowtie:v1.1.2
   dockerFile: >
-    $import: ./dockerfiles/bowtie2-Dockerfile
+    $import: ./dockerfiles/bowtie-Dockerfile
 
 inputs:
 
@@ -25,11 +25,11 @@ inputs:
       itemSeparator: ","
       position: 25
 
-  bt2_index_base:
+  index_base:
     type:
       - string
     doc: |
-      write bt2 data to files with this dir/basename
+      write Ebwt data to files with this dir/basename
     inputBinding:
       position: 26
       shellQuote: false
@@ -49,7 +49,7 @@ inputs:
       - "null"
       - boolean
     doc: |
-      reference sequences given on cmd line (as <reference_in>)
+      reference sequences given on cmd line (as <seq_in>)
     inputBinding:
       position: 2
       prefix: '-c'
@@ -64,6 +64,16 @@ inputs:
       position: 3
       prefix: '--large-index'
 
+  color:
+    type:
+      - "null"
+      - boolean
+    doc: |
+      build a colorspace index
+    inputBinding:
+      position: 4
+      prefix: '--color'
+
   noauto:
     type:
       - "null"
@@ -71,7 +81,7 @@ inputs:
     doc: |
       disable automatic -p/--bmax/--dcv memory-fitting
     inputBinding:
-      position: 4
+      position: 5
       prefix: '--noauto'
 
   packed:
@@ -81,7 +91,7 @@ inputs:
     doc: |
       use packed strings internally; slower, less memory
     inputBinding:
-      position: 5
+      position: 6
       prefix: '--packed'
 
   bmax:
@@ -91,7 +101,7 @@ inputs:
     doc: |
       max bucket sz for blockwise suffix-array builder
     inputBinding:
-      position: 6
+      position: 7
       prefix: '--bmax'
 
   bmaxdivn:
@@ -101,7 +111,7 @@ inputs:
     doc: |
       max bucket sz as divisor of ref len (default: 4)
     inputBinding:
-      position: 7
+      position: 8
       prefix: '--bmaxdivn'
 
   dcv:
@@ -111,7 +121,7 @@ inputs:
     doc: |
       diff-cover period for blockwise (default: 1024)
     inputBinding:
-      position: 8
+      position: 9
       prefix: '--dcv'
 
   nodc:
@@ -121,7 +131,7 @@ inputs:
     doc: |
       disable diff-cover (algorithm becomes quadratic)
     inputBinding:
-      position: 9
+      position: 10
       prefix: '--nodc'
 
   noref:
@@ -131,7 +141,7 @@ inputs:
     doc: |
       don't build .3/.4 index files
     inputBinding:
-      position: 10
+      position: 11
       prefix: '--noref'
 
   justref:
@@ -141,7 +151,7 @@ inputs:
     doc: |
       just build .3/.4 index files
     inputBinding:
-      position: 11
+      position: 12
       prefix: '--justref'
 
   offrate:
@@ -151,7 +161,7 @@ inputs:
     doc: |
       SA is sampled every 2^<int> BWT chars (default: 5)
     inputBinding:
-      position: 12
+      position: 13
       prefix: '--offrate'
 
   ftabchars:
@@ -161,18 +171,18 @@ inputs:
     doc: |
       # of chars consumed in initial lookup (default: 10)
     inputBinding:
-      position: 13
+      position: 14
       prefix: '--ftabchars'
 
-  threads:
+  ntoa:
     type:
       - "null"
-      - int
+      - boolean
     doc: |
-      # of threads
+      convert Ns in reference to As
     inputBinding:
-      position: 14
-      prefix: '--threads'
+      position: 15
+      prefix: '--ntoa'
 
   seed:
     type:
@@ -181,7 +191,7 @@ inputs:
     doc: |
       seed for random number generator
     inputBinding:
-      position: 15
+      position: 16
       prefix: '--seed'
 
   quiet:
@@ -191,7 +201,7 @@ inputs:
     doc: |
       verbose output (for debugging)
     inputBinding:
-      position: 15
+      position: 17
       prefix: '--quiet'
 
 outputs:
@@ -199,7 +209,7 @@ outputs:
   indices:
     type: File
     outputBinding:
-      glob: $(inputs.bt2_index_base + ".1.bt2*")
+      glob: $(inputs.index_base + ".1.ebwt*")
     secondaryFiles: |
       ${
         var ext = self.location.split('/').slice(-1)[0].split('.').slice(-1)[0];
@@ -216,13 +226,13 @@ outputs:
   output_log:
     type: File
     outputBinding:
-      glob: $(inputs.bt2_index_base + ".log")
+      glob: $(inputs.index_base + ".log")
 
 baseCommand:
-  - bowtie2-build
+  - bowtie-build
 
 arguments:
-  - valueFrom: $('2> ' + inputs.bt2_index_base + '.log')
+  - valueFrom: $('> ' + inputs.index_base + '.log')
     position: 100000
     shellQuote: false
 
@@ -236,7 +246,7 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/bowtie2-metadata.yaml
 
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bowtie2-build.cwl
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bowtie-build.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -260,32 +270,29 @@ s:author:
       s:name: Barski Lab
 
 doc: |
-  Bowtie 2 version 2.3.0 by Ben Langmead (langmea@cs.jhu.edu, www.cs.jhu.edu/~langmea)
-  Usage: bowtie2-build [options]* <reference_in> <bt2_index_base>
+  Usage: bowtie-build [options]* <reference_in> <ebwt_outfile_base>
       reference_in            comma-separated list of files with ref sequences
-      bt2_index_base          write bt2 data to files with this dir/basename
-  *** Bowtie 2 indexes work only with v2 (not v1).  Likewise for v1 indexes. ***
+      ebwt_outfile_base       write Ebwt data to files with this dir/basename
   Options:
       -f                      reference files are Fasta (default)
-      -c                      reference sequences given on cmd line (as
-                              <reference_in>)
+      -c                      reference sequences given on cmd line (as <seq_in>)
       --large-index           force generated index to be 'large', even if ref
                               has fewer than 4 billion nucleotides
+      -C/--color              build a colorspace index
       -a/--noauto             disable automatic -p/--bmax/--dcv memory-fitting
-      -p/--packed             use packed strings internally; slower, less memory
+      -p/--packed             use packed strings internally; slower, uses less mem
       --bmax <int>            max bucket sz for blockwise suffix-array builder
       --bmaxdivn <int>        max bucket sz as divisor of ref len (default: 4)
       --dcv <int>             diff-cover period for blockwise (default: 1024)
       --nodc                  disable diff-cover (algorithm becomes quadratic)
-      -r/--noref              don't build .3/.4 index files
-      -3/--justref            just build .3/.4 index files
-      -o/--offrate <int>      SA is sampled every 2^<int> BWT chars (default: 5)
+      -r/--noref              don't build .3/.4.ebwt (packed reference) portion
+      -3/--justref            just build .3/.4.ebwt (packed reference) portion
+      -o/--offrate <int>      SA is sampled every 2^offRate BWT chars (default: 5)
       -t/--ftabchars <int>    # of chars consumed in initial lookup (default: 10)
-      --threads <int>         # of threads
+      --ntoa                  convert Ns in reference to As
       --seed <int>            seed for random number generator
       -q/--quiet              verbose output (for debugging)
       -h/--help               print detailed description of tool and its options
       --usage                 print this usage message
       --version               print version information and quit
-
 
