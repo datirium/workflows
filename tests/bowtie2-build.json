@@ -1,4 +1,4 @@
 {
-  "reference_in": {"class": "File", "location": "./data/small.fa"},
+  "reference_in": {"class": "File", "location": "./data/small.fa", "format":"http://edamontology.org/format_1929"},
   "threads": 1
 }
