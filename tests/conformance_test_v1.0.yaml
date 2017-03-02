@@ -330,3 +330,15 @@
       - class: File
         location: bowtie_indices.rev.2.ebwt
         size: 2076
+
+- job: ./samtools-sort-index-2.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bamBaiPair:
+      class: File
+      location: test.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: test.sorted.bam.bai
+        size: 28664
+      size: 50487
