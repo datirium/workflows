@@ -42,10 +42,10 @@ inputs:
 
   filelist:
     type:
-      - "null"
-      - File
-      - type: array
-        items: File
+    - "null"
+    - File
+    - type: array
+      items: File
     doc: |
       {-1 <m1> -2 <m2> | -U <r>} [-S <sam>]
       <m1>       Files with #1 mates, paired with files in <m2>.
@@ -60,10 +60,10 @@ inputs:
 
   filelist_mates:
     type:
-      - "null"
-      - File
-      - type: array
-        items: File
+    - "null"
+    - File
+    - type: array
+      items: File
     inputBinding:
       itemSeparator: ","
       position: 85
@@ -78,8 +78,8 @@ inputs:
 
   q:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "query input files are FASTQ .fq/.fastq (default)"
     inputBinding:
       position: 1
@@ -87,8 +87,8 @@ inputs:
 
   qseq:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "query input files are in Illumina's qseq format"
     inputBinding:
       position: 1
@@ -96,17 +96,17 @@ inputs:
 
   f:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "query input files are (multi-)FASTA .fa/.mfa"
     inputBinding:
       position: 1
       prefix: '-f'
 
-  r:
+  raw:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "query input files are raw one-sequence-per-line"
     inputBinding:
       position: 1
@@ -114,8 +114,8 @@ inputs:
 
   c:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "<m1>, <m2>, <r> are sequences themselves, not files"
     inputBinding:
       position: 1
@@ -123,8 +123,8 @@ inputs:
 
   s:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       skip the first <int> reads/pairs in the input (none)
     inputBinding:
@@ -133,8 +133,8 @@ inputs:
 
   u:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       stop after first <int> reads/pairs (no limit)
     inputBinding:
@@ -159,8 +159,8 @@ inputs:
 
   phred33_quals:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "qualities are Phred+33 (default)"
     inputBinding:
       position: 6
@@ -168,8 +168,8 @@ inputs:
 
   phred64_quals:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "qualities are Phred+64"
     inputBinding:
       position: 6
@@ -177,8 +177,8 @@ inputs:
 
   integer_quals:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "qualities encoded as space-delimited integers"
     inputBinding:
       position: 6
@@ -186,8 +186,8 @@ inputs:
 
   n:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       max # mismatches in seed alignment; can be 0 or 1 (0)
     inputBinding:
@@ -196,8 +196,8 @@ inputs:
 
   l:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       length of seed substrings; must be >3, <32 (22)
     inputBinding:
@@ -206,8 +206,8 @@ inputs:
 
   i:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       interval between seed substrings w/r/t read len (S,1,1.15)
     inputBinding:
@@ -216,8 +216,8 @@ inputs:
 
   n_ceil:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: >
       func for max # non-A/C/G/Ts permitted in aln (L,0,0.15)
     inputBinding:
@@ -226,8 +226,8 @@ inputs:
 
   dpad:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       include <int> extra ref chars on sides of DP table (15)
     inputBinding:
@@ -236,8 +236,8 @@ inputs:
 
   gbar:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       disallow gaps within <int> nucs of read extremes (4)
     inputBinding:
@@ -246,8 +246,8 @@ inputs:
 
   ignore_quals:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       treat all quality values as 30 on Phred scale (off)
     inputBinding:
@@ -256,8 +256,8 @@ inputs:
 
   nofw:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       do not align forward (original) version of read (off)
     inputBinding:
@@ -266,8 +266,8 @@ inputs:
 
   norc:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       do not align reverse-complement version of read (off)
     inputBinding:
@@ -276,8 +276,8 @@ inputs:
 
   no_1mm_upfront:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       do not allow 1 mismatch alignments before attempting to scan for the optimal seeded alignments
     inputBinding:
@@ -286,8 +286,8 @@ inputs:
 
   end_to_end:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       entire read must align; no clipping (on)
       Options:
@@ -301,8 +301,8 @@ inputs:
 
   end_to_end_very_fast:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for end_to_end:
         --very-fast            -D 5 -R 1 -N 0 -L 22 -i S,0,2.50
@@ -312,8 +312,8 @@ inputs:
 
   end_to_end_fast:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for end_to_end:
         --very-fast            -D 5 -R 1 -N 0 -L 22 -i S,0,2.50
@@ -323,8 +323,8 @@ inputs:
 
   end_to_end_sensitive:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for end_to_end:
         --sensitive            -D 15 -R 2 -N 0 -L 22 -i S,1,1.15 (default)
@@ -334,8 +334,8 @@ inputs:
 
   end_to_end_very_sensitive:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for end_to_end:
         --very-sensitive       -D 20 -R 3 -N 0 -L 20 -i S,1,0.50
@@ -345,8 +345,8 @@ inputs:
 
   local:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       local alignment; ends might be soft clipped (off)
       Options:
@@ -360,8 +360,8 @@ inputs:
 
   local_very_fast_local:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for local:
         --very-fast-local      -D 5 -R 1 -N 0 -L 25 -i S,1,2.00
@@ -371,8 +371,8 @@ inputs:
 
   local_fast_local:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for local:
         --fast-local           -D 10 -R 2 -N 0 -L 22 -i S,1,1.75
@@ -382,8 +382,8 @@ inputs:
 
   local_sensitive_local:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for local:
         --sensitive-local      -D 15 -R 2 -N 0 -L 20 -i S,1,0.75 (default)
@@ -393,8 +393,8 @@ inputs:
 
   local_very_sensitive_local:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       Option for local:
         --very-sensitive-local -D 20 -R 3 -N 0 -L 20 -i S,1,0.50
@@ -404,8 +404,8 @@ inputs:
 
   ma:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       match bonus (0 for --end-to-end, 2 for --local)
     inputBinding:
@@ -414,8 +414,8 @@ inputs:
 
   mp:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       max penalty for mismatch; lower qual = lower penalty (6)
     inputBinding:
@@ -424,8 +424,8 @@ inputs:
 
   np:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       penalty for non-A/C/G/Ts in read/ref (1)
     inputBinding:
@@ -434,8 +434,8 @@ inputs:
 
   rdg:
     type:
-      - "null"
-      - int[]
+    - "null"
+    - int[]
     doc: |
       read gap open, extend penalties (5,3)
     inputBinding:
@@ -445,8 +445,8 @@ inputs:
 
   rfg:
     type:
-      - "null"
-      - int[]
+    - "null"
+    - int[]
     doc: |
       reference gap open, extend penalties (5,3)
     inputBinding:
@@ -456,8 +456,8 @@ inputs:
 
   score_min:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       min acceptable alignment score w/r/t read length (G,20,8 for local, L,-0.6,-0.6 for end-to-end)
     inputBinding:
@@ -466,8 +466,8 @@ inputs:
 
   k:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       report up to <int> alns per read; MAPQ not meaningful
     inputBinding:
@@ -476,8 +476,8 @@ inputs:
 
   a:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       report all alignments; very slow, MAPQ not meaningful
     inputBinding:
@@ -486,8 +486,8 @@ inputs:
 
   d:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       give up extending after <int> failed extends in a row (15)
     inputBinding:
@@ -496,8 +496,8 @@ inputs:
 
   r:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       for reads w/ repetitive seeds, try <int> sets of seeds (2)
     inputBinding:
@@ -506,8 +506,8 @@ inputs:
 
   minins:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       minimum fragment length (0)
     inputBinding:
@@ -516,8 +516,8 @@ inputs:
 
   maxins:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       maxins fragment length (0)
     inputBinding:
@@ -526,8 +526,8 @@ inputs:
 
   fr:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       -1, -2 mates align fw/rev, rev/fw, fw/fw (--fr)
     inputBinding:
@@ -536,8 +536,8 @@ inputs:
 
   rf:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       -1, -2 mates align fw/rev, rev/fw, fw/fw (--fr)
     inputBinding:
@@ -546,8 +546,8 @@ inputs:
 
   ff:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       -1, -2 mates align fw/rev, rev/fw, fw/fw (--fr)
     inputBinding:
@@ -556,8 +556,8 @@ inputs:
 
   no_mixed:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       suppress unpaired alignments for paired reads
     inputBinding:
@@ -566,8 +566,8 @@ inputs:
 
   no_discordant:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       suppress discordant alignments for paired reads
     inputBinding:
@@ -576,8 +576,8 @@ inputs:
 
   no_dovetail:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       not concordant when mates extend past each other
     inputBinding:
@@ -586,8 +586,8 @@ inputs:
 
   no_contain:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       not concordant when one mate alignment contains other
     inputBinding:
@@ -596,8 +596,8 @@ inputs:
 
   no_overlap:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       not concordant when mates overlap at all
     inputBinding:
@@ -606,8 +606,8 @@ inputs:
 
   t:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       print wall-clock time taken by search phases
     inputBinding:
@@ -616,8 +616,8 @@ inputs:
 
   un:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       write unpaired reads that didn't align to <path>
     inputBinding:
@@ -626,8 +626,8 @@ inputs:
 
   al:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       write unpaired reads that aligned at least once to <path>
     inputBinding:
@@ -636,8 +636,8 @@ inputs:
 
   un_conc:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       write pairs that didn't align concordantly to <path>
     inputBinding:
@@ -646,8 +646,8 @@ inputs:
 
   al_conc:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       write pairs that aligned concordantly at least once to <path>
     inputBinding:
@@ -656,8 +656,8 @@ inputs:
 
   quiet:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "print nothing to stderr except serious errors"
     inputBinding:
       position: 42
@@ -665,8 +665,8 @@ inputs:
 
   met_file:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       send metrics to file at <path> (off)
     inputBinding:
@@ -675,8 +675,8 @@ inputs:
 
   met_stderr:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "send metrics to stderr (off)"
     inputBinding:
       position: 44
@@ -684,8 +684,8 @@ inputs:
 
   met:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       report internal counters & metrics every <int> secs (1)
     inputBinding:
@@ -694,8 +694,8 @@ inputs:
 
   no_unal:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "suppress SAM records for unaligned reads"
     inputBinding:
       position: 46
@@ -703,8 +703,8 @@ inputs:
 
   no_head:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "suppress header lines, i.e. lines starting with @"
     inputBinding:
       position: 47
@@ -712,8 +712,8 @@ inputs:
 
   no_sq:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "suppress @SQ header lines"
     inputBinding:
       position: 48
@@ -721,8 +721,8 @@ inputs:
 
   rg_id:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: "set read group id, reflected in @RG line and RG:Z: opt field"
     inputBinding:
       position: 49
@@ -730,8 +730,8 @@ inputs:
 
   rg:
     type:
-      - "null"
-      - string
+    - "null"
+    - string
     doc: |
       add <text> ("lab:value") to @RG line of SAM header.
       Note: @RG line only printed when --rg-id is set.
@@ -741,8 +741,8 @@ inputs:
 
   omit_sec_seq:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "put '*' in SEQ and QUAL fields for secondary alignments"
     inputBinding:
       position: 51
@@ -750,8 +750,8 @@ inputs:
 
   p:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       number of alignment threads to launch (1)
     inputBinding:
@@ -760,8 +760,8 @@ inputs:
 
   reorder:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: |
       force SAM output order to match order of input reads
     inputBinding:
@@ -770,8 +770,8 @@ inputs:
 
   mm:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "use memory-mapped I/O for index; many 'bowtie's can share"
     inputBinding:
       position: 54
@@ -779,17 +779,17 @@ inputs:
 
   qc_filter:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "filter out reads that are bad according to QSEQ filter"
     inputBinding:
       position: 55
       prefix: '--qc-filter'
-
+#
   seed:
     type:
-      - "null"
-      - int
+    - "null"
+    - int
     doc: |
       seed for random number generator (0)
     inputBinding:
@@ -798,8 +798,8 @@ inputs:
 
   non_deterministic:
     type:
-      - "null"
-      - boolean
+    - "null"
+    - boolean
     doc: "seed rand. gen. arbitrarily instead of using read attributes"
     inputBinding:
       position: 57
