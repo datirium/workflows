@@ -9,11 +9,11 @@ requirements:
 
 inputs:
 
-  fasta_input_files:
-    type: File[]
-    label: "FASTA input files"
+  fasta_input_file:
+    type: File
+    label: "FASTA input file"
     format: "http://edamontology.org/format_1929"
-    doc: "Reference genome input FASTA file(s)"
+    doc: "Reference genome input FASTA file"
 
 outputs:
   indices_folder:
@@ -26,7 +26,7 @@ steps:
   bowtie_generate_indices:
     run: ../../tools/bowtie-build.cwl
     in:
-      reference_in: fasta_input_files
+      reference_in: fasta_input_file
     out: [indices]
 
   files_to_folder:

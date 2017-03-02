@@ -1,4 +1,4 @@
 {
-  "fasta_input_files":[{"class": "File", "location": "./data/chrM.fa", "format":"http://edamontology.org/format_1929"}]
+  "fasta_input_file":{"class": "File", "location": "./data/chrM.fa", "format":"http://edamontology.org/format_1929"}
 }
 

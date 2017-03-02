@@ -9,11 +9,11 @@ requirements:
 
 inputs:
 
-  fasta_input_files:
-    type: File[]
-    label: "FASTA input files"
+  fasta_input_file:
+    type: File
+    label: "FASTA input file"
     format: "http://edamontology.org/format_1929"
-    doc: "Reference genome input FASTA file(s)"
+    doc: "Reference genome input FASTA file"
 
   annotation_input_file:
     type: File
@@ -44,7 +44,7 @@ steps:
   star_generate_indices:
     run: ../../tools/star-genomegenerate.cwl
     in:
-      genomeFastaFiles: fasta_input_files
+      genomeFastaFiles: fasta_input_file
       sjdbGTFfile: annotation_input_file
       threads: threads
     out: [indices]
