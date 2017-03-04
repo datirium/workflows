@@ -6,6 +6,9 @@ class: CommandLineTool
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
+- class: InitialWorkDirRequirement
+  listing:
+    - $(inputs.sortInput)
 - class: InlineJavascriptRequirement
   expressionLib:
   - var ext = function() {
@@ -82,6 +85,7 @@ inputs:
     type: File
     inputBinding:
       position: 6
+      valueFrom: $(self.basename)
     doc: |
       Input only in.sam|in.bam|in.cram
 
