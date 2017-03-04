@@ -237,15 +237,29 @@ inputs:
       prefix: "-3"
 
   genomecoverageout:
-    type: string
+    type: string?
 
 outputs:
   genomecoverage:
     type: File
     doc: "The file containing the genome coverage"
     outputBinding:
-      glob: $(inputs.genomecoverageout)
+      glob: |
+        ${
+          if (inputs.genomecoverageout == null){
+            return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".bed";
+          } else {
+            return inputs.genomecoverageout;
+          }
+        }
 
-stdout: $(inputs.genomecoverageout)
+stdout: |
+  ${
+    if (inputs.genomecoverageout == null){
+      return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".bed";
+    } else {
+      return inputs.genomecoverageout;
+    }
+  }
 
 baseCommand: ["bedtools", "genomecov"]

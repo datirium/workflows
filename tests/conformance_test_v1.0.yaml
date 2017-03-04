@@ -75,7 +75,7 @@
   output:
     genomecoverage:
       class: File
-      location: output.bedGraph
+      location: test.bed
       size: 27256
 
 - job: ./fastx-quality-stats.json

@@ -47,8 +47,6 @@ steps:
     in:
       input: input
       genomeFile: genomeFile
-      genomecoverageout:
-        default: "./genomecov.bedGraph"
       dept:
         default: "-bg"
       split:
