@@ -24,7 +24,7 @@ requirements:
       }
     };
   - var default_bam = function() {
-      return inputs.sortInput.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".sorted.bam";
+      return inputs.sortInput.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sorted.bam";
     };
 
 

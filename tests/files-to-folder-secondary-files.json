@@ -10,13 +10,13 @@
           },
           {
             "class": "File",
-            "location": "./data/test.bam"
+            "location": "./data/test.trimmed.bam"
           },
         ]
       },
       {
         "class": "File",
-        "location": "./data/test.bam.bai"
+        "location": "./data/test.trimmed.bam.bai"
       }
     ]
 }

@@ -1,7 +1,7 @@
 {
   "input": {
     "class": "File",
-    "path": "./data/test.bam"
+    "path": "./data/test.trimmed.bam"
   },
   "isbam": true,
   "readsquality": 1,

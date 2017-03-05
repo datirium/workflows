@@ -1,6 +1,6 @@
 {
     "sortInput": {
         "class": "File",
-        "location": "./data/test.sam"
+        "location": "./data/test.trimmed.sam"
     }
 }

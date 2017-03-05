@@ -1,7 +1,7 @@
 {
     "input": {
         "class": "File",
-        "path": "./data/test.bam"
+        "path": "./data/test.trimmed.bam"
     },
     "scale": 1,
     "dept": "-bg"

@@ -247,7 +247,7 @@ outputs:
       glob: |
         ${
           if (inputs.genomecoverageout == null){
-            return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".bed";
+            return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bed";
           } else {
             return inputs.genomecoverageout;
           }
@@ -256,7 +256,7 @@ outputs:
 stdout: |
   ${
     if (inputs.genomecoverageout == null){
-      return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1)+".bed";
+      return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bed";
     } else {
       return inputs.genomecoverageout;
     }

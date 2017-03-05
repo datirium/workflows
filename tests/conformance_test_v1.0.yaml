@@ -75,7 +75,7 @@
   output:
     genomecoverage:
       class: File
-      location: test.bed
+      location: test.trimmed.bed
       size: 27256
 
 - job: ./fastx-quality-stats.json
@@ -91,10 +91,10 @@
   output:
     bamBaiPair:
       class: File
-      location: test.sorted.bam
+      location: test.trimmed.sorted.bam
       secondaryFiles:
       - class: File
-        location: test.sorted.bam.bai
+        location: test.trimmed.sorted.bam.bai
         size: 28664
       size: 50487
 
@@ -279,10 +279,10 @@
       location: folder
       listing:
       - class: File
-        location: test.bam
+        location: test.trimmed.bam
         size: 50487
       - class: File
-        location: test.bam.bai
+        location: test.trimmed.bam.bai
         size: 28664
 
 - job: ./files-to-folder-secondary-files.json
@@ -296,13 +296,13 @@
         location: small.fa
         size: 46500
       - class: File
-        location: test.bam
+        location: test.trimmed.bam
         size: 50487
       - class: File
         location: chrM.fa
         size: 16909
       - class: File
-        location: test.bam.bai
+        location: test.trimmed.bam.bai
         size: 28664
 
 - job: ./bowtie-index.json
@@ -336,9 +336,9 @@
   output:
     bamBaiPair:
       class: File
-      location: test.sorted.bam
+      location: test.trimmed.sorted.bam
       secondaryFiles:
       - class: File
-        location: test.sorted.bam.bai
+        location: test.trimmed.sorted.bam.bai
         size: 28664
       size: 50487
