@@ -6,10 +6,6 @@ class: CommandLineTool
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
-- class: EnvVarRequirement
-  envDef:
-    - envName: "BOWTIE2_INDEXES"
-      envValue: $(inputs.indices_folder)
 - class: InlineJavascriptRequirement
 
 
