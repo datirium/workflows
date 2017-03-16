@@ -1,0 +1,6 @@
+{
+  "upstream_fastq": {"class": "File", "location": "/mnt/data/HOME/michael_kotliar/temp/SRR3017196.trimmed.fastq"},
+  "bowtie2_indices_folder": {"class": "Directory", "location": "/home/michael_kotliar/indices/Bowtie_indexes_Laevis_9"},
+  "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/indices/LAEVIS_TROP_CHROM_SIZE/Laevis_9_1_chrom_sizes.genome"},
+  "split": true
+}

@@ -14,11 +14,8 @@ inputs:
   downstream_fastq:
     type: File?
   bowtie2_indices_folder:
-    type: File
+    type: Directory
     doc: "Path to BOWTIE2 indices folder"
-  samtools_view_reads_quality_cutoff:
-    type: int
-    doc: Filter out all aligned reads, whch have quality lower then this threshold
   split:
     type: boolean?
     doc: define if use split option for bedtools genomcove
@@ -93,25 +90,10 @@ steps:
         default: true
     out: [output_file, metrics_file]
 
-  samtools_view:
-    run: ../../tools/samtools-view.cwl
-    in:
-      input: remove_dup_picard/output_file
-      isbam:
-        default: true
-      readsquality: samtools_view_reads_quality_cutoff
-      output_name:
-        source: upstream_fastq
-        valueFrom: |
-          ${
-            return self.basename.split('.').slice(0, -1).join('.') + ".filtered.bam";
-          }
-    out: [output]
-
   samtools_sort_index_after_dup_removing:
     run: ../../tools/samtools-sort-index.cwl
     in:
-      sortInput: samtools_view/output
+      sortInput: remove_dup_picard/output_file
       sortOutputFileName:
         source: upstream_fastq
         valueFrom: |

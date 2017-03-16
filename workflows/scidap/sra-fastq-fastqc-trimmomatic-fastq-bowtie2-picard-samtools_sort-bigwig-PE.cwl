@@ -16,9 +16,6 @@ inputs:
   bowtie2_indices_folder:
     type: Directory
     doc: "Path to BOWTIE2 indices folder"
-  samtools_view_reads_quality_cutoff:
-    type: int
-    doc: Filter out all aligned reads, whch have quality lower then this threshold
   chrLengthFile:
     type: File
 
@@ -63,7 +60,6 @@ steps:
       upstream_fastq: sra_fastqc_trimmomatic_fastq_PE/upstream_fastq
       downstream_fastq: sra_fastqc_trimmomatic_fastq_PE/downstream_fastq
       bowtie2_indices_folder: bowtie2_indices_folder
-      samtools_view_reads_quality_cutoff: samtools_view_reads_quality_cutoff
       chrLengthFile: chrLengthFile
       split:
         default: true

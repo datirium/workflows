@@ -1,0 +1,6 @@
+{
+  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/GSE76059/SRR3017207.sra"},
+  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/indices/adapters/TruSeq3-SE.fa"},
+  "bowtie2_indices_folder": {"class": "Directory", "location": "/home/michael_kotliar/indices/Bowtie_indexes_Laevis_9"},
+  "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/indices/LAEVIS_TROP_CHROM_SIZE/Laevis_9_1_chrom_sizes.genome"}
+}
