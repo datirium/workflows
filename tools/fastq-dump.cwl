@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/sratoolkit:v2.8.2-1
+  dockerPull: biowardrobe2/sratoolkit:v2.8.2-1
   dockerFile: >
     $import: ./dockerfiles/sratoolkit-Dockerfile
 

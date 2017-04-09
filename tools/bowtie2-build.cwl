@@ -10,7 +10,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bowtie2:v2.3.0
+  dockerPull: biowardrobe2/bowtie2:v2.3.0
   dockerFile: >
     $import: ./dockerfiles/bowtie2-Dockerfile
 
@@ -290,5 +290,3 @@ doc: |
       -h/--help               print detailed description of tool and its options
       --usage                 print this usage message
       --version               print version information and quit
-
-

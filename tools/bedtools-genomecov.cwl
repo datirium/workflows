@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bedtools2:v2.26.0
+  dockerPull: biowardrobe2/bedtools2:v2.26.0
   dockerFile: >
     $import: ./dockerfiles/bedtools-Dockerfile
 

@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/star:v2.5.3a
+  dockerPull: biowardrobe2/star:v2.5.3a
   dockerFile: >
     $import: ./dockerfiles/star-Dockerfile
 

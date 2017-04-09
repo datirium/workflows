@@ -10,7 +10,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/scidap:v0.0.2
+  dockerPull: biowardrobe2/scidap:v0.0.2
   dockerFile: >
     $import: ./dockerfiles/scidap-Dockerfile
 

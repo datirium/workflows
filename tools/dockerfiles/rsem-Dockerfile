@@ -10,14 +10,14 @@
 #                   https://github.com/alexdobin/STAR
 #                   https://scidap.com/
 # Provides:         deweylab, BenLangmead, alexdobin, scidap
-# Base Image:       scidap/scidap:v0.0.2
-# Build Cmd:        docker build --rm -t scidap/rsem:v1.3.0 -f rsem-Dockerfile .
-# Pull Cmd:         docker pull scidap/rsem:v1.3.0
-# Run Cmd:          docker run --rm -ti scidap/rsem:v1.3.0 rsem-calculate-expression --help
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/rsem:v1.3.0 -f rsem-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/rsem:v1.3.0
+# Run Cmd:          docker run --rm -ti biowardrobe2/rsem:v1.3.0 rsem-calculate-expression --help
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.2
+FROM biowardrobe2/scidap:v0.0.2
 MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -90,4 +90,3 @@ RUN wget -q -O - $URL_STAR | tar -zxv && \
     rm -rf ./RSEM-${VERSION_RSEM} && \
 
     strip /usr/local/bin/*; true
-

@@ -6,14 +6,14 @@
 # Description:      STAR image for SciDAP
 # Website:          https://github.com/alexdobin/STAR, http://scidap.com/
 # Provides:         STAR
-# Base Image:       scidap/scidap:v0.0.2
-# Build Cmd:        docker build --rm -t scidap/star:v2.5.3a -f star-Dockerfile .
-# Pull Cmd:         docker pull scidap/star:v2.5.3a
-# Run Cmd:          docker run --rm -ti scidap/star:v2.5.3a STAR
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/star:v2.5.3a -f star-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/star:v2.5.3a
+# Run Cmd:          docker run --rm -ti biowardrobe2/star:v2.5.3a STAR
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.2
+FROM biowardrobe2/scidap:v0.0.2
 MAINTAINER Andrey V Kartashov "porter@porter.st"
 ENV DEBIAN_FRONTEND noninteractive
 

@@ -6,14 +6,14 @@
 # Description:      Bowtie image for SciDAP
 # Website:          http://bowtie-bio.sourceforge.net, http://scidap.com/
 # Provides:         bowtie
-# Base Image:       scidap/scidap:v0.0.2
-# Build Cmd:        docker build --rm -t scidap/bowtie:v1.2.0 -f bowtie-Dockerfile .
-# Pull Cmd:         docker pull scidap/bowtie:v1.2.0
-# Run Cmd:          docker run --rm -ti scidap/bowtie:v1.2.0 bowtie
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/bowtie:v1.2.0 -f bowtie-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/bowtie:v1.2.0
+# Run Cmd:          docker run --rm -ti biowardrobe2/bowtie:v1.2.0 bowtie
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.2
+FROM biowardrobe2/scidap:v0.0.2
 MAINTAINER Andrey V Kartashov "porter@porter.st"
 ENV DEBIAN_FRONTEND noninteractive
 

@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/fastqc:v0.11.5
+  dockerPull: biowardrobe2/fastqc:v0.11.5
   dockerFile: >
     $import: ./dockerfiles/fastqc-Dockerfile
 

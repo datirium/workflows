@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/fastx_toolkit:v0.0.14
+  dockerPull: biowardrobe2/fastx_toolkit:v0.0.14
   dockerFile: >
     $import: ./dockerfiles/fastx-Dockerfile
 

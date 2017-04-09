@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/rsem:v1.3.0
+  dockerPull: biowardrobe2/rsem:v1.3.0
   dockerFile: >
     $import: ./dockerfiles/rsem-Dockerfile
 

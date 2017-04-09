@@ -23,7 +23,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/samtools:v1.4
+  dockerPull: biowardrobe2/samtools:v1.4
   dockerFile: >
     $import: ./dockerfiles/samtools-Dockerfile
 

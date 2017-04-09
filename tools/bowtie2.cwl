@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bowtie2:v2.3.0
+  dockerPull: biowardrobe2/bowtie2:v2.3.0
   dockerFile: >
     $import: ./dockerfiles/bowtie2-Dockerfile
 
@@ -1003,5 +1003,3 @@ doc: |
     --non-deterministic seed rand. gen. arbitrarily instead of using read attributes
     --version          print version information and quit
     -h/--help          print this usage message
-
-

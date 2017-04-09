@@ -55,7 +55,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/macs2:v2.1.1
+  dockerPull: biowardrobe2/macs2:v2.1.1
   dockerFile: >
     $import: ./dockerfiles/macs2-Dockerfile
 

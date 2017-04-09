@@ -6,14 +6,14 @@
 # Description:      picard image for SciDAP
 # Website:          https://broadinstitute.github.io/picard/, http://scidap.com/
 # Provides:         Broad Institute
-# Base Image:       scidap/scidap:v0.0.2
-# Build Cmd:        docker build --rm -t scidap/picard:v2.9.0 -f picard-Dockerfile .
-# Pull Cmd:         docker pull scidap/picard:v2.9.0
-# Run Cmd:          docker run --rm -ti scidap/picard:v2.9.0 java -jar /usr/local/bin/picard.jar
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/picard:v2.9.0 -f picard-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/picard:v2.9.0
+# Run Cmd:          docker run --rm -ti biowardrobe2/picard:v2.9.0 java -jar /usr/local/bin/picard.jar
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.2
+FROM biowardrobe2/scidap:v0.0.2
 MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
