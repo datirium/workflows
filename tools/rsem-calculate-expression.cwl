@@ -946,7 +946,7 @@ outputs:
       glob: $(inputs.sample_name + ".genome.sorted.bam")
     secondaryFiles: ${return self.location + ".bai"}
 
-  time:
+  align_time:
     type: File?
     outputBinding:
       glob: $(inputs.sample_name + ".time")

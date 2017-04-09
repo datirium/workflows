@@ -10,7 +10,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bowtie:v1.1.2
+  dockerPull: scidap/bowtie:v1.2.0
   dockerFile: >
     $import: ./dockerfiles/bowtie-Dockerfile
 

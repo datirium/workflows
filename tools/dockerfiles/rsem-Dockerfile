@@ -1,8 +1,8 @@
 #################################################################
 # Dockerfile
 #
-# Software:         RSEM  [BOWTIE, BOWTIE2, STAR,  R]
-# Software Version: 1.3.0 [1.2.0,  2.3.0,   2.5.2b 3.2.2-1]
+# Software:         RSEM  [BOWTIE  BOWTIE2  STAR    R      ]
+# Software Version: 1.3.0 [1.2.0   2.3.0    2.5.3a  3.2.3-4]
 # Description:      RSEM toolkit for SciDAP (plus all additional software to run RSEM)
 # Website:          http://deweylab.github.io/RSEM/README.html
 #                   http://bowtie-bio.sourceforge.net/index.shtml
@@ -10,14 +10,14 @@
 #                   https://github.com/alexdobin/STAR
 #                   https://scidap.com/
 # Provides:         deweylab, BenLangmead, alexdobin, scidap
-# Base Image:       scidap/scidap:v0.0.1
-# Build Cmd:        docker build --rm -t scidap/rsem:v1.3.0 .
+# Base Image:       scidap/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t scidap/rsem:v1.3.0 -f rsem-Dockerfile .
 # Pull Cmd:         docker pull scidap/rsem:v1.3.0
-# Run Cmd:          docker run --rm scidap/rsem:v1.3.0 bash
+# Run Cmd:          docker run --rm -ti scidap/rsem:v1.3.0 rsem-calculate-expression --help
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.1
+FROM scidap/scidap:v0.0.2
 MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -28,7 +28,7 @@ WORKDIR /tmp
 ENV VERSION_RSEM 1.3.0
 ENV URL_RSEM "https://github.com/deweylab/rsem/archive/v${VERSION_RSEM}.tar.gz"
 
-ENV VERSION_STAR 2.5.2b
+ENV VERSION_STAR 2.5.3a
 ENV URL_STAR "https://github.com/alexdobin/STAR/archive/${VERSION_STAR}.tar.gz"
 
 ENV VERSION_BOWTIE 1.2.0
@@ -37,7 +37,7 @@ ENV URL_BOWTIE "https://github.com/BenLangmead/bowtie/archive/v${VERSION_BOWTIE}
 ENV VERSION_BOWTIE2 2.3.0
 ENV URL_BOWTIE2 "https://github.com/BenLangmead/bowtie2/archive/v${VERSION_BOWTIE2}.tar.gz"
 
-ENV VERSION_R 3.2.2-1
+ENV VERSION_R 3.2.3-4
 
 
 

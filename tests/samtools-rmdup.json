@@ -1,0 +1,13 @@
+{
+    "input_file": {
+        "class": "File",
+        "location": "./data/test.trimmed.bam",
+        "secondaryFiles":[
+            {
+                "class": "File",
+                "location": "./data/test.trimmed.bam.bai"
+            }
+        ]
+    },
+    "single_end": true
+}

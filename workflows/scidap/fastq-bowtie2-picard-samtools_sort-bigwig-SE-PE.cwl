@@ -32,10 +32,10 @@ outputs:
     outputSource: remove_dup_picard/metrics_file
   bam_file:
     type: File
-    outputSource: samtools_sort_index_after_dup_removing/bamBaiPair
+    outputSource: samtools_sort_index_after_dup_removing/bam_bai_pair
   bamtools_stats_log:
     type: File
-    outputSource: bamtools_stats/statsLog
+    outputSource: bamtools_stats/stats_log
   bed:
     type: File
     outputSource: bam_to_bigwig/bed_file
@@ -61,19 +61,19 @@ steps:
   samtools_sort_index:
     run: ../../tools/samtools-sort-index.cwl
     in:
-      sortInput: bowtie2_aligner/output
-      sortOutputFileName:
+      sort_input: bowtie2_aligner/output
+      sort_output_filename:
         source: upstream_fastq
         valueFrom: |
           ${
             return self.basename.split('.').slice(0, -1).join('.')+".bam";
           }
-    out: [bamBaiPair]
+    out: [bam_bai_pair]
 
   remove_dup_picard:
     run: ../../tools/picard-markduplicates.cwl
     in:
-      input_file: samtools_sort_index/bamBaiPair
+      input_file: samtools_sort_index/bam_bai_pair
       output_filename:
         source: upstream_fastq
         valueFrom: |
@@ -93,25 +93,25 @@ steps:
   samtools_sort_index_after_dup_removing:
     run: ../../tools/samtools-sort-index.cwl
     in:
-      sortInput: remove_dup_picard/output_file
-      sortOutputFileName:
+      sort_input: remove_dup_picard/output_file
+      sort_output_filename:
         source: upstream_fastq
         valueFrom: |
           ${
             return self.basename.split('.').slice(0, -1).join('.')+".bam";
           }
-    out: [bamBaiPair]
+    out: [bam_bai_pair]
 
   bamtools_stats:
     run: ../../tools/bamtools-stats.cwl
     in:
-      inputFiles: samtools_sort_index_after_dup_removing/bamBaiPair
-    out: [mappedreads, statsLog]
+      input_files: samtools_sort_index_after_dup_removing/bam_bai_pair
+    out: [mappedreads, stats_log]
 
   bam_to_bigwig:
     run: bam-genomecov-bigwig.cwl
     in:
-      input: samtools_sort_index_after_dup_removing/bamBaiPair
+      input: samtools_sort_index_after_dup_removing/bam_bai_pair
       genomeFile: chrLengthFile
       mappedreads: bamtools_stats/mappedreads
       split:

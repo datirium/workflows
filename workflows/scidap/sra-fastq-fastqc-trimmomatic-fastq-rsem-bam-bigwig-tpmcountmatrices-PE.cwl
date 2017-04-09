@@ -58,22 +58,6 @@ outputs:
     label: "BigWig file"
     format: http://edamontology.org/format_3006
     outputSource: fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE/bigwig_outfile
-  isoforms_tpm_matrix:
-    type: File
-    label: "Isoform/TPM matrix file"
-    outputSource: fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE/isoforms_tpm_matrix
-  isoforms_counts_matrix:
-    type: File
-    label: "Isoform/ReadsCount matrix file"
-    outputSource: fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE/isoforms_counts_matrix
-  genes_tpm_matrix:
-    type: File
-    label: "Gene/TPM matrix file"
-    outputSource: fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE/genes_tpm_matrix
-  genes_counts_matrix:
-    type: File
-    label: "Gene/ReadsCount matrix file"
-    outputSource: fastq_rsem_bam_bigwig_tpmcountmatrices_SE_PE/genes_counts_matrix
   upstream_fastq:
     type: File
     label: "Upstream FASTQ file"
@@ -111,7 +95,7 @@ steps:
         valueFrom: $(self)
       chrLengthFile: chrLengthFile
       threads: threads
-    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix, bam_quality_log]
+    out: [rsem_isoform_results, rsem_gene_results, rsem_genome_sorted_bam_bai_pair, bigwig_outfile, bam_quality_log]
 
 
 
@@ -160,9 +144,8 @@ s:about: >
   Current workflow should be used only with the paired-end RNA-Seq data obtained from Illumina sequencing machine. It performs the following steps:
   1. Convert input SRA file into the pair of FASTQ files (run fastq-dump)
   3. Check the quality of generated upstream and downstream FASTQ files (run fastqc)
-  4. If fastqc returned FAIL for "Per base sequence quality" or "Per sequence quality scores" or "Overrepresented sequences" for upstream or downstream
+  4. If fastqc returned FAIL for "Per base sequence quality" or "Per sequence quality scores" or "Overrepresented sequences" or "Adapter Content" for upstream or downstream
      fastq file, run Trimmomatic for both of the files. If files passed all of the fastqc test parameters, continue to work with the original FASTQ files.
   5. Run rsem-calculate-expression utility. Return isoform and gene expression files, a pair of coordinate sorted BAM and index BAI files.
   6. Calculate basic statistics for BAM file (bamtools stats). Return file with calculated statistics.
   7. Generate BigWig file on the base of BAM file
-  8. Calculate isoform TPM, isoform raw reads count, gene TPM, gene raw reads count matrices

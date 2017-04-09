@@ -9,14 +9,13 @@ requirements:
 
 hints:
 - class: DockerRequirement
-    #dockerImageId: scidap/star:v2.5.0b #not yet ready
-  dockerPull: scidap/star:v2.5.0b
+  dockerPull: scidap/star:v2.5.3a
   dockerFile: >
     $import: ./dockerfiles/star-Dockerfile
 
 inputs:
 
-  parametersFiles:
+  parameters_files:
     type: string?
     inputBinding:
       position: 1
@@ -25,7 +24,7 @@ inputs:
       string: name of a user-defined parameters file, "-": none. Can only be
       defined on the command line.
 
-  runDirPerm:
+  run_dir_perm:
     type: string?
     inputBinding:
       position: 1
@@ -36,7 +35,7 @@ inputs:
       User_RWX ... user-read/write/execute
       All_RWX  ... all-read/write/execute (same as chmod 777)
 
-  sjdbGTFfeatureExon:
+  sjdb_gtf_feature_exon:
     type: string?
     inputBinding:
       position: 1
@@ -46,7 +45,7 @@ inputs:
       string: feature type in GTF file to be used as exons for building
       transcripts
 
-  genomeDir:
+  genome_dir:
     type: string
     default: "./"
     inputBinding:
@@ -55,7 +54,7 @@ inputs:
     doc: |
       string: path to the directory where genome files are stored
 
-  genomeFastaFiles:
+  genome_fasta_files:
     type:
     - File
     - type: array
@@ -71,7 +70,7 @@ inputs:
       generation, separated by spaces. Only used if runMode==genomeGenerate.
       These files should be plain text FASTA files, they *cannot* be zipped.
 
-  limitIObufferSize:
+  limit_io_buffer_size:
     type: int?
     inputBinding:
       position: 1
@@ -80,16 +79,15 @@ inputs:
       150000000
       int>0: max available buffers size (bytes) for input/output, per thread
 
-  sjdbGTFchrPrefix:
+  sjdb_gtf_chr_prefix:
     type: string?
     inputBinding:
       position: 1
       prefix: --sjdbGTFchrPrefix
     doc: |
-      string: prefix for chromosome names in a GTF file (e.g. 'chr' for using
-      ENSMEBL annotations with UCSC geneomes)
+      string: prefix for chromosome names in a GTF file (e.g. 'chr' for using ENSMEBL annotations with UCSC genomes)
 
-  genomeChrBinNbits:
+  genome_chr_bin_n_bits:
     type: int?
     inputBinding:
       position: 1
@@ -98,7 +96,7 @@ inputs:
       int: =log2(chrBin), where chrBin is the size of the bins for genome
       storage: each chromosome will occupy an integer number of bins
 
-  genomeSAsparseD:
+  genome_sa_sparse_d:
     type: int?
     inputBinding:
       position: 1
@@ -107,7 +105,27 @@ inputs:
       int>0: suffux array sparsity, i.e. distance between indices: use bigger
       numbers to decrease needed RAM at the cost of mapping speed reduction
 
-  limitGenomeGenerateRAM:
+  genome_suffix_length_max:
+    type: int?
+    inputBinding:
+      position: 1
+      prefix: --genomeSuffixLengthMax
+    doc: |
+      int: maximum length of the suffixes, has to be longer than read length. -1 = infinite.
+
+  genome_chain_files:
+    type:
+      - "null"
+      - File
+      - type: array
+        items: File
+    inputBinding:
+      position: 1
+      prefix: --genomeChainFiles
+    doc: |
+      string: chain files for genomic liftover
+
+  limit_genome_generate_ram:
     type: int?
     inputBinding:
       position: 1
@@ -116,7 +134,7 @@ inputs:
       31000000000
       int>0: maximum available RAM (bytes) for genome generation
 
-  sjdbGTFtagExonParentTranscript:
+  sjdb_gtf_tag_exon_parent_transcript:
     type: string?
     inputBinding:
       position: 1
@@ -126,7 +144,7 @@ inputs:
       string: tag name to be used as exons' transcript-parents (default
       "transcript_id" works for GTF files)
 
-  sjdbGTFtagExonParentGene:
+  sjdb_gtf_tag_exon_parent_gene:
     type: string?
     inputBinding:
       position: 1
@@ -136,7 +154,7 @@ inputs:
       for GTF files)
       '
 
-  runThreadN:
+  threads:
     type: int?
     inputBinding:
       position: 1
@@ -145,7 +163,7 @@ inputs:
       1
       int: number of threads to run STAR
 
-  sjdbGTFfile:
+  sjdb_gtf_file:
     type: File?
     format:
       - http://edamontology.org/format_2306
@@ -155,7 +173,7 @@ inputs:
     doc: |
       string: path to the GTF file with annotations
 
-  sysShell:
+  sys_shell:
     type: string?
     inputBinding:
       position: 1
@@ -164,7 +182,7 @@ inputs:
       string: path to the shell binary, preferrably bash, e.g. /bin/bash.
       - ... the default shell is executed, typically /bin/sh. This was reported to fail on some Ubuntu systems - then you need to specify path to bash.
 
-  sjdbOverhang:
+  sjdb_overhang:
     type: int?
     inputBinding:
       position: 1
@@ -174,7 +192,7 @@ inputs:
       ideally = (mate_length - 1)
       '
 
-  genomeSAindexNbases:
+  genome_sa_index_n_bases:
     type: int?
     inputBinding:
       position: 1
@@ -182,15 +200,6 @@ inputs:
     doc: |
       int: length (bases) of the SA pre-indexing string. Typically between 10 and
       15. Longer strings will use much more memory, but allow faster searches.
-
-  outTmpDir:
-    type: string?
-    inputBinding:
-      position: 1
-      prefix: --outTmpDir
-    doc: |
-      string: path to a directory that will be used as temporary by STAR. All contents of this directory will be removed!
-      - the temp directory will default to outFileNamePrefix_STARtmp
 
 outputs:
 
@@ -211,61 +220,60 @@ outputs:
 
 baseCommand: [STAR]
 arguments: ["--runMode", "genomeGenerate"]
-#$namespaces:
-#  s: http://schema.org/
-#$schemas:
-#- http://schema.org/docs/schema_org_rdfa.html
-#
-#s:mainEntity:
-#  class: s:SoftwareSourceCode
-#  s:name: STAR
-#  s:about: 'Aligns RNA-seq reads to a reference genome using uncompressed suffix arrays.
-#    STAR has a potential for accurately aligning long (several kilobases) reads that
-#    are emerging from the third-generation sequencing technologies.
-#
-#    '
-#  s:url: https://github.com/alexdobin/STAR
-#  s:codeRepository: https://github.com/alexdobin/STAR.git
-#
-#  s:license:
-#  - https://opensource.org/licenses/GPL-3.0
-#
-#  s:targetProduct:
-#    class: s:SoftwareApplication
-#    s:softwareVersion: 2.5.0b
-#    s:applicationCategory: commandline tool
-#  s:programmingLanguage: C++
-#  s:publication:
-#  - class: s:ScholarlyArticle
-#    id: http://dx.doi.org/10.1093/bioinformatics/bts635
-#
-#  s:author:
-#  - class: s:Person
-#    id: mailto:dobin@cshl.edu
-#    s:name: Alexander Dobin
-#    s:email: mailto:dobin@cshl.edu
-##    foaf:fundedBy: "NHGRI (NIH) grant U54HG004557"
-#    s:worksFor:
-#    - class: s:Organization
-#      s:name: Cold Spring Harbor Laboratory, Cold Spring Harbor, NY, USA
-#s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/STAR.cwl
-#s:codeRepository: https://github.com/common-workflow-language/workflows
-#s:isPartOf:
-#  class: s:CreativeWork
-#  s:name: Common Workflow Language
-#  s:url: http://commonwl.org/
-#
-#s:author:
-#  class: s:Person
-#  s:name: Andrey Kartashov
-#  s:email: mailto:Andrey.Kartashov@cchmc.org
-#  s:sameAs:
-#  - id: http://orcid.org/0000-0001-9102-5681
-#  s:worksFor:
-#  - class: s:Organization
-#    s:name: Cincinnati Children's Hospital Medical Center
-#    s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
-#    s:department:
-#    - class: s:Organization
-#      s:name: Barski Lab
-#
+$namespaces:
+ s: http://schema.org/
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
+s:mainEntity:
+ class: s:SoftwareSourceCode
+ s:name: STAR
+ s:about: 'Aligns RNA-seq reads to a reference genome using uncompressed suffix arrays.
+   STAR has a potential for accurately aligning long (several kilobases) reads that
+   are emerging from the third-generation sequencing technologies.
+
+   '
+ s:url: https://github.com/alexdobin/STAR
+ s:codeRepository: https://github.com/alexdobin/STAR.git
+
+ s:license:
+ - https://opensource.org/licenses/GPL-3.0
+
+ s:targetProduct:
+   class: s:SoftwareApplication
+   s:softwareVersion: 2.5.0b
+   s:applicationCategory: commandline tool
+ s:programmingLanguage: C++
+ s:publication:
+ - class: s:ScholarlyArticle
+   id: http://dx.doi.org/10.1093/bioinformatics/bts635
+
+ s:author:
+ - class: s:Person
+   id: mailto:dobin@cshl.edu
+   s:name: Alexander Dobin
+   s:email: mailto:dobin@cshl.edu
+#    foaf:fundedBy: "NHGRI (NIH) grant U54HG004557"
+   s:worksFor:
+   - class: s:Organization
+     s:name: Cold Spring Harbor Laboratory, Cold Spring Harbor, NY, USA
+s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/STAR.cwl
+s:codeRepository: https://github.com/common-workflow-language/workflows
+s:isPartOf:
+ class: s:CreativeWork
+ s:name: Common Workflow Language
+ s:url: http://commonwl.org/
+
+s:author:
+ class: s:Person
+ s:name: Andrey Kartashov
+ s:email: mailto:Andrey.Kartashov@cchmc.org
+ s:sameAs:
+ - id: http://orcid.org/0000-0001-9102-5681
+ s:worksFor:
+ - class: s:Organization
+   s:name: Cincinnati Children's Hospital Medical Center
+   s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
+   s:department:
+   - class: s:Organization
+     s:name: Barski Lab

@@ -100,7 +100,7 @@ s:license:
 
 s:targetProduct:
   class: s:SoftwareApplication
-  s:softwareVersion: "2.8.3"
+  s:softwareVersion: "2.9.0"
   s:applicationCategory: "command line tool"
 
 s:programmingLanguage: "Java"

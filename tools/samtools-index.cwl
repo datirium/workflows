@@ -7,13 +7,22 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var new_ext = function() { var ext=inputs.bai?'.bai':inputs.csi?'.csi':'.bai';
-    return inputs.input.path.split('/').slice(-1)[0]+ext; };
+  - var new_out_filename = function() {
+      if (inputs.out_filename){
+        return inputs.out_filename;
+      }
+      if (inputs.input.location.split('/').slice(-1)[0].split('.').slice(-1)[0] == 'cram'){
+        return inputs.input.location.split('/').slice(-1)[0]+'.crai';
+      } else if (inputs.csi && !inputs.bai){
+        return inputs.input.location.split('/').slice(-1)[0]+'.csi';
+      } else {
+        return inputs.input.location.split('/').slice(-1)[0]+'.bai';
+      }
+    };
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/samtools:v1.2-242-4d56437
-    #dockerImageId: scidap/samtools:v1.2-242-4d56437 #not yet ready
+  dockerPull: scidap/samtools:v1.4
   dockerFile: >
     $import: ./dockerfiles/samtools-Dockerfile
 
@@ -21,40 +30,55 @@ inputs:
   input:
     type: File
     inputBinding:
-      position: 2
-
+      position: 8
     doc: |
       Input bam file.
+
   interval:
     type: int?
     inputBinding:
-      position: 1
+      position: 6
       prefix: -m
     doc: |
       Set minimum interval size for CSI indices to 2^INT [14]
+
+  threads:
+    type: int?
+    inputBinding:
+      position: 7
+      prefix: -@
+    doc: |
+      Sets the number of threads
+
+  out_filename:
+    type: string?
+    doc: |
+      Output filename
+
   csi:
-    type: boolean
-    default: false
+    type: boolean?
     doc: |
       Generate CSI-format index for BAM files
+
   bai:
-    type: boolean
-    default: false
+    type: boolean?
     doc: |
       Generate BAI-format index for BAM files [default]
+
 outputs:
   index:
     type: File
     outputBinding:
-      glob: $(new_ext())
+      glob: $(new_out_filename())
 
     doc: The index file
+
 baseCommand: [samtools, index]
 arguments:
 - valueFrom: $(inputs.bai?'-b':inputs.csi?'-c':[])
-  position: 1
-- valueFrom: $(new_ext())
-  position: 3 
+  position: 5
+- valueFrom: $(new_out_filename())
+  position: 9
 
 $namespaces:
   s: http://schema.org/

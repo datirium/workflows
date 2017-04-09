@@ -1,8 +1,0 @@
-{
-  "treatment":[
-    {
-      "path": "/mnt/data/HOME/michael_kotliar/workspaces/cwl_ws/workflows/tools/bowtie2_with_praneet_indices.bam",
-      "class": "File"
-    }
-  ]
-}

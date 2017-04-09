@@ -9,8 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-    #dockerImageId: scidap/star:v2.5.0b #not yet ready
-  dockerPull: scidap/star:v2.5.0b
+  dockerPull: scidap/star:v2.5.3a
   dockerFile: >
     $import: ./dockerfiles/star-Dockerfile
 
@@ -45,9 +44,9 @@ inputs:
     doc: |
       Standard
       string: a string of desired SAM attributes, in the order desired for the output SAM
-      NH HI AS nM NM MD jM jI XS ... any combination in any order
+      NH HI AS nM NM MD jM jI XS ch ... any combination in any order
       Standard   ... NH HI AS nM
-      All        ... NH HI AS nM NM MD jM jI
+      All        ... NH HI AS nM NM MD jM jI ch
       None       ... no attributes
   outSAMheaderPG:
     type: boolean?
@@ -238,10 +237,13 @@ inputs:
       position: 1
       prefix: --chimOutType
     doc: |
-      SeparateSAMold
-      string: type of chimeric output
+      string(s): type of chimeric output
+      1st word:
       SeparateSAMold  ... output old SAM into separate Chimeric.out.sam file
       WithinBAM       ... output into main aligned BAM files (Aligned.*.bam)
+      2nd word:
+      WithinBAM HardClip  ... hard-clipping in the CIGAR for supplemental chimeric alignments (defaultif no 2nd word is present)
+      WithinBAM SoftClip  ... soft-clipping in the CIGAR for supplemental chimeric alignments
   runDirPerm:
     type: string?
     inputBinding:
@@ -252,6 +254,15 @@ inputs:
       string: permissions for the directories created at the run-time.
       User_RWX ... user-read/write/execute
       All_RWX  ... all-read/write/execute (same as chmod 777)
+
+  chimMainSegmentMultNmax:
+    type: int?
+    inputBinding:
+      position: 1
+      prefix: --chimMainSegmentMultNmax
+    doc: |
+      int>=1: maximum number of multi-alignments for the main chimeric segment. =1 will prohibit multimapping main segments.
+
   outQSconversionAdd:
     type: int?
     inputBinding:
@@ -362,9 +373,13 @@ inputs:
       position: 1
       prefix: --outSAMunmapped
     doc: |
-      string: output of unmapped reads in the SAM format
-      None   ... no output
-      Within ... output unmapped reads within the main SAM file (i.e. Aligned.out.sam)
+      string(s): output of unmapped reads in the SAM format
+        1st word:
+          None   ... no output
+          Within ... output unmapped reads within the main SAM file (i.e. Aligned.out.sam)
+        2nd word:
+          KeepPairs ... record unmapped mate for each alignment, and, in case of unsorted output, keep it adjacent to its mapped mate.
+          Only affects multi-mapping reads
   seedSearchStartLmax:
     type: int?
     inputBinding:
@@ -431,17 +446,18 @@ inputs:
     doc: |
       int(s): number(s) of bases to clip from 3p of each mate. If one value is
       given, it will be assumed the same for both mates.
+
   outFilterMultimapNmax:
     type: int?
     inputBinding:
       position: 1
       prefix: --outFilterMultimapNmax
-    doc: '10
+    doc: |
+      int: maximum number of loci the read is allowed to map to. Alignments (all of them) will be output only if
+      the read maps to no more loci than this value.
+      Otherwise no alignments will be output, and the read will be counted as "mapped to too many loci"
+      in the Log.final.out.
 
-      int: read alignments will be output only if the read maps fewer than this value,
-      otherwise no alignments will be output
-
-      '
 #  outFileNamePrefix:
 #    type: string?
 #    inputBinding:
@@ -461,17 +477,15 @@ inputs:
       -                ... none
       TranscriptomeSAM ... output SAM/BAM alignments to transcriptome into a separate file
       GeneCounts       ... count reads per gene
+
   outFilterMismatchNoverLmax:
-    type: int?
+    type: float?
     inputBinding:
       position: 1
       prefix: --outFilterMismatchNoverLmax
-    doc: '0.3
+    doc: |
+      float: alignment will be output only if its ratio of mismatches to *mapped* length is less than or equal to this value.
 
-      int: alignment will be output only if its ratio of mismatches to *mapped* length
-      is less than this value
-
-      '
   sjdbGTFchrPrefix:
     type: string?
     inputBinding:
@@ -523,6 +537,7 @@ inputs:
       None
       string(s): filter the output into main SAM/BAM files
       KeepOnlyAddedReferences ... only keep the reads for which all alignments are to the extra reference sequences added with --genomeFastaFiles at the mapping stage.
+      KeepAllAddedReferences ...  keep all alignments to the extra reference sequences added with --genomeFastaFiles at the mapping stage.
   outSAMheaderHD:
     type: boolean?
     inputBinding:
@@ -814,6 +829,38 @@ inputs:
       Local           ... standard local alignment with soft-clipping allowed
       EndToEnd        ... force end-to-end read alignment, do not soft-clip
       Extend5pOfRead1 ... fully extend only the 5p of the read1, all other ends: local alignment
+      Extend5pOfReads12 ... fully extend only the 5p of the both read1 and read2, all other ends: local alignment
+
+  winReadCoverageRelativeMin:
+    type: float?
+    inputBinding:
+      position: 1
+      prefix: --winReadCoverageRelativeMin
+    doc: |
+      float>=0: minimum relative coverage of the read sequence by the seeds in a window, for STARlong algorithm only.
+
+  winReadCoverageBasesMin:
+    type: int?
+    inputBinding:
+      position: 1
+      prefix: --winReadCoverageBasesMin
+    doc: |
+      int>0: minimum number of bases covered by the seeds in a window , for STARlong algorithm only.
+
+  alignEndsProtrude:
+    type: string?
+    inputBinding:
+      position: 1
+      prefix: --alignEndsProtrude
+    doc: |
+      0    ConcordantPair
+      int, string:
+      allow protrusion of alignment ends, i.e. start (end) of the +strand mate downstream of the start (end) of the -strand mate
+        1st word: int: maximum number of protrusion bases allowed
+        2nd word: string:
+          ConcordantPair ... report alignments with non-zero protrusion as concordant pairs
+          DiscordantPair ... report alignments with non-zero protrusion as discordant pairs
+
   sjdbGTFtagExonParentGene:
     type: string?
     inputBinding:
@@ -912,10 +959,10 @@ inputs:
       position: 1
       prefix: --bamRemoveDuplicatesType
     doc: |
-      -
-      string: mark duplicates in the BAM file, for now only works with sorted BAM feeded with inputBAMfile
-      -               ... no duplicate removal/marking
-      UniqueIdentical ... mark all multimappers, and duplicate unique mappers. The coordinates, FLAG, CIGAR must be identical
+      string: mark duplicates in the BAM file, for now only works with (i) sorted BAM feeded with inputBAMfile, and (ii) for paired-end alignments only
+      -                       ... no duplicate removal/marking
+      UniqueIdentical         ... mark all multimappers, and duplicate unique mappers. The coordinates, FLAG, CIGAR must be identical
+      UniqueIdenticalNotMulti  ... mark duplicate unique mappers but not multimappers.
   seedNoneLociPerWindow:
     type: int?
     inputBinding:
@@ -1132,13 +1179,13 @@ inputs:
       -
       string: path to the file with @CO (comment) lines of the SAM header
   outFilterMismatchNoverReadLmax:
-    type: int?
+    type: float?
     inputBinding:
       position: 1
       prefix: --outFilterMismatchNoverReadLmax
     doc: '1
 
-      int: alignment will be output only if its ratio of mismatches to *read* length
+      float: alignment will be output only if its ratio of mismatches to *read* length
       is less than this value
 
       '
@@ -1205,7 +1252,7 @@ inputs:
       prefix: --outFilterScoreMin
     doc: '0
 
-      int: alignment will be output only if its score is higher than this value
+      int: alignment will be output only if its score is higher than or equal to this value
 
       '
   outReadsUnmapped:
@@ -1215,7 +1262,7 @@ inputs:
       prefix: --outReadsUnmapped
     doc: |
       None
-      string: output of unmapped reads (besides SAM)
+      string: output of unmapped and partially mapped (i.e. mapped only one mate of a paired end read) reads in separate file(s).
       None    ... no output
       Fastx   ... output in separate fasta/fastq files, Unmapped.out.mate1/2
   outBAMcompression:
@@ -1262,7 +1309,7 @@ inputs:
       prefix: --outFilterMismatchNmax
     doc: '10
 
-      int: alignment will be output only if it has fewer mismatches than this value
+      int: alignment will be output only if it has no more mismatches than this value
 
       '
   chimSegmentReadGapMax:

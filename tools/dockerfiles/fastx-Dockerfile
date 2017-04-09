@@ -6,14 +6,14 @@
 # Description:      Fastx toolkit for SciDAP
 # Website:          http://hannonlab.cshl.edu/fastx_toolkit/, http://scidap.com/
 # Provides:         fastx_toolkit
-# Base Image:       scidap/scidap:v0.0.1
-# Build Cmd:        docker build --rm -t scidap/fastx_toolkit:v${VERSION} .
-# Pull Cmd:         docker pull scidap/fastx_toolkit:v${VERSION}
-# Run Cmd:          docker run --rm scidap/fastx_toolkit:v${VERSION} bash
+# Base Image:       scidap/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t scidap/fastx_toolkit:v0.0.14 -f fastx-Dockerfile .
+# Pull Cmd:         docker pull scidap/fastx_toolkit:v0.0.14
+# Run Cmd:          docker run --rm -ti scidap/fastx_toolkit:v0.0.14 fastx_quality_stats -h
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.1
+FROM scidap/scidap:v0.0.2
 MAINTAINER Andrey V Kartashov "porter@porter.st"
 ENV DEBIAN_FRONTEND noninteractive
 

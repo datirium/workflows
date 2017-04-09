@@ -7,10 +7,27 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function() {
+        if (Array.isArray(inputs.filelist) && inputs.filelist.length > 0){
+          return inputs.filelist[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+        } else
+          if (inputs.filelist != null){
+            return inputs.filelist.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+          } else
+            if (Array.isArray(inputs.filelist_mates) && inputs.filelist_mates.length > 0){
+              return inputs.filelist_mates[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+            } else
+              if (inputs.filelist_mates != null){
+                return inputs.filelist_mates.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+              } else {
+                return null;
+              }
+    };
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bowtie:v1.1.2
+  dockerPull: scidap/bowtie:v1.2.0
   dockerFile: >
     $import: ./dockerfiles/bowtie-Dockerfile
 
@@ -75,9 +92,22 @@ inputs:
 
 
   filename:
-    type: string
+    type:
+      - "null"
+      - string
     inputBinding:
       position: 90
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
+    doc: |
+      Generates default output filename on the base of filelist/filelist_mates files
 
   q:
     type:
@@ -621,17 +651,41 @@ inputs:
     inputBinding:
       position: 1
       prefix: '--verbose'
+  reads_per_batch:
+    type:
+      - "null"
+      - int
+    doc: |
+      # of reads to read from input file at once (default: 16)
+    inputBinding:
+      position: 1
+      prefix: '--reads-per-batch'
+
 
 outputs:
   output:
     type: File
     outputBinding:
-      glob: $(inputs.filename)
+      glob: |
+        ${
+           if (inputs.filename == null){
+             return default_output_filename();
+           } else {
+             return inputs.filename;
+           }
+        }
 
   output_bowtie_log:
     type: File
     outputBinding:
-      glob: $(inputs.filename + ".log")
+      glob: |
+        ${
+           if (inputs.filename == null){
+             return default_output_filename() + ".log";
+           } else {
+             return inputs.filename + ".log";
+           }
+        }
 
 baseCommand:
   - bowtie
@@ -653,14 +707,70 @@ arguments:
         return null;
       }
     position: 84
-  - valueFrom: $('2> ' + inputs.filename + '.log')
+  - valueFrom: |
+      ${
+        if (inputs.filename == null){
+          return ' 2> ' + default_output_filename() + '.log';
+        } else {
+          return ' 2> ' + inputs.filename + '.log';
+        }
+      }
     position: 100000
     shellQuote: false
+
+$namespaces:
+  schema: http://schema.org/
+
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
+schema:mainEntity:
+  class: schema:SoftwareSourceCode
+  schema:name: "bowtie"
+  schema:about: >
+    Bowtie is an ultrafast, memory-efficient short read aligner.
+    It aligns short DNA sequences (reads) to the human genome at a rate of over 25 million 35-bp reads per hour.
+    Bowtie indexes the genome with a Burrows-Wheeler index to keep its memory footprint small: typically about 2.2 GB for the human genome (2.9 GB for paired-end).
+  schema:url: http://bowtie-bio.sourceforge.net
+  schema:codeRepository: https://github.com/BenLangmead/bowtie.git
+
+  schema:license:
+  - https://opensource.org/licenses/GPL-3.0
+
+  schema:targetProduct:
+    class: schema:SoftwareApplication
+    schema:softwareVersion: "1.2.0"
+    schema:applicationCategory: "commandline tool"
+
+  schema:programmingLanguage: "C++"
+
+  schema:publication:
+  - class: schema:ScholarlyArticle
+    id: http://dx.doi.org/10.1186/gb-2009-10-3-r25
+
+schema:isPartOf:
+  class: schema:CreativeWork
+  schema:name: "Common Workflow Language"
+  schema:url: http://commonwl.org/
+
+schema:author:
+  class: schema:Person
+  schema:name: "Andrey Kartashov"
+  schema:email: mailto:Andrey.Kartashov@cchmc.org
+  schema:sameAs:
+  - id: http://orcid.org/0000-0001-9102-5681
+  schema:worksFor:
+  - class: schema:Organization
+    schema:name: "Cincinnati Children's Hospital Medical Center"
+    schema:location: "3333 Burnet Ave, Cincinnati, OH 45229-3026"
+    schema:department:
+    - class: schema:Organization
+      schema:name: "Barski Lab"
 
 doc: |
   bowtie.cwl is developed for CWL consortium
 
-  Usage: 
+  Usage:
   bowtie [options]* <ebwt> {-1 <m1> -2 <m2> | --12 <r> | <s>} [<hit>]
 
     <m1>    Comma-separated list of files containing upstream mates (or the
@@ -746,54 +856,3 @@ doc: |
     --verbose          verbose output (for debugging)
     --version          print version information and quit
     -h/--help          print this usage message
-
-
-$namespaces:
-  schema: http://schema.org/
-
-$schemas:
-- http://schema.org/docs/schema_org_rdfa.html
-
-schema:mainEntity:
-#  $import: https://scidap.com/description/tools/bowtie.yaml
-  class: schema:SoftwareSourceCode
-  schema:name: "bowtie"
-  schema:about: >
-    Bowtie is an ultrafast, memory-efficient short read aligner.
-    It aligns short DNA sequences (reads) to the human genome at a rate of over 25 million 35-bp reads per hour.
-    Bowtie indexes the genome with a Burrows-Wheeler index to keep its memory footprint small: typically about 2.2 GB for the human genome (2.9 GB for paired-end).
-  schema:url: http://bowtie-bio.sourceforge.net
-  schema:codeRepository: https://github.com/BenLangmead/bowtie.git
-
-  schema:license:
-  - https://opensource.org/licenses/GPL-3.0
-
-  schema:targetProduct:
-    class: schema:SoftwareApplication
-    schema:softwareVersion: "1.1.2"
-    schema:applicationCategory: "commandline tool"
-
-  schema:programmingLanguage: "C++"
-
-  schema:publication:
-  - class: schema:ScholarlyArticle
-    id: http://dx.doi.org/10.1186/gb-2009-10-3-r25
-
-schema:isPartOf:
-  class: schema:CreativeWork
-  schema:name: "Common Workflow Language"
-  schema:url: http://commonwl.org/
-
-schema:author:
-  class: schema:Person
-  schema:name: "Andrey Kartashov"
-  schema:email: mailto:Andrey.Kartashov@cchmc.org
-  schema:sameAs:
-  - id: http://orcid.org/0000-0001-9102-5681
-  schema:worksFor:
-  - class: schema:Organization
-    schema:name: "Cincinnati Children's Hospital Medical Center"
-    schema:location: "3333 Burnet Ave, Cincinnati, OH 45229-3026"
-    schema:department:
-    - class: schema:Organization
-      schema:name: "Barski Lab"

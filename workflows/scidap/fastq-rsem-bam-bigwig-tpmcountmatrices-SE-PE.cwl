@@ -38,23 +38,9 @@ outputs:
   bigwig_outfile:
     type: File
     outputSource: bamToBigwig/outfile
-
-  isoforms_tpm_matrix:
-    type: File
-    outputSource: gen_matrices/isoforms_tpm_matrix
-  isoforms_counts_matrix:
-    type: File
-    outputSource: gen_matrices/isoforms_counts_matrix
-  genes_tpm_matrix:
-    type: File
-    outputSource: gen_matrices/genes_tpm_matrix
-  genes_counts_matrix:
-    type: File
-    outputSource: gen_matrices/genes_counts_matrix
-
   bam_quality_log:
     type: File
-    outputSource: bamtoolsStats/statsLog
+    outputSource: bamtoolsStats/stats_log
 
 
 steps:
@@ -101,8 +87,8 @@ steps:
   bamtoolsStats:
     run: ../../tools/bamtools-stats.cwl
     in:
-      inputFiles: rsem_calculate_expression/genome_sorted_bam_bai_pair
-    out: [mappedreads, statsLog]
+      input_files: rsem_calculate_expression/genome_sorted_bam_bai_pair
+    out: [mappedreads, stats_log]
 
   bamToBigwig:
     run: bam-genomecov-bigwig.cwl
@@ -117,21 +103,3 @@ steps:
             return self.basename.split('.')[0]+".bigwig";
           }
     out: [outfile]
-
-  files_to_folder:
-    run: ../../expressiontools/files-to-folder.cwl
-    in:
-      input_files: [rsem_calculate_expression/isoform_results, rsem_calculate_expression/gene_results]
-    out: [folder]
-
-  gen_matrices:
-    run: ../../tools/tpm_reads_matrix_gen.cwl
-    in:
-      input_directory: files_to_folder/folder
-      prefix_name:
-        source: upstream_fastq
-        valueFrom: |
-          ${
-            return self.basename.split('.')[0]+"_";
-          }
-    out: [isoforms_tpm_matrix, isoforms_counts_matrix, genes_tpm_matrix, genes_counts_matrix]

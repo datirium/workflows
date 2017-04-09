@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/picard:v2.8.3
+  dockerPull: scidap/picard:v2.9.0
   dockerFile: >
     $import: ./dockerfiles/picard-Dockerfile
 

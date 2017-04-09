@@ -44,8 +44,8 @@ steps:
   star_generate_indices:
     run: ../../tools/star-genomegenerate.cwl
     in:
-      genomeFastaFiles: fasta_input_file
-      sjdbGTFfile: annotation_input_file
+      genome_fasta_files: fasta_input_file
+      sjdb_gtf_file: annotation_input_file
       threads: threads
     out: [indices]
 

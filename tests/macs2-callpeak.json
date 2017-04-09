@@ -1,0 +1,3 @@
+{
+  "treatment": {"location": "./data/bam/macs2_test.bam", "class": "File"},
+}

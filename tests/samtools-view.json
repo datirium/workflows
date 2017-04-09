@@ -1,10 +1,9 @@
 {
   "input": {
     "class": "File",
-    "path": "./data/test.trimmed.bam"
+    "location": "./data/test.trimmed.bam"
   },
   "isbam": true,
   "readsquality": 1,
-  "threads": 1,
   "output_name": "./output.bam"
 }

@@ -3,7 +3,7 @@
   "filelist": [{"class": "File", "location": "/home/michael_kotliar/temp/part1.fastq"}],
   "filename":"bowtie.sam",
   "sam":true,
-  "p": 1,
+  "threads": 1,
   "clip_3p_end": 0,
   "clip_5p_end": 0,
   "q": true,

@@ -1,8 +1,7 @@
 {
-  "upstream_read_file": {"class": "File", "location": "/home/michael_kotliar/temp/part1.fastq"},
-  "reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/indices/RSEM_LAEVIS_9_1_Reference_files"},
-  "reference_name": "LAEVIS9",
-  "sample_name": "./output",
+  "upstream_read_file": {"class": "File", "location": "./data/chr21/chr21.fastq"},
+  "reference_name_dir": {"class": "Directory", "location": "./data/chr21/rsem_ref_bowtie2"},
+  "sample_name": "output",
   "bowtie2": true,
   "sort_bam_by_coordinate": true,
   "output_genome_bam": true

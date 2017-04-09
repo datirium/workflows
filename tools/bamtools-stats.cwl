@@ -10,13 +10,13 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/bamtools:v2.4.0
+  dockerPull: scidap/bamtools:v2.4.1
   dockerFile: >
     $import: ./dockerfiles/bamtools-Dockerfile
 
 inputs:
 
-  inputFiles:
+  input_files:
     type:
       - File
       - type: array
@@ -27,10 +27,10 @@ inputs:
       position: 2
       valueFrom: |
         ${
-          if ( Object.prototype.toString.call(inputs.inputFiles) === '[object Array]'){
+          if ( Object.prototype.toString.call(inputs.input_files) === '[object Array]'){
             return null;
           } else {
-            return ["-in", inputs.inputFiles.path];
+            return ["-in", inputs.input_files.path];
           }
         }
     doc: |
@@ -40,7 +40,7 @@ inputs:
       even without additional File type and valueFrom field
 
 outputs:
-  statsLog:
+  stats_log:
     type: File
     outputBinding:
       glob: "stats.log"

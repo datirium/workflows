@@ -107,7 +107,7 @@ outputs:
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: samtools_sort_index/bamBaiPair
+    outputSource: samtools_sort_index/bam_bai_pair
 
   bowtie_reads_alignment_log:
     type: File
@@ -147,26 +147,26 @@ steps:
   fastx_quality_stats:
     run: ../../tools/fastx-quality-stats.cwl
     in:
-      inputFile: fastq_input_file
+      input_file: fastq_input_file
     out: [statistics]
 
   samtools_sort_index:
     run: ../../tools/samtools-sort-index.cwl
     in:
-      sortInput: star_reads_alignment/aligned
+      sort_input: star_reads_alignment/aligned
       threads: threads
-    out: [bamBaiPair]
+    out: [bam_bai_pair]
 
   bamtools_stats:
     run: ../../tools/bamtools-stats.cwl
     in:
-      inputFiles: samtools_sort_index/bamBaiPair
+      input_files: samtools_sort_index/bam_bai_pair
     out: [mappedreads]
 
   bam_to_bigwig:
     run: bam-genomecov-bigwig.cwl
     in:
-      input: samtools_sort_index/bamBaiPair
+      input: samtools_sort_index/bam_bai_pair
       genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
     out: [outfile]
@@ -202,7 +202,7 @@ steps:
   rpkm_calculation:
     run: ../../tools/reads-counting.cwl
     in:
-      aligned: samtools_sort_index/bamBaiPair
+      aligned: samtools_sort_index/bam_bai_pair
       annotation: annotation
       rpkm-cutoff:
         default: 0.001

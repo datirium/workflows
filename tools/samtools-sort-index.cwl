@@ -8,38 +8,75 @@ requirements:
 - class: ShellCommandRequirement
 - class: InitialWorkDirRequirement
   listing:
-    - $(inputs.sortInput)
+    - $(inputs.sort_input)
 - class: InlineJavascriptRequirement
   expressionLib:
   - var ext = function() {
-      if (!inputs.sortOutputFileName){
-        return '.bai';
-      }
-      if (inputs.sortOutputFileName.split('.').slice(-1)[0] == 'cram'){
-        return '.crai';
-      } else if (inputs.indexCsi && !inputs.indexBai){
+      if (inputs.csi && !inputs.bai){
         return '.csi';
       } else {
         return '.bai';
       }
     };
   - var default_bam = function() {
-      return inputs.sortInput.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sorted.bam";
+      if (inputs.trigger == true){
+        return inputs.sort_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sorted.bam";
+      } else {
+        return inputs.sort_input.location.split('/').slice(-1)[0];
+      }
     };
 
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/samtools:v1.2-242-4d56437
+  dockerPull: scidap/samtools:v1.4
   dockerFile: >
     $import: ./dockerfiles/samtools-Dockerfile
 
 inputs:
 
-  sortCompressionLevel:
+  bash_script_sort:
+    type: string?
+    default: |
+      #!/bin/bash
+      if [ "$0" = True ]
+      then
+        echo "Run: samtools sort " ${@:1}
+        samtools sort "${@:1}"
+      else
+        echo "Skip samtools sort " ${@:1}
+      fi
+    inputBinding:
+      position: 5
+    doc: |
+      Bash function to run samtools sort with all input parameters or skip it if trigger is false
+
+  bash_script_index:
+    type: string?
+    default: |
+      #!/bin/bash
+      if [ "$0" = True ]
+      then
+        echo "Run: samtools index " ${@:1}
+        samtools index "${@:1}"
+      else
+        echo "Skip samtools index " ${@:1}
+      fi
+    inputBinding:
+      position: 20
+    doc: |
+      Bash function to run samtools index with all input parameters or skip it if trigger is false
+
+  trigger:
+    type: boolean?
+    default: true
+    doc: |
+      If true - run samtools, if false - return sort_input, previously staged into output directory
+
+  sort_compression_level:
     type: int?
     inputBinding:
-      position: 2
+      position: 11
       prefix: -l
     doc: |
       SORT: desired compression level for the final output file, ranging from 0 (uncompressed)
@@ -47,22 +84,22 @@ inputs:
       similarly to gzip(1)'s compression level setting.
       If -l is not used, the default compression level will apply.
 
-  sortByName:
+  sort_by_name:
     type: boolean?
     inputBinding:
-      position: 4
+      position: 14
       prefix: -n
     doc: |
       Sort by read names (i.e., the QNAME field) rather than by chromosomal coordinates
 
-  sortOutputFileName:
+  sort_output_filename:
     type: string?
     inputBinding:
-      position: 3
+      position: 12
       prefix: -o
       valueFrom: |
         ${
-            if (self == null){
+            if (self == null || inputs.trigger == false){
               return default_bam();
             } else {
               return self;
@@ -75,108 +112,104 @@ inputs:
 
   threads:
     type: int?
-    inputBinding:
-      position: 5
-      prefix: -@
     doc: |
       Set number of sorting and compression threads [1] (Only for sorting)
 
-  sortInput:
+  sort_input:
     type: File
     inputBinding:
-      position: 6
-      valueFrom: $(self.basename)
+      position: 16
+      valueFrom: $(self.basename)           # Why do we need this
     doc: |
       Input only in.sam|in.bam|in.cram
 
   interval:
     type: int?
     inputBinding:
-      position: 12
+      position: 24
       prefix: -m
     doc: |
       Set minimum interval size for CSI indices to 2^INT [14]
 
-  indexCsi:
+  csi:
     type: boolean?
-    inputBinding:
-      position: 11
-      prefix: -c
-      valueFrom: |
-        ${
-          if (ext() == '.crai' || ext() == '.bai'){
-            return false;
-          }
-          return true;
-        }
     doc: |
       Generate CSI-format index for BAM files. If input isn't cram.
 
-  indexBai:
+  bai:
     type: boolean?
-    inputBinding:
-      position: 10
-      prefix: -b
-      valueFrom: |
-        ${
-          if (ext() == '.crai' || ext() == '.csi'){
-            return false;
-          }
-          return true;
-        }
     doc: |
       Generate BAI-format index for BAM files [default]. If input isn't cram.
 
 outputs:
-  bamBaiPair:
+  bam_bai_pair:
     type: File
     outputBinding:
       glob: |
         ${
-            if (!inputs.sortOutputFileName){
+            if (inputs.sort_output_filename == null || inputs.trigger == false){
               return default_bam();
             } else {
-              return inputs.sortOutputFileName;
+              return inputs.sort_output_filename;
             }
         }
-    secondaryFiles: ${return self.location + ext()}
+    secondaryFiles:
+      ${
+          if (inputs.sort_input.secondaryFiles && inputs.trigger == false){
+            return inputs.sort_input.secondaryFiles;
+          } else {
+            return self.location + ext();
+          }
+        }
 
+baseCommand: [bash, '-c']
 
-baseCommand: [samtools]
 arguments:
-  - valueFrom: sort
-    position: 1
-    # -l - position 2
-    # -o sortOutputFileName - position 3
-    # -n - position 4
-    # --threads - position 5
-    # sortInput - position 6
+#   run script sort position 5
+  - valueFrom: $(inputs.trigger)
+    position: 6
+  # -l - position 11
+  # -o sort_output_filename - position 12
+  - valueFrom: bam
+    position: 13
+    prefix: -O
+    # -n - position 14
+  - valueFrom: $(inputs.threads?inputs.threads:1)
+    position: 15
+    prefix: -@
+  # sort_input - position 16
   - valueFrom: ";"
-    position: 7
+    position: 17
     shellQuote: false
-  - valueFrom: samtools
-    position: 8
-    shellQuote: false
-  - valueFrom: index
-    position: 9
-    # -b - position 10
-    # -c - position 11
-    # -m - position 12
+
+  - valueFrom: "bash"
+    position: 18
+  - valueFrom: "-c"
+    position: 19
+#   run script index position 20
+  - valueFrom: $(inputs.trigger)
+    position: 21
+  - valueFrom: $(inputs.bai?'-b':inputs.csi?'-c':[])
+    position: 23
+    # -m - position 24
+  - valueFrom: $(inputs.threads?inputs.threads:1)
+    position: 25
+    prefix: -@
   - valueFrom: |
       ${
-          if (!inputs.sortOutputFileName){
+          if (inputs.sort_output_filename == null || inputs.trigger == false){
             return default_bam();
           } else {
-            return inputs.sortOutputFileName;
+            return inputs.sort_output_filename;
           }
       }
-    position: 13
+    position: 26
   - valueFrom: |
       ${
-          if (!inputs.sortOutputFileName){
+          if (inputs.sort_output_filename == null || inputs.trigger == false){
             return default_bam() + ext();
           } else {
-            return inputs.sortOutputFileName + ext();
+            return inputs.sort_output_filename + ext();
           }
       }
-    position: 14
+    position: 27

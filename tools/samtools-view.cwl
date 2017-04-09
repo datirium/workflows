@@ -9,179 +9,235 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/samtools:v1.2-242-4d56437
+  dockerPull: scidap/samtools:v1.4
   dockerFile: >
     $import: ./dockerfiles/samtools-Dockerfile
 
-
 inputs:
+
   isbam:
-    type: boolean
-    default: false
+    type: boolean?
     inputBinding:
-      position: 2
+      position: 5
       prefix: -b
     doc: |
       output in BAM format
-  readswithoutbits:
-    type: int?
-    inputBinding:
-      position: 1
-      prefix: -F
-    doc: |
-      only include reads with none of the bits set in INT set in FLAG [0]
-  collapsecigar:
-    type: boolean
-    default: false
-    inputBinding:
-      position: 1
-      prefix: -B
-    doc: |
-      collapse the backward CIGAR operation
-  readsingroup:
-    type: string?
-    inputBinding:
-      position: 1
-      prefix: -r
-    doc: |
-      only include reads in read group STR [null]
-  bedoverlap:
-    type: File?
-    inputBinding:
-      position: 1
-      prefix: -L
-    doc: |
-      only include reads overlapping this BED FILE [null]
-  uncompressed:
-    type: boolean
-    default: false
-    inputBinding:
-      position: 1
-      prefix: -u
-    doc: |
-      uncompressed BAM output (implies -b)
-  readtagtostrip:
-    type: string[]?
-    inputBinding:
-      position: 1
-    doc: |
-      read tag to strip (repeatable) [null]
-  input:
-    type: File
-    inputBinding:
-      position: 4
-    doc: |
-      Input bam file.
-  readsquality:
-    type: int?
-    inputBinding:
-      position: 1
-      prefix: -q
-    doc: |
-      only include reads with mapping quality >= INT [0]
-  readswithbits:
-    type: int?
-    inputBinding:
-      position: 1
-      prefix: -f
-    doc: |
-      only include reads with all bits set in INT set in FLAG [0]
-  cigar:
-    type: int?
-    inputBinding:
-      position: 1
-      prefix: -m
-    doc: |
-      only include reads with number of CIGAR operations
-      consuming query sequence >= INT [0]
+
   iscram:
-    type: boolean
-    default: false
+    type: boolean?
     inputBinding:
-      position: 2
+      position: 6
       prefix: -C
     doc: |
       output in CRAM format
-  threads:
-    type: int?
-    inputBinding:
-      position: 1
-      prefix: -@
-    doc: |
-      number of BAM compression threads [0]
+
   fastcompression:
-    type: boolean
-    default: false
+    type: boolean?
     inputBinding:
-      position: 1
+      position: 7
       prefix: '-1'
     doc: |
       use fast BAM compression (implies -b)
-  samheader:
-    type: boolean
-    default: false
+
+  uncompressed:
+    type: boolean?
     inputBinding:
-      position: 1
+      position: 8
+      prefix: -u
+    doc: |
+      uncompressed BAM output (implies -b)
+
+  samheader:
+    type: boolean?
+    inputBinding:
+      position: 9
       prefix: -h
     doc: |
-      include header in SAM output
-  count:
-    type: boolean
-    default: false
+      include header in the output
+
+  header_only:
+    type: boolean?
     inputBinding:
-      position: 1
+      position: 10
+      prefix: -H
+    doc: |
+      include header in the output
+
+  count:
+    type: boolean?
+    inputBinding:
+      position: 11
       prefix: -c
     doc: |
-      print only the count of matching records
-  randomseed:
-    type: float?
-    inputBinding:
-      position: 1
-      prefix: -s
-    doc: |
-      integer part sets seed of random number generator [0];
-      rest sets fraction of templates to subsample [no subsampling]
-  referencefasta:
-    type: File?
-    inputBinding:
-      position: 1
-      prefix: -T
-    doc: |
-      reference sequence FASTA FILE [null]
-  region:
-    type: string?
-    inputBinding:
-      position: 5
+      Instead of printing the alignments, only count them and print the total number.
+      All filter options, such as -f, -F, and -q, are taken into account.
 
-    doc: |
-      [region ...]
-  readsingroupfile:
-    type: File?
-    inputBinding:
-      position: 1
-      prefix: -R
-    doc: |
-      only include reads with read group listed in FILE [null]
-  readsinlibrary:
-    type: string?
-    inputBinding:
-      position: 1
-      prefix: -l
-    doc: |
-      only include reads in library STR [null]
   output_name:
     type: string
     inputBinding:
-      position: 2
+      position: 12
       prefix: -o
+    doc: |
+      Output to file
+
+  filtered_out:
+    type: string?
+    inputBinding:
+      position: 13
+      prefix: -U
+    doc: |
+      Write alignments that are not selected by the various filter options to FILE.
+      When this option is used, all alignments (or all alignments intersecting the
+      regions specified) are written to either the output file or this file, but never both.
+
+  chr_length:
+    type: File?
+    inputBinding:
+      position: 14
+      prefix: -t
+    doc: |
+      A tab-delimited FILE. Each line must contain the reference name in the first column and the length
+      of the reference in the second column, with one line for each distinct reference.
+      Any additional fields beyond the second column are ignored. This file also defines the order of
+      the reference sequences in sorting. If you run: `samtools faidx <ref.fa>',
+      the resulting index file <ref.fa>.fai can be used as this FILE.
+
+  reference_fasta:
+    type: File?
+    inputBinding:
+      position: 15
+      prefix: -T
+    doc: |
+      A FASTA format reference FILE, optionally compressed by bgzip and ideally indexed by samtools faidx.
+      If an index is not present, one will be generated for you.
+
+  bed_overlap:
+    type: File?
+    inputBinding:
+      position: 16
+      prefix: -L
+    doc: |
+      only include reads overlapping this BED FILE
+
+  reads_in_group:
+    type: string?
+    inputBinding:
+      position: 17
+      prefix: -r
+    doc: |
+      Only output alignments in read group STR [null].
+
+  readsquality:
+    type: int?
+    inputBinding:
+      position: 18
+      prefix: -q
+    doc: |
+      Skip alignments with MAPQ smaller than INT [0].
+
+  reads_in_library:
+    type: string?
+    inputBinding:
+      position: 19
+      prefix: -l
+    doc: |
+      Only output alignments in library STR [null].
+
+  cigar:
+    type: int?
+    inputBinding:
+      position: 20
+      prefix: -m
+    doc: |
+      Only output alignments with number of CIGAR bases consuming query sequence ≥ INT [0]
+
+  reads_with_bits:
+    type: int?
+    inputBinding:
+      position: 21
+      prefix: -f
+    doc: |
+      Only output alignments with all bits set in INT present in the FLAG field. INT can be
+      specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning
+      with `0' (i.e. /^0[0-7]+/) [0].
+
+  reads_without_bits:
+    type: int?
+    inputBinding:
+      position: 22
+      prefix: -F
+    doc: |
+      Do not output alignments with any bits set in INT present in the FLAG field. INT can be
+      specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with
+      `0' (i.e. /^0[0-7]+/) [0].
+
+  reads_tag:
+    type: string?
+    inputBinding:
+      position: 23
+      prefix: -x
+    doc: |
+      Read tag to exclude from output (repeatable) [null]
+
+  collapse_cigar:
+    type: boolean?
+    inputBinding:
+      position: 24
+      prefix: -B
+    doc: |
+      collapse the backward CIGAR operation
+
+  random_seed:
+    type: float?
+    inputBinding:
+      position: 25
+      prefix: -s
+    doc: |
+      Integer part is used to seed the random number generator [0]. Part after the decimal
+      point sets the fraction of templates/pairs to subsample [no subsampling].
+
+  threads:
+    type: int?
+    inputBinding:
+      position: 26
+      prefix: -@
+    doc: |
+      number of BAM compression threads [0]
+
+  reads_in_group_file:
+    type: File?
+    inputBinding:
+      position: 27
+      prefix: -R
+    doc: |
+      only include reads with read group listed in FILE [null]
+
+  input:
+    type: File
+    inputBinding:
+      position: 30
+    doc: |
+      Input SAM, BAM, or CRAM file.
+
+  region:
+    type: string?
+    inputBinding:
+      position: 31
+    doc: |
+      RNAME[:STARTPOS[-ENDPOS]] and all position coordinates are 1-based.
+
 outputs:
   output:
     type: File
     outputBinding:
       glob: $(inputs.output_name)
 
-baseCommand: [samtools, view]
+  filtered_out_file:
+    type: File?
+    outputBinding:
+      glob: $(inputs.filtered_out)
 
+baseCommand: [samtools, view]
 
 $namespaces:
   s: http://schema.org/
@@ -216,31 +272,43 @@ s:author:
       s:name: Barski Lab
 doc: |
   samtools-view.cwl is developed for CWL consortium
-    Usage:   samtools view [options] <in.bam>|<in.sam>|<in.cram> [region ...]
+  Usage: samtools view [options] <in.bam>|<in.sam>|<in.cram> [region ...]
 
-    Options: -b       output BAM
-             -C       output CRAM (requires -T)
-             -1       use fast BAM compression (implies -b)
-             -u       uncompressed BAM output (implies -b)
-             -h       include header in SAM output
-             -H       print SAM header only (no alignments)
-             -c       print only the count of matching records
-             -o FILE  output file name [stdout]
-             -U FILE  output reads not selected by filters to FILE [null]
-             -t FILE  FILE listing reference names and lengths (see long help) [null]
-             -T FILE  reference sequence FASTA FILE [null]
-             -L FILE  only include reads overlapping this BED FILE [null]
-             -r STR   only include reads in read group STR [null]
-             -R FILE  only include reads with read group listed in FILE [null]
-             -q INT   only include reads with mapping quality >= INT [0]
-             -l STR   only include reads in library STR [null]
-             -m INT   only include reads with number of CIGAR operations
-                      consuming query sequence >= INT [0]
-             -f INT   only include reads with all bits set in INT set in FLAG [0]
-             -F INT   only include reads with none of the bits set in INT
-                      set in FLAG [0]
-             -x STR   read tag to strip (repeatable) [null]
-             -B       collapse the backward CIGAR operation
-             -s FLOAT integer part sets seed of random number generator [0];
-                      rest sets fraction of templates to subsample [no subsampling]
-             -@ INT   number of BAM compression threads [0]
+  Options:
+    -b       output BAM
+    -C       output CRAM (requires -T)
+    -1       use fast BAM compression (implies -b)
+    -u       uncompressed BAM output (implies -b)
+    -h       include header in SAM output
+    -H       print SAM header only (no alignments)
+    -c       print only the count of matching records
+    -o FILE  output file name [stdout]
+    -U FILE  output reads not selected by filters to FILE [null]
+    -t FILE  FILE listing reference names and lengths (see long help) [null]
+    -L FILE  only include reads overlapping this BED FILE [null]
+    -r STR   only include reads in read group STR [null]
+    -R FILE  only include reads with read group listed in FILE [null]
+    -q INT   only include reads with mapping quality >= INT [0]
+    -l STR   only include reads in library STR [null]
+    -m INT   only include reads with number of CIGAR operations consuming
+             query sequence >= INT [0]
+    -f INT   only include reads with all bits set in INT set in FLAG [0]
+    -F INT   only include reads with none of the bits set in INT set in FLAG [0]
+    -s FLOAT subsample reads (given INT.FRAC option value, 0.FRAC is the
+             fraction of templates/read pairs to keep; INT part sets seed)
+    -x STR   read tag to strip (repeatable) [null]
+    -B       collapse the backward CIGAR operation
+    -?       print long help, including note about region specification
+    -S       ignored (input format is auto-detected)
+        --input-fmt-option OPT[=VAL]
+                 Specify a single input file format option in the form
+                 of OPTION or OPTION=VALUE
+    -O, --output-fmt FORMAT[,OPT[=VAL]]...
+                 Specify output format (SAM, BAM, CRAM)
+        --output-fmt-option OPT[=VAL]
+                 Specify a single output file format option in the form
+                 of OPTION or OPTION=VALUE
+    -T, --reference FILE
+                 Reference sequence FASTA FILE [null]
+    -@, --threads INT
+                 Number of additional threads to use [0]
