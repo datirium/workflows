@@ -1,0 +1,69 @@
+class: s:SoftwareSourceCode
+s:name: "MACS2"
+s:about: >
+  With the improvement of sequencing techniques, chromatin immunoprecipitation followed by high throughput
+  sequencing (ChIP-Seq) is getting popular to study genome-wide protein-DNA interactions. To address the
+  lack of powerful ChIP-Seq analysis method, we present a novel algorithm, named Model-based Analysis
+  of ChIP-Seq (MACS), for identifying transcript factor binding sites. MACS captures the influence of
+  genome complexity to evaluate the significance of enriched ChIP regions, and MACS improves the spatial
+  resolution of binding sites through combining the information of both sequencing tag position and
+  orientation. MACS can be easily used for ChIP-Seq data alone, or with control sample with the increase
+  of specificity.
+
+s:url: http://liulab.dfci.harvard.edu/MACS/
+s:codeRepository: https://github.com/taoliu/MACS
+
+s:license:
+- https://opensource.org/licenses/BSD-3-Clause
+
+s:targetProduct:
+  class: s:SoftwareApplication
+  s:softwareVersion: "2.1.1.20160309"
+  s:applicationCategory: "command line tool"
+
+s:programmingLanguage: "Python"
+
+s:publication:
+- class: s:ScholarlyArticle
+  id: 10.1186/gb-2008-9-9-r137
+  s:name: "Model-based analysis of ChIP-Seq (MACS)"
+  s:author:
+  - class: s:Person
+    s:name: "Zhang Y"
+  - class: s:Person
+    s:name: "Liu T"
+  - class: s:Person
+    s:name: "Meyer CA"
+  - class: s:Person
+    s:name: "Eeckhoute J"
+  - class: s:Person
+    s:name: "Johnson DS"
+  - class: s:Person
+    s:name: "Bernstein BE"
+  - class: s:Person
+    s:name: "Nusbaum C"
+  - class: s:Person
+    s:name: "Myers RM"
+  - class: s:Person
+    s:name: "Brown M"
+  - class: s:Person
+    s:name: "Li W"
+  - class: s:Person
+    s:name: "Liu XS"
+  datePublished: 17 September 2008
+  s:url: https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-9-r137
+
+s:discussionUrl:
+- https://groups.google.com/forum/#!forum/macs-announcement
+- https://github.com/taoliu/MACS/issues
+
+s:creator:
+- class: s:Organization
+  s:name: "Xiaole Shirley Liu's Lab"
+  s:member:
+  - class: s:Person
+    s:name: "Yong Zhang"
+    s:description: "Main author"
+  - class: s:Person
+    s:name: "Tao Liu"
+    s:description: "Main author"

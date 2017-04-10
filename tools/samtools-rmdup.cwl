@@ -19,8 +19,6 @@ requirements:
   listing:
     - $(inputs.input_file)
 
-
-
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.4
@@ -147,7 +145,6 @@ arguments:
     position: 100000
     shellQuote: false
 
-
 $namespaces:
   s: http://schema.org/
 
@@ -157,6 +154,7 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/samtools-metadata.yaml
 
+s:name: "samtools-rmdup"
 s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/tools/samtools-rmdup.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -190,13 +188,15 @@ s:creator:
         s:email: mailto:michael.kotliar@cchmc.org
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
-      - class: s:Person
-        s:name: Andrey Kartashov
-        s:email: mailto:Andrey.Kartashov@cchmc.org
-        s:sameAs:
-        - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
+  This tool is used to remove duplicates from input coordinate sorted BAM file
+  Input Trigger (default: true) allows to skip all calculation and return
+  all input files unchanged. To set files to be returned in case of Trigger == false,
+  use the following inputs:
+    input_file
+    
+s:about: >
   Usage:  samtools rmdup [-sS] <input.srt.bam> <output.bam>
 
   Option: -s    rmdup for SE reads

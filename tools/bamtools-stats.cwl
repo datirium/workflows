@@ -129,3 +129,64 @@ arguments:
   - valueFrom: $('> ' + 'stats.log')
     position: 1000
     shellQuote: false
+
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
+s:mainEntity:
+  $import: ./metadata/bamtools-metadata.yaml
+
+s:name: "bamtools-stats"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bamtools-stats.cwl
+s:codeRepository: https://github.com/SciDAP/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:michael.kotliar@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
+doc: |
+  Tool is used to calculate general alignment statistics from the input BAM file
+
+s:about: >
+  Usage: bamtools stats [-in <filename> -in <filename> ... | -list <filelist>] [statsOptions]
+
+  Input & Output:
+    -in <BAM filename>                the input BAM file [stdin]
+    -list <filename>                  the input BAM file list, one
+                                      line per file
+
+  Additional Stats:
+    -insert                           summarize insert size data
+
+  Help:
+    --help, -h                        shows this help text

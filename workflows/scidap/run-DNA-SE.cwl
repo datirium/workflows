@@ -350,3 +350,77 @@ steps:
       genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
     out: [outfile]
+
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
+s:name: "run-dna-SE"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/run-DNA-SE.cwl
+s:codeRepository: https://github.com/SciDAP/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:michael.kotliar@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
+doc: |
+  Current workflow is used to run CHIP-Seq basic analysis with single-end input FASTQ file.
+  In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
+  statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
+  data in a form of narrowPeak or broadPeak files.
+
+s:about: >
+  Current workflow is used to run CHIP-Seq basic analysis with single-end input FASTQ file.
+  In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
+  statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
+  data in a form of narrowPeak or broadPeak files.
+  Workflow starts with running fastx_quality_stats (Step fastx_quality_stats) from FASTX-Toolkit
+  to calculate quality statistics for input FASTQ file. At the same time (Step bowtie_aligner)
+  Bowtie is used to align reads from input FASTQ file to reference genome. The output of this step
+  is unsorted SAM file which is being sorted and indexed by samtools sort and samtools index
+  (Step samtools_sort_index). Depending on workflow’s input parameters indexed and sorted BAM file
+  could be processed by samtools rmdup (Step samtools_rmdup) to remove all possible read duplicates.
+  In a case when removing duplicates is not necessary the step returns original input BAM and BAI
+  files without any processing. If the duplicates were removed the following step
+  (Step samtools_sort_index_after_rmdup) reruns samtools sort and samtools index with BAM and BAI files,
+  if not - the step returns original unchanged input files. Right after that (Step macs2_callpeak)
+  macs2 callpeak performs peak calling. On the base of returned outputs the next step
+  (Step macs_island_count) calculates the number and islands and estimated fragment size. If the last
+  one is less that 80 (hardcoded in a workflow) macs2 callpeak is rerun again with forced fixed
+  fragment size value (Step macs2_callpeak_forced). If at the very beginning it was set in workflow
+  input parameters to run peak calling with fixed fragment size, this step is skipped and the
+  original peak calling results are saved. The following two steps (Step bamtools_stats and bam_to_bigwig)
+  are used to calculate coverage on the base of input BAM file and save it in BigWig format.
+  For that purpose bamtools stats returns the number of mapped reads number which is then used as
+  scaling factor by bedtools genomecov when it performs coverage calculation and saves
+  it in BED format. The last one is then being sorted and converted to BigWig format by
+  bedGraphToBigWig tool from UCSC utilities.

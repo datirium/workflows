@@ -719,57 +719,53 @@ arguments:
     shellQuote: false
 
 $namespaces:
-  schema: http://schema.org/
+  s: http://schema.org/
 
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-schema:mainEntity:
-  class: schema:SoftwareSourceCode
-  schema:name: "bowtie"
-  schema:about: >
-    Bowtie is an ultrafast, memory-efficient short read aligner.
-    It aligns short DNA sequences (reads) to the human genome at a rate of over 25 million 35-bp reads per hour.
-    Bowtie indexes the genome with a Burrows-Wheeler index to keep its memory footprint small: typically about 2.2 GB for the human genome (2.9 GB for paired-end).
-  schema:url: http://bowtie-bio.sourceforge.net
-  schema:codeRepository: https://github.com/BenLangmead/bowtie.git
+s:mainEntity:
+  $import: ./metadata/bowtie-metadata.yaml
 
-  schema:license:
-  - https://opensource.org/licenses/GPL-3.0
+s:name: "bowtie"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bowtie.cwl
+s:codeRepository: https://github.com/SciDAP/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
 
-  schema:targetProduct:
-    class: schema:SoftwareApplication
-    schema:softwareVersion: "1.2.0"
-    schema:applicationCategory: "commandline tool"
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
 
-  schema:programmingLanguage: "C++"
-
-  schema:publication:
-  - class: schema:ScholarlyArticle
-    id: http://dx.doi.org/10.1186/gb-2009-10-3-r25
-
-schema:isPartOf:
-  class: schema:CreativeWork
-  schema:name: "Common Workflow Language"
-  schema:url: http://commonwl.org/
-
-schema:author:
-  class: schema:Person
-  schema:name: "Andrey Kartashov"
-  schema:email: mailto:Andrey.Kartashov@cchmc.org
-  schema:sameAs:
-  - id: http://orcid.org/0000-0001-9102-5681
-  schema:worksFor:
-  - class: schema:Organization
-    schema:name: "Cincinnati Children's Hospital Medical Center"
-    schema:location: "3333 Burnet Ave, Cincinnati, OH 45229-3026"
-    schema:department:
-    - class: schema:Organization
-      schema:name: "Barski Lab"
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Andrey Kartashov
+        s:email: mailto:Andrey.Kartashov@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  bowtie.cwl is developed for CWL consortium
+  Tool is used to run bowtie aligner to align input FASTQ file(s) to reference genome
 
+s:about: >
   Usage:
   bowtie [options]* <ebwt> {-1 <m1> -2 <m2> | --12 <r> | <s>} [<hit>]
 
@@ -778,9 +774,9 @@ doc: |
     <m2>    Comma-separated list of files containing downstream mates (or the
             sequences themselves if -c is set) paired with mates in <m1>
     <r>     Comma-separated list of files containing Crossbow-style reads.  Can be
-            a mixture of paired and unpaired.  Specify "-"for stdin.
+            a mixture of paired and unpaired.  Specify "-" for stdin.
     <s>     Comma-separated list of files containing unpaired reads, or the
-            sequences themselves, if -c is set.  Specify "-"for stdin.
+            sequences themselves, if -c is set.  Specify "-" for stdin.
     <hit>   File to write hits to (default: stdout)
   Input:
     -q                 query input files are FASTQ .fq/.fastq (default)
@@ -815,6 +811,7 @@ doc: |
     --pairtries <int>  max # attempts to find mate for anchor hit (default: 100)
     -y/--tryhard       try hard to find valid alignments, at the expense of speed
     --chunkmbs <int>   max megabytes of RAM for best-first search frames (def: 64)
+   --reads-per-batch   # of reads to read from input file at once (default: 16)
   Reporting:
     -k <int>           report up to <int> good alignments per read (default: 1)
     -a/--all           report all alignments per read (much slower than low -k)

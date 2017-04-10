@@ -1,55 +1,6 @@
 #!/usr/bin/env cwl-runner
-
-$namespaces:
-  dct: http://purl.org/dc/terms/
-  foaf: http://xmlns.com/foaf/0.1/
-  doap: http://usefulinc.com/ns/doap#
-  adms: http://www.w3.org/ns/adms#
-  dcat: http://www.w3.org/ns/dcat#
-
-$schemas:
-- http://dublincore.org/2012/06/14/dcterms.rdf
-- http://xmlns.com/foaf/spec/20140114.rdf
-- http://usefulinc.com/ns/doap#
-- http://www.w3.org/ns/adms#
-- http://www.w3.org/ns/dcat.rdf
-
 cwlVersion: v1.0
 class: CommandLineTool
-
-adms:includedAsset:
-  doap:name: "sort"
-  doap:description: >
-    sort - sort lines of text files
-  doap:release:
-  - class: doap:Version
-    doap:revision: "5.93"
-  doap:license: "GPL"
-  doap:category: "commandline tool"
-  doap:programming-language: "C"
-  doap:developer:
-  - class: foaf:Person
-    foaf:name: "Mike Haertel"
-  - class: foaf:Person
-    foaf:name: "Paul Eggert"
-  doap:mailing-list:
-    foaf:mbox: "bug-coreutils@gnu.org"
-
-doc: |
-  linux-sort.cwl is developed for CWL consortium
-
-doap:name: "linux-sort.cwl"
-dcat:downloadURL: "https://github.com/common-workflow-language/workflows/blob/master/tools/linux-sort.cwl"
-
-doap:maintainer:
-- class: foaf:Organization
-  foaf:name: "Barski Lab, Cincinnati Children's Hospital Medical Center"
-  foaf:member:
-  - class: foaf:Person
-    id: "http://orcid.org/0000-0001-9102-5681"
-    foaf:openid: "http://orcid.org/0000-0001-9102-5681"
-    foaf:name: "Andrey Kartashov"
-    foaf:mbox: "mailto:Andrey.Kartashov@cchmc.org"
 
 requirements:
   - $import: ./metadata/envvar-global.yml
@@ -58,7 +9,6 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: ubuntu:15.10
-
 
 inputs:
   input:
@@ -73,7 +23,7 @@ inputs:
     type: string
 
   key:
-    type: 
+    type:
       type: array
       items: string
       inputBinding:
@@ -95,4 +45,46 @@ stdout: $(inputs.output)
 
 baseCommand: ["sort"]
 
+$namespaces:
+  s: http://schema.org/
 
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
+s:name: "linux-sort"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/linux-sort.cwl
+s:codeRepository: https://github.com/SciDAP/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Andrey Kartashov
+        s:email: mailto:Andrey.Kartashov@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0001-9102-5681
+
+doc: |
+  Tool is used to run sort command with input data

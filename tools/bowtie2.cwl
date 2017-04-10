@@ -851,6 +851,7 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/bowtie2-metadata.yaml
 
+s:name: "bowtie2"
 s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/tools/bowtie2.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -860,27 +861,35 @@ s:isPartOf:
   s:name: Common Workflow Language
   s:url: http://commonwl.org/
 
-s:author:
-  class: s:Person
-  s:name: Michael Kotliar
-  s:email: mailto:michael.kotliar@cchmc.org
-  s:sameAs:
-  - id: http://orcid.org/0000-0002-6486-3898
-  s:worksFor:
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
   - class: s:Organization
-    s:name: Cincinnati Children's Hospital Medical Center
-    s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
+    s:legalName: "Allergy and Immunology"
     s:department:
     - class: s:Organization
-      s:name: Barski Lab
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:michael.kotliar@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Bowtie 2 is an ultrafast and memory-efficient tool for aligning sequencing reads to long reference sequences.
-  It is particularly good at aligning reads of about 50 up to 100s or 1,000s of characters, and particularly good
-  at aligning to relatively long (e.g. mammalian) genomes. Bowtie 2 indexes the genome with an FM Index to keep
-  its memory footprint small: for the human genome, its memory footprint is typically around 3.2 GB. Bowtie 2
-  supports gapped, local, and paired-end alignment modes.
+  Tool is used to run bowtie aligner to align input FASTQ file(s) to reference genome
 
+s:about: >
   Usage:
     bowtie2 [options]* -x <bt2-idx> {-1 <m1> -2 <m2> | -U <r>} [-S <sam>]
 

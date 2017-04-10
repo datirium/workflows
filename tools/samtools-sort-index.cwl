@@ -213,3 +213,82 @@ arguments:
           }
       }
     position: 27
+
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
+s:mainEntity:
+  $import: ./metadata/samtools-metadata.yaml
+
+s:name: "samtools-sort-index"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/samtools-sort-index.cwl
+s:codeRepository: https://github.com/SciDAP/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:michael.kotliar@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
+doc: |
+  This tool is used to sort and index input BAM/SAM file by means of samtools sort/index
+  Input Trigger (default: true) allows to skip all calculation and return
+  all input files unchanged. To set files to be returned in case of Trigger == false,
+  use the following inputs:
+    sort_input
+
+s:about: >
+  Usage: samtools sort [options...] [in.bam]
+  Options:
+    -l INT     Set compression level, from 0 (uncompressed) to 9 (best)
+    -m INT     Set maximum memory per thread; suffix K/M/G recognized [768M]
+    -n         Sort by read name
+    -o FILE    Write final output to FILE rather than standard output
+    -T PREFIX  Write temporary files to PREFIX.nnnn.bam
+        --input-fmt-option OPT[=VAL]
+                 Specify a single input file format option in the form
+                 of OPTION or OPTION=VALUE
+    -O, --output-fmt FORMAT[,OPT[=VAL]]...
+                 Specify output format (SAM, BAM, CRAM)
+        --output-fmt-option OPT[=VAL]
+                 Specify a single output file format option in the form
+                 of OPTION or OPTION=VALUE
+        --reference FILE
+                 Reference sequence FASTA FILE [null]
+    -@, --threads INT
+                 Number of additional threads to use [0]
+
+  Usage: samtools index [-bc] [-m INT] <in.bam> [out.index]
+  Options:
+    -b       Generate BAI-format index for BAM files [default]
+    -c       Generate CSI-format index for BAM files
+    -m INT   Set minimum interval size for CSI indices to 2^INT [14]
+    -@ INT   Sets the number of threads [none]
