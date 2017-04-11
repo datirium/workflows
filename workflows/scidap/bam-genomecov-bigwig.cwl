@@ -73,7 +73,7 @@ steps:
       key:
         default: ["1,1","2,2n"]
       output:
-        default: tmp_sorted
+        default: tmp_sorted.bed
     out: [sorted]
 
   bigwig:
