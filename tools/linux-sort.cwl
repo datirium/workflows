@@ -5,6 +5,10 @@ class: CommandLineTool
 requirements:
   - $import: ./metadata/envvar-global.yml
   - class: InlineJavascriptRequirement
+    expressionLib:
+    - var default_output_filename = function() {
+          return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sorted.bed";
+      };
 
 hints:
 - class: DockerRequirement
@@ -12,15 +16,9 @@ hints:
 
 inputs:
   input:
-    type:
-      - type: array
-        items: File
-      - File
+    type: File
     inputBinding:
       position: 4
-
-  output:
-    type: string
 
   key:
     type:
@@ -39,9 +37,9 @@ outputs:
     type: File
     doc: "The sorted file"
     outputBinding:
-      glob: $(inputs.output)
+      glob: $(default_output_filename())
 
-stdout: $(inputs.output)
+stdout: $(default_output_filename())
 
 baseCommand: ["sort"]
 
