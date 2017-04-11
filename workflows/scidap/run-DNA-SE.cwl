@@ -188,6 +188,8 @@ steps:
       sam:
         default: true
       threads: threads
+      q:
+        default: true
     out: [output, output_bowtie_log]
 
   samtools_sort_index:
@@ -266,6 +268,8 @@ steps:
         default: 0.05
       format:
         default: BAM
+      buffer_size:
+        default: 10000
     out:
       - peak_xls_file
       - narrow_peak_file
@@ -326,6 +330,8 @@ steps:
         default: 0.05
       format:
         default: BAM
+      buffer_size:
+        default: 10000
     out:
       - peak_xls_file
       - narrow_peak_file
