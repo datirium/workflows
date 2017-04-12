@@ -192,20 +192,10 @@ steps:
         default: true
     out: [output, output_bowtie_log]
 
-  samtools_view_remove_unmapped:
-    run: ../../tools/samtools-view.cwl
-    in:
-      input: bowtie_aligner/output
-      isbam:
-        default: true
-      reads_without_bits:
-        default: 4
-    out: [output]
-
   samtools_sort_index:
     run: ../../tools/samtools-sort-index.cwl
     in:
-      sort_input: samtools_view_remove_unmapped/output
+      sort_input: bowtie_aligner/output
       threads: threads
     out: [bam_bai_pair]
 
