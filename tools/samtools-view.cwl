@@ -6,6 +6,20 @@ class: CommandLineTool
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
+  expressionLib:
+  - var ext = function() {
+      if (inputs.iscram && !inputs.isbam){
+        return '.cram';
+      } else if (inputs.isbam) {
+        return '.bam';
+      } else {
+        return '.sam';
+      }
+    };
+  - var default_output_name = function() {
+        return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+ext();
+    }
+
 
 hints:
 - class: DockerRequirement
@@ -77,6 +91,15 @@ inputs:
     inputBinding:
       position: 12
       prefix: -o
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_name();
+            } else {
+              return self;
+            }
+        }
+    default: null
     doc: |
       Output to file
 
@@ -157,9 +180,7 @@ inputs:
       position: 21
       prefix: -f
     doc: |
-      Only output alignments with all bits set in INT present in the FLAG field. INT can be
-      specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning
-      with `0' (i.e. /^0[0-7]+/) [0].
+      only include reads with all bits set in INT set in FLAG [0]
 
   reads_without_bits:
     type: int?
@@ -167,9 +188,7 @@ inputs:
       position: 22
       prefix: -F
     doc: |
-      Do not output alignments with any bits set in INT present in the FLAG field. INT can be
-      specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with
-      `0' (i.e. /^0[0-7]+/) [0].
+      only include reads with none of the bits set in INT set in FLAG [0]
 
   reads_tag:
     type: string?
@@ -230,7 +249,7 @@ outputs:
   output:
     type: File
     outputBinding:
-      glob: $(inputs.output_name)
+      glob: $(default_output_name())
 
   filtered_out_file:
     type: File?

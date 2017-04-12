@@ -168,8 +168,8 @@
   output:
     output:
       class: File
-      location: output.bam
-      size: 50487
+      location: test.trimmed.sam
+      size: 259369
 
 - job: ./picard-markduplicates.json
   tool: ../tools/picard-markduplicates.cwl

@@ -1,9 +1,3 @@
 {
-  "input": {
-    "class": "File",
-    "location": "./data/test.trimmed.bam"
-  },
-  "isbam": true,
-  "readsquality": 1,
-  "output_name": "./output.bam"
+  "input": {"class": "File", "location": "./data/test.trimmed.bam" }
 }
