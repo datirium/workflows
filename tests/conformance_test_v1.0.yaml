@@ -1,3 +1,11 @@
+- job: ./samtools-sort.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.sorted.bam
+      size: 50487
+
 - job: ./macs2-island-count.json
   tool: ../tools/macs2-island-count.cwl
   output:
