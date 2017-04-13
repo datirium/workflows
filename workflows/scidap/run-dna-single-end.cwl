@@ -159,6 +159,12 @@ outputs:
     doc: "MACS2 output log"
     outputSource: macs2_callpeak_forced/macs_log
 
+  get_stat_log:
+    type: File?
+    label: "Bowtie & Samtools Rmdup combined log"
+    format: "http://edamontology.org/format_2330"
+    doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
+    outputSource: get_stat/output
 
 steps:
 # TODO add step to bzip FASTQ files
@@ -356,6 +362,13 @@ steps:
       genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
     out: [outfile]
+
+  get_stat:
+      run: ../../tools/python-get-stat.cwl
+      in:
+        bowtie_log: bowtie_aligner/output_bowtie_log
+        rmdup_log: samtools_rmdup/rmdup_log
+      out: [output]
 
 $namespaces:
   s: http://schema.org/
