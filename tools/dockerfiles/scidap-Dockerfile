@@ -49,7 +49,9 @@ RUN apt-get clean all &&\
         python          \
         python-dev      \
         python-pip      \
-        zlib1g-dev && \
+        zlib1g-dev      \
+        libmagic-dev  &&\
     apt-get clean && \
     apt-get purge && \
+    pip install python-magic &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
