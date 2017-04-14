@@ -1,3 +1,11 @@
+- job: ./python-get-stat.json
+  tool: ../tools/python-get-stat.cwl
+  output:
+    output:
+      class: File
+      location: bowtie_align.stat
+      size: 32
+
 - job: ./samtools-sort.json
   tool: ../tools/samtools-sort.cwl
   output:
