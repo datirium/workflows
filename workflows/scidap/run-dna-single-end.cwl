@@ -167,8 +167,6 @@ outputs:
     outputSource: get_stat/output
 
 steps:
-# TODO add step to bzip FASTQ files
-# Make sure that I return original log file if I didn't run MACS2 for the second time
 
   fastx_quality_stats:
     run: ../../tools/fastx-quality-stats.cwl
