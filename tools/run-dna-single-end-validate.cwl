@@ -28,9 +28,9 @@ inputs:
       import uuid
 
       def set_fail (conf_data, key):
-          for step_name, value in conf_data['Steps'].iteritems():
+          for step_name, value in conf_data['steps'].iteritems():
               if key in value[1]:
-                  value[0] = "FAIL"
+                  value[0] = "false"
 
       def compare (control_item, check_item):
           if not os.path.isfile(control_item): raise ValueError("missing file   {0}".format(control_item))
@@ -53,31 +53,31 @@ inputs:
                       print '    ',str(e)
 
       conf =  '{ \
-                    "Overall": "PASS", \
-                    "Steps": { \
-                      "fastx_quality_stats": ["PASS",            ["reads_data.fastq.fastxstat"]], \
-                      "bowtie_aligner": ["PASS",                 ["reads_data.sam.log", \
-                                                                   "reads_data.sorted.bam", \
-                                                                   "reads_data.sam.stat"]], \
-                      "samtools_sort_index": ["PASS",            ["reads_data.sorted.bam", \
-                                                                   "reads_data.sorted.bam.bai", \
-                                                                   "reads_data.sam.stat"]], \
-                      "samtools_rmdup": ["PASS",                 ["reads_data.sorted.bam", \
-                                                                   "reads_data.sorted.bam.bai", \
-                                                                   "reads_data.sam.stat"]], \
-                      "samtools_sort_index_after_rmdup": ["PASS",["reads_data.sorted.bam", \
-                                                                   "reads_data.sorted.bam.bai"]], \
-                      "macs2_callpeak": ["PASS",                 ["reads_data.sorted_model.r", \
-                                                                   "reads_data.sorted_peaks.narrowPeak", \
-                                                                   "reads_data.sorted_peaks.xls", \
-                                                                   "reads_data.sorted_summits.bed"]], \
-                      "macs_island_count": ["PASS",              ["reads_data.sorted_peaks.xls"]], \
-                      "macs2_callpeak_forced": ["PASS",          ["reads_data.sorted_model.r", \
-                                                                   "reads_data.sorted_peaks.narrowPeak", \
-                                                                   "reads_data.sorted_peaks.xls", \
-                                                                   "reads_data.sorted_summits.bed"]], \
-                      "bamtools_stats": ["PASS",                 ["reads_data.sorted.sorted.bigwig"]], \
-                      "bam_to_bigwig": ["PASS",                  ["reads_data.sorted.sorted.bigwig"]] \
+                    "overall": "true", \
+                    "steps": { \
+                      "fastx_quality_stats": ["true",            ["SRR1198790.fastq.fastxstat"]], \
+                      "bowtie_aligner": ["true",                 ["SRR1198790.sam.log", \
+                                                                   "SRR1198790.sorted.bam", \
+                                                                   "SRR1198790.sam.stat"]], \
+                      "samtools_sort_index": ["true",            ["SRR1198790.sorted.bam", \
+                                                                   "SRR1198790.sorted.bam.bai", \
+                                                                   "SRR1198790.sam.stat"]], \
+                      "samtools_rmdup": ["true",                 ["SRR1198790.sorted.bam", \
+                                                                   "SRR1198790.sorted.bam.bai", \
+                                                                   "SRR1198790.sam.stat"]], \
+                      "samtools_sort_index_after_rmdup": ["true",["SRR1198790.sorted.bam", \
+                                                                   "SRR1198790.sorted.bam.bai"]], \
+                      "macs2_callpeak": ["true",                 ["SRR1198790.sorted_model.r", \
+                                                                   "SRR1198790.sorted_peaks.narrowPeak", \
+                                                                   "SRR1198790.sorted_peaks.xls", \
+                                                                   "SRR1198790.sorted_summits.bed"]], \
+                      "macs_island_count": ["true",              ["SRR1198790.sorted_peaks.xls"]], \
+                      "macs2_callpeak_forced": ["true",          ["SRR1198790.sorted_model.r", \
+                                                                   "SRR1198790.sorted_peaks.narrowPeak", \
+                                                                   "SRR1198790.sorted_peaks.xls", \
+                                                                   "SRR1198790.sorted_summits.bed"]], \
+                      "bamtools_stats": ["true",                 ["SRR1198790.sorted.sorted.bigwig"]], \
+                      "bam_to_bigwig": ["true",                  ["SRR1198790.sorted.sorted.bigwig"]] \
                      } \
                  }'
 
@@ -105,11 +105,11 @@ inputs:
               print '     Fail:', str(e)
               set_fail (conf_obj, key)
 
-      for step_name in conf_obj['Steps']:
-          state = conf_obj['Steps'][step_name][0]
-          conf_obj['Steps'][step_name] = state
-          if state == 'FAIL':
-              conf_obj['Overall'] = 'FAIL'
+      for step_name in conf_obj['steps']:
+          state = conf_obj['steps'][step_name][0]
+          conf_obj['steps'][step_name] = state
+          if state == 'false':
+              conf_obj['overall'] = 'false'
 
       with open('results.json', 'w') as resutls_file:
           resutls_file.write(json.dumps(conf_obj, indent = 4))
@@ -140,9 +140,9 @@ outputs:
     doc: |
       Main results file
         {
-          “Overall” : “PASS|FAIL”,
-          “Steps”: {
-            “STEP_NAME” : “PASS|FAIL”,
+          “overall” : “true|false”,
+          “steps”: {
+            “STEP_NAME” : “true|false”,
             ....
            }
          }
