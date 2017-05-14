@@ -681,9 +681,9 @@ outputs:
       glob: |
         ${
            if (inputs.filename == null){
-             return default_output_filename() + ".log";
+             return default_output_filename().split('.').slice(0,-1).join('.') + ".bw";
            } else {
-             return inputs.filename + ".log";
+             return inputs.filename.split('.').slice(0,-1).join('.') + ".bw";
            }
         }
 
@@ -710,9 +710,9 @@ arguments:
   - valueFrom: |
       ${
         if (inputs.filename == null){
-          return ' 2> ' + default_output_filename() + '.log';
+          return ' 2> ' + default_output_filename().split('.').slice(0,-1).join('.') + '.bw';
         } else {
-          return ' 2> ' + inputs.filename + '.log';
+          return ' 2> ' + inputs.filename.split('.').slice(0,-1).join('.') + '.bw';
         }
       }
     position: 100000

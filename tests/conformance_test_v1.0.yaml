@@ -29,7 +29,7 @@
       size: 32396
     rmdup_log:
       class: File
-      location: test.trimmed.r.bam.rmdup
+      location: test.trimmed.rmdup
       size: 175
 
 - job: ./fastq-dump_1.json
@@ -120,23 +120,23 @@
     gapped_peak_file: null
     peak_xls_file:
       class: File
-      location: macs2_test_peaks.xls
+      location: macs2_test_macs_peaks.xls
       size: 142708
     narrow_peak_file:
       class: File
-      location: macs2_test_peaks.narrowPeak
+      location: macs2_test_macs_peaks.narrowPeak
       size: 126792
     peak_summits_file:
       class: File
-      location: macs2_test_summits.bed
+      location: macs2_test_macs_summits.bed
       size: 84835
     moder_r_file:
       class: File
-      location: macs2_test_model.r
+      location: macs2_test_macs_model.r
       size: 65666
     macs_log:
       class: File
-      location: macs2_test.log
+      location: macs2_test_macs.log
       size: 2942
 
 - job: ./fastqc.json
@@ -224,7 +224,7 @@
   output:
     statistics:
       class: File
-      location: reads_test.fastq.fastxstat
+      location: reads_test.fastxstat
       size: 2167
 
 - job: ./samtools-sort-index.json
@@ -232,10 +232,10 @@
   output:
     bam_bai_pair:
       class: File
-      location: test.trimmed.sorted.bam
+      location: test.trimmed.bam
       secondaryFiles:
       - class: File
-        location: test.trimmed.sorted.bam.bai
+        location: test.trimmed.bam.bai
         size: 28664
       size: 50487
 
@@ -478,9 +478,9 @@
   output:
     bam_bai_pair:
       class: File
-      location: test.trimmed.sorted.bam
+      location: test.trimmed.bam
       secondaryFiles:
       - class: File
-        location: test.trimmed.sorted.bam.bai
+        location: test.trimmed.bam.bai
         size: 28664
       size: 50487

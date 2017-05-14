@@ -20,7 +20,7 @@ requirements:
     };
   - var default_bam = function() {
       if (inputs.trigger == true){
-        return inputs.sort_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sorted.bam";
+        return inputs.sort_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bam";
       } else {
         return inputs.sort_input.location.split('/').slice(-1)[0];
       }

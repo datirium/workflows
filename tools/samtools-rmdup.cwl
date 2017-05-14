@@ -125,9 +125,9 @@ outputs:
       glob: |
         ${
           if (inputs.output_filename == null || inputs.trigger == false){
-            return default_output_filename() + '.rmdup';
+            return default_output_filename().split('.').slice(0,-2).join('.') + '.rmdup';
           } else {
-            return inputs.output_filename + '.rmdup';
+            return inputs.output_filename.split('.').slice(0,-1).join('.') + '.rmdup';
           }
         }
 
@@ -137,9 +137,9 @@ arguments:
   - valueFrom: |
       ${
         if (inputs.output_filename == null || inputs.trigger == false){
-          return " > " + default_output_filename() + ".rmdup 2>&1";
+          return " > " + default_output_filename().split('.').slice(0,-2).join('.') + ".rmdup 2>&1";
         } else {
-          return " > " + inputs.output_filename + ".rmdup 2>&1";
+          return " > " + inputs.output_filename.split('.').slice(0,-1).join('.') + ".rmdup 2>&1";
         }
       }
     position: 100000

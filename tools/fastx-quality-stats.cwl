@@ -55,9 +55,10 @@ outputs:
 
 baseCommand: [fastx_quality_stats]
 arguments:
-  - valueFrom: $(inputs.input_file.basename + ".fastxstat")
+  - valueFrom: $(inputs.input_file.basename.split('.').slice(0,-1).join('.') + ".fastxstat")
     position: 11
     prefix: -o
+
 
 $namespaces:
   s: http://schema.org/
