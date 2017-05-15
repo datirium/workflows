@@ -7,7 +7,7 @@ requirements:
   - class: InlineJavascriptRequirement
     expressionLib:
     - var default_output_filename = function() {
-          return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sorted.bed";
+          return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bed";
       };
 
 hints:

@@ -259,7 +259,7 @@
   output:
     sorted:
       class: File
-      location: input_sorted.bedGraph
+      location: input_unsorted.bed
       size: 27256
 
 - job: ./ucsc-bedgraphtobigwig.json

@@ -555,7 +555,7 @@ inputs:
       find subpeak summits in each enriched peak region.
       DEFAULT: False
 
-  fe-cutoff:
+  fe_cutoff:
     type:
       - "null"
       - float
