@@ -1,4 +1,0 @@
-{
-  "control_dir": {"class": "Directory", "location": "./controls"},
-  "check_dir": {"class": "Directory", "location": "./outputs"},
-}
