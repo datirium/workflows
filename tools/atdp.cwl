@@ -8,15 +8,15 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-        return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_iaintersect.tsv";
+        return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_atdp.tsv";
     };
   - var default_log_filename = function() {
-        return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_iaintersect.log";
+        return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_atdp.log";
     };
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/iaintersect:v0.0.1
+  dockerPull: biowardrobe2/atdp:v0.0.1
 
 inputs:
 
@@ -27,9 +27,13 @@ inputs:
       position: 1
       prefix: --in=
       separate: false
-    format: "http://edamontology.org/format_3475"
+    format: "http://edamontology.org/format_2572"
+    secondaryFiles: |
+      ${
+        return {"location": self.location+".bai", "class": "File"};
+      }
     doc: |
-      Input filename with MACS2 peak calling results
+      Input indexed BAM file (+BAI index file)
 
   annotation_filename:
     type:
@@ -82,38 +86,60 @@ inputs:
     doc: |
       Log filename
 
-  promoter_bp:
+  fragmentsize_bp:
     type:
       - "null"
       - int
     inputBinding:
       position: 5
-      prefix: --promoter=
+      prefix: --f=
       separate: false
     doc: |
-      Promoter region around TSS, base pairs
+      Fragmentsize, int [150]
 
-  upstream_bp:
+  avd_window_bp:
     type:
       - "null"
       - int
     inputBinding:
       position: 6
-      prefix: --upstream=
+      prefix: --avd_window=
       separate: false
     doc: |
-      Upstream region before promoter, base pairs
+      Average tag density window, int [5000]
+
+  avd_smooth_bp:
+    type:
+      - "null"
+      - int
+    inputBinding:
+      position: 7
+      prefix: --avd_smooth=
+      separate: false
+    doc: |
+      Average smooth window (odd), int [0]
 
   ignore_chr:
     type:
       - "null"
       - string
     inputBinding:
-      position: 7
+      position: 8
       prefix: --sam_ignorechr=
       separate: false
     doc: |
-      The chromosome to be ignored, string
+      The chromosomes to be ignored, string
+
+  double_chr:
+    type:
+      - "null"
+      - string
+    inputBinding:
+      position: 9
+      prefix: --sam_twicechr=
+      separate: false
+    doc: |
+      The chromosomes to be doubled, string
 
 outputs:
   log:
@@ -140,8 +166,7 @@ outputs:
           }
         }
 
-
-baseCommand: [iaintersect]
+baseCommand: [atdp]
 
 $namespaces:
   s: http://schema.org/
@@ -150,10 +175,10 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:mainEntity:
-  $import: ./metadata/iaintersect-metadata.yaml
+  $import: ./metadata/atdp-metadata.yaml
 
-s:name: "iaintersect"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/iaintersect.cwl
+s:name: "atdp"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/atdp.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -188,15 +213,23 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to assign each peak obtained from MACS2 to a gene and region (upstream, promoter, exon, intron, intergenic)
+  Tool is used to calculate average tag density profile around all annotated TSS.
+  Such data can be used to estimate the success of ChIP-Seq type experiments for
+  some histone modifications (e.g. H3K4me)
 
 s:about: >
   Usage:
-    iaintersect [options] --in=pathToFile --a=pathtoFile --out=pathToFile
+  atdp [options] --in=pathToFile --a=pathtoFile --out=pathToFile
     --a                        	Tab-separated annotation file
-    --in                       	Input filename with MACS2 peak calling results, xls
-    --log                      	Log filename (default is ./logfile_def.log)
-    --out                      	Base output file name
-    --promoter                 	Promoter region around TSS in bp
-    --sam_ignorechr            	The chromosome to be ignored
-    --upstream                 	Upstream region before promoter in bp
+    --avd_bsmooth              	Average smooth window for gene body
+    --avd_guid                 	Genelist uid
+    --avd_heat_window          	Average tag density window for heatmap
+    --avd_smooth               	Average smooth window (odd)
+    --avd_window               	Average tag density window
+    --f                        	Fragmentsize, bp
+    --in                       	Input BAM file
+    --index                    	Input index bai file
+    --log                      	Log file name (default is ./logfile_def.log)
+    --out                      	Base output filename
+    --sam_ignorechr            	Which chromosome to ignore
+    --sam_twicechr             	Which chromosome to double

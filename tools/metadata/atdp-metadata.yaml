@@ -1,11 +1,12 @@
 class: s:SoftwareSourceCode
-s:name: "iaintersect"
+s:name: "atdp"
 s:about: >
-  Based on BioWardrobe iaintersect (https://github.com/cincinnati-childrens-hospital/biowardrobe/tree/master/src/iaintersect)
-  The software assigns each peak obtained from MACS2 to a gene and region (upstream, promoter, exon, intron, intergenic).
+  Based on BioWardrobe atdp (https://github.com/cincinnati-childrens-hospital/biowardrobe/tree/master/src/atdp)
+  The software is used to calculate average tag density profile around all annotated TSS. Such data can be used
+  to estimate the success of ChIP-Seq type experiments for some histone modifications (e.g. H3K4me)
 
-s:url: https://github.com/Barski-lab/iaintersect/blob/master/README.md
-s:codeRepository: https://github.com/Barski-lab/iaintersect
+s:url: https://github.com/Barski-lab/atdp/blob/master/README.md
+s:codeRepository: https://github.com/Barski-lab/atdp
 
 s:license:
 - https://opensource.org/licenses/MIT
@@ -18,7 +19,7 @@ s:targetProduct:
 s:programmingLanguage: "C++"
 
 s:discussionUrl:
-- https://github.com/Barski-lab/iaintersect/issues
+- https://github.com/Barski-lab/atdp/issues
 
 s:creator:
 - class: s:Organization

@@ -1,3 +1,27 @@
+- job: ./atdp_1.json
+  tool: ../tools/atdp.cwl
+  output:
+    log:
+      class: File
+      location: atdp_res.log
+      size: 95
+    result:
+      class: File
+      location: atdp_res.tsv
+      size: 74584
+
+- job: ./atdp_2.json
+  tool: ../tools/atdp.cwl
+  output:
+    log:
+      class: File
+      location: sorted_atdp.log
+      size: 95
+    result:
+      class: File
+      location: sorted_atdp.tsv
+      size: 74583
+
 - job: ./iaintersect_1.json
   tool: ../tools/iaintersect.cwl
   output:
@@ -45,3 +69,490 @@
       class: File
       location: iaintersect_res.tsv
       size: 543324
+
+- job: ./python-get-stat.json
+  tool: ../tools/python-get-stat.cwl
+  output:
+    output:
+      class: File
+      location: bowtie_align.stat
+      size: 32
+
+- job: ./samtools-sort.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.sorted.bam
+      size: 50487
+
+- job: ./macs2-island-count.json
+  tool: ../tools/macs2-island-count.cwl
+  output:
+    islands: 1621
+    fragments: 292
+
+- job: ./samtools-rmdup.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: test.trimmed.r.bam
+      size: 32396
+    rmdup_log:
+      class: File
+      location: test.trimmed.rmdup
+      size: 175
+
+- job: ./fastq-dump_1.json
+  tool: ../tools/fastq-dump.cwl
+  output:
+    output_file_1:
+      class: File
+      location: SRR390728_pe_1.fastq
+      size: 137572
+    output_file_2:
+      class: File
+      location: SRR390728_pe_2.fastq
+      size: 137572
+
+
+- job: ./fastq-dump_2.json
+  tool: ../tools/fastq-dump.cwl
+  output:
+    output_file_1:
+      class: File
+      location: SRR3017206_se.fastq
+      size: 151572
+
+- job: ./samtools-index.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index:
+      class: File
+      location: test.trimmed.bam.bai
+      size: 28664
+
+- job: ./rsem-calculate-expression.json
+  tool: ../tools/rsem-calculate-expression.cwl
+  output:
+    align_time: null
+    alleles_results: null
+    transcript_sorted_bam_bai_pair:
+      class: File
+      location: output.transcript.sorted.bam
+      size: 2211315
+      secondaryFiles:
+      - class: File
+        location: output.transcript.sorted.bam.bai
+        size: 16136
+    genome_sorted_bam_bai_pair:
+      class: File
+      location: output.genome.sorted.bam
+      size: 1016090
+      secondaryFiles:
+      - class: File
+        location: output.genome.sorted.bam.bai
+        size: 24880
+    isoform_results:
+      class: File
+      location: output.isoforms.results
+      size: 40027
+    gene_results:
+      class: File
+      location: output.genes.results
+      size: 22776
+    genome_bam:
+      class: File
+      location: output.genome.bam
+      size: 1024403
+    transcript_bam:
+      class: File
+      location: output.transcript.bam
+      size: 1368054
+    stat:
+      class: Directory
+      location: output.stat
+      listing:
+      - class: File
+        location: output.cnt
+        size: 120
+      - class: File
+        location: output.model
+        size: 49599
+      - class: File
+        location: output.theta
+        size: 7196
+
+- job: ./macs2-callpeak.json
+  tool: ../tools/macs2-callpeak.cwl
+  output:
+    broad_peak_file: null
+    control_lambda_bdg_file: null
+    gapped_peak_file: null
+    peak_xls_file:
+      class: File
+      location: macs2_test_macs_peaks.xls
+      size: 142708
+    narrow_peak_file:
+      class: File
+      location: macs2_test_macs_peaks.narrowPeak
+      size: 126792
+    peak_summits_file:
+      class: File
+      location: macs2_test_macs_summits.bed
+      size: 84835
+    moder_r_file:
+      class: File
+      location: macs2_test_macs_model.r
+      size: 65666
+    macs_log:
+      class: File
+      location: macs2_test_macs.log
+      size: 2942
+
+- job: ./fastqc.json
+  tool: ../tools/fastqc.cwl
+  output:
+    zippedFile:
+      - class: File
+        location: reads_test_fastqc.zip
+        size: 398565
+    summary_file:
+      - class: File
+        location: summary.txt
+        size: 494
+
+- job: ./bowtie2-build.json
+  tool: ../tools/bowtie2-build.cwl
+  output:
+    indices:
+      class: File
+      location: bowtie2_indices.1.bt2
+      secondaryFiles:
+      - class: File
+        location: bowtie2_indices.2.bt2
+        size: 11488
+      - class: File
+        location: bowtie2_indices.3.bt2
+        size: 17
+      - class: File
+        location: bowtie2_indices.4.bt2
+        size: 11480
+      - class: File
+        location: bowtie2_indices.rev.1.bt2
+        size: 4209831
+      - class: File
+        location: bowtie2_indices.rev.2.bt2
+        size: 11488
+      size: 4209831
+    output_log:
+      class: File
+      location: bowtie2_indices.log
+      size: 23
+
+- job: ./samtools-view.json
+  tool: ../tools/samtools-view.cwl
+  output:
+    output:
+      class: File
+      location: test.trimmed.sam
+      size: 259369
+
+- job: ./picard-markduplicates.json
+  tool: ../tools/picard-markduplicates.cwl
+  output:
+    output_file:
+      class: File
+      location: output.bam
+      size: 53710
+    metrics_file:
+     class: File
+     location: output.metrics
+     size: 1258
+
+- job: ./bowtie2.json
+  tool: ../tools/bowtie2.cwl
+  output:
+    output:
+      class: File
+      location: bowtie2.sam
+      size: 1692
+    output_log:
+     class: File
+     location: bowtie2.sam.log
+     size: 190
+
+- job: ./bedtools-genomecov.json
+  tool: ../tools/bedtools-genomecov.cwl
+  output:
+    genomecoverage:
+      class: File
+      location: test.trimmed.bed
+      size: 27287
+
+- job: ./fastx-quality-stats.json
+  tool: ../tools/fastx-quality-stats.cwl
+  output:
+    statistics:
+      class: File
+      location: reads_test.fastxstat
+      size: 2167
+
+- job: ./samtools-sort-index.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+      size: 50487
+
+- job: ./bamtools-stats.json
+  tool: ../tools/bamtools-stats.cwl
+  output:
+    stats_log:
+      class: File
+      location: stats.log
+      size: 322
+    forwardstrand: 581
+    duplicates: 0
+    totalReads: 1204
+    mappedreads: 1204
+    failedQC: 0
+    reversestrand: 623
+    pairedendreads: 0
+
+- job: ./linux-sort.json
+  tool: ../tools/linux-sort.cwl
+  output:
+    sorted:
+      class: File
+      location: input_unsorted.bed
+      size: 27256
+
+- job: ./ucsc-bedgraphtobigwig.json
+  tool: ../tools/ucsc-bedgraphtobigwig.cwl
+  output:
+    bigWigOut:
+      class: File
+      location: input_sorted.bigwig
+      size: 43072
+
+- job: ./star-genomegenerate.json
+  tool: ../tools/star-genomegenerate.cwl
+  output:
+    indices:
+    - class: File
+      location: chrLength.txt
+      size: 6
+    - class: File
+      location: chrName.txt
+      size: 5
+    - class: File
+      location: chrNameLength.txt
+      size: 11
+    - class: File
+      location: chrStart.txt
+      size: 9
+    - class: File
+      location: exonGeTrInfo.tab
+      size: 33
+    - class: File
+      location: exonInfo.tab
+      size: 19
+    - class: File
+      location: geneInfo.tab
+      size: 22
+    - class: File
+      location: Genome
+      size: 262144
+    - class: File
+      location: genomeParameters.txt
+      size: 743
+    - class: File
+      location: Log.out
+      size: 15822
+    - class: File
+      location: SA
+      size: 136714
+    - class: File
+      location: SAindex
+      size: 1565873619
+    - class: File
+      location: sjdbInfo.txt
+      size: 6
+    - class: File
+      location: sjdbList.fromGTF.out.tab
+      size: 0
+    - class: File
+      location: sjdbList.out.tab
+      size: 0
+    - class: File
+      location: transcriptInfo.tab
+      size: 63
+
+
+- job: ./star-index.json
+  tool: ../workflows/scidap/star-index.cwl
+  output:
+    chr_length:
+      class: File
+      location: chrNameLength.txt
+      size: 11
+    indices_folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: chrLength.txt
+        size: 6
+      - class: File
+        location: chrName.txt
+        size: 5
+      - class: File
+        location: chrNameLength.txt
+        size: 11
+      - class: File
+        location: chrStart.txt
+        size: 9
+      - class: File
+        location: exonGeTrInfo.tab
+        size: 33
+      - class: File
+        location: exonInfo.tab
+        size: 19
+      - class: File
+        location: geneInfo.tab
+        size: 22
+      - class: File
+        location: Genome
+        size: 262144
+      - class: File
+        location: genomeParameters.txt
+        size: 743
+      - class: File
+        location: Log.out
+        size: 15822
+      - class: File
+        location: SA
+        size: 136714
+      - class: File
+        location: SAindex
+        size: 1565873619
+      - class: File
+        location: sjdbInfo.txt
+        size: 6
+      - class: File
+        location: sjdbList.fromGTF.out.tab
+        size: 0
+      - class: File
+        location: sjdbList.out.tab
+        size: 0
+      - class: File
+        location: transcriptInfo.tab
+        size: 63
+
+- job: ./bowtie-build.json
+  tool: ../tools/bowtie-build.cwl
+  output:
+    indices:
+      class: File
+      location: bowtie_indices.1.ebwt
+      secondaryFiles:
+      - class: File
+        location: bowtie_indices.2.ebwt
+        size: 5748
+      - class: File
+        location: bowtie_indices.3.ebwt
+        size: 17
+      - class: File
+        location: bowtie_indices.4.ebwt
+        size: 11480
+      - class: File
+        location: bowtie_indices.rev.1.ebwt
+        size: 4207655
+      - class: File
+        location: bowtie_indices.rev.2.ebwt
+        size: 5748
+      size: 4207655
+    output_log:
+      class: File
+      location: bowtie_indices.log
+      size: 11165
+
+
+- job: ./files-to-folder.json
+  tool: ../expressiontools/files-to-folder.cwl
+  output:
+    folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: test.trimmed.bam
+        size: 50487
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+
+- job: ./files-to-folder-secondary-files.json
+  tool: ../expressiontools/files-to-folder.cwl
+  output:
+    folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: small.fa
+        size: 46500
+      - class: File
+        location: test.trimmed.bam
+        size: 50487
+      - class: File
+        location: chrM.fa
+        size: 16909
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+
+- job: ./bowtie-index.json
+  tool: ../workflows/scidap/bowtie-index.cwl
+  output:
+    indices_folder:
+      class: Directory
+      location: folder
+      listing:
+      - class: File
+        location: bowtie_indices.1.ebwt
+        size: 4199206
+      - class: File
+        location: bowtie_indices.2.ebwt
+        size: 2076
+      - class: File
+        location: bowtie_indices.3.ebwt
+        size: 17
+      - class: File
+        location: bowtie_indices.4.ebwt
+        size: 4143
+      - class: File
+        location: bowtie_indices.rev.1.ebwt
+        size: 4199206
+      - class: File
+        location: bowtie_indices.rev.2.ebwt
+        size: 2076
+
+- job: ./samtools-sort-index-2.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+      size: 50487
