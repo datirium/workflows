@@ -1,0 +1,6 @@
+{
+    "input_filename": {"class": "File", "location": "./data/mm10/macs_peaks.xls", "format": "http://edamontology.org/format_3475"},
+    "annotation_filename": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv", "format": "http://edamontology.org/format_3475"},
+    "output_filename": "iaintersect_res.tsv",
+    "log_filename": "iaintersect_res.log"
+}
