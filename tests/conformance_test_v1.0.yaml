@@ -1,3 +1,15 @@
+- job: ./iaintersect.json
+  tool: ../tools/iaintersect.cwl
+  output:
+    log:
+      class: File
+      location: macs_peaks_iaintersect.log
+      size: 0
+    result:
+      class: File
+      location: macs_peaks_iaintersect.tsv
+      size: 560115
+
 - job: ./python-get-stat.json
   tool: ../tools/python-get-stat.cwl
   output:
