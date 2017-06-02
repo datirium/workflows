@@ -21,39 +21,58 @@ inputs:
     label: "BOWTIE indices folder"
     doc: "Path to BOWTIE generated indices folder"
 
+  annotation_input_file:
+    type: File
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated input annotation file"
+
   clip_3p_end:
-    type: int
+    type: int?
+    default: 0
+    sd: advanced
     label: "Clip from 3p end"
     doc: "Number of bases to clip from the 3p end"
 
   clip_5p_end:
-    type: int
+    type: int?
+    default: 0
+    sd: advanced
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
   threads:
     type: int?
+    default: 2
+    sd: system
     label: "Threads"
     doc: "Number of threads for those steps that support multithreading"
 
   remove_duplicates:
-    type: boolean
+    type: boolean?
+    default: false
+    sd: advanced
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
   control_file:
     type: File?
+#    default: null
     label: "Control BAM file"
     format: "http://edamontology.org/format_2572"
     doc: "Control BAM file file for MACS2 peak calling"
 
   exp_fragment_size:
-    type: int
+    type: int?
+    default: 150
+    sd: advanced
     label: "Expected fragment size"
     doc: "Expected fragment size for MACS2"
 
   force_fragment_size:
-    type: boolean
+    type: boolean?
+    default: false
+    sd: advanced
     label: "Force fragment size"
     doc: "Force MACS2 to use exp_fragment_size"
 
@@ -95,6 +114,34 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "BOWTIE generated alignment log"
     outputSource: bowtie_aligner/output_bowtie_log
+
+  iaintersect_log:
+    type: File
+    label: "Island intersect log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Iaintersect generated log"
+    outputSource: island_intersect/log
+
+  iaintersect_result:
+    type: File
+    label: "Island intersect results"
+    format: "http://edamontology.org/format_3475"
+    doc: "Iaintersect generated results"
+    outputSource: island_intersect/result
+
+  atdp_log:
+    type: File
+    label: "ATDP log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated log"
+    outputSource: average_tag_density/log
+
+  atdp_result:
+    type: File
+    label: "ATDP results"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated results"
+    outputSource: average_tag_density/result
 
   samtools_rmdup_log:
     type: File
@@ -368,14 +415,50 @@ steps:
         rmdup_log: samtools_rmdup/rmdup_log
       out: [output]
 
+  island_intersect:
+      run: ../../tools/iaintersect.cwl
+      in:
+        input_filename: macs2_callpeak_forced/peak_xls_file
+        annotation_filename: annotation_input_file
+        promoter_bp:
+          default: 1000
+      out: [result, log]
+
+  average_tag_density:
+      run: ../../tools/atdp.cwl
+      in:
+        input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
+        annotation_filename: annotation_input_file
+        fragmentsize_bp:
+          source: [exp_fragment_size, macs_island_count/fragments]
+          valueFrom: |
+            ${
+              if (parseInt(self[1]) < 80){
+                return parseInt(self[0]);
+              };
+              return parseInt(self[1]);
+            }
+        avd_window_bp:
+          default: 5000
+        avd_smooth_bp:
+          default: 50
+        ignore_chr:
+          default: chrM
+        double_chr:
+          default: "chrX chrY"
+        avd_heat_window_bp:
+          default: 200
+      out: [result, log]
+
+
 $namespaces:
   s: http://schema.org/
 
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "run-dna-single-end"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/run-dna-single-end.cwl
+s:name: "chipseq-se"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/chipseq-se.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -410,13 +493,13 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Current workflow is used to run CHIP-Seq basic analysis with single-end input FASTQ file.
+  Runs ChIP-Seq basic analysis with single-end input data (FASTQ).
   In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
   statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
   data in a form of narrowPeak or broadPeak files.
 
 s:about: >
-  Current workflow is used to run CHIP-Seq basic analysis with single-end input FASTQ file.
+  Runs CHIP-Seq basic analysis with single-end input FASTQ file.
   In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
   statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
   data in a form of narrowPeak or broadPeak files.

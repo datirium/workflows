@@ -27,7 +27,6 @@ inputs:
       position: 1
       prefix: --in=
       separate: false
-    format: "http://edamontology.org/format_2572"
     secondaryFiles: |
       ${
         return {"location": self.location+".bai", "class": "File"};
@@ -42,9 +41,8 @@ inputs:
       position: 2
       prefix: --a=
       separate: false
-    format: "http://edamontology.org/format_3475"
     doc: |
-      Annotation file
+      Annotation file, tsv
 
   output_filename:
     type:
@@ -140,6 +138,18 @@ inputs:
       separate: false
     doc: |
       The chromosomes to be doubled, string
+
+  avd_heat_window_bp:
+    type:
+      - "null"
+      - int
+    inputBinding:
+      position: 10
+      prefix: --avd_heat_window=
+      separate: false
+    doc: |
+      Average tag density window for heatmap
+
 
 outputs:
   log:

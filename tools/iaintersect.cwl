@@ -27,9 +27,8 @@ inputs:
       position: 1
       prefix: --in=
       separate: false
-    format: "http://edamontology.org/format_3475"
     doc: |
-      Input filename with MACS2 peak calling results
+      Input filename with MACS2 peak calling results, tsv
 
   annotation_filename:
     type:
@@ -38,9 +37,8 @@ inputs:
       position: 2
       prefix: --a=
       separate: false
-    format: "http://edamontology.org/format_3475"
     doc: |
-      Annotation file
+      Annotation file, tsv
 
   output_filename:
     type:
