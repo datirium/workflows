@@ -2,14 +2,14 @@
 # Dockerfile
 #
 # Software:         iaintersect
-# Software Version: 0.0.1
+# Software Version: 0.0.2
 # Description:      BioWardrobe iaintersect image for SciDAP
 # Website:          https://github.com/Barski-lab/iaintersect, http://scidap.com/
 # Provides:         iaintersect
-# Base Image:       biowardrobe2/iaintersect:v0.0.1
-# Build Cmd:        docker build --rm -t biowardrobe2/iaintersect:v0.0.1 -f iaintersect-Dockerfile .
-# Pull Cmd:         docker pull biowardrobe2/iaintersect:v0.0.1
-# Run Cmd:          docker run --rm -ti biowardrobe2/iaintersect:v0.0.1 iaintersect
+# Base Image:       biowardrobe2/iaintersect:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/iaintersect:v0.0.2 -f iaintersect-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/iaintersect:v0.0.2
+# Run Cmd:          docker run --rm -ti biowardrobe2/iaintersect:v0.0.2 iaintersect
 #################################################################
 
 ### Base Image
@@ -23,7 +23,7 @@ WORKDIR /tmp
 
 ### Installing iaintersect
 
-ENV VERSION 0.0.1
+ENV VERSION 0.0.2
 ENV NAME iaintersect
 ENV URL "https://github.com/Barski-lab/${NAME}/archive/v${VERSION}.tar.gz"
 
