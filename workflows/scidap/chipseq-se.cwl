@@ -157,49 +157,49 @@ outputs:
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
 
-  macs_called_peaks:
+  macs2_called_peaks:
     type: File?
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"
     doc: "XLS file to include information about called peaks"
     outputSource: macs2_callpeak_forced/peak_xls_file
 
-  macs_narrow_peaks:
+  macs2_narrow_peaks:
     type: File?
     label: "Narrow peaks"
     format: "http://edamontology.org/format_3613"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
     outputSource: macs2_callpeak_forced/narrow_peak_file
 
-  macs_broad_peaks:
+  macs2_broad_peaks:
     type: File?
     label: "Broad peaks"
     format: "http://edamontology.org/format_3614"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
     outputSource: macs2_callpeak_forced/broad_peak_file
 
-  macs_peak_summits:
+  macs2_peak_summits:
     type: File?
     label: "Peak summits"
     format: "http://edamontology.org/format_3003"
     doc: "Contains the peak summits locations for every peaks"
     outputSource: macs2_callpeak_forced/peak_summits_file
 
-  macs_moder_r:
+  macs2_moder_r:
     type: File?
     label: "MACS2 generated R script"
     format: "http://edamontology.org/format_2330"
     doc: "R script to produce a PDF image about the model based on your data"
     outputSource: macs2_callpeak_forced/moder_r_file
 
-  macs_gapped_peak:
+  macs2_gapped_peak:
     type: File?
     label: "Gapped peak"
     format: "http://edamontology.org/format_3586"
     doc: "Contains both the broad region and narrow peaks"
     outputSource: macs2_callpeak_forced/gapped_peak_file
 
-  macs_log:
+  macs2_log:
     type: File?
     label: "MACS2 log"
     format: "http://edamontology.org/format_2330"
@@ -212,6 +212,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output
+
+  macs2_fragment_stat:
+    type: File?
+    label: "FRAGMENT, FRAGMENTE, ISLANDS"
+    format: "http://edamontology.org/format_2330"
+    doc: "fragment, calculated fragment, islands count from MACS2 results"
+    outputSource: macs2_stat/fragment_stat_file
 
 steps:
 
@@ -332,7 +339,7 @@ steps:
       - control_lambda_bdg_file
       - macs_log
 
-  macs_island_count:
+  macs2_island_count:
     run: ../../tools/macs2-island-count.cwl
     in:
       input_file: macs2_callpeak/peak_xls_file
@@ -342,7 +349,7 @@ steps:
     run: ../../tools/macs2-callpeak.cwl
     in:
       trigger:
-        source: [force_fragment_size, macs_island_count/fragments]
+        source: [force_fragment_size, macs2_island_count/fragments]
         valueFrom: |
           ${
             return !self[0] && parseInt(self[1]) < 80;
@@ -394,6 +401,36 @@ steps:
       - control_lambda_bdg_file
       - macs_log
 
+
+  macs2_island_count_forced:
+    run: ../../tools/macs2-island-count.cwl
+    in:
+      input_file: macs2_callpeak_forced/peak_xls_file
+    out: [fragments, islands]
+
+
+  macs2_stat:
+    run: ../../tools/macs2-stat.cwl
+    in:
+      fragments_old: macs2_island_count/fragments
+      islands_old:   macs2_island_count/islands
+      fragments_new: macs2_island_count_forced/fragments
+      islands_new:   macs2_island_count_forced/islands
+      trigger:
+        source: [force_fragment_size, macs2_island_count/fragments]
+        valueFrom: |
+          ${
+            return !self[0] && parseInt(self[1]) < 80;
+          }
+      output_filename:
+        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        valueFrom: |
+          ${
+            return self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_fragment_stat.tsv'
+          }
+    out: [fragment_stat_file]
+
+
   bamtools_stats:
     run: ../../tools/bamtools-stats.cwl
     in:
@@ -430,7 +467,7 @@ steps:
         input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
         annotation_filename: annotation_input_file
         fragmentsize_bp:
-          source: [exp_fragment_size, macs_island_count/fragments]
+          source: [exp_fragment_size, macs2_island_count/fragments]
           valueFrom: |
             ${
               if (parseInt(self[1]) < 80){
@@ -514,7 +551,7 @@ s:about: >
   (Step samtools_sort_index_after_rmdup) reruns samtools sort and samtools index with BAM and BAI files,
   if not - the step returns original unchanged input files. Right after that (Step macs2_callpeak)
   macs2 callpeak performs peak calling. On the base of returned outputs the next step
-  (Step macs_island_count) calculates the number and islands and estimated fragment size. If the last
+  (Step macs2_island_count) calculates the number and islands and estimated fragment size. If the last
   one is less that 80 (hardcoded in a workflow) macs2 callpeak is rerun again with forced fixed
   fragment size value (Step macs2_callpeak_forced). If at the very beginning it was set in workflow
   input parameters to run peak calling with fixed fragment size, this step is skipped and the

@@ -1,0 +1,8 @@
+{
+  "fragments_old": 50,
+  "fragments_new": 150,
+  "islands_old": 450,
+  "islands_new": 500,
+  "trigger": false,
+  "output_filename": "output.tsv"
+}
