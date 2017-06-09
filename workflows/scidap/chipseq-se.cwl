@@ -10,14 +10,23 @@ requirements:
 
 inputs:
 
-  fastq_input_file:
-    type: File
-    label: "FASTQ input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format, received after single end sequencing"
+# MAIN
+#        1       |       2       |       3       |       4
+# ---------------------------------------------------------------
+#|     bowtie_indices_folder     |         control_file          |
+# ---------------------------------------------------------------
+#|          broad_peak           |                               |
+# ---------------------------------------------------------------
+#|                       fastq_input_file                        |
+# ---------------------------------------------------------------
 
   bowtie_indices_folder:
     type: Directory
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: main
     label: "BOWTIE indices folder"
     doc: "Path to BOWTIE generated indices folder"
 
@@ -27,59 +36,10 @@ inputs:
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated input annotation file"
 
-  clip_3p_end:
-    type: int?
-    default: 0
-    sd: advanced
-    label: "Clip from 3p end"
-    doc: "Number of bases to clip from the 3p end"
-
-  clip_5p_end:
-    type: int?
-    default: 0
-    sd: advanced
-    label: "Clip from 5p end"
-    doc: "Number of bases to clip from the 5p end"
-
-  threads:
-    type: int?
-    default: 2
-    sd: system
-    label: "Threads"
-    doc: "Number of threads for those steps that support multithreading"
-
-  remove_duplicates:
-    type: boolean?
-    default: false
-    sd: advanced
-    label: "Remove duplicates"
-    doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
-
-  control_file:
-    type: File?
-#    default: null
-    label: "Control BAM file"
-    format: "http://edamontology.org/format_2572"
-    doc: "Control BAM file file for MACS2 peak calling"
-
-  exp_fragment_size:
-    type: int?
-    default: 150
-    sd: advanced
-    label: "Expected fragment size"
-    doc: "Expected fragment size for MACS2"
-
-  force_fragment_size:
-    type: boolean?
-    default: false
-    sd: advanced
-    label: "Force fragment size"
-    doc: "Force MACS2 to use exp_fragment_size"
-
-  broad_peak:
-    type: boolean
-    label: "Callpeak broad"
-    doc: "Set to call broad peak for MACS2"
+  genome_size:
+    type: string
+    label: "Effective genome size"
+    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
@@ -87,10 +47,110 @@ inputs:
     format: "http://edamontology.org/format_2330"
     doc: "Chromosome length file"
 
-  genome_size:
-    type: string
-    label: "Effective genome size"
-    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
+  control_file:
+    type: File?
+    default: null
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: main
+    label: "Control BAM file"
+    format: "http://edamontology.org/format_2572"
+    doc: "Control BAM file file for MACS2 peak calling"
+
+  broad_peak:
+    type: boolean
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: main
+    label: "Callpeak broad"
+    doc: "Set to call broad peak for MACS2"
+
+  fastq_input_file:
+    type: File
+    sd:
+    - group: layout
+      colspan: 4
+      rowspan: 1
+      page: main
+    label: "FASTQ input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Reads data in a FASTQ format, received after single end sequencing"
+
+# ADVANCED
+#        1       |       2       |       3       |       4
+# ---------------------------------------------------------------
+#|      exp_fragment_size        |     force_fragment_size       |
+# ---------------------------------------------------------------
+#|          clip_3p_end          |         clip_5p_end           |
+# ---------------------------------------------------------------
+#|      remove_duplicates        |                               |
+# ---------------------------------------------------------------
+
+  exp_fragment_size:
+    type: int?
+    default: 150
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: advanced
+    label: "Expected fragment size"
+    doc: "Expected fragment size for MACS2"
+
+  force_fragment_size:
+    type: boolean?
+    default: false
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: advanced
+    label: "Force fragment size"
+    doc: "Force MACS2 to use exp_fragment_size"
+
+  clip_3p_end:
+    type: int?
+    default: 0
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: advanced
+    label: "Clip from 3p end"
+    doc: "Number of bases to clip from the 3p end"
+
+  clip_5p_end:
+    type: int?
+    default: 0
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: advanced
+    label: "Clip from 5p end"
+    doc: "Number of bases to clip from the 5p end"
+
+  remove_duplicates:
+    type: boolean?
+    default: false
+    sd:
+    - group: layout
+      colspan: 2
+      rowspan: 1
+      page: advanced
+    label: "Remove duplicates"
+    doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
+
+# SYSTEM DEPENDENT
+
+  threads:
+    type: int?
+    default: 2
+    doc: "Number of threads for those steps that support multithreading"
 
 outputs:
 
