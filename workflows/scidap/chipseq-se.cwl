@@ -13,36 +13,39 @@ inputs:
 # MAIN
 #        1       |       2       |       3       |       4
 # ---------------------------------------------------------------
-#|     bowtie_indices_folder     |         control_file          |
+#|        indices_folder         |         control_file          |
 # ---------------------------------------------------------------
 #|          broad_peak           |                               |
 # ---------------------------------------------------------------
-#|                       fastq_input_file                        |
+#|                          fastq_file                           |
 # ---------------------------------------------------------------
 
-  bowtie_indices_folder:
+  indices_folder:
     type: Directory
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: main
+      advanced: false
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
     label: "BOWTIE indices folder"
     doc: "Path to BOWTIE generated indices folder"
 
-  annotation_input_file:
+  annotation_file:
     type: File
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated input annotation file"
 
   genome_size:
     type: string
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosome length file"
@@ -50,32 +53,30 @@ inputs:
   control_file:
     type: File?
     default: null
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: main
+      advanced: false
     label: "Control BAM file"
     format: "http://edamontology.org/format_2572"
     doc: "Control BAM file file for MACS2 peak calling"
 
   broad_peak:
     type: boolean
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: main
+      advanced: false
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
-  fastq_input_file:
+  fastq_file:
     type: File
     sd:
-    - group: layout
+    'sd:layout':
       colspan: 4
       rowspan: 1
-      page: main
+      advanced: false
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
@@ -93,55 +94,50 @@ inputs:
   exp_fragment_size:
     type: int?
     default: 150
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: advanced
+      advanced: true
     label: "Expected fragment size"
     doc: "Expected fragment size for MACS2"
 
   force_fragment_size:
     type: boolean?
     default: false
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: advanced
+      advanced: true
     label: "Force fragment size"
     doc: "Force MACS2 to use exp_fragment_size"
 
   clip_3p_end:
     type: int?
     default: 0
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: advanced
+      advanced: true
     label: "Clip from 3p end"
     doc: "Number of bases to clip from the 3p end"
 
   clip_5p_end:
     type: int?
     default: 0
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: advanced
+      advanced: true
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
   remove_duplicates:
     type: boolean?
     default: false
-    sd:
-    - group: layout
+    'sd:layout':
       colspan: 2
       rowspan: 1
-      page: advanced
+      advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
@@ -285,14 +281,14 @@ steps:
   fastx_quality_stats:
     run: ../../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_input_file
+      input_file: fastq_file
     out: [statistics]
 
   bowtie_aligner:
     run: ../../tools/bowtie.cwl
     in:
-      filelist: fastq_input_file
-      indices_folder: bowtie_indices_folder
+      filelist: fastq_file
+      indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
       v:
@@ -516,7 +512,7 @@ steps:
       run: ../../tools/iaintersect.cwl
       in:
         input_filename: macs2_callpeak_forced/peak_xls_file
-        annotation_filename: annotation_input_file
+        annotation_filename: annotation_file
         promoter_bp:
           default: 1000
       out: [result, log]
@@ -525,7 +521,7 @@ steps:
       run: ../../tools/atdp.cwl
       in:
         input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
-        annotation_filename: annotation_input_file
+        annotation_filename: annotation_file
         fragmentsize_bp:
           source: [exp_fragment_size, macs2_island_count/fragments]
           valueFrom: |
