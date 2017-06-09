@@ -9,6 +9,11 @@ requirements:
 
 inputs:
 
+  genome:
+    type: string?
+    label: "Genome"
+    doc: "Used by BioWardrobe to set genome"
+
   fasta_input_file:
     type: File
     label: "FASTA input file"
