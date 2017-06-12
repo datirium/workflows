@@ -17,7 +17,7 @@ inputs:
 # ---------------------------------------------------------------
 #|          broad_peak           |                               |
 # ---------------------------------------------------------------
-#|                          fastq_file                           |
+#|      fastq_file_upstream      |      fastq_file_downstream    |
 # ---------------------------------------------------------------
 
   indices_folder:
@@ -70,16 +70,27 @@ inputs:
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
-  fastq_file:
+  fastq_file_upstream:
     type: File
     sd:
     'sd:layout':
-      colspan: 4
+      colspan: 2
       rowspan: 1
       advanced: false
-    label: "FASTQ input file"
+    label: "FASTQ upstream input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format, received after single end sequencing"
+    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
+
+  fastq_file_downstream:
+    type: File
+    sd:
+    'sd:layout':
+      colspan: 2
+      rowspan: 1
+      advanced: false
+    label: "FASTQ downstream input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
 
 # ADVANCED
 #        1       |       2       |       3       |       4
@@ -157,12 +168,19 @@ outputs:
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/outfile
 
-  fastx_statistics:
+  fastx_statistics_upstream:
     type: File
-    label: "FASTQ statistics"
+    label: "FASTQ upstream statistics"
     format: "http://edamontology.org/format_2330"
-    doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-    outputSource: fastx_quality_stats/statistics
+    doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
+    outputSource: fastx_quality_stats_upstream/statistics
+
+  fastx_statistics_downstream:
+    type: File
+    label: "FASTQ downstream statistics"
+    format: "http://edamontology.org/format_2330"
+    doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
+    outputSource: fastx_quality_stats_downstream/statistics
 
   bowtie_log:
     type: File
@@ -278,16 +296,23 @@ outputs:
 
 steps:
 
-  fastx_quality_stats:
+  fastx_quality_stats_upstream:
     run: ../../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file
+      input_file: fastq_file_upstream
+    out: [statistics]
+
+  fastx_quality_stats_downstream:
+    run: ../../tools/fastx-quality-stats.cwl
+    in:
+      input_file: fastq_file_downstream
     out: [statistics]
 
   bowtie_aligner:
     run: ../../tools/bowtie.cwl
     in:
-      filelist: fastq_file
+      filelist: fastq_file_upstream
+      filelist_mates: fastq_file_downstream
       indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -318,8 +343,6 @@ steps:
     in:
       trigger: remove_duplicates
       input_file: samtools_sort_index/bam_bai_pair
-      single_end:
-        default: true
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
@@ -381,7 +404,7 @@ steps:
       q_value:
         default: 0.05
       format:
-        default: BAM
+        default: BAMPE
       buffer_size:
         default: 10000
     out:
@@ -443,7 +466,7 @@ steps:
       q_value:
         default: 0.05
       format:
-        default: BAM
+        default: BAMPE
       buffer_size:
         default: 10000
     out:
@@ -499,6 +522,8 @@ steps:
       input: samtools_sort_index_after_rmdup/bam_bai_pair
       genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
+      pairchip:
+        default: true
     out: [outfile]
 
   get_stat:
@@ -550,8 +575,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "chipseq-se"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/chipseq-se.cwl
+s:name: "chipseq-pe"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/chipseq-pe.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -586,23 +611,24 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Runs ChIP-Seq BioWardrobe basic analysis with single-end input data (FASTQ file).
-  In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
-  statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
-  data in a form of narrowPeak or broadPeak files, islands with the assigned nearest genes and
-  region type, data for average tag density plot (on the base of BAM file).
+  Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data (upstream and downstream
+  FASTQ file). In outputs it returns coordinate sorted BAM file alongside with index BAI file,
+  quality statistics for both the input FASTQ files, reads coverage in a form of BigWig file,
+  peaks calling data in a form of narrowPeak or broadPeak files, islands with the assigned nearest
+  genes and region type, data for average tag density plot (on the base of BAM file).
 
 s:about: >
-  Runs CHIP-Seq basic analysis with single-end input data (FASTQ file).
-  In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
-  statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
-  data in a form of narrowPeak or broadPeak files, islands with the assigned nearest genes and
-  region type, data for average tag density plot (on the base of BAM file).
-  Workflow starts with running fastx_quality_stats (step fastx_quality_stats) from FASTX-Toolkit
-  to calculate quality statistics for input FASTQ file. At the same time Bowtie is used to align
-  reads from input FASTQ file to reference genome (Step bowtie_aligner). The output of this step
-  is unsorted SAM file which is being sorted and indexed by samtools sort and samtools index
-  (Step samtools_sort_index). Depending on workflow’s input parameters indexed and sorted BAM file
+  Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data (upstream and downstream
+  FASTQ file). In outputs it returns coordinate sorted BAM file alongside with index BAI file,
+  quality statistics for both the input FASTQ files, reads coverage in a form of BigWig file,
+  peaks calling data in a form of narrowPeak or broadPeak files, islands with the assigned nearest
+  genes and region type, data for average tag density plot (on the base of BAM file).
+  Workflow starts with running fastx_quality_stats (steps fastx_quality_stats_upstream and
+  fastx_quality_stats_downstream) from FASTX-Toolkit to calculate quality statistics for both upstream
+  and downstream input FASTQ files. At the same time Bowtie is used to align reads from input FASTQ
+  files to reference genome (Step bowtie_aligner). The output of this step is unsorted SAM file which
+  is being sorted and indexed by samtools sort and samtools index (Step samtools_sort_index).
+  Depending on workflow’s input parameters indexed and sorted BAM file
   could be processed by samtools rmdup (Step samtools_rmdup) to remove all possible read duplicates.
   In a case when removing duplicates is not necessary the step returns original input BAM and BAI
   files without any processing. If the duplicates were removed the following step
