@@ -8,6 +8,7 @@ inputs:
     type: string
   catalog:
     type: string?
+  description: text
 
 outputs: []
 

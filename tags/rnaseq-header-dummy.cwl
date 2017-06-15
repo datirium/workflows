@@ -6,6 +6,7 @@ inputs:
     type: string
   conditions:
     type: string
+  description: text
 
 outputs: []
 
