@@ -57,6 +57,7 @@ inputs:
       colspan: 2
       rowspan: 1
       advanced: false
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/chipseq-se.cwl"
     label: "Control BAM file"
     format: "http://edamontology.org/format_2572"
     doc: "Control BAM file file for MACS2 peak calling"
@@ -67,6 +68,7 @@ inputs:
       colspan: 2
       rowspan: 1
       advanced: false
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/tags/antibody-dummy.cwl"
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
