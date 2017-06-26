@@ -1,3 +1,11 @@
+- job: ./bzip2.json
+  tool: ../tools/bzip2.cwl
+  output:
+    output:
+      class: File
+      location: chr21.fastq.bz2
+      size: 707263
+
 - job: ./macs2-stat.json
   tool: ../tools/macs2-stat.cwl
   output:
