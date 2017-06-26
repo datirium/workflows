@@ -294,6 +294,18 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_stat/fragment_stat_file
 
+  fastq_compressed_upstream:
+    type: File
+    label: "Compressed upstream FASTQ"
+    doc: "bz2 compressed upstream FASTQ file"
+    outputSource: bzip_upstream/output
+
+  fastq_compressed_downstream:
+    type: File
+    label: "Compressed downstream FASTQ"
+    doc: "bz2 compressed downstream FASTQ file"
+    outputSource: bzip_downstream/output
+
 steps:
 
   fastx_quality_stats_upstream:
@@ -307,6 +319,18 @@ steps:
     in:
       input_file: fastq_file_downstream
     out: [statistics]
+
+  bzip_upstream:
+    run: ../../tools/bzip2.cwl
+    in:
+      input_file: fastq_file_upstream
+    out: [output]
+
+  bzip_downstream:
+    run: ../../tools/bzip2.cwl
+    in:
+      input_file: fastq_file_downstream
+    out: [output]
 
   bowtie_aligner:
     run: ../../tools/bowtie.cwl

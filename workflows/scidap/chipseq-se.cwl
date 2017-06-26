@@ -278,6 +278,12 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_stat/fragment_stat_file
 
+  fastq_compressed:
+    type: File
+    label: "Compressed FASTQ"
+    doc: "bz2 compressed FASTQ file"
+    outputSource: bzip/output
+
 steps:
 
   fastx_quality_stats:
@@ -285,6 +291,12 @@ steps:
     in:
       input_file: fastq_file
     out: [statistics]
+
+  bzip:
+    run: ../../tools/bzip2.cwl
+    in:
+      input_file: fastq_file
+    out: [output]
 
   bowtie_aligner:
     run: ../../tools/bowtie.cwl
