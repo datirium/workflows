@@ -1,3 +1,4 @@
 {
-  "treatment": {"location": "./data/bam/macs2_test.bam", "class": "File"}
+  "treatment": {"location": "./data/bam/macs2_test.bam", "class": "File"},
+  "format_mode": "BAM"
 }

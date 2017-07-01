@@ -158,7 +158,7 @@ inputs:
     doc: |
       The control or mock data file. Please follow the same direction as for -t/–treatment.
 
-  format:
+  format_mode:
     type:
       - "null"
       - string

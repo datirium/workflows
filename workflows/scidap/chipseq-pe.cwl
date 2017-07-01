@@ -427,7 +427,7 @@ steps:
         default: auto
       q_value:
         default: 0.05
-      format:
+      format_mode:
         default: BAMPE
       buffer_size:
         default: 10000
@@ -489,7 +489,7 @@ steps:
         default: auto
       q_value:
         default: 0.05
-      format:
+      format_mode:
         default: BAMPE
       buffer_size:
         default: 10000
