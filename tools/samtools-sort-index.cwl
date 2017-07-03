@@ -7,8 +7,18 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
 - class: InitialWorkDirRequirement
-  listing:
-    - $(inputs.sort_input)
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.sort_input,
+                  "entryname": inputs.sort_input.basename,
+                  "writable": true
+                }
+              ]
+    }
+
+
 - class: InlineJavascriptRequirement
   expressionLib:
   - var ext = function() {
@@ -119,7 +129,6 @@ inputs:
     type: File
     inputBinding:
       position: 16
-      valueFrom: $(self.basename)           # Why do we need this
     doc: |
       Input only in.sam|in.bam|in.cram
 

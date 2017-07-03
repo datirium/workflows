@@ -27,28 +27,76 @@ requirements:
     ${
       var listing = []
       if (inputs.peak_xls_file_staged){
-        listing.push(inputs.peak_xls_file_staged);
+        listing.push(
+          {
+            "entry": inputs.peak_xls_file_staged,
+            "entryname": inputs.peak_xls_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.narrow_peak_file_staged){
-        listing.push(inputs.narrow_peak_file_staged);
+        listing.push(
+          {
+            "entry": inputs.narrow_peak_file_staged,
+            "entryname": inputs.narrow_peak_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.broad_peak_file_staged){
-        listing.push(inputs.broad_peak_file_staged);
+        listing.push(
+          {
+            "entry": inputs.broad_peak_file_staged,
+            "entryname": inputs.broad_peak_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.gapped_peak_file_staged){
-        listing.push(inputs.gapped_peak_file_staged);
+        listing.push(
+          {
+            "entry": inputs.gapped_peak_file_staged,
+            "entryname": inputs.gapped_peak_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.peak_summits_file_staged){
-        listing.push(inputs.peak_summits_file_staged);
+        listing.push(
+          {
+            "entry": inputs.peak_summits_file_staged,
+            "entryname": inputs.peak_summits_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.moder_r_file_staged){
-        listing.push(inputs.moder_r_file_staged);
+        listing.push(
+          {
+            "entry": inputs.moder_r_file_staged,
+            "entryname": inputs.moder_r_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.treat_pileup_bdg_file_staged){
-        listing.push(inputs.treat_pileup_bdg_file_staged);
+        listing.push(
+          {
+            "entry": inputs.treat_pileup_bdg_file_staged,
+            "entryname": inputs.treat_pileup_bdg_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       if (inputs.control_lambda_bdg_file_staged){
-        listing.push(inputs.control_lambda_bdg_file_staged);
+        listing.push(
+          {
+            "entry": inputs.control_lambda_bdg_file_staged,
+            "entryname": inputs.control_lambda_bdg_file_staged.basename,
+            "writable": true
+          }
+        )
       }
       return listing;
     }

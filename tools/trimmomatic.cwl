@@ -8,16 +8,17 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: ShellCommandRequirement
   - class: InitialWorkDirRequirement
-    listing:
-      - $(inputs.input_read1_fastq_file)
-      - ${
-            if (inputs.input_read2_fastq_file)
-            {
-              return inputs.input_read2_fastq_file;
-            } else {
-              return inputs.input_read1_fastq_file;
-            }
-         }
+    listing: |
+      ${
+        var listing = []
+        if (inputs.input_read1_fastq_file){
+          listing.push(inputs.input_read1_fastq_file);
+        }
+        if (inputs.input_read2_fastq_file){
+          listing.push(inputs.input_read2_fastq_file);
+        }
+        return listing;
+      }
   - class: InlineJavascriptRequirement
     expressionLib:
     - var getExtension = function() {
