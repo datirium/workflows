@@ -7,8 +7,16 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
 - class: InitialWorkDirRequirement
-  listing:
-    - $(inputs.sort_input)
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.sort_input,
+                  "entryname": inputs.sort_input.basename,
+                  "writable": true
+                }
+              ]
+    }
 - class: InlineJavascriptRequirement
   expressionLib:
   - var ext = function() {
@@ -22,7 +30,7 @@ requirements:
     };
   - var default_output_name = function() {
       if (inputs.trigger == true){
-        return inputs.sort_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.sorted'+ext();
+        return inputs.sort_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ext();
       } else {
         return inputs.sort_input.location.split('/').slice(-1)[0];
       }
@@ -43,7 +51,6 @@ inputs:
       #!/bin/bash
       if [ "$0" = True ]
       then
-        echo "Run: samtools sort " ${@:1}
         samtools sort "${@:1}"
       else
         echo "Skip samtools sort " ${@:1}
