@@ -35,13 +35,11 @@ outputs:
 
   genome_size:
     type: string?
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File?
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosome length file"
@@ -105,7 +103,8 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-s:about: >
+s:about: |
   Current workflow should be used to generate BOWTIE genome indices files. It performs the following steps:
+
   1. Use BOWTIE to generate genome indices files on the base of input FASTA, return results as group of main and secondary files
   2. Transform indices files from the previous step into the Direcotry data type
