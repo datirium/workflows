@@ -9,15 +9,19 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-      if (inputs.trigger == true){
-        return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".r.bam";
-      } else {
-        return inputs.input_file.location.split('/').slice(-1)[0];
-      }
-    };
+          return inputs.input_file.location.split('/').slice(-1)[0];
+        };
 - class: InitialWorkDirRequirement
-  listing:
-    - $(inputs.input_file)
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.input_file,
+                  "entryname": inputs.input_file.basename,
+                  "writable": true
+                }
+              ]
+    }
 
 hints:
 - class: DockerRequirement
@@ -124,7 +128,7 @@ outputs:
       glob: |
         ${
           if (inputs.output_filename == null || inputs.trigger == false){
-            return default_output_filename().split('.').slice(0,-2).join('.') + '.rmdup';
+            return default_output_filename().split('.').slice(0,-1).join('.') + '.rmdup';
           } else {
             return inputs.output_filename.split('.').slice(0,-1).join('.') + '.rmdup';
           }
@@ -136,7 +140,7 @@ arguments:
   - valueFrom: |
       ${
         if (inputs.output_filename == null || inputs.trigger == false){
-          return " > " + default_output_filename().split('.').slice(0,-2).join('.') + ".rmdup 2>&1";
+          return " > " + default_output_filename().split('.').slice(0,-1).join('.') + ".rmdup 2>&1";
         } else {
           return " > " + inputs.output_filename.split('.').slice(0,-1).join('.') + ".rmdup 2>&1";
         }
