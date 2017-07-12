@@ -336,32 +336,11 @@ steps:
         default: "4 40"
       verbose:
         default: 3
-      nomodel:
-        source: force_fragment_size
-        valueFrom: |
-          ${
-            return Boolean(self);
-          }
-      extsize:
-        source: [force_fragment_size, exp_fragment_size]
-        valueFrom: |
-          ${
-            if (self[0]){
-              return self[1];
-            } else {
-              return null;
-            }
-          }
-      bw:
-        source: [force_fragment_size, exp_fragment_size]
-        valueFrom: |
-          ${
-            if (!self[0]){
-              return self[1];
-            } else {
-              return null;
-            }
-          }
+      nomodel: force_fragment_size
+      extsize: exp_fragment_size
+      bw: exp_fragment_size
+      fix_bimodal:
+        default: true
       broad: broad_peak
       call_summits:
         source: broad_peak
