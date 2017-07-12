@@ -22,30 +22,26 @@ inputs:
 
   indices_folder:
     type: Directory
-    'sd:layout':
-      colspan: 2
-      rowspan: 1
-      advanced: false
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
     label: "BOWTIE indices folder"
     doc: "Path to BOWTIE generated indices folder"
 
   annotation_file:
     type: File
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated input annotation file"
 
   genome_size:
     type: string
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosome length file"
@@ -53,41 +49,24 @@ inputs:
   control_file:
     type: File?
     default: null
-    'sd:layout':
-      colspan: 2
-      rowspan: 1
-      advanced: false
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/chipseq-se.cwl"
     label: "Control BAM file"
     format: "http://edamontology.org/format_2572"
     doc: "Control BAM file file for MACS2 peak calling"
 
   broad_peak:
     type: boolean
-    'sd:layout':
-      colspan: 2
-      rowspan: 1
-      advanced: false
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
   fastq_file_upstream:
     type: File
-    sd:
-    'sd:layout':
-      colspan: 2
-      rowspan: 1
-      advanced: false
     label: "FASTQ upstream input file"
     format: "http://edamontology.org/format_1930"
     doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
     type: File
-    sd:
-    'sd:layout':
-      colspan: 2
-      rowspan: 1
-      advanced: false
     label: "FASTQ downstream input file"
     format: "http://edamontology.org/format_1930"
     doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
@@ -106,8 +85,6 @@ inputs:
     type: int?
     default: 150
     'sd:layout':
-      colspan: 2
-      rowspan: 1
       advanced: true
     label: "Expected fragment size"
     doc: "Expected fragment size for MACS2"
@@ -116,8 +93,6 @@ inputs:
     type: boolean?
     default: false
     'sd:layout':
-      colspan: 2
-      rowspan: 1
       advanced: true
     label: "Force fragment size"
     doc: "Force MACS2 to use exp_fragment_size"
@@ -126,8 +101,6 @@ inputs:
     type: int?
     default: 0
     'sd:layout':
-      colspan: 2
-      rowspan: 1
       advanced: true
     label: "Clip from 3p end"
     doc: "Number of bases to clip from the 3p end"
@@ -136,8 +109,6 @@ inputs:
     type: int?
     default: 0
     'sd:layout':
-      colspan: 2
-      rowspan: 1
       advanced: true
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
@@ -146,8 +117,6 @@ inputs:
     type: boolean?
     default: false
     'sd:layout':
-      colspan: 2
-      rowspan: 1
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
@@ -157,6 +126,9 @@ inputs:
   threads:
     type: int?
     default: 2
+    'sd:layout':
+      advanced: true
+    label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
 
 outputs:
@@ -634,19 +606,18 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: |
+doc: >
+  Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data files.
+
+s:about: |
   Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data (upstream and downstream
-  FASTQ file). In outputs it returns coordinate sorted BAM file alongside with index BAI file,
+  FASTQ file).
+
+  In outputs it returns coordinate sorted BAM file alongside with index BAI file,
   quality statistics for both the input FASTQ files, reads coverage in a form of BigWig file,
   peaks calling data in a form of narrowPeak or broadPeak files, islands with the assigned nearest
   genes and region type, data for average tag density plot (on the base of BAM file).
 
-s:about: >
-  Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data (upstream and downstream
-  FASTQ file). In outputs it returns coordinate sorted BAM file alongside with index BAI file,
-  quality statistics for both the input FASTQ files, reads coverage in a form of BigWig file,
-  peaks calling data in a form of narrowPeak or broadPeak files, islands with the assigned nearest
-  genes and region type, data for average tag density plot (on the base of BAM file).
   Workflow starts with running fastx_quality_stats (steps fastx_quality_stats_upstream and
   fastx_quality_stats_downstream) from FASTX-Toolkit to calculate quality statistics for both upstream
   and downstream input FASTQ files. At the same time Bowtie is used to align reads from input FASTQ
