@@ -104,6 +104,9 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
+doc: >
+  Workflow makes indices for bowtie v1.2.0 (12/30/2016).
+
 s:about: |
   Workflow makes indices for [bowtie](http://bowtie-bio.sourceforge.net/tutorial.shtml) v1.2.0 (12/30/2016).
 

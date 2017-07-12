@@ -130,6 +130,9 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
+doc: >
+  Workflow makes indices for STAR v2.5.3a (03/17/2017).
+
 s:about: |
   Workflow makes indices for [STAR](https://github.com/alexdobin/STAR) v2.5.3a (03/17/2017) PMID: [23104886](https://www.ncbi.nlm.nih.gov/pubmed/23104886).
 
