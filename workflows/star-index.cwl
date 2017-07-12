@@ -10,9 +10,10 @@ requirements:
 inputs:
 
   genome:
-    type: string?
+    type: string
     label: "Genome"
     doc: "Used by BioWardrobe to set genome"
+    "sd:showAs": "title"
 
   fasta_input_file:
     type: File
@@ -20,11 +21,25 @@ inputs:
     format: "http://edamontology.org/format_1929"
     doc: "Reference genome input FASTA file"
 
+  annotation_input_file:
+    type: File?
+    label: "GTF input file"
+    format: "http://edamontology.org/format_2306"
+    doc: "Annotation input file"
+
+  threads:
+    type: int?
+    label: "Number of threads to run tools"
+    doc: "Number of threads for those steps that support multithreading"
+    'sd:layout':
+      advanced: true
+
 outputs:
+
   indices_folder:
     type: Directory
-    label: "Bowtie indices folder"
-    doc: "Folder which includes all Bowtie generated indices files"
+    label: "STAR indices folder"
+    doc: "Folder which includes all STAR generated indices files"
     outputSource: files_to_folder/folder
 
   annotation_file:
@@ -39,23 +54,35 @@ outputs:
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
-    type: File?
+    type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
+    outputSource: get_chr_length_file/selected_file
     doc: "Chromosome length file"
 
 steps:
-  bowtie_generate_indices:
-    run: ../tools/bowtie-build.cwl
+  star_generate_indices:
+    run: ../../tools/star-genomegenerate.cwl
     in:
-      reference_in: fasta_input_file
+      genome_fasta_files: fasta_input_file
+      sjdb_gtf_file: annotation_input_file
+      threads: threads
     out: [indices]
 
   files_to_folder:
-    run: ../expressiontools/files-to-folder.cwl
+    run: ../../expressiontools/files-to-folder.cwl
     in:
-      input_files: bowtie_generate_indices/indices
+      input_files: star_generate_indices/indices
     out: [folder]
+
+  get_chr_length_file:
+    run: ../../expressiontools/get-file-by-name.cwl
+    in:
+      input_files: star_generate_indices/indices
+      basename_regex:
+        default: chrNameLength.txt
+    out: [selected_file]
+
 
 $namespaces:
   s: http://schema.org/
@@ -63,8 +90,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "bowtie-index"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl
+s:name: "star-index"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -104,7 +131,10 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 s:about: |
-  Current workflow should be used to generate BOWTIE genome indices files. It performs the following steps:
+  Workflow makes indices for [STAR](https://github.com/alexdobin/STAR) v2.5.3a (03/17/2017) PMID: [23104886](https://www.ncbi.nlm.nih.gov/pubmed/23104886).
 
-  1. Use BOWTIE to generate genome indices files on the base of input FASTA, return results as group of main and secondary files
-  2. Transform indices files from the previous step into the Direcotry data type
+  It performs the following steps:
+  1. Runs `STAR --runMode genomeGenerate` to generate indices, based on [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) and [GTF](http://mblab.wustl.edu/GTF2.html) input files, returns results as an array of files
+  2. Transforms array of files into [Direcotry](http://www.commonwl.org/v1.0/CommandLineTool.html#Directory) data type
+  3. Separates *chrNameLength.txt* file as an output
+
