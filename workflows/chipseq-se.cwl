@@ -576,7 +576,7 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: >
-  Runs ChIP-Seq BioWardrobe basic analysis for single-end data.
+  Runs ChIP-Seq BioWardrobe basic analysis with single-end data file.
 
 s:about: |
   Runs **ChIP-Seq** basic analysis with **single-end** input data (FASTQ file).
