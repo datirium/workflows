@@ -9,6 +9,12 @@ requirements:
 
 inputs:
 
+  genome:
+    type: string
+    label: "Genome"
+    doc: "Used by BioWardrobe to set genome"
+    "sd:showAs": "title"
+
   fasta_input_file:
     type: File
     label: "FASTA input file"
@@ -22,15 +28,32 @@ outputs:
     doc: "Folder which includes all Bowtie generated indices files"
     outputSource: files_to_folder/folder
 
+  annotation_file:
+    type: File?
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
+
+  genome_size:
+    type: string?
+    label: "Effective genome size"
+    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
+
+  chrom_length:
+    type: File?
+    label: "Chromosome length file"
+    format: "http://edamontology.org/format_2330"
+    doc: "Chromosome length file"
+
 steps:
   bowtie_generate_indices:
-    run: ../../tools/bowtie-build.cwl
+    run: ../tools/bowtie-build.cwl
     in:
       reference_in: fasta_input_file
     out: [indices]
 
   files_to_folder:
-    run: ../../expressiontools/files-to-folder.cwl
+    run: ../expressiontools/files-to-folder.cwl
     in:
       input_files: bowtie_generate_indices/indices
     out: [folder]
@@ -42,7 +65,7 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "bowtie-index"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/bowtie-index.cwl
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -81,7 +104,9 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-s:about: >
-  Current workflow should be used to generate BOWTIE genome indices files. It performs the following steps:
-  1. Use BOWTIE to generate genome indices files on the base of input FASTA, return results as group of main and secondary files
-  2. Transform indices files from the previous step into the Direcotry data type
+s:about: |
+  Workflow makes indices for [bowtie](http://bowtie-bio.sourceforge.net/tutorial.shtml) v1.2.0 (12/30/2016).
+
+  It performs the following steps:
+  1. Executes `bowtie-index` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input, returns results as a group of main and secondary files
+  2. Transforms results from the previous step into Direcotry data type
