@@ -98,6 +98,15 @@ requirements:
           }
         )
       }
+      if (inputs.macs_log_staged){
+        listing.push(
+          {
+            "entry": inputs.macs_log_staged,
+            "entryname": inputs.macs_log_staged.basename,
+            "writable": true
+          }
+        )
+      }
       return listing;
     }
 
@@ -115,8 +124,7 @@ inputs:
       #!/bin/bash
       if [ "$0" = True ]
       then
-        echo "Run: macs2 callpeak " ${@:1}
-        ls | grep -v ${@: -1}.log | xargs rm
+        ls | grep -v ${@: -1}.log | xargs rm -f
         macs2 callpeak "${@:1}"
       else
         echo "Skip macs2 callpeak " ${@:1}
@@ -156,6 +164,9 @@ inputs:
     type: File?
     doc: For staging in a case of trigger is set to false
   control_lambda_bdg_file_staged:
+    type: File?
+    doc: For staging in a case of trigger is set to false
+  macs_log_staged:
     type: File?
     doc: For staging in a case of trigger is set to false
 
@@ -741,9 +752,9 @@ arguments:
   - valueFrom:
       ${
           if (inputs.name == null || inputs.trigger == false ){
-            return ' 2> ' + default_name(null, '_macs.log');
+            return ' 2>> ' + default_name(null, '_macs.log');
           } else {
-            return ' 2> ' + inputs.name + '.log';
+            return ' 2>> ' + inputs.name + '.log';
           }
       }
     position: 100000

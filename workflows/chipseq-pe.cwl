@@ -365,32 +365,11 @@ steps:
         default: "4 40"
       verbose:
         default: 3
-      nomodel:
-        source: force_fragment_size
-        valueFrom: |
-          ${
-            return Boolean(self);
-          }
-      extsize:
-        source: [force_fragment_size, exp_fragment_size]
-        valueFrom: |
-          ${
-            if (self[0]){
-              return self[1];
-            } else {
-              return null;
-            }
-          }
-      bw:
-        source: [force_fragment_size, exp_fragment_size]
-        valueFrom: |
-          ${
-            if (!self[0]){
-              return self[1];
-            } else {
-              return null;
-            }
-          }
+      nomodel: force_fragment_size
+      extsize: exp_fragment_size
+      bw: exp_fragment_size
+      fix_bimodal:
+        default: true
       broad: broad_peak
       call_summits:
         source: broad_peak
@@ -437,6 +416,7 @@ steps:
       moder_r_file_staged: macs2_callpeak/moder_r_file
       treat_pileup_bdg_file_staged: macs2_callpeak/treat_pileup_bdg_file
       control_lambda_bdg_file_staged: macs2_callpeak/control_lambda_bdg_file
+      macs_log_staged: macs2_callpeak/macs_log
       treatment: samtools_sort_index_after_rmdup/bam_bai_pair
       control: control_file
       nolambda:
