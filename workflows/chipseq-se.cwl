@@ -263,19 +263,19 @@ outputs:
 steps:
 
   fastx_quality_stats:
-    run: ../../tools/fastx-quality-stats.cwl
+    run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: fastq_file
     out: [statistics]
 
   bzip:
-    run: ../../tools/bzip2.cwl
+    run: ../tools/bzip2.cwl
     in:
       input_file: fastq_file
     out: [output]
 
   bowtie_aligner:
-    run: ../../tools/bowtie.cwl
+    run: ../tools/bowtie.cwl
     in:
       filelist: fastq_file
       indices_folder: indices_folder
@@ -297,14 +297,14 @@ steps:
     out: [output, output_bowtie_log]
 
   samtools_sort_index:
-    run: ../../tools/samtools-sort-index.cwl
+    run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: bowtie_aligner/output
       threads: threads
     out: [bam_bai_pair]
 
   samtools_rmdup:
-    run: ../../tools/samtools-rmdup.cwl
+    run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
       input_file: samtools_sort_index/bam_bai_pair
@@ -313,7 +313,7 @@ steps:
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
-    run: ../../tools/samtools-sort-index.cwl
+    run: ../tools/samtools-sort-index.cwl
     in:
       trigger: remove_duplicates
       sort_input: samtools_rmdup/rmdup_output
@@ -321,7 +321,7 @@ steps:
     out: [bam_bai_pair]
 
   macs2_callpeak:
-    run: ../../tools/macs2-callpeak.cwl
+    run: ../tools/macs2-callpeak.cwl
     in:
       treatment: samtools_sort_index_after_rmdup/bam_bai_pair
       control: control_file
@@ -365,13 +365,13 @@ steps:
       - macs_log
 
   macs2_island_count:
-    run: ../../tools/macs2-island-count.cwl
+    run: ../tools/macs2-island-count.cwl
     in:
       input_file: macs2_callpeak/peak_xls_file
     out: [fragments, islands]
 
   macs2_callpeak_forced:
-    run: ../../tools/macs2-callpeak.cwl
+    run: ../tools/macs2-callpeak.cwl
     in:
       trigger:
         source: [force_fragment_size, macs2_island_count/fragments]
@@ -428,14 +428,14 @@ steps:
 
 
   macs2_island_count_forced:
-    run: ../../tools/macs2-island-count.cwl
+    run: ../tools/macs2-island-count.cwl
     in:
       input_file: macs2_callpeak_forced/peak_xls_file
     out: [fragments, islands]
 
 
   macs2_stat:
-    run: ../../tools/macs2-stat.cwl
+    run: ../tools/macs2-stat.cwl
     in:
       fragments_old: macs2_island_count/fragments
       islands_old:   macs2_island_count/islands
@@ -457,7 +457,7 @@ steps:
 
 
   bamtools_stats:
-    run: ../../tools/bamtools-stats.cwl
+    run: ../tools/bamtools-stats.cwl
     in:
       input_files: samtools_sort_index_after_rmdup/bam_bai_pair
     out: [mappedreads]
@@ -471,14 +471,14 @@ steps:
     out: [outfile]
 
   get_stat:
-      run: ../../tools/python-get-stat.cwl
+      run: ../tools/python-get-stat.cwl
       in:
         bowtie_log: bowtie_aligner/output_bowtie_log
         rmdup_log: samtools_rmdup/rmdup_log
       out: [output]
 
   island_intersect:
-      run: ../../tools/iaintersect.cwl
+      run: ../tools/iaintersect.cwl
       in:
         input_filename: macs2_callpeak_forced/peak_xls_file
         annotation_filename: annotation_file
@@ -487,7 +487,7 @@ steps:
       out: [result, log]
 
   average_tag_density:
-      run: ../../tools/atdp.cwl
+      run: ../tools/atdp.cwl
       in:
         input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
         annotation_filename: annotation_file

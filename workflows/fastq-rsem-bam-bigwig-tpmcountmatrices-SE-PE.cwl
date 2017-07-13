@@ -46,7 +46,7 @@ outputs:
 steps:
 
   rsem_calculate_expression:
-    run: ../../tools/rsem-calculate-expression.cwl
+    run: ../tools/rsem-calculate-expression.cwl
     in:
       upstream_read_file: upstream_fastq
       downstream_read_file: downstream_fastq
@@ -85,7 +85,7 @@ steps:
     out: [isoform_results, gene_results, genome_sorted_bam_bai_pair]
 
   bamtoolsStats:
-    run: ../../tools/bamtools-stats.cwl
+    run: ../tools/bamtools-stats.cwl
     in:
       input_files: rsem_calculate_expression/genome_sorted_bam_bai_pair
     out: [mappedreads, stats_log]

@@ -127,7 +127,7 @@ outputs:
 
 steps:
   star_reads_alignment:
-    run: ../../tools/star-alignreads.cwl
+    run: ../tools/star-alignreads.cwl
     in:
       readFilesIn: fastq_input_file
       genomeDir: star_indices
@@ -145,20 +145,20 @@ steps:
     out: [aligned, alignedLog]
 
   fastx_quality_stats:
-    run: ../../tools/fastx-quality-stats.cwl
+    run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: fastq_input_file
     out: [statistics]
 
   samtools_sort_index:
-    run: ../../tools/samtools-sort-index.cwl
+    run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_reads_alignment/aligned
       threads: threads
     out: [bam_bai_pair]
 
   bamtools_stats:
-    run: ../../tools/bamtools-stats.cwl
+    run: ../tools/bamtools-stats.cwl
     in:
       input_files: samtools_sort_index/bam_bai_pair
     out: [mappedreads]
@@ -172,7 +172,7 @@ steps:
     out: [outfile]
 
   bowtie_reads_alignment:
-    run: ../../tools/bowtie.cwl
+    run: ../tools/bowtie.cwl
     in:
       indices_folder: bowtie_indices
       filelist: fastq_input_file
@@ -200,7 +200,7 @@ steps:
     out: [output_bowtie_log]
 
   rpkm_calculation:
-    run: ../../tools/reads-counting.cwl
+    run: ../tools/reads-counting.cwl
     in:
       aligned: samtools_sort_index/bam_bai_pair
       annotation: annotation

@@ -27,7 +27,7 @@ outputs:
 steps:
 
   sra_to_fastq:
-    run: ../../tools/fastq-dump.cwl
+    run: ../tools/fastq-dump.cwl
     in:
       input_file: sra_input_file
       split_files:
@@ -35,20 +35,20 @@ steps:
     out: [output_file_1, output_file_2]
 
   fastqc_1:
-    run: ../../tools/fastqc.cwl
+    run: ../tools/fastqc.cwl
     in:
       fastq_file: sra_to_fastq/output_file_1
     out: [summary_file]
 
   fastqc_2:
-    run: ../../tools/fastqc.cwl
+    run: ../tools/fastqc.cwl
     in:
       fastq_file: sra_to_fastq/output_file_2
     out: [summary_file]
 
 
   pick_file_from_array_1:
-    run: ../../expressiontools/get-file-by-name.cwl
+    run: ../expressiontools/get-file-by-name.cwl
     in:
       input_files: fastqc_1/summary_file
       basename_regex:
@@ -60,7 +60,7 @@ steps:
     out: [selected_file]
 
   pick_file_from_array_2:
-    run: ../../expressiontools/get-file-by-name.cwl
+    run: ../expressiontools/get-file-by-name.cwl
     in:
       input_files: fastqc_2/summary_file
       basename_regex:
@@ -72,19 +72,19 @@ steps:
     out: [selected_file]
 
   fastqc_results_trigger_1:
-    run: ../../expressiontools/fastqc-results-trigger.cwl
+    run: ../expressiontools/fastqc-results-trigger.cwl
     in:
       summary: pick_file_from_array_1/selected_file
     out: [trigger]
 
   fastqc_results_trigger_2:
-    run: ../../expressiontools/fastqc-results-trigger.cwl
+    run: ../expressiontools/fastqc-results-trigger.cwl
     in:
       summary: pick_file_from_array_2/selected_file
     out: [trigger]
 
   trimmomatic:
-    run: ../../tools/trimmomatic.cwl
+    run: ../tools/trimmomatic.cwl
     in:
       input_read1_fastq_file: sra_to_fastq/output_file_1
       input_read2_fastq_file: sra_to_fastq/output_file_2
