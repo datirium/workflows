@@ -45,7 +45,7 @@ outputs:
 
 steps:
   bowtie2_aligner:
-    run: ../../tools/bowtie2.cwl
+    run: ../tools/bowtie2.cwl
     in:
       filelist: upstream_fastq
       filelist_mates: downstream_fastq
@@ -59,7 +59,7 @@ steps:
     out: [output, output_log]
 
   samtools_sort_index:
-    run: ../../tools/samtools-sort-index.cwl
+    run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: bowtie2_aligner/output
       sort_output_filename:
@@ -71,7 +71,7 @@ steps:
     out: [bam_bai_pair]
 
   remove_dup_picard:
-    run: ../../tools/picard-markduplicates.cwl
+    run: ../tools/picard-markduplicates.cwl
     in:
       input_file: samtools_sort_index/bam_bai_pair
       output_filename:
@@ -91,7 +91,7 @@ steps:
     out: [output_file, metrics_file]
 
   samtools_sort_index_after_dup_removing:
-    run: ../../tools/samtools-sort-index.cwl
+    run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: remove_dup_picard/output_file
       sort_output_filename:
@@ -103,7 +103,7 @@ steps:
     out: [bam_bai_pair]
 
   bamtools_stats:
-    run: ../../tools/bamtools-stats.cwl
+    run: ../tools/bamtools-stats.cwl
     in:
       input_files: samtools_sort_index_after_dup_removing/bam_bai_pair
     out: [mappedreads, stats_log]
