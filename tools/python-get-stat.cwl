@@ -40,7 +40,7 @@ inputs:
           if '/' in line and 'Skip' not in line:
             splt = line.split('/')
             USED = int((splt[1].split('='))[0].strip()) - int((splt[0].split(']'))[1].strip())
-      print (TOTAL, ALIGNED, SUPRESSED, USED)
+      print TOTAL, ALIGNED, SUPRESSED, USED
     inputBinding:
       position: 5
     doc: |
