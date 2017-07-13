@@ -62,7 +62,7 @@ outputs:
 
 steps:
   star_generate_indices:
-    run: ../../tools/star-genomegenerate.cwl
+    run: ../tools/star-genomegenerate.cwl
     in:
       genome_fasta_files: fasta_input_file
       sjdb_gtf_file: annotation_input_file
@@ -70,13 +70,13 @@ steps:
     out: [indices]
 
   files_to_folder:
-    run: ../../expressiontools/files-to-folder.cwl
+    run: ../expressiontools/files-to-folder.cwl
     in:
       input_files: star_generate_indices/indices
     out: [folder]
 
   get_chr_length_file:
-    run: ../../expressiontools/get-file-by-name.cwl
+    run: ../expressiontools/get-file-by-name.cwl
     in:
       input_files: star_generate_indices/indices
       basename_regex:
