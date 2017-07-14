@@ -376,6 +376,7 @@ steps:
       input: samtools_sort_index_after_rmdup/bam_bai_pair
       genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
+      fragmentsize: macs2_callpeak/macs2_fragments_calculated
     out: [outfile]
 
   get_stat:
