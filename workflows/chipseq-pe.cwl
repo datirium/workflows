@@ -56,6 +56,7 @@ inputs:
 
   broad_peak:
     type: boolean
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/tags/antibody-dummy.cwl"
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
@@ -128,8 +129,8 @@ inputs:
     default: 2
     'sd:layout':
       advanced: true
-    label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
+    label: "Number of threads"
 
 outputs:
 
@@ -208,49 +209,49 @@ outputs:
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"
     doc: "XLS file to include information about called peaks"
-    outputSource: macs2_callpeak_forced/peak_xls_file
+    outputSource: macs2_callpeak/peak_xls_file
 
   macs2_narrow_peaks:
     type: File?
     label: "Narrow peaks"
     format: "http://edamontology.org/format_3613"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
-    outputSource: macs2_callpeak_forced/narrow_peak_file
+    outputSource: macs2_callpeak/narrow_peak_file
 
   macs2_broad_peaks:
     type: File?
     label: "Broad peaks"
     format: "http://edamontology.org/format_3614"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
-    outputSource: macs2_callpeak_forced/broad_peak_file
+    outputSource: macs2_callpeak/broad_peak_file
 
   macs2_peak_summits:
     type: File?
     label: "Peak summits"
     format: "http://edamontology.org/format_3003"
     doc: "Contains the peak summits locations for every peaks"
-    outputSource: macs2_callpeak_forced/peak_summits_file
+    outputSource: macs2_callpeak/peak_summits_file
 
   macs2_moder_r:
     type: File?
     label: "MACS2 generated R script"
     format: "http://edamontology.org/format_2330"
     doc: "R script to produce a PDF image about the model based on your data"
-    outputSource: macs2_callpeak_forced/moder_r_file
+    outputSource: macs2_callpeak/moder_r_file
 
   macs2_gapped_peak:
     type: File?
     label: "Gapped peak"
     format: "http://edamontology.org/format_3586"
     doc: "Contains both the broad region and narrow peaks"
-    outputSource: macs2_callpeak_forced/gapped_peak_file
+    outputSource: macs2_callpeak/gapped_peak_file
 
   macs2_log:
     type: File?
     label: "MACS2 log"
     format: "http://edamontology.org/format_2330"
     doc: "MACS2 output log"
-    outputSource: macs2_callpeak_forced/macs_log
+    outputSource: macs2_callpeak/macs_log
 
   get_stat_log:
     type: File?
@@ -264,7 +265,7 @@ outputs:
     label: "FRAGMENT, FRAGMENTE, ISLANDS"
     format: "http://edamontology.org/format_2330"
     doc: "fragment, calculated fragment, islands count from MACS2 results"
-    outputSource: macs2_stat/fragment_stat_file
+    outputSource: macs2_callpeak/macs2_stat
 
   fastq_compressed_upstream:
     type: File
@@ -350,7 +351,7 @@ steps:
     out: [bam_bai_pair]
 
   macs2_callpeak:
-    run: ../tools/macs2-callpeak.cwl
+    run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
       treatment: samtools_sort_index_after_rmdup/bam_bai_pair
       control: control_file
@@ -368,8 +369,6 @@ steps:
       nomodel: force_fragment_size
       extsize: exp_fragment_size
       bw: exp_fragment_size
-      fix_bimodal:
-        default: true
       broad: broad_peak
       call_summits:
         source: broad_peak
@@ -392,99 +391,8 @@ steps:
       - treat_pileup_bdg_file
       - control_lambda_bdg_file
       - macs_log
-
-  macs2_island_count:
-    run: ../tools/macs2-island-count.cwl
-    in:
-      input_file: macs2_callpeak/peak_xls_file
-    out: [fragments, islands]
-
-  macs2_callpeak_forced:
-    run: ../tools/macs2-callpeak.cwl
-    in:
-      trigger:
-        source: [force_fragment_size, macs2_island_count/fragments]
-        valueFrom: |
-          ${
-            return !self[0] && parseInt(self[1]) < 80;
-          }
-      peak_xls_file_staged: macs2_callpeak/peak_xls_file
-      narrow_peak_file_staged: macs2_callpeak/narrow_peak_file
-      broad_peak_file_staged: macs2_callpeak/broad_peak_file
-      gapped_peak_file_staged: macs2_callpeak/gapped_peak_file
-      peak_summits_file_staged: macs2_callpeak/peak_summits_file
-      moder_r_file_staged: macs2_callpeak/moder_r_file
-      treat_pileup_bdg_file_staged: macs2_callpeak/treat_pileup_bdg_file
-      control_lambda_bdg_file_staged: macs2_callpeak/control_lambda_bdg_file
-      macs_log_staged: macs2_callpeak/macs_log
-      treatment: samtools_sort_index_after_rmdup/bam_bai_pair
-      control: control_file
-      nolambda:
-        source: control_file
-        valueFrom: |
-          ${
-            return !Boolean(self);
-          }
-      genome_size: genome_size
-      mfold:
-        default: "4 40"
-      verbose:
-        default: 3
-      nomodel:
-        default: true
-      extsize: exp_fragment_size
-      broad: broad_peak
-      call_summits:
-        source: broad_peak
-        valueFrom: $(!self)
-      keep_dup:
-        default: auto
-      q_value:
-        default: 0.05
-      format_mode:
-        default: BAMPE
-      buffer_size:
-        default: 10000
-    out:
-      - peak_xls_file
-      - narrow_peak_file
-      - peak_summits_file
-      - broad_peak_file
-      - moder_r_file
-      - gapped_peak_file
-      - treat_pileup_bdg_file
-      - control_lambda_bdg_file
-      - macs_log
-
-
-  macs2_island_count_forced:
-    run: ../tools/macs2-island-count.cwl
-    in:
-      input_file: macs2_callpeak_forced/peak_xls_file
-    out: [fragments, islands]
-
-
-  macs2_stat:
-    run: ../tools/macs2-stat.cwl
-    in:
-      fragments_old: macs2_island_count/fragments
-      islands_old:   macs2_island_count/islands
-      fragments_new: macs2_island_count_forced/fragments
-      islands_new:   macs2_island_count_forced/islands
-      trigger:
-        source: [force_fragment_size, macs2_island_count/fragments]
-        valueFrom: |
-          ${
-            return !self[0] && parseInt(self[1]) < 80;
-          }
-      output_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
-        valueFrom: |
-          ${
-            return self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_fragment_stat.tsv'
-          }
-    out: [fragment_stat_file]
-
+      - macs2_stat
+      - macs2_fragments_calculated
 
   bamtools_stats:
     run: ../tools/bamtools-stats.cwl
@@ -498,6 +406,7 @@ steps:
       input: samtools_sort_index_after_rmdup/bam_bai_pair
       genomeFile: chrom_length
       mappedreads: bamtools_stats/mappedreads
+      fragmentsize: macs2_callpeak/macs2_fragments_calculated
       pairchip:
         default: true
     out: [outfile]
@@ -512,7 +421,7 @@ steps:
   island_intersect:
       run: ../tools/iaintersect.cwl
       in:
-        input_filename: macs2_callpeak_forced/peak_xls_file
+        input_filename: macs2_callpeak/peak_xls_file
         annotation_filename: annotation_file
         promoter_bp:
           default: 1000
@@ -523,15 +432,7 @@ steps:
       in:
         input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
         annotation_filename: annotation_file
-        fragmentsize_bp:
-          source: [exp_fragment_size, macs2_island_count/fragments]
-          valueFrom: |
-            ${
-              if (parseInt(self[1]) < 80){
-                return parseInt(self[0]);
-              };
-              return parseInt(self[1]);
-            }
+        fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
         avd_window_bp:
           default: 5000
         avd_smooth_bp:
