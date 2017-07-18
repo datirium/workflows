@@ -1,4 +1,5 @@
 {
     "input_filename": {"class": "File", "location": "./data/mm10/sorted.bam", "format": "http://edamontology.org/format_2572"},
-    "annotation_filename": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv", "format": "http://edamontology.org/format_3475"}
+    "annotation_filename": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv", "format": "http://edamontology.org/format_3475"},
+    "mapped_reads": 5976
 }

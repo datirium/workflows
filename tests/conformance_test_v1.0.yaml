@@ -93,6 +93,10 @@
       class: File
       location: bowtie_align.stat
       size: 32
+    supressed_reads: 1079953
+    total_reads: 8553294
+    mapped_reads: 6818304
+    used_reads: 6568256
 
 - job: ./samtools-sort.json
   tool: ../tools/samtools-sort.cwl
