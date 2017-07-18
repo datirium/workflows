@@ -364,18 +364,12 @@ steps:
       - macs2_stat
       - macs2_fragments_calculated
 
-  bamtools_stats:
-    run: ../tools/bamtools-stats.cwl
-    in:
-      input_files: samtools_sort_index_after_rmdup/bam_bai_pair
-    out: [mappedreads]
-
   bam_to_bigwig:
     run: bam-genomecov-bigwig.cwl
     in:
       input: samtools_sort_index_after_rmdup/bam_bai_pair
       genomeFile: chrom_length
-      mappedreads: bamtools_stats/mappedreads
+      mappedreads: get_stat/mapped_reads
       fragmentsize: macs2_callpeak/macs2_fragments_calculated
     out: [outfile]
 
@@ -384,7 +378,9 @@ steps:
       in:
         bowtie_log: bowtie_aligner/output_bowtie_log
         rmdup_log: samtools_rmdup/rmdup_log
-      out: [output]
+      out:
+        - output
+        - mapped_reads
 
   island_intersect:
       run: ../tools/iaintersect.cwl
@@ -411,6 +407,7 @@ steps:
           default: "chrX chrY"
         avd_heat_window_bp:
           default: 200
+        mapped_reads: get_stat/mapped_reads
       out: [result, log]
 
 

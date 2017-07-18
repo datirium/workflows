@@ -150,6 +150,16 @@ inputs:
     doc: |
       Average tag density window for heatmap
 
+  mapped_reads:
+    type:
+      - "null"
+      - int
+    inputBinding:
+      position: 11
+      prefix: --m=
+      separate: false
+    doc: |
+      Mapped reads number
 
 outputs:
   log:
@@ -243,3 +253,4 @@ s:about: >
     --out                      	Base output filename
     --sam_ignorechr            	Which chromosome to ignore
     --sam_twicechr             	Which chromosome to double
+    --m                         Mapped reads number
