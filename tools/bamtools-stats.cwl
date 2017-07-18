@@ -46,7 +46,7 @@ outputs:
       glob: "stats.log"
 
   totalReads:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"
@@ -57,7 +57,7 @@ outputs:
           return totalReads;
         }
   mappedreads:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"
@@ -68,7 +68,7 @@ outputs:
           return mappedreads;
         }
   forwardstrand:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"
@@ -79,7 +79,7 @@ outputs:
           return forwardstrand;
         }
   reversestrand:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"
@@ -90,7 +90,7 @@ outputs:
           return reversestrand;
         }
   failedQC:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"
@@ -101,7 +101,7 @@ outputs:
           return failedQC;
         }
   duplicates:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"
@@ -112,7 +112,7 @@ outputs:
           return duplicates;
         }
   pairedendreads:
-    type: double
+    type: int
     outputBinding:
       loadContents: true
       glob: "stats.log"

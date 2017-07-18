@@ -64,7 +64,7 @@ inputs:
       prefix: -scale
 
   mappedreads:
-    type: double?
+    type: int?
     doc: |
       Optional parameter to calculate scale as 1000000/mappedreads
     inputBinding:

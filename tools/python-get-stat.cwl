@@ -67,6 +67,33 @@ outputs:
     outputBinding:
       glob: $(default_output_filename())
 
+  total_reads:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename())
+      outputEval: $(parseInt(self[0].contents.split(' ')[0]))
+
+  mapped_reads:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename())
+      outputEval: $(parseInt(self[0].contents.split(' ')[1]))
+
+  supressed_reads:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename())
+      outputEval: $(parseInt(self[0].contents.split(' ')[2]))
+
+  used_reads:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename())
+      outputEval: $(parseInt(self[0].contents.split(' ')[3]))
 
 baseCommand: [python, '-c']
 arguments:

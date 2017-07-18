@@ -21,7 +21,7 @@ inputs:
   scale:
     type: float?
   mappedreads:
-    type: double?
+    type: int?
   pairchip:
     type: boolean?
   fragmentsize:
