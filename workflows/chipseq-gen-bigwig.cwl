@@ -1,6 +1,8 @@
 cwlVersion: v1.0
 class: Workflow
 
+requirements:
+  - class: SubworkflowFeatureRequirement
 
 inputs:
   bam_bai_pair_file:
@@ -30,7 +32,7 @@ outputs:
     doc: "bigWig generated file"
     outputSource: bam_to_bigwig/outfile
 
-
+steps:
   bam_to_bigwig:
     run: bam-genomecov-bigwig.cwl
     in:
