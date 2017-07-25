@@ -32,7 +32,7 @@ inputs:
       valueFrom: |
         ${
             if (self == null){
-              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigwig";
+              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigWig";
             } else {
               return self;
             }
@@ -71,7 +71,7 @@ outputs:
       glob: |
         ${
             if (inputs.bigWig == null){
-              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigwig";
+              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigWig";
             } else {
               return inputs.bigWig;
             }

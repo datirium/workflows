@@ -100,6 +100,6 @@ steps:
         source: upstream_fastq
         valueFrom: |
           ${
-            return self.basename.split('.')[0]+".bigwig";
+            return self.basename.split('.')[0]+".bigWig";
           }
     out: [outfile]

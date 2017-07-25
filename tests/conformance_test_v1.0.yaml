@@ -359,7 +359,7 @@
   output:
     bigWigOut:
       class: File
-      location: input_sorted.bigwig
+      location: input_sorted.bigWig
       size: 43072
 
 - job: ./star-genomegenerate.json

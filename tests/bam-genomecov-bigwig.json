@@ -8,5 +8,5 @@
         "path": "../../tools/chrNameLength.txt"
     },
     "scale": 1,
-    "bigWig": "./output.bigwig"
+    "bigWig": "./output.bigWig"
 }
