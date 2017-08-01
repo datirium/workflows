@@ -13,6 +13,18 @@ requirements:
   - var default_log_filename = function() {
         return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_atdp.log";
     };
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.annotation_filename,
+                  "entryname": inputs.annotation_filename.basename,
+                  "writable": true
+                }
+              ]
+    }
+
 
 hints:
 - class: DockerRequirement
@@ -20,11 +32,32 @@ hints:
 
 inputs:
 
+  script:
+    type: string?
+    default: |
+        #!/bin/bash
+        set -- "$0" "$@"
+        echo "Original arguments:"
+        for i in "$@";
+            do echo $i;
+        done;
+        set -- "$1" --a=$(basename "${2:4}") "${@:3}"
+        echo Updated arguments:
+        for i in "$@";
+            do echo $i;
+        done;
+        refgene-sort -i "${2:4}" -o "${2:4}" -s "ORDER BY chrom, strand, CASE strand WHEN '+' THEN txStart WHEN '-' THEN txEnd END"
+        atdp "$@"
+    inputBinding:
+      position: 1
+    doc: |
+      Bash function to run samtools sort with all input parameters or skip it if trigger is false
+
   input_filename:
     type:
       - File
     inputBinding:
-      position: 1
+      position: 2
       prefix: --in=
       separate: false
     secondaryFiles: |
@@ -38,7 +71,7 @@ inputs:
     type:
       - File
     inputBinding:
-      position: 2
+      position: 3
       prefix: --a=
       separate: false
     doc: |
@@ -49,7 +82,7 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 3
+      position: 4
       prefix: --out=
       separate: false
       valueFrom: |
@@ -69,7 +102,7 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 4
+      position: 5
       prefix: --log=
       separate: false
       valueFrom: |
@@ -89,7 +122,7 @@ inputs:
       - "null"
       - int
     inputBinding:
-      position: 5
+      position: 6
       prefix: --f=
       separate: false
     doc: |
@@ -100,7 +133,7 @@ inputs:
       - "null"
       - int
     inputBinding:
-      position: 6
+      position: 7
       prefix: --avd_window=
       separate: false
     doc: |
@@ -111,7 +144,7 @@ inputs:
       - "null"
       - int
     inputBinding:
-      position: 7
+      position: 8
       prefix: --avd_smooth=
       separate: false
     doc: |
@@ -122,7 +155,7 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 8
+      position: 9
       prefix: --sam_ignorechr=
       separate: false
     doc: |
@@ -133,7 +166,7 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 9
+      position: 10
       prefix: --sam_twicechr=
       separate: false
     doc: |
@@ -144,7 +177,7 @@ inputs:
       - "null"
       - int
     inputBinding:
-      position: 10
+      position: 11
       prefix: --avd_heat_window=
       separate: false
     doc: |
@@ -155,7 +188,7 @@ inputs:
       - "null"
       - int
     inputBinding:
-      position: 11
+      position: 12
       prefix: --m=
       separate: false
     doc: |
@@ -186,7 +219,7 @@ outputs:
           }
         }
 
-baseCommand: [atdp]
+baseCommand: [bash, '-c']
 
 $namespaces:
   s: http://schema.org/
