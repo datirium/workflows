@@ -36,7 +36,7 @@
     result:
       class: File
       location: sorted_atdp.tsv
-      size: 74583
+      size: 74599
 
 - job: ./iaintersect_1.json
   tool: ../tools/iaintersect.cwl
