@@ -7,6 +7,9 @@ requirements:
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
 
+'sd:metadata':
+  - "https://raw.githubusercontent.com/SciDAP/workflows/master/metadata/rnaseq-header.cwl"
+
 inputs:
 
   fastq_input_file:
@@ -18,20 +21,20 @@ inputs:
   star_indices:
     type: Directory
     label: "STAR indices folder"
-    s:isPartOf: "genome/organism"
-    s:isBasedOn:
-    - class: s:SoftwareApplication
-      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
-      s:locationCreated: "outputs/indices_folder"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/star-index.cwl"
     doc: "STAR generated indices"
 
   clip_3p_end:
     type: int?
+    'sd:layout':
+      advanced: true
     label: "Clip from 3p end"
     doc: "Number of bases to clip from the 3p end"
 
   clip_5p_end:
     type: int?
+    'sd:layout':
+      advanced: true
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
@@ -39,35 +42,23 @@ inputs:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    s:isPartOf: "genome/organism"
-    s:isBasedOn:
-    - class: s:SoftwareApplication
-      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
-      s:locationCreated: "outputs/chr_length"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/star-index.cwl"
     doc: "Chromosome length file"
 
   bowtie_indices:
     type: Directory
-    label: "BOWTIE indices folder"
+    label: "BowTie Ribosomal Indices"
     format:
       - http://edamontology.org/format_3484 # ebwt
       - http://edamontology.org/format_3491 # ebwtl
-    s:isPartOf: "genome/organism"
-    s:isBasedOn:
-    - class: s:SoftwareApplication
-      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/bowtie-index.cwl"
-      s:locationCreated: "outputs/indices_folder"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
     doc: "Bowtie generated indices"
 
   annotation:
     type: File
     label: "GTF annotation file"
     format: "http://edamontology.org/format_2306"
-    s:isPartOf: "genome/organism"
-    s:isBasedOn:
-    - class: s:SoftwareApplication
-      s:url: "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/star-index.cwl"
-      s:locationCreated: "inputs/annotation_input_file"
+    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/star-index.cwl"
     doc: "GTF annotation file"
 
   dutp:
@@ -77,6 +68,8 @@ inputs:
 
   threads:
     type: int?
+    'sd:layout':
+      advanced: true
     label: "Number of threads to run tools"
     doc: "Number of threads for those steps that support multithreading"
 
@@ -270,7 +263,14 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-s:about: >
+doc: >
+  Runs RNA-Seq BioWardrobe basic analysis with single-end data file.
+
+s:about: |
+  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  **RNA-Seq** basic analysis for a **single-end** experiment.
+  A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
+
   Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
   1. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
   2. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
@@ -279,6 +279,7 @@ s:about: >
   5. Generate BigWig file on the base of sorted BAM file
   6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   7. Calculate isoform and gene expression levels for the sorted BAM file and GTF annotation file using SciDAP reads-counting utility; export results to file
+
   Tasks #2 and #6 are started independently on other workflow steps.
   Workflow doesn't depend on the type of the organism
 

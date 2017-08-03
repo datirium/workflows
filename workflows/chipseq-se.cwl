@@ -459,7 +459,9 @@ doc: >
   Runs ChIP-Seq BioWardrobe basic analysis with single-end data file.
 
 s:about: |
-  Runs **ChIP-Seq** basic analysis with **single-end** input data (FASTQ file).
+  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  **ChIP-Seq** basic analysis for a **single-end** experiment.
+  A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
 
   In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
   statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
