@@ -762,10 +762,10 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-doc: |
+doc: >
   Tool is used to run bowtie aligner to align input FASTQ file(s) to reference genome
 
-s:about: >
+s:about: |
   Usage:
   bowtie [options]* <ebwt> {-1 <m1> -2 <m2> | --12 <r> | <s>} [<hit>]
 

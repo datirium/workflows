@@ -12,14 +12,10 @@ inputs:
     type: string
     "sd:showAs": "title"
     label: "Experiment short name/Alias"
-  catalog:
-    type: string?
-    label: "Catalog #"
   description:
     type: string?
     'sd:type': 'text'
     label: "Description"
-
 
 outputs: []
 steps: []

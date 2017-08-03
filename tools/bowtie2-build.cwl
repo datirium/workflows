@@ -262,7 +262,7 @@ s:author:
     - class: s:Organization
       s:name: Barski Lab
 
-doc: |
+s:about: |
   Bowtie 2 version 2.3.0 by Ben Langmead (langmea@cs.jhu.edu, www.cs.jhu.edu/~langmea)
   Usage: bowtie2-build [options]* <reference_in> <bt2_index_base>
       reference_in            comma-separated list of files with ref sequences
