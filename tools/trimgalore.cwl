@@ -444,50 +444,32 @@ outputs:
   trimmed:
     type: File
     outputBinding:
-      glob:
-        ${
-            return default_name()['trimmed'];
-        }
+      glob: $(default_name()['trimmed'])
 
   trimmed_pair:
     type: File?
     outputBinding:
-      glob:
-        ${
-            return default_name()['trimmed_pair'];
-        }
+      glob: $(default_name()['trimmed_pair'])
 
   unpaired_1:
     type: File?
     outputBinding:
-      glob:
-        ${
-            return default_name()['unpaired_1'];
-        }
+      glob: $(default_name()['unpaired_1'])
 
   unpaired_2:
     type: File?
     outputBinding:
-      glob:
-        ${
-            return default_name()['unpaired_2'];
-        }
+      glob: $(default_name()['unpaired_2'])
 
   report:
     type: File?
     outputBinding:
-      glob:
-        ${
-            return default_name()['report'];
-        }
+      glob: $(default_name()['report'])
 
   report_pair:
     type: File?
     outputBinding:
-      glob:
-        ${
-            return default_name()['report_pair'];
-        }
+      glob: $(default_name()['report_pair'])
 
 
 baseCommand: [trim_galore]
