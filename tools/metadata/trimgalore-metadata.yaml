@@ -1,0 +1,18 @@
+class: s:SoftwareSourceCode
+s:name: "TrimGalore"
+s:about: |
+  A wrapper around Cutadapt and FastQC to consistently apply adapter and quality trimming to FastQ files,
+  with extra functionality for RRBS data
+
+s:url: "https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/"
+
+s:targetProduct:
+  class: s:SoftwareApplication
+  s:softwareVersion: "v0.4.4"
+  s:applicationCategory: "commandline tool"
+  s:downloadURL: "https://github.com/FelixKrueger/TrimGalore"
+
+s:programmingLanguage: "Perl"
+
+s:license:
+- https://opensource.org/licenses/GPL-3.0
