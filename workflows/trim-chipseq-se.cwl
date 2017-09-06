@@ -279,8 +279,6 @@ steps:
         default: true
       length:
         default: 30
-      trim1:
-        default: true
     out:
       - trimmed
       - report
