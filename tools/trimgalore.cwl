@@ -395,7 +395,7 @@ inputs:
       - boolean
     inputBinding:
       position: 33
-      prefix: '-t'
+      prefix: '--trim1'
     doc: |
       Trims 1 bp off every read from its 3' end. This may be needed for FastQ files that
       are to be aligned as paired-end data with Bowtie.
