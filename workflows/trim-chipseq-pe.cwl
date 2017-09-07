@@ -304,6 +304,8 @@ steps:
         default: 30
       trim1:
         default: true
+      paired:
+        default: true
     out:
       - trimmed
       - trimmed_pair
