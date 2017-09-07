@@ -300,7 +300,7 @@ steps:
   bzip:
     run: ../tools/bzip2.cwl
     in:
-      input_file: rename/target_file
+      input_file: fastq_file
     out: [output]
 
   bowtie_aligner:

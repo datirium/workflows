@@ -343,13 +343,13 @@ steps:
   bzip_upstream:
     run: ../tools/bzip2.cwl
     in:
-      input_file: rename_upstream/target_file
+      input_file: fastq_file_upstream
     out: [output]
 
   bzip_downstream:
     run: ../tools/bzip2.cwl
     in:
-      input_file: rename_downstream/target_file
+      input_file: fastq_file_downstream
     out: [output]
 
   bowtie_aligner:
