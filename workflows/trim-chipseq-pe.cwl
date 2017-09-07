@@ -281,22 +281,23 @@ outputs:
 
   trim_report_upstream:
     type: File
-    label: "TrimGalore report for upstream FASTQ"
-    doc: "TrimGalore generated log for upstream FASTQ file"
-    outputSource: trim_fastq_upstream/report
+    label: "TrimGalore report Upstream"
+    doc: "TrimGalore generated log for upstream FASTQ"
+    outputSource: trim_fastq/report
 
   trim_report_downstream:
     type: File
-    label: "TrimGalore report for downstream FASTQ"
-    doc: "TrimGalore generated log for downstream FASTQ file"
-    outputSource: trim_fastq_downstream/report
+    label: "TrimGalore report Downstream"
+    doc: "TrimGalore generated log for downstream FASTQ"
+    outputSource: trim_fastq/report_pair
 
 steps:
 
-  trim_fastq_upstream:
+  trim_fastq:
     run: ../tools/trimgalore.cwl
     in:
       input_filename: fastq_file_upstream
+      input_filename_pair: fastq_file_downstream
       dont_gzip:
         default: true
       length:
@@ -305,35 +306,22 @@ steps:
         default: true
     out:
       - trimmed
+      - trimmed_pair
       - report
+      - report_pair
 
   rename_upstream:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq_upstream/trimmed
+      source_file: trim_fastq/trimmed
       target_filename: fastq_file_upstream
     out:
       - target_file
 
-
-  trim_fastq_downstream:
-    run: ../tools/trimgalore.cwl
-    in:
-      input_filename: fastq_file_downstream
-      dont_gzip:
-        default: true
-      length:
-        default: 30
-      trim1:
-        default: true
-    out:
-      - trimmed
-      - report
-
   rename_downstream:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq_downstream/trimmed
+      source_file: trim_fastq/trimmed_pair
       target_filename: fastq_file_downstream
     out:
       - target_file
