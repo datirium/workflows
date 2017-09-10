@@ -1,12 +1,12 @@
 cwlVersion: v1.0
 class: Workflow
 
+
 requirements:
-  - class: SubworkflowFeatureRequirement
-  - class: ScatterFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
+
 
 inputs:
   sra_input_file:
@@ -16,52 +16,65 @@ inputs:
   threads:
     type: int?
 
+
 outputs:
-  fastq:
+  upstream_fastq:
     type: File
     outputSource: trimmomatic/output_read1_trimmed_file
+  downstream_fastq:
+    type: File
+    outputSource: trimmomatic/output_read2_trimmed_paired_file
+
 
 steps:
+
   sra_to_fastq:
     run: ../tools/fastq-dump.cwl
     in:
       input_file: sra_input_file
-    out: [output_file_1]
+      split_files:
+        default: true
+    out: [output_file_1, output_file_2]
 
-  fastqc:
+  fastqc_1:
     run: ../tools/fastqc.cwl
     in:
       fastq_file: sra_to_fastq/output_file_1
     out: [summary_file]
 
-  pick_file_from_array:
-    run: ../expressiontools/get-file-by-name.cwl
+  fastqc_2:
+    run: ../tools/fastqc.cwl
     in:
-     input_files: fastqc/summary_file
-     basename_regex:
-        source: sra_to_fastq/output_file_1
-        valueFrom: |
-          ${
-            return self.basename.split(".")[0] + ".fastq"
-          }
-    out: [selected_file]
+      fastq_file: sra_to_fastq/output_file_2
+    out: [summary_file]
 
-  fastqc_results_trigger:
+  fastqc_results_trigger_1:
     run: ../expressiontools/fastqc-results-trigger.cwl
     in:
-      summary: pick_file_from_array/selected_file
+      summary: fastqc_1/summary_file
+    out: [trigger]
+
+  fastqc_results_trigger_2:
+    run: ../expressiontools/fastqc-results-trigger.cwl
+    in:
+      summary: fastqc_2/summary_file
     out: [trigger]
 
   trimmomatic:
     run: ../tools/trimmomatic.cwl
     in:
       input_read1_fastq_file: sra_to_fastq/output_file_1
+      input_read2_fastq_file: sra_to_fastq/output_file_2
       input_adapters_file: illumina_adapters_file
-      trigger: fastqc_results_trigger/trigger
+      trigger:
+        source: [fastqc_results_trigger_1/trigger, fastqc_results_trigger_2/trigger]
+        valueFrom: |
+          ${
+              return self[0] && self[1];
+          }
       end_mode:
-        default: "SE"
+        default: "PE"
       illuminaclip:
         default: '2:30:15'
       threads: threads
-    out: [output_read1_trimmed_file]
-
+    out: [output_read1_trimmed_file, output_read2_trimmed_paired_file]

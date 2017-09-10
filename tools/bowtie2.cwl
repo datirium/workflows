@@ -7,7 +7,23 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
-
+  expressionLib:
+  - var default_output_filename = function() {
+        if (Array.isArray(inputs.filelist) && inputs.filelist.length > 0){
+          return inputs.filelist[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+        } else
+          if (inputs.filelist != null){
+            return inputs.filelist.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+          } else
+            if (Array.isArray(inputs.filelist_mates) && inputs.filelist_mates.length > 0){
+              return inputs.filelist_mates[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+            } else
+              if (inputs.filelist_mates != null){
+                return inputs.filelist_mates.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".sam";
+              } else {
+                return null;
+              }
+    };
 
 hints:
 - class: DockerRequirement
@@ -34,7 +50,6 @@ inputs:
             }
             return null;
         }
-
 
   filelist:
     type:
@@ -69,6 +84,15 @@ inputs:
     inputBinding:
       position: 90
       prefix: "-S"
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
     doc: |
       File for SAM output (default: stdout)
 
@@ -744,7 +768,7 @@ inputs:
       position: 51
       prefix: '--omit-sec-seq'
 
-  p:
+  threads:
     type:
     - "null"
     - int
@@ -805,12 +829,27 @@ outputs:
   output:
     type: File
     outputBinding:
-      glob: $(inputs.output_filename)
+      glob: |
+        ${
+           if (inputs.output_filename == null){
+             return default_output_filename();
+           } else {
+             return inputs.output_filename;
+           }
+        }
 
   output_log:
     type: File
     outputBinding:
-      glob: $(inputs.output_filename + ".log")
+      glob: |
+        ${
+           if (inputs.output_filename == null){
+             return default_output_filename().split('.').slice(0,-1).join('.') + ".log";
+           } else {
+             return inputs.output_filename.split('.').slice(0,-1).join('.') + ".log";
+           }
+        }
+
 
 baseCommand:
   - bowtie2
@@ -838,9 +877,20 @@ arguments:
         }
       }
     position: 84
-  - valueFrom: $('2> ' + inputs.output_filename + '.log')
+  - valueFrom: |
+      ${
+        if (inputs.output_filename == null){
+          return ' 2> ' + default_output_filename().split('.').slice(0,-1).join('.') + '.log';
+        } else {
+          return ' 2> ' + inputs.output_filename.split('.').slice(0,-1).join('.') + '.log';
+        }
+      }
     position: 100000
     shellQuote: false
+
+
+
+
 
 $namespaces:
   s: http://schema.org/
