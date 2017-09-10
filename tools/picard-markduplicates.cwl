@@ -4,8 +4,15 @@ class: CommandLineTool
 
 requirements:
 - $import: ./metadata/envvar-global.yml
-- class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function() {
+          return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bam";
+        };
+  - var default_output_metrics_filename = function() {
+          return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".metrics";
+        };
 
 hints:
 - class: DockerRequirement
@@ -149,6 +156,15 @@ inputs:
       position: 14
       prefix: 'OUTPUT='
       separate: false
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
 
   output_metrics_filename:
     type:
@@ -159,6 +175,16 @@ inputs:
       position: 15
       prefix: 'METRICS_FILE='
       separate: false
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_metrics_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
+
 
   remove_dup:
     type:
@@ -304,12 +330,26 @@ outputs:
   output_file:
     type: File
     outputBinding:
-      glob: $(inputs.output_filename)
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename();
+            } else {
+              return inputs.output_filename;
+            }
+        }
 
   metrics_file:
     type: File
     outputBinding:
-      glob: $(inputs.output_metrics_filename)
+      glob: |
+        ${
+            if (inputs.output_metrics_filename == null){
+              return default_output_metrics_filename();
+            } else {
+              return inputs.output_metrics_filename;
+            }
+        }
 
 baseCommand: java
 

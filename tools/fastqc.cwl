@@ -17,8 +17,6 @@ inputs:
   fastq_file:
     type:
       - File
-      - type: array
-        items: File
     inputBinding:
       position: 50
 
@@ -28,10 +26,8 @@ inputs:
       - boolean
     default: True
     doc: |
-      Do not uncompress the output file after creating it.  You
-      should set this option if you do not wish to uncompress
-      the output when running in non-interactive mode.
-      Default is false.
+      Uncompress or do not Uncompress the output file after creating it.
+      Default is true.
 
   format:
     type:
@@ -170,15 +166,15 @@ arguments:
     position: 5
 
 outputs:
-  zippedFile:
+  zipped_file:
     type:
-      - File[]
+      - File
     outputBinding:
       glob: '*.zip'
   summary_file:
     type:
       - "null"
-      - File[]
+      - File
     outputBinding:
       glob: |
         ${

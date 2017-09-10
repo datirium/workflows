@@ -2,5 +2,5 @@
   "indices_folder": {"class": "Directory", "location": "./data/bowtie2_index"},
   "filelist": [{"class": "File", "path": "./data/reads_test.fastq"}],
   "output_filename":"bowtie2.sam",
-  "p": 1
+  "threads": 1
 }

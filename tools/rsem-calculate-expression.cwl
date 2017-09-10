@@ -4,8 +4,30 @@ class: CommandLineTool
 
 requirements:
 - $import: ./metadata/envvar-global.yml
-- class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function() {
+        if (Array.isArray(inputs.upstream_read_file) && inputs.upstream_read_file.length > 0){
+          return inputs.upstream_read_file[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+        } else
+          if (inputs.upstream_read_file != null){
+            return inputs.upstream_read_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+          } else
+            if (Array.isArray(inputs.downstream_read_file) && inputs.downstream_read_file.length > 0){
+              return inputs.downstream_read_file[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+            } else
+              if (inputs.downstream_read_file != null){
+                return inputs.downstream_read_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+              } else
+                if (inputs.input_aligned != null){
+                  return inputs.input_aligned.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+                } else
+                  {
+                    return null;
+                  }
+    };
+
 
 hints:
 - class: DockerRequirement
@@ -46,7 +68,7 @@ inputs:
       If the --no-qualities option is specified,
       then FASTA format is expected.
 
-  input:
+  input_aligned:
     type:
       - "null"
       - File
@@ -79,11 +101,20 @@ inputs:
       The name of the reference used. The user must have run 'rsem-prepare-reference' with this reference_name before running this program
       Shouldn't include path. The folder where the reference files are saved is to be set by reference_name_dir
 
-  sample_name:
+  output_filename:
     type:
       - string
     inputBinding:
       position: 104
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
     doc: |
       The name of the sample analyzed.
       All output files are prefixed by this name
@@ -148,7 +179,7 @@ inputs:
       For Illumina TruSeq Stranded protocols, please use 'reverse'.
       (Default: 'none')
 
-  num_threads:
+  threads:
     type:
       - "null"
       - int
@@ -912,49 +943,105 @@ outputs:
   isoform_results:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".isoforms.results")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".isoforms.results";
+            } else {
+              return inputs.output_filename + ".isoforms.results";
+            }
+        }
 
   gene_results:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".genes.results")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".genes.results";
+            } else {
+              return inputs.output_filename + ".genes.results";
+            }
+        }
 
   alleles_results:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".alleles.results")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".alleles.results";
+            } else {
+              return inputs.output_filename + ".alleles.results";
+            }
+        }
 
   transcript_bam:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".transcript.bam")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".transcript.bam";
+            } else {
+              return inputs.output_filename + ".transcript.bam";
+            }
+        }
 
   transcript_sorted_bam_bai_pair:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".transcript.sorted.bam")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".transcript.sorted.bam";
+            } else {
+              return inputs.output_filename + ".transcript.sorted.bam";
+            }
+        }
     secondaryFiles: ${return self.location + ".bai"}
 
   genome_bam:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".genome.bam")
+      glob: $(inputs.output_filename + ".genome.bam")
 
   genome_sorted_bam_bai_pair:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".genome.sorted.bam")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".genome.sorted.bam";
+            } else {
+              return inputs.output_filename + ".genome.sorted.bam";
+            }
+        }
     secondaryFiles: ${return self.location + ".bai"}
 
   align_time:
     type: File?
     outputBinding:
-      glob: $(inputs.sample_name + ".time")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".time";
+            } else {
+              return inputs.output_filename + ".time";
+            }
+        }
 
   stat:
     type: Directory?
     outputBinding:
-      glob: $(inputs.sample_name + ".stat")
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".stat";
+            } else {
+              return inputs.output_filename + ".stat";
+            }
+        }
 
 
 baseCommand: [rsem-calculate-expression]
@@ -969,10 +1056,10 @@ arguments:
         return null;
       }
     position: 99
-# Check if input 'input' is used and prefix --alignments isn't set. If true - add prefix automatically
+# Check if input 'input_aligned' is used and prefix --alignments isn't set. If true - add prefix automatically
   - valueFrom: |
       ${
-        if (inputs.input && !inputs.alignments){
+        if (inputs.input_aligned && !inputs.alignments){
           return "--alignments";
         }
         return null;

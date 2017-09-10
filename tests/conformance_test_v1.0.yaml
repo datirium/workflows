@@ -262,7 +262,7 @@
 - job: ./fastqc.json
   tool: ../tools/fastqc.cwl
   output:
-    zippedFile:
+    zipped_file:
       - class: File
         location: reads_test_fastqc.zip
         size: 398565
@@ -328,7 +328,7 @@
       size: 1692
     output_log:
      class: File
-     location: bowtie2.sam.log
+     location: bowtie2.log
      size: 190
 
 - job: ./bedtools-genomecov.json
