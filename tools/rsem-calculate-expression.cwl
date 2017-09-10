@@ -1072,8 +1072,9 @@ arguments:
           return null;
         } else {
           for (var i = 0; i < inputs.reference_name_dir.listing.length; i++) {
-              if (inputs.reference_name_dir.listing[i].path.split('.').slice(-1)[0] == 'grp'){
-                return inputs.reference_name_dir.listing[i].path.split('.').slice(-2,-1)[0];
+              if (inputs.reference_name_dir.listing[i].path.split('/').slice(-1)[0].split('.').slice(-1)[0] == 'grp'){
+                let name = inputs.reference_name_dir.listing[i].path.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+                return inputs.reference_name_dir.listing[i].path.split('/').slice(0,-1).join('/') + '/' + name;
               }
           }
           return null;
