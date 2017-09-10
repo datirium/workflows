@@ -30,7 +30,7 @@ outputs:
   bam_file:
     type: File
     outputSource: samtools_sort_index_after_dup_removing/bam_bai_pair
-  bamtools_stats_log:
+  bamtools_log:
     type: File
     outputSource: bamtools_stats/stats_log
   bed:

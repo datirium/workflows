@@ -21,9 +21,6 @@ inputs:
 
 outputs:
 
-  fastq:
-    type: File
-    outputSource: sra_to_fastq/fastq
   bowtie2_log:
     type: File
     outputSource: fastq_to_bigwig/bowtie2_log
@@ -33,9 +30,9 @@ outputs:
   bam_file:
     type: File
     outputSource: fastq_to_bigwig/bam_file
-  bamtools_stats_log:
+  bamtools_log:
     type: File
-    outputSource: fastq_to_bigwig/bamtools_stats_log
+    outputSource: fastq_to_bigwig/bamtools_log
   bed:
     type: File
     outputSource: fastq_to_bigwig/bed
@@ -65,6 +62,6 @@ steps:
       - bowtie2_log
       - picard_metrics
       - bam_file
-      - bamtools_stats_log
+      - bamtools_log
       - bed
       - bigwig

@@ -7,6 +7,7 @@ requirements:
 
 
 inputs:
+
   sra_input_file:
     type: File
   illumina_adapters_file:
@@ -19,12 +20,7 @@ inputs:
     type: int?
 
 outputs:
-  upstream_fastq:
-    type: File
-    outputSource: sra_to_fastq/upstream_fastq
-  downstream_fastq:
-    type: File
-    outputSource: sra_to_fastq/downstream_fastq
+
   bowtie2_log:
     type: File
     outputSource: fastq_to_bigwig/bowtie2_log
@@ -34,9 +30,9 @@ outputs:
   bam_file:
     type: File
     outputSource: fastq_to_bigwig/bam_file
-  bamtools_stats_log:
+  bamtools_log:
     type: File
-    outputSource: fastq_to_bigwig/bamtools_stats_log
+    outputSource: fastq_to_bigwig/bamtools_log
   bed:
     type: File
     outputSource: fastq_to_bigwig/bed
@@ -58,7 +54,7 @@ steps:
       - downstream_fastq
 
   fastq_to_bigwig:
-    run: xenbase-fastq-to-bigwig-se-pe.cwl
+    run: xenbase-fastq-bowtie-bigwig-se-pe.cwl
     in:
       upstream_fastq: sra_to_fastq/upstream_fastq
       downstream_fastq: sra_to_fastq/downstream_fastq
@@ -69,6 +65,6 @@ steps:
     - bowtie2_log
     - picard_metrics
     - bam_file
-    - bamtools_stats_log
+    - bamtools_log
     - bed
     - bigwig

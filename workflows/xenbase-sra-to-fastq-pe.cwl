@@ -9,6 +9,7 @@ requirements:
 
 
 inputs:
+
   sra_input_file:
     type: File
   illumina_adapters_file:
@@ -18,6 +19,7 @@ inputs:
 
 
 outputs:
+
   upstream_fastq:
     type: File
     outputSource: trimmomatic/output_read1_trimmed_file

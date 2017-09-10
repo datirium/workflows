@@ -3,6 +3,7 @@ class: Workflow
 
 
 inputs:
+
   sra_input_file:
     type: File
   illumina_adapters_file:
@@ -12,12 +13,14 @@ inputs:
 
 
 outputs:
+
   fastq:
     type: File
     outputSource: trimmomatic/output_read1_trimmed_file
 
 
 steps:
+
   sra_to_fastq:
     run: ../tools/fastq-dump.cwl
     in:
