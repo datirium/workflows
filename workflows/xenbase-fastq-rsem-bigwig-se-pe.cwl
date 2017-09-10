@@ -30,7 +30,7 @@ outputs:
   bam_file:
     type: File
     outputSource: rsem_calculate_expression/genome_sorted_bam_bai_pair
-  bamtools_stats_log:
+  bamtools_log:
     type: File
     outputSource: bamtools_stats/stats_log
   bed:
