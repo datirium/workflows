@@ -15,6 +15,8 @@ inputs:
     type: Directory
   chr_length_file:
     type: File
+  paired:
+    type: boolean?
   threads:
     type: int?
 
@@ -75,6 +77,7 @@ steps:
       input: rsem_calculate_expression/genome_sorted_bam_bai_pair
       genomeFile: chr_length_file
       mappedreads: bamtools_stats/mappedreads
+      pairchip: paired
     out:
       - outfile
       - bed_file
