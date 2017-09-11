@@ -421,7 +421,7 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "chipseq-se"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/chipseq-se.cwl
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/chipseq-se.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
