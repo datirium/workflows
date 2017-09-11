@@ -9,12 +9,15 @@ requirements:
 inputs:
   sra_input_file:
     type: File
+    format: "http://edamontology.org/format_3698"
   illumina_adapters_file:
     type: File
+    format: "http://edamontology.org/format_1929"
   rsem_indices_folder:
     type: Directory
   chr_length_file:
     type: File
+    format: "http://edamontology.org/format_2330"
   threads:
     type: int?
 

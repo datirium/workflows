@@ -1,4 +1,0 @@
-{
-  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/SRR2230080.sra"},
-  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/temp/illumina_not_correct_adapters/illumina_not_correct_adapters.fa"}
-}
