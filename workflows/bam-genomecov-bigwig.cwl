@@ -39,7 +39,7 @@ outputs:
     outputSource: bigwig/bigWigOut
   bed_file:
     type: File
-    outputSource: genomecov/genomecoverage
+    outputSource: sort/sorted
 
 steps:
   genomecov:
