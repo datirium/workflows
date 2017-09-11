@@ -1,9 +1,0 @@
-{
-  "sra_input_file": {"class": "File", "location": "/home/michael_kotliar/documents/praneet/GSE37452_in_work/input_files/SRR489445.sra", "format": "http://edamontology.org/format_3698"},
-  "illumina_adapters_file": {"class": "File", "location": "/home/michael_kotliar/indices/adapters/TruSeq3-PE.fa", "format": "http://edamontology.org/format_1929"},
-  "rsem_reference_name_dir": {"class": "Directory", "location": "/home/michael_kotliar/indices/RSEM_TROP_9_Reference_files"},
-  "rsem_aligner_type": "bowtie2",
-  "chrLengthFile": {"class": "File", "location": "/home/michael_kotliar/indices/LAEVIS_TROP_CHROM_SIZE/Trop_9_1_chrom_sizes.genome"},
-  "threads": 10,
-  "uid": "SRR489439"
-}
