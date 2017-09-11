@@ -15,6 +15,8 @@ inputs:
     type: Directory
   chr_length_file:
     type: File
+  paired:
+    type: boolean?
   threads:
     type: int?
 
@@ -89,6 +91,7 @@ steps:
       input: samtools_sort_index_after_dup_removing/bam_bai_pair
       genomeFile: chr_length_file
       mappedreads: bamtools_stats/mappedreads
+      pairchip: paired
     out:
       - outfile
       - bed_file

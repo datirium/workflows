@@ -63,6 +63,8 @@ steps:
       downstream_fastq: sra_to_fastq/downstream_fastq
       rsem_indices_folder: rsem_indices_folder
       chr_length_file: chr_length_file
+      paired:
+        default: true
       threads: threads
     out:
       - rsem_isoforms
