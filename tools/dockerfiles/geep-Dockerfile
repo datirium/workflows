@@ -34,7 +34,7 @@ RUN apt-get update && \
     wget -q -O - $URL | tar -zxv && \
     cd ${NAME}-${VERSION} && \
     mkdir build && \
-    cd build \
+    cd build && \
     cmake .. && \
     make && \
     cp ../bin/${NAME} /usr/local/bin/ && \
