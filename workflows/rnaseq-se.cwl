@@ -3,62 +3,49 @@ class: Workflow
 
 requirements:
   - class: SubworkflowFeatureRequirement
-  - class: ScatterFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/SciDAP/workflows/master/metadata/rnaseq-header.cwl"
+  - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
 
 inputs:
 
-  fastq_input_file:
+# General inputs
+
+  fastq_file:
     type: File
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format"
 
-  star_indices:
+  star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/star-index.cwl"
-    doc: "STAR generated indices"
+    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    doc: "Path to STAR generated indices"
 
-  clip_3p_end:
-    type: int?
-    'sd:layout':
-      advanced: true
-    label: "Clip from 3p end"
-    doc: "Number of bases to clip from the 3p end"
-
-  clip_5p_end:
-    type: int?
-    'sd:layout':
-      advanced: true
-    label: "Clip from 5p end"
-    doc: "Number of bases to clip from the 5p end"
-
-  chrom_length:
-    type: File
-    label: "Chromosome length file"
-    format: "http://edamontology.org/format_2330"
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/star-index.cwl"
-    doc: "Chromosome length file"
-
-  bowtie_indices:
+  bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
     format:
       - http://edamontology.org/format_3484 # ebwt
       - http://edamontology.org/format_3491 # ebwtl
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
-    doc: "Bowtie generated indices"
+    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/bowtie-index.cwl"
+    doc: "Path to Bowtie generated indices"
 
-  annotation:
+  chrom_length_file:
+    type: File
+    label: "Chromosome length file"
+    format: "http://edamontology.org/format_2330"
+    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    doc: "Chromosome length file"
+
+  annotation_file:
     type: File
     label: "GTF annotation file"
     format: "http://edamontology.org/format_2306"
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/star-index.cwl"
+    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
     doc: "GTF annotation file"
 
   dutp:
@@ -66,14 +53,36 @@ inputs:
     label: "dUTP"
     doc: "Enable strand specific dUTP calculation"
 
-  threads:
+# Advanced inputs
+
+  clip_3p_end:
     type: int?
+    default: 0
     'sd:layout':
       advanced: true
-    label: "Number of threads to run tools"
+    label: "Clip from 3p end"
+    doc: "Number of bases to clip from the 3p end"
+
+  clip_5p_end:
+    type: int?
+    default: 0
+    'sd:layout':
+      advanced: true
+    label: "Clip from 5p end"
+    doc: "Number of bases to clip from the 5p end"
+
+# System dependent
+
+  threads:
+    type: int?
+    default: 2
+    'sd:layout':
+      advanced: true
+    label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
 
 outputs:
+
   bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
@@ -81,18 +90,18 @@ outputs:
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/outfile
 
-  star_reads_alignment_log:
+  star_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "STAR alignment log"
     doc: "STAR alignment log file"
-    outputSource: star_reads_alignment/alignedLog
+    outputSource: star_aligner/alignedLog
 
-  fastx_quality_stats_statistics:
+  fastx_statistics:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "fastx_quality_stats statistics"
-    doc: "Fastx statistics file"
+    label: "FASTQ statistics"
+    doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats/statistics
 
   bambai_pair:
@@ -102,28 +111,29 @@ outputs:
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_sort_index/bam_bai_pair
 
-  bowtie_reads_alignment_log:
+  bowtie_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
-    doc: "Bowtie alignment log file"  # To display plain text
-    outputSource: bowtie_reads_alignment/output_bowtie_log
+    doc: "Bowtie alignment log file"
+    outputSource: bowtie_aligner/output_bowtie_log
 
-  rpkm_calculation_table:
+  rpkm_file:
     type: File
     format:
     - "http://edamontology.org/format_3752" # csv
     - "http://edamontology.org/format_3475" # tsv
     label: "RPKM table file"
-    doc: "Calculated rpkm values"  # To display csv/tsv file as a table
+    doc: "Calculated rpkm values"
     outputSource: rpkm_calculation/rpkmFile
 
 steps:
-  star_reads_alignment:
+
+  star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: fastq_input_file
-      genomeDir: star_indices
+      readFilesIn: fastq_file
+      genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
       outFilterMismatchNmax:
@@ -140,13 +150,13 @@ steps:
   fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_input_file
+      input_file: fastq_file
     out: [statistics]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: star_reads_alignment/aligned
+      sort_input: star_aligner/aligned
       threads: threads
     out: [bam_bai_pair]
 
@@ -160,17 +170,17 @@ steps:
     run: bam-genomecov-bigwig.cwl
     in:
       input: samtools_sort_index/bam_bai_pair
-      genomeFile: chrom_length
+      genomeFile: chrom_length_file
       mappedreads: bamtools_stats/mappedreads
     out: [outfile]
 
-  bowtie_reads_alignment:
+  bowtie_aligner:
     run: ../tools/bowtie.cwl
     in:
-      indices_folder: bowtie_indices
-      filelist: fastq_input_file
+      indices_folder: bowtie_indices_folder
+      filelist: fastq_file
       filename:
-        source: fastq_input_file
+        source: fastq_file
         valueFrom: |
           ${
             return self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_ribosomal'+'.sam';
@@ -196,7 +206,7 @@ steps:
     run: ../tools/reads-counting.cwl
     in:
       aligned: samtools_sort_index/bam_bai_pair
-      annotation: annotation
+      annotation: annotation_file
       rpkm-cutoff:
         default: 0.001
       rpkm-cutoff-val:

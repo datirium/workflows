@@ -1,0 +1,43 @@
+#################################################################
+# Dockerfile
+#
+# Software:         geep
+# Software Version: 0.0.1
+# Description:      RPKM calculation tool (includes bamtools)
+# Website:          https://github.com/pezmaster31/bamtools, https://github.com/Barski-lab/geep/tree/master
+# Provides:         geep
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/geep:v0.0.1 -f geep-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/geep:v0.0.1
+# Run Cmd:          docker run --rm -ti biowardrobe2/geep:v0.0.1
+#################################################################
+
+### Base Image
+FROM biowardrobe2/scidap:v0.0.2
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing geep
+
+ENV VERSION 0.0.1
+ENV NAME geep
+ENV URL "https://github.com/Barski-lab/${NAME}/archive/v${VERSION}.tar.gz"
+
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install libboost-all-dev -y && \
+    wget -q -O - $URL | tar -zxv && \
+    cd ${NAME}-${VERSION} && \
+    mkdir build && \
+    cd build \
+    cmake .. && \
+    make && \
+    cp ../bin/${NAME} /usr/local/bin/ && \
+    strip /usr/local/bin/*; true && \
+    cd .. && \
+    rm -rf ./${NAME}-${VERSION}/
