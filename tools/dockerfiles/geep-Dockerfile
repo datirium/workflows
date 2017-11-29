@@ -26,6 +26,7 @@ WORKDIR /tmp
 ENV VERSION 0.0.2
 ENV NAME geep
 ENV URL "https://github.com/Barski-lab/${NAME}/archive/v${VERSION}.tar.gz"
+ENV LD_LIBRARY_PATH "/usr/local/lib/bamtools:${LD_LIBRARY_PATH}"
 
 
 RUN apt-get update && \
@@ -36,8 +37,7 @@ RUN apt-get update && \
     mkdir build && \
     cd build && \
     cmake .. && \
-    make && \
-    cp ../bin/${NAME} /usr/local/bin/ && \
-    strip /usr/local/bin/*; true && \
-    cd .. && \
-    rm -rf ./${NAME}-${VERSION}/
+    make install && \
+    cd ../.. && \
+    rm -rf ./${NAME}-${VERSION}/ && \
+    strip /usr/local/bin/*; true
