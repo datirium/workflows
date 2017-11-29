@@ -1,0 +1,29 @@
+class: s:SoftwareSourceCode
+s:name: "geep"
+s:about: |
+  Program to calculate RPKM values from BAM and annotation files.
+  Results are grouped by isoform and gene names.
+
+s:url: https://github.com/Barski-lab/geep/blob/master/README.md
+s:codeRepository: https://github.com/Barski-lab/geep
+
+s:license:
+- https://opensource.org/licenses/MIT
+
+s:targetProduct:
+  class: s:SoftwareApplication
+  s:softwareVersion: "0.0.2"
+  s:applicationCategory: "command line tool"
+
+s:programmingLanguage: "C++"
+
+s:discussionUrl:
+- https://github.com/Barski-lab/geep/issues
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:member:
+  - class: s:Person
+    s:name: "Michael Kotliar"
+    s:description: "Main author"
