@@ -134,8 +134,8 @@
       location: iaintersect_res.tsv
       size: 543324
 
-- job: ./python-get-stat.json
-  tool: ../tools/python-get-stat.cwl
+- job: ./python-get-stat-chipseq.json
+  tool: ../tools/python-get-stat-chipseq.cwl
   output:
     output:
       class: File
