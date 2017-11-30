@@ -107,8 +107,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "python-get-stat"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/python-get-stat.cwl
+s:name: "python-get-stat-chipseq"
+s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/python-get-stat-chipseq.cwl
 s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

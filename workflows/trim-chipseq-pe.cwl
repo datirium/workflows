@@ -453,7 +453,7 @@ steps:
     out: [outfile]
 
   get_stat:
-      run: ../tools/python-get-stat.cwl
+      run: ../tools/python-get-stat-chipseq.cwl
       in:
         bowtie_log: bowtie_aligner/output_bowtie_log
         rmdup_log: samtools_rmdup/rmdup_log
