@@ -6,12 +6,19 @@ class: CommandLineTool
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_name_prefix = function() {
+        if (Array.isArray(inputs.readFilesIn) && inputs.readFilesIn.length > 0){
+          return inputs.readFilesIn[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+        } else {
+          return inputs.readFilesIn.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+        }
+    };
 
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/star:v2.5.3a
-  dockerFile: >
-    $import: ./dockerfiles/star-Dockerfile
+
 
 inputs:
   winBinNbits:
@@ -458,14 +465,24 @@ inputs:
       Otherwise no alignments will be output, and the read will be counted as "mapped to too many loci"
       in the Log.final.out.
 
-#  outFileNamePrefix:
-#    type: string?
-#    inputBinding:
-#      position: 1
-#      prefix: --outFileNamePrefix
-#    doc: |
-#      string: output files name prefix (including full or relative path). Can
-#      only be defined on the command line.
+  outFileNamePrefix:
+    type: string?
+    inputBinding:
+      position: 1
+      prefix: --outFileNamePrefix
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_name_prefix();
+            } else {
+              return self;
+            }
+        }
+    default: null
+    doc: |
+      string: output files name prefix (including full or relative path). Can
+      only be defined on the command line.
+
   quantMode:
     type: string?
     inputBinding:
@@ -1330,36 +1347,41 @@ inputs:
       int>0: minimum mapped length for a read mate that is spliced
 
 outputs:
-  aligned:
+  aligned_file:
     type: File
     outputBinding:
-      glob: |
-        ${
-          if (inputs.outSAMtype.indexOf("SAM") > -1) {
-              return "Aligned.out.sam";
-          } else {
-           if ( inputs.outSAMtype.indexOf("SortedByCoordinate") > -1 )
-              return "Aligned.sortedByCoord.out.bam";
-            else
-              return "Aligned.out.bam";
-          }
-        }
-#    secondaryFiles:
-#      - "^^^Log.out"
-#      - "^^^Log.progress.out"
-#      - "^^^SJ.out.tab"
+      glob: "*Aligned.out*"
 
-
-  alignedLog:
-    type: File
+  log_out:
+    type: File?
     outputBinding:
-      glob: "Log.final.out"
+      glob: "*Log.out*"
 
-  mappingstats:
+  log_progress:
+    type: File?
+    outputBinding:
+      glob: "*Log.progress.out*"
+
+  log_std:
+    type: File?
+    outputBinding:
+      glob: "*Log.std.out*"
+
+  log_final:
+    type: File?
+    outputBinding:
+      glob: "*Log.final.out*"
+
+  log_sj:
+    type: File?
+    outputBinding:
+      glob: "*SJ.out.tab*"
+
+  mapping_stats:
     type: string?
     outputBinding:
       loadContents: true
-      glob: "Log.final.out"
+      glob: "*Log.final.out*"
       outputEval: |
         ${
           var s = self[0].contents.replace(/[ ]+.*?:\n|[ ]{2,}|\n$/g,"").
@@ -1367,62 +1389,68 @@ outputs:
           return JSON.stringify(s);
         }
 
+  uniquely_mapped_reads_number:
+    type: string?
+    outputBinding:
+      loadContents: true
+      glob: "*Log.final.out*"
+      outputEval: |
+        ${
+          let uniquelyMappedReadsNumberRegex = /Uniquely mapped reads number.*/;
+          return self[0].contents.match(uniquelyMappedReadsNumberRegex)[0].split(/\|\t/g)[1];
+        }
+
 baseCommand: [STAR]
 arguments: ["--runMode", "alignReads"]
+
+
 $namespaces:
   s: http://schema.org/
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:mainEntity:
-  class: s:SoftwareSourceCode
-  s:name: STAR
-  s:about: 'Aligns RNA-seq reads to a reference genome using uncompressed suffix arrays.
-    STAR has a potential for accurately aligning long (several kilobases) reads that
-    are emerging from the third-generation sequencing technologies.
+s:name: "star-alignreads"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/star-alignreads.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
 
-    '
-  s:url: https://github.com/alexdobin/STAR
-  s:codeRepository: https://github.com/alexdobin/STAR.git
-
-  s:license:
-  - https://opensource.org/licenses/GPL-3.0
-
-  s:targetProduct:
-    class: s:SoftwareApplication
-    s:softwareVersion: 2.5.0b
-    s:applicationCategory: commandline tool
-  s:programmingLanguage: C++
-  s:publication:
-  - class: s:ScholarlyArticle
-    id: http://dx.doi.org/10.1093/bioinformatics/bts635
-
-  s:author:
-  - class: s:Person
-    id: mailto:dobin@cshl.edu
-    s:name: Alexander Dobin
-    s:email: mailto:dobin@cshl.edu
-#    foaf:fundedBy: "NHGRI (NIH) grant U54HG004557"
-    s:worksFor:
-    - class: s:Organization
-      s:name: Cold Spring Harbor Laboratory, Cold Spring Harbor, NY, USA
-s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/STAR.cwl
-s:codeRepository: https://github.com/common-workflow-language/workflows
 s:isPartOf:
   class: s:CreativeWork
   s:name: Common Workflow Language
   s:url: http://commonwl.org/
 
-s:author:
-  class: s:Person
-  s:name: Andrey Kartashov
-  s:email: mailto:Andrey.Kartashov@cchmc.org
-  s:sameAs:
-  - id: http://orcid.org/0000-0001-9102-5681
-  s:worksFor:
+s:mainEntity:
+  $import: ./metadata/star-metadata.yaml
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
   - class: s:Organization
-    s:name: Cincinnati Children's Hospital Medical Center
-    s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
+    s:legalName: "Allergy and Immunology"
     s:department:
     - class: s:Organization
-      s:name: Barski Lab
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
+doc: |
+  Tool to run STAR alignReads
+
+s:about: |
+  Usage: STAR  [options]... --genomeDir REFERENCE   --readFilesIn R1.fq R2.fq
+
+

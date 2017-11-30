@@ -194,7 +194,7 @@ doc: |
   use the following inputs:
     sort_input
 
-s:about: >
+s:about: |
   Usage: samtools sort [options...] [in.bam]
   Options:
     -l INT     Set compression level, from 0 (uncompressed) to 9 (best)
