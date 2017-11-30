@@ -1,3 +1,16 @@
+- job: ./python-get-stat-rnaseq.json
+  tool: ../tools/python-get-stat-rnaseq.cwl
+  output:
+    output:
+      class: File
+      location: star_align.stat
+      size: 37
+    total_reads: 35774006
+    mapped_reads: 26951948
+    ribo_reads: 6818304
+    supressed_reads: 1219000
+    used_reads: 11
+
 - job: ./geep.json
   tool: ../tools/geep.cwl
   output:
