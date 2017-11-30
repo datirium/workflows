@@ -1,3 +1,28 @@
+- job: ./star-alignreads.json
+  tool: ../tools/star-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: res_Aligned.out.bam
+      size: 1198987
+    log_sj:
+      class: File
+      location: res_SJ.out.tab
+      size: 7718
+    log_progress:
+      class: File
+      location: res_Log.progress.out
+      size: 246
+    log_final:
+      class: File
+      location: res_Log.final.out
+      size: 1826
+    log_out:
+      class: File
+      location: res_Log.out
+      size: 16362
+    uniquely_mapped_reads_number: 24959
+
 - job: ./python-get-stat-rnaseq.json
   tool: ../tools/python-get-stat-rnaseq.cwl
   output:

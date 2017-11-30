@@ -1,0 +1,57 @@
+class: s:SoftwareSourceCode
+s:name: "STAR"
+s:about: |
+  Aligns RNA-seq reads to a reference genome using uncompressed suffix arrays.
+  STAR has a potential for accurately aligning long (several kilobases) reads that
+  are emerging from the third-generation sequencing technologies
+
+s:url: https://github.com/alexdobin/STAR
+s:codeRepository: https://github.com/alexdobin/STAR
+
+s:license:
+- https://opensource.org/licenses/GPL-3.0
+
+s:targetProduct:
+  class: s:SoftwareApplication
+  s:softwareVersion: "v2.5.3a"
+  s:applicationCategory: "command line tool"
+
+s:programmingLanguage: "C++"
+
+s:publication:
+- class: s:ScholarlyArticle
+  id: "doi: 10.1093/bioinformatics/bts635"
+  s:name: "STAR: ultrafast universal RNA-seq aligner"
+  s:author:
+  - class: s:Person
+    s:name: "Alexander Dobin"
+  - class: s:Person
+    s:name: "Carrie A. Davis"
+  - class: s:Person
+    s:name: "Felix Schlesinger"
+  - class: s:Person
+    s:name: "Jorg Drenkow"
+  - class: s:Person
+    s:name: "Chris Zaleski"
+  - class: s:Person
+    s:name: "Sonali Jha"
+  - class: s:Person
+    s:name: "Philippe Batut"
+  - class: s:Person
+    s:name: "Mark Chaisson"
+  - class: s:Person
+    s:name: "Thomas R. Gingeras1"
+  datePublished: 1 January 2013
+  s:url: https://academic.oup.com/bioinformatics/article/29/1/15/272537
+
+s:discussionUrl:
+- https://github.com/alexdobin/STAR/issues
+
+s:creator:
+- class: s:Organization
+  s:name: "Cold Spring Harbor Laboratory, Cold Spring Harbor, NY, USA"
+  s:member:
+  - class: s:Person
+    s:name: "Alexander Dobin"
+    s:description: "main author"
+
