@@ -1,0 +1,6 @@
+{
+  "star_log":{"class": "File", "location": "./data/star_align.log"},
+  "bowtie_log":{"class": "File", "location": "./data/bowtie_align.log"},
+  "rpkm_isoforms":{"class": "File", "location": "./data/geep_rpkm_isoforms.csv"},
+  "pair_end": true
+}
