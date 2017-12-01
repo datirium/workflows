@@ -1387,7 +1387,7 @@ outputs:
         }
 
   uniquely_mapped_reads_number:
-    type: string?
+    type: int?
     outputBinding:
       loadContents: true
       glob: "*Log.final.out*"
