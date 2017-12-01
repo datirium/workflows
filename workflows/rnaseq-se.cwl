@@ -43,17 +43,21 @@ inputs:
 
   annotation_file:
     type: File
-    label: "GTF annotation file"
-    format: "http://edamontology.org/format_2306"
+    label: "Annotation file"
+    format:
+      - "http://edamontology.org/format_2306"
+      - "http://edamontology.org/format_3475"
     'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
-    doc: "GTF annotation file"
-
-  dutp:
-    type: boolean
-    label: "dUTP"
-    doc: "Enable strand specific dUTP calculation"
+    doc: "GTF or TAB-separated annotation file"
 
 # Advanced inputs
+
+  exclude_chr:
+    type: string?
+    'sd:layout':
+      advanced: true
+    label: "Chromosome to be excluded in rpkm calculation"
+    doc: "Chromosome to be excluded in rpkm calculation"
 
   clip_3p_end:
     type: int?
@@ -90,12 +94,40 @@ outputs:
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/outfile
 
-  star_log:
+  star_final_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "STAR alignment log"
-    doc: "STAR alignment log file"
-    outputSource: star_aligner/alignedLog
+    label: "STAR final log"
+    doc: "STAR Log.final.out"
+    outputSource: star_aligner/log_final
+
+  star_out_log:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "STAR log out"
+    doc: "STAR Log.out"
+    outputSource: star_aligner/log_out
+
+  star_progress_log:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "STAR progress log"
+    doc: "STAR Log.progress.out"
+    outputSource: star_aligner/log_progress
+
+  star_stdout_log:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "STAR stdout log"
+    doc: "STAR Log.std.out"
+    outputSource: star_aligner/log_std
+
+  star_sj_log:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "STAR sj log"
+    doc: "STAR SJ.out.tab"
+    outputSource: star_aligner/log_sj
 
   fastx_statistics:
     type: File
@@ -118,14 +150,25 @@ outputs:
     doc: "Bowtie alignment log file"
     outputSource: bowtie_aligner/output_bowtie_log
 
-  rpkm_file:
+  rpkm_isoforms:
     type: File
-    format:
-    - "http://edamontology.org/format_3752" # csv
-    - "http://edamontology.org/format_3475" # tsv
-    label: "RPKM table file"
-    doc: "Calculated rpkm values"
-    outputSource: rpkm_calculation/rpkmFile
+    format: "http://edamontology.org/format_3752"
+    label: "RPKM, grouped by isoforms"
+    doc: "Calculated rpkm values, grouped by isoforms"
+    outputSource: rpkm_calculation/isoforms_file
+
+  fastq_file_compressed:
+    type: File
+    label: "Compressed FASTQ"
+    doc: "bz2 compressed FASTQ file"
+    outputSource: bzip/output
+
+  get_stat_log:
+    type: File?
+    label: "Bowtie, STAR and GEEP combined log"
+    format: "http://edamontology.org/format_2330"
+    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
+    outputSource: get_stat/output
 
 steps:
 
@@ -145,7 +188,14 @@ steps:
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
       threads: threads
-    out: [aligned, alignedLog]
+    out:
+      - aligned_file
+      - log_final
+      - uniquely_mapped_reads_number
+      - log_out
+      - log_progress
+      - log_std
+      - log_sj
 
   fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
@@ -153,38 +203,33 @@ steps:
       input_file: fastq_file
     out: [statistics]
 
+  bzip:
+    run: ../tools/bzip2.cwl
+    in:
+      input_file: fastq_file
+    out: [output]
+
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: star_aligner/aligned
+      sort_input: star_aligner/aligned_file
       threads: threads
     out: [bam_bai_pair]
-
-  bamtools_stats:
-    run: ../tools/bamtools-stats.cwl
-    in:
-      input_files: samtools_sort_index/bam_bai_pair
-    out: [mappedreads]
 
   bam_to_bigwig:
     run: bam-genomecov-bigwig.cwl
     in:
       input: samtools_sort_index/bam_bai_pair
       genomeFile: chrom_length_file
-      mappedreads: bamtools_stats/mappedreads
+      mappedreads: star_aligner/uniquely_mapped_reads_number
+#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
     out: [outfile]
 
   bowtie_aligner:
     run: ../tools/bowtie.cwl
     in:
-      indices_folder: bowtie_indices_folder
       filelist: fastq_file
-      filename:
-        source: fastq_file
-        valueFrom: |
-          ${
-            return self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_ribosomal'+'.sam';
-          }
+      indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
       q:
@@ -203,29 +248,23 @@ steps:
     out: [output_bowtie_log]
 
   rpkm_calculation:
-    run: ../tools/reads-counting.cwl
+    run: ../tools/geep.cwl
     in:
-      aligned: samtools_sort_index/bam_bai_pair
-      annotation: annotation_file
-      rpkm-cutoff:
+      bam_file: samtools_sort_index/bam_bai_pair
+      annotation_file: annotation_file
+      rpkm_threshold:
         default: 0.001
-      rpkm-cutoff-val:
-        default: 0
-      rnaSeqType:
-        source: dutp
-        valueFrom: |
-          ${
-            if (self){
-              return 'dUTP';
-            } else {
-              return 'RNA';
-            }
-          }
-      ignore_chrom:
-        default: "control"
+      exclude_chr: exclude_chr
       threads: threads
-    out: [rpkmFile]
+    out: [isoforms_file]
 
+  get_stat:
+      run: ../tools/python-get-stat-rnaseq.cwl
+      in:
+        star_log: star_aligner/log_final
+        bowtie_log: bowtie_aligner/output_bowtie_log
+        rpkm_isoforms: rpkm_calculation/isoforms_file
+      out: [output]
 
 $namespaces:
   s: http://schema.org/
@@ -233,9 +272,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "run-rna-SE"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/v0.0.1b/workflows/scidap/run-rna-SE.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:name: "rnaseq-se"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-se.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -264,7 +303,7 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
       - class: s:Person
@@ -273,7 +312,7 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-doc: >
+doc: |
   Runs RNA-Seq BioWardrobe basic analysis with single-end data file.
 
 s:about: |
