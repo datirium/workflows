@@ -6,7 +6,10 @@ class: CommandLineTool
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
-
+  expressionLib:
+  - var default_output_filename = function() {
+        return inputs.bam_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".";
+    };
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/geep:v0.0.2
@@ -51,6 +54,15 @@ inputs:
     inputBinding:
       position: 13
       prefix: --output
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
     doc: |
       Set the prefix to save output files. Default: ""
 

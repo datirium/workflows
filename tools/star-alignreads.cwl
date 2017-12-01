@@ -9,9 +9,9 @@ requirements:
   expressionLib:
   - var default_output_name_prefix = function() {
         if (Array.isArray(inputs.readFilesIn) && inputs.readFilesIn.length > 0){
-          return inputs.readFilesIn[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+          return inputs.readFilesIn[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".";
         } else {
-          return inputs.readFilesIn.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+          return inputs.readFilesIn.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".";
         }
     };
 
