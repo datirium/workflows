@@ -1394,7 +1394,7 @@ outputs:
       outputEval: |
         ${
           let uniquelyMappedReadsNumberRegex = /Uniquely mapped reads number.*/;
-          return self[0].contents.match(uniquelyMappedReadsNumberRegex)[0].split(/\|\t/g)[1];
+          return parseInt(self[0].contents.match(uniquelyMappedReadsNumberRegex)[0].split(/\|\t/g)[1]);
         }
 
 baseCommand: [STAR]
