@@ -23,7 +23,6 @@ inputs:
         items: File
     doc: >
       comma-separated list of files with ref sequences
-    format: "http://edamontology.org/format_1929"
     inputBinding:
       itemSeparator: ","
       position: 25

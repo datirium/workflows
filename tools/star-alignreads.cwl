@@ -690,9 +690,6 @@ inputs:
       - File
       - type: array
         items: File
-    format:
-      - http://edamontology.org/format_1931 # FASTQ-illumina
-      - http://edamontology.org/format_1929 # FASTA
     inputBinding:
       position: 1
       prefix: --readFilesIn

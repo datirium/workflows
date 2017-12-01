@@ -1,6 +1,6 @@
 {
-  "genome_fasta_files":[{"class": "File", "path": "./data/chrM.fa", "format": "http://edamontology.org/format_1929"}],
-  "sjdb_gtf_file": {"class": "File", "path":"./data/hg19_chrM.gtf", "format": "http://edamontology.org/format_2306"},
+  "genome_fasta_files":[{"class": "File", "path": "./data/chrM.fa"}],
+  "sjdb_gtf_file": {"class": "File", "path":"./data/hg19_chrM.gtf"},
   "threads": 1,
   "sjdb_overhang":100
 }
