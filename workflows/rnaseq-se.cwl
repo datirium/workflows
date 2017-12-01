@@ -28,9 +28,6 @@ inputs:
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    format:
-      - http://edamontology.org/format_3484 # ebwt
-      - http://edamontology.org/format_3491 # ebwtl
     'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/bowtie-index.cwl"
     doc: "Path to Bowtie generated indices"
 
