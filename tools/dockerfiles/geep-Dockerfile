@@ -36,7 +36,7 @@ RUN apt-get update && \
     cd ${NAME}-${VERSION} && \
     mkdir build && \
     cd build && \
-    cmake .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make install && \
     cd ../.. && \
     rm -rf ./${NAME}-${VERSION}/ && \
