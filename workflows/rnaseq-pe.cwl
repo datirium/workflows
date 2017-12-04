@@ -13,11 +13,17 @@ inputs:
 
 # General inputs
 
-  fastq_file:
+  fastq_file_upstream:
     type: File
-    label: "FASTQ input file"
+    label: "FASTQ upstream input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format"
+    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
+
+  fastq_file_downstream:
+    type: File
+    label: "FASTQ downstream input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
 
   star_indices_folder:
     type: Directory
@@ -126,12 +132,19 @@ outputs:
     doc: "STAR SJ.out.tab"
     outputSource: star_aligner/log_sj
 
-  fastx_statistics:
+  fastx_statistics_upstream:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "FASTQ statistics"
-    doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-    outputSource: fastx_quality_stats/statistics
+    label: "FASTQ upstream statistics"
+    doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
+    outputSource: fastx_quality_stats_upstream/statistics
+
+  fastx_statistics_downstream:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "FASTQ downstream statistics"
+    doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
+    outputSource: fastx_quality_stats_downstream/statistics
 
   bambai_pair:
     type: File
@@ -154,11 +167,17 @@ outputs:
     doc: "Calculated rpkm values, grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
-  fastq_file_compressed:
+  fastq_file_compressed_upstream:
     type: File
-    label: "Compressed FASTQ"
-    doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output
+    label: "Compressed upstream FASTQ"
+    doc: "bz2 compressed upstream FASTQ file"
+    outputSource: bzip_upstream/output
+
+  fastq_file_compressed_downstream:
+    type: File
+    label: "Compressed downstream FASTQ"
+    doc: "bz2 compressed downstream FASTQ file"
+    outputSource: bzip_downstream/output
 
   get_stat_log:
     type: File?
@@ -172,7 +191,7 @@ steps:
   star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: fastq_file
+      readFilesIn: [fastq_file_upstream, fastq_file_downstream]
       genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
@@ -194,16 +213,28 @@ steps:
       - log_std
       - log_sj
 
-  fastx_quality_stats:
+  fastx_quality_stats_upstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file
+      input_file: fastq_file_upstream
     out: [statistics]
 
-  bzip:
+  fastx_quality_stats_downstream:
+    run: ../tools/fastx-quality-stats.cwl
+    in:
+      input_file: fastq_file_downstream
+    out: [statistics]
+
+  bzip_upstream:
     run: ../tools/bzip2.cwl
     in:
-      input_file: fastq_file
+      input_file: fastq_file_upstream
+    out: [output]
+
+  bzip_downstream:
+    run: ../tools/bzip2.cwl
+    in:
+      input_file: fastq_file_downstream
     out: [output]
 
   samtools_sort_index:
@@ -211,7 +242,7 @@ steps:
     in:
       sort_input: star_aligner/aligned_file
       sort_output_filename:
-        source: fastq_file
+        source: fastq_file_upstream
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
@@ -223,12 +254,15 @@ steps:
       genomeFile: chrom_length_file
       mappedreads: star_aligner/uniquely_mapped_reads_number
 #     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
+      pairchip:
+        default: true
     out: [outfile]
 
   bowtie_aligner:
     run: ../tools/bowtie.cwl
     in:
-      filelist: fastq_file
+      filelist: fastq_file_upstream
+      filelist_mates: fastq_file_downstream
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -236,10 +270,6 @@ steps:
         default: 3
       m:
         default: 1
-      best:
-        default: true
-      strata:
-        default: true
       sam:
         default: true
       threads: threads
@@ -270,8 +300,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "rnaseq-se"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-se.cwl
+s:name: "rnaseq-pe"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -311,20 +341,20 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq BioWardrobe basic analysis with single-end data file.
+  Runs RNA-Seq BioWardrobe basic analysis with pair-end data file.
 
 s:about: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **RNA-Seq** basic analysis for a **single-end** experiment.
+  **RNA-Seq** basic analysis for a **pair-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
 
   Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
-  1. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
-  2. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
+  1. Use STAR to align reads from input FASTQ files according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
+  2. Use fastx_quality_stats to analyze input FASTQ files and generate quality statistics files
   3. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)
-  5. Generate BigWig file on the base of sorted BAM file
-  6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
-  7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
+  4. Generate BigWig file on the base of sorted BAM file
+  5. Map input FASTQ files to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
+  6. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
 
 
 
