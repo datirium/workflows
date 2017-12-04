@@ -9,7 +9,7 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-        return inputs.star_log.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".stat";
+        return inputs.star_log.location.split('/').slice(-1)[0].replace(/\.*Log\.final\.out$/i,'.')+"stat";
     };
 
 hints:
