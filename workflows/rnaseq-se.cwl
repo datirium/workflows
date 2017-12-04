@@ -210,6 +210,9 @@ steps:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_aligner/aligned_file
+      sort_output_filename:
+        source: fastq_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
 
@@ -324,10 +327,7 @@ s:about: |
   4. Calculate basic statistics for sorted BAM file using bamtools stats. Return mapped reads number.
   5. Generate BigWig file on the base of sorted BAM file
   6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
-  7. Calculate isoform and gene expression levels for the sorted BAM file and GTF annotation file using SciDAP reads-counting utility; export results to file
-
-  Tasks #2 and #6 are started independently on other workflow steps.
-  Workflow doesn't depend on the type of the organism
+  7. Calculate isoform and gene expression levels for the sorted BAM file and GTF annotation file using GEEP reads-counting utility; export results to file
 
 
 
