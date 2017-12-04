@@ -5,6 +5,7 @@ requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
   - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
