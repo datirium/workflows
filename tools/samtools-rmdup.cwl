@@ -9,15 +9,15 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-          return inputs.input_file.location.split('/').slice(-1)[0];
+          return inputs.bam_file.location.split('/').slice(-1)[0];
         };
 - class: InitialWorkDirRequirement
   listing: |
     ${
       return  [
                 {
-                  "entry": inputs.input_file,
-                  "entryname": inputs.input_file.basename,
+                  "entry": inputs.bam_file,
+                  "entryname": "input_file_backup",
                   "writable": true
                 }
               ]
@@ -26,8 +26,6 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.4
-  dockerFile: >
-    $import: ./dockerfiles/samtools-Dockerfile
 
 inputs:
 
@@ -35,11 +33,13 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      if [ "$0" = True ]
+      if [ "$0" = "true" ]
       then
         samtools rmdup "${@:1}"
       else
         echo "Skip samtools rmdup " ${@:1}
+        echo "moving" ${@: -2}
+        mv ${@: -2}
       fi
     inputBinding:
       position: 1
@@ -51,34 +51,11 @@ inputs:
     default: true
     inputBinding:
       position: 2
-    doc: |
-      If true - run samtools rmdup, if false - return input_file, previously staged into output directory
-
-  input_file:
-    type: File
-    inputBinding:
-      position: 10
-    doc: |
-      Input sorted bam file.
-
-  output_filename:
-    type:
-      - "null"
-      - string
-    inputBinding:
-      position: 11
       valueFrom: |
-        ${
-            if (self == null || inputs.trigger == false){
-              return default_output_filename();
-            } else {
-              return self;
-            }
-        }
-    default: null
+        ${ return self ? "true" : "false" }
     doc: |
-      Writes the output bam file to output_filename if set,
-      otherwise generates output_filename on the base of input_file
+      If true - run samtools rmdup, if false - return bam_file, previously staged into output directory
+      Use valueFrom to return string instead of boolean, because if return boolean False, argument is not printed
 
   single_end:
     type:
@@ -100,6 +77,35 @@ inputs:
     doc: |
       treat PE reads as SE in rmdup (force -s)
 
+  bam_file:
+    type: File
+    inputBinding:
+      position: 10
+    doc: |
+      Input sorted bam file.
+    # Need this only to make sure that bam file is sorted.
+    secondaryFiles: |
+      $({"location": self.location+".bai", "class": "File"})
+
+  output_filename:
+    type:
+      - "null"
+      - string
+    inputBinding:
+      position: 11
+      valueFrom: |
+        ${
+            if (self == null || inputs.trigger == false){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
+    doc: |
+      Writes the output bam file to output_filename if set,
+      otherwise generates output_filename on the base of bam_file
+
 outputs:
   rmdup_output:
     type: File
@@ -114,13 +120,13 @@ outputs:
         }
     secondaryFiles: |
       ${
-          if (inputs.input_file.secondaryFiles && inputs.trigger == false){
-            return inputs.input_file.secondaryFiles;
+          if (inputs.bam_file.secondaryFiles && inputs.trigger == false){
+            return inputs.bam_file.secondaryFiles;
           } else {
             return "null";
           }
         }
-    doc: File with removed duplicates or input_file with optional secondaryFiles
+    doc: File with removed duplicates or bam_file with optional secondaryFiles
 
   rmdup_log:
     type: File
@@ -193,11 +199,35 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  This tool is used to remove duplicates from input coordinate sorted BAM file
-  Input Trigger (default: true) allows to skip all calculation and return
-  all input files unchanged. To set files to be returned in case of Trigger == false,
-  use the following inputs:
-    input_file
+  Tool to remove duplicates from coordinate sorted BAM file set as input `bam_file`.
+  If input `trigger` is set to `true` or isn't set at all (`true` is used by default), run `samtools rmdup`, return
+  newly generated BAM file without duplicates and log as outputs `rmdup_output` and `rmdup_log`.
+  If input `trigger` is set to `false`, return unchanged BAM and index files, previously staged into output directory,
+  and log.
+
+  Before execution `baseCommand` input BAM and index files are staged into directory set as docker parameter `--workdir`
+  (tool's output directory), using `InitialWorkDirRequirement`. Setting `writable: true` makes cwl-runner to make copies
+  of the BAM and index files and mount them to docker container with `rw` mode as part of `--workdir` (if set to false,
+  the files staged into output directory will be mounted to docker container separately with `ro` mode). Because `bam_file`
+  is copied into `--workdir` (where `samtools rmdup` should be run) we need to change its name - set `entryname`. This
+  prevents `samtools rmdup` from reading and writing to the same file (which happens only when `output_filename` is not set
+  and we generated output filename automatically on the base of the `bam_file` basename). Index file which is set as
+  `secondaryFiles` for `bam_file` shouln't be renamed, because `samtools rmdup` don't work with this file at all and is
+  completely ignored when `trigger` is true.
+
+  Trigger logic is implemented in bash script set by default in input `bash_script`. If first argment $0 (which is `trigger` input)
+  is true, run `samtools rmdup` with the rest of the arguments. If $0 is not true, skip samtools running and rename
+  staged into output directory BAM file. Current filename of staged BAM file and the filename which we are waiting to be the
+  output of tool are always set as two last arguments of the script.
+
+  Input `trigger` is Boolean, but returns String, because of `valueFrom` field. The `valueFrom` is used, because if `trigger`
+  is false, cwl-runner doesn't append this argument at all to the the `baseCommand` - new feature of CWL v1.0.2. Alternatively,
+  `prefix` field could be used, but it causes changing logic in bash script saved in `bash_script` input.
+
+  `default_output_filename` function is used for generating output filename if input `output_filename` is not set or in
+  case when `trigger` is false and we need to return BAM and index files staged into output directory.
+
+  Output `rmdup_output` returns `secondaryFiles` only in case when `trigger` was set to false (we need to rerurn index too).
     
 s:about: >
   Usage:  samtools rmdup [-sS] <input.srt.bam> <output.bam>

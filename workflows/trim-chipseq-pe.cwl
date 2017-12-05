@@ -386,7 +386,7 @@ steps:
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
-      input_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_sort_index/bam_bai_pair
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
