@@ -189,7 +189,7 @@
   output:
     sorted_file:
       class: File
-      location: test.trimmed.sorted.bam
+      location: test.trimmed.bam
       size: 50487
 
 - job: ./macs2-island-count.json
@@ -198,17 +198,121 @@
     islands: 1621
     fragments: 292
 
-- job: ./samtools-rmdup.json
+- job: ./samtools-rmdup-1.json
   tool: ../tools/samtools-rmdup.cwl
   output:
     rmdup_output:
       class: File
-      location: test.trimmed.r.bam
+      location: test.trimmed.bam
       size: 32396
+      secondaryFiles: []
     rmdup_log:
       class: File
       location: test.trimmed.rmdup
-      size: 175
+#      size: 54
+
+- job: ./samtools-rmdup-2.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: res.bam
+      size: 32396
+      secondaryFiles: []
+    rmdup_log:
+      class: File
+      location: res.rmdup
+#      size: 54
+
+- job: ./samtools-rmdup-3.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: res.bam
+      size: 50487
+      secondaryFiles: []
+    rmdup_log:
+      class: File
+      location: res.rmdup
+#      size: 47
+
+- job: ./samtools-rmdup-4.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+    rmdup_log:
+      class: File
+      location: test.trimmed.rmdup
+#      size: 147
+
+- job: ./samtools-rmdup-5.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+    rmdup_log:
+      class: File
+      location: test.trimmed.rmdup
+#      size: 144
+
+- job: ./samtools-rmdup-6.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+    rmdup_log:
+      class: File
+      location: test.trimmed.rmdup
+#      size: 144
+
+- job: ./samtools-rmdup-7.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+    rmdup_log:
+      class: File
+      location: test.trimmed.rmdup
+#      size: 147
+
+- job: ./samtools-rmdup-8.json
+  tool: ../tools/samtools-rmdup.cwl
+  output:
+    rmdup_output:
+      class: File
+      location: res.bam
+      size: 32396
+      secondaryFiles: []
+    rmdup_log:
+      class: File
+      location: res.rmdup
+#      size: 54
 
 - job: ./fastq-dump_1.json
   tool: ../tools/fastq-dump.cwl
@@ -221,7 +325,6 @@
       class: File
       location: SRR390728_pe_2.fastq
       size: 137572
-
 
 - job: ./fastq-dump_2.json
   tool: ../tools/fastq-dump.cwl

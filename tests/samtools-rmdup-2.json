@@ -1,0 +1,8 @@
+{
+    "bam_file": {
+        "class": "File",
+        "location": "./data/test.trimmed.bam"
+    },
+    "single_end": true,
+    "output_filename": "res.bam"
+}
