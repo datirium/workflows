@@ -463,7 +463,7 @@ s:about: |
   **ChIP-Seq** basic analysis for a **single-read** experiment.
   A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
 
- The pipeline produces a sorted BAM file alongside with index BAI file, quality
+  The pipeline produces a sorted BAM file alongside with index BAI file, quality
   statistics of the input FASTQ file, coverage by estimated fragments as a BigWig file, peaks calling
   data in a form of narrowPeak or broadPeak files, islands with the assigned nearest genes and
   region type, data for average tag density plot.
