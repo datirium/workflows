@@ -184,12 +184,68 @@
     mapped_reads: 6818304
     used_reads: 6568256
 
-- job: ./samtools-sort.json
+- job: ./samtools-sort-1.json
   tool: ../tools/samtools-sort.cwl
   output:
     sorted_file:
       class: File
       location: test.trimmed.bam
+      size: 50487
+
+- job: ./samtools-sort-2.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+
+- job: ./samtools-sort-3.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+
+- job: ./samtools-sort-4.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.bam
+      size: 57206
+
+- job: ./samtools-sort-5.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.bam
+      size: 57206
+
+- job: ./samtools-sort-6.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: res.sam
+      size: 260801
+
+- job: ./samtools-sort-7.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: test.trimmed.bam
+      size: 50487
+
+- job: ./samtools-sort-8.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: res.sam
       size: 50487
 
 - job: ./macs2-island-count.json
