@@ -1,0 +1,7 @@
+{
+    "sort_input": {
+        "class": "File",
+        "location": "./data/test.trimmed.bam"
+    },
+    "trigger": false
+}

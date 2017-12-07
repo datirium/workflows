@@ -1,0 +1,8 @@
+{
+    "sort_input": {
+        "class": "File",
+        "location": "./data/test.trimmed.bam"
+    },
+    "sort_by_name": true,
+    "sort_output_filename": "res.sam"
+}
