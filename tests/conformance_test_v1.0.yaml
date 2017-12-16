@@ -300,10 +300,7 @@
       class: File
       location: test.trimmed.bam
       size: 50487
-      secondaryFiles:
-      - class: File
-        location: test.trimmed.bam.bai
-        size: 28664
+      secondaryFiles: []
     rmdup_log:
       class: File
       location: test.trimmed.rmdup
@@ -332,10 +329,7 @@
       class: File
       location: test.trimmed.bam
       size: 50487
-      secondaryFiles:
-      - class: File
-        location: test.trimmed.bam.bai
-        size: 28664
+      secondaryFiles: []
     rmdup_log:
       class: File
       location: test.trimmed.rmdup

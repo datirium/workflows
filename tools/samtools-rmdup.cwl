@@ -54,7 +54,7 @@ inputs:
       valueFrom: |
         ${ return self ? "true" : "false" }
     doc: |
-      If true - run samtools rmdup, if false - return bam_file, previously staged into output directory
+      If true - run samtools rmdup, if false - return bam_file, previously staged into output directory and optional index file
       Use valueFrom to return string instead of boolean, because if return boolean False, argument is not printed
 
   single_end:
@@ -82,10 +82,7 @@ inputs:
     inputBinding:
       position: 10
     doc: |
-      Input sorted bam file.
-    # Need this only to make sure that bam file is sorted.
-    secondaryFiles: |
-      $({"location": self.location+".bai", "class": "File"})
+      Input sorted bam file (index file is optional)
 
   output_filename:
     type:
@@ -202,16 +199,17 @@ doc: |
   Tool to remove duplicates from coordinate sorted BAM file set as input `bam_file`.
   If input `trigger` is set to `true` or isn't set at all (`true` is used by default), run `samtools rmdup`, return
   newly generated BAM file without duplicates and log as outputs `rmdup_output` and `rmdup_log`.
-  If input `trigger` is set to `false`, return unchanged BAM and index files, previously staged into output directory,
-  and log.
+  If input `trigger` is set to `false`, return unchanged BAM and index files (if provided in secondaryFiles),
+  previously staged into output directory, and log.
 
-  Before execution `baseCommand` input BAM and index files are staged into directory set as docker parameter `--workdir`
-  (tool's output directory), using `InitialWorkDirRequirement`. Setting `writable: true` makes cwl-runner to make copies
-  of the BAM and index files and mount them to docker container with `rw` mode as part of `--workdir` (if set to false,
-  the files staged into output directory will be mounted to docker container separately with `ro` mode). Because `bam_file`
-  is copied into `--workdir` (where `samtools rmdup` should be run) we need to change its name - set `entryname`. This
-  prevents `samtools rmdup` from reading and writing to the same file (which happens only when `output_filename` is not set
-  and we generated output filename automatically on the base of the `bam_file` basename). Index file which is set as
+  Before execution `baseCommand` input BAM and index files (if provided in secondaryFiles) are staged into directory
+  set as docker parameter `--workdir` (tool's output directory), using `InitialWorkDirRequirement`. Setting
+  `writable: true` makes cwl-runner to make copies of the BAM and index files (if provided in secondaryFiles) and mount
+  them to docker container with `rw` mode as part of `--workdir` (if set to false, the files staged into output
+  directory will be mounted to docker container separately with `ro` mode). Because `bam_file` is copied into `--workdir`
+  (where `samtools rmdup` should be run) we need to change its name - set `entryname`. This prevents `samtools rmdup`
+  from reading and writing to the same file (which happens only when `output_filename` is not set and we generated
+  output filename automatically on the base of the `bam_file` basename). Index file which is optionally set as
   `secondaryFiles` for `bam_file` shouln't be renamed, because `samtools rmdup` don't work with this file at all and is
   completely ignored when `trigger` is true.
 
@@ -225,9 +223,10 @@ doc: |
   `prefix` field could be used, but it causes changing logic in bash script saved in `bash_script` input.
 
   `default_output_filename` function is used for generating output filename if input `output_filename` is not set or in
-  case when `trigger` is false and we need to return BAM and index files staged into output directory.
+  case when `trigger` is false and we need to return BAM and index files (if provided in secondaryFiles) staged into
+  output directory.
 
-  Output `rmdup_output` returns `secondaryFiles` only in case when `trigger` was set to false (we need to rerurn index too).
+  Output `rmdup_output` returns `secondaryFiles` only in case when `trigger` was set to false (we need to rerun index).
     
 s:about: >
   Usage:  samtools rmdup [-sS] <input.srt.bam> <output.bam>
