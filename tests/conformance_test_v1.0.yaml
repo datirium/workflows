@@ -558,7 +558,39 @@
       location: reads_test.fastxstat
       size: 2167
 
-- job: ./samtools-sort-index.json
+- job: ./samtools-sort-index-1.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+      size: 51274
+
+- job: ./samtools-sort-index-2.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.csi
+      size: 51274
+
+- job: ./samtools-sort-index-3.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles: []
+      size: 50487
+
+- job: ./samtools-sort-index-4.json
   tool: ../tools/samtools-sort-index.cwl
   output:
     bam_bai_pair:
@@ -569,6 +601,53 @@
         location: test.trimmed.bam.bai
         size: 28664
       size: 50487
+
+- job: ./samtools-sort-index-5.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+      size: 51274
+
+- job: ./samtools-sort-index-6.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: coord_sorted.bam
+      secondaryFiles:
+      - class: File
+        location: coord_sorted.bam.csi
+      size: 51274
+
+- job: ./samtools-sort-index-7.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+      size: 50487
+
+- job: ./samtools-sort-index-8.json
+  tool: ../tools/samtools-sort-index.cwl
+  output:
+    bam_bai_pair:
+      class: File
+      location: test.trimmed.bam
+      secondaryFiles:
+      - class: File
+        location: test.trimmed.bam.bai
+        size: 28664
+      size: 51274
 
 - job: ./bamtools-stats.json
   tool: ../tools/bamtools-stats.cwl
@@ -803,15 +882,3 @@
       - class: File
         location: bowtie_indices.rev.2.ebwt
         size: 2076
-
-- job: ./samtools-sort-index-2.json
-  tool: ../tools/samtools-sort-index.cwl
-  output:
-    bam_bai_pair:
-      class: File
-      location: test.trimmed.bam
-      secondaryFiles:
-      - class: File
-        location: test.trimmed.bam.bai
-        size: 28664
-      size: 50487

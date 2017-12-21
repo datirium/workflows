@@ -228,7 +228,7 @@ doc: |
 
   Output `rmdup_output` returns `secondaryFiles` only in case when `trigger` was set to false (we need to rerun index).
     
-s:about: >
+s:about: |
   Usage:  samtools rmdup [-sS] <input.srt.bam> <output.bam>
 
   Option: -s    rmdup for SE reads

@@ -1,0 +1,7 @@
+{
+    "sort_input": {
+        "class": "File",
+        "location": "./data/test.trimmed.sam"
+    },
+    "sort_compression_level": 5
+}
