@@ -1,0 +1,8 @@
+{
+    "sort_input": {
+        "class": "File",
+        "location": "./data/test.trimmed.bam"
+    },
+    "sort_compression_level": 5,
+    "trigger": true
+}

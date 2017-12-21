@@ -11,5 +11,5 @@
     },
     "sort_compression_level": 5,
     "csi": true,
-    "trigger": true
+    "trigger": false
 }
