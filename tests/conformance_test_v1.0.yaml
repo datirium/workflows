@@ -145,7 +145,7 @@
       location: SRR390728_pe_2_unpaired_2.fq
       size: 136
 
-- job: ./bzip2.json
+- job: ./bzip2-1.json
   tool: ../tools/bzip2.cwl
   output:
     output:
