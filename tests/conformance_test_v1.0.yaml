@@ -384,13 +384,69 @@
       location: SRR3017206_se.fastq
       size: 151572
 
-- job: ./samtools-index.json
+- job: ./samtools-index-1.json
   tool: ../tools/samtools-index.cwl
   output:
-    index:
+    index_file:
       class: File
       location: test.trimmed.bam.bai
       size: 28664
+
+- job: ./samtools-index-2.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: output.bai
+      size: 28664
+
+- job: ./samtools-index-3.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: test.trimmed.bam.csi
+      size: 97
+
+- job: ./samtools-index-4.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: output.csi
+      size: 97
+
+- job: ./samtools-index-5.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: output.bai
+      size: 28664
+
+- job: ./samtools-index-6.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: output.index
+      size: 28664
+
+- job: ./samtools-index-7.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: cramExample.cram.crai
+      size: 94
+
+- job: ./samtools-index-8.json
+  tool: ../tools/samtools-index.cwl
+  output:
+    index_file:
+      class: File
+      location: cramExample.cram.crai
+      size: 94
 
 - job: ./rsem-calculate-expression.json
   tool: ../tools/rsem-calculate-expression.cwl

@@ -1,0 +1,9 @@
+{
+    "input_file": {
+        "class": "File",
+        "location": "./data/cramExample.cram"
+    },
+    "csi": true,
+    "bai": true,
+    "threads": 1
+}
