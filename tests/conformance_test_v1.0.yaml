@@ -1,10 +1,31 @@
-- job: ./star-alignreads.json
+- job: ./star-alignreads-1.json
+  tool: ../tools/star-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: chr21.Aligned.out.bam
+    log_sj:
+      class: File
+      location: chr21.SJ.out.tab
+      size: 7718
+    log_progress:
+      class: File
+      location: chr21.Log.progress.out
+      size: 246
+    log_final:
+      class: File
+      location: chr21.Log.final.out
+    log_out:
+      class: File
+      location: chr21.Log.out
+    uniquely_mapped_reads_number: 24959
+
+- job: ./star-alignreads-2.json
   tool: ../tools/star-alignreads.cwl
   output:
     aligned_file:
       class: File
       location: res_Aligned.out.bam
-      size: 1198987
     log_sj:
       class: File
       location: res_SJ.out.tab
@@ -16,12 +37,52 @@
     log_final:
       class: File
       location: res_Log.final.out
-      size: 1826
     log_out:
       class: File
       location: res_Log.out
-      size: 16362
     uniquely_mapped_reads_number: 24959
+
+- job: ./star-alignreads-3.json
+  tool: ../tools/star-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: SRR390728_pe_1.fastq.Aligned.out.bam
+    log_sj:
+      class: File
+      location: SRR390728_pe_1.fastq.SJ.out.tab
+    log_progress:
+      class: File
+      location: SRR390728_pe_1.fastq.Log.progress.out
+      size: 246
+    log_final:
+      class: File
+      location: SRR390728_pe_1.fastq.Log.final.out
+    log_out:
+      class: File
+      location: SRR390728_pe_1.fastq.Log.out
+    uniquely_mapped_reads_number: 7
+
+- job: ./star-alignreads-4.json
+  tool: ../tools/star-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: res_Aligned.out.bam
+    log_sj:
+      class: File
+      location: res_SJ.out.tab
+    log_progress:
+      class: File
+      location: res_Log.progress.out
+      size: 246
+    log_final:
+      class: File
+      location: res_Log.final.out
+    log_out:
+      class: File
+      location: res_Log.out
+    uniquely_mapped_reads_number: 7
 
 - job: ./python-get-stat-rnaseq.json
   tool: ../tools/python-get-stat-rnaseq.cwl
