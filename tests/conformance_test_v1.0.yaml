@@ -667,7 +667,7 @@
       location: test.trimmed.bed
       size: 27287
 
-- job: ./fastx-quality-stats.json
+- job: ./fastx-quality-stats-1.json
   tool: ../tools/fastx-quality-stats.cwl
   output:
     statistics:
