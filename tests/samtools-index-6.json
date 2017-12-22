@@ -1,0 +1,10 @@
+{
+    "input_file": {
+        "class": "File",
+        "location": "./data/test.trimmed.bam"
+    },
+    "output_filename": "output.index",
+    "csi": true,
+    "bai": true,
+    "threads": 1
+}

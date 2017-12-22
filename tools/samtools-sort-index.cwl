@@ -124,7 +124,7 @@ inputs:
     doc: |
       Input only in.sam|in.bam|in.cram. Optionally could be supplemented with index file in secondaryFiles
 
-  interval:
+  csi_interval:
     type: int?
     inputBinding:
       position: 24
