@@ -9,8 +9,7 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/fastx_toolkit:v0.0.14
-  dockerFile: >
-    $import: ./dockerfiles/fastx-Dockerfile
+
 
 inputs:
 
@@ -70,8 +69,8 @@ s:mainEntity:
   $import: ./metadata/fastx-toolkit-metadata.yaml
 
 s:name: "fastx-quality-stats"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/fastx-quality-stats.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/fastx-quality-stats.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -100,14 +99,15 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to calculate statistics on the base of FASTQ file quality scores
+  Tool calculates statistics on the base of FASTQ file quality scores
+  Output `statistics` is saved to the file with the name generated as `input_file` basename + `.fastxstat` extension
 
-s:about: >
+s:about: |
   usage: fastx_quality_stats [-h] [-N] [-i INFILE] [-o OUTFILE]
   Part of FASTX Toolkit 0.0.14 by A. Gordon (assafgordon@gmail.com)
      [-h] = This helpful help screen.
