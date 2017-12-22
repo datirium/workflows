@@ -1,0 +1,9 @@
+{
+  "readFilesIn": [
+    {"class": "File", "location": "./data/fastq/SRR390728_pe_1.fastq.gz"},
+    {"class": "File", "location": "./data/fastq/SRR390728_pe_2.fastq.gz"}
+  ],
+  "genomeDir": {"class": "Directory", "location": "./data/chr21/star_indices"},
+  "readFilesCommand": "gunzip -c",
+  "runThreadN": 1
+}
