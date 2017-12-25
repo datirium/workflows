@@ -341,13 +341,13 @@ steps:
     out: [statistics]
 
   bzip_upstream:
-    run: ../tools/bzip2.cwl
+    run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file_upstream
     out: [output]
 
   bzip_downstream:
-    run: ../tools/bzip2.cwl
+    run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file_downstream
     out: [output]
