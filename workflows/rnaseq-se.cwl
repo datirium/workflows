@@ -201,7 +201,7 @@ steps:
     out: [statistics]
 
   bzip:
-    run: ../tools/bzip2.cwl
+    run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file
     out: [output]
