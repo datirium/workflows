@@ -1,0 +1,9 @@
+{
+    "input_file": {
+        "class": "File",
+        "path": "./data/test.trimmed.bam"
+    },
+    "output_filename": "results.bed",
+    "scale": 1,
+    "depth": "-bg"
+}

@@ -45,9 +45,9 @@ steps:
   genomecov:
     run: ../tools/bedtools-genomecov.cwl
     in:
-      input: input
-      genomeFile: genomeFile
-      dept:
+      input_file: input
+      chrom_length_file: genomeFile # maybe we don't need it at all, because we always use BAM file as input
+      depth:
         default: "-bg"
       split:
         source: split
@@ -60,16 +60,16 @@ steps:
             }
           }
       pairchip: pairchip
-      fragmentsize: fragmentsize
+      fragment_size: fragmentsize
       scale: scale
-      mappedreads: mappedreads
+      mapped_reads_number: mappedreads
       strand: strand
-    out: [genomecoverage]
+    out: [genome_coverage_file]
 
   sort:
     run: ../tools/linux-sort.cwl
     in:
-      input: genomecov/genomecoverage
+      input: genomecov/genome_coverage_file
       key:
         default: ["1,1","2,2n"]
     out: [sorted]

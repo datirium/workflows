@@ -1,0 +1,8 @@
+{
+    "input_file": {
+        "class": "File",
+        "path": "./data/test.trimmed.bam"
+    },
+    "mapped_reads_number": 500000,
+    "depth": "-bga"
+}
