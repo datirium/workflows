@@ -1,0 +1,4 @@
+{
+    "input_file": {"class": "File", "path": "./data/reads_test.fastq"},
+    "output_filename": "results.stat"
+}
