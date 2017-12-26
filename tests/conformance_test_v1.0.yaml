@@ -675,6 +675,14 @@
       location: reads_test.fastxstat
       size: 2167
 
+- job: ./fastx-quality-stats-2.json
+  tool: ../tools/fastx-quality-stats.cwl
+  output:
+    statistics:
+      class: File
+      location: results.stat
+      size: 2167
+
 - job: ./samtools-sort-index-1.json
   tool: ../tools/samtools-sort-index.cwl
   output:
