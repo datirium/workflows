@@ -1,0 +1,8 @@
+{
+    "input_file": {
+        "class": "File",
+        "path": "./data/test.trimmed.bam"
+    },
+    "scale": 1,
+    "depth": "-bg"
+}

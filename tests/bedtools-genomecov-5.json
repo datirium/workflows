@@ -1,0 +1,11 @@
+{
+    "input_file": {
+        "class": "File",
+        "path": "./data/input_sorted.bedGraph"
+    },
+    "depth": "-bga",
+    "chrom_length_file": {
+        "class": "File",
+        "path": "./data/chrNameLength.txt"
+    }
+}

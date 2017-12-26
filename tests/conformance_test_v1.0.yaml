@@ -659,13 +659,45 @@
      location: bowtie2.log
      size: 190
 
-- job: ./bedtools-genomecov.json
+- job: ./bedtools-genomecov-1.json
   tool: ../tools/bedtools-genomecov.cwl
   output:
-    genomecoverage:
+    genome_coverage_file:
       class: File
-      location: test.trimmed.bed
+      location: test.trimmed.bedGraph
       size: 27287
+
+- job: ./bedtools-genomecov-2.json
+  tool: ../tools/bedtools-genomecov.cwl
+  output:
+    genome_coverage_file:
+      class: File
+      location: results.bed
+      size: 27287
+
+- job: ./bedtools-genomecov-3.json
+  tool: ../tools/bedtools-genomecov.cwl
+  output:
+    genome_coverage_file:
+      class: File
+      location: test.trimmed.tab
+      size: 4858
+
+- job: ./bedtools-genomecov-4.json
+  tool: ../tools/bedtools-genomecov.cwl
+  output:
+    genome_coverage_file:
+      class: File
+      location: test.trimmed.bedGraph
+      size: 27913
+
+- job: ./bedtools-genomecov-5.json
+  tool: ../tools/bedtools-genomecov.cwl
+  output:
+    genome_coverage_file:
+      class: File
+      location: input_sorted.bedGraph
+      size: 1152
 
 - job: ./fastx-quality-stats-1.json
   tool: ../tools/fastx-quality-stats.cwl
