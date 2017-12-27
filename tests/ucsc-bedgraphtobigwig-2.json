@@ -1,10 +1,11 @@
 {
-    "input": {
+    "bedgraph_file": {
         "class": "File",
         "path": "./data/input_sorted.bedGraph"
     },
-    "genomeFile": {
+    "chrom_length_file": {
         "class": "File",
         "path": "./data/chrNameLength.txt"
-    }
+    },
+    "output_filename": "result.bigwig"
 }

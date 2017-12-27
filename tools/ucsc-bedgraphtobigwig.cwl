@@ -1,79 +1,96 @@
 #!/usr/bin/env cwl-runner
-
 cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- class: InlineJavascriptRequirement
 - $import: ./metadata/envvar-global.yml
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function() {
+          return inputs.bedgraph_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigWig";
+        };
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/ucsc-userapps:v325
-  dockerFile: >
-    $import: ./dockerfiles/ucsc-userapps-Dockerfile
+  dockerPull: biowardrobe2/ucscuserapps:v358
 
 
 inputs:
-  input:
+  bedgraph_file:
     type: File
     inputBinding:
-      position: 2
+      position: 10
+    doc: |
+      Four column bedGraph file: <chrom> <start> <end> <value>
 
-  genomeFile:
+  chrom_length_file:
     type: File
     inputBinding:
-      position: 3
+      position: 11
+    doc: |
+      Two-column chromosome length file: <chromosome name> <size in bases>
 
-  bigWig:
-    type: string?
+  unc:
+    type:
+      - "null"
+      - boolean
     inputBinding:
-      position: 4
+      position: 5
+      prefix: "-unc"
+    doc: |
+      Disable compression
+
+  items_per_slot:
+    type:
+      - "null"
+      - int
+    inputBinding:
+      separate: false
+      position: 6
+      prefix: "-itemsPerSlot="
+    doc: |
+      Number of data points bundled at lowest level. Default 1024
+
+  block_size:
+    type:
+      - "null"
+      - int
+    inputBinding:
+      separate: false
+      position: 7
+      prefix: "-blockSize="
+    doc: |
+      Number of items to bundle in r-tree.  Default 256
+
+  output_filename:
+    type:
+      - "null"
+      - string
+    inputBinding:
+      position: 12
       valueFrom: |
         ${
             if (self == null){
-              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigWig";
+              return default_output_filename();
             } else {
               return self;
             }
         }
     default: null
-
-  unc:
-    type: boolean?
-    doc: "If set, do not use compression."
-    inputBinding:
-      position: 1
-      prefix: "-unc"
-
-  itemsPerSlot:
-    type: int?
     doc: |
-      -itemsPerSlot=N - Number of data points bundled at lowest level. Default 1024
-    inputBinding:
-      separate: false
-      position: 1
-      prefix: "-itemsPerSlot="
-
-  blockSize:
-    type: int?
-    doc: |
-      -blockSize=N - Number of items to bundle in r-tree.  Default 256
-    inputBinding:
-      separate: false
-      position: 1
-      prefix: "-blockSize="
+      If set, writes the output bigWig file to output_filename,
+      otherwise generates filename from default_output_filename()
 
 outputs:
-  bigWigOut:
+  bigwig_file:
     type: File
     outputBinding:
       glob: |
         ${
-            if (inputs.bigWig == null){
-              return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigWig";
+            if (inputs.output_filename == null){
+              return default_output_filename();
             } else {
-              return inputs.bigWig;
+              return inputs.output_filename;
             }
         }
 
@@ -89,8 +106,8 @@ s:mainEntity:
   $import: ./metadata/ucsc-metadata.yaml
 
 s:name: "ucsc-bedgraphtobigwig"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/ucsc-bedgraphtobigwig.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/ucsc-bedgraphtobigwig.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -122,11 +139,18 @@ s:creator:
         s:email: mailto:Andrey.Kartashov@cchmc.org
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
-
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
 doc: |
-  Tool is used to convert bedGraph to bigWig file
+  Tool converts bedGraph to bigWig file.
 
-s:about: >
+  `default_output_filename` function returns filename for generated bigWig if `output_filename` is not provided.
+  Default filename is generated on the base of `bedgraph_file` basename with the updated to `*.bigWig` extension.
+
+s:about: |
   usage:
      bedGraphToBigWig in.bedGraph chrom.sizes out.bw
   where in.bedGraph is a four column file in the format:

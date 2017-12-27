@@ -36,7 +36,7 @@ inputs:
 outputs:
   outfile:
     type: File
-    outputSource: bigwig/bigWigOut
+    outputSource: bigwig/bigwig_file
   bed_file:
     type: File
     outputSource: sort/sorted_file
@@ -77,7 +77,7 @@ steps:
   bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      input: sort/sorted_file
-      genomeFile: genomeFile
-      bigWig: bigWig
-    out: [bigWigOut]
+      bedgraph_file: sort/sorted_file
+      chrom_length_file: genomeFile
+      output_filename: bigWig
+    out: [bigwig_file]

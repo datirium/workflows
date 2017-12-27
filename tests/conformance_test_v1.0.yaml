@@ -837,12 +837,20 @@
       location: sorted.bed
       size: 27256
 
-- job: ./ucsc-bedgraphtobigwig.json
+- job: ./ucsc-bedgraphtobigwig-1.json
   tool: ../tools/ucsc-bedgraphtobigwig.cwl
   output:
-    bigWigOut:
+    bigwig_file:
       class: File
       location: input_sorted.bigWig
+      size: 43072
+
+- job: ./ucsc-bedgraphtobigwig-2.json
+  tool: ../tools/ucsc-bedgraphtobigwig.cwl
+  output:
+    bigwig_file:
+      class: File
+      location: result.bigwig
       size: 43072
 
 - job: ./star-genomegenerate.json
