@@ -1,0 +1,10 @@
+{
+    "unsorted_file": {
+        "location": "./data/input_unsorted.bedGraph",
+        "class": "File"
+    },
+    "key": [
+        "1,1",
+        "2,2n"
+    ]
+}
