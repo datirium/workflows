@@ -7,9 +7,9 @@ s:url: "https://genome.ucsc.edu/util.html"
 
 s:targetProduct:
   class: s:SoftwareApplication
-  s:softwareVersion: "v325"
+  s:softwareVersion: "v358"
   s:applicationCategory: "commandline tool"
-  s:downloadURL: "http://hgdownload.cse.ucsc.edu/admin/exe/userApps.v325.src.tgz"
+  s:downloadURL: "http://hgdownload.cse.ucsc.edu/admin/exe/userApps.v358.src.tgz"
 
 s:programmingLanguage: "C++"
 
