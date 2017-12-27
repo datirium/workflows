@@ -1,0 +1,10 @@
+{
+    "bedgraph_file": {
+        "class": "File",
+        "path": "./data/input_sorted.bedGraph"
+    },
+    "chrom_length_file": {
+        "class": "File",
+        "path": "./data/chrNameLength.txt"
+    }
+}
