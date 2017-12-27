@@ -1,8 +1,9 @@
 {
-    "input": {
+    "unsorted_file": {
         "location": "./data/input_unsorted.bedGraph",
         "class": "File"
     },
+    "output_filename": "sorted.bed",
     "key": [
         "1,1",
         "2,2n"

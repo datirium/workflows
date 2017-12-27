@@ -821,12 +821,20 @@
     reversestrand: 623
     pairedendreads: 0
 
-- job: ./linux-sort.json
+- job: ./linux-sort-1.json
   tool: ../tools/linux-sort.cwl
   output:
-    sorted:
+    sorted_file:
       class: File
-      location: input_unsorted.bed
+      location: input_unsorted.bedGraph
+      size: 27256
+
+- job: ./linux-sort-2.json
+  tool: ../tools/linux-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: sorted.bed
       size: 27256
 
 - job: ./ucsc-bedgraphtobigwig.json

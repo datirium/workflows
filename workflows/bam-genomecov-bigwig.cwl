@@ -39,14 +39,14 @@ outputs:
     outputSource: bigwig/bigWigOut
   bed_file:
     type: File
-    outputSource: sort/sorted
+    outputSource: sort/sorted_file
 
 steps:
   genomecov:
     run: ../tools/bedtools-genomecov.cwl
     in:
-      input_file: input
-      chrom_length_file: genomeFile # maybe we don't need it at all, because we always use BAM file as input
+      unsorted_file: input
+#      chrom_length_file: genomeFile # we don't need it at all, because we always use BAM file as input
       depth:
         default: "-bg"
       split:
@@ -69,15 +69,15 @@ steps:
   sort:
     run: ../tools/linux-sort.cwl
     in:
-      input: genomecov/genome_coverage_file
+      unsorted_file: genomecov/genome_coverage_file
       key:
         default: ["1,1","2,2n"]
-    out: [sorted]
+    out: [sorted_file]
 
   bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      input: sort/sorted
+      input: sort/sorted_file
       genomeFile: genomeFile
       bigWig: bigWig
     out: [bigWigOut]
