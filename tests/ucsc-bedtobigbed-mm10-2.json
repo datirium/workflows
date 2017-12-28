@@ -1,0 +1,6 @@
+{
+  "input_bed":    {"class": "File", "location": "./data/bedtobigbed/input_sorted_mm10_chr3.broadPeak"},
+  "chrom_length_file": {"class": "File", "location": "./data/bedtobigbed/chrNameLength_mm10.txt"},
+  "bed_type": "bed6+3",
+  "bed_template": {"class": "File", "location": "./data/bedtobigbed/broadpeak.as"}
+}

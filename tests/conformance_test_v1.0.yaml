@@ -853,6 +853,41 @@
       location: result.bigwig
       size: 43072
 
+- job: ./ucsc-bedtobigbed-dm3-1.json
+  tool: ../tools/ucsc-bedtobigbed.cwl
+  output:
+    bigbed_file:
+      class: File
+      location: input_sorted_dm3_chr3.bb
+
+- job: ./ucsc-bedtobigbed-dm3-2.json
+  tool: ../tools/ucsc-bedtobigbed.cwl
+  output:
+    bigbed_file:
+      class: File
+      location: result.bb
+
+- job: ./ucsc-bedtobigbed-dm3-3.json
+  tool: ../tools/ucsc-bedtobigbed.cwl
+  output:
+    bigbed_file:
+      class: File
+      location: input_sorted_dm3_chr3.bb
+
+- job: ./ucsc-bedtobigbed-mm10-1.json
+  tool: ../tools/ucsc-bedtobigbed.cwl
+  output:
+    bigbed_file:
+      class: File
+      location: input_sorted_mm10_chr3.bb
+
+- job: ./ucsc-bedtobigbed-mm10-2.json
+  tool: ../tools/ucsc-bedtobigbed.cwl
+  output:
+    bigbed_file:
+      class: File
+      location: input_sorted_mm10_chr3.bb
+
 - job: ./star-genomegenerate.json
   tool: ../tools/star-genomegenerate.cwl
   output:
