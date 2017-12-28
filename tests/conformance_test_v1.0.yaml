@@ -1,3 +1,69 @@
+- job: ./bam-bedgraph-bigwig-1.json
+  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: test.trimmed.bedGraph
+      size: 27256
+    bigwig_file:
+      class: File
+      location: test.trimmed.bigWig
+
+- job: ./bam-bedgraph-bigwig-2.json
+  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: result.bedGraph
+      size: 28311
+    bigwig_file:
+      class: File
+      location: result.bigWig
+
+- job: ./bam-bedgraph-bigwig-3.json
+  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: result
+      size: 28311
+    bigwig_file:
+      class: File
+      location: result.bigWig
+
+- job: ./bam-bedgraph-bigwig-4.json
+  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: coverage
+      size: 28311
+    bigwig_file:
+      class: File
+      location: bin_coverage
+
+- job: ./bam-bedgraph-bigwig-5.json
+  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: test.trimmed.bedGraph
+      size: 27287
+    bigwig_file:
+      class: File
+      location: test.trimmed.bigWig
+
+- job: ./bam-bedgraph-bigwig-6.json
+  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: test.trimmed.bedGraph
+      size: 27256
+    bigwig_file:
+      class: File
+      location: test.trimmed.bigWig
+
 - job: ./star-alignreads-1.json
   tool: ../tools/star-alignreads.cwl
   output:

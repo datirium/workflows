@@ -7,7 +7,10 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-          return inputs.bedgraph_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bigWig";
+          let basename = inputs.bedgraph_file.location.split('/').slice(-1)[0];
+          let root = basename.split('.').slice(0,-1).join('.');
+          let ext = ".bigWig";
+          return (root == "")?basename+ext:root+ext;
         };
 
 hints:
