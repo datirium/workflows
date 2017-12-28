@@ -139,7 +139,7 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
   fastx_statistics_upstream:
     type: File
@@ -442,15 +442,15 @@ steps:
       - macs2_fragments_calculated
 
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: samtools_sort_index_after_rmdup/bam_bai_pair
-      genomeFile: chrom_length
-      mappedreads: get_stat/mapped_reads
-      fragmentsize: macs2_callpeak/macs2_fragments_calculated
+      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      chrom_length_file: chrom_length
+      mapped_reads_number: get_stat/mapped_reads
+      fragment_size: macs2_callpeak/macs2_fragments_calculated
       pairchip:
         default: true
-    out: [outfile]
+    out: [bigwig_file]
 
   get_stat:
       run: ../tools/python-get-stat-chipseq.cwl

@@ -1,0 +1,11 @@
+{
+    "bam_file": {
+        "class": "File",
+        "path": "./data/test.trimmed.bam"
+    },
+    "chrom_length_file": {
+        "class": "File",
+        "path": "./data/chrNameLength.txt"
+    },
+    "scale": 1
+}

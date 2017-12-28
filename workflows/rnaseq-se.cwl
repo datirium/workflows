@@ -89,7 +89,7 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
   star_final_log:
     type: File
@@ -217,13 +217,13 @@ steps:
     out: [bam_bai_pair]
 
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: samtools_sort_index/bam_bai_pair
-      genomeFile: chrom_length_file
-      mappedreads: star_aligner/uniquely_mapped_reads_number
+      bam_file: samtools_sort_index/bam_bai_pair
+      chrom_length_file: chrom_length_file
+      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
 #     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
-    out: [outfile]
+    out: [bigwig_file]
 
   bowtie_aligner:
     run: ../tools/bowtie.cwl

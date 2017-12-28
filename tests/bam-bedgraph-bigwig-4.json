@@ -1,0 +1,13 @@
+{
+    "bam_file": {
+        "class": "File",
+        "path": "./data/test.trimmed.bam"
+    },
+    "chrom_length_file": {
+        "class": "File",
+        "path": "./data/chrNameLength.txt"
+    },
+    "mapped_reads_number": 2000000,
+    "bedgraph_filename": "coverage",
+    "bigwig_filename": "bin_coverage"
+}

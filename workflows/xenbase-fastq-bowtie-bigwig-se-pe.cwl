@@ -37,10 +37,10 @@ outputs:
     outputSource: bamtools_stats/stats_log
   bed:
     type: File
-    outputSource: bam_to_bigwig/bed_file
+    outputSource: bam_to_bigwig/bedgraph_file
   bigwig:
     type: File
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
 
 steps:
@@ -86,12 +86,12 @@ steps:
       - stats_log
 
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: samtools_sort_index_after_dup_removing/bam_bai_pair
-      genomeFile: chr_length_file
-      mappedreads: bamtools_stats/mappedreads
+      bam_file: samtools_sort_index_after_dup_removing/bam_bai_pair
+      chrom_length_file: chr_length_file
+      mapped_reads_number: bamtools_stats/mappedreads
       pairchip: paired
     out:
-      - outfile
-      - bed_file
+      - bigwig_file
+      - bedgraph_file
