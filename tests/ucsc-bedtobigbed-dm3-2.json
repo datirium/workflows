@@ -1,0 +1,5 @@
+{
+  "input_bed":    {"class": "File", "location": "./data/bedtobigbed/input_sorted_dm3_chr3.narrowPeak"},
+  "chrom_length_file": {"class": "File", "location": "./data/bedtobigbed/chrNameLength_dm3.txt"},
+  "output_filename": "result.bb"
+}
