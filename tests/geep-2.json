@@ -1,0 +1,17 @@
+{
+  "bam_file": {
+    "class": "File",
+    "location": "./data/mm10/sorted.bam",
+    "secondaryFiles": [
+      {
+        "class": "File",
+        "location": "./data/mm10/sorted.bam.bai"
+      }
+    ]
+  },
+  "annotation_file": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv"},
+  "log_filename": "log.txt",
+  "output_prefix": "res_external_bai_",
+  "exclude_chr": "chr1,chr2",
+  "threads": 4
+}

@@ -327,7 +327,7 @@
     supressed_reads: 1219000
     used_reads: 11
 
-- job: ./geep.json
+- job: ./geep-1.json
   tool: ../tools/geep.cwl
   output:
     isoforms_file:
@@ -338,14 +338,51 @@
       class: File
       location: res_genes.csv
       size: 1048697
+    log_file:
+      class: File
+      location: log.txt
     raw_file:
       class: File
       location: res_raw.txt
       size: 1245756
+
+- job: ./geep-2.json
+  tool: ../tools/geep.cwl
+  output:
+    isoforms_file:
+      class: File
+      location: res_external_bai_isoforms.csv
+      size: 1289124
+    genes_file:
+      class: File
+      location: res_external_bai_genes.csv
+      size: 1048697
     log_file:
       class: File
       location: log.txt
-      size: 56577274
+    raw_file:
+      class: File
+      location: res_external_bai_raw.txt
+      size: 1245756
+
+- job: ./geep-3.json
+  tool: ../tools/geep.cwl
+  output:
+    isoforms_file:
+      class: File
+      location: sorted.isoforms.csv
+      size: 1289124
+    genes_file:
+      class: File
+      location: sorted.genes.csv
+      size: 1048697
+    log_file:
+      class: File
+      location: log.txt
+    raw_file:
+      class: File
+      location: sorted.raw.txt
+      size: 1245756
 
 - job: ./trimgalore.json
   tool: ../tools/trimgalore.cwl
