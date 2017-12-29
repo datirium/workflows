@@ -160,7 +160,7 @@ outputs:
     label: "BOWTIE alignment log"
     format: "http://edamontology.org/format_2330"
     doc: "BOWTIE generated alignment log"
-    outputSource: bowtie_aligner/output_bowtie_log
+    outputSource: bowtie_aligner/log_file
 
   iaintersect_log:
     type: File
@@ -353,10 +353,10 @@ steps:
     out: [output]
 
   bowtie_aligner:
-    run: ../tools/bowtie.cwl
+    run: ../tools/bowtie-alignreads.cwl
     in:
-      filelist: rename_upstream/target_file
-      filelist_mates: rename_downstream/target_file
+      upstream_filelist: rename_upstream/target_file
+      downstream_filelist: rename_downstream/target_file
       indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -373,12 +373,12 @@ steps:
       threads: threads
       q:
         default: true
-    out: [output, output_bowtie_log]
+    out: [sam_file, log_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: bowtie_aligner/output
+      sort_input: bowtie_aligner/sam_file
       threads: threads
     out: [bam_bai_pair]
 
@@ -455,7 +455,7 @@ steps:
   get_stat:
       run: ../tools/python-get-stat-chipseq.cwl
       in:
-        bowtie_log: bowtie_aligner/output_bowtie_log
+        bowtie_log: bowtie_aligner/log_file
         rmdup_log: samtools_rmdup/rmdup_log
       out:
         - output
