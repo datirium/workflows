@@ -145,7 +145,7 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
     doc: "Bowtie alignment log file"
-    outputSource: bowtie_aligner/output_bowtie_log
+    outputSource: bowtie_aligner/log_file
 
   rpkm_isoforms:
     type: File
@@ -226,9 +226,9 @@ steps:
     out: [bigwig_file]
 
   bowtie_aligner:
-    run: ../tools/bowtie.cwl
+    run: ../tools/bowtie-alignreads.cwl
     in:
-      filelist: fastq_file
+      upstream_filelist: fastq_file
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -243,7 +243,7 @@ steps:
       sam:
         default: true
       threads: threads
-    out: [output_bowtie_log]
+    out: [log_file]
 
   rpkm_calculation:
     run: ../tools/geep.cwl
@@ -260,7 +260,7 @@ steps:
       run: ../tools/python-get-stat-rnaseq.cwl
       in:
         star_log: star_aligner/log_final
-        bowtie_log: bowtie_aligner/output_bowtie_log
+        bowtie_log: bowtie_aligner/log_file
         rpkm_isoforms: rpkm_calculation/isoforms_file
       out: [output]
 

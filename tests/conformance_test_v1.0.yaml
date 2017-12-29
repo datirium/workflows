@@ -1,3 +1,167 @@
+- job: ./bowtie-alignreads-1.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file: null
+    refout_file:
+      - class: File
+        location: ref00000.map
+        size: 13128
+    log_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.bw
+      size: 285
+
+- job: ./bowtie-alignreads-2.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file: null
+    refout_file:
+      - class: File
+        location: ref00000.map
+        size: 13128
+    log_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.bw
+      size: 285
+
+- job: ./bowtie-alignreads-3.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file: null
+    refout_file:
+      - class: File
+        location: ref00000.map
+        size: 13128
+    log_file:
+      class: File
+      location: result.bw
+      size: 250
+
+- job: ./bowtie-alignreads-4.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file: null
+    refout_file:
+      - class: File
+        location: ref00000.map
+        size: 13128
+    log_file:
+      class: File
+      location: result.bw
+      size: 250
+
+- job: ./bowtie-alignreads-5.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.sam
+      size: 20562
+    refout_file: null
+    log_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.bw
+      size: 168
+
+- job: ./bowtie-alignreads-6.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file:
+      class: File
+      location: result.sam
+      size: 20562
+    refout_file: null
+    log_file:
+      class: File
+      location: result.bw
+      size: 168
+
+- job: ./bowtie-alignreads-7.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file: null
+    unaligned_file: null
+    multimapped_file: null
+    sam_file:
+      class: File
+      location: result
+      size: 20562
+    refout_file: null
+    log_file:
+      class: File
+      location: result.bw
+      size: 168
+
+- job: ./bowtie-alignreads-8.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file: null
+    unaligned_file: null
+    multimapped_file: null
+    sam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.sam
+      size: 37941
+    refout_file: null
+    log_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.bw
+      size: 179
+
 - job: ./bam-bedgraph-bigwig-1.json
   tool: ../workflows/bam-bedgraph-bigwig.cwl
   output:

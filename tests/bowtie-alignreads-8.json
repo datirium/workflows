@@ -1,0 +1,8 @@
+{
+  "indices_folder": {"class": "Directory", "location": "./data/bowtie_index_dm3_chr4"},
+  "upstream_filelist": {"class": "File", "location": "./data/fastq/chr4_100_reads_chrM_25_reads_dm3_upstream.fastq"},
+  "downstream_filelist": {"class": "File", "location": "./data/fastq/chr4_100_reads_chrM_25_reads_dm3_downstream.fastq"},
+  "threads": 1,
+  "sam": true,
+  "sam_nohead": true
+}

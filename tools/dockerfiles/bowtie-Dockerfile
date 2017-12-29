@@ -33,8 +33,7 @@ RUN apt-get update && apt-get install -y libtbb-dev && \
     wget -q -O - $URL | tar -zxv && \
     cd ${NAME}-${VERSION} && \
     make -j 4 && \
+    make install &&\
     cd .. && \
-    cp ./${NAME}-${VERSION}/${NAME} /usr/local/bin/ && \
-    cp ./${NAME}-${VERSION}/${NAME}-* /usr/local/bin/ && \
-    strip /usr/local/bin/*; true && \
-    rm -rf ./${NAME}-${VERSION}/
+    rm -rf ./${NAME}-${VERSION} && \
+    strip /usr/local/bin/*; true
