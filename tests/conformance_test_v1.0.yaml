@@ -314,12 +314,25 @@
       location: res_Log.out
     uniquely_mapped_reads_number: 7
 
-- job: ./python-get-stat-rnaseq.json
+- job: ./python-get-stat-rnaseq-1.json
   tool: ../tools/python-get-stat-rnaseq.cwl
   output:
-    output:
+    output_file:
       class: File
       location: star_align.stat
+      size: 37
+    total_reads: 35774006
+    mapped_reads: 26951948
+    ribo_reads: 6818304
+    supressed_reads: 1219000
+    used_reads: 11
+
+- job: ./python-get-stat-rnaseq-2.json
+  tool: ../tools/python-get-stat-rnaseq.cwl
+  output:
+    output_file:
+      class: File
+      location: result.txt
       size: 37
     total_reads: 35774006
     mapped_reads: 26951948
