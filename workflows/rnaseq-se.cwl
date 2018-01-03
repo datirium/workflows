@@ -131,7 +131,7 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "FASTQ statistics"
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-    outputSource: fastx_quality_stats/statistics
+    outputSource: fastx_quality_stats/statistics_file
 
   bambai_pair:
     type: File
@@ -158,7 +158,7 @@ outputs:
     type: File
     label: "Compressed FASTQ"
     doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output
+    outputSource: bzip/output_file
 
   get_stat_log:
     type: File?
@@ -198,13 +198,13 @@ steps:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: fastq_file
-    out: [statistics]
+    out: [statistics_file]
 
   bzip:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file
-    out: [output]
+    out: [output_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl

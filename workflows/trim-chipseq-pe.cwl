@@ -146,14 +146,14 @@ outputs:
     label: "FASTQ upstream statistics"
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_upstream/statistics
+    outputSource: fastx_quality_stats_upstream/statistics_file
 
   fastx_statistics_downstream:
     type: File
     label: "FASTQ downstream statistics"
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_downstream/statistics
+    outputSource: fastx_quality_stats_downstream/statistics_file
 
   bowtie_log:
     type: File
@@ -271,13 +271,13 @@ outputs:
     type: File
     label: "Compressed upstream FASTQ"
     doc: "bz2 compressed upstream FASTQ file"
-    outputSource: bzip_upstream/output
+    outputSource: bzip_upstream/output_file
 
   fastq_compressed_downstream:
     type: File
     label: "Compressed downstream FASTQ"
     doc: "bz2 compressed downstream FASTQ file"
-    outputSource: bzip_downstream/output
+    outputSource: bzip_downstream/output_file
 
   trim_report_upstream:
     type: File
@@ -332,25 +332,25 @@ steps:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: rename_upstream/target_file
-    out: [statistics]
+    out: [statistics_file]
 
   fastx_quality_stats_downstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: rename_downstream/target_file
-    out: [statistics]
+    out: [statistics_file]
 
   bzip_upstream:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file_upstream
-    out: [output]
+    out: [output_file]
 
   bzip_downstream:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file_downstream
-    out: [output]
+    out: [output_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl

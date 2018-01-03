@@ -68,7 +68,7 @@ inputs:
       Output file to store generated statistics. If not provided - return from default_output_filename function
 
 outputs:
-  statistics:
+  statistics_file:
     type: File
     outputBinding:
       glob: |

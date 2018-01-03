@@ -338,7 +338,7 @@
     mapped_reads: 26951948
     ribo_reads: 6818304
     supressed_reads: 1219000
-    used_reads: 11
+    used_reads: 22
 
 - job: ./geep-1.json
   tool: ../tools/geep.cwl
@@ -419,7 +419,7 @@
 - job: ./bzip2-compress-1.json
   tool: ../tools/bzip2-compress.cwl
   output:
-    output:
+    output_file:
       class: File
       location: chr21.fastq.bz2
       size: 707263
@@ -973,7 +973,7 @@
 - job: ./fastx-quality-stats-1.json
   tool: ../tools/fastx-quality-stats.cwl
   output:
-    statistics:
+    statistics_file:
       class: File
       location: reads_test.fastxstat
       size: 2167
@@ -981,7 +981,7 @@
 - job: ./fastx-quality-stats-2.json
   tool: ../tools/fastx-quality-stats.cwl
   output:
-    statistics:
+    statistics_file:
       class: File
       location: results.stat
       size: 2167
