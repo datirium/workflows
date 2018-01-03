@@ -138,14 +138,14 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "FASTQ upstream statistics"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_upstream/statistics
+    outputSource: fastx_quality_stats_upstream/statistics_file
 
   fastx_statistics_downstream:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "FASTQ downstream statistics"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_downstream/statistics
+    outputSource: fastx_quality_stats_downstream/statistics_file
 
   bambai_pair:
     type: File
@@ -172,13 +172,13 @@ outputs:
     type: File
     label: "Compressed upstream FASTQ"
     doc: "bz2 compressed upstream FASTQ file"
-    outputSource: bzip_upstream/output
+    outputSource: bzip_upstream/output_file
 
   fastq_file_compressed_downstream:
     type: File
     label: "Compressed downstream FASTQ"
     doc: "bz2 compressed downstream FASTQ file"
-    outputSource: bzip_downstream/output
+    outputSource: bzip_downstream/output_file
 
   get_stat_log:
     type: File?
@@ -218,25 +218,25 @@ steps:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: fastq_file_upstream
-    out: [statistics]
+    out: [statistics_file]
 
   fastx_quality_stats_downstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: fastq_file_downstream
-    out: [statistics]
+    out: [statistics_file]
 
   bzip_upstream:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file_upstream
-    out: [output]
+    out: [output_file]
 
   bzip_downstream:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file_downstream
-    out: [output]
+    out: [output_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
@@ -293,6 +293,8 @@ steps:
         star_log: star_aligner/log_final
         bowtie_log: bowtie_aligner/log_file
         rpkm_isoforms: rpkm_calculation/isoforms_file
+        pair_end:
+          default: true
       out: [output_file]
 
 $namespaces:

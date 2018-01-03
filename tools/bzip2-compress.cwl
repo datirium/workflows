@@ -54,7 +54,7 @@ inputs:
 
 outputs:
 
-  output:
+  output_file:
     type:
       - File
     outputBinding:

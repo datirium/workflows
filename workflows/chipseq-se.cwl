@@ -143,7 +143,7 @@ outputs:
     label: "FASTQ statistics"
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-    outputSource: fastx_quality_stats/statistics
+    outputSource: fastx_quality_stats/statistics_file
 
   bowtie_log:
     type: File
@@ -261,7 +261,7 @@ outputs:
     type: File
     label: "Compressed FASTQ"
     doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output
+    outputSource: bzip/output_file
 
 steps:
 
@@ -269,13 +269,13 @@ steps:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: fastq_file
-    out: [statistics]
+    out: [statistics_file]
 
   bzip:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file
-    out: [output]
+    out: [output_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
@@ -463,7 +463,7 @@ s:about: |
   **ChIP-Seq** basic analysis for a **single-read** experiment.
   A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
 
- The pipeline produces a sorted BAM file alongside with index BAI file, quality
+  The pipeline produces a sorted BAM file alongside with index BAI file, quality
   statistics of the input FASTQ file, coverage by estimated fragments as a BigWig file, peaks calling
   data in a form of narrowPeak or broadPeak files, islands with the assigned nearest genes and
   region type, data for average tag density plot.
@@ -485,7 +485,7 @@ s:about: |
   reports *macs2\_island\_count*  the number of islands and estimated fragment size. If the latter
   is less that 80bp (hardcoded in the workflow) `macs2 callpeak` is rerun again with forced fixed
   fragment size value (*macs2\_callpeak\_forced*). It is also possible to force MACS2 to use pre set  fragment size in the first place.
-  
+
   Next step (*macs2\_stat*) is used to define which of the islands and estimated fragment size should be used
   in workflow output: either from *macs2\_island\_count* step or from *macs2\_island\_count\_forced* step. If input
   trigger of this step is set to True it means that *macs2\_callpeak\_forced* step was run and it returned different

@@ -143,7 +143,7 @@ outputs:
     label: "FASTQ statistics"
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-    outputSource: fastx_quality_stats/statistics
+    outputSource: fastx_quality_stats/statistics_file
 
   bowtie_log:
     type: File
@@ -261,7 +261,7 @@ outputs:
     type: File
     label: "Compressed FASTQ"
     doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output
+    outputSource: bzip/output_file
 
   trim_report:
     type: File
@@ -295,13 +295,13 @@ steps:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: rename/target_file
-    out: [statistics]
+    out: [statistics_file]
 
   bzip:
     run: ../tools/bzip2-compress.cwl
     in:
       input_file: fastq_file
-    out: [output]
+    out: [output_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
