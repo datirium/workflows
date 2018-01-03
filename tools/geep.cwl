@@ -26,7 +26,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/geep:v0.0.2
+  dockerPull: biowardrobe2/geep:v0.0.3
 
 
 inputs:
