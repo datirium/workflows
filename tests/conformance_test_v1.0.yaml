@@ -532,26 +532,50 @@
       location: output.tsv
       size: 10
 
-- job: ./atdp_1.json
+- job: ./atdp-1.json
   tool: ../tools/atdp.cwl
   output:
-    log:
+    log_file:
       class: File
       location: atdp_res.log
       size: 95
-    result:
+    result_file:
       class: File
       location: atdp_res.tsv
       size: 74584
 
-- job: ./atdp_2.json
+- job: ./atdp-2.json
   tool: ../tools/atdp.cwl
   output:
-    log:
+    log_file:
       class: File
       location: sorted_atdp.log
       size: 95
-    result:
+    result_file:
+      class: File
+      location: sorted_atdp.tsv
+      size: 74599
+
+- job: ./atdp-3.json
+  tool: ../tools/atdp.cwl
+  output:
+    log_file:
+      class: File
+      location: sorted_atdp.log
+      size: 95
+    result_file:
+      class: File
+      location: atdp_res.tsv
+      size: 74599
+
+- job: ./atdp-4.json
+  tool: ../tools/atdp.cwl
+  output:
+    log_file:
+      class: File
+      location: atdp_res.log
+      size: 95
+    result_file:
       class: File
       location: sorted_atdp.tsv
       size: 74599

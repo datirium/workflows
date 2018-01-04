@@ -171,14 +171,14 @@ outputs:
     label: "ATDP log"
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated log"
-    outputSource: average_tag_density/log
+    outputSource: average_tag_density/log_file
 
   atdp_result:
     type: File
     label: "ATDP results"
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated results"
-    outputSource: average_tag_density/result
+    outputSource: average_tag_density/result_file
 
   samtools_rmdup_log:
     type: File
@@ -408,7 +408,7 @@ steps:
         avd_heat_window_bp:
           default: 200
         mapped_reads: get_stat/mapped_reads
-      out: [result, log]
+      out: [result_file, log_file]
 
 
 $namespaces:

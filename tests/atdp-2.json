@@ -1,0 +1,5 @@
+{
+    "input_filename": {"class": "File", "location": "./data/mm10/sorted.bam"},
+    "annotation_filename": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv"},
+    "mapped_reads": 5976
+}
