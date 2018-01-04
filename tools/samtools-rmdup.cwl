@@ -38,7 +38,6 @@ inputs:
         samtools rmdup "${@:1}"
       else
         echo "Skip samtools rmdup " ${@:1}
-        echo "moving" ${@: -2}
         mv ${@: -2}
       fi
     inputBinding:
