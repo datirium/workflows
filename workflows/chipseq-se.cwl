@@ -248,7 +248,7 @@ outputs:
     label: "Bowtie & Samtools Rmdup combined log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
-    outputSource: get_stat/output
+    outputSource: get_stat/output_file
 
   macs2_fragment_stat:
     type: File?
@@ -330,10 +330,7 @@ steps:
       control_file: control_file
       nolambda:
         source: control_file
-        valueFrom: |
-          ${
-            return !Boolean(self);
-          }
+        valueFrom: $(!self)
       genome_size: genome_size
       mfold:
         default: "4 40"
@@ -382,7 +379,7 @@ steps:
         bowtie_log: bowtie_aligner/log_file
         rmdup_log: samtools_rmdup/rmdup_log
       out:
-        - output
+        - output_file
         - mapped_reads
 
   island_intersect:
