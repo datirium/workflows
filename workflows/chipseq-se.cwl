@@ -255,7 +255,7 @@ outputs:
     label: "FRAGMENT, FRAGMENTE, ISLANDS"
     format: "http://edamontology.org/format_2330"
     doc: "fragment, calculated fragment, islands count from MACS2 results"
-    outputSource: macs2_callpeak/macs2_stat
+    outputSource: macs2_callpeak/macs2_stat_file
 
   fastq_compressed:
     type: File
@@ -326,8 +326,8 @@ steps:
   macs2_callpeak:
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment: samtools_sort_index_after_rmdup/bam_bai_pair
-      control: control_file
+      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      control_file: control_file
       nolambda:
         source: control_file
         valueFrom: |
@@ -364,7 +364,7 @@ steps:
       - treat_pileup_bdg_file
       - control_lambda_bdg_file
       - macs_log
-      - macs2_stat
+      - macs2_stat_file
       - macs2_fragments_calculated
 
   bam_to_bigwig:

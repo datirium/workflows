@@ -1,0 +1,5 @@
+{
+  "treatment_file": [{"location": "./data/bam/macs2_test.bam", "class": "File"}],
+  "format_mode": "BAM",
+  "extsize": 150
+}

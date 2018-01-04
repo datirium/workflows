@@ -1,3 +1,103 @@
+- job: ./macs2-callpeak-biowardrobe-only-1.json
+  tool: ../tools/macs2-callpeak-biowardrobe-only.cwl
+  output:
+    macs2_stat_file:
+      class: File
+      location: macs2_test_fragment_stat.tsv
+      size: 12
+    peak_xls_file:
+      class: File
+      location: macs2_test_macs_peaks.xls
+    narrow_peak_file:
+      class: File
+      location: macs2_test_macs_peaks.narrowPeak
+      size: 134897
+    peak_summits_file:
+      class: File
+      location: macs2_test_macs_summits.bed
+      size: 92940
+    macs_log:
+      class: File
+      location: macs2_test_macs.log
+    moder_r_file:
+      class: File
+      location: macs2_test_macs_model.r
+      size: 65671
+    macs2_fragments_expected: 292
+    macs2_islands: 1621
+    macs2_fragments_calculated: 292
+    treat_pileup_bdg_file: null
+    control_lambda_bdg_file: null
+    gapped_peak_file: null
+    broad_peak_file: null
+
+
+- job: ./macs2-callpeak-biowardrobe-only-2.json
+  tool: ../tools/macs2-callpeak-biowardrobe-only.cwl
+  output:
+    macs2_stat_file:
+      class: File
+      location: results_fragment_stat.tsv
+      size: 12
+    peak_xls_file:
+      class: File
+      location: results_peaks.xls
+    narrow_peak_file:
+      class: File
+      location: results_peaks.narrowPeak
+      size: 121929
+    peak_summits_file:
+      class: File
+      location: results_summits.bed
+      size: 79972
+    macs_log:
+      class: File
+      location: results.log
+    moder_r_file:
+      class: File
+      location: results_model.r
+      size: 65663
+    macs2_fragments_expected: 292
+    macs2_islands: 1621
+    macs2_fragments_calculated: 292
+    treat_pileup_bdg_file: null
+    control_lambda_bdg_file: null
+    gapped_peak_file: null
+    broad_peak_file: null
+
+- job: ./macs2-callpeak-biowardrobe-only-3.json
+  tool: ../tools/macs2-callpeak-biowardrobe-only.cwl
+  output:
+    macs2_stat_file:
+      class: File
+      location: macs2_test_fragment_stat.tsv
+      size: 12
+    peak_xls_file:
+      class: File
+      location: macs2_test_macs_peaks.xls
+    narrow_peak_file:
+      class: File
+      location: macs2_test_macs_peaks.narrowPeak
+      size: 134897
+    peak_summits_file:
+      class: File
+      location: macs2_test_macs_summits.bed
+      size: 92940
+    macs_log:
+      class: File
+      location: macs2_test_macs.log
+    moder_r_file:
+      class: File
+      location: macs2_test_macs_model.r
+      size: 65671
+    macs2_fragments_expected: 292
+    macs2_islands: 1621
+    macs2_fragments_calculated: 292
+    treat_pileup_bdg_file: null
+    control_lambda_bdg_file: null
+    gapped_peak_file: null
+    broad_peak_file: null
+
 - job: ./bowtie-alignreads-1.json
   tool: ../tools/bowtie-alignreads.cwl
   output:
