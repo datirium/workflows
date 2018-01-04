@@ -420,7 +420,7 @@ steps:
   average_tag_density:
       run: ../tools/atdp.cwl
       in:
-        input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
+        input_file: samtools_sort_index_after_rmdup/bam_bai_pair
         annotation_filename: annotation_file
         fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
         avd_window_bp:

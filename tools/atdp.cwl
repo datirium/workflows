@@ -8,8 +8,8 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function(ext) {
-        let root = inputs.input_filename.basename.split('.').slice(0,-1).join('.');
-        return (root == "")?inputs.input_filename.basename+ext:root+ext;
+        let root = inputs.input_file.basename.split('.').slice(0,-1).join('.');
+        return (root == "")?inputs.input_file.basename+ext:root+ext;
     };
 - class: InitialWorkDirRequirement
   listing: |
@@ -51,19 +51,15 @@ inputs:
     doc: |
       Bash function to run samtools sort with all input parameters or skip it if trigger is false
 
-  input_filename:
+  input_file:
     type:
       - File
     inputBinding:
       position: 2
       prefix: --in=
       separate: false
-    secondaryFiles: |
-      ${
-        return {"location": self.location+".bai", "class": "File"};
-      }
     doc: |
-      Input indexed BAM file (+BAI index file)
+      Input indexed BAM file (optionally +BAI index file in secondaryFiles)
 
   annotation_filename:
     type:
@@ -192,6 +188,17 @@ inputs:
     doc: |
       Mapped reads number
 
+  index_file:
+    type:
+      - "null"
+      - File
+    inputBinding:
+      position: 13
+      prefix: --index=
+      separate: false
+    doc: |
+      Index file
+
 outputs:
   log_file:
     type: File
@@ -271,6 +278,9 @@ doc: |
 
   Before running `baseCommand`, annotaion file `annotation_filename` is staged into output directory
   (Docker's `--workdir`) with `"writable": true` (to allow to overwrite it by `refgene-sort`).
+
+  To run `atdp` index file should be provided (either in `secondaryFiles` of `input_file` or as separate input
+  `index_file`)
 
   `baseCommand` runs bash script from `script` input. Script runs `refgene-sort` to sort annotaion file and then runs
   `atdp`. `refgene-sort` - utility to sort refgene annotation files, using MySQL syntax.
