@@ -604,12 +604,24 @@
       location: iaintersect_res.tsv
       size: 543324
 
-- job: ./python-get-stat-chipseq.json
+- job: ./python-get-stat-chipseq-1.json
   tool: ../tools/python-get-stat-chipseq.cwl
   output:
-    output:
+    output_file:
       class: File
       location: bowtie_align.stat
+      size: 32
+    supressed_reads: 1079953
+    total_reads: 8553294
+    mapped_reads: 6818304
+    used_reads: 6568256
+
+- job: ./python-get-stat-chipseq-2.json
+  tool: ../tools/python-get-stat-chipseq.cwl
+  output:
+    output_file:
+      class: File
+      location: result.txt
       size: 32
     supressed_reads: 1079953
     total_reads: 8553294
