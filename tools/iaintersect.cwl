@@ -7,11 +7,9 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var default_output_filename = function() {
-        return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_iaintersect.tsv";
-    };
-  - var default_log_filename = function() {
-        return inputs.input_filename.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_iaintersect.log";
+  - var default_output_filename = function(ext) {
+        let root = inputs.input_filename.basename.split('.').slice(0,-1).join('.');
+        return (root == "")?inputs.input_filename.basename+ext:root+ext;
     };
 
 hints:
@@ -51,7 +49,7 @@ inputs:
       valueFrom: |
         ${
             if (self == null){
-              return default_output_filename();
+              return default_output_filename('_iaintersect.tsv');
             } else {
               return self;
             }
@@ -71,7 +69,7 @@ inputs:
       valueFrom: |
         ${
             if (self == null){
-              return default_log_filename();
+              return default_output_filename('_iaintersect.log');
             } else {
               return self;
             }
@@ -114,25 +112,25 @@ inputs:
       The chromosome to be ignored, string
 
 outputs:
-  log:
+  log_file:
     type: File
     outputBinding:
       glob: |
         ${
           if (inputs.log_filename == null){
-            return default_log_filename();
+            return default_output_filename('_iaintersect.log');
           } else {
             return inputs.log_filename;
           }
         }
 
-  result:
+  result_file:
     type: File
     outputBinding:
       glob: |
         ${
           if (inputs.output_filename == null){
-            return default_output_filename();
+            return default_output_filename('_iaintersect.tsv');
           } else {
             return inputs.output_filename;
           }
@@ -151,8 +149,8 @@ s:mainEntity:
   $import: ./metadata/iaintersect-metadata.yaml
 
 s:name: "iaintersect"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/iaintersect.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/iaintersect.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -181,14 +179,17 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to assign each peak obtained from MACS2 to a gene and region (upstream, promoter, exon, intron, intergenic)
+  Tool assigns each peak obtained from MACS2 to a gene and region (upstream, promoter, exon, intron, intergenic)
 
-s:about: >
+  `default_output_filename` function returns output filename with sufix set as `ext` argument. Function is called when
+  either `output_filename` or `log_filename` inputs are not provided.
+
+s:about: |
   Usage:
     iaintersect [options] --in=pathToFile --a=pathtoFile --out=pathToFile
     --a                        	Tab-separated annotation file

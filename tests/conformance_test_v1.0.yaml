@@ -556,53 +556,49 @@
       location: sorted_atdp.tsv
       size: 74599
 
-- job: ./iaintersect_1.json
+- job: ./iaintersect-1.json
   tool: ../tools/iaintersect.cwl
   output:
-    log:
+    log_file:
       class: File
       location: macs_peaks_iaintersect.log
-      size: 0
-    result:
+    result_file:
       class: File
       location: macs_peaks_iaintersect.tsv
-      size: 560115
+      size: 560955
 
-- job: ./iaintersect_2.json
+- job: ./iaintersect-2.json
   tool: ../tools/iaintersect.cwl
   output:
-    log:
+    log_file:
       class: File
       location: macs_peaks_iaintersect.log
-      size: 0
-    result:
+    result_file:
       class: File
       location: iaintersect_res.tsv
-      size: 560115
+      size: 560955
 
-- job: ./iaintersect_3.json
+- job: ./iaintersect-3.json
   tool: ../tools/iaintersect.cwl
   output:
-    log:
+    log_file:
       class: File
       location: iaintersect_res.log
-      size: 0
-    result:
+    result_file:
       class: File
       location: iaintersect_res.tsv
-      size: 560115
+      size: 560955
 
-- job: ./iaintersect_4.json
+- job: ./iaintersect-4.json
   tool: ../tools/iaintersect.cwl
   output:
-    log:
+    log_file:
       class: File
       location: iaintersect_res.log
-      size: 0
-    result:
+    result_file:
       class: File
       location: iaintersect_res.tsv
-      size: 543324
+      size: 552942
 
 - job: ./python-get-stat-chipseq-1.json
   tool: ../tools/python-get-stat-chipseq.cwl

@@ -167,14 +167,14 @@ outputs:
     label: "Island intersect log"
     format: "http://edamontology.org/format_3475"
     doc: "Iaintersect generated log"
-    outputSource: island_intersect/log
+    outputSource: island_intersect/log_file
 
   iaintersect_result:
     type: File
     label: "Island intersect results"
     format: "http://edamontology.org/format_3475"
     doc: "Iaintersect generated results"
-    outputSource: island_intersect/result
+    outputSource: island_intersect/result_file
 
   atdp_log:
     type: File
@@ -465,7 +465,7 @@ steps:
         annotation_filename: annotation_file
         promoter_bp:
           default: 1000
-      out: [result, log]
+      out: [result_file, log_file]
 
   average_tag_density:
       run: ../tools/atdp.cwl

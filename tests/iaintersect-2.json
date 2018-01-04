@@ -1,0 +1,5 @@
+{
+    "input_filename": {"class": "File", "location": "./data/mm10/macs_peaks.xls"},
+    "annotation_filename": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv"},
+    "output_filename": "iaintersect_res.tsv"
+}
