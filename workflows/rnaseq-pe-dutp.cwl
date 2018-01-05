@@ -343,8 +343,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "rnaseq-pe"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-pe.cwl
+s:name: "rnaseq-pe-dutp"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-pe-dutp.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -384,9 +384,10 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq BioWardrobe basic analysis with pair-end data file.
+  Runs RNA-Seq BioWardrobe basic analysis with strand specific pair-end data file.
 
 s:about: |
+  Note: should be updated
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for a **pair-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
