@@ -271,8 +271,6 @@ steps:
           }
       strand:
         default: '+'
-      pairchip:
-        default: true
     out: [bigwig_file]
 
   bam_to_bigwig_downstream:
@@ -293,8 +291,6 @@ steps:
           }
       strand:
         default: '-'
-      pairchip:
-        default: true
     out: [bigwig_file]
 
   bowtie_aligner:
