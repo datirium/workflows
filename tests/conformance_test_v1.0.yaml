@@ -488,33 +488,102 @@
       location: sorted.raw.txt
     log_file: null
 
-- job: ./trimgalore.json
+- job: ./trimgalore-1.json
   tool: ../tools/trimgalore.cwl
   output:
-    trimmed:
+    trimmed_file:
       class: File
       location: SRR390728_pe_1_val_1.fq
       size: 118832
-    report:
-      class: File
-      location: SRR390728_pe_1.fastq.gz_trimming_report.txt
-      size: 1907
-    trimmed_pair:
+    trimmed_file_pair:
       class: File
       location: SRR390728_pe_2_val_2.fq
       size: 120214
-    report_pair:
+    report_file:
+      class: File
+      location: SRR390728_pe_1.fastq.gz_trimming_report.txt
+    report_file_pair:
       class: File
       location: SRR390728_pe_2.fastq.gz_trimming_report.txt
-      size: 2101
-    unpaired_1:
+    unpaired_file_1:
       class: File
       location: SRR390728_pe_1_unpaired_1.fq
       size: 0
-    unpaired_2:
+    unpaired_file_2:
       class: File
       location: SRR390728_pe_2_unpaired_2.fq
       size: 136
+
+- job: ./trimgalore-2.json
+  tool: ../tools/trimgalore.cwl
+  output:
+    trimmed_file:
+      class: File
+      location: SRR390728_pe_1_val_1.fq.gz
+      size: 22750
+    trimmed_file_pair:
+      class: File
+      location: SRR390728_pe_2_val_2.fq.gz
+      size: 23836
+    report_file:
+      class: File
+      location: SRR390728_pe_1.fastq.gz_trimming_report.txt
+    report_file_pair:
+      class: File
+      location: SRR390728_pe_2.fastq.gz_trimming_report.txt
+    unpaired_file_1:
+      class: File
+      location: SRR390728_pe_1_unpaired_1.fq.gz
+      size: 20
+    unpaired_file_2:
+      class: File
+      location: SRR390728_pe_2_unpaired_2.fq.gz
+      size: 88
+
+- job: ./trimgalore-3.json
+  tool: ../tools/trimgalore.cwl
+  output:
+    trimmed_file:
+      class: File
+      location: SRR390728_pe_1_trimmed.fq.gz
+      size: 23487
+    trimmed_file_pair: null
+    report_file:
+      class: File
+      location: SRR390728_pe_1.fastq.gz_trimming_report.txt
+    report_file_pair: null
+    unpaired_file_1: null
+    unpaired_file_2: null
+
+- job: ./trimgalore-4.json
+  tool: ../tools/trimgalore.cwl
+  output:
+    trimmed_file:
+      class: File
+      location: SRR390728_pe_1_trimmed.fq.gz
+      size: 23487
+    trimmed_file_pair: null
+    report_file:
+      class: File
+      location: SRR390728_pe_1.fastq.gz_trimming_report.txt
+    report_file_pair: null
+    unpaired_file_1: null
+    unpaired_file_2: null
+
+- job: ./trimgalore-5.json
+  tool: ../tools/trimgalore.cwl
+  output:
+    trimmed_file:
+      class: File
+      location: SRR390728_pe_1_trimmed.fq.gz
+      size: 23487
+    trimmed_file_pair: null
+    report_file:
+      class: File
+      location: SRR390728_pe_1.fastq.gz_trimming_report.txt
+    report_file_pair: null
+    unpaired_file_1: null
+    unpaired_file_2: null
 
 - job: ./bzip2-compress-1.json
   tool: ../tools/bzip2-compress.cwl

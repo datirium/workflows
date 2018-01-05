@@ -1,0 +1,4 @@
+{
+  "input_file":      { "location":  "./data/fastq/SRR390728_pe_1.fastq.gz", "class": "File" },
+  "input_file_pair": { "location":  "./data/fastq/SRR390728_pe_2.fastq.gz", "class": "File" }
+}
