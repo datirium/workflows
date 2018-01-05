@@ -50,8 +50,8 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "rename"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/rename.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/rename.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -80,12 +80,12 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  Tool to rename files
+doc: |
+  Tool renames `source_file` to `target_filename`
 
-s:about: >
+s:about: |
   cp source target

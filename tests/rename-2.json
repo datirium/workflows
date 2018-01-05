@@ -1,0 +1,4 @@
+{
+  "source_file":      { "location":  "./data/fastq/SRR390728_pe_1.fastq.gz", "class": "File" },
+  "target_filename":  "SRR390728_pe_2.fastq.gz"
+}
