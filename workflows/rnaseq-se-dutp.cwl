@@ -229,6 +229,14 @@ steps:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+      bigwig_filename:
+        source: samtools_sort_index/bam_bai_pair
+        valueFrom: |
+          ${
+            let root = self.basename.split('.').slice(0,-1).join('.');
+            let ext = "_upstream.bigWig";
+            return (root == "")?self.basename+ext:root+ext;
+          }
       strand:
         default: '+'
     out: [bigwig_file]
@@ -241,6 +249,14 @@ steps:
       mapped_reads_number:
         source: star_aligner/uniquely_mapped_reads_number
         valueFrom: $(-self)
+      bigwig_filename:
+        source: samtools_sort_index/bam_bai_pair
+        valueFrom: |
+          ${
+            let root = self.basename.split('.').slice(0,-1).join('.');
+            let ext = "_downstream.bigWig";
+            return (root == "")?self.basename+ext:root+ext;
+          }
       strand:
         default: '-'
     out: [bigwig_file]
