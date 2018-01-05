@@ -7,31 +7,11 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var default_name = function() {
-      let filenames = {};
-
-      let basename = inputs.input_filename.location.split('/').slice(-1)[0];
-      let basename_pair = ( (inputs.paired && inputs.input_filename_pair) ? inputs.input_filename_pair.location.split('/').slice(-1)[0]:null);
-      let gz_input_ext_cut = (basename.split('.').slice(-1)[0] == 'gz' ? -2:-1);
-      let gz_input_ext_cut_pair = (basename_pair && basename_pair.split('.').slice(-1)[0] == 'gz' ? -2:-1);
-
-      let gz_output_ext = ( ((inputs.gzip || gz_input_ext_cut == -2 || gz_input_ext_cut_pair == -2) && !inputs.dont_gzip) ? '.gz':'');
-
-      if (inputs.paired && inputs.input_filename_pair){
-        filenames["trimmed"] = basename.split('.').slice(0,gz_input_ext_cut).join('.')+'_val_1.fq' + gz_output_ext;
-        filenames["trimmed_pair"] = basename_pair.split('.').slice(0,gz_input_ext_cut_pair).join('.')+'_val_2.fq' + gz_output_ext;
-        filenames["report_pair"] = basename_pair + '_trimming_report.txt';
-        filenames["unpaired_1"] = basename.split('.').slice(0,gz_input_ext_cut).join('.') + '_unpaired_1.fq' + gz_output_ext;
-        filenames["unpaired_2"] = basename_pair.split('.').slice(0,gz_input_ext_cut_pair).join('.') + '_unpaired_2.fq' + gz_output_ext;
-      } else {
-        filenames["trimmed"] = basename.split('.').slice(0,gz_input_ext_cut).join('.')+'_trimmed.fq' + gz_output_ext;
-        filenames["trimmed_pair"] = null;
-        filenames["report_pair"] = null;
-        filenames["unpaired_1"] = null;
-        filenames["unpaired_2"] = null;
-      }
-      filenames["report"] = basename + '_trimming_report.txt';
-      return filenames;
+  - var default_log_name = function() {
+      let lognames = {};
+      lognames["pair"] = (inputs.paired && inputs.input_file_pair) ? inputs.input_file_pair.basename+'_trimming_report.txt':null;
+      lognames["single"] = inputs.input_file.basename+'_trimming_report.txt';
+      return lognames;
     }
 
 hints:
@@ -40,7 +20,7 @@ hints:
 
 inputs:
 
-  input_filename:
+  input_file:
     type:
       - File
     inputBinding:
@@ -48,7 +28,7 @@ inputs:
     doc: |
       Input FASTQ file
 
-  input_filename_pair:
+  input_file_pair:
     type:
       - "null"
       - File
@@ -196,8 +176,6 @@ inputs:
       Maximum allowed error rate (no. of errors divided by the length of the matching region)
       Default: 0.1
 
-# NOTE: if specified output files should have diffrent extension. Make a function to gen ext
-# Pay attention on If the input files are GZIP-compressed the output files will automatically be GZIP compressed as well
   gzip:
     type:
       - "null"
@@ -255,7 +233,6 @@ inputs:
     doc: |
       Removes Ns from either side of the read. This option does currently not work in RRBS mode.
 
-# NOTE use is a log
   no_report_file:
     type:
       - "null"
@@ -374,7 +351,7 @@ inputs:
       prefix: '--paired'
       valueFrom: |
         ${
-            if (!inputs.input_filename_pair){
+            if (!inputs.input_file_pair){
               return null;
             } else {
               return self;
@@ -441,36 +418,35 @@ inputs:
 
 
 outputs:
-  trimmed:
+  trimmed_file:
     type: File
     outputBinding:
-      glob: $(default_name()['trimmed'])
+      glob: $((inputs.paired && inputs.input_file_pair) ? "*_val_1.fq*":"*_trimmed.fq*")
 
-  trimmed_pair:
+  trimmed_file_pair:
     type: File?
     outputBinding:
-      glob: $(default_name()['trimmed_pair'])
+      glob: "*_val_2.fq*"
 
-  unpaired_1:
+  unpaired_file_1:
     type: File?
     outputBinding:
-      glob: $(default_name()['unpaired_1'])
+      glob: "*_unpaired_1.fq*"
 
-  unpaired_2:
+  unpaired_file_2:
     type: File?
     outputBinding:
-      glob: $(default_name()['unpaired_2'])
+      glob: "*_unpaired_2.fq*"
 
-  report:
+  report_file:
     type: File?
     outputBinding:
-      glob: $(default_name()['report'])
+      glob: $(default_log_name()['single'])
 
-  report_pair:
+  report_file_pair:
     type: File?
     outputBinding:
-      glob: $(default_name()['report_pair'])
-
+      glob: $(default_log_name()['pair'])
 
 baseCommand: [trim_galore]
 
@@ -484,8 +460,8 @@ s:mainEntity:
   $import: ./metadata/trimgalore-metadata.yaml
 
 s:name: "trimgalore"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/trimgalore.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/trimgalore.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -514,13 +490,19 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  Tool for a wrapper around Cutadapt and FastQC to consistently apply adapter and quality trimming to FastQ files,
-  with extra functionality for RRBS data
+doc: |
+  Tool runs Trimgalore - the wrapper around Cutadapt and FastQC to consistently apply adapter and quality trimming
+  to FastQ files.
+
+  `default_log_name` function returns names for generated log files (for both paired-end and single-end cases).
+  `trim_galore` itself doesn't support setting custom names for output files.
+
+  For paired-end data processing both `input_file_pair` and `paired` should be set. If either of them is not set,
+  the other one becomes unset automatically.
 
 s:about: |
   trim_galore [options] <filename(s)>

@@ -267,26 +267,26 @@ outputs:
     type: File
     label: "TrimGalore report"
     doc: "TrimGalore generated log"
-    outputSource: trim_fastq/report
+    outputSource: trim_fastq/report_file
 
 steps:
 
   trim_fastq:
     run: ../tools/trimgalore.cwl
     in:
-      input_filename: fastq_file
+      input_file: fastq_file
       dont_gzip:
         default: true
       length:
         default: 30
     out:
-      - trimmed
-      - report
+      - trimmed_file
+      - report_file
 
   rename:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq/trimmed
+      source_file: trim_fastq/trimmed_file
       target_filename: fastq_file
     out:
       - target_file

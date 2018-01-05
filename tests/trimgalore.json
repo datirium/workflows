@@ -1,7 +1,0 @@
-{
-  "input_filename":      { "location":  "./data/fastq/SRR390728_pe_1.fastq.gz", "class": "File" },
-  "input_filename_pair": { "location":  "./data/fastq/SRR390728_pe_2.fastq.gz", "class": "File" },
-  "paired": true,
-  "dont_gzip": true,
-  "retain_unpaired": true
-}
