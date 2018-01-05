@@ -1,3 +1,19 @@
+- job: ./rename-1.json
+  tool: ../tools/rename.cwl
+  output:
+    target_file:
+      class: File
+      location: SRR390728_pe_2.fastq.gz
+      size: 29781
+
+- job: ./rename-2.json
+  tool: ../tools/rename.cwl
+  output:
+    target_file:
+      class: File
+      location: SRR390728_pe_2.fastq.gz
+      size: 29781
+
 - job: ./macs2-callpeak-biowardrobe-only-1.json
   tool: ../tools/macs2-callpeak-biowardrobe-only.cwl
   output:
