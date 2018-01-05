@@ -349,9 +349,10 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq dUTP BioWardrobe basic analysis with single-end data file.
+  Runs RNA-Seq dUTP BioWardrobe basic analysis with strand specific single-end data file.
 
 s:about: |
+  Note: should be updated
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for a **single-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
