@@ -60,6 +60,12 @@ inputs:
     label: "Split reads by 'N' and 'D'"
     doc: "Calculate genome coverage for each part of the splitted by 'N' and 'D' read"
 
+  dutp:
+    type: boolean?
+    label: "Split reads by 'N' and 'D'"
+    doc: "Change strand af the mate read (so both reads from the same strand) useful for strand specific. Works for BAM files only"
+
+
 outputs:
   bigwig_file:
     type: File
@@ -96,6 +102,7 @@ steps:
       scale: scale
       mapped_reads_number: mapped_reads_number
       strand: strand
+      du: dutp
     out: [genome_coverage_file]
 
   sort_bedgraph:
