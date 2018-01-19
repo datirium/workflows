@@ -62,8 +62,8 @@ inputs:
 
   dutp:
     type: boolean?
-    label: "Split reads by 'N' and 'D'"
-    doc: "Change strand af the mate read (so both reads from the same strand) useful for strand specific. Works for BAM files only"
+    label: "Enable dUTP"
+    doc: "Change strand af the mate read, so both reads come from the same strand"
 
 
 outputs:
