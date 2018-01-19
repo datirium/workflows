@@ -253,10 +253,9 @@ steps:
     in:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length_file
-      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
-#      pairchip:
-#        default: true
+      mapped_reads_number:
+        source: star_aligner/uniquely_mapped_reads_number
+        valueFrom: $(self*2)
     out: [bigwig_file]
 
   bowtie_aligner:
