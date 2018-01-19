@@ -262,7 +262,7 @@ steps:
       chrom_length_file: chrom_length_file
       mapped_reads_number:
         source: star_aligner/uniquely_mapped_reads_number
-        valueFrom: $(self/2)
+        valueFrom: $(self*2)
       bigwig_filename:
         source: samtools_sort_index/bam_bai_pair
         valueFrom: |
@@ -284,7 +284,7 @@ steps:
       chrom_length_file: chrom_length_file
       mapped_reads_number:
         source: star_aligner/uniquely_mapped_reads_number
-        valueFrom: $(-self/2)
+        valueFrom: $(-self*2)
       bigwig_filename:
         source: samtools_sort_index/bam_bai_pair
         valueFrom: |
