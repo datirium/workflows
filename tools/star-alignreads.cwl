@@ -1332,7 +1332,11 @@ inputs:
       int: alignment will be output only if its score is higher than or equal to this value
 
   outReadsUnmapped:
-    type: string?
+    type:
+      - "null"
+      - type: enum
+        name: "unmapped"
+        symbols: ['None','Fastx']
     inputBinding:
       position: 1
       prefix: --outReadsUnmapped
@@ -1413,6 +1417,16 @@ outputs:
     type: File
     outputBinding:
       glob: "*Aligned.out*"
+
+  unmapped_mate_1_file:
+    type: File?
+    outputBinding:
+      glob: "*Unmapped.out.mate1*"
+
+  unmapped_mate_2_file:
+    type: File?
+    outputBinding:
+      glob: "*Unmapped.out.mate2*"
 
   log_out:
     type: File?
