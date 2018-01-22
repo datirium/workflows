@@ -350,6 +350,11 @@
     aligned_file:
       class: File
       location: chr21.Aligned.out.bam
+    unmapped_mate_1_file:
+      class: File
+      location: chr21.Unmapped.out.mate1
+      size: 468
+    unmapped_mate_2_file: null
     log_sj:
       class: File
       location: chr21.SJ.out.tab
