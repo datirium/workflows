@@ -33,40 +33,40 @@ steps:
   sra_to_fastq:
     run: ../tools/fastq-dump.cwl
     in:
-      input_file: sra_input_file
+      sra_file: sra_input_file
       split_files:
         default: true
-    out: [output_file_1, output_file_2]
+    out: [fastq_file_1, fastq_file_2]
 
   fastqc_1:
     run: ../tools/fastqc.cwl
     in:
-      fastq_file: sra_to_fastq/output_file_1
+      fastq_file: sra_to_fastq/fastq_file_1
     out: [summary_file]
 
   fastqc_2:
     run: ../tools/fastqc.cwl
     in:
-      fastq_file: sra_to_fastq/output_file_2
+      fastq_file: sra_to_fastq/fastq_file_2
     out: [summary_file]
 
   fastqc_results_trigger_1:
     run: ../expressiontools/fastqc-results-trigger.cwl
     in:
-      summary: fastqc_1/summary_file
+      summary_file: fastqc_1/summary_file
     out: [trigger]
 
   fastqc_results_trigger_2:
     run: ../expressiontools/fastqc-results-trigger.cwl
     in:
-      summary: fastqc_2/summary_file
+      summary_file: fastqc_2/summary_file
     out: [trigger]
 
   trimmomatic:
     run: ../tools/trimmomatic.cwl
     in:
-      input_read1_fastq_file: sra_to_fastq/output_file_1
-      input_read2_fastq_file: sra_to_fastq/output_file_2
+      input_read1_fastq_file: sra_to_fastq/fastq_file_1
+      input_read2_fastq_file: sra_to_fastq/fastq_file_2
       input_adapters_file: illumina_adapters_file
       trigger:
         source: [fastqc_results_trigger_1/trigger, fastqc_results_trigger_2/trigger]

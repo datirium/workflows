@@ -160,8 +160,8 @@ s:mainEntity:
   $import: ./metadata/samtools-metadata.yaml
 
 s:name: "samtools-rmdup"
-s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/tools/samtools-rmdup.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://github.com/Barski-lab/workflows/blob/master/tools/samtools-rmdup.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:

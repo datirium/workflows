@@ -1,0 +1,4 @@
+{
+  "fastq_file": {"class": "File", "location": "./data/mm10/sorted.bam"},
+  "format_enum": "bam"
+}
