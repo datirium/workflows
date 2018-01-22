@@ -435,6 +435,35 @@
       location: res_Log.out
     uniquely_mapped_reads_number: 7
 
+- job: ./star-alignreads-5.json
+  tool: ../tools/star-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: res_Aligned.out.bam
+    unmapped_mate_1_file:
+      class: File
+      location: res_Unmapped.out.mate1
+      size: 3445
+    unmapped_mate_2_file:
+      class: File
+      location: res_Unmapped.out.mate2
+      size: 3445
+    log_sj:
+      class: File
+      location: res_SJ.out.tab
+    log_progress:
+      class: File
+      location: res_Log.progress.out
+      size: 246
+    log_final:
+      class: File
+      location: res_Log.final.out
+    log_out:
+      class: File
+      location: res_Log.out
+    uniquely_mapped_reads_number: 94
+
 - job: ./python-get-stat-rnaseq-1.json
   tool: ../tools/python-get-stat-rnaseq.cwl
   output:
