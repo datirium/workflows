@@ -1,0 +1,10 @@
+{
+  "readFilesIn": [
+    {"class": "File", "location": "./data/fastq/chr4_100_reads_chrM_25_reads_dm3_upstream.fastq"},
+    {"class": "File", "location": "./data/fastq/chr4_100_reads_chrM_25_reads_dm3_downstream.fastq"}
+  ],
+  "genomeDir": {"class": "Directory", "location": "./data/star_dm3_indices_chr4"},
+  "outFileNamePrefix": "res_",
+  "runThreadN": 4,
+  "outReadsUnmapped": "Fastx"
+}
