@@ -913,24 +913,52 @@
       location: res.rmdup
 #      size: 54
 
-- job: ./fastq-dump_1.json
+- job: ./fastq-dump-1.json
   tool: ../tools/fastq-dump.cwl
   output:
-    output_file_1:
+    fastq_file_1:
       class: File
       location: SRR390728_pe_1.fastq
       size: 137572
-    output_file_2:
+    fastq_file_2:
       class: File
       location: SRR390728_pe_2.fastq
       size: 137572
 
-- job: ./fastq-dump_2.json
+- job: ./fastq-dump-2.json
   tool: ../tools/fastq-dump.cwl
   output:
-    output_file_1:
+    fastq_file_1:
+      class: File
+      location: SRR390728_pe_1.fastq
+      size: 137572
+    fastq_file_2:
+      class: File
+      location: SRR390728_pe_2.fastq
+      size: 137572
+
+- job: ./fastq-dump-3.json
+  tool: ../tools/fastq-dump.cwl
+  output:
+    fastq_file_1:
       class: File
       location: SRR3017206_se.fastq
+      size: 151572
+
+- job: ./fastq-dump-4.json
+  tool: ../tools/fastq-dump.cwl
+  output:
+    fastq_file_1:
+      class: File
+      location: SRR3017206_se.fastq
+      size: 151572
+
+- job: ./fastq-dump-5.json
+  tool: ../tools/fastq-dump.cwl
+  output:
+    fastq_file_1:
+      class: File
+      location: SRR3017206_se_1.fastq
       size: 151572
 
 - job: ./samtools-index-1.json
@@ -1075,17 +1103,51 @@
       location: macs2_test_macs.log
       size: 2942
 
-- job: ./fastqc.json
+- job: ./fastqc-results-trigger-1.json
+  tool: ../expressiontools/fastqc-results-trigger.cwl
+  output:
+    trigger: False
+
+- job: ./fastqc-results-trigger-2.json
+  tool: ../expressiontools/fastqc-results-trigger.cwl
+  output:
+    trigger: True
+
+- job: ./fastqc-1.json
   tool: ../tools/fastqc.cwl
   output:
     zipped_file:
-      - class: File
-        location: reads_test_fastqc.zip
-        size: 398565
+      class: File
+      location: reads_test_fastqc.zip
+      size: 398565
     summary_file:
-      - class: File
-        location: summary.txt
-        size: 494
+      class: File
+      location: summary.txt
+      size: 494
+
+- job: ./fastqc-2.json
+  tool: ../tools/fastqc.cwl
+  output:
+    zipped_file:
+      class: File
+      location: sorted_fastqc.zip
+      size: 376295
+    summary_file:
+      class: File
+      location: summary.txt
+      size: 470
+
+- job: ./fastqc-3.json
+  tool: ../tools/fastqc.cwl
+  output:
+    zipped_file:
+      class: File
+      location: sorted_fastqc.zip
+      size: 376295
+    summary_file:
+      class: File
+      location: summary.txt
+      size: 470
 
 - job: ./bowtie2-build.json
   tool: ../tools/bowtie2-build.cwl
