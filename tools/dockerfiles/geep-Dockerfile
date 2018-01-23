@@ -30,7 +30,6 @@ ENV LD_LIBRARY_PATH "/usr/local/lib/bamtools:${LD_LIBRARY_PATH}"
 
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get install libboost-all-dev -y && \
     wget -q -O - $URL | tar -zxv && \
     cd ${NAME}-${VERSION} && \

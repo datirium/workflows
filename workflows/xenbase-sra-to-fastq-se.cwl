@@ -16,7 +16,7 @@ outputs:
 
   fastq:
     type: File
-    outputSource: trimmomatic/output_read1_trimmed_file
+    outputSource: trimmomatic/upstream_trimmed_file
 
 
 steps:
@@ -42,13 +42,13 @@ steps:
   trimmomatic:
     run: ../tools/trimmomatic.cwl
     in:
-      input_read1_fastq_file: sra_to_fastq/fastq_file_1
-      input_adapters_file: illumina_adapters_file
+      fastq_file_upstream: sra_to_fastq/fastq_file_1
+      adapters_file: illumina_adapters_file
       trigger: fastqc_results_trigger/trigger
-      end_mode:
+      lib_type:
         default: "SE"
-      illuminaclip:
+      illuminaclip_step_param:
         default: '2:30:15'
       threads: threads
-    out: [output_read1_trimmed_file]
+    out: [upstream_trimmed_file]
 

@@ -32,8 +32,7 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/rsem:v1.3.0
-  dockerFile: >
-    $import: ./dockerfiles/rsem-Dockerfile
+
 
 inputs:
   upstream_read_file:

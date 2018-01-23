@@ -28,7 +28,6 @@ ENV URL_WALT "https://github.com/smithlabcode/walt/archive/v${VERSION_WALT}.tar.
 
 RUN apt-get clean all &&\
     apt-get update &&\
-    apt-get upgrade -y &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* &&\
 

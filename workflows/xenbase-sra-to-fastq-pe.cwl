@@ -22,10 +22,10 @@ outputs:
 
   upstream_fastq:
     type: File
-    outputSource: trimmomatic/output_read1_trimmed_file
+    outputSource: trimmomatic/upstream_trimmed_file
   downstream_fastq:
     type: File
-    outputSource: trimmomatic/output_read2_trimmed_paired_file
+    outputSource: trimmomatic/downstream_trimmed_file
 
 
 steps:
@@ -65,18 +65,18 @@ steps:
   trimmomatic:
     run: ../tools/trimmomatic.cwl
     in:
-      input_read1_fastq_file: sra_to_fastq/fastq_file_1
-      input_read2_fastq_file: sra_to_fastq/fastq_file_2
-      input_adapters_file: illumina_adapters_file
+      fastq_file_upstream: sra_to_fastq/fastq_file_1
+      fastq_file_downstream: sra_to_fastq/fastq_file_2
+      adapters_file: illumina_adapters_file
       trigger:
         source: [fastqc_results_trigger_1/trigger, fastqc_results_trigger_2/trigger]
         valueFrom: |
           ${
               return self[0] && self[1];
           }
-      end_mode:
+      lib_type:
         default: "PE"
-      illuminaclip:
+      illuminaclip_step_param:
         default: '2:30:15'
       threads: threads
-    out: [output_read1_trimmed_file, output_read2_trimmed_paired_file]
+    out: [upstream_trimmed_file, downstream_trimmed_file]
