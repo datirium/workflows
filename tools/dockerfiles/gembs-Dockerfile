@@ -41,7 +41,6 @@ ENV URL_UCSC_UTILITIES "http://hgdownload.soe.ucsc.edu/admin/exe/userApps.${VERS
 
 RUN apt-get clean all &&\
     apt-get update &&\
-    apt-get upgrade -y &&\
     apt-get install -y libgsl-dev libssl-dev libmysqlclient-dev libpng12-dev uuid-dev \
                        libncurses5-dev libbz2-dev liblzma-dev &&\
     pip install --upgrade pip &&\

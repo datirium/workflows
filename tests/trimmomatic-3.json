@@ -1,0 +1,15 @@
+{
+  "fastq_file_upstream":
+  {
+    "location":  "./data/chr21/chr21.fastq",
+    "class": "File"
+  },
+  "adapters_file":
+  {
+    "location":  "./data/illumina_adapters/TruSeq3-SE.fa",
+    "class": "File"
+  },
+  "lib_type": "SE",
+  "illuminaclip_step_param": "2:30:15",
+  "trigger": false
+}

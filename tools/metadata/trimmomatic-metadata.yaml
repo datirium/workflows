@@ -1,0 +1,30 @@
+class: s:SoftwareSourceCode
+s:name: "trimmomatic"
+s:about: |
+  Trimmomatic is a fast, multithreaded command line tool that can be used to trim and crop
+  Illumina (FASTQ) data as well as to remove adapters. These adapters can pose a real problem
+  depending on the library preparation and downstream application.
+
+s:url: http://www.usadellab.org/cms/?page=trimmomatic
+s:codeRepository: http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-Src-0.35.zip
+
+s:license:
+- https://opensource.org/licenses/GPL-3.0
+
+s:targetProduct:
+  class: s:SoftwareApplication
+  s:softwareVersion: "0.35"
+  s:applicationCategory: "command line tool"
+
+s:programmingLanguage: "Java"
+
+s:creator:
+- class: s:Organization
+  s:name: "USADELLAB"
+  s:member:
+  - class: s:Person
+    s:name: "Bolger AM"
+  - class: s:Person
+    s:name: "Lohse M"
+  - class: s:Person
+    s:name: "Usadel B"

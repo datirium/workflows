@@ -464,6 +464,72 @@
       location: res_Log.out
     uniquely_mapped_reads_number: 94
 
+- job: ./trimmomatic-1.json
+  tool: ../tools/trimmomatic.cwl
+  output:
+    upstream_trimmed_file:
+      class: File
+      location: chr21.trimmed.fastq
+      size: 3906783
+    upstream_trimmed_unpaired_file: null
+    downstream_trimmed_file: null
+    downstream_trimmed_unpaired_file: null
+    log_file: null
+
+- job: ./trimmomatic-2.json
+  tool: ../tools/trimmomatic.cwl
+  output:
+    upstream_trimmed_file:
+      class: File
+      location: chr21.trimmed.fastq
+      size: 3906783
+    upstream_trimmed_unpaired_file: null
+    downstream_trimmed_file: null
+    downstream_trimmed_unpaired_file: null
+    log_file: null
+
+- job: ./trimmomatic-3.json
+  tool: ../tools/trimmomatic.cwl
+  output:
+    upstream_trimmed_file:
+      class: File
+      location: chr21.fastq
+      size: 3906783
+    upstream_trimmed_unpaired_file: null
+    downstream_trimmed_file: null
+    downstream_trimmed_unpaired_file: null
+    log_file: null
+
+- job: ./trimmomatic-4.json
+  tool: ../tools/trimmomatic.cwl
+  output:
+    upstream_trimmed_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.trimmed.fastq
+      size: 15415
+    upstream_trimmed_unpaired_file: null
+    downstream_trimmed_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_downstream.trimmed.fastq
+      size: 15415
+    downstream_trimmed_unpaired_file: null
+    log_file: null
+
+- job: ./trimmomatic-5.json
+  tool: ../tools/trimmomatic.cwl
+  output:
+    upstream_trimmed_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.fastq
+      size: 15415
+    upstream_trimmed_unpaired_file: null
+    downstream_trimmed_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_downstream.fastq
+      size: 15415
+    downstream_trimmed_unpaired_file: null
+    log_file: null
+
 - job: ./python-get-stat-rnaseq-1.json
   tool: ../tools/python-get-stat-rnaseq.cwl
   output:
