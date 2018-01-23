@@ -1125,56 +1125,173 @@
       location: cramExample.cram.crai
       size: 94
 
-- job: ./rsem-calculate-expression.json
+- job: ./rsem-calculate-expression-1.json
   tool: ../tools/rsem-calculate-expression.cwl
   output:
-    align_time: null
-    alleles_results: null
-    transcript_sorted_bam_bai_pair:
+    isoform_results_file:
       class: File
-      location: output.transcript.sorted.bam
-      size: 2211315
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.isoforms.results
+      size: 16907
+    gene_results_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genes.results
+      size: 7870
+    alleles_results_file: null
+    genome_bam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.bam
+    transcript_bam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.bam
+    genome_sorted_bam_bai_pair:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.sorted.bam
       secondaryFiles:
       - class: File
-        location: output.transcript.sorted.bam.bai
-        size: 16136
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.sorted.bam.bai
+    transcript_sorted_bam_bai_pair:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.sorted.bam.bai
+    align_time_file: null
+    stat_folder:
+      class: Directory
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.stat
+      listing:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.cnt
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.theta
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.model
+
+- job: ./rsem-calculate-expression-2.json
+  tool: ../tools/rsem-calculate-expression.cwl
+  output:
+    isoform_results_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.isoforms.results
+      size: 16792
+    gene_results_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genes.results
+      size: 7793
+    alleles_results_file: null
+    genome_bam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.bam
+    transcript_bam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.bam
+    genome_sorted_bam_bai_pair:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.sorted.bam.bai
+    transcript_sorted_bam_bai_pair:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.sorted.bam.bai
+    align_time_file: null
+    stat_folder:
+      class: Directory
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.stat
+      listing:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.cnt
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.theta
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.model
+
+- job: ./rsem-calculate-expression-3.json
+  tool: ../tools/rsem-calculate-expression.cwl
+  output:
+    isoform_results_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.isoforms.results
+      size: 16792
+    gene_results_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genes.results
+      size: 7793
+    alleles_results_file: null
+    genome_bam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.bam
+    transcript_bam_file:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.bam
+    genome_sorted_bam_bai_pair:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.genome.sorted.bam.bai
+    transcript_sorted_bam_bai_pair:
+      class: File
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.transcript.sorted.bam.bai
+    align_time_file: null
+    stat_folder:
+      class: Directory
+      location: chr4_100_reads_chrM_25_reads_dm3_upstream.stat
+      listing:
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.cnt
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.theta
+      - class: File
+        location: chr4_100_reads_chrM_25_reads_dm3_upstream.model
+
+- job: ./rsem-calculate-expression-4.json
+  tool: ../tools/rsem-calculate-expression.cwl
+  output:
+    isoform_results_file:
+      class: File
+      location: output.isoforms.results
+      size: 16792
+    gene_results_file:
+      class: File
+      location: output.genes.results
+      size: 7793
+    alleles_results_file: null
+    genome_bam_file:
+      class: File
+      location: output.genome.bam
+    transcript_bam_file:
+      class: File
+      location: output.transcript.bam
     genome_sorted_bam_bai_pair:
       class: File
       location: output.genome.sorted.bam
-      size: 1016090
       secondaryFiles:
       - class: File
         location: output.genome.sorted.bam.bai
-        size: 24880
-    isoform_results:
+    transcript_sorted_bam_bai_pair:
       class: File
-      location: output.isoforms.results
-      size: 40027
-    gene_results:
-      class: File
-      location: output.genes.results
-      size: 22776
-    genome_bam:
-      class: File
-      location: output.genome.bam
-      size: 1024403
-    transcript_bam:
-      class: File
-      location: output.transcript.bam
-      size: 1368054
-    stat:
+      location: output.transcript.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: output.transcript.sorted.bam.bai
+    align_time_file: null
+    stat_folder:
       class: Directory
       location: output.stat
       listing:
       - class: File
         location: output.cnt
-        size: 120
-      - class: File
-        location: output.model
-        size: 49599
       - class: File
         location: output.theta
-        size: 7196
+      - class: File
+        location: output.model
 
 - job: ./macs2-callpeak.json
   tool: ../tools/macs2-callpeak.cwl
