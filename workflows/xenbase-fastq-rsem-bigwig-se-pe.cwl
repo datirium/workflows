@@ -25,10 +25,10 @@ outputs:
 
   rsem_isoforms:
     type: File
-    outputSource: rsem_calculate_expression/isoform_results
+    outputSource: rsem_calculate_expression/isoform_results_file
   rsem_genes:
     type: File
-    outputSource: rsem_calculate_expression/gene_results
+    outputSource: rsem_calculate_expression/gene_results_file
   bam_file:
     type: File
     outputSource: rsem_calculate_expression/genome_sorted_bam_bai_pair
@@ -50,7 +50,7 @@ steps:
     in:
       upstream_read_file: upstream_fastq
       downstream_read_file: downstream_fastq
-      reference_name_dir: rsem_indices_folder
+      indices_folder: rsem_indices_folder
       bowtie2:
         default: true
       sort_bam_by_coordinate:
@@ -59,8 +59,8 @@ steps:
         default: true
       threads: threads
     out:
-      - isoform_results
-      - gene_results
+      - isoform_results_file
+      - gene_results_file
       - genome_sorted_bam_bai_pair
 
   bamtools_stats:

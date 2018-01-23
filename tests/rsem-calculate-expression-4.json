@@ -1,0 +1,11 @@
+{
+  "upstream_read_file": {"class": "File",      "location": "./data/fastq/chr4_100_reads_chrM_25_reads_dm3_upstream.fastq"},
+  "downstream_read_file": {"class": "File",      "location": "./data/fastq/chr4_100_reads_chrM_25_reads_dm3_downstream.fastq"},
+  "indices_folder":     {"class": "Directory", "location": "./data/rsem_dm_3_chr4_bowtie2_indices"},
+  "bowtie2": true,
+  "sort_bam_by_coordinate": true,
+  "output_genome_bam": true,
+  "paired_end": true,
+  "output_filename": "output",
+  "threads": 4
+}
