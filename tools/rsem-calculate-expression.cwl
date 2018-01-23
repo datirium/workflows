@@ -82,23 +82,8 @@ inputs:
 
   reference_name_dir:
     type: Directory
-    inputBinding:
-      position: 103
-      valueFrom: ""
-      shellQuote: false
-    doc: >
+    doc: |
       Path to the folder where all rsem reference files are saved
-
-  reference_name:
-    type:
-      - "null"
-      - string
-    inputBinding:
-      position: 104
-      valueFrom: $(inputs.reference_name_dir.path + "/" + self)
-    doc: >
-      The name of the reference used. The user must have run 'rsem-prepare-reference' with this reference_name before running this program
-      Shouldn't include path. The folder where the reference files are saved is to be set by reference_name_dir
 
   output_filename:
     type:
@@ -1067,9 +1052,6 @@ arguments:
 # in a case when reference_name is not set, we should get the value automatically from reference_name_dir
   - valueFrom: |
       ${
-        if (inputs.reference_name){
-          return null;
-        } else {
           for (var i = 0; i < inputs.reference_name_dir.listing.length; i++) {
               if (inputs.reference_name_dir.listing[i].path.split('/').slice(-1)[0].split('.').slice(-1)[0] == 'grp'){
                 let name = inputs.reference_name_dir.listing[i].path.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
@@ -1077,7 +1059,6 @@ arguments:
               }
           }
           return null;
-        }
       }
     position: 104
 
