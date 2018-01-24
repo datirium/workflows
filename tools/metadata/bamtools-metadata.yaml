@@ -1,6 +1,6 @@
 class: s:SoftwareSourceCode
-s:name: "bowtie2"
-s:about: >
+s:name: "bamtools"
+s:about: |
   Software suite for programmers and end users that facilitates research analysis
   and data management using BAM files. BamTools provides both the first C++ API
   publicly available for BAM file support as well as a command-line toolkit.

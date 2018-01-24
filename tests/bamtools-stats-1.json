@@ -1,0 +1,3 @@
+{
+    "bam_file": {"class": "File", "location": "./data/test.trimmed.bam"}
+}
