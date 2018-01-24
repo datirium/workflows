@@ -3,10 +3,12 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
+
 
 hints:
 - class: DockerRequirement
@@ -15,36 +17,24 @@ hints:
 
 inputs:
 
-  input_files:
+  bam_file:
     type:
       - File
-      - type: array
-        items: File
-        inputBinding:
-          prefix: -in
     inputBinding:
       position: 2
-      valueFrom: |
-        ${
-          if ( Object.prototype.toString.call(inputs.input_files) === '[object Array]'){
-            return null;
-          } else {
-            return ["-in", inputs.input_files.path];
-          }
-        }
+      prefix: -in
     doc: |
-      the input BAM file[s]
-      NOTE: If cwl fix a bug https://github.com/common-workflow-language/common-workflow-language/issues/330
-      we'll be able to use MultipleInputFeatureRequirement for single-item array and it will work
-      even without additional File type and valueFrom field
+      the input BAM file
+
 
 outputs:
-  stats_log:
+
+  log_file:
     type: File
     outputBinding:
       glob: "stats.log"
 
-  totalReads:
+  total_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -55,7 +45,8 @@ outputs:
           var totalReads = parseInt(s.substring ( s.indexOf("Totalreads")+11, s.indexOf("\t", (s.indexOf("Totalreads")))  ));
           return totalReads;
         }
-  mappedreads:
+
+  mapped_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -66,7 +57,8 @@ outputs:
           var mappedreads = parseInt(s.substring ( s.indexOf("Mappedreads")+12, s.indexOf("\t", (s.indexOf("Mappedreads")))  ));
           return mappedreads;
         }
-  forwardstrand:
+
+  forward_strand_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -77,7 +69,8 @@ outputs:
           var forwardstrand = parseInt(s.substring ( s.indexOf("Forwardstrand")+14, s.indexOf("\t", (s.indexOf("Forwardstrand")))  ));
           return forwardstrand;
         }
-  reversestrand:
+
+  reverse_strand_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -88,7 +81,8 @@ outputs:
           var reversestrand = parseInt(s.substring ( s.indexOf("Reversestrand")+14, s.indexOf("\t", (s.indexOf("Reversestrand")))  ));
           return reversestrand;
         }
-  failedQC:
+
+  failed_QC_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -99,7 +93,8 @@ outputs:
           var failedQC = parseInt(s.substring ( s.indexOf("FailedQC")+9, s.indexOf("\t", (s.indexOf("FailedQC")))  ));
           return failedQC;
         }
-  duplicates:
+
+  duplicate_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -110,7 +105,8 @@ outputs:
           var duplicates = parseInt(s.substring ( s.indexOf("Duplicates")+11, s.indexOf("\t", (s.indexOf("Duplicates")))  ));
           return duplicates;
         }
-  pairedendreads:
+
+  pairedend_reads_number:
     type: int
     outputBinding:
       loadContents: true
@@ -122,12 +118,13 @@ outputs:
           return pairedendreads;
         }
 
-baseCommand: [bamtools]
+
+baseCommand: [bamtools, stats]
 arguments:
-  - stats
   - valueFrom: $('> ' + 'stats.log')
     position: 1000
     shellQuote: false
+
 
 $namespaces:
   s: http://schema.org/
@@ -139,8 +136,8 @@ s:mainEntity:
   $import: ./metadata/bamtools-metadata.yaml
 
 s:name: "bamtools-stats"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bamtools-stats.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/bamtools-stats.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -174,9 +171,13 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to calculate general alignment statistics from the input BAM file
+  Tool runs `bamtools stats' to calculate general alignment statistics from the input BAM file
 
-s:about: >
+  `-insert` parameter is not implemented
+
+
+
+s:about: |
   Usage: bamtools stats [-in <filename> -in <filename> ... | -list <filelist>] [statsOptions]
 
   Input & Output:

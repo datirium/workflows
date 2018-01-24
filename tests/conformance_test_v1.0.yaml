@@ -1573,20 +1573,20 @@
         size: 28664
       size: 51274
 
-- job: ./bamtools-stats.json
+- job: ./bamtools-stats-1.json
   tool: ../tools/bamtools-stats.cwl
   output:
-    stats_log:
+    log_file:
       class: File
       location: stats.log
       size: 322
-    forwardstrand: 581
-    duplicates: 0
-    totalReads: 1204
-    mappedreads: 1204
-    failedQC: 0
-    reversestrand: 623
-    pairedendreads: 0
+    total_reads_number: 1204
+    mapped_reads_number: 1204
+    forward_strand_reads_number: 581
+    reverse_strand_reads_number: 623
+    failed_QC_reads_number: 0
+    duplicate_reads_number: 0
+    pairedend_reads_number: 0
 
 - job: ./linux-sort-1.json
   tool: ../tools/linux-sort.cwl
