@@ -49,7 +49,8 @@ steps:
   bowtie_generate_indices:
     run: ../tools/bowtie-build.cwl
     in:
-      reference_in: fasta_input_file
+      fasta_file: fasta_input_file
+      index_base_name: genome
     out: [indices]
 
   files_to_folder:
