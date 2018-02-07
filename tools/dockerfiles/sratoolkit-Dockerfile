@@ -29,4 +29,5 @@ ENV URL "https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/${VERSION}/sratoolkit.${VERS
 
 RUN wget -q -O - $URL | tar -zxv && \
     cp -r sratoolkit.${VERSION}-ubuntu64/bin/* /usr/local/bin && \
+    cp -r sratoolkit.${VERSION}-ubuntu64/schema /usr/local && \
     rm -rf sratoolkit.${VERSION}-ubuntu64
