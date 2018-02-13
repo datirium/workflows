@@ -1,10 +1,16 @@
 # workflows
 cwl workflows and tools for BioWardrobe project
-tested with cwltool==1.0.20171107133715
 
 ## Install 
 
 ```sh
 git clone https://github.com/datirium/workflows
 pip3 install .
+```
+
+## Usage
+
+```python
+from biowardrobe_cwl_workflows import available
+_path_to_workflow=available(workflow='chipseq-se.cwl')
 ```
