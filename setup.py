@@ -21,21 +21,53 @@
 
 
 from setuptools import setup, find_packages
-import os
+from os import symlink
+from subprocess import check_output
+from time import strftime, gmtime
+
+
+def get_git_tag():
+    return check_output(['git', 'describe', '--contains']).strip()
+
+
+def get_git_timestamp():
+    gitinfo = check_output(
+        ['git', 'log', '--first-parent', '--max-count=1',
+         '--format=format:%ct', '.']).strip()
+    return strftime('%Y%m%d%H%M%S', gmtime(int(gitinfo)))
 
 
 try:
-    os.symlink('.', './biowardrobe_cwl_workflows', target_is_directory=True)
+    symlink('.', './biowardrobe_cwl_workflows', target_is_directory=True)
 except:
     pass
 
 
+def get_version():
+    """
+    Tries to get package version with following order:
+    1. from git_version file - when installing from pip, this is the only source to get version
+    2. from tag
+    3. from commit timestamp
+    :return: package version
+    """
+    version = '1.0.0'                                       # set default version
+    try:
+        version = get_git_tag()                             # try to get version info from the closest tag
+    except Exception:
+        try:
+            version = "1.0.{}".format(get_git_timestamp())  # try to get version info from commit date
+        except Exception:
+            pass
+    return version
+
+
 setup(
     name='biowardrobe-cwl-workflows',
-    description='Python package to extend BioWardrobe functionality with CWL Airflow',
-    version='1.0.0',
-    url='https://github.com/datirium/biowardrobe-airflow-analysis',
-    download_url='https://github.com/datirium/biowardrobe-airflow-analysis',
+    description="The wrapped BioWardrobe's CWL files for python packaging",
+    version=get_version(),
+    url='https://github.com/datirium/workflows',
+    # download_url='https://github.com/datirium/workflows/archive/v1.0.2.zip',
     author='Datirium, LLC',
     author_email='porter@datirium.com',
     license='Apache-2.0',
@@ -49,7 +81,7 @@ setup(
         'ruamel.yaml < 0.15',
         'apache-airflow >= 1.9.0, < 2'
     ],
-    zip_safe=False,
+    zip_safe=True,
     include_package_data=True,
     package_data={
         'biowardrobe_cwl_workflows': ['workflows/*.cwl',
