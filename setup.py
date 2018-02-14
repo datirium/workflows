@@ -60,8 +60,11 @@ except ImportError:
 
 setup(
     name='biowardrobe-cwl-workflows',
-    description="The wrapped BioWardrobe's CWL files for python packaging",
-    long_description=open(README).read(),
+    description="Wrapped BioWardrobe's CWL files",
+    long_description="""
+    Wrapped BioWardrobe's (https://biowardrobe.com) Common Workflow Language files
+    Details: https://github.com/datirium/workflows/blob/v1.0.2/README.md
+    """,  # open(README).read(),
     version='1.0',
     url='https://github.com/datirium/workflows',
     download_url='https://github.com/datirium/workflows',
@@ -92,11 +95,12 @@ setup(
     cmdclass={'egg_info': tagger},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Environment :: Airflow',
+        'Environment :: Console',
+        'Environment :: Other Environment',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'Intended Audience :: Healthcare Industry',
-        'License :: OSI Approved :: Apache License, Version 2.0',
+        'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: POSIX',
@@ -108,11 +112,9 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
-        'Topic :: Scientific/Engineering :: Epigenetics',
-        'Topic :: Scientific/Engineering :: Next Generation Sequencing',
+        'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Scientific/Engineering :: Information Analysis',
-        'Topic :: Scientific/Engineering :: Medical Science Apps.',
-        'Topic :: Workflows',
+        'Topic :: Scientific/Engineering :: Medical Science Apps.'
     ]
 
 )
