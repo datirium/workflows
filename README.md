@@ -4,6 +4,10 @@ CWL workflows for [BioWardrobe](https://biowardrobe.com/) project
 ## Install 
 
 ```sh
+pip3 install biowardrobe-cwl-workflows
+```
+or from sources
+```sh
 git clone https://github.com/datirium/workflows
 pip3 install .
 ```
