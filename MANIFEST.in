@@ -1,6 +1,6 @@
-include biowardrobe_cwl_workflows/workflows/*.cwl
-include biowardrobe_cwl_workflows/expressiontools/*.cwl
-include biowardrobe_cwl_workflows/metadata/*.cwl
-include biowardrobe_cwl_workflows/tools/*.cwl
-include biowardrobe_cwl_workflows/tools/metadata/*.yaml
-include biowardrobe_cwl_workflows/tools/metadata/*.yml
+include workflows/*.cwl
+include expressiontools/*.cwl
+include metadata/*.cwl
+include tools/*.cwl
+include tools/metadata/*.yaml
+include tools/metadata/*.yml

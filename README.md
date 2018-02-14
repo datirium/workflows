@@ -1,5 +1,5 @@
 # workflows
-cwl workflows and tools for BioWardrobe project
+CWL workflows for [BioWardrobe](https://biowardrobe.com/) project
 
 ## Install 
 

@@ -21,66 +21,64 @@
 
 
 from setuptools import setup, find_packages
-from os import symlink
-from subprocess import check_output
+from os import symlink, path
+from subprocess import check_output, CalledProcessError
 from time import strftime, gmtime
+import setuptools.command.egg_info as egg_info_cmd
+from setuptools.command.egg_info import egg_info
 
-
-def get_git_tag():
-    return check_output(['git', 'describe', '--contains']).strip()
-
-
-def get_git_timestamp():
-    gitinfo = check_output(
-        ['git', 'log', '--first-parent', '--max-count=1',
-         '--format=format:%ct', '.']).strip()
-    return strftime('%Y%m%d%H%M%S', gmtime(int(gitinfo)))
-
+SETUP_DIR = path.dirname(__file__)
+README = path.join(SETUP_DIR, 'README.md')
 
 try:
-    symlink('.', './biowardrobe_cwl_workflows', target_is_directory=True)
-except:
-    pass
+    class EggInfoFromGit(egg_info):
+        """Tag the build with git commit timestamp.
+
+        If a build tag has already been set (e.g., "egg_info -b", building
+        from source package), leave it alone.
+        """
+
+        def git_timestamp_tag(self):
+            gitinfo = check_output(
+                ['git', 'log', '--first-parent', '--max-count=1',
+                 '--format=format:%ct', '.']).strip()
+            return strftime('.%Y%m%d%H%M%S', gmtime(int(gitinfo)))
+
+        def tags(self):
+            if self.tag_build is None:
+                try:
+                    self.tag_build = self.git_timestamp_tag()
+                except CalledProcessError:
+                    pass
+            return egg_info.tags(self)
 
 
-def get_version():
-    """
-    Tries to get package version with following order:
-    1. from git_version file - when installing from pip, this is the only source to get version
-    2. from tag
-    3. from commit timestamp
-    :return: package version
-    """
-    version = '1.0.0'                                       # set default version
-    try:
-        version = get_git_tag()                             # try to get version info from the closest tag
-    except Exception:
-        try:
-            version = "1.0.{}".format(get_git_timestamp())  # try to get version info from commit date
-        except Exception:
-            pass
-    return version
+    tagger = EggInfoFromGit
+except ImportError:
+    tagger = egg_info_cmd.egg_info
 
 
 setup(
     name='biowardrobe-cwl-workflows',
     description="The wrapped BioWardrobe's CWL files for python packaging",
-    version=get_version(),
+    long_description=open(README).read(),
+    version='1.0',
     url='https://github.com/datirium/workflows',
-    # download_url='https://github.com/datirium/workflows/archive/v1.0.2.zip',
+    download_url='https://github.com/datirium/workflows',
     author='Datirium, LLC',
-    author_email='porter@datirium.com',
-    license='Apache-2.0',
-    packages=find_packages(
-        exclude=[
-            "biowardrobe_cwl_workflows.biowardrobe_cwl_workflows",
-            "biowardrobe_cwl_workflows.biowardrobe_cwl_workflows.*"]),
+    author_email='support@datirium.com',
+    # license='Apache-2.0',
+    packages=["biowardrobe_cwl_workflows"],
+    package_dir={'biowardrobe_cwl_workflows': '.'},
+
     install_requires=[
+        'setuptools',
         'cwltool',
         'jsonmerge',
         'ruamel.yaml < 0.15',
         'apache-airflow >= 1.9.0, < 2'
     ],
+
     zip_safe=True,
     include_package_data=True,
     package_data={
@@ -90,5 +88,31 @@ setup(
                                       'tools/*.cwl',
                                       'tools/metadata/*.yaml',
                                       'tools/metadata/*.yml']
-    }
+    },
+    cmdclass={'egg_info': tagger},
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Airflow',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Healthcare Industry',
+        'License :: OSI Approved :: Apache License, Version 2.0',
+        'Natural Language :: English',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: OS Independent',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: Microsoft :: Windows :: Windows 10',
+        'Operating System :: Microsoft :: Windows :: Windows 8.1',
+        'Programming Language :: Python :: 3.6',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Bio-Informatics',
+        'Topic :: Scientific/Engineering :: Epigenetics',
+        'Topic :: Scientific/Engineering :: Next Generation Sequencing',
+        'Topic :: Scientific/Engineering :: Information Analysis',
+        'Topic :: Scientific/Engineering :: Medical Science Apps.',
+        'Topic :: Workflows',
+    ]
+
 )
