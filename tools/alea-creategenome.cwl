@@ -4,19 +4,26 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: alea-docker.yml
+- $import: ./metadata/envvar-global.yml
 - class: EnvVarRequirement
   envDef:
   - envName: AL_USE_CONCATENATED_GENOME
-    envValue: $(inputs.CONCATENATED_GENOME?"1":"0")
+    envValue: $(inputs.concat_genome?"1":"0")
   - envName: AL_BWA_ALN_PARAMS
     envValue: -k 0 -n 0 -t 4
   - envName: AL_DIR_TOOLS
     envValue: /usr/local/bin/
 - class: InlineJavascriptRequirement
 
+
+hints:
+- class: DockerRequirement
+  dockerPull: biowardrobe2/alea:v1.2.2
+
+
 inputs:
-  CONCATENATED_GENOME:
+
+  concat_genome:
     type: boolean
     default: false
 
@@ -28,27 +35,7 @@ inputs:
     - .fai
     doc: |
       the reference genome fasta file
-  phasedindels:
-    type: File?
-    inputBinding:
-      position: 4
-    secondaryFiles:
-    - .tbi
-    doc: |
-      the phased Indels (should be specified second)
-  strain2:
-    type: string
-    inputBinding:
-      position: 6
 
-    doc: |
-      name of strain2 exactly as specified in the vcf file (e.g. hap2)
-  strain1:
-    type: string
-    inputBinding:
-      position: 5
-
-    doc: name of strain1 exactly as specified in the vcf file (e.g. hap1)
   phased:
     type: File
     inputBinding:
@@ -58,18 +45,37 @@ inputs:
     doc: |
       the phased variants vcf file (including SNPs and Indels)
       or the phased SNPs (should be specified first)
-  outputDir:
+
+  phased_indels:
+    type: File?
+    inputBinding:
+      position: 4
+    secondaryFiles:
+    - .tbi
+    doc: |
+      the phased Indels (should be specified second)
+
+  strain1:
     type: string
     inputBinding:
-      position: 7
-
+      position: 5
     doc: |
-      location of the output directory
+      name of strain1 exactly as specified in the vcf file (e.g. hap1)
+
+  strain2:
+    type: string
+    inputBinding:
+      position: 6
+    doc: |
+      name of strain2 exactly as specified in the vcf file (e.g. hap2)
+
+
 outputs:
+
   strain12_indices:
     type: File?
     outputBinding:
-      glob: $(inputs.CONCATENATED_GENOME?inputs.outputDir+"/"+inputs.strain1+"_"+inputs.strain2+".fasta":[])
+      glob: $(inputs.strain1 + "_" + inputs.strain2 + ".fasta")
     secondaryFiles:
     - .amb
     - .ann
@@ -77,10 +83,11 @@ outputs:
     - .fai
     - .pac
     - .sa
+
   strain1_indices:
-    type: File
+    type: File?
     outputBinding:
-      glob: $(inputs.outputDir+"/"+inputs.strain1+".fasta")
+      glob: $(inputs.strain1 + ".fasta")
     secondaryFiles:
     - .amb
     - .ann
@@ -89,10 +96,11 @@ outputs:
     - .pac
     - .refmap
     - .sa
+
   strain2_indices:
-    type: File
+    type: File?
     outputBinding:
-      glob: $(inputs.outputDir+"/"+inputs.strain1+".fasta")
+      glob: $(inputs.strain2 + ".fasta")
     secondaryFiles:
     - .amb
     - .ann
@@ -101,10 +109,13 @@ outputs:
     - .pac
     - .refmap
     - .sa
+
 baseCommand: [alea, createGenome]
 arguments:
-- valueFrom: $(inputs.phasedindels?"-snps-indels-separately":[])
+- valueFrom: $(inputs.phased_indels?"-snps-indels-separately":[])
   position: 1
+- valueFrom: $("./")
+  position: 7
 
 $namespaces:
   s: http://schema.org/
