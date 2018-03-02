@@ -9,8 +9,6 @@ requirements:
   envDef:
   - envName: AL_USE_CONCATENATED_GENOME
     envValue: $(inputs.concat_genome?'1':'0')
-  - envName: AL_BWA_ALN_PARAMS
-    envValue: $(inputs.al_bwa_aln_params)
   - envName: AL_DIR_TOOLS
     envValue: /usr/local/bin/
 - class: InlineJavascriptRequirement
@@ -26,10 +24,6 @@ inputs:
   concat_genome:
     type: boolean?
     default: false
-
-  al_bwa_aln_params:
-    type: string?
-    default: '-k 0 -n 0 -t 4'
 
   reference:
     type: File
