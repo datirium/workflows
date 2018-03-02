@@ -71,26 +71,40 @@ inputs:
 outputs:
 
   strain12_indices:
-    type:
-      - "null"
-      - File[]
+    type: File?
     outputBinding:
-      glob: $('*' + inputs.strain1 + '_' + inputs.strain2 + '*')
+      glob: $(inputs.strain1 + '_' + inputs.strain2 + '.fasta')
+    secondaryFiles:
+    - .amb
+    - .ann
+    - .bwt
+    - .fai
+    - .pac
+    - .sa
 
   strain1_indices:
-    type:
-      - "null"
-      - File[]
+    type: File?
     outputBinding:
-      glob: $('*' + inputs.strain1 + '*')
+      glob: $(inputs.strain1 + '.fasta')
+    secondaryFiles:
+    - .amb
+    - .ann
+    - .bwt
+    - .fai
+    - .pac
+    - .sa
 
   strain2_indices:
-    type:
-      - "null"
-      - File[]
+    type: File?
     outputBinding:
-      glob: $('*' + inputs.strain2 + '*')
-
+      glob: $(inputs.strain2 + '.fasta')
+    secondaryFiles:
+    - .amb
+    - .ann
+    - .bwt
+    - .fai
+    - .pac
+    - .sa
 
 baseCommand: [alea, createGenome]
 arguments:
