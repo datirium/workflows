@@ -86,6 +86,7 @@ s:creator:
 
 doc: |
   Tool renames `source_file` to `target_filename`
+  If `target_filename` has a type `File`, its `location` should point to the existent file.
 
 s:about: |
   cp source target
