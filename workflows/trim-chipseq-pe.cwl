@@ -267,18 +267,6 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_callpeak/macs2_stat_file
 
-  fastq_compressed_upstream:
-    type: File
-    label: "Compressed upstream FASTQ"
-    doc: "bz2 compressed upstream FASTQ file"
-    outputSource: bzip_upstream/output_file
-
-  fastq_compressed_downstream:
-    type: File
-    label: "Compressed downstream FASTQ"
-    doc: "bz2 compressed downstream FASTQ file"
-    outputSource: bzip_downstream/output_file
-
   trim_report_upstream:
     type: File
     label: "TrimGalore report Upstream"
@@ -293,11 +281,23 @@ outputs:
 
 steps:
 
+  extract_fastq_upstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_upstream
+    out: [fastq_file]
+
+  extract_fastq_downstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_downstream
+    out: [fastq_file]
+
   trim_fastq:
     run: ../tools/trimgalore.cwl
     in:
-      input_file: fastq_file_upstream
-      input_file_pair: fastq_file_downstream
+      input_file: extract_fastq_upstream/fastq_file
+      input_file_pair: extract_fastq_downstream/fastq_file
       dont_gzip:
         default: true
       length:
@@ -316,7 +316,7 @@ steps:
     run: ../tools/rename.cwl
     in:
       source_file: trim_fastq/trimmed_file
-      target_filename: fastq_file_upstream
+      target_filename: extract_fastq_upstream/fastq_file
     out:
       - target_file
 
@@ -324,7 +324,7 @@ steps:
     run: ../tools/rename.cwl
     in:
       source_file: trim_fastq/trimmed_file_pair
-      target_filename: fastq_file_downstream
+      target_filename: extract_fastq_downstream/fastq_file
     out:
       - target_file
 
@@ -339,18 +339,6 @@ steps:
     in:
       input_file: rename_downstream/target_file
     out: [statistics_file]
-
-  bzip_upstream:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file_upstream
-    out: [output_file]
-
-  bzip_downstream:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file_downstream
-    out: [output_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
