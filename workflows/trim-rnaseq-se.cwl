@@ -154,12 +154,6 @@ outputs:
     doc: "Calculated rpkm values, grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
-  fastq_file_compressed:
-    type: File
-    label: "Compressed FASTQ"
-    doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output_file
-
   get_stat_log:
     type: File?
     label: "Bowtie, STAR and GEEP combined log"
@@ -175,10 +169,16 @@ outputs:
 
 steps:
 
+  extract_fastq:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file
+    out: [fastq_file]
+
   trim_fastq:
     run: ../tools/trimgalore.cwl
     in:
-      input_file: fastq_file
+      input_file: extract_fastq/fastq_file
       dont_gzip:
         default: true
       length:
@@ -191,7 +191,7 @@ steps:
     run: ../tools/rename.cwl
     in:
       source_file: trim_fastq/trimmed_file
-      target_filename: fastq_file
+      target_filename: extract_fastq/fastq_file
     out:
       - target_file
 
@@ -225,12 +225,6 @@ steps:
     in:
       input_file: rename/target_file
     out: [statistics_file]
-
-  bzip:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file
-    out: [output_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl

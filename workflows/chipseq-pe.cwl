@@ -267,49 +267,38 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_callpeak/macs2_stat_file
 
-  fastq_compressed_upstream:
-    type: File
-    label: "Compressed upstream FASTQ"
-    doc: "bz2 compressed upstream FASTQ file"
-    outputSource: bzip_upstream/output_file
-
-  fastq_compressed_downstream:
-    type: File
-    label: "Compressed downstream FASTQ"
-    doc: "bz2 compressed downstream FASTQ file"
-    outputSource: bzip_downstream/output_file
 
 steps:
+
+  extract_fastq_upstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_upstream
+    out: [fastq_file]
+
+  extract_fastq_downstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_downstream
+    out: [fastq_file]
 
   fastx_quality_stats_upstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file_upstream
+      input_file: extract_fastq_upstream/fastq_file
     out: [statistics_file]
 
   fastx_quality_stats_downstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file_downstream
+      input_file: extract_fastq_downstream/fastq_file
     out: [statistics_file]
-
-  bzip_upstream:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file_upstream
-    out: [output_file]
-
-  bzip_downstream:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file_downstream
-    out: [output_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
-      upstream_filelist: fastq_file_upstream
-      downstream_filelist: fastq_file_downstream
+      upstream_filelist: extract_fastq_upstream/fastq_file
+      downstream_filelist: extract_fastq_downstream/fastq_file
       indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
