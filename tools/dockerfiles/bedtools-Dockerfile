@@ -3,8 +3,8 @@
 #
 # Software:         bedtools2
 # Software Version: 2.26.0
-# Description:      bedtools2 image for SciDAP
-# Website:          http://bedtools.readthedocs.org/, http://scidap.com/
+# Description:      bedtools2 image for BioWardrobe
+# Website:          http://bedtools.readthedocs.org/
 # Provides:         bedtools2
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/bedtools2:v2.26.0 -f bedtools-Dockerfile .

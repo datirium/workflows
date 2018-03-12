@@ -3,9 +3,9 @@
 #
 # Software:         WALT
 # Software Version: v1.01
-# Description:      WALT image for BioWardrobe2
+# Description:      WALT image for BioWardrobe
 # Website:          http://smithlabresearch.org/
-# Provides:         The Smith Lab
+# Provides:         walt
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/walt:v1.01 -f walt-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/walt:v1.01

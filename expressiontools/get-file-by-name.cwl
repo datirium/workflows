@@ -21,3 +21,6 @@ expression: |
     }
     return null
   }
+
+doc: |
+  Returns file the first file from input File[], that match input regex expression

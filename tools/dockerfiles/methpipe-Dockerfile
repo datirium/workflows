@@ -3,7 +3,7 @@
 #
 # Software:         MethPipe
 # Software Version: v3.4.3
-# Description:      MethPipe image for BioWardrobe2
+# Description:      MethPipe image for BioWardrobe
 # Website:          http://smithlabresearch.org/software/methpipe/
 # Provides:         duplicate-remover, methcounts, bsrate, hmr, hypermr, pmd, amrfinder, roimethstat, mlml
 # Base Image:       biowardrobe2/scidap:v0.0.2

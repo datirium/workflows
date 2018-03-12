@@ -1,6 +1,0 @@
-{
-  "input_bed": {"class": "File", "location": "./data/bedtobigbed/input_sorted_dm3_chr3.narrowPeak"},
-  "chrom_length_file": {"class": "File", "location": "./data/bedtobigbed/chrNameLength_dm3.txt"},
-  "bed_type": "bed6+4",
-  "bed_template": {"class": "File", "location": "./data/bedtobigbed/narrowpeak.as"}
-}

@@ -3,9 +3,9 @@
 #
 # Software:         fastqc
 # Software Version: 0.11.5
-# Description:      fastqc image for SciDAP
+# Description:      fastqc image for BioWardrobe
 # Website:          http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
-# Provides:         Babraham Bioinformatics
+# Provides:         fastqc
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/fastqc:v0.11.5 -f fastqc-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/fastqc:v0.11.5

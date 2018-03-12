@@ -5,7 +5,7 @@
 # Software Version: commit 040e5cd45648c0abaf9412926f97fef26928acd9
 # Description:      GEMBS image for BioWardrobe2
 # Website:          http://statgen.cnag.cat/gemBS/
-# Provides:         gemBS
+# Provides:         gemBS, htslib, samtools, bcftools, ucsc utilities
 # Base Image:       biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9
 # Build Cmd:        docker build --rm -t biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9 -f gembs-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9
