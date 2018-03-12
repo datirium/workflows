@@ -287,7 +287,9 @@ steps:
     run: ../tools/rename.cwl
     in:
       source_file: trim_fastq/trimmed_file
-      target_filename: extract_fastq/fastq_file
+      target_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.basename)
     out:
       - target_file
 

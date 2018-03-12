@@ -1,0 +1,7 @@
+- job: ./atdp-1.json
+  tool: ../tools/atdp.cwl
+  output:
+    target_file:
+      class: File
+      location: SRR390728_pe_2.fastq.gz
+      size: 29781

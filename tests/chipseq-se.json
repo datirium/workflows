@@ -1,8 +1,0 @@
-{
-  "fastq_file": {"class": "File", "location": "/Users/kot4or/temp/ga4gh/inputs/SRR1198790.fastq", "format": "http://edamontology.org/format_1930"},
-  "indices_folder": {"class": "Directory", "location": "/Users/kot4or/temp/ga4gh/references/dm3/bowtie_indices"},
-  "annotation_file": {"class": "File", "location": "/Users/kot4or/temp/atdp/dm3_refgene.tsv", "format": "http://edamontology.org/format_3475"},
-  "broad_peak": false,
-  "chrom_length": {"class": "File", "location": "/Users/kot4or/temp/ga4gh/references/dm3/chrNameLength.txt", "format": "http://edamontology.org/format_2330"},
-  "genome_size": "1.2e8"
-}
