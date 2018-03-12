@@ -257,12 +257,6 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_callpeak/macs2_stat_file
 
-  fastq_compressed:
-    type: File
-    label: "Compressed FASTQ"
-    doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output_file
-
   trim_report:
     type: File
     label: "TrimGalore report"
@@ -271,10 +265,16 @@ outputs:
 
 steps:
 
+  extract_fastq:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file
+    out: [fastq_file]
+
   trim_fastq:
     run: ../tools/trimgalore.cwl
     in:
-      input_file: fastq_file
+      input_file: extract_fastq/fastq_file
       dont_gzip:
         default: true
       length:
@@ -287,7 +287,7 @@ steps:
     run: ../tools/rename.cwl
     in:
       source_file: trim_fastq/trimmed_file
-      target_filename: fastq_file
+      target_filename: extract_fastq/fastq_file
     out:
       - target_file
 
@@ -296,12 +296,6 @@ steps:
     in:
       input_file: rename/target_file
     out: [statistics_file]
-
-  bzip:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file
-    out: [output_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl

@@ -161,6 +161,12 @@ outputs:
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
 
+  trim_report:
+    type: File
+    label: "TrimGalore report"
+    doc: "TrimGalore generated log"
+    outputSource: trim_fastq/report_file
+
 steps:
 
   extract_fastq:
@@ -169,10 +175,30 @@ steps:
       compressed_file: fastq_file
     out: [fastq_file]
 
+  trim_fastq:
+    run: ../tools/trimgalore.cwl
+    in:
+      input_file: extract_fastq/fastq_file
+      dont_gzip:
+        default: true
+      length:
+        default: 30
+    out:
+      - trimmed_file
+      - report_file
+
+  rename:
+    run: ../tools/rename.cwl
+    in:
+      source_file: trim_fastq/trimmed_file
+      target_filename: extract_fastq/fastq_file
+    out:
+      - target_file
+
   star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: extract_fastq/fastq_file
+      readFilesIn: rename/target_file
       genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
@@ -197,7 +223,7 @@ steps:
   fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: extract_fastq/fastq_file
+      input_file: rename/target_file
     out: [statistics_file]
 
   samtools_sort_index:
@@ -205,7 +231,7 @@ steps:
     in:
       sort_input: star_aligner/aligned_file
       sort_output_filename:
-        source: extract_fastq/fastq_file
+        source: rename/target_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
@@ -222,7 +248,7 @@ steps:
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
-      upstream_filelist: extract_fastq/fastq_file
+      upstream_filelist: rename/target_file
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -264,8 +290,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "rnaseq-se"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-se.cwl
+s:name: "trim-rnaseq-se"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/trim-rnaseq-se.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -313,9 +339,10 @@ s:about: |
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
 
   Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
-  1. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
-  2. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
-  3. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)
+  1. Trim adapters from input FASTQ file
+  2. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
+  3. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
+  4. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)
   5. Generate BigWig file on the base of sorted BAM file
   6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file

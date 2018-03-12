@@ -175,18 +175,6 @@ outputs:
     doc: "Calculated rpkm values, grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
-  fastq_file_compressed_upstream:
-    type: File
-    label: "Compressed upstream FASTQ"
-    doc: "bz2 compressed upstream FASTQ file"
-    outputSource: bzip_upstream/output_file
-
-  fastq_file_compressed_downstream:
-    type: File
-    label: "Compressed downstream FASTQ"
-    doc: "bz2 compressed downstream FASTQ file"
-    outputSource: bzip_downstream/output_file
-
   get_stat_log:
     type: File?
     label: "Bowtie, STAR and GEEP combined log"
@@ -196,10 +184,22 @@ outputs:
 
 steps:
 
+  extract_fastq_upstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_upstream
+    out: [fastq_file]
+
+  extract_fastq_downstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_downstream
+    out: [fastq_file]
+
   star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: [fastq_file_upstream, fastq_file_downstream]
+      readFilesIn: [extract_fastq_upstream/fastq_file, extract_fastq_downstream/fastq_file]
       genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
@@ -224,33 +224,21 @@ steps:
   fastx_quality_stats_upstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file_upstream
+      input_file: extract_fastq_upstream/fastq_file
     out: [statistics_file]
 
   fastx_quality_stats_downstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file_downstream
+      input_file: extract_fastq_downstream/fastq_file
     out: [statistics_file]
-
-  bzip_upstream:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file_upstream
-    out: [output_file]
-
-  bzip_downstream:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file_downstream
-    out: [output_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_aligner/aligned_file
       sort_output_filename:
-        source: fastq_file_upstream
+        source: extract_fastq_upstream/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
@@ -302,8 +290,8 @@ steps:
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
-      upstream_filelist: fastq_file_upstream
-      downstream_filelist: fastq_file_downstream
+      upstream_filelist: extract_fastq_upstream/fastq_file
+      downstream_filelist: extract_fastq_downstream/fastq_file
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end

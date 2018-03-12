@@ -5,7 +5,7 @@
 # Software Version: v0.0.2
 # Description:      Basic image for SciDAP
 # Website:          http://scidap.com/
-# Provides:         autotools-dev|automake|cmake|curl|fuse|git|wget|zip|openjdk-9-jre-headless|build-essential|pkg-config|python|python-dev|python-pip|zlib1g-dev
+# Provides:         autotools-dev, automake, cmake, curl, fuse, git, wget, zip, openjdk-9-jre-headless, build-essential, pkg-config, python, python-dev, python-pip, zlib1g-dev
 # Base Image:       ubuntu:16.04
 # Build Cmd:        docker build --rm -t biowardrobe2/scidap:v0.0.2 -f scidap-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/scidap:v0.0.2
@@ -50,6 +50,8 @@ RUN apt-get clean all &&\
         python-dev      \
         python-pip      \
         zlib1g-dev      \
+        p7zip-full      \
+        file            \
         libmagic-dev  &&\
     apt-get clean && \
     apt-get purge && \
