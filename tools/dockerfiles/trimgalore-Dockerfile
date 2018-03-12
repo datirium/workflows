@@ -3,9 +3,9 @@
 #
 # Software:         TrimGalore [FastQC, Cutadapt]
 # Software Version: 0.4.4      [0.11.5, 1.13]
-# Description:      TrimGalore image for SciDAP
+# Description:      TrimGalore image for BioWardrobe
 # Website:          https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/
-# Provides:         Babraham Bioinformatics
+# Provides:         trim_galore, fastqc, cutadapt
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/trimgalore:v0.4.4 -f trimgalore-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/trimgalore:v0.4.4

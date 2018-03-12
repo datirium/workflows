@@ -1,7 +1,7 @@
 {
-  "bam_file":        {"class": "File", "location": "./data/mm10/sorted.bam"},
-  "annotation_file": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv"},
+  "bam_file":        {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam"},
+  "annotation_file": {"class": "File", "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"},
   "output_prefix": "res_",
-  "exclude_chr": "chr1,chr2",
+  "exclude_chr": "chrM",
   "threads": 4
 }

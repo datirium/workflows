@@ -1,12 +1,12 @@
 {
   "fastq_file_upstream":
   {
-    "location":  "./data/chr21/chr21.fastq",
+    "location":  "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/upstream.fastq",
     "class": "File"
   },
   "adapters_file":
   {
-    "location":  "./data/illumina_adapters/TruSeq3-SE.fa",
+    "location":  "./data/dm3_chr4/main_inputs/illumina_adapters/TruSeq3-SE.fa",
     "class": "File"
   },
   "lib_type": "SE",

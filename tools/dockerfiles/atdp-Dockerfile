@@ -3,9 +3,9 @@
 #
 # Software:         atdp
 # Software Version: 0.0.1
-# Description:      BioWardrobe atdp image for SciDAP
-# Website:          https://github.com/Barski-lab/atdp, http://scidap.com/
-# Provides:         atdp
+# Description:      atdp image for BioWardrobe
+# Website:          https://github.com/Barski-lab/atdp
+# Provides:         atdp, refgene-sort
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/atdp:v0.0.1 -f atdp-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/atdp:v0.0.1

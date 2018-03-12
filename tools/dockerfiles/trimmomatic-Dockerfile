@@ -3,9 +3,9 @@
 #
 # Software:         trimmomatic
 # Software Version: 0.35+dfsg-1
-# Description:      trimmomatic image for BioWardrobe2
+# Description:      trimmomatic image for BioWardrobe
 # Website:          http://www.usadellab.org/cms/?page=trimmomatic
-# Provides:         usadellab
+# Provides:         trimmomatic
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/trimmomatic:v0.35 -f trimmomatic-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/trimmomatic:v0.35

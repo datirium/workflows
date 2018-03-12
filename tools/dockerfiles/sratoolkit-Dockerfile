@@ -3,8 +3,8 @@
 #
 # Software:         sratoolkit
 # Software Version: 2.8.2-1
-# Description:      sratoolkit image for SciDAP
-# Website:          https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=toolkit_doc, http://scidap.com/
+# Description:      sratoolkit image for BioWardrobe
+# Website:          https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=toolkit_doc
 # Provides:         sratoolkit
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/sratoolkit:v2.8.2-1 -f sratoolkit-Dockerfile .

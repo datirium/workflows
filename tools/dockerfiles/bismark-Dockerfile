@@ -5,7 +5,7 @@
 # Software Version: 0.19.0
 # Description:      bismark image for BioWardrobe2
 # Website:          https://www.bioinformatics.babraham.ac.uk/projects/bismark/
-# Provides:         Babraham Bioinformatics
+# Provides:         bismark, bowtie, bowtie2, htslib, samtools
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/bismark:v0.19.0 -f bismark-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/bismark:v0.19.0

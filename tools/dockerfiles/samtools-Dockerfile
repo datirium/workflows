@@ -3,9 +3,9 @@
 #
 # Software:         samtools
 # Software Version: 1.4
-# Description:      samtools image for SciDAP
-# Website:          https://samtools.github.io, http://www.htslib.org/download/, http://scidap.com/
-# Provides:         samtools/htslib/tabix/bgzip
+# Description:      samtools image for BioWardrobe
+# Website:          https://samtools.github.io, http://www.htslib.org/download/
+# Provides:         samtools, htslib, tabix, bgzip
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/samtools:v1.4 -f samtools-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/samtools:v1.4

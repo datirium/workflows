@@ -3,7 +3,7 @@
 #
 # Software:         ucsc userApps
 # Software Version: v358
-# Description:      ucsc userApps image for BioWardrobe2
+# Description:      ucsc userApps image for BioWardrobe
 # Website:          http://hgdownload.soe.ucsc.edu/admin/exe/
 # Provides:         ucsc userApps
 # Base Image:       biowardrobe2/scidap:v0.0.2

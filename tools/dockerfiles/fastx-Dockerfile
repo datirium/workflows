@@ -3,8 +3,8 @@
 #
 # Software:         fastx_toolkit
 # Software Version: 0.0.14
-# Description:      Fastx toolkit for SciDAP
-# Website:          http://hannonlab.cshl.edu/fastx_toolkit/, http://scidap.com/
+# Description:      Fastx toolkit for BioWardrobe
+# Website:          http://hannonlab.cshl.edu/fastx_toolkit/
 # Provides:         fastx_toolkit
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/fastx_toolkit:v0.0.14 -f fastx-Dockerfile .
