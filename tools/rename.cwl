@@ -8,11 +8,7 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var get_target_name = function() {
-      if (inputs.target_filename.class == 'File'){
-        return inputs.target_filename.basename;
-      } else {
         return inputs.target_filename.split('/').slice(-1)[0];
-      }
     }
 
 hints:
@@ -27,9 +23,7 @@ inputs:
       position: 5
 
   target_filename:
-    type:
-      - string
-      - File
+    type: string
     inputBinding:
       position: 6
       valueFrom: $(get_target_name())
@@ -85,8 +79,8 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool renames `source_file` to `target_filename`
-  If `target_filename` has a type `File`, its `location` should point to the existent file.
+  Tool renames `source_file` to `target_filename`.
+  Input `target_filename` shoudl be set as string. If it's a full path, only basename will be used.
 
 s:about: |
   cp source target
