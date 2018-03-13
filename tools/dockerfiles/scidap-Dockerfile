@@ -2,14 +2,14 @@
 # Dockerfile
 #
 # Software:         SciDAP base Image
-# Software Version: v0.0.2
+# Software Version: v0.0.3
 # Description:      Basic image for SciDAP
 # Website:          http://scidap.com/
 # Provides:         autotools-dev, automake, cmake, curl, fuse, git, wget, zip, openjdk-9-jre-headless, build-essential, pkg-config, python, python-dev, python-pip, zlib1g-dev
 # Base Image:       ubuntu:16.04
-# Build Cmd:        docker build --rm -t biowardrobe2/scidap:v0.0.2 -f scidap-Dockerfile .
-# Pull Cmd:         docker pull biowardrobe2/scidap:v0.0.2
-# Run Cmd:          docker run --rm -ti biowardrobe2/scidap:v0.0.2 bash
+# Build Cmd:        docker build --rm -t biowardrobe2/scidap:v0.0.3 -f scidap-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap:v0.0.3
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap:v0.0.3 bash
 #################################################################
 
 ### Base Image
