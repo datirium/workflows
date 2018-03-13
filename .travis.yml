@@ -8,10 +8,10 @@ os:
 - linux
 install:
 - pip install --upgrade cwltool==1.0.20171107133715
-- pip install --upgrade cwltest
+- pip install --upgrade cwltest>=1.0.20180130081614
 script: bash run_test.sh --junit-xml=result.xml RUNNER=cwltool
 branches:
   only:
-  - v1.0.2
+  - master
 notifications:
   email: false
