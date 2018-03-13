@@ -7,7 +7,7 @@ os:
 install:
 - pip install --upgrade cwltool
 - pip install --upgrade cwltest
-script: bash run_test.sh
+script: bash run_test.sh --junit-xml=result.xml RUNNER=cwltool
 branches:
   only:
   - v1.0.2
