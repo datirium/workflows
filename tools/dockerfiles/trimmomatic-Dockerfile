@@ -2,18 +2,18 @@
 # Dockerfile
 #
 # Software:         trimmomatic
-# Software Version: 0.33+dfsg-1
-# Description:      trimmomatic image for SciDAP
+# Software Version: 0.35+dfsg-1
+# Description:      trimmomatic image for BioWardrobe
 # Website:          http://www.usadellab.org/cms/?page=trimmomatic
-# Provides:         usadellab
-# Base Image:       scidap/scidap:v0.0.1
-# Build Cmd:        docker build --rm -t scidap/trimmomatic:v0.33 .
-# Pull Cmd:         docker pull scidap/trimmomatic:v0.33
-# Run Cmd:          docker run --rm scidap/trimmomatic:v0.33
+# Provides:         trimmomatic
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/trimmomatic:v0.35 -f trimmomatic-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/trimmomatic:v0.35
+# Run Cmd:          docker run --rm biowardrobe2/trimmomatic:v0.35
 #################################################################
 
 ### Base Image
-FROM scidap/scidap:v0.0.1
+FROM biowardrobe2/scidap:v0.0.2
 MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -23,7 +23,7 @@ WORKDIR /tmp
 
 ### Installing trimmomatic
 
-ENV VERSION 0.33+dfsg-1
+ENV VERSION 0.35+dfsg-1
 ENV NAME trimmomatic
 
 RUN apt-get update && apt-get install -y \

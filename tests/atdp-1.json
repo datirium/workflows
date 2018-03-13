@@ -1,0 +1,20 @@
+{
+    "input_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
+        "secondaryFiles":[
+            {
+                "class": "File",
+                "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam.bai"
+            }
+        ]
+    },
+    "annotation_filename": {"class": "File", "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"},
+    "output_filename": "atdp_res.tsv",
+    "log_filename": "atdp_res.log",
+    "fragmentsize_bp": 150,
+    "avd_window_bp": 4999,
+    "avd_smooth_bp": 0,
+    "ignore_chr": "chrM",
+    "mapped_reads": 94
+}

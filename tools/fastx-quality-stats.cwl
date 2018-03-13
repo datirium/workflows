@@ -5,12 +5,14 @@ class: CommandLineTool
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
-
+  expressionLib:
+  - var default_output_filename = function() {
+          return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ".fastxstat"
+        };
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/fastx_toolkit:v0.0.14
-  dockerFile: >
-    $import: ./dockerfiles/fastx-Dockerfile
+
 
 inputs:
 
@@ -46,18 +48,40 @@ inputs:
           lW	= 'Left-Whisker' value (for boxplotting).
           rW	= 'Right-Whisker' value (for boxplotting).
 
+  output_filename:
+    type:
+      - "null"
+      - string
+    inputBinding:
+      position: 11
+      prefix: -o
+      valueFrom: |
+        ${
+            if (self == null){
+              return default_output_filename();
+            } else {
+              return self;
+            }
+        }
+    default: null
+    doc: |
+      Output file to store generated statistics. If not provided - return from default_output_filename function
+
 outputs:
-  statistics:
+  statistics_file:
     type: File
     outputBinding:
-      glob: "*.fastxstat"
-    doc: Statistics file
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename();
+            } else {
+              return inputs.output_filename;
+            }
+        }
+    doc: Generated statistics file
 
 baseCommand: [fastx_quality_stats]
-arguments:
-  - valueFrom: $(inputs.input_file.basename.split('.').slice(0,-1).join('.') + ".fastxstat")
-    position: 11
-    prefix: -o
 
 
 $namespaces:
@@ -70,8 +94,8 @@ s:mainEntity:
   $import: ./metadata/fastx-toolkit-metadata.yaml
 
 s:name: "fastx-quality-stats"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/fastx-quality-stats.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/fastx-quality-stats.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -100,14 +124,16 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to calculate statistics on the base of FASTQ file quality scores
+  Tool calculates statistics on the base of FASTQ file quality scores.
+  If `output_filename` is not provided call function `default_output_filename` to return default output file name
+  generated as `input_file` basename + `.fastxstat` extension.
 
-s:about: >
+s:about: |
   usage: fastx_quality_stats [-h] [-N] [-i INFILE] [-o OUTFILE]
   Part of FASTX Toolkit 0.0.14 by A. Gordon (assafgordon@gmail.com)
      [-h] = This helpful help screen.

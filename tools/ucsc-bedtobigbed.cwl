@@ -65,7 +65,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: scidap/ucsc-userapps:v325
+  dockerPull: biowardrobe2/ucscuserapps:v358
 
 inputs:
 
@@ -74,7 +74,7 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 1
+      position: 5
       prefix: -type=
       separate: false
       valueFrom: |
@@ -86,15 +86,15 @@ inputs:
             }
         }
     default: null
-    doc: >
-      Type of BED file in a form of bedN[+[P]]
+    doc: |
+      Type of BED file in a form of bedN[+[P]]. By default bed3 to three required BED fields
 
   bed_template:
     type:
       - "null"
       - File
     inputBinding:
-      position: 2
+      position: 6
       prefix: -as=
       separate: false
       valueFrom: |
@@ -106,18 +106,19 @@ inputs:
             }
         }
     default: null
-    doc: >
-      For non-standard "bedPlus" fields put a definition of each field in a row in AutoSql format
+    doc: |
+      For non-standard "bedPlus" fields put a definition of each field in a row in AutoSql format.
+      By default includes only three required BED fields: chrom, chromStart, chromEnd
 
   block_size:
     type:
       - "null"
       - int
     inputBinding:
-      position: 3
+      position: 7
       prefix: -blockSize=
       separate: false
-    doc: >
+    doc: |
       Number of items to bundle in r-tree.  Default 256
 
   items_per_slot:
@@ -125,10 +126,10 @@ inputs:
       - "null"
       - int
     inputBinding:
-      position: 4
+      position: 8
       prefix: -itemsPerSlot=
       separate: false
-    doc: >
+    doc: |
       Number of data points bundled at lowest level. Default 512
 
   unc:
@@ -136,9 +137,9 @@ inputs:
       - "null"
       - boolean
     inputBinding:
-      position: 5
+      position: 9
       prefix: '-unc'
-    doc: >
+    doc: |
       If set, do not use compression
 
   tab_sep:
@@ -146,9 +147,9 @@ inputs:
       - "null"
       - boolean
     inputBinding:
-      position: 6
+      position: 10
       prefix: '-tab'
-    doc: >
+    doc: |
       If set, expect fields to be tab separated, normally expects white space separator
 
   extra_index:
@@ -156,26 +157,37 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 7
+      position: 11
       prefix: -extraIndex=
       separate: false
-    doc: >
+    doc: |
       Makes an index on each field in a comma separated list extraIndex=name and extraIndex=name,id are commonly used
+
+  size_2bit:
+    type:
+      - "null"
+      - boolean
+    inputBinding:
+      position: 12
+      prefix: -sizesIs2Bit=
+      separate: false
+    doc: |
+      If set, the chrom.sizes file is assumed to be a 2bit file
 
   input_bed:
     type:
       - File
     inputBinding:
-      position: 10
-    doc: >
+      position: 20
+    doc: |
       Input BED file
 
-  chrom_length:
+  chrom_length_file:
     type:
       - File
     inputBinding:
-      position: 11
-    doc: >
+      position: 21
+    doc: |
       Chromosome length files
 
   output_filename:
@@ -183,7 +195,7 @@ inputs:
       - "null"
       - string
     inputBinding:
-      position: 12
+      position: 22
       valueFrom: |
         ${
             if (self == null){
@@ -193,12 +205,12 @@ inputs:
             }
         }
     default: null
-    doc: >
+    doc: |
       Output filename
 
 
 outputs:
-  bigbed:
+  bigbed_file:
     type: File
     outputBinding:
       glob: |
@@ -224,8 +236,8 @@ s:mainEntity:
   $import: ./metadata/ucsc-metadata.yaml
 
 s:name: "ucsc-bedtobigbed"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/ucsc-bedtobigbed.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/ucsc-bedtobigbed.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -254,15 +266,34 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  Converts bed file to bigBed
+doc: |
+  Tool converts bed file to bigBed
+
+  Before running `baseCommand` the following files are created in Docker working directory (using
+  `InitialWorkDirRequirement`):
+  `narrowpeak.as` - default BED file structure template for ENCODE narrowPeak format
+  `broadpeak.as`  - default BED file structure template for ENCODE broadPeak format
+
+  `default_output_filename` function returns default output file name based on `input_bed` basename with `*.bb`
+  extension if `output_filename` is not provided.
+
+  `get_bed_type` function returns default BED file type if `bed_type` is not provided. Depending on `input_bed` file
+  extension the following values are returned:
+    `*.narrowpeak`  -->   bed6+4
+    `*.broadpeak`   -->   bed6+3
+     else           -->   null (`bedToBigBed` will use its own default value)
+
+  `get_bed_template` function returns default BED file template if `bed_template` is not provided. Depending on
+  `input_bed` file extension the following values are returned:
+      `*.narrowpeak`  -->   narrowpeak.as (previously staged into Docker working directory)
+      `*.broadpeak`   -->   broadpeak.as (previously staged into Docker working directory)
+       else           -->   null (`bedToBigBed` will use its own default value)
 
 s:about: |
-  bedToBigBed v. 2.7 - Convert bed file to bigBed. (BigBed version: 4)
   usage:
      bedToBigBed in.bed chrom.sizes out.bb
   Where in.bed is in one of the ascii bed formats, but not including track lines
@@ -276,7 +307,7 @@ s:about: |
   The in.bed file must be sorted by chromosome,start,
     to sort a bed file, use the unix sort command:
        sort -k1,1 -k2,2n unsorted.bed > sorted.bed
-  Sorting must be case insensitive (LC_COLLATE=C).
+  Sorting must be set to skip Unicode mapping (LC_COLLATE=C).
 
   options:
      -type=bedN[+[P]] :
@@ -294,3 +325,5 @@ s:about: |
              expects white space separator.
      -extraIndex=fieldList - If set, make an index on each field in a comma separated list
              extraIndex=name and extraIndex=name,id are commonly used.
+     -sizesIs2Bit  -- If set, the chrom.sizes file is assumed to be a 2bit file.
+     -udcDir=/path/to/udcCacheDir  -- sets the UDC cache dir for caching of remote files.

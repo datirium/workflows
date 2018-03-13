@@ -8,11 +8,7 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var get_target_name = function() {
-      if (inputs.target_filename.class == 'File'){
-        return inputs.target_filename.basename;
-      } else {
         return inputs.target_filename.split('/').slice(-1)[0];
-      }
     }
 
 hints:
@@ -27,9 +23,7 @@ inputs:
       position: 5
 
   target_filename:
-    type:
-      - string
-      - File
+    type: string
     inputBinding:
       position: 6
       valueFrom: $(get_target_name())
@@ -50,8 +44,8 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "rename"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/rename.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/rename.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -80,12 +74,13 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  Tool to rename files
+doc: |
+  Tool renames `source_file` to `target_filename`.
+  Input `target_filename` shoudl be set as string. If it's a full path, only basename will be used.
 
-s:about: >
+s:about: |
   cp source target

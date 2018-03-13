@@ -1,0 +1,16 @@
+{
+  "bam_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
+    "secondaryFiles": [
+      {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam.bai"
+      }
+    ]
+  },
+  "annotation_file": {"class": "File", "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"},
+  "output_prefix": "res_external_bai_",
+  "exclude_chr": "chrM",
+  "threads": 4
+}

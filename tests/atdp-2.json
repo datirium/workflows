@@ -1,0 +1,6 @@
+{
+    "input_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam"},
+    "index_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam.bai"},
+    "annotation_filename": {"class": "File", "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"},
+    "mapped_reads": 94
+}

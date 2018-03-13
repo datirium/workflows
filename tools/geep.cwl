@@ -7,12 +7,26 @@ requirements:
 - $import: ./metadata/envvar-global.yml
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var default_output_filename = function() {
-        return inputs.bam_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".";
+  - var default_output_prefix = function() {
+        let ext = '.';
+        let root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
+        return (root == "")?inputs.bam_file.basename+ext:root+ext;
     };
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.bam_file,
+                  "entryname": inputs.bam_file.basename,
+                  "writable": true
+                }
+              ]
+    }
+
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/geep:v0.0.2
+  dockerPull: biowardrobe2/geep:v0.0.3
 
 
 inputs:
@@ -23,10 +37,8 @@ inputs:
     inputBinding:
       position: 10
       prefix: --bam
-    secondaryFiles: |
-      $({"location": self.location+".bai", "class": "File"})
     doc: |
-      Set the path to the BAM file. Required
+      Set the path to the coordinate sorted BAM file. Required
 
   annotation_file:
     type:
@@ -57,7 +69,7 @@ inputs:
       valueFrom: |
         ${
             if (self == null){
-              return default_output_filename();
+              return default_output_prefix();
             } else {
               return self;
             }
@@ -218,10 +230,17 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  Tool run GEEP rpkm calculation tool
+doc: |
+  Tool calculates RPKM values grouped by isoforms or genes.
 
-s:about: >
+  `default_output_prefix` function returns default prefix based on `bam_file` basename, if `output_prefix` is not
+  provided.
+
+  Before running `baseCommand` `bam_file` is staged into output directory with write permissions (`"writable": true`).
+  This allow to automatically generate index file at the same directory as input `bam_file`. In case when index file
+  is provided in `secondaryFiles` of `bam_file`, it's not generated twice.
+
+s:about: |
   Usage:
     geep [params]
       -b,--bam         Set the path to the BAM file. Required

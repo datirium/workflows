@@ -3,9 +3,9 @@
 #
 # Software:         MACS2
 # Software Version: 2.1.1.20160309
-# Description:      MACS2 image for SciDAP
-# Website:          http://liulab.dfci.harvard.edu/MACS/, http://scidap.com/
-# Provides:         Dana Farber Cancer Institute
+# Description:      MACS2 image for BioWardrobe
+# Website:          http://liulab.dfci.harvard.edu/MACS/
+# Provides:         MACS2
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/macs2:v2.1.1 -f macs2-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/macs2:v2.1.1

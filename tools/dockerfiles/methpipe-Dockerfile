@@ -1,0 +1,44 @@
+#################################################################
+# Dockerfile
+#
+# Software:         MethPipe
+# Software Version: v3.4.3
+# Description:      MethPipe image for BioWardrobe
+# Website:          http://smithlabresearch.org/software/methpipe/
+# Provides:         duplicate-remover, methcounts, bsrate, hmr, hypermr, pmd, amrfinder, roimethstat, mlml
+# Base Image:       biowardrobe2/scidap:v0.0.2
+# Build Cmd:        docker build --rm -t biowardrobe2/methpipe:v3.4.3 -f methpipe-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/methpipe:v3.4.3
+# Run Cmd:          docker run --rm -ti biowardrobe2/methpipe:v3.4.3
+#################################################################
+
+### Base Image
+FROM biowardrobe2/scidap:v0.0.2
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+ENV VERSION_METHPIPE 3.4.3
+ENV URL_METHPIPE "https://github.com/smithlabcode/methpipe.git"
+
+### Updating the system
+
+RUN apt-get clean all &&\
+    apt-get update &&\
+    apt-get install -y libgsl-dev &&\
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* &&\
+
+### Installing MethPipe
+
+    git clone --recursive --depth 1 --branch v${VERSION_METHPIPE} ${URL_METHPIPE} &&\
+    cd methpipe &&\
+    make -j 4 all &&\
+    make install &&\
+    cp ./bin/* /usr/local/bin/ &&\
+    cd .. &&\
+    rm -rf ./methpipe &&\
+    strip /usr/local/bin/*; true

@@ -1,0 +1,16 @@
+{
+    "sort_input": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
+        "secondaryFiles":[
+            {
+                "class": "File",
+                "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam.bai"
+            }
+        ]
+    },
+    "sort_compression_level": 5,
+    "csi": true,
+    "sort_output_filename": "coord_sorted.bam",
+    "trigger": false
+}

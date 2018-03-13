@@ -1,0 +1,17 @@
+sudo: required
+services:
+  - docker
+language: python
+python:
+- 2.7
+os:
+- linux
+install:
+- pip install --upgrade cwltool==1.0.20171107133715
+- pip install --upgrade cwltest>=1.0.20180130081614
+script: bash run_test.sh --junit-xml=result.xml RUNNER=cwltool
+branches:
+  only:
+  - master
+notifications:
+  email: false

@@ -1,0 +1,4 @@
+{
+  "input_file":      { "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/upstream.fastq.gz", "class": "File" },
+  "input_file_pair": { "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/downstream.fastq.gz", "class": "File" }
+}

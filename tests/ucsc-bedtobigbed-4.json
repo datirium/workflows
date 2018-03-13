@@ -1,0 +1,4 @@
+{
+  "input_bed":    {"class": "File", "location": "./data/dm3_chr4/generated_inputs/macs_peaks/broad_peaks.broadPeak"},
+  "chrom_length_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4/chrNameLength.txt"}
+}

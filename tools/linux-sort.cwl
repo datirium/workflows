@@ -7,15 +7,15 @@ requirements:
   - class: InlineJavascriptRequirement
     expressionLib:
     - var default_output_filename = function() {
-          return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bed";
+          return inputs.unsorted_file.location.split('/').slice(-1)[0];
       };
 
 hints:
 - class: DockerRequirement
-  dockerPull: ubuntu:15.10
+  dockerPull: biowardrobe2/scidap:v0.0.2
 
 inputs:
-  input:
+  unsorted_file:
     type: File
     inputBinding:
       position: 4
@@ -32,14 +32,36 @@ inputs:
       -k, --key=POS1[,POS2]
       start a key at POS1, end it at POS2 (origin 1)
 
-outputs:
-  sorted:
-    type: File
-    doc: "The sorted file"
-    outputBinding:
-      glob: $(default_output_filename())
+  output_filename:
+    type:
+    - "null"
+    - string
+    doc: |
+      Name for generated output file
 
-stdout: $(default_output_filename())
+outputs:
+  sorted_file:
+    type: File
+    outputBinding:
+      glob: |
+        ${
+          if (inputs.output_filename == null){
+            return default_output_filename();
+          } else {
+            return inputs.output_filename;
+          }
+        }
+    doc: |
+      Sorted file
+
+stdout: |
+  ${
+    if (inputs.output_filename == null){
+      return default_output_filename();
+    } else {
+      return inputs.output_filename;
+    }
+  }
 
 baseCommand: ["sort"]
 
@@ -50,8 +72,8 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "linux-sort"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/linux-sort.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/linux-sort.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -83,6 +105,15 @@ s:creator:
         s:email: mailto:Andrey.Kartashov@cchmc.org
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to run sort command with input data
+  Tool sorts data from `unsorted_file` by key
+
+  `default_output_filename` function returns file name identical to `unsorted_file`, if `output_filename` is not provided.
+
+

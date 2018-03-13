@@ -3,8 +3,8 @@
 #
 # Software:         bowtie
 # Software Version: 1.2.0
-# Description:      Bowtie image for SciDAP
-# Website:          http://bowtie-bio.sourceforge.net, http://scidap.com/
+# Description:      Bowtie image for BioWardrobe
+# Website:          http://bowtie-bio.sourceforge.net
 # Provides:         bowtie
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/bowtie:v1.2.0 -f bowtie-Dockerfile .
@@ -33,8 +33,7 @@ RUN apt-get update && apt-get install -y libtbb-dev && \
     wget -q -O - $URL | tar -zxv && \
     cd ${NAME}-${VERSION} && \
     make -j 4 && \
+    make install &&\
     cd .. && \
-    cp ./${NAME}-${VERSION}/${NAME} /usr/local/bin/ && \
-    cp ./${NAME}-${VERSION}/${NAME}-* /usr/local/bin/ && \
-    strip /usr/local/bin/*; true && \
-    rm -rf ./${NAME}-${VERSION}/
+    rm -rf ./${NAME}-${VERSION} && \
+    strip /usr/local/bin/*; true

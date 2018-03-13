@@ -1,4 +1,0 @@
-{
-  "bowtie_log":{"class": "File", "location": "./data/bowtie_align.log"},
-  "rmdup_log":{"class": "File", "location": "./data/samtools_rmdup.log"},
-}

@@ -3,8 +3,8 @@
 #
 # Software:         bowtie2
 # Software Version: 2.3.0
-# Description:      Bowtie2 image for SciDAP
-# Website:          http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml, http://scidap.com/
+# Description:      Bowtie2 image for BioWardrobe
+# Website:          http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml
 # Provides:         bowtie2
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/bowtie2:v2.3.0 -f bowtie2-Dockerfile .

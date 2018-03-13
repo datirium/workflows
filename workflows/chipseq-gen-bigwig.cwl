@@ -30,15 +30,15 @@ outputs:
   bigwig_file:
     type: File
     doc: "bigWig generated file"
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
 steps:
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: bam_bai_pair_file
-      genomeFile: chrom_length_file
-      mappedreads: mapped_reads
-      fragmentsize: fragment_size
+      bam_file: bam_bai_pair_file
+      chrom_length_file: chrom_length_file
+      mapped_reads_number: mapped_reads
+      fragment_size: fragment_size
       pairchip: paired
-    out: [outfile]
+    out: [bigwig_file]

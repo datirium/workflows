@@ -1,6 +1,0 @@
-{
-  "readFilesIn": {"class": "File", "location": "./data/chr21/chr21.fastq"},
-  "genomeDir": {"class": "Directory", "location": "./data/chr21/star_indices"},
-  "runThreadN": 2,
-  "outFileNamePrefix": "res_"
-}

@@ -3,9 +3,9 @@
 #
 # Software:         reads-counting
 # Software Version: 0.0.1
-# Description:      reads-counting image for SciDAP. Includes bamtools
-# Website:          https://github.com/pezmaster31/bamtools, http://scidap.com/
-# Provides:         reads-counting
+# Description:      reads-counting image for BioWardrobe
+# Website:          https://github.com/pezmaster31/bamtools
+# Provides:         reads-counting, bamtools
 # Base Image:       scidap/scidap:v0.0.1
 # Build Cmd:        docker build --rm -t scidap/reads-counting:v0.0.1 .
 # Pull Cmd:         docker pull scidap/reads-counting:v0.0.1

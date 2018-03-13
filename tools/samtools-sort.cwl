@@ -40,8 +40,7 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.4
-  dockerFile: >
-    $import: ./dockerfiles/samtools-Dockerfile
+
 
 inputs:
 
@@ -49,7 +48,7 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      if [ "$0" = True ]
+      if [ "$0" = "true" ]
       then
         samtools sort "${@:1}"
       else
@@ -65,6 +64,8 @@ inputs:
     default: true
     inputBinding:
       position: 6
+      valueFrom: |
+        ${ return self ? "true" : "false" }
     doc: |
       If true - run samtools, if false - return sort_input, previously staged into output directory
 
@@ -153,8 +154,8 @@ s:mainEntity:
   $import: ./metadata/samtools-metadata.yaml
 
 s:name: "samtools-sort"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/samtools-sort.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/samtools-sort.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -188,11 +189,39 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  This tool is used to sort input BAM/SAM file by means of samtools sort
-  Input Trigger (default: true) allows to skip all calculation and return
-  all input files unchanged. To set files to be returned in case of Trigger == false,
-  use the following inputs:
-    sort_input
+  Tool to sort BAM/SAM file (set as input `sort_input`).
+  If input `trigger` is set to `true` or isn't set at all (`true` is used by default), run `samtools sort`, return
+  newly generated sorted BAM/SAM/CRAM file (the actual format of the output file depends on `out_format` value and
+  extension of a filename set in `sort_output_filename`).
+  If input `trigger` is set to `false`, return unchanged BAM/SAM file, previously staged into output directory.
+
+  Before `baseCommand` is executed, input BAM/SAM file is staged into output directory (docker parameter `--workdir`),
+  using `InitialWorkDirRequirement`. Setting `writable: true` makes cwl-runner to copy input BAM/SAM file and
+  mount it to docker container with `rw` mode as part of `--workdir` (if set to false, the file staged into output
+  directory will be mounted to docker container separately with `ro` mode). Because `samtools sort` can overwrite input
+  BAM/SAM file and save output with the same name, we don't need to rename it (as we did for samtools rmdup).
+
+  Trigger logic is implemented in bash script set by default in input `bash_script`. If first argment $0 (which is `trigger` input)
+  is true, run `samtools sort` with the rest of the arguments. If $0 is not true, skip `samtools sort` and return
+  input BAM/SAM file, previously staged into output directory.
+
+  Input `trigger` is Boolean, but returns String, because of `valueFrom` field. The `valueFrom` is used, because if `trigger`
+  is false, cwl-runner doesn't append this argument at all to the the `baseCommand` - new feature of CWL v1.0.2. Alternatively,
+  `prefix` field could be used, but it causes changing logic in bash script saved in `bash_script` input.
+
+  `default_output_name` function is used for generating output filename if input `sort_output_filename` is not set or in
+  case when `trigger` is false and we need to return original BAM/SAM file staged into output directory.
+
+  `ext` function returns output filename extension on the base of `out_format` value. If input `out_format` is not set,
+  use `.bam` by default. If input `trigger` is false, `out_format` is ignored.
+
+  If `trigger` is set to true (or true is used by default), but both `sort_output_filename` and `out_format` are not set,
+  the output file format will be BAM by default.
+
+  If `trigger` is set to true (or true is used by default) and `sort_output_filename` is set to some value, but `out_format`
+  is not set, the actual format of output file will be defined on the filename extension set in `sort_output_filename`
+  (if filename doesn't have any extension, BAM is used by default). When `out_format` is also set, it overwrites extension
+  generated on the base of `sort_output_filename` value.
 
 s:about: |
   Usage: samtools sort [options...] [in.bam]

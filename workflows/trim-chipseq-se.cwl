@@ -136,49 +136,49 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
   fastx_statistics:
     type: File
     label: "FASTQ statistics"
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-    outputSource: fastx_quality_stats/statistics
+    outputSource: fastx_quality_stats/statistics_file
 
   bowtie_log:
     type: File
     label: "BOWTIE alignment log"
     format: "http://edamontology.org/format_2330"
     doc: "BOWTIE generated alignment log"
-    outputSource: bowtie_aligner/output_bowtie_log
+    outputSource: bowtie_aligner/log_file
 
   iaintersect_log:
     type: File
     label: "Island intersect log"
     format: "http://edamontology.org/format_3475"
     doc: "Iaintersect generated log"
-    outputSource: island_intersect/log
+    outputSource: island_intersect/log_file
 
   iaintersect_result:
     type: File
     label: "Island intersect results"
     format: "http://edamontology.org/format_3475"
     doc: "Iaintersect generated results"
-    outputSource: island_intersect/result
+    outputSource: island_intersect/result_file
 
   atdp_log:
     type: File
     label: "ATDP log"
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated log"
-    outputSource: average_tag_density/log
+    outputSource: average_tag_density/log_file
 
   atdp_result:
     type: File
     label: "ATDP results"
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated results"
-    outputSource: average_tag_density/result
+    outputSource: average_tag_density/result_file
 
   samtools_rmdup_log:
     type: File
@@ -248,46 +248,48 @@ outputs:
     label: "Bowtie & Samtools Rmdup combined log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
-    outputSource: get_stat/output
+    outputSource: get_stat/output_file
 
   macs2_fragment_stat:
     type: File?
     label: "FRAGMENT, FRAGMENTE, ISLANDS"
     format: "http://edamontology.org/format_2330"
     doc: "fragment, calculated fragment, islands count from MACS2 results"
-    outputSource: macs2_callpeak/macs2_stat
-
-  fastq_compressed:
-    type: File
-    label: "Compressed FASTQ"
-    doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output
+    outputSource: macs2_callpeak/macs2_stat_file
 
   trim_report:
     type: File
     label: "TrimGalore report"
     doc: "TrimGalore generated log"
-    outputSource: trim_fastq/report
+    outputSource: trim_fastq/report_file
 
 steps:
+
+  extract_fastq:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file
+    out: [fastq_file]
 
   trim_fastq:
     run: ../tools/trimgalore.cwl
     in:
-      input_filename: fastq_file
+      input_file: extract_fastq/fastq_file
       dont_gzip:
         default: true
       length:
         default: 30
     out:
-      - trimmed
-      - report
+      - trimmed_file
+      - report_file
 
   rename:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq/trimmed
-      target_filename: fastq_file
+      source_file: trim_fastq/trimmed_file
+      target_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.basename)
     out:
       - target_file
 
@@ -295,18 +297,12 @@ steps:
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: rename/target_file
-    out: [statistics]
-
-  bzip:
-    run: ../tools/bzip2.cwl
-    in:
-      input_file: fastq_file
-    out: [output]
+    out: [statistics_file]
 
   bowtie_aligner:
-    run: ../tools/bowtie.cwl
+    run: ../tools/bowtie-alignreads.cwl
     in:
-      filelist: rename/target_file
+      upstream_filelist: rename/target_file
       indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -323,12 +319,12 @@ steps:
       threads: threads
       q:
         default: true
-    out: [output, output_bowtie_log]
+    out: [sam_file, log_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: bowtie_aligner/output
+      sort_input: bowtie_aligner/sam_file
       threads: threads
     out: [bam_bai_pair]
 
@@ -336,7 +332,7 @@ steps:
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
-      input_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_sort_index/bam_bai_pair
       single_end:
         default: true
     out: [rmdup_output, rmdup_log]
@@ -352,14 +348,11 @@ steps:
   macs2_callpeak:
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment: samtools_sort_index_after_rmdup/bam_bai_pair
-      control: control_file
+      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      control_file: control_file
       nolambda:
         source: control_file
-        valueFrom: |
-          ${
-            return !Boolean(self);
-          }
+        valueFrom: $(!self)
       genome_size: genome_size
       mfold:
         default: "4 40"
@@ -390,25 +383,25 @@ steps:
       - treat_pileup_bdg_file
       - control_lambda_bdg_file
       - macs_log
-      - macs2_stat
+      - macs2_stat_file
       - macs2_fragments_calculated
 
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: samtools_sort_index_after_rmdup/bam_bai_pair
-      genomeFile: chrom_length
-      mappedreads: get_stat/mapped_reads
-      fragmentsize: macs2_callpeak/macs2_fragments_calculated
-    out: [outfile]
+      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      chrom_length_file: chrom_length
+      mapped_reads_number: get_stat/mapped_reads
+      fragment_size: macs2_callpeak/macs2_fragments_calculated
+    out: [bigwig_file]
 
   get_stat:
       run: ../tools/python-get-stat-chipseq.cwl
       in:
-        bowtie_log: bowtie_aligner/output_bowtie_log
+        bowtie_log: bowtie_aligner/log_file
         rmdup_log: samtools_rmdup/rmdup_log
       out:
-        - output
+        - output_file
         - mapped_reads
 
   island_intersect:
@@ -418,12 +411,12 @@ steps:
         annotation_filename: annotation_file
         promoter_bp:
           default: 1000
-      out: [result, log]
+      out: [result_file, log_file]
 
   average_tag_density:
       run: ../tools/atdp.cwl
       in:
-        input_filename: samtools_sort_index_after_rmdup/bam_bai_pair
+        input_file: samtools_sort_index_after_rmdup/bam_bai_pair
         annotation_filename: annotation_file
         fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
         avd_window_bp:
@@ -437,7 +430,7 @@ steps:
         avd_heat_window_bp:
           default: 200
         mapped_reads: get_stat/mapped_reads
-      out: [result, log]
+      out: [result_file, log_file]
 
 
 $namespaces:
