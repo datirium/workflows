@@ -1,7 +1,0 @@
-{
-  "bam_file":        {"class": "File", "location": "./data/mm10/sorted.bam"},
-  "annotation_file": {"class": "File", "location": "./data/mm10/mm10_refGene_2013_dump.tsv"},
-  "log_filename": "log.txt",
-  "output_prefix": "res_",
-  "exclude_chr": "chr1,chr2"
-}

@@ -1,7 +1,0 @@
-{
-  "sra_input_file":         { "class": "File",       "location": "SRR3017195.sra",                "format": "http://edamontology.org/format_3698"},
-  "illumina_adapters_file": { "class": "File",       "location": "TruSeq3-SE.fa",                 "format": "http://edamontology.org/format_1929"},
-  "bowtie2_indices_folder": { "class": "Directory",  "location": "Bowtie_indexes_Laevis_9_2"},
-  "chr_length_file":        { "class": "File",       "location": "LAEVIS_9_2.chrom_sizes.genome", "format": "http://edamontology.org/format_2330"},
-  "threads": 10
-}

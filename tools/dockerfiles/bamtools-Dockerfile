@@ -3,8 +3,8 @@
 #
 # Software:         bamtools
 # Software Version: 2.4.1
-# Description:      Bamtools image for SciDAP
-# Website:          https://github.com/pezmaster31/bamtools, http://scidap.com/
+# Description:      Bamtools image for BioWardrobe
+# Website:          https://github.com/pezmaster31/bamtools
 # Provides:         bamtools
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/bamtools:v2.4.1 -f bamtools-Dockerfile .

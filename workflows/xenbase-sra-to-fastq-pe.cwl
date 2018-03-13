@@ -22,10 +22,10 @@ outputs:
 
   upstream_fastq:
     type: File
-    outputSource: trimmomatic/output_read1_trimmed_file
+    outputSource: trimmomatic/upstream_trimmed_file
   downstream_fastq:
     type: File
-    outputSource: trimmomatic/output_read2_trimmed_paired_file
+    outputSource: trimmomatic/downstream_trimmed_file
 
 
 steps:
@@ -33,50 +33,50 @@ steps:
   sra_to_fastq:
     run: ../tools/fastq-dump.cwl
     in:
-      input_file: sra_input_file
+      sra_file: sra_input_file
       split_files:
         default: true
-    out: [output_file_1, output_file_2]
+    out: [fastq_file_1, fastq_file_2]
 
   fastqc_1:
     run: ../tools/fastqc.cwl
     in:
-      fastq_file: sra_to_fastq/output_file_1
+      fastq_file: sra_to_fastq/fastq_file_1
     out: [summary_file]
 
   fastqc_2:
     run: ../tools/fastqc.cwl
     in:
-      fastq_file: sra_to_fastq/output_file_2
+      fastq_file: sra_to_fastq/fastq_file_2
     out: [summary_file]
 
   fastqc_results_trigger_1:
     run: ../expressiontools/fastqc-results-trigger.cwl
     in:
-      summary: fastqc_1/summary_file
+      summary_file: fastqc_1/summary_file
     out: [trigger]
 
   fastqc_results_trigger_2:
     run: ../expressiontools/fastqc-results-trigger.cwl
     in:
-      summary: fastqc_2/summary_file
+      summary_file: fastqc_2/summary_file
     out: [trigger]
 
   trimmomatic:
     run: ../tools/trimmomatic.cwl
     in:
-      input_read1_fastq_file: sra_to_fastq/output_file_1
-      input_read2_fastq_file: sra_to_fastq/output_file_2
-      input_adapters_file: illumina_adapters_file
+      fastq_file_upstream: sra_to_fastq/fastq_file_1
+      fastq_file_downstream: sra_to_fastq/fastq_file_2
+      adapters_file: illumina_adapters_file
       trigger:
         source: [fastqc_results_trigger_1/trigger, fastqc_results_trigger_2/trigger]
         valueFrom: |
           ${
               return self[0] && self[1];
           }
-      end_mode:
+      lib_type:
         default: "PE"
-      illuminaclip:
+      illuminaclip_step_param:
         default: '2:30:15'
       threads: threads
-    out: [output_read1_trimmed_file, output_read2_trimmed_paired_file]
+    out: [upstream_trimmed_file, downstream_trimmed_file]

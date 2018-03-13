@@ -85,5 +85,3 @@ npm-debug.log
 # webstorm files
 .idea
 
-# testing input data
-tests/data

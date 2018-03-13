@@ -3,9 +3,9 @@
 #
 # Software:         picard
 # Software Version: 2.9.0
-# Description:      picard image for SciDAP
-# Website:          https://broadinstitute.github.io/picard/, http://scidap.com/
-# Provides:         Broad Institute
+# Description:      picard image for BioWardrobe
+# Website:          https://broadinstitute.github.io/picard/
+# Provides:         picard
 # Base Image:       biowardrobe2/scidap:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/picard:v2.9.0 -f picard-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/picard:v2.9.0

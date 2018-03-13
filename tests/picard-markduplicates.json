@@ -1,6 +1,0 @@
-{
-  "input_file": {"class": "File", "location": "./data/test.trimmed.bam"},
-  "output_filename": "output.bam",
-  "output_metrics_filename": "output.metrics",
-  "remove_dup": true
-}

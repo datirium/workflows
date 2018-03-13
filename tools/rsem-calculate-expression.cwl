@@ -2,26 +2,27 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-        if (Array.isArray(inputs.upstream_read_file) && inputs.upstream_read_file.length > 0){
-          return inputs.upstream_read_file[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+        if (Array.isArray(inputs.upstream_read_file) && inputs.upstream_read_file.length | 0){
+          return inputs.upstream_read_file[0].basename.split('.').slice(0,-1).join('.');
         } else
           if (inputs.upstream_read_file != null){
-            return inputs.upstream_read_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+            return inputs.upstream_read_file.basename.split('.').slice(0,-1).join('.');
           } else
-            if (Array.isArray(inputs.downstream_read_file) && inputs.downstream_read_file.length > 0){
-              return inputs.downstream_read_file[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+            if (Array.isArray(inputs.downstream_read_file) && inputs.downstream_read_file.length | 0){
+              return inputs.downstream_read_file[0].basename.split('.').slice(0,-1).join('.');
             } else
               if (inputs.downstream_read_file != null){
-                return inputs.downstream_read_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+                return inputs.downstream_read_file.basename.split('.').slice(0,-1).join('.');
               } else
                 if (inputs.input_aligned != null){
-                  return inputs.input_aligned.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
+                  return inputs.input_aligned.basename.split('.').slice(0,-1).join('.');
                 } else
                   {
                     return null;
@@ -32,8 +33,7 @@ requirements:
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/rsem:v1.3.0
-  dockerFile: >
-    $import: ./dockerfiles/rsem-Dockerfile
+
 
 inputs:
   upstream_read_file:
@@ -44,7 +44,6 @@ inputs:
         items: File
     inputBinding:
       position: 100
-      itemSeparator: ","
     doc: |
       Comma-separated list of files containing single-end reads
       or upstream reads for paired-end data.
@@ -74,6 +73,7 @@ inputs:
       - File
     inputBinding:
       position: 102
+      prefix: '--alignments'
     doc: |
       SAM/BAM/CRAM formatted input file.
       RSEM requires all alignments of the same read group together.
@@ -81,28 +81,14 @@ inputs:
       In addition, RSEM does not allow the SEQ and QUAL fields to be empty.
       See Description section for how to make input file obey RSEM's requirements.
 
-  reference_name_dir:
+  indices_folder:
     type: Directory
-    inputBinding:
-      position: 103
-      valueFrom: ""
-      shellQuote: false
-    doc: >
+    doc: |
       Path to the folder where all rsem reference files are saved
-
-  reference_name:
-    type:
-      - "null"
-      - string
-    inputBinding:
-      position: 104
-      valueFrom: $(inputs.reference_name_dir.path + "/" + self)
-    doc: >
-      The name of the reference used. The user must have run 'rsem-prepare-reference' with this reference_name before running this program
-      Shouldn't include path. The folder where the reference files are saved is to be set by reference_name_dir
 
   output_filename:
     type:
+      - "null"
       - string
     inputBinding:
       position: 104
@@ -129,23 +115,11 @@ inputs:
     inputBinding:
       position: 99
       prefix: '--paired-end'
-    doc: >
+    doc: |
       Input reads are paired-end reads
       If ommited and both upstream_read_file and downstream_read_file are set - we'll add this prefix
       automatically from the arguments oprator.
       In a case of using input 'input', user should define himself either it's paired-end or single-end data
-      (Default: off)
-
-  alignments:
-    type:
-      - "null"
-      - boolean
-    inputBinding:
-      position: 98
-      prefix: '--alignments'
-    doc: >
-      Input file contains alignments in SAM/BAM/CRAM format. The exact file format will be determined automatically
-      If omitted and input 'input' is used, we'll set this prefix automatically
       (Default: off)
 
   no_qualities:
@@ -155,7 +129,7 @@ inputs:
     inputBinding:
       position: 97
       prefix: '--no-qualities'
-    doc: >
+    doc: |
       Input reads do not contain quality scores
       (Default: off)
 
@@ -168,7 +142,7 @@ inputs:
     inputBinding:
       position: 96
       prefix: '--strandedness'
-    doc: >
+    doc: |
       This option defines the strandedness of the RNA-Seq reads.
       It recognizes three values: 'none', 'forward', and 'reverse'.
       'none' refers to non-strand-specific protocols.
@@ -186,7 +160,7 @@ inputs:
     inputBinding:
       position: 95
       prefix: '--num-threads'
-    doc: >
+    doc: |
       Number of threads to use. Both Bowtie/Bowtie2, expression estimation and 'samtools sort' will use this many threads.
       (Default: 1)
 
@@ -199,7 +173,7 @@ inputs:
       prefix: '--fai'
     doc: |
       If the header section of input alignment file does not contain reference sequence information,
-      this option should be turned on. <file> is a FAI format file containing each reference sequence's name and length.
+      this option should be turned on. <file| is a FAI format file containing each reference sequence's name and length.
       Please refer to the SAM official website for the details of FAI format.
       (Default: off)
 
@@ -210,7 +184,7 @@ inputs:
     inputBinding:
       position: 93
       prefix: '--bowtie2'
-    doc: >
+    doc: |
       Use Bowtie 2 instead of Bowtie to align reads. Since currently RSEM does not handle indel,
       local and discordant alignments, the Bowtie2 parameters are set in a way to avoid those alignments.
       In particular, we use options '--sensitive --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.1' by default.
@@ -226,7 +200,7 @@ inputs:
     inputBinding:
       position: 92
       prefix: '--star'
-    doc: >
+    doc: |
       Use STAR to align reads. Alignment parameters are from ENCODE3's STAR-RSEM pipeline.
       To save computational time and memory resources, STAR's Output BAM file is unsorted.
       It is stored in RSEM's temporary directory with name as 'sample_name.bam'.
@@ -239,7 +213,7 @@ inputs:
     inputBinding:
       position: 91
       prefix: '--append-names'
-    doc: >
+    doc: |
       If gene_name/transcript_name is available, append it to the end of gene_id/transcript_id (separated by '_')
       in files 'sample_name.isoforms.results' and 'sample_name.genes.results'.
       (Default: off)
@@ -251,7 +225,7 @@ inputs:
     inputBinding:
       position: 90
       prefix: '--seed'
-    doc: >
+    doc: |
       Set the seed for the random number generators used in calculating posterior mean estimates and credibility intervals.
       The seed must be a non-negative 32 bit integer.
       (Default: off)
@@ -263,7 +237,7 @@ inputs:
     inputBinding:
       position: 89
       prefix: '--single-cell-prior'
-    doc: >
+    doc: |
       By default, RSEM uses Dirichlet(1) as the prior to calculate posterior mean estimates and credibility intervals.
       However, much less genes are expressed in single cell RNA-Seq data. Thus, if you want to compute posterior
       mean estimates and/or credibility intervals and you have single-cell RNA-Seq data, you are recommended
@@ -278,7 +252,7 @@ inputs:
     inputBinding:
       position: 88
       prefix: '--calc-pme'
-    doc: >
+    doc: |
       Run RSEM's collapsed Gibbs sampler to calculate posterior mean estimates.
       (Default: off)
 
@@ -289,7 +263,7 @@ inputs:
     inputBinding:
       position: 87
       prefix: '--calc-ci'
-    doc: >
+    doc: |
       Calculate 95% credibility intervals and posterior mean estimates.
       The credibility level can be changed by setting '--ci-credibility-level'.
       (Default: off)
@@ -301,7 +275,7 @@ inputs:
     inputBinding:
       position: 86
       prefix: '--quiet'
-    doc: >
+    doc: |
       Suppress the output of logging information.
       (Default: off)
 
@@ -314,7 +288,7 @@ inputs:
     inputBinding:
       position: 85
       prefix: '--sort-bam-by-read-name'
-    doc: >
+    doc: |
       Sort BAM file aligned under transcript coordidate by read name.
       Setting this option on will produce deterministic maximum likelihood estimations from independent runs.
       Note that sorting will take long time and lots of memory.
@@ -327,7 +301,7 @@ inputs:
     inputBinding:
       position: 84
       prefix: '--no-bam-output'
-    doc: >
+    doc: |
       Do not output any BAM file.
       (Default: off)
 
@@ -338,7 +312,7 @@ inputs:
     inputBinding:
       position: 83
       prefix: '--sampling-for-bam'
-    doc: >
+    doc: |
       When RSEM generates a BAM file, instead of outputting all alignments a read has with their posterior probabilities,
       one alignment is sampled according to the posterior probabilities. The sampling procedure includes the alignment
       to the "noise" transcript, which does not appear in the BAM file. Only the sampled alignment has a weight of 1.
@@ -353,7 +327,7 @@ inputs:
     inputBinding:
       position: 82
       prefix: '--output-genome-bam'
-    doc: >
+    doc: |
       Generate a BAM file, 'sample_name.genome.bam', with alignments mapped to genomic coordinates and annotated with
       their posterior probabilities. In addition, RSEM will call samtools (included in RSEM package) to sort and index
       the bam file. 'sample_name.genome.sorted.bam' and 'sample_name.genome.sorted.bam.bai' will be generated.
@@ -366,7 +340,7 @@ inputs:
     inputBinding:
       position: 81
       prefix: '--sort-bam-by-coordinate'
-    doc: >
+    doc: |
       Sort RSEM generated transcript and genome BAM files by coordinates and build associated indices.
       (Default: off)
 
@@ -377,9 +351,9 @@ inputs:
     inputBinding:
       position: 80
       prefix: '--sort-bam-memory-per-thread'
-    doc: >
-      Set the maximum memory per thread that can be used by 'samtools sort'. <string> represents the memory and accepts
-      suffices 'K/M/G'. RSEM will pass <string> to the '-m' option of 'samtools sort'.
+    doc: |
+      Set the maximum memory per thread that can be used by 'samtools sort'. <string| represents the memory and accepts
+      suffices 'K/M/G'. RSEM will pass <string| to the '-m' option of 'samtools sort'.
       Note that the default used here is different from the default used by samtools.
       (Default: 1G)
 
@@ -392,12 +366,12 @@ inputs:
     inputBinding:
       position: 79
       prefix: '--seed-length'
-    doc: >
+    doc: |
       Seed length used by the read aligner. Providing the correct value is important for RSEM.
       If RSEM runs Bowtie, it uses this value for Bowtie's seed length parameter.
       Any read with its or at least one of its mates' (for paired-end reads) length less than this value will be ignored.
       If the references are not added poly(A) tails, the minimum allowed value is 5, otherwise, the minimum allowed value is 25.
-      Note that this script will only check if the value >= 5 and give a warning message if the value < 25 but >= 5.
+      Note that this script will only check if the value |= 5 and give a warning message if the value < 25 but |= 5.
       (Default: 25)
 
   phred33_quals:
@@ -407,7 +381,7 @@ inputs:
     inputBinding:
       position: 78
       prefix: '--phred33-quals'
-    doc: >
+    doc: |
       Input quality scores are encoded as Phred+33.
       (Default: on)
 
@@ -418,8 +392,8 @@ inputs:
     inputBinding:
       position: 77
       prefix: '--phred64-quals'
-    doc: >
-      Input quality scores are encoded as Phred+64 (default for GA Pipeline ver. >= 1.3).
+    doc: |
+      Input quality scores are encoded as Phred+64 (default for GA Pipeline ver. |= 1.3).
       (Default: off)
 
   solexa_quals:
@@ -429,20 +403,9 @@ inputs:
     inputBinding:
       position: 76
       prefix: '--solexa-quals'
-    doc: >
+    doc: |
       Input quality scores are solexa encoded (from GA Pipeline ver. < 1.3).
       (Default: off)
-
-  bowtie_path:
-    type:
-      - "null"
-      - string
-    inputBinding:
-      position: 75
-      prefix: '--bowtie-path'
-    doc: >
-      The path to the Bowtie executables.
-      (Default: the path to the Bowtie executables is assumed to be in the user's PATH environment variable)
 
   bowtie_n:
     type:
@@ -451,7 +414,7 @@ inputs:
     inputBinding:
       position: 74
       prefix: '--bowtie-n'
-    doc: >
+    doc: |
       (Bowtie parameter) max # of mismatches in the seed.
       (Range: 0-3, Default: 2))
 
@@ -462,7 +425,7 @@ inputs:
     inputBinding:
       position: 73
       prefix: '--bowtie-e'
-    doc: >
+    doc: |
       (Bowtie parameter) max sum of mismatch quality scores across the alignment.
       (Default: 99999999)
 
@@ -473,8 +436,8 @@ inputs:
     inputBinding:
       position: 72
       prefix: '--bowtie-m'
-    doc: >
-      (Bowtie parameter) suppress all alignments for a read if > <int> valid alignments exist.
+    doc: |
+      (Bowtie parameter) suppress all alignments for a read if | <int| valid alignments exist.
       (Default: 200)
 
   bowtie_chunkmbs:
@@ -484,20 +447,9 @@ inputs:
     inputBinding:
       position: 71
       prefix: '--bowtie-chunkmbs'
-    doc: >
+    doc: |
       (Bowtie parameter) memory allocated for best first alignment calculation
       (Default: 0 - use Bowtie's default)
-
-  bowtie2_path:
-    type:
-      - "null"
-      - string
-    inputBinding:
-      position: 70
-      prefix: '--bowtie2-path'
-    doc: >
-      (Bowtie 2 parameter) The path to the Bowtie 2 executables.
-      (Default: the path to the Bowtie 2 executables is assumed to be in the user's PATH environment variable)
 
   bowtie2_mismatch_rate:
     type:
@@ -506,7 +458,7 @@ inputs:
     inputBinding:
       position: 69
       prefix: '--bowtie2-mismatch-rate'
-    doc: >
+    doc: |
       (Bowtie 2 parameter) The maximum mismatch rate allowed.
       (Default: 0.1)
 
@@ -517,8 +469,8 @@ inputs:
     inputBinding:
       position: 68
       prefix: '--bowtie2-k'
-    doc: >
-      (Bowtie 2 parameter) Find up to <int> alignments per read.
+    doc: |
+      (Bowtie 2 parameter) Find up to <int| alignments per read.
       (Default: 200)
 
   bowtie2_sensitivity_level:
@@ -530,23 +482,12 @@ inputs:
     inputBinding:
       position: 67
       prefix: '--bowtie2-sensitivity-level'
-    doc: >
+    doc: |
       (Bowtie 2 parameter) Set Bowtie 2's preset options in --end-to-end mode.
       This option controls how hard Bowtie 2 tries to find alignments.
-      <string> must be one of "very_fast", "fast", "sensitive" and "very_sensitive".
+      <string| must be one of "very_fast", "fast", "sensitive" and "very_sensitive".
       The four candidates correspond to Bowtie 2's "--very-fast", "--fast", "--sensitive" and "--very-sensitive" options.
       (Default: "sensitive" - use Bowtie 2's default)
-
-  star_path:
-    type:
-      - "null"
-      - string
-    inputBinding:
-      position: 66
-      prefix: '--star-path'
-    doc: >
-      The path to STAR's executable.
-      (Default: the path to STAR executable is assumed to be in user's PATH environment variable)
 
   star_gzipped_read_file:
     type:
@@ -555,7 +496,7 @@ inputs:
     inputBinding:
       position: 65
       prefix: '--star-gzipped-read-file'
-    doc: >
+    doc: |
       (STAR parameter) Input read file(s) is compressed by gzip.
       (Default: off)
 
@@ -566,7 +507,7 @@ inputs:
     inputBinding:
       position: 64
       prefix: '--star-bzipped-read-file'
-    doc: >
+    doc: |
       (STAR parameter) Input read file(s) is compressed by bzip2.
       (Default: off)
 
@@ -577,7 +518,7 @@ inputs:
     inputBinding:
       position: 63
       prefix: '--star-output-genome-bam'
-    doc: >
+    doc: |
       (STAR parameter) Save the BAM file from STAR alignment under genomic coordinate to 'sample_name.STAR.genome.bam'.
       This file is NOT sorted by genomic coordinate. In this file, according to STAR's manual,
       'paired ends of an alignment are always adjacent, and multiple alignments of a read are adjacent as well'.
@@ -592,9 +533,9 @@ inputs:
     inputBinding:
       position: 62
       prefix: '--tag'
-    doc: >
+    doc: |
       The name of the optional field used in the SAM input for identifying a read with too many valid alignments.
-      The field should have the format <tagName>:i:<value>, where a <value> bigger than 0 indicates a read with too many alignments.
+      The field should have the format <tagName|:i:<value|, where a <value| bigger than 0 indicates a read with too many alignments.
       (Default: "")
 
   fragment_length_min:
@@ -604,7 +545,7 @@ inputs:
     inputBinding:
       position: 61
       prefix: '--fragment-length-min'
-    doc: >
+    doc: |
       Minimum read/insert length allowed. This is also the value for the Bowtie/Bowtie2 -I option.
       (Default: 1)
 
@@ -615,7 +556,7 @@ inputs:
     inputBinding:
       position: 60
       prefix: '--fragment-length-max'
-    doc: >
+    doc: |
       Maximum read/insert length allowed. This is also the value for the Bowtie/Bowtie 2 -X option.
       (Default: 1000)
 
@@ -626,7 +567,7 @@ inputs:
     inputBinding:
       position: 59
       prefix: '--fragment-length-mean'
-    doc: >
+    doc: |
       (single-end data only) The mean of the fragment length distribution, which is assumed to be a Gaussian.
       (Default: -1, which disables use of the fragment length distribution)
 
@@ -637,7 +578,7 @@ inputs:
     inputBinding:
       position: 58
       prefix: '--fragment-length-sd'
-    doc: >
+    doc: |
       (single-end data only) The standard deviation of the fragment length distribution, which is assumed to be a Gaussian.
       (Default: 0, which assumes that all fragments are of the same length, given by the rounded value of --fragment-length-mean)
 
@@ -648,7 +589,7 @@ inputs:
     inputBinding:
       position: 57
       prefix: '--estimate-rspd'
-    doc: >
+    doc: |
       Set this option if you want to estimate the read start position distribution (RSPD) from data. Otherwise, RSEM will use a uniform RSPD.
       (Default: off)
 
@@ -659,7 +600,7 @@ inputs:
     inputBinding:
       position: 56
       prefix: '--num-rspd-bins'
-    doc: >
+    doc: |
       Number of bins in the RSPD. Only relevant when '--estimate-rspd' is specified. Use of the default setting is recommended.
       (Default: 20)
 
@@ -670,7 +611,7 @@ inputs:
     inputBinding:
       position: 55
       prefix: '--gibbs-burnin'
-    doc: >
+    doc: |
       The number of burn-in rounds for RSEM's Gibbs sampler. Each round passes over the entire data set once.
       If RSEM can use multiple threads, multiple Gibbs samplers will start at the same time and all samplers share the same burn-in number.
       (Default: 200)
@@ -682,7 +623,7 @@ inputs:
     inputBinding:
       position: 54
       prefix: '--gibbs-number-of-samples'
-    doc: >
+    doc: |
       TThe total number of count vectors RSEM will collect from its Gibbs samplers.
       (Default: 1000)
 
@@ -693,9 +634,9 @@ inputs:
     inputBinding:
       position: 53
       prefix: '--gibbs-sampling-gap'
-    doc: >
+    doc: |
       The number of rounds between two succinct count vectors RSEM collects.
-      If the count vector after round N is collected, the count vector after round N + <int> will also be collected.
+      If the count vector after round N is collected, the count vector after round N + <int| will also be collected.
       (Default: 1)
 
   ci_credibility_level:
@@ -705,7 +646,7 @@ inputs:
     inputBinding:
       position: 52
       prefix: '--ci-credibility-level'
-    doc: >
+    doc: |
       The credibility level for credibility intervals.
       (Default: 0.95)
 
@@ -716,7 +657,7 @@ inputs:
     inputBinding:
       position: 51
       prefix: '--ci-memory'
-    doc: >
+    doc: |
       Maximum size (in memory, MB) of the auxiliary buffer used for computing credibility intervals (CI).
       (Default: 1024)
 
@@ -727,7 +668,7 @@ inputs:
     inputBinding:
       position: 50
       prefix: '--ci-number-of-samples-per-count-vector'
-    doc: >
+    doc: |
       The number of read generating probability vectors sampled per sampled count vector.
       The crebility intervals are calculated by first sampling P(C | D) and then sampling P(Theta | C)
       for each sampled count vector. This option controls how many Theta vectors are sampled per sampled count vector.
@@ -740,7 +681,7 @@ inputs:
     inputBinding:
       position: 49
       prefix: '--keep-intermediate-files'
-    doc: >
+    doc: |
       Keep temporary files generated by RSEM. RSEM creates a temporary directory, 'sample_name.temp', into which
       it puts all intermediate output files. If this directory already exists, RSEM overwrites all files generated
       by previous RSEM runs inside of it. By default, after RSEM finishes, the temporary directory is deleted.
@@ -754,7 +695,7 @@ inputs:
     inputBinding:
       position: 48
       prefix: '--temporary-folder'
-    doc: >
+    doc: |
       Set where to put the temporary files generated by RSEM.
       If the folder specified does not exist, RSEM will try to create it.
       (Default: sample_name.temp)
@@ -766,7 +707,7 @@ inputs:
     inputBinding:
       position: 47
       prefix: '--time'
-    doc: >
+    doc: |
       Output time consumed by each step of RSEM to 'sample_name.time'.
       (Default: off)
 
@@ -779,13 +720,13 @@ inputs:
     inputBinding:
       position: 46
       prefix: '--run-pRSEM'
-    doc: >
+    doc: |
       Running prior-enhanced RSEM (pRSEM). Prior parameters, i.e. isoform's initial pseudo-count for RSEM's Gibbs sampling,
       will be learned from input RNA-seq data and an external data set. When pRSEM needs and only needs ChIP-seq peak
       information to partition isoforms (e.g. in pRSEM's default partition model), either ChIP-seq peak file (with the
       '--chipseq-peak-file' option) or ChIP-seq FASTQ files for target and input and the path for Bowtie executables
-      are required (with the '--chipseq-target-read-files <string>', '--chipseq-control-read-files <string>', and
-      '--bowtie-path <path> options), otherwise, ChIP-seq FASTQ files for target and control and the path to
+      are required (with the '--chipseq-target-read-files <string|', '--chipseq-control-read-files <string|', and
+      '--bowtie-path <path| options), otherwise, ChIP-seq FASTQ files for target and control and the path to
       Bowtie executables are required.
       (Default: off)
 
@@ -796,7 +737,7 @@ inputs:
     inputBinding:
       position: 45
       prefix: '--chipseq-peak-file'
-    doc: >
+    doc: |
       Full path to a ChIP-seq peak file in ENCODE's narrowPeak, i.e. BED6+4, format.
       This file is used when running prior-enhanced RSEM in the default two-partition model.
       It partitions isoforms by whether they have ChIP-seq overlapping with their transcription start site region or not.
@@ -814,11 +755,11 @@ inputs:
       position: 44
       itemSeparator: ","
       prefix: '--chipseq-target-read-files'
-    doc: >
+    doc: |
       Comma-separated full path of FASTQ read file(s) for ChIP-seq target.
       This option is used when running prior-enhanced RSEM. It provides information to calculate ChIP-seq peaks and signals.
-      The file(s) can be either ungzipped or gzipped with a suffix '.gz' or '.gzip'. The options '--bowtie-path <path>' and
-      '--chipseq-control-read-files <string>' must be defined when this option is specified.
+      The file(s) can be either ungzipped or gzipped with a suffix '.gz' or '.gzip'. The options '--bowtie-path <path|' and
+      '--chipseq-control-read-files <string|' must be defined when this option is specified.
       (Default: "")
 
   chipseq_control_read_files:
@@ -831,10 +772,10 @@ inputs:
       position: 43
       itemSeparator: ","
       prefix: '--chipseq-control-read-files'
-    doc: >
+    doc: |
       Comma-separated full path of FASTQ read file(s) for ChIP-seq conrol. This option is used when running prior-enhanced RSEM.
       It provides information to call ChIP-seq peaks. The file(s) can be either ungzipped or gzipped with a suffix
-      '.gz' or '.gzip'. The options '--bowtie-path <path>' and '--chipseq-target-read-files <string>'
+      '.gz' or '.gzip'. The options '--bowtie-path <path|' and '--chipseq-target-read-files <string|'
       must be defined when this option is specified.
       (Default: "")
 
@@ -848,13 +789,13 @@ inputs:
       position: 42
       itemSeparator: ","
       prefix: '--chipseq-read-files-multi-targets'
-    doc: >
+    doc: |
       Comma-separated full path of FASTQ read files for multiple ChIP-seq targets.
       This option is used when running prior-enhanced RSEM, where prior is learned from multiple
       complementary data sets. It provides information to calculate ChIP-seq signals.
       All files can be either ungzipped or gzipped with a suffix '.gz' or '.gzip'.
-      When this option is specified, the option '--bowtie-path <path>' must be defined and the option
-      '--partition-model <string>' will be set to 'cmb_lgt' automatically.
+      When this option is specified, the option '--bowtie-path <path|' must be defined and the option
+      '--partition-model <string|' will be set to 'cmb_lgt' automatically.
       (Default: "")
 
   chipseq_bed_files_multi_targets:
@@ -867,13 +808,13 @@ inputs:
       position: 41
       itemSeparator: ","
       prefix: '--chipseq-bed-files-multi-targets'
-    doc: >
+    doc: |
       Comma-separated full path of BED files for multiple ChIP-seq targets.
       This option is used when running prior-enhanced RSEM, where prior is learned
       from multiple complementary data sets. It provides information of ChIP-seq signals
       and must have at least the first six BED columns. All files can be either
       ungzipped or gzipped with a suffix '.gz' or '.gzip'. When this option is specified,
-      the option '--partition-model <string>' will be set to 'cmb_lgt' automatically.
+      the option '--partition-model <string|' will be set to 'cmb_lgt' automatically.
       (Default: "")
 
   cap_stacked_chipseq_reads:
@@ -883,11 +824,11 @@ inputs:
     inputBinding:
       position: 40
       prefix: '--cap-stacked-chipseq-reads'
-    doc: >
+    doc: |
       Keep a maximum number of ChIP-seq reads that aligned to the same genomic interval.
       This option is used when running prior-enhanced RSEM, where prior is learned from multiple
       complementary data sets. This option is only in use when either '--chipseq-read-files-multi-targets
-      <string>' or '--chipseq-bed-files-multi-targets <string>' is specified.
+      <string|' or '--chipseq-bed-files-multi-targets <string|' is specified.
       (Default: off)
 
   n_max_stacked_chipseq_reads:
@@ -897,7 +838,7 @@ inputs:
     inputBinding:
       position: 39
       prefix: '--n-max-stacked-chipseq-reads'
-    doc: >
+    doc: |
       The maximum number of stacked ChIP-seq reads to keep. This option is used when running prior-enhanced RSEM,
       where prior is learned from multiple complementary data sets. This option is only in use when the option
       '--cap-stacked-chipseq-reads' is set.
@@ -912,7 +853,7 @@ inputs:
     inputBinding:
       position: 38
       prefix: '--partition-model'
-    doc: >
+    doc: |
       A keyword to specify the partition model used by prior-enhanced RSEM. It must be one of the following keywords:
       - pk
           Partitioned by whether an isoform has a ChIP-seq peak overlapping with its transcription start site (TSS) region.
@@ -931,7 +872,7 @@ inputs:
           employed to further classify them into 2, 3, 4, or 5 partitions.
       - cmb_lgt
           Using a logistic regression to combine TSS signals from multiple complementary data sets and partition training
-          set isoform into 'expressed' and 'not expressed'. This partition model is only in use when either '--chipseq-read-files-multi-targets <string>' or '--chipseq-bed-files-multi-targets <string> is specified.
+          set isoform into 'expressed' and 'not expressed'. This partition model is only in use when either '--chipseq-read-files-multi-targets <string|' or '--chipseq-bed-files-multi-targets <string| is specified.
 
       Parameters for all the above models are learned from a training set. For detailed explainations,
       please see prior-enhanced RSEM's paper.
@@ -940,8 +881,10 @@ inputs:
 
 outputs:
 
-  isoform_results:
-    type: File?
+  isoform_results_file:
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -952,8 +895,10 @@ outputs:
             }
         }
 
-  gene_results:
-    type: File?
+  gene_results_file:
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -964,8 +909,10 @@ outputs:
             }
         }
 
-  alleles_results:
-    type: File?
+  alleles_results_file:
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -976,8 +923,24 @@ outputs:
             }
         }
 
-  transcript_bam:
-    type: File?
+  genome_bam_file:
+    type:
+      - "null"
+      - File
+    outputBinding:
+      glob: |
+        ${
+            if (inputs.output_filename == null){
+              return default_output_filename() + ".genome.bam";
+            } else {
+              return inputs.output_filename + ".genome.bam";
+            }
+        }
+
+  transcript_bam_file:
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -989,7 +952,9 @@ outputs:
         }
 
   transcript_sorted_bam_bai_pair:
-    type: File?
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -999,15 +964,12 @@ outputs:
               return inputs.output_filename + ".transcript.sorted.bam";
             }
         }
-    secondaryFiles: ${return self.location + ".bai"}
-
-  genome_bam:
-    type: File?
-    outputBinding:
-      glob: $(inputs.output_filename + ".genome.bam")
+    secondaryFiles: ${return self.basename + ".bai"}
 
   genome_sorted_bam_bai_pair:
-    type: File?
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -1017,10 +979,12 @@ outputs:
               return inputs.output_filename + ".genome.sorted.bam";
             }
         }
-    secondaryFiles: ${return self.location + ".bai"}
+    secondaryFiles: ${return self.basename + ".bai"}
 
-  align_time:
-    type: File?
+  align_time_file:
+    type:
+      - "null"
+      - File
     outputBinding:
       glob: |
         ${
@@ -1031,8 +995,10 @@ outputs:
             }
         }
 
-  stat:
-    type: Directory?
+  stat_folder:
+    type:
+      - "null"
+      - Directory
     outputBinding:
       glob: |
         ${
@@ -1056,43 +1022,28 @@ arguments:
         return null;
       }
     position: 99
-# Check if input 'input_aligned' is used and prefix --alignments isn't set. If true - add prefix automatically
+# We should get the value automatically from indices_folder
   - valueFrom: |
       ${
-        if (inputs.input_aligned && !inputs.alignments){
-          return "--alignments";
-        }
-        return null;
-      }
-    position: 98
-# in a case when reference_name is not set, we should get the value automatically from reference_name_dir
-  - valueFrom: |
-      ${
-        if (inputs.reference_name){
-          return null;
-        } else {
-          for (var i = 0; i < inputs.reference_name_dir.listing.length; i++) {
-              if (inputs.reference_name_dir.listing[i].path.split('/').slice(-1)[0].split('.').slice(-1)[0] == 'grp'){
-                let name = inputs.reference_name_dir.listing[i].path.split('/').slice(-1)[0].split('.').slice(0,-1).join('.');
-                return inputs.reference_name_dir.listing[i].path.split('/').slice(0,-1).join('/') + '/' + name;
+          for (var i = 0; i < inputs.indices_folder.listing.length; i++) {
+              if (inputs.indices_folder.listing[i].basename.split('.').slice(-1)[0] == 'grp'){
+                let name = inputs.indices_folder.listing[i].basename.split('.').slice(0,-1).join('.');
+                return inputs.indices_folder.listing[i].path.split('/').slice(0,-1).join('/') + '/' + name;
               }
           }
           return null;
-        }
       }
-    position: 104
+    position: 103
+
 
 $namespaces:
   s: http://schema.org/
-
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:mainEntity:
-  $import: ./metadata/rsem-metadata.yaml
-
-s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/tools/rsem-calculate-expression.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:name: "rsem-calculate-expression"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/rsem-calculate-expression.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -1100,22 +1051,47 @@ s:isPartOf:
   s:name: Common Workflow Language
   s:url: http://commonwl.org/
 
-s:author:
-  class: s:Person
-  s:name: Michael Kotliar
-  s:email: mailto:michael.kotliar@cchmc.org
-  s:sameAs:
-  - id: http://orcid.org/0000-0002-6486-3898
-  s:worksFor:
+s:mainEntity:
+  $import: ./metadata/rsem-metadata.yaml
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
   - class: s:Organization
-    s:name: Cincinnati Children's Hospital Medical Center
-    s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
+    s:legalName: "Allergy and Immunology"
     s:department:
     - class: s:Organization
-      s:name: Barski Lab
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
 doc: |
-  Estimate gene and isoform expression from RNA-Seq data.
+  Tool runs rsem-calculate-expression.
+
+  `reference_name` parameter for RSEM is resolved from `indices_folder` input.
+  If `paired_end` input is not set, but both of the `upstream_read_file` and `downstream_read_file` are present,
+  set `paired_end` automatically.
+
+  `default_output_filename` function return prefix fot output files generated by RSEM based on `upstream_read_file` or
+  `downstream_read_file` basename, if `output_filename` input is not provided
+
+s:about: |
   Usage:
-  rsem-calculate-expression [options] upstream_read_file(s) reference_name sample_name
-  rsem-calculate-expression [options] --paired-end upstream_read_file(s) downstream_read_file(s) reference_name sample_name
-  rsem-calculate-expression [options] --alignments [--paired-end] input reference_name sample_name
+     rsem-calculate-expression [options] upstream_read_file(s) reference_name sample_name
+     rsem-calculate-expression [options] --paired-end upstream_read_file(s) downstream_read_file(s) reference_name sample_name
+     rsem-calculate-expression [options] --alignments [--paired-end] input reference_name sample_name
+

@@ -1,3 +1,0 @@
-{
-  "fastq_file": {"class": "File", "location": "./data/reads_test.fastq"}
-}

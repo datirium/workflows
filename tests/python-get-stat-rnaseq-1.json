@@ -1,0 +1,6 @@
+{
+  "star_log":{"class": "File", "location": "./data/dm3_chr4/generated_inputs/logs/star_align_log/chr4_100_mapped_reads.Log.final.out"},
+  "bowtie_log":{"class": "File", "location": "./data/dm3_chr4/generated_inputs/logs/bowtie_align_ribo_log/upstream.bw"},
+  "rpkm_isoforms":{"class": "File", "location": "./data/dm3_chr4/generated_inputs/geep/chr4_100_mapped_reads.Aligned.out.isoforms.csv"},
+  "pair_end": true
+}

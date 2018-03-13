@@ -3,84 +3,96 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-  - $import: ./metadata/envvar-global.yml
-  - class: InlineJavascriptRequirement
+- $import: ./metadata/envvar-global.yml
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function() {
+          let ext = (inputs.depth == "-bg" || inputs.depth == "-bga")?".bedGraph":".tab";
+          return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ext;
+        };
 
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/bedtools2:v2.26.0
-  dockerFile: >
-    $import: ./dockerfiles/bedtools-Dockerfile
+
 
 inputs:
-  input:
+  input_file:
     type: File
-    doc: |
-      The input file can be in BAM format
-          (Note: BAM _must_ be sorted by position)
-      or <bed/gff/vcf>
     inputBinding:
-      position: 10
+      position: 16
       valueFrom: |
           ${
-            var prefix = ((/.*\.bam$/i).test(inputs.input.path))?'-ibam':'-i';
-            return [prefix,inputs.input.path];
+            var prefix = ((/.*\.bam$/i).test(inputs.input_file.path))?'-ibam':'-i';
+            return [prefix, inputs.input_file.path];
           }
-# TODO Need this only to make sure that bam file is sorted.
-    secondaryFiles: |
-           ${
-            if ((/.*\.bam$/i).test(self.location))
-               return {"location": self.location+".bai", "class": "File"};
-            return [];
-           }
+    doc: |
+      The input file can be in BAM format (Note: BAM must be sorted by position) or <bed/gff/vcf>.
+      Prefix is selected on the base of input file extension
 
-# Needed only when -i flag
-  genomeFile:
-    type: File?
-    doc:
-      Input genome file.
-    inputBinding:
-      position: 11
-      prefix: "-g"
-
-  dept:
+  chrom_length_file:
     type:
-      name: "JustDepts"
-      type: enum
+    - "null"
+    - File
+    inputBinding:
+      position: 17
+      prefix: "-g"
+    doc: |
+      Input genome file. Needed only when -i flag. The genome file is tab delimited <chromName><TAB><chromSize>
+
+  depth:
+    type:
+    - "null"
+    - type: enum
+      name: "depth"
       symbols: ["-bg","-bga","-d", "-dz"]
     inputBinding:
       position: 5
+    doc: |
+      Report the depth type. By default, bedtools genomecov will compute a histogram of coverage
+      for the genome file provided (intputs.chrom_length_file)
 
   scale:
-    type: float?
+    type:
+    - "null"
+    - float
+    inputBinding:
+      position: 6
+      prefix: -scale
     doc: |
       Scale the coverage by a constant factor.
       Each coverage value is multiplied by this factor before being reported.
       Useful for normalizing coverage by, e.g., reads per million (RPM).
       - Default is 1.0; i.e., unscaled.
       - (FLOAT)
-    inputBinding:
-      position: 5
-      prefix: -scale
 
-  mappedreads:
-    type: int?
-    doc: |
-      Optional parameter to calculate scale as 1000000/mappedreads
+  mapped_reads_number:
+    type:
+    - "null"
+    - int
     inputBinding:
-      position: 5
+      position: 7
       prefix: -scale
       valueFrom: |
         ${
           if (inputs.scale){
             return null;
+          } else if (inputs.mapped_reads_number) {
+            return 1000000/inputs.mapped_reads_number;
           } else {
-            return 1000000/inputs.mappedreads;
+            return null;
           }
         }
+    doc: |
+      Optional parameter to calculate scale as 1000000/mapped_reads_number if inputs.scale is not provided
 
   split:
-    type: ["null",boolean]
+    type:
+    - "null"
+    - boolean
+    inputBinding:
+      position: 8
+      prefix: "-split"
     doc: |
       treat "split" BAM or BED12 entries as distinct BED intervals.
       when computing coverage.
@@ -88,93 +100,111 @@ inputs:
       to infer the blocks for computing coverage.
       For BED12 files, this uses the BlockCount, BlockStarts, and BlockEnds
       fields (i.e., columns 10,11,12).
-    inputBinding:
-      position: 5
-      prefix: "-split"
 
   strand:
-    type: ["null", string]
+    type:
+    - "null"
+    - string
+    inputBinding:
+      position: 9
+      prefix: "-strand"
     doc: |
       Calculate coverage of intervals from a specific strand.
       With BED files, requires at least 6 columns (strand is column 6).
       - (STRING): can be + or -
-    inputBinding:
-      position: 5
-      prefix: "-strand"
 
   pairchip:
-    type: ["null", boolean]
-    doc: "pair-end chip seq experiment"
+    type:
+    - "null"
+    - boolean
     inputBinding:
-      position: 5
+      position: 10
       prefix: "-pc"
+    doc: |
+      pair-end chip seq experiment
 
   du:
-    type: ["null", boolean]
+    type:
+    - "null"
+    - boolean
+    inputBinding:
+      position: 11
+      prefix: "-du"
     doc: |
       Change strand af the mate read (so both reads from the same strand) useful for strand specific.
       Works for BAM files only
-    inputBinding:
-      position: 5
-      prefix: "-du"
 
-  fragmentsize:
-    type: ["null", int]
-    doc: "fixed fragment size"
+  fragment_size:
+    type:
+    - "null"
+    - int
     inputBinding:
-      position: 5
+      position: 12
       prefix: "-fs"
+    doc: |
+      Set fixed fragment size
 
   max:
-    type: ["null",int]
+    type:
+    - "null"
+    - int
+    inputBinding:
+      position: 13
+      prefix: "-max"
     doc: |
       Combine all positions with a depth >= max into
       a single bin in the histogram. Irrelevant
       for -d and -bedGraph
       - (INTEGER)
-    inputBinding:
-      position: 5
-      prefix: "-max"
 
   m5:
-    type: ["null",boolean]
-    doc: |
-      Calculate coverage of 5" positions (instead of entire interval).
+    type:
+    - "null"
+    - boolean
     inputBinding:
-      position: 5
+      position: 14
       prefix: "-5"
+    doc: |
+      Calculate coverage of 5" positions (instead of entire interval)
 
   m3:
-    type: ["null",boolean]
-    doc: |
-      Calculate coverage of 3" positions (instead of entire interval).
+    type:
+    - "null"
+    - boolean
     inputBinding:
-      position: 5
+      position: 15
       prefix: "-3"
+    doc: |
+      Calculate coverage of 3" positions (instead of entire interval)
 
-  genomecoverageout:
-    type: string?
+  output_filename:
+    type:
+    - "null"
+    - string
+    doc: |
+      Name for generated output file
 
 outputs:
-  genomecoverage:
+  genome_coverage_file:
     type: File
-    doc: "The file containing the genome coverage"
     outputBinding:
       glob: |
         ${
-          if (inputs.genomecoverageout == null){
-            return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bed";
+          if (inputs.output_filename == null){
+            return default_output_filename();
           } else {
-            return inputs.genomecoverageout;
+            return inputs.output_filename;
           }
         }
+    doc: |
+      Generated genome coverage output file
 
 stdout: |
   ${
-    if (inputs.genomecoverageout == null){
-      return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".bed";
+    if (inputs.output_filename == null){
+      return default_output_filename();
     } else {
-      return inputs.genomecoverageout;
+      return inputs.output_filename;
     }
   }
 
@@ -190,8 +220,8 @@ s:mainEntity:
   $import: ./metadata/bedtools-metadata.yaml
 
 s:name: "bedtools-genomecov"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bedtools-genomecov.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/bedtools-genomecov.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -219,15 +249,25 @@ s:creator:
       s:legalName: "Barski Research Lab"
       s:member:
       - class: s:Person
-        s:name: Andrey Kartashov
-        s:email: mailto:Andrey.Kartashov@cchmc.org
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
-        - id: http://orcid.org/0000-0001-9102-5681
+        - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool is used to calculate statistics on the base of FASTQ file quality scores
+  Tool calculates genome coverage from input bam/bed/gff/vcf using `bedtools genomecov`
 
-s:about: >
+  Depending on `input_file` extension additional prefix is used: if `*.bam` use `-ibam`, else use `-i`.
+
+  `scale` and `mapped_reads_number` inputs result in the same parameter `-scale`. If `scale` is not provided, check if
+  `mapped_reads_number` is not null and calculate `-scale` as `1000000/mapped_reads_number`. If both inputs are
+  null, `bedtools genomecov` will use its default scaling value.
+
+  `default_output_filename` function returns default output filename and is used when `output_filename` is not provided.
+  Default output file extention is `.tab`. If bedGraph should be generated (check flags `inputs.depth`), extension is
+  updated to `.bedGraph`. Default basename of the output file is generated on the base of `input_file` basename.
+
+s:about: |
   Usage: bedtools genomecov [OPTIONS] -i <bed/gff/vcf> -g <genome>
 
   Options:

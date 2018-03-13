@@ -1,0 +1,13 @@
+{
+  "readFilesIn": [
+    {"class": "File", "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/upstream.fastq"},
+    {"class": "File", "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/downstream.fastq"}
+  ],
+  "genomeDir": {"class": "Directory", "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4"},
+  "outFilterMultimapNmax": 1,
+  "outFilterMismatchNmax": 5,
+  "alignSJDBoverhangMin": 1,
+  "seedSearchStartLmax": 15,
+  "outFileNamePrefix": "chr4_100_mapped_reads.",
+  "runThreadN": 2
+}

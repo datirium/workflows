@@ -3,8 +3,8 @@
 #
 # Software:         iaintersect
 # Software Version: 0.0.2
-# Description:      BioWardrobe iaintersect image for SciDAP
-# Website:          https://github.com/Barski-lab/iaintersect, http://scidap.com/
+# Description:      iaintersect image for BioWardrobe
+# Website:          https://github.com/Barski-lab/iaintersect
 # Provides:         iaintersect
 # Base Image:       biowardrobe2/iaintersect:v0.0.2
 # Build Cmd:        docker build --rm -t biowardrobe2/iaintersect:v0.0.2 -f iaintersect-Dockerfile .

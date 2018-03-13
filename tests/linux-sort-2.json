@@ -1,0 +1,11 @@
+{
+    "unsorted_file": {
+        "location": "./data/dm3_chr4/generated_inputs/bedgraph/chr4_100_mapped_reads.Aligned.out.bedGraph",
+        "class": "File"
+    },
+    "output_filename": "sorted.bed",
+    "key": [
+        "1,1",
+        "2,2n"
+    ]
+}

@@ -1,0 +1,105 @@
+#################################################################
+# Dockerfile
+#
+# Software:         GEMBS
+# Software Version: commit 040e5cd45648c0abaf9412926f97fef26928acd9
+# Description:      GEMBS image for BioWardrobe2
+# Website:          http://statgen.cnag.cat/gemBS/
+# Provides:         gemBS, htslib, samtools, bcftools, ucsc utilities
+# Base Image:       biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9
+# Build Cmd:        docker build --rm -t biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9 -f gembs-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9
+# Run Cmd:          docker run --rm -ti biowardrobe2/gembs:v040e5cd45648c0abaf9412926f97fef26928acd9
+#################################################################
+
+### Base Image
+FROM biowardrobe2/scidap:v0.0.2
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+ENV VERSION_GEMBS 040e5cd45648c0abaf9412926f97fef26928acd9
+ENV URL_GEMBS "https://github.com/heathsc/gemBS.git"
+
+ENV VERSION_HTSLIB 1.4
+ENV URL_HTSLIB "https://github.com/samtools/htslib/releases/download/${VERSION_HTSLIB}/htslib-${VERSION_HTSLIB}.tar.bz2"
+
+ENV VERSION_SAMTOOLS 1.4
+ENV URL_SAMTOOLS "https://github.com/samtools/samtools/releases/download/${VERSION_SAMTOOLS}/samtools-${VERSION_SAMTOOLS}.tar.bz2"
+
+ENV VERSION_BCFTOOLS 1.6
+ENV URL_BCFTOOLS "https://github.com/samtools/bcftools/releases/download/${VERSION_BCFTOOLS}/bcftools-${VERSION_BCFTOOLS}.tar.bz2"
+
+ENV VERSION_UCSC_UTILITIES v358
+ENV URL_UCSC_UTILITIES "http://hgdownload.soe.ucsc.edu/admin/exe/userApps.${VERSION_UCSC_UTILITIES}.src.tgz"
+
+
+### Updating the system
+
+RUN apt-get clean all &&\
+    apt-get update &&\
+    apt-get install -y libgsl-dev libssl-dev libmysqlclient-dev libpng12-dev uuid-dev \
+                       libncurses5-dev libbz2-dev liblzma-dev &&\
+    pip install --upgrade pip &&\
+    pip install setuptools &&\
+    pip install numpy &&\
+    pip install matplotlib &&\
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* &&\
+
+### Installing samtools
+
+    wget -q $URL_HTSLIB &&\
+    bzip2 -d htslib-${VERSION_HTSLIB}.tar.bz2 &&\
+    tar -xf htslib-${VERSION_HTSLIB}.tar &&\
+    cd htslib-${VERSION_HTSLIB} &&\
+    ./configure &&\
+    make -j 4 &&\
+    make install &&\
+    cd .. &&\
+    rm -rf ./htslib-${VERSION_HTSLIB} &&\
+    rm -rf ./htslib-${VERSION_HTSLIB}.tar &&\
+
+    wget -q $URL_SAMTOOLS &&\
+    bzip2 -d samtools-${VERSION_SAMTOOLS}.tar.bz2 &&\
+    tar -xf samtools-${VERSION_SAMTOOLS}.tar &&\
+    cd samtools-${VERSION_SAMTOOLS} &&\
+    ./configure &&\
+    make -j 4 &&\
+    make install &&\
+    cd .. &&\
+    rm -rf ./samtools-${VERSION_SAMTOOLS} &&\
+    rm -rf ./samtools-${VERSION_SAMTOOLS}.tar &&\
+
+### Installing bcftools
+
+    wget -q $URL_BCFTOOLS &&\
+    bzip2 -d bcftools-${VERSION_BCFTOOLS}.tar.bz2 &&\
+    tar -xf bcftools-${VERSION_BCFTOOLS}.tar &&\
+    cd bcftools-${VERSION_BCFTOOLS} &&\
+    ./configure &&\
+    make -j 4 &&\
+    make install &&\
+    cd .. &&\
+    rm -rf ./bcftools-${VERSION_BCFTOOLS} &&\
+    rm -rf ./bcftools-${VERSION_BCFTOOLS}.tar &&\
+
+### Installing UCSC Utilities
+
+    wget -q -O - $URL_UCSC_UTILITIES | tar -zxv --strip-components=2 &&\
+    make -j 4 &&\
+    cp ./bin/* /usr/local/bin/ &&\
+    rm -rf ./* &&\
+
+### Installing GEMBS
+
+    git clone --recursive ${URL_GEMBS} &&\
+    cd gemBS &&\
+    git checkout ${VERSION_GEMBS} &&\
+    python setup.py install &&\
+    cd .. &&\
+    rm -rf ./* &&\
+    strip /usr/local/bin/*; true

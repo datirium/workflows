@@ -25,22 +25,22 @@ outputs:
 
   rsem_isoforms:
     type: File
-    outputSource: rsem_calculate_expression/isoform_results
+    outputSource: rsem_calculate_expression/isoform_results_file
   rsem_genes:
     type: File
-    outputSource: rsem_calculate_expression/gene_results
+    outputSource: rsem_calculate_expression/gene_results_file
   bam_file:
     type: File
     outputSource: rsem_calculate_expression/genome_sorted_bam_bai_pair
   bamtools_log:
     type: File
-    outputSource: bamtools_stats/stats_log
+    outputSource: bamtools_stats/log_file
   bed:
     type: File
-    outputSource: bam_to_bigwig/bed_file
+    outputSource: bam_to_bigwig/bedgraph_file
   bigwig:
     type: File
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
 
 steps:
@@ -50,7 +50,7 @@ steps:
     in:
       upstream_read_file: upstream_fastq
       downstream_read_file: downstream_fastq
-      reference_name_dir: rsem_indices_folder
+      indices_folder: rsem_indices_folder
       bowtie2:
         default: true
       sort_bam_by_coordinate:
@@ -59,25 +59,25 @@ steps:
         default: true
       threads: threads
     out:
-      - isoform_results
-      - gene_results
+      - isoform_results_file
+      - gene_results_file
       - genome_sorted_bam_bai_pair
 
   bamtools_stats:
     run: ../tools/bamtools-stats.cwl
     in:
-      input_files: rsem_calculate_expression/genome_sorted_bam_bai_pair
+      bam_file: rsem_calculate_expression/genome_sorted_bam_bai_pair
     out:
-     - mappedreads
-     - stats_log
+     - mapped_reads_number
+     - log_file
 
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: rsem_calculate_expression/genome_sorted_bam_bai_pair
-      genomeFile: chr_length_file
-      mappedreads: bamtools_stats/mappedreads
+      bam_file: rsem_calculate_expression/genome_sorted_bam_bai_pair
+      chrom_length_file: chr_length_file
+      mapped_reads_number: bamtools_stats/mapped_reads_number
       pairchip: paired
     out:
-      - outfile
-      - bed_file
+      - bigwig_file
+      - bedgraph_file

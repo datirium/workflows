@@ -77,15 +77,13 @@ steps:
 
 $namespaces:
   s: http://schema.org/
-  dct: http://purl.org/dc/terms/
-  foaf: http://xmlns.com/foaf/0.1/
 
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "xenbase-chipseq-pe"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/xenbase-chipseq-pe.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/xenbase-chipseq-pe.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -114,16 +112,11 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-dct:creator:
-  "@id": "http://orcid.org/0000-0002-6486-3898"
-  foaf:name: "Michael Kotliar"
-  foaf:mbox: "mailto:michael.kotliar@cchmc.org"
-
-doc: >
+doc: |
   XenBase workflow for analysing ChIP-Seq paired-end data
 
 s:about: |

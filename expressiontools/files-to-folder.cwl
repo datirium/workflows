@@ -17,7 +17,7 @@ expression: |
   ${
     var folder = {
       "class": "Directory",
-      "basename": "folder",
+      "basename": "",
       "listing": []
     }
     var files = [];
@@ -35,3 +35,7 @@ expression: |
     }
     return { "folder": folder };
   }
+
+doc: |
+  Returns Directory object with a listing set from File or File[]. Only one nested level of secondaryFiles
+  is supported

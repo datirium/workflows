@@ -1,0 +1,9 @@
+{
+    "input_filename": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/macs_peaks/chr4_100_mapped_reads.Aligned.out_macs_peaks.xls"},
+    "annotation_filename": {"class": "File", "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"},
+    "output_filename": "iaintersect_res.tsv",
+    "log_filename": "iaintersect_res.log",
+    "promoter_bp": 2000,
+    "upstream_bp": 15000,
+    "ignore_chr": "chrM"
+}

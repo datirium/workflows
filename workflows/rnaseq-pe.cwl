@@ -96,7 +96,7 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/outfile
+    outputSource: bam_to_bigwig/bigwig_file
 
   star_final_log:
     type: File
@@ -138,14 +138,14 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "FASTQ upstream statistics"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_upstream/statistics
+    outputSource: fastx_quality_stats_upstream/statistics_file
 
   fastx_statistics_downstream:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "FASTQ downstream statistics"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_downstream/statistics
+    outputSource: fastx_quality_stats_downstream/statistics_file
 
   bambai_pair:
     type: File
@@ -159,7 +159,7 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
     doc: "Bowtie alignment log file"
-    outputSource: bowtie_aligner/output_bowtie_log
+    outputSource: bowtie_aligner/log_file
 
   rpkm_isoforms:
     type: File
@@ -168,31 +168,31 @@ outputs:
     doc: "Calculated rpkm values, grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
-  fastq_file_compressed_upstream:
-    type: File
-    label: "Compressed upstream FASTQ"
-    doc: "bz2 compressed upstream FASTQ file"
-    outputSource: bzip_upstream/output
-
-  fastq_file_compressed_downstream:
-    type: File
-    label: "Compressed downstream FASTQ"
-    doc: "bz2 compressed downstream FASTQ file"
-    outputSource: bzip_downstream/output
-
   get_stat_log:
     type: File?
     label: "Bowtie, STAR and GEEP combined log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
-    outputSource: get_stat/output
+    outputSource: get_stat/output_file
 
 steps:
+
+  extract_fastq_upstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_upstream
+    out: [fastq_file]
+
+  extract_fastq_downstream:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_downstream
+    out: [fastq_file]
 
   star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: [fastq_file_upstream, fastq_file_downstream]
+      readFilesIn: [extract_fastq_upstream/fastq_file, extract_fastq_downstream/fastq_file]
       genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
@@ -217,53 +217,40 @@ steps:
   fastx_quality_stats_upstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file_upstream
-    out: [statistics]
+      input_file: extract_fastq_upstream/fastq_file
+    out: [statistics_file]
 
   fastx_quality_stats_downstream:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file_downstream
-    out: [statistics]
-
-  bzip_upstream:
-    run: ../tools/bzip2.cwl
-    in:
-      input_file: fastq_file_upstream
-    out: [output]
-
-  bzip_downstream:
-    run: ../tools/bzip2.cwl
-    in:
-      input_file: fastq_file_downstream
-    out: [output]
+      input_file: extract_fastq_downstream/fastq_file
+    out: [statistics_file]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_aligner/aligned_file
       sort_output_filename:
-        source: fastq_file_upstream
+        source: extract_fastq_upstream/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
 
   bam_to_bigwig:
-    run: bam-genomecov-bigwig.cwl
+    run: bam-bedgraph-bigwig.cwl
     in:
-      input: samtools_sort_index/bam_bai_pair
-      genomeFile: chrom_length_file
-      mappedreads: star_aligner/uniquely_mapped_reads_number
-#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
-      pairchip:
-        default: true
-    out: [outfile]
+      bam_file: samtools_sort_index/bam_bai_pair
+      chrom_length_file: chrom_length_file
+      mapped_reads_number:
+        source: star_aligner/uniquely_mapped_reads_number
+        valueFrom: $(self*2)
+    out: [bigwig_file]
 
   bowtie_aligner:
-    run: ../tools/bowtie.cwl
+    run: ../tools/bowtie-alignreads.cwl
     in:
-      filelist: fastq_file_upstream
-      filelist_mates: fastq_file_downstream
+      upstream_filelist: extract_fastq_upstream/fastq_file
+      downstream_filelist: extract_fastq_downstream/fastq_file
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -274,7 +261,7 @@ steps:
       sam:
         default: true
       threads: threads
-    out: [output_bowtie_log]
+    out: [log_file]
 
   rpkm_calculation:
     run: ../tools/geep.cwl
@@ -291,9 +278,11 @@ steps:
       run: ../tools/python-get-stat-rnaseq.cwl
       in:
         star_log: star_aligner/log_final
-        bowtie_log: bowtie_aligner/output_bowtie_log
+        bowtie_log: bowtie_aligner/log_file
         rpkm_isoforms: rpkm_calculation/isoforms_file
-      out: [output]
+        pair_end:
+          default: true
+      out: [output_file]
 
 $namespaces:
   s: http://schema.org/
