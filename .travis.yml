@@ -1,4 +1,6 @@
-sudo: false
+sudo: required
+services:
+  - docker
 language: python
 python:
 - 2.7
