@@ -10,6 +10,6 @@ install:
 script: bash run_test.sh
 branches:
   only:
-  - master
+  - v1.0.2
 notifications:
   email: false
