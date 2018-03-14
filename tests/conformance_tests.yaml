@@ -1123,7 +1123,6 @@
     rmdup_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.rmdup
-      size: 94
 
 - job: ./samtools-rmdup-2.json
   tool: ../tools/samtools-rmdup.cwl
@@ -1136,7 +1135,6 @@
     rmdup_log:
       class: File
       location: res.rmdup
-      size: 94
 
 - job: ./samtools-rmdup-3.json
   tool: ../tools/samtools-rmdup.cwl
@@ -1149,7 +1147,6 @@
     rmdup_log:
       class: File
       location: res.rmdup
-      size: 94
 
 - job: ./samtools-rmdup-4.json
   tool: ../tools/samtools-rmdup.cwl
