@@ -366,26 +366,26 @@
   output:
     indices:
     - class: File
-      location: dm3_chr4.1.ebwt
-      size: 4580786
-    - class: File
-      location: dm3_chr4.2.ebwt
-      size: 42248
-    - class: File
-      location: dm3_chr4.3.ebwt
-      size: 26
-    - class: File
-      location: dm3_chr4.4.ebwt
-      size: 337940
-    - class: File
       location: dm3_chr4.log
       size: 0
     - class: File
       location: dm3_chr4.rev.1.ebwt
       size: 4580786
     - class: File
+      location: dm3_chr4.1.ebwt
+      size: 4580786
+    - class: File
+      location: dm3_chr4.3.ebwt
+      size: 26
+    - class: File
+      location: dm3_chr4.2.ebwt
+      size: 42248
+    - class: File
       location: dm3_chr4.rev.2.ebwt
       size: 42248
+    - class: File
+      location: dm3_chr4.4.ebwt
+      size: 337940
 
 # ========================================================
 # bzip2-compress
@@ -897,13 +897,10 @@
       listing:
       - class: File
         location: upstream.model
-        size: 3014
       - class: File
         location: upstream.theta
-        size: 3013
       - class: File
         location: upstream.cnt
-        size: 81
 
 - job: ./rsem-calculate-expression-2.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -942,13 +939,10 @@
       listing:
       - class: File
         location: upstream.model
-        size: 44461
       - class: File
         location: upstream.theta
-        size: 2352
       - class: File
         location: upstream.cnt
-        size: 75
 
 - job: ./rsem-calculate-expression-3.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -987,13 +981,10 @@
       listing:
       - class: File
         location: upstream.model
-        size: 44461
       - class: File
         location: upstream.theta
-        size: 2354
       - class: File
         location: upstream.cnt
-        size: 75
 
 - job: ./rsem-calculate-expression-4.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -1032,13 +1023,10 @@
       listing:
       - class: File
         location: output.theta
-        size: 2346
       - class: File
         location: output.cnt
-        size: 75
       - class: File
         location: output.model
-        size: 44461
 
 # ========================================================
 # samtools-index
@@ -1497,6 +1485,9 @@
       location: res_Unmapped.out.mate1
       size: 3445
     unmapped_mate_2_file:
+      class: File
+      location: res_Unmapped.out.mate2
+      size: 3445
     log_sj:
       class: File
       location: res_SJ.out.tab
