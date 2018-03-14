@@ -207,7 +207,7 @@
     multimapped_file: null
     sam_file: null
     refout_file:
-      class: File
+    - class: File
       location: ref00000.map
       size: 13128
     log_file:
@@ -229,7 +229,7 @@
     multimapped_file: null
     sam_file: null
     refout_file:
-      class: File
+    - class: File
       location: ref00000.map
       size: 13128
     log_file:
@@ -251,7 +251,7 @@
     multimapped_file: null
     sam_file: null
     refout_file:
-      class: File
+    - class: File
       location: ref00000.map
       size: 13128
     log_file:
@@ -273,7 +273,7 @@
     multimapped_file: null
     sam_file: null
     refout_file:
-      class: File
+    - class: File
       location: ref00000.map
       size: 5411
     log_file:
@@ -384,7 +384,7 @@
       location: dm3_chr4.rev.1.ebwt
       size: 4580786
     - class: File
-      location: dm3_chr4.rev.1.ebwt
+      location: dm3_chr4.rev.2.ebwt
       size: 42248
 
 # ========================================================
@@ -449,7 +449,6 @@
     zipped_file:
       class: File
       location: upstream_fastqc.zip
-      size: 306136
 
 - job: ./fastqc-2.json
   tool: ../tools/fastqc.cwl
@@ -461,7 +460,6 @@
     zipped_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_fastqc.zip
-      size: 296317
 
 - job: ./fastqc-3.json
   tool: ../tools/fastqc.cwl
@@ -473,19 +471,18 @@
     zipped_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_fastqc.zip
-      size: 296317
 
 # ========================================================
 # fastqc-results-trigger
 # ========================================================
 
 - job: ./fastqc-results-trigger-1.json
-  tool: ../expressiontools/fastqc.cwlfastqc-results-trigger.cwl
+  tool: ../expressiontools/fastqc-results-trigger.cwl
   output:
     trigger: false
 
 - job: ./fastqc-results-trigger-2.json
-  tool: ../expressiontools/fastqc.cwlfastqc-results-trigger.cwl
+  tool: ../expressiontools/fastqc-results-trigger.cwl
   output:
     trigger: true
 
@@ -518,7 +515,7 @@
   output:
     folder:
       class: Directory
-      location: ./
+      basename: ""
       listing:
       - class: File
         location: chr4_100_mapped_reads.Aligned.out.bam
@@ -532,7 +529,7 @@
   output:
     folder:
       class: Directory
-      location: ./
+      basename: ""
       listing:
       - class: File
         location: chr4_100_mapped_reads.Aligned.out.bam
@@ -701,7 +698,6 @@
     peak_xls_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs_peaks.xls
-      size: 1919
     macs2_fragments_expected: 10080
     macs2_islands: 8
     narrow_peak_file:
@@ -719,7 +715,6 @@
     macs_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs.log
-      size: 2275
     moder_r_file: null
 
 - job: ./macs2-callpeak-biowardrobe-only-2.json
@@ -733,7 +728,6 @@
     peak_xls_file:
       class: File
       location: results_peaks.xls
-      size: 1601
     macs2_fragments_expected: 10080
     macs2_islands: 8
     narrow_peak_file:
@@ -751,7 +745,6 @@
     macs_log:
       class: File
       location: results.log
-      size: 2112
     moder_r_file: null
 
 - job: ./macs2-callpeak-biowardrobe-only-3.json
@@ -765,7 +758,6 @@
     peak_xls_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs_peaks.xls
-      size: 1911
     macs2_fragments_expected: 10080
     macs2_islands: 8
     narrow_peak_file:
@@ -783,7 +775,6 @@
     macs_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs.log
-      size: 2267
     moder_r_file: null
 
 # ========================================================
@@ -879,28 +870,22 @@
     genome_bam_file:
       class: File
       location: upstream.genome.bam
-      size: 5456
     alleles_results_file: null
     transcript_sorted_bam_bai_pair:
       class: File
       location: upstream.transcript.sorted.bam
-      size: 12242
       secondaryFiles:
       - class: File
         location: upstream.transcript.sorted.bam.bai
-        size: 11496
     genome_sorted_bam_bai_pair:
       class: File
       location: upstream.genome.sorted.bam
-      size: 12242
       secondaryFiles:
       - class: File
         location: upstream.genome.sorted.bam.bai
-        size: 1312
     transcript_bam_file:
       class: File
       location: upstream.transcript.bam
-      size: 12403
     align_time_file: null
     gene_results_file:
       class: File
@@ -930,28 +915,22 @@
     genome_bam_file:
       class: File
       location: upstream.genome.bam
-      size: 11361
     alleles_results_file: null
     transcript_sorted_bam_bai_pair:
       class: File
       location: upstream.transcript.sorted.bam
-      size: 17852
       secondaryFiles:
       - class: File
         location: upstream.transcript.sorted.bam.bai
-        size: 7968
     genome_sorted_bam_bai_pair:
       class: File
       location: upstream.genome.sorted.bam
-      size: 11311
       secondaryFiles:
       - class: File
         location: upstream.genome.sorted.bam.bai
-        size: 1056
     transcript_bam_file:
       class: File
       location: upstream.transcript.bam
-      size: 18123
     align_time_file: null
     gene_results_file:
       class: File
@@ -981,28 +960,22 @@
     genome_bam_file:
       class: File
       location: upstream.genome.bam
-      size: 11346
     alleles_results_file: null
     transcript_sorted_bam_bai_pair:
       class: File
       location: upstream.transcript.sorted.bam
-      size: 17863
       secondaryFiles:
       - class: File
         location: upstream.transcript.sorted.bam.bai
-        size: 7968
     genome_sorted_bam_bai_pair:
       class: File
       location: upstream.genome.sorted.bam
-      size: 11324
       secondaryFiles:
       - class: File
         location: upstream.genome.sorted.bam.bai
-        size: 1056
     transcript_bam_file:
       class: File
       location: upstream.transcript.bam
-      size: 18085
     align_time_file: null
     gene_results_file:
       class: File
@@ -1032,28 +1005,22 @@
     genome_bam_file:
       class: File
       location: output.genome.bam
-      size: 11371
     alleles_results_file: null
     transcript_sorted_bam_bai_pair:
       class: File
       location: output.transcript.sorted.bam
-      size: 17888
       secondaryFiles:
       - class: File
         location: output.transcript.sorted.bam.bai
-        size: 7968
     genome_sorted_bam_bai_pair:
       class: File
       location: output.genome.sorted.bam
-      size: 11334
       secondaryFiles:
       - class: File
         location: output.genome.sorted.bam.bai
-        size: 1056
     transcript_bam_file:
       class: File
       location: output.transcript.bam
-      size: 18138
     align_time_file: null
     gene_results_file:
       class: File
@@ -1195,7 +1162,6 @@
     rmdup_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.rmdup
-      size: 100
 
 - job: ./samtools-rmdup-5.json
   tool: ../tools/samtools-rmdup.cwl
@@ -1211,7 +1177,6 @@
     rmdup_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.rmdup
-      size: 100
 
 - job: ./samtools-rmdup-6.json
   tool: ../tools/samtools-rmdup.cwl
@@ -1224,7 +1189,6 @@
     rmdup_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.rmdup
-      size: 100
 
 - job: ./samtools-rmdup-7.json
   tool: ../tools/samtools-rmdup.cwl
@@ -1240,7 +1204,6 @@
     rmdup_log:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.rmdup
-      size: 100
 
 - job: ./samtools-rmdup-8.json
   tool: ../tools/samtools-rmdup.cwl
@@ -1253,7 +1216,6 @@
     rmdup_log:
       class: File
       location: res.rmdup
-      size: 94
 
 # ========================================================
 # samtools-sort
@@ -1430,7 +1392,6 @@
     aligned_file:
       class: File
       location: upstream.Aligned.out.bam
-      size: 5076
     unmapped_mate_2_file: null
     unmapped_mate_1_file:
       class: File
@@ -1447,11 +1408,9 @@
     log_final:
       class: File
       location: upstream.Log.final.out
-      size: 1810
     log_out:
       class: File
       location: upstream.Log.out
-      size: 16611
     log_std: null
     uniquely_mapped_reads_number: 100
 
@@ -1461,7 +1420,6 @@
     aligned_file:
       class: File
       location: res_Aligned.out.bam
-      size: 5061
     unmapped_mate_2_file: null
     unmapped_mate_1_file: null
     log_sj:
@@ -1475,11 +1433,9 @@
     log_final:
       class: File
       location: res_Log.final.out
-      size: 1810
     log_out:
       class: File
       location: res_Log.out
-      size: 16365
     log_std: null
     uniquely_mapped_reads_number: 100
 
@@ -1489,7 +1445,6 @@
     aligned_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.bam
-      size: 11668
     unmapped_mate_2_file: null
     unmapped_mate_1_file: null
     log_sj:
@@ -1503,11 +1458,9 @@
     log_final:
       class: File
       location: chr4_100_mapped_reads.Log.final.out
-      size: 1810
     log_out:
       class: File
       location: chr4_100_mapped_reads.Log.out
-      size: 17419
     log_std: null
     uniquely_mapped_reads_number: 94
 
@@ -1517,7 +1470,6 @@
     aligned_file:
       class: File
       location: res_Aligned.out.bam
-      size: 12264
     unmapped_mate_2_file: null
     unmapped_mate_1_file: null
     log_sj:
@@ -1531,11 +1483,9 @@
     log_final:
       class: File
       location: res_Log.final.out
-      size: 1809
     log_out:
       class: File
       location: res_Log.out
-      size: 18033
     log_std: null
     uniquely_mapped_reads_number: 94
 
@@ -1545,7 +1495,6 @@
     aligned_file:
       class: File
       location: res_Aligned.out.bam
-      size: 12253
     unmapped_mate_1_file:
       class: File
       location: res_Unmapped.out.mate1
@@ -1562,11 +1511,9 @@
     log_final:
       class: File
       location: res_Log.final.out
-      size: 1809
     log_out:
       class: File
       location: res_Log.out
-      size: 17040
     log_std: null
     uniquely_mapped_reads_number: 94
 
@@ -1580,7 +1527,6 @@
     report_file:
       class: File
       location: upstream.fastq.gz_trimming_report.txt
-      size: 1852
     trimmed_file_pair:
       class: File
       location: downstream_val_2.fq
@@ -1596,7 +1542,6 @@
     report_file_pair:
       class: File
       location: downstream.fastq.gz_trimming_report.txt
-      size: 2044
     unpaired_file_2:
       class: File
       location: downstream_unpaired_2.fq
@@ -1608,7 +1553,6 @@
     report_file:
       class: File
       location: upstream.fastq.gz_trimming_report.txt
-      size: 1888
     trimmed_file_pair:
       class: File
       location: downstream_val_2.fq.gz
@@ -1624,7 +1568,6 @@
     report_file_pair:
       class: File
       location: downstream.fastq.gz_trimming_report.txt
-      size: 2080
     unpaired_file_2:
       class: File
       location: downstream_unpaired_2.fq.gz
@@ -1636,7 +1579,6 @@
     report_file:
       class: File
       location: upstream.fastq.gz_trimming_report.txt
-      size: 1870
     trimmed_file_pair: null
     trimmed_file:
       class: File
@@ -1652,7 +1594,6 @@
     report_file:
       class: File
       location: upstream.fastq.gz_trimming_report.txt
-      size: 1870
     trimmed_file_pair: null
     trimmed_file:
       class: File
@@ -1668,7 +1609,6 @@
     report_file:
       class: File
       location: upstream.fastq.gz_trimming_report.txt
-      size: 1870
     trimmed_file_pair: null
     trimmed_file:
       class: File
