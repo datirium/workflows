@@ -1,0 +1,4 @@
+class: s:SoftwareSourceCode
+s:name: "makegff"
+s:about: |
+  makegff R script
