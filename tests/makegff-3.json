@@ -1,0 +1,5 @@
+{
+    "islands_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/iaintersect/chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.tsv"},
+    "islands_control_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/iaintersect/custom_control_macs_peaks_iaintersect.tsv"},
+    "output_filename": "custom.gff"
+}

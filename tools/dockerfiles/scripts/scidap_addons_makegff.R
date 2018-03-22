@@ -1,0 +1,26 @@
+#!/usr/bin/env Rscript
+library(GenomicRanges)
+
+args <- commandArgs(trailingOnly = TRUE)
+
+BASE_FILENAME = as.character(args[1])
+GFF_FILENAME = as.character(args[2])
+CONTROL_FILENAME = as.character(args[3])
+
+base_islands <- read.table(BASE_FILENAME, sep="\t", header=TRUE)
+base_islands = base_islands[base_islands[ ,"chrom"] != "chrM", ]
+
+if(!is.na(CONTROL_FILENAME)){
+    control_islands <- read.table(CONTROL_FILENAME, sep="\t", header=TRUE)
+    control_islands = control_islands[control_islands[ ,"chrom"] != "chrM", ]
+
+    extended = 100000
+    control_islands.granges = GRanges(seqnames=control_islands[, "chrom"], ranges = IRanges(start = control_islands[, "start"] - extended, end = control_islands[, "end"] + extended))
+    control_islands.granges = reduce(control_islands.granges)
+    base_islands.granges = GRanges(seqnames=base_islands[, "chrom"], ranges = IRanges(start = base_islands[, "start"], end= base_islands[, "end"]))
+    mark = as.matrix(findOverlaps(base_islands.granges, control_islands.granges, ignore.strand = T))
+    base_islands = base_islands[-mark[ ,1], ]
+}
+
+gff_islands = cbind.data.frame(base_islands[,"chrom"],apply(base_islands,1,function(x) gsub(" ","",paste(x, collapse="_",sep="")) ),"", base_islands[ ,"start"],base_islands[ ,"end"],"",".","",apply(base_islands,1,function(x) gsub(" ","",paste(x, collapse="_",sep=""))))
+write.table(gff_islands, GFF_FILENAME, quote=FALSE, col.names=FALSE, row.names=FALSE, append=FALSE, sep="\t")

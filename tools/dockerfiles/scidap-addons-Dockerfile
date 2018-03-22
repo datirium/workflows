@@ -1,0 +1,92 @@
+#################################################################
+# Dockerfile
+#
+# Software:         SciDAP Add-ons
+# Software Version: v0.0.1
+# Description:      Add-ons toolkit for BioWardrobe
+# Website:          https://github.com/Barski-lab/workflows
+# Provides:         R, ROSE (RANK ORDERING OF SUPER-ENHANCERS), Bioconductor, Samtools
+# Base Image:       biowardrobe2/scidap:v0.0.3
+# Build Cmd:        docker build --rm -t biowardrobe2/scidap-addons:v0.0.1 -f scidap-addons-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap-addons:v0.0.1
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-addons:v0.0.1 /bin/bash
+#################################################################
+
+### Base Image
+FROM biowardrobe2/scidap:v0.0.3
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+ENV VERSION_R 3.2.3-4
+
+ENV VERSION_ROSE 1a9bb86b546476d0e227640aa2995332a3b650c3
+ENV URL_ROSE "https://bitbucket.org/young_computation/rose.git"
+
+ENV VERSION_BIOCONDUCTOR 3.2
+ENV URL_BIOCONDUCTOR "http://bioconductor.org/packages/${VERSION_BIOCONDUCTOR}/bioc"
+
+ENV VERSION_HTSLIB 1.4
+ENV URL_HTSLIB "https://github.com/samtools/htslib/releases/download/${VERSION_HTSLIB}/htslib-${VERSION_HTSLIB}.tar.bz2"
+
+ENV VERSION_SAMTOOLS 1.4
+ENV URL_SAMTOOLS "https://github.com/samtools/samtools/releases/download/${VERSION_SAMTOOLS}/samtools-${VERSION_SAMTOOLS}.tar.bz2"
+
+COPY ./scripts/scidap_addons_rose.py /usr/local/bin/ROSE_main
+COPY ./scripts/scidap_addons_patch_rose.sh /tmp/scidap_addons_patch_rose.sh
+COPY ./scripts/scidap_addons_makegff.R /usr/local/bin/makegff
+COPY ./scripts/scidap_addons_bioconductor_install.R /tmp/bioconductor_install.R
+
+### Updating the system
+RUN apt-get update && \
+
+### Installing R
+    apt-get -y install r-base="${VERSION_R}" && \
+
+### Installing ROSE
+    cd /opt && \
+    git clone ${URL_ROSE} && \
+    cd rose && \
+    git checkout ${VERSION_ROSE} && \
+    chmod +x /usr/local/bin/ROSE_main && \
+
+### Patching ROSE
+    bash /tmp/scidap_addons_patch_rose.sh && \
+
+### Installing Bioconductor packages
+    Rscript /tmp/bioconductor_install.R "${URL_BIOCONDUCTOR}" && \
+
+### Installing makegff R script
+    chmod +x /usr/local/bin/makegff && \
+
+### Installing samtools
+    wget $URL_HTSLIB && \
+    bzip2 -d htslib-${VERSION_HTSLIB}.tar.bz2 && \
+    tar -xf htslib-${VERSION_HTSLIB}.tar && \
+    cd htslib-${VERSION_HTSLIB} && \
+    ./configure && \
+    make -j 4 && \
+    make install && \
+    cd .. && \
+    rm -rf ./htslib-${VERSION_HTSLIB} && \
+    rm -rf ./htslib-${VERSION_HTSLIB}.tar && \
+
+    wget $URL_SAMTOOLS && \
+    bzip2 -d samtools-${VERSION_SAMTOOLS}.tar.bz2 && \
+    tar -xf samtools-${VERSION_SAMTOOLS}.tar && \
+    cd samtools-${VERSION_SAMTOOLS} && \
+    ./configure && \
+    make -j 4 && \
+    make install && \
+    cd .. && \
+    rm -rf ./samtools-${VERSION_SAMTOOLS} && \
+    rm -rf ./samtools-${VERSION_SAMTOOLS}.tar && \
+
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
