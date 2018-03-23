@@ -1750,7 +1750,7 @@
     gff_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
-      size: 513
+      size: 3659
 
 - job: ./makegff-2.json
   tool: ../tools/makegff.cwl
@@ -1758,7 +1758,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 513
+      size: 3659
 
 - job: ./makegff-3.json
   tool: ../tools/makegff.cwl
@@ -1766,7 +1766,15 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 186
+      size: 1404
+
+- job: ./makegff-4.json
+  tool: ../tools/makegff.cwl
+  output:
+    gff_file:
+      class: File
+      location: custom.gff
+      size: 1863
 
 # ========================================================
 # rose
@@ -1826,6 +1834,55 @@
 # ========================================================
 
 - job: ./super-enhancer-1.json
+  tool: ../workflows/super-enhancer.cwl
+  output:
+    gff_directory:
+      class: Directory
+      basename: "gff"
+      listing:
+      - class: File
+        location: custom.gff
+        size: 513
+      - class: File
+        location: custom_20KB_STITCHED_TSS_DISTAL.gff
+        size: 603
+    mapped_gff_directory:
+      class: Directory
+      basename: "mappedGFF"
+      listing:
+      - class: File
+        location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 479
+      - class: File
+        location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 434
+    super_enhancers_table:
+      class: File
+      location: custom_SuperEnhancers.table.txt
+      size: 353
+    plot_points_pic:
+      class: File
+      location: custom_Plot_points.png
+      size: 23753
+    all_enhancers_table:
+      class: File
+      location: custom_AllEnhancers.table.txt
+      size: 796
+    gateway_enhancers_bed:
+      class: File
+      location: custom_Gateway_Enhancers.bed
+      size: 390
+    gateway_enhancers_bed:
+      class: File
+      location: custom_Gateway_SuperEnhancers.bed
+      size: 43
+    enhancers_with_super_bed:
+      class: File
+      location: custom_Enhancers_withSuper.bed
+      size: 1020
+    stitched_enhancer_region_map: null
+
+- job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
   output:
     gff_directory:
