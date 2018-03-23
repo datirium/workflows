@@ -15,13 +15,13 @@ inputs:
     type: File
     label: "Input TSV file"
     format: "http://edamontology.org/format_3475"
-    doc: "Input tab-delimited file (output from iaintersect.cwl tool)"
+    doc: "Input tab-delimited file (output from iaintersect.cwl or macs2-callpeak-biowardrobe-only.cwl tool)"
 
   islands_control_file:
     type: File?
     label: "Input TSV file (control)"
     format: "http://edamontology.org/format_3475"
-    doc: "Control tab-delimited file (output from iaintersect.cwl tool)"
+    doc: "Control tab-delimited file (output from iaintersect.cwl or macs2-callpeak-biowardrobe-only.cwl tool)"
 
   bam_file:
     type: File
@@ -174,6 +174,7 @@ s:creator:
 
 doc: |
   Workflow
+  Both islands_file and islands_control_file should be produced by the same tool
 
 s:about: |
   Workflow

@@ -1,0 +1,4 @@
+{
+    "islands_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/macs_peaks/chr4_100_mapped_reads.Aligned.out_macs_peaks.xls"},
+    "output_filename": "custom.gff"
+}
