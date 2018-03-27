@@ -74,7 +74,7 @@ outputs:
   stitched_enhancer_region_map:
     type: File?
     outputBinding:
-      glob: "*STITCHED_ENHANCER_REGION_MAP.txt"
+      glob: "*STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt"
 
   all_enhancers_table:
     type: File?

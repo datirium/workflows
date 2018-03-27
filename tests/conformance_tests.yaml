@@ -1827,7 +1827,10 @@
       class: File
       location: custom_Enhancers_withSuper.bed
       size: 1020
-    stitched_enhancer_region_map: null
+    stitched_enhancer_region_map:
+      class: File
+      location: custom_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
+      size: 554
 
 # ========================================================
 # super-enhancer
@@ -1880,7 +1883,10 @@
       class: File
       location: custom_Enhancers_withSuper.bed
       size: 1020
-    stitched_enhancer_region_map: null
+    stitched_enhancer_region_map:
+      class: File
+      location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
+      size: 2127
 
 - job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
@@ -1929,4 +1935,7 @@
       class: File
       location: custom_Enhancers_withSuper.bed
       size: 1020
-    stitched_enhancer_region_map: null
+    stitched_enhancer_region_map:
+      class: File
+      location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
+      size: 1229
