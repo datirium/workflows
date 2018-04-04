@@ -1270,6 +1270,14 @@
       location: res.sam
       size: 10962
 
+- job: ./samtools-sort-9.json
+  tool: ../tools/samtools-sort.cwl
+  output:
+    sorted_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.bam
+      size: 10962
+
 # ========================================================
 # samtools-sort-index
 # ========================================================
@@ -1939,3 +1947,99 @@
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
       size: 1229
+
+# ========================================================
+# mea-filter
+# ========================================================
+
+- job: ./mea-filter-1.json
+  tool: ../tools/mea-filter.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sam
+      size: 35485
+
+- job: ./mea-filter-2.json
+  tool: ../tools/mea-filter.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sam
+      size: 0
+
+# ========================================================
+# ucsc-bigwigtowig
+# ========================================================
+
+- job: ./ucsc-bigwigtowig-1.json
+  tool: ../tools/ucsc-bigwigtowig.cwl
+  output:
+    wig_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.wig
+      size: 3319
+
+- job: ./ucsc-bigwigtowig-2.json
+  tool: ../tools/ucsc-bigwigtowig.cwl
+  output:
+    wig_file:
+      class: File
+      location: custom.wig
+      size: 3319
+
+- job: ./ucsc-bigwigtowig-3.json
+  tool: ../tools/ucsc-bigwigtowig.cwl
+  output:
+    wig_file:
+      class: File
+      location: output.wig
+      size: 1658
+
+- job: ./ucsc-bigwigtowig-3.json
+  tool: ../tools/ucsc-bigwigtowig.cwl
+  output:
+    wig_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.wig
+      size: 0
+
+# ========================================================
+# mea-bedgraphtowig
+# ========================================================
+
+- job: ./mea-bedgraphtowig-1.json
+  tool: ../tools/mea-bedgraphtowig.cwl
+  output:
+    wig_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.wig
+      size: 1586724
+
+- job: ./mea-bedgraphtowig-2.json
+  tool: ../tools/mea-bedgraphtowig.cwl
+  output:
+    wig_file:
+      class: File
+      location: output.wig
+      size: 1586724
+
+# ========================================================
+# mea-alea-project
+# ========================================================
+
+- job: ./mea-alea-project-1.json
+  tool: ../tools/mea-alea-project.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.bedGraph
+      size: 125
+
+- job: ./mea-alea-project-2.json
+  tool: ../tools/mea-alea-project.cwl
+  output:
+    bedgraph_file:
+      class: File
+      location: projected.bedGraph
+      size: 125

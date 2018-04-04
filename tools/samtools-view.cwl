@@ -17,15 +17,14 @@ requirements:
       }
     };
   - var default_output_name = function() {
-        return inputs.input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+ext();
+        return inputs.view_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+ext();
     }
 
 
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.4
-  dockerFile: >
-    $import: ./dockerfiles/samtools-Dockerfile
+
 
 inputs:
 
@@ -231,7 +230,7 @@ inputs:
     doc: |
       only include reads with read group listed in FILE [null]
 
-  input:
+  view_input:
     type: File
     inputBinding:
       position: 30
@@ -246,12 +245,12 @@ inputs:
       RNAME[:STARTPOS[-ENDPOS]] and all position coordinates are 1-based.
 
 outputs:
-  output:
+  view_file:
     type: File
     outputBinding:
       glob: $(default_output_name())
 
-  filtered_out_file:
+  filtered_file:
     type: File?
     outputBinding:
       glob: $(inputs.filtered_out)

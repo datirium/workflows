@@ -1,0 +1,4 @@
+{
+  "bigwig_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bigwig/chr4_100_mapped_reads.Aligned.out.sorted.bigWig"},
+  "output_filename": "custom.wig"
+}

@@ -1,0 +1,4 @@
+{
+  "bedgraph_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bedgraph/chr4_100_mapped_reads.Aligned.out.bedGraph"},
+  "output_filename": "output.wig"
+}
