@@ -140,7 +140,7 @@ steps:
       outFilterMultimapNmax:
         default: 1
       outSAMtype:
-        default: ["SAM", "Unsorted"]
+        default: ["SAM"]
       threads: threads
     out:
       - aligned_file
