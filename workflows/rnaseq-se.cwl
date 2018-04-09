@@ -9,6 +9,10 @@ requirements:
 'sd:metadata':
   - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
 
+'sd:upstream':
+  star_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+
 inputs:
 
 # General inputs
@@ -22,20 +26,20 @@ inputs:
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/indices_folder"
     doc: "Path to STAR generated indices"
 
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/indices_folder"
     doc: "Path to Bowtie generated indices"
 
   chrom_length_file:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/chrom_length"
     doc: "Chromosome length file"
 
   annotation_file:
@@ -44,7 +48,7 @@ inputs:
     format:
       - "http://edamontology.org/format_2306"
       - "http://edamontology.org/format_3475"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/annotation_file"
     doc: "GTF or TAB-separated annotation file"
 
 # Advanced inputs

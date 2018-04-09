@@ -8,7 +8,12 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
+- "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
+
+'sd:upstream':
+  star_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+  star_index_mitochondrial: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
 
 inputs:
 
@@ -23,26 +28,26 @@ inputs:
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:parent': "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/indices_folder"
     doc: "Path to STAR generated indices"
 
   star_indices_folder_mitochondrial:
     type: Directory
     label: "STAR indices mitochondrial folder"
-    'sd:parent': "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index_mitochondrial/indices_folder"
     doc: "Path to STAR generated indices for mitochondrial dna"
 
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    'sd:parent': "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/indices_folder"
     doc: "Path to Bowtie generated indices"
 
   chrom_length_file:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    'sd:parent': "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/chrom_length"
     doc: "Chromosome length file"
 
   annotation_file:
@@ -51,7 +56,7 @@ inputs:
     format:
       - "http://edamontology.org/format_2306"
       - "http://edamontology.org/format_3475"
-    'sd:parent': "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/annotation_file"
     doc: "GTF or TAB-separated annotation file"
 
 # Advanced inputs
@@ -168,12 +173,6 @@ outputs:
     doc: "Calculated rpkm values, grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
-  fastq_file_compressed:
-    type: File
-    label: "Compressed FASTQ"
-    doc: "bz2 compressed FASTQ file"
-    outputSource: bzip/output_file
-
   get_stat_log:
     type: File?
     label: "Bowtie, STAR and GEEP combined log"
@@ -183,10 +182,16 @@ outputs:
 
 steps:
 
+  extract_fastq:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file
+    out: [fastq_file]
+
   star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: fastq_file
+      readFilesIn: extract_fastq/fastq_file
       genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
@@ -241,12 +246,6 @@ steps:
     in:
       input_file: fastq_file
     out: [statistics_file]
-
-  bzip:
-    run: ../tools/bzip2-compress.cwl
-    in:
-      input_file: fastq_file
-    out: [output_file]
 
   samtools_sort_index_mitochondrial:
     run: ../tools/samtools-sort-index.cwl
@@ -386,14 +385,16 @@ s:creator:
     - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq dUTP Mitochondrial BioWardrobe basic analysis with strand specific single-read data file.
+  Runs RNA-Seq dUTP Mitochondrial workflow based on BioWardrobe's basic analysis for strand specific single-read experiment.
 
 s:about: |
-  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **RNA-Seq** basic analysis for a **single-read** experiment.
-  A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
+  Slightly changed original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  **RNA-Seq** basic analysis for **strand specific single-read** experiment.
+  An additional steps were added to map data to mitochondrial chromosome only and then merge the output.
 
-  Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
+  Input experement file in [FASTQ](http://maq.sourceforge.net/fastq.shtml) has to be provided.
+
+  Current workflow should be used only with the single-end stranded RNA-Seq data. It performs the following steps:
   1. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
   2. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
   3. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)

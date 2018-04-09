@@ -11,6 +11,10 @@ requirements:
 'sd:metadata':
   - "https://raw.githubusercontent.com/SciDAP/workflows/master/metadata/chipseq-header.cwl"
 
+'sd:upstream':
+  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+  control_file: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl"
+
 inputs:
 
 # MAIN
@@ -25,26 +29,26 @@ inputs:
 
   indices_folder:
     type: Directory
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/indices_folder"
     label: "BOWTIE indices folder"
     doc: "Path to BOWTIE generated indices folder"
 
   annotation_file:
     type: File
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/annotation_file"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated input annotation file"
 
   genome_size:
     type: string
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/genome_size"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/chrom_length"
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosome length file"
@@ -52,7 +56,7 @@ inputs:
   control_file:
     type: File?
     default: null
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/chipseq-se.cwl"
+    'sd:upstreamSource': "control_file/bambai_pair"
     label: "Control BAM file"
     format: "http://edamontology.org/format_2572"
     doc: "Control BAM file file for MACS2 peak calling"
@@ -447,11 +451,11 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: >
-  Runs ChIP-Seq BioWardrobe basic analysis with single-end data file.
+  Runs ChIP-Seq BioWardrobe basic analysis workflow for a single-end experiment.
 
 s:about: |
-  This is the original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **ChIP-Seq** basic analysis for a **single-read** experiment.
+  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  **ChIP-Seq** basic analysis workflow for a **single-read** experiment.
   A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
 
   The pipeline produces a sorted BAM file alongside with index BAI file, quality

@@ -9,6 +9,10 @@ requirements:
 'sd:metadata':
   - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
 
+'sd:upstream':
+  star_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
+  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+
 inputs:
 
 # General inputs
@@ -22,20 +26,20 @@ inputs:
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/indices_folder"
     doc: "Path to STAR generated indices"
 
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/indices_folder"
     doc: "Path to Bowtie generated indices"
 
   chrom_length_file:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/chrom_length"
     doc: "Chromosome length file"
 
   annotation_file:
@@ -44,7 +48,7 @@ inputs:
     format:
       - "http://edamontology.org/format_2306"
       - "http://edamontology.org/format_3475"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "star_index/annotation_file"
     doc: "GTF or TAB-separated annotation file"
 
 # Advanced inputs
@@ -343,12 +347,12 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq dUTP BioWardrobe basic analysis with strand specific single-end data file.
+  Runs RNA-Seq dUTP BioWardrobe basic analysis workflow for strand specific single-end experiment.
 
 s:about: |
   Note: should be updated
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **RNA-Seq** basic analysis for a **single-end** experiment.
+  **RNA-Seq** basic analysis for **strand specific single-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
 
   Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
