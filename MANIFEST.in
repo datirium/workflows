@@ -1,0 +1,6 @@
+include workflows/*.cwl
+include expressiontools/*.cwl
+include metadata/*.cwl
+include tools/*.cwl
+include tools/metadata/*.yaml
+include tools/metadata/*.yml
