@@ -244,7 +244,7 @@ steps:
   fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: fastq_file
+      input_file: extract_fastq/fastq_file
     out: [statistics_file]
 
   samtools_sort_index_mitochondrial:
@@ -252,7 +252,7 @@ steps:
     in:
       sort_input: star_aligner_mitochondrial/aligned_file
       sort_output_filename:
-        source: fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_mitochondrial.bam')
       threads: threads
     out: [bam_bai_pair]
@@ -262,7 +262,7 @@ steps:
     in:
       sort_input: star_aligner/aligned_file
       sort_output_filename:
-        source: fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_sorted.bam')
       threads: threads
     out: [bam_bai_pair]
@@ -271,7 +271,7 @@ steps:
     run: ../tools/samtools-merge.cwl
     in:
       output_name:
-        source: fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       input: [ samtools_sort_index/bam_bai_pair, samtools_sort_index_mitochondrial/bam_bai_pair ]
     out: [output]
@@ -283,7 +283,7 @@ steps:
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
       bigwig_filename:
-        source: fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: |
           ${
             let root = self.basename.split('.').slice(0,-1).join('.');
@@ -303,7 +303,7 @@ steps:
         source: star_aligner/uniquely_mapped_reads_number
         valueFrom: $(-self)
       bigwig_filename:
-        source: fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: |
           ${
             let root = self.basename.split('.').slice(0,-1).join('.');
@@ -317,7 +317,7 @@ steps:
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
-      upstream_filelist: fastq_file
+      upstream_filelist: extract_fastq/fastq_file
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
