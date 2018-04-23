@@ -8,7 +8,7 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
+  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
 
 'sd:upstream':
   star_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
@@ -335,14 +335,14 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq BioWardrobe basic analysis with pair-end data file.
+  RNA-Seq basic analysis workflow for paired-end experiment.
 
 s:about: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **RNA-Seq** basic analysis for a **pair-end** experiment.
+  **RNA-Seq** basic analysis for a **paired-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
 
-  Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
+  Current workflow should be used only with the paired-end RNA-Seq data. It performs the following steps:
   1. Use STAR to align reads from input FASTQ files according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
   2. Use fastx_quality_stats to analyze input FASTQ files and generate quality statistics files
   3. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)

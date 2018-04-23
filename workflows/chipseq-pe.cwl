@@ -9,7 +9,7 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/SciDAP/workflows/master/metadata/chipseq-header.cwl"
+  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/chipseq-header.cwl"
 
 'sd:upstream':
   bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
@@ -476,7 +476,7 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: >
-  Runs ChIP-Seq BioWardrobe basic analysis workflow for a paired-end experiment.
+  ChIP-Seq basic analysis workflow for a paired-end experiment.
 
 s:about: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
