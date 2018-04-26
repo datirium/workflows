@@ -37,6 +37,11 @@ inputs:
     label: "STAR indices folder for reference genome"
     doc: "Path to STAR generated indices folder for reference genome"
 
+  reference_chrom_length_file:
+    type: File
+    label: "Chromosome length file for reference genome"
+    doc: "Chromosome length file for reference genome"
+
   strain1:
     type: string
     label: "I strain name"
@@ -47,6 +52,16 @@ inputs:
     label: "II strain name"
     doc: "Second strain name"
 
+  strain1_chain_file:
+    type: File
+    label: "I strain chain file"
+    doc: "Chain file to project strain I to reference genome"
+
+  strain2_chain_file:
+    type: File
+    label: "II strain chain file"
+    doc: "Chain file to project strain II to reference genome"
+
   threads:
     type: int?
     default: 2
@@ -55,23 +70,41 @@ inputs:
 
 outputs:
 
-  strain1_sorted_bam:
+  strain1_bambai_pair:
     type: File
-    outputSource: insilico_strain1_samtools_sort/sorted_file
+    outputSource: strain1_project/projected_file
     label: "I strain output BAM"
-    doc: "Coordinate sorted BAM file mapped to the first strain genome"
+    doc: "Coordinate sorted BAM file mapped to the first strain genome, projected to reference genome"
 
-  strain2_sorted_bam:
+  strain2_bambai_pair:
     type: File
-    outputSource: insilico_strain2_samtools_sort/sorted_file
+    outputSource: strain2_project/projected_file
     label: "II strain output BAM"
-    doc: "Coordinate sorted BAM file mapped to the second strain genome"
+    doc: "Coordinate sorted BAM file mapped to the second strain genome, projected to reference genome"
 
-  reference_sorted_bam:
+  reference_bambai_pair:
     type: File
     outputSource: reference_samtools_sort/sorted_file
     label: "Reference output BAM"
     doc: "Coordinate sorted BAM file mapped to reference genome"
+
+  strain1_bigwig:
+    type: File
+    label: "I strain bigWig file"
+    doc: "Generated bigWig file for the first strain, projected to reference genome"
+    outputSource: strain1_bam_to_bigwig/bigwig_file
+
+  strain2_bigwig:
+    type: File
+    label: "II strain bigWig file"
+    doc: "Generated bigWig file for the second strain, projected to reference genome"
+    outputSource: strain2_bam_to_bigwig/bigwig_file
+
+  reference_bigwig:
+    type: File
+    label: "Reference bigWig file"
+    doc: "Generated BigWig file for the reference genome"
+    outputSource: reference_bam_to_bigwig/bigwig_file
 
   insilico_star_final_log:
     type: File
@@ -121,12 +154,6 @@ outputs:
     label: "STAR stdout log for reference genome"
     doc: "STAR Log.std.out for reference genome"
 
-  reference_uniquely_mapped_reads_number:
-    type: int
-    outputSource: reference_star_aligner/uniquely_mapped_reads_number
-    label: "Uniquely mapped reads number"
-    doc: "Uniquely mapped reads number from Log.final.out"
-
 steps:
 
   insilico_star_aligner:
@@ -149,43 +176,81 @@ steps:
       - log_progress
       - log_std
 
-  insilico_strain1_sam_filter:
-    run: ../tools/mea-filter.cwl
+  strain1_sam_filter:
+    run: ../tools/custom-bash.cwl
     in:
       input_file: insilico_star_aligner/aligned_file
+      script:
+        default: 'cat "$0" | grep "$1" | sed "s/$1/chr/g"  > `basename $0`'
       param:
         source: strain1
         valueFrom: $(self+"_")
     out: [filtered_file]
 
-  insilico_strain2_sam_filter:
-    run: ../tools/mea-filter.cwl
+  strain2_sam_filter:
+    run: ../tools/custom-bash.cwl
     in:
       input_file: insilico_star_aligner/aligned_file
+      script:
+        default: 'cat "$0" | grep "$1" | sed "s/$1/chr/g"  > `basename $0`'
       param:
         source: strain2
         valueFrom: $(self+"_")
     out: [filtered_file]
 
-  insilico_strain1_samtools_sort:
-    run: ../tools/samtools-sort.cwl
+  strain1_samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: insilico_strain1_sam_filter/filtered_file
+      sort_input: strain1_sam_filter/filtered_file
       sort_output_filename:
         source: [fastq_files, strain1]
         valueFrom: $(default_output_name(self[0], "_"+self[1], ".bam"))
       threads: threads
-    out: [sorted_file]
+    out: [bam_bai_pair]
 
-  insilico_strain2_samtools_sort:
-    run: ../tools/samtools-sort.cwl
+  strain2_samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: insilico_strain2_sam_filter/filtered_file
+      sort_input: strain2_sam_filter/filtered_file
       sort_output_filename:
         source: [fastq_files, strain2]
         valueFrom: $(default_output_name(self[0], "_"+self[1], ".bam"))
       threads: threads
-    out: [sorted_file]
+    out: [bam_bai_pair]
+
+  strain1_project:
+    run: ../tools/crossmap.cwl
+    in:
+      input_file_type:
+        default: "bam"
+      chain_file: strain1_chain_file
+      input_file: strain1_samtools_sort_index/bam_bai_pair
+    out: [projected_file]
+
+  strain2_project:
+    run: ../tools/crossmap.cwl
+    in:
+      input_file_type:
+        default: "bam"
+      chain_file: strain2_chain_file
+      input_file: strain2_samtools_sort_index/bam_bai_pair
+    out: [projected_file]
+
+  strain1_bam_to_bigwig:
+    run: bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: strain1_project/projected_file
+      chrom_length_file: reference_chrom_length_file
+      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+    out: [bigwig_file]
+
+  strain2_bam_to_bigwig:
+    run: bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: strain2_project/projected_file
+      chrom_length_file: reference_chrom_length_file
+      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+    out: [bigwig_file]
 
   reference_star_aligner:
     run: ../tools/star-alignreads.cwl
@@ -213,6 +278,13 @@ steps:
       threads: threads
     out: [sorted_file]
 
+  reference_bam_to_bigwig:
+    run: bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: reference_samtools_sort/sorted_file
+      chrom_length_file: reference_chrom_length_file
+      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+    out: [bigwig_file]
 
 $namespaces:
   s: http://schema.org/
