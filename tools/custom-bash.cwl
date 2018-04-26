@@ -4,17 +4,6 @@ class: CommandLineTool
 
 requirements:
 - $import: ./metadata/envvar-global.yml
-- class: InlineJavascriptRequirement
-  expressionLib:
-  - var get_output_filename = function() {
-      if (inputs.output_filename == null){
-        let ext = '.wig';
-        let root = inputs.bedgraph_file.basename.split('.').slice(0,-1).join('.');
-        return (root == "")?inputs.bedgraph_file.basename+ext:root+ext;
-      } else {
-        return inputs.output_filename;
-      }
-    };
 
 
 hints:
@@ -27,38 +16,29 @@ inputs:
   script:
     type: string?
     default: |
-      #!/bin/bash
-      awk 'BEGIN {
-          print "track type=wiggle_0"
-      }
-      NF == 4 {
-          print "fixedStep chrom="$1" start="$2+1" step=1 span=1"
-          for(i = 0; i < $3-$2; i++) {
-              print $4
-          }
-      }' "$0"
+      cat "$0" | grep "$1" | sed "s/$1//g"  > `basename $0`
     inputBinding:
       position: 1
 
-  bedgraph_file:
+  input_file:
     type: File
     inputBinding:
       position: 2
 
-  output_filename:
-    type: string?
-    default: null
+  param:
+    type:
+    - string
+    - string[]
+    inputBinding:
+      position: 3
 
 
 outputs:
 
-  wig_file:
+  filtered_file:
     type: File
     outputBinding:
-      glob: $(get_output_filename())
-
-
-stdout: $(get_output_filename())
+      glob: $(inputs.input_file.basename)
 
 
 baseCommand: [bash, '-c']
@@ -70,8 +50,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "mea-bedgraphtowig"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/mea-bedgraphtowig.cwl
+s:name: "custom-bash"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/custom-bash.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -106,11 +86,8 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  AWK script to convert input bedGraph file into Wig with fixedStep format
-
-  If input `output_filename` is not set, call `get_output_filename` function to return default output filename
-  based on `bedgraph_file` basename with `wig` extension.
+  Tool to run custom script set as `script` input with arguments from `param`.
+  Default script runs sed command over the input file and exports results to the file with the same name as input's basename
 
 s:about: |
-  AWK script is taken from
-  https://github.com/julienrichardalbert/MEA/blob/e3de228734bafd957cc2072dd8a6a0e84d554724/src/scripts/createTracks.sh#L92
+  Custom bash script runner
