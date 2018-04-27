@@ -2101,3 +2101,23 @@
       class: File
       location: projected.log
     unmap_file: null
+
+# ========================================================
+# halliftover
+# ========================================================
+
+- job: ./halliftover-1.json
+  tool: ../tools/halliftover.cwl
+  output:
+    projected_bed_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.bed
+      size: 190358
+
+- job: ./halliftover-2.json
+  tool: ../tools/halliftover.cwl
+  output:
+    projected_bed_file:
+      class: File
+      location: output.bedGraph
+      size: 190358
