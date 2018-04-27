@@ -68,6 +68,12 @@ inputs:
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
 
+  insilico_star_output_type:
+    type: string[]
+    default: ["SAM"]
+    label: "Redundant parameter"
+    doc: "Should be places as default for step input after update to latest cwltool"
+
 outputs:
 
   strain1_bambai_pair:
@@ -166,8 +172,7 @@ steps:
         valueFrom: $(default_output_name(inputs.readFilesIn, "_"+self.join("_"), "."))
       outFilterMultimapNmax:
         default: 1
-      outSAMtype:
-        default: ["SAM"]
+      outSAMtype: insilico_star_output_type
       threads: threads
     out:
       - aligned_file
