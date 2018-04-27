@@ -816,7 +816,7 @@ doc: |
     treat_pileup_bdg_file_staged:
     control_lambda_bdg_file_staged:
 
-s:about: >
+s:about: |
   usage: macs2 callpeak [-h] -t TFILE [TFILE ...] [-c [CFILE [CFILE ...]]]
                         [-f {AUTO,BAM,SAM,BED,ELAND,ELANDMULTI,ELANDEXPORT,BOWTIE,BAMPE,BEDPE}]
                         [-g GSIZE] [--keep-dup KEEPDUPLICATES]
