@@ -366,26 +366,25 @@
   output:
     indices:
     - class: File
-      location: dm3_chr4.log
-      size: 0
-    - class: File
-      location: dm3_chr4.rev.1.ebwt
-      size: 4580786
-    - class: File
       location: dm3_chr4.1.ebwt
       size: 4580786
-    - class: File
-      location: dm3_chr4.3.ebwt
-      size: 26
     - class: File
       location: dm3_chr4.2.ebwt
       size: 42248
     - class: File
-      location: dm3_chr4.rev.2.ebwt
-      size: 42248
+      location: dm3_chr4.3.ebwt
+      size: 26
     - class: File
       location: dm3_chr4.4.ebwt
       size: 337940
+    - class: File
+      location: dm3_chr4.log
+    - class: File
+      location: dm3_chr4.rev.1.ebwt
+      size: 4580786
+    - class: File
+      location: dm3_chr4.rev.2.ebwt
+      size: 42248
 
 # ========================================================
 # bzip2-compress
@@ -1827,7 +1826,7 @@
       class: File
       location: custom_Gateway_Enhancers.bed
       size: 390
-    gateway_enhancers_bed:
+    gateway_super_enhancers_bed:
       class: File
       location: custom_Gateway_SuperEnhancers.bed
       size: 43
@@ -1883,7 +1882,7 @@
       class: File
       location: custom_Gateway_Enhancers.bed
       size: 390
-    gateway_enhancers_bed:
+    gateway_super_enhancers_bed:
       class: File
       location: custom_Gateway_SuperEnhancers.bed
       size: 43
@@ -1935,7 +1934,7 @@
       class: File
       location: custom_Gateway_Enhancers.bed
       size: 390
-    gateway_enhancers_bed:
+    gateway_super_enhancers_bed:
       class: File
       location: custom_Gateway_SuperEnhancers.bed
       size: 43
@@ -2004,7 +2003,7 @@
       location: output.wig
       size: 1658
 
-- job: ./ucsc-bigwigtowig-3.json
+- job: ./ucsc-bigwigtowig-4.json
   tool: ../tools/ucsc-bigwigtowig.cwl
   output:
     wig_file:

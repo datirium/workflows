@@ -23,9 +23,11 @@ inputs:
 
   bam_file:
     type: File
-    label: "Input TSV file (control)"
+    label: "Indexed bam+bai files"
     format: "http://edamontology.org/format_3475"
-    doc: "Indexed bamfile to rank super-enhancer"
+    doc: "BAM file to rank super-enhancer + BAI index"
+    secondaryFiles:
+    - .bai
 
   genome_type:
     type: string
