@@ -1846,50 +1846,50 @@
 - job: ./super-enhancer-1.json
   tool: ../workflows/super-enhancer.cwl
   output:
+    super_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
+      size: 793
+    plot_points_pic:
+      class: File
+      location: chr4_100_mapped_reads_Plot_points.png
+      size: 23753
+    all_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_AllEnhancers.table.txt
+      size: 2399
+    gateway_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_Enhancers.bed
+      size: 1963
     gff_directory:
       class: Directory
       basename: "gff"
       listing:
       - class: File
-        location: custom.gff
-        size: 513
+        location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
+        size: 3659
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL.gff
-        size: 603
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
+        size: 3749
+    gateway_super_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
+      size: 453
+    enhancers_with_super_bed:
+      class: File
+      location: chr4_100_mapped_reads_Enhancers_withSuper.bed
+      size: 3063
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 479
+        location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 2007
       - class: File
-        location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 434
-    super_enhancers_table:
-      class: File
-      location: custom_SuperEnhancers.table.txt
-      size: 353
-    plot_points_pic:
-      class: File
-      location: custom_Plot_points.png
-      size: 23753
-    all_enhancers_table:
-      class: File
-      location: custom_AllEnhancers.table.txt
-      size: 796
-    gateway_enhancers_bed:
-      class: File
-      location: custom_Gateway_Enhancers.bed
-      size: 390
-    gateway_super_enhancers_bed:
-      class: File
-      location: custom_Gateway_SuperEnhancers.bed
-      size: 43
-    enhancers_with_super_bed:
-      class: File
-      location: custom_Enhancers_withSuper.bed
-      size: 1020
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 2052
     stitched_enhancer_region_map:
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
@@ -1898,50 +1898,50 @@
 - job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
   output:
+    super_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
+      size: 468
+    plot_points_pic:
+      class: File
+      location: chr4_100_mapped_reads_Plot_points.png
+      size: 23753
+    all_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_AllEnhancers.table.txt
+      size: 1501
+    gateway_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_Enhancers.bed
+      size: 1065
     gff_directory:
       class: Directory
       basename: "gff"
       listing:
       - class: File
-        location: custom.gff
-        size: 513
+        location: chr4_100_mapped_reads.Aligned.out_macs_peaks.gff
+        size: 1863
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL.gff
-        size: 603
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
+        size: 1953
+    gateway_super_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
+      size: 128
+    enhancers_with_super_bed:
+      class: File
+      location: chr4_100_mapped_reads_Enhancers_withSuper.bed
+      size: 1840
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 479
+        location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 1109
       - class: File
-        location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 434
-    super_enhancers_table:
-      class: File
-      location: custom_SuperEnhancers.table.txt
-      size: 353
-    plot_points_pic:
-      class: File
-      location: custom_Plot_points.png
-      size: 23753
-    all_enhancers_table:
-      class: File
-      location: custom_AllEnhancers.table.txt
-      size: 796
-    gateway_enhancers_bed:
-      class: File
-      location: custom_Gateway_Enhancers.bed
-      size: 390
-    gateway_super_enhancers_bed:
-      class: File
-      location: custom_Gateway_SuperEnhancers.bed
-      size: 43
-    enhancers_with_super_bed:
-      class: File
-      location: custom_Enhancers_withSuper.bed
-      size: 1020
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 1154
     stitched_enhancer_region_map:
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
