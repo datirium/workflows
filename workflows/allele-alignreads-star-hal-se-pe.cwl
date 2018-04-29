@@ -230,7 +230,7 @@ steps:
         default: "-bg"
       split:
         default: true
-      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+#      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
     out: [genome_coverage_file]
 
   strain1_sort_bedgraph:
@@ -268,10 +268,28 @@ steps:
         default: ["1,1","2,2n"]
     out: [sorted_file]
 
+  strain1_remove_overlaps:
+    run: ../tools/bedtools-genomecov.cwl
+    in:
+      input_file: strain1_sort_projected_bedgraph/sorted_file
+      chrom_length_file: reference_chrom_length_file
+      depth:
+        default: "-bg"
+      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+    out: [genome_coverage_file]
+
+  strain1_sort_bedgraph_wo_overlaps:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: strain1_remove_overlaps/genome_coverage_file
+      key:
+        default: ["1,1","2,2n"]
+    out: [sorted_file]
+
   strain1_sorted_bedgraph_to_bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      bedgraph_file: strain1_sort_projected_bedgraph/sorted_file
+      bedgraph_file: strain1_sort_bedgraph_wo_overlaps/sorted_file
       chrom_length_file: reference_chrom_length_file
     out: [bigwig_file]
 
@@ -286,7 +304,7 @@ steps:
         default: "-bg"
       split:
         default: true
-      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+#      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
     out: [genome_coverage_file]
 
   strain2_sort_bedgraph:
@@ -324,13 +342,30 @@ steps:
         default: ["1,1","2,2n"]
     out: [sorted_file]
 
+  strain2_remove_overlaps:
+    run: ../tools/bedtools-genomecov.cwl
+    in:
+      input_file: strain2_sort_projected_bedgraph/sorted_file
+      chrom_length_file: reference_chrom_length_file
+      depth:
+        default: "-bg"
+      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+    out: [genome_coverage_file]
+
+  strain2_sort_bedgraph_wo_overlaps:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: strain2_remove_overlaps/genome_coverage_file
+      key:
+        default: ["1,1","2,2n"]
+    out: [sorted_file]
+
   strain2_sorted_bedgraph_to_bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      bedgraph_file: strain2_sort_projected_bedgraph/sorted_file
+      bedgraph_file: strain2_sort_bedgraph_wo_overlaps/sorted_file
       chrom_length_file: reference_chrom_length_file
     out: [bigwig_file]
-
 
 
 
