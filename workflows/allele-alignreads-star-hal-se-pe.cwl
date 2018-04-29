@@ -250,10 +250,20 @@ steps:
       target_genome_name: ref_strain
     out: [projected_bed_file]
 
+  strain1_filter_projected_bedgraph:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: strain1_project_bedgraph/projected_bed_file
+      script:
+        default: 'cat "$0" | grep "$1" > `basename $0`'
+      param:
+        default: "chr"
+    out: [filtered_file]
+
   strain1_sort_projected_bedgraph:
     run: ../tools/linux-sort.cwl
     in:
-      unsorted_file: strain1_project_bedgraph/projected_bed_file
+      unsorted_file: strain1_filter_projected_bedgraph/filtered_file
       key:
         default: ["1,1","2,2n"]
     out: [sorted_file]
@@ -296,10 +306,20 @@ steps:
       target_genome_name: ref_strain
     out: [projected_bed_file]
 
+  strain2_filter_projected_bedgraph:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: strain2_project_bedgraph/projected_bed_file
+      script:
+        default: 'cat "$0" | grep "$1" > `basename $0`'
+      param:
+        default: "chr"
+    out: [filtered_file]
+
   strain2_sort_projected_bedgraph:
     run: ../tools/linux-sort.cwl
     in:
-      unsorted_file: strain2_project_bedgraph/projected_bed_file
+      unsorted_file: strain2_filter_projected_bedgraph/filtered_file
       key:
         default: ["1,1","2,2n"]
     out: [sorted_file]
