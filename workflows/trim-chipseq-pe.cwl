@@ -8,6 +8,13 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
 
+'sd:metadata':
+  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/chipseq-header.cwl"
+
+'sd:upstream':
+  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+  control_file: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl"
+
 inputs:
 
 # MAIN
@@ -22,37 +29,37 @@ inputs:
 
   indices_folder:
     type: Directory
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
-    label: "BOWTIE indices folder"
-    doc: "Path to BOWTIE generated indices folder"
+    'sd:upstreamSource': "bowtie_index/indices_folder"
+    label: "Indexed genome folder (bowtie)"
+    doc: "Path to indexed genome folder by **bowtie**"
 
   annotation_file:
     type: File
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/annotation_file"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated input annotation file"
+    doc: "Tab-separated annotation file"
 
   genome_size:
     type: string
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "bowtie_index/genome_size"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/bowtie-index.cwl"
-    label: "Chromosome length file"
+    'sd:upstreamSource': "bowtie_index/chrom_length"
+    label: "Chromosomes length file"
     format: "http://edamontology.org/format_2330"
-    doc: "Chromosome length file"
+    doc: "Chromosomes length file"
 
   control_file:
     type: File?
     default: null
-    'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/chipseq-se.cwl"
-    label: "Control BAM file"
+    'sd:upstreamSource': "control_file/bambai_pair"
+    label: "Use experiment as a control"
     format: "http://edamontology.org/format_2572"
-    doc: "Control BAM file file for MACS2 peak calling"
+    doc: "Use experiment as a control for MACS2 peak calling"
 
   broad_peak:
     type: boolean
