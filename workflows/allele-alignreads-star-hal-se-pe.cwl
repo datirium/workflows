@@ -411,7 +411,7 @@ steps:
         source: [fastq_files, reference_star_aligner/uniquely_mapped_reads_number]
         valueFrom: |
           ${
-            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1]
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
           }
     out: [bigwig_file]
 
