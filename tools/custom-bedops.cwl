@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/bedops:v2.4.3
+  dockerPull: biowardrobe2/bedops:v2.4.34
 
 
 inputs:
