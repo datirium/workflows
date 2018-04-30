@@ -266,34 +266,25 @@ steps:
     out: [filtered_file]
 
   strain1_sort_projected_bedgraph:
-    run: ../tools/linux-sort.cwl
+    run: ../tools/custom-bedops.cwl
     in:
-      unsorted_file: strain1_filter_projected_bedgraph/filtered_file
-      key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
+      input_file: strain1_filter_projected_bedgraph/filtered_file
+      script:
+        default: 'sort-bed "$0" > `basename $0`'
+    out: [filtered_file]
 
   strain1_remove_overlaps:
-    run: ../tools/bedtools-genomecov.cwl
+    run: ../tools/custom-bedops.cwl
     in:
-      input_file: strain1_sort_projected_bedgraph/sorted_file
-      chrom_length_file: reference_chrom_length_file
-      depth:
-        default: "-bg"
-    out: [genome_coverage_file]
-
-  strain1_sort_bedgraph_wo_overlaps:
-    run: ../tools/linux-sort.cwl
-    in:
-      unsorted_file: strain1_remove_overlaps/genome_coverage_file
-      key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
+      input_file: strain1_sort_projected_bedgraph/filtered_file
+      script:
+        default: bedops --partition "$0" | bedmap --echo --echo-map-id --delim "\t" - "$0" | awk '{n=split($4,reads,";"); sum=0; for(i=1;i<=n;i++) sum+=reads[i]; $4=sum; print $0 }' > `basename $0`
+    out: [filtered_file]
 
   strain1_sorted_bedgraph_to_bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      bedgraph_file: strain1_sort_bedgraph_wo_overlaps/sorted_file
+      bedgraph_file: strain1_remove_overlaps/filtered_file
       chrom_length_file: reference_chrom_length_file
     out: [bigwig_file]
 
@@ -343,34 +334,25 @@ steps:
     out: [filtered_file]
 
   strain2_sort_projected_bedgraph:
-    run: ../tools/linux-sort.cwl
+    run: ../tools/custom-bedops.cwl
     in:
-      unsorted_file: strain2_filter_projected_bedgraph/filtered_file
-      key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
+      input_file: strain2_filter_projected_bedgraph/filtered_file
+      script:
+        default: 'sort-bed "$0" > `basename $0`'
+    out: [filtered_file]
 
   strain2_remove_overlaps:
-    run: ../tools/bedtools-genomecov.cwl
+    run: ../tools/custom-bedops.cwl
     in:
-      input_file: strain2_sort_projected_bedgraph/sorted_file
-      chrom_length_file: reference_chrom_length_file
-      depth:
-        default: "-bg"
-    out: [genome_coverage_file]
-
-  strain2_sort_bedgraph_wo_overlaps:
-    run: ../tools/linux-sort.cwl
-    in:
-      unsorted_file: strain2_remove_overlaps/genome_coverage_file
-      key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
+      input_file: strain2_sort_projected_bedgraph/filtered_file
+      script:
+        default: bedops --partition "$0" | bedmap --echo --echo-map-id --delim "\t" - "$0" | awk '{n=split($4,reads,";"); sum=0; for(i=1;i<=n;i++) sum+=reads[i]; $4=sum; print $0 }' > `basename $0`
+    out: [filtered_file]
 
   strain2_sorted_bedgraph_to_bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      bedgraph_file: strain2_sort_bedgraph_wo_overlaps/sorted_file
+      bedgraph_file: strain2_remove_overlaps/filtered_file
       chrom_length_file: reference_chrom_length_file
     out: [bigwig_file]
 
