@@ -13,7 +13,7 @@ requirements:
 
 'sd:upstream':
   bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
-  control_file: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl"
+  control_file: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl"
 
 inputs:
 
@@ -30,15 +30,15 @@ inputs:
   indices_folder:
     type: Directory
     'sd:upstreamSource': "bowtie_index/indices_folder"
-    label: "BOWTIE indices folder"
-    doc: "Path to BOWTIE generated indices folder"
+    label: "Indexed genome folder (bowtie)"
+    doc: "Path to indexed genome folder by **bowtie**"
 
   annotation_file:
     type: File
     'sd:upstreamSource': "bowtie_index/annotation_file"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated input annotation file"
+    doc: "Tab-separated annotation file"
 
   genome_size:
     type: string
@@ -49,17 +49,17 @@ inputs:
   chrom_length:
     type: File
     'sd:upstreamSource': "bowtie_index/chrom_length"
-    label: "Chromosome length file"
+    label: "Chromosomes length file"
     format: "http://edamontology.org/format_2330"
-    doc: "Chromosome length file"
+    doc: "Chromosomes length file"
 
   control_file:
     type: File?
     default: null
     'sd:upstreamSource': "control_file/bambai_pair"
-    label: "Control BAM file"
+    label: "Use experiment as a control"
     format: "http://edamontology.org/format_2572"
-    doc: "Control BAM file file for MACS2 peak calling"
+    doc: "Use experiment as a control for MACS2 peak calling"
 
   broad_peak:
     type: boolean
