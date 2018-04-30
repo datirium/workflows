@@ -1975,6 +1975,14 @@
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 36064
 
+- job: ./custom-bash-4.json
+  tool: ../tools/custom-bash.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sam
+      size: 36089
+
 # ========================================================
 # ucsc-bigwigtowig
 # ========================================================

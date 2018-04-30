@@ -27,7 +27,7 @@ inputs:
 
   param:
     type:
-    - string
+    - string?
     - string[]
     inputBinding:
       position: 3
