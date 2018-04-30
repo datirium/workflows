@@ -221,6 +221,11 @@ steps:
 
 
 
+  strain1_bamtools_stats:
+    run: ../tools/bamtools-stats.cwl
+    in:
+      bam_file: strain1_samtools_sort_index/bam_bai_pair
+    out: [mapped_reads_number]
 
   strain1_bam_to_bedgraph:
     run: ../tools/bedtools-genomecov.cwl
@@ -230,7 +235,7 @@ steps:
         default: "-bg"
       split:
         default: true
-#      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+      mapped_reads_number: strain1_bamtools_stats/mapped_reads_number
     out: [genome_coverage_file]
 
   strain1_sort_bedgraph:
@@ -275,7 +280,6 @@ steps:
       chrom_length_file: reference_chrom_length_file
       depth:
         default: "-bg"
-      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
     out: [genome_coverage_file]
 
   strain1_sort_bedgraph_wo_overlaps:
@@ -294,7 +298,11 @@ steps:
     out: [bigwig_file]
 
 
-
+  strain2_bamtools_stats:
+    run: ../tools/bamtools-stats.cwl
+    in:
+      bam_file: strain2_samtools_sort_index/bam_bai_pair
+    out: [mapped_reads_number]
 
   strain2_bam_to_bedgraph:
     run: ../tools/bedtools-genomecov.cwl
@@ -304,7 +312,7 @@ steps:
         default: "-bg"
       split:
         default: true
-#      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+      mapped_reads_number: strain2_bamtools_stats/mapped_reads_number
     out: [genome_coverage_file]
 
   strain2_sort_bedgraph:
@@ -349,7 +357,6 @@ steps:
       chrom_length_file: reference_chrom_length_file
       depth:
         default: "-bg"
-      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
     out: [genome_coverage_file]
 
   strain2_sort_bedgraph_wo_overlaps:
@@ -400,7 +407,12 @@ steps:
     in:
       bam_file: reference_samtools_sort/sorted_file
       chrom_length_file: reference_chrom_length_file
-      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+      mapped_reads_number:
+        source: [fastq_files, reference_star_aligner/uniquely_mapped_reads_number]
+        valueFrom: |
+          ${
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1]
+          }
     out: [bigwig_file]
 
 $namespaces:
