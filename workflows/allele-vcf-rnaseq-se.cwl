@@ -6,22 +6,15 @@ requirements:
 - class: SubworkflowFeatureRequirement
 - class: StepInputExpressionRequirement
 - class: InlineJavascriptRequirement
-- class: MultipleInputFeatureRequirement
 
 
 inputs:
 
-  fastq_file_upstream:
+  fastq_file:
     type: File
-    label: "FASTQ upstream input file"
+    label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
-
-  fastq_file_downstream:
-    type: File
-    label: "FASTQ downstream input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format"
 
   star_indices_folder:
     type: Directory
@@ -75,118 +68,111 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "I strain bigWig file"
     doc: "Generated bigWig file for the first strain"
-    outputSource: allele_alignreads_star_vcf_se_pe/strain1_bigwig
+    outputSource: allele_vcf_alignreads_se_pe/strain1_bigwig
 
   strain2_bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "II strain bigWig file"
     doc: "Generated bigWig file for the second strain"
-    outputSource: allele_alignreads_star_vcf_se_pe/strain2_bigwig
+    outputSource: allele_vcf_alignreads_se_pe/strain2_bigwig
 
   reference_bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "Reference bigWig file"
     doc: "Generated BigWig file for the reference genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/reference_bigwig
+    outputSource: allele_vcf_alignreads_se_pe/reference_bigwig
 
   strain1_bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "Strain I coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file for strain I"
-    outputSource: allele_alignreads_star_vcf_se_pe/strain1_bambai_pair
+    outputSource: allele_vcf_alignreads_se_pe/strain1_bambai_pair
 
   strain2_bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "Strain II coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file for strain II"
-    outputSource: allele_alignreads_star_vcf_se_pe/strain2_bambai_pair
+    outputSource: allele_vcf_alignreads_se_pe/strain2_bambai_pair
 
   reference_bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "Reference coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file for reference genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/reference_bambai_pair
+    outputSource: allele_vcf_alignreads_se_pe/reference_bambai_pair
 
   insilico_star_final_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "STAR final log for insilico genome"
     doc: "STAR Log.final.out for insilico genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_final_log
+    outputSource: allele_vcf_alignreads_se_pe/insilico_star_final_log
 
   insilico_star_out_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR log out for insilico genome"
     doc: "STAR Log.out for insilico genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_out_log
+    outputSource: allele_vcf_alignreads_se_pe/insilico_star_out_log
 
   insilico_star_progress_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR progress log for insilico genome"
     doc: "STAR Log.progress.out for insilico genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_progress_log
+    outputSource: allele_vcf_alignreads_se_pe/insilico_star_progress_log
 
   insilico_star_stdout_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR stdout log for insilico genome"
     doc: "STAR Log.std.out for insilico genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_stdout_log
+    outputSource: allele_vcf_alignreads_se_pe/insilico_star_stdout_log
 
   reference_star_final_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "STAR final log for reference genome"
     doc: "STAR Log.final.out for reference genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_final_log
+    outputSource: allele_vcf_alignreads_se_pe/reference_star_final_log
 
   reference_star_out_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR log out for reference genome"
     doc: "STAR Log.out for reference genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_out_log
+    outputSource: allele_vcf_alignreads_se_pe/reference_star_out_log
 
   reference_star_progress_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR progress log for reference genome"
     doc: "STAR Log.progress.out for reference genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_progress_log
+    outputSource: allele_vcf_alignreads_se_pe/reference_star_progress_log
 
   reference_star_stdout_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR stdout log for reference genome"
     doc: "STAR Log.std.out for reference genome"
-    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_stdout_log
-
+    outputSource: allele_vcf_alignreads_se_pe/reference_star_stdout_log
 
 steps:
 
-  extract_fastq_upstream:
+  extract_fastq:
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: fastq_file_upstream
+      compressed_file: fastq_file
     out: [fastq_file]
 
-  extract_fastq_downstream:
-    run: ../tools/extract-fastq.cwl
+  allele_vcf_alignreads_se_pe:
+    run: ./allele-vcf-alignreads-se-pe.cwl
     in:
-      compressed_file: fastq_file_downstream
-    out: [fastq_file]
-
-  allele_alignreads_star_vcf_se_pe:
-    run: ./allele-alignreads-star-vcf-se-pe.cwl
-    in:
-      fastq_files: [extract_fastq_upstream/fastq_file, extract_fastq_downstream/fastq_file]
+      fastq_files: extract_fastq/fastq_file
       insilico_star_indices_folder: insilico_star_indices_folder
       reference_star_indices_folder: star_indices_folder
       reference_chrom_length_file: chrom_length_file
@@ -210,5 +196,3 @@ steps:
     - reference_star_out_log
     - reference_star_progress_log
     - reference_star_stdout_log
-
-
