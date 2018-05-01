@@ -176,6 +176,7 @@ steps:
       - log_out
       - log_progress
       - log_std
+      - uniquely_mapped_reads_number
 
   strain1_sam_filter:
     run: ../tools/custom-bash.cwl
@@ -237,32 +238,30 @@ steps:
       input_file: strain2_samtools_sort_index/bam_bai_pair
     out: [projected_file]
 
-  strain1_bamtools_stats:
-    run: ../tools/bamtools-stats.cwl
-    in:
-      bam_file: strain1_project/projected_file
-    out: [mapped_reads_number]
-
   strain1_bam_to_bigwig:
     run: bam-bedgraph-bigwig.cwl
     in:
       bam_file: strain1_project/projected_file
       chrom_length_file: reference_chrom_length_file
-      mapped_reads_number: strain1_bamtools_stats/mapped_reads_number
+      mapped_reads_number:
+        source: [fastq_files, insilico_star_aligner/uniquely_mapped_reads_number]
+        valueFrom: |
+          ${
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
+          }
     out: [bigwig_file]
-
-  strain2_bamtools_stats:
-    run: ../tools/bamtools-stats.cwl
-    in:
-      bam_file: strain2_project/projected_file
-    out: [mapped_reads_number]
 
   strain2_bam_to_bigwig:
     run: bam-bedgraph-bigwig.cwl
     in:
       bam_file: strain2_project/projected_file
       chrom_length_file: reference_chrom_length_file
-      mapped_reads_number: strain2_bamtools_stats/mapped_reads_number
+      mapped_reads_number:
+        source: [fastq_files, insilico_star_aligner/uniquely_mapped_reads_number]
+        valueFrom: |
+          ${
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
+          }
     out: [bigwig_file]
 
   reference_star_aligner:
@@ -310,8 +309,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "allele-alignreads-star-vcf-se-pe"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/allele-alignreads-star-vcf-se-pe.cwl
+s:name: "allele-vcf-alignreads-se-pe"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/allele-vcf-alignreads-se-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
