@@ -1954,7 +1954,7 @@
 - job: ./custom-bash-1.json
   tool: ../tools/custom-bash.cwl
   output:
-    filtered_file:
+    output_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 35485
@@ -1962,7 +1962,7 @@
 - job: ./custom-bash-2.json
   tool: ../tools/custom-bash.cwl
   output:
-    filtered_file:
+    output_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 35485
@@ -1970,7 +1970,7 @@
 - job: ./custom-bash-3.json
   tool: ../tools/custom-bash.cwl
   output:
-    filtered_file:
+    output_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 36064
@@ -1978,7 +1978,7 @@
 - job: ./custom-bash-4.json
   tool: ../tools/custom-bash.cwl
   output:
-    filtered_file:
+    output_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 36089

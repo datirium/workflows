@@ -186,7 +186,7 @@ steps:
       param:
         source: strain1
         valueFrom: $(self+"_")
-    out: [filtered_file]
+    out: [output_file]
 
   strain2_sam_filter:
     run: ../tools/custom-bash.cwl
@@ -197,12 +197,12 @@ steps:
       param:
         source: strain2
         valueFrom: $(self+"_")
-    out: [filtered_file]
+    out: [output_file]
 
   strain1_samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: strain1_sam_filter/filtered_file
+      sort_input: strain1_sam_filter/output_file
       sort_output_filename:
         source: [fastq_files, strain1]
         valueFrom: $(default_output_name(self[0], "_"+self[1], ".bam"))
@@ -212,7 +212,7 @@ steps:
   strain2_samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: strain2_sam_filter/filtered_file
+      sort_input: strain2_sam_filter/output_file
       sort_output_filename:
         source: [fastq_files, strain2]
         valueFrom: $(default_output_name(self[0], "_"+self[1], ".bam"))
