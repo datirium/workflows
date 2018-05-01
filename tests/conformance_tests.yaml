@@ -366,26 +366,25 @@
   output:
     indices:
     - class: File
-      location: dm3_chr4.log
-      size: 0
-    - class: File
-      location: dm3_chr4.rev.1.ebwt
-      size: 4580786
-    - class: File
       location: dm3_chr4.1.ebwt
       size: 4580786
-    - class: File
-      location: dm3_chr4.3.ebwt
-      size: 26
     - class: File
       location: dm3_chr4.2.ebwt
       size: 42248
     - class: File
-      location: dm3_chr4.rev.2.ebwt
-      size: 42248
+      location: dm3_chr4.3.ebwt
+      size: 26
     - class: File
       location: dm3_chr4.4.ebwt
       size: 337940
+    - class: File
+      location: dm3_chr4.log
+    - class: File
+      location: dm3_chr4.rev.1.ebwt
+      size: 4580786
+    - class: File
+      location: dm3_chr4.rev.2.ebwt
+      size: 42248
 
 # ========================================================
 # bzip2-compress
@@ -1827,7 +1826,7 @@
       class: File
       location: custom_Gateway_Enhancers.bed
       size: 390
-    gateway_enhancers_bed:
+    gateway_super_enhancers_bed:
       class: File
       location: custom_Gateway_SuperEnhancers.bed
       size: 43
@@ -1847,50 +1846,50 @@
 - job: ./super-enhancer-1.json
   tool: ../workflows/super-enhancer.cwl
   output:
+    super_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
+      size: 793
+    plot_points_pic:
+      class: File
+      location: chr4_100_mapped_reads_Plot_points.png
+      size: 23753
+    all_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_AllEnhancers.table.txt
+      size: 2399
+    gateway_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_Enhancers.bed
+      size: 1963
     gff_directory:
       class: Directory
       basename: "gff"
       listing:
       - class: File
-        location: custom.gff
-        size: 513
+        location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
+        size: 3659
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL.gff
-        size: 603
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
+        size: 3749
+    gateway_super_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
+      size: 453
+    enhancers_with_super_bed:
+      class: File
+      location: chr4_100_mapped_reads_Enhancers_withSuper.bed
+      size: 3063
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 479
+        location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 2007
       - class: File
-        location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 434
-    super_enhancers_table:
-      class: File
-      location: custom_SuperEnhancers.table.txt
-      size: 353
-    plot_points_pic:
-      class: File
-      location: custom_Plot_points.png
-      size: 23753
-    all_enhancers_table:
-      class: File
-      location: custom_AllEnhancers.table.txt
-      size: 796
-    gateway_enhancers_bed:
-      class: File
-      location: custom_Gateway_Enhancers.bed
-      size: 390
-    gateway_enhancers_bed:
-      class: File
-      location: custom_Gateway_SuperEnhancers.bed
-      size: 43
-    enhancers_with_super_bed:
-      class: File
-      location: custom_Enhancers_withSuper.bed
-      size: 1020
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 2052
     stitched_enhancer_region_map:
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
@@ -1899,74 +1898,90 @@
 - job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
   output:
+    super_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
+      size: 468
+    plot_points_pic:
+      class: File
+      location: chr4_100_mapped_reads_Plot_points.png
+      size: 23753
+    all_enhancers_table:
+      class: File
+      location: chr4_100_mapped_reads_AllEnhancers.table.txt
+      size: 1501
+    gateway_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_Enhancers.bed
+      size: 1065
     gff_directory:
       class: Directory
       basename: "gff"
       listing:
       - class: File
-        location: custom.gff
-        size: 513
+        location: chr4_100_mapped_reads.Aligned.out_macs_peaks.gff
+        size: 1863
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL.gff
-        size: 603
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
+        size: 1953
+    gateway_super_enhancers_bed:
+      class: File
+      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
+      size: 128
+    enhancers_with_super_bed:
+      class: File
+      location: chr4_100_mapped_reads_Enhancers_withSuper.bed
+      size: 1840
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
-        location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 479
+        location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 1109
       - class: File
-        location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 434
-    super_enhancers_table:
-      class: File
-      location: custom_SuperEnhancers.table.txt
-      size: 353
-    plot_points_pic:
-      class: File
-      location: custom_Plot_points.png
-      size: 23753
-    all_enhancers_table:
-      class: File
-      location: custom_AllEnhancers.table.txt
-      size: 796
-    gateway_enhancers_bed:
-      class: File
-      location: custom_Gateway_Enhancers.bed
-      size: 390
-    gateway_enhancers_bed:
-      class: File
-      location: custom_Gateway_SuperEnhancers.bed
-      size: 43
-    enhancers_with_super_bed:
-      class: File
-      location: custom_Enhancers_withSuper.bed
-      size: 1020
+        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
+        size: 1154
     stitched_enhancer_region_map:
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
       size: 1229
 
 # ========================================================
-# mea-filter
+# custom-bash
 # ========================================================
 
-- job: ./mea-filter-1.json
-  tool: ../tools/mea-filter.cwl
+- job: ./custom-bash-1.json
+  tool: ../tools/custom-bash.cwl
   output:
     filtered_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 35485
 
-- job: ./mea-filter-2.json
-  tool: ../tools/mea-filter.cwl
+- job: ./custom-bash-2.json
+  tool: ../tools/custom-bash.cwl
   output:
     filtered_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
-      size: 0
+      size: 35485
+
+- job: ./custom-bash-3.json
+  tool: ../tools/custom-bash.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sam
+      size: 36064
+
+- job: ./custom-bash-4.json
+  tool: ../tools/custom-bash.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sam
+      size: 36089
 
 # ========================================================
 # ucsc-bigwigtowig
@@ -1996,7 +2011,7 @@
       location: output.wig
       size: 1658
 
-- job: ./ucsc-bigwigtowig-3.json
+- job: ./ucsc-bigwigtowig-4.json
   tool: ../tools/ucsc-bigwigtowig.cwl
   output:
     wig_file:
@@ -2005,41 +2020,111 @@
       size: 0
 
 # ========================================================
-# mea-bedgraphtowig
+# crossmap
 # ========================================================
 
-- job: ./mea-bedgraphtowig-1.json
-  tool: ../tools/mea-bedgraphtowig.cwl
+- job: ./crossmap-1.json
+  tool: ../tools/crossmap.cwl
   output:
-    wig_file:
+    projected_file:
       class: File
-      location: chr4_100_mapped_reads.Aligned.out.wig
-      size: 1586724
-
-- job: ./mea-bedgraphtowig-2.json
-  tool: ../tools/mea-bedgraphtowig.cwl
-  output:
-    wig_file:
+      location: chr4_100_mapped_reads.Aligned.out.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: chr4_100_mapped_reads.Aligned.out.sorted.bam.bai
+        size: 1408
+    log_file:
       class: File
-      location: output.wig
-      size: 1586724
+      location: chr4_100_mapped_reads.Aligned.out.log
+      size: 317
+    unmap_file: null
 
-# ========================================================
-# mea-alea-project
-# ========================================================
-
-- job: ./mea-alea-project-1.json
-  tool: ../tools/mea-alea-project.cwl
+- job: ./crossmap-2.json
+  tool: ../tools/crossmap.cwl
   output:
-    bedgraph_file:
+    projected_file:
       class: File
-      location: chr4_100_mapped_reads.Aligned.out.bedGraph
-      size: 125
+      location: projected.sorted.bam
+      secondaryFiles:
+      - class: File
+        location: projected.sorted.bam.bai
+        size: 1408
+    log_file:
+      class: File
+      location: projected.log
+      size: 317
+    unmap_file: null
 
-- job: ./mea-alea-project-2.json
-  tool: ../tools/mea-alea-project.cwl
+- job: ./crossmap-3.json
+  tool: ../tools/crossmap.cwl
   output:
-    bedgraph_file:
+    projected_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.bedGraph
+      size: 3236
+    log_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.log
+    unmap_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.bedGraph.unmap
+      size: 46
+
+- job: ./crossmap-4.json
+  tool: ../tools/crossmap.cwl
+  output:
+    projected_file:
       class: File
       location: projected.bedGraph
-      size: 125
+      size: 3236
+    log_file:
+      class: File
+      location: projected.log
+    unmap_file:
+      class: File
+      location: projected.bedGraph.unmap
+      size: 46
+
+- job: ./crossmap-5.json
+  tool: ../tools/crossmap.cwl
+  output:
+    projected_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.bw
+      size: 26288
+    log_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.log
+    unmap_file: null
+
+- job: ./crossmap-6.json
+  tool: ../tools/crossmap.cwl
+  output:
+    projected_file:
+      class: File
+      location: projected.bw
+      size: 26288
+    log_file:
+      class: File
+      location: projected.log
+    unmap_file: null
+
+# ========================================================
+# halliftover
+# ========================================================
+
+- job: ./halliftover-1.json
+  tool: ../tools/halliftover.cwl
+  output:
+    projected_bed_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.sorted.bed
+      size: 190358
+
+- job: ./halliftover-2.json
+  tool: ../tools/halliftover.cwl
+  output:
+    projected_bed_file:
+      class: File
+      location: output.bedGraph
+      size: 190358

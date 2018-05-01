@@ -1,5 +1,0 @@
-{
-  "wig_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/wig/chr4_100_mapped_reads.Aligned.out.wig"},
-  "refmap_file": {"class": "File", "location": "./data/dm3_chr4/main_inputs/refmap/custom.refmap"},
-  "output_filename": "projected.bedGraph"
-}

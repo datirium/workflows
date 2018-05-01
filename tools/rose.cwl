@@ -20,7 +20,7 @@ inputs:
       position: 5
       prefix: "-i"
     doc: |
-      GFF or BEd file of binding sites used to make enhancers
+      GFF or BED file of binding sites used to make enhancers
 
   bam_file:
     type: File
