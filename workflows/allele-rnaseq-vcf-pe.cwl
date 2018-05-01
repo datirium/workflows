@@ -9,10 +9,6 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 
-'sd:metadata':
-  - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
-
-
 inputs:
 
   fastq_file_upstream:
@@ -53,17 +49,17 @@ inputs:
     label: "II strain name"
     doc: "Second strain name"
 
-  strain1_refmap_file:
+  strain1_chain_file:
     type: File
-    label: "I strain refmap file"
+    label: "I strain chain file"
     format: "http://edamontology.org/format_2330"
-    doc: "Refmap file generated while making strain specific indices for the first strain"
+    doc: "Chain file to project strain I to reference genome"
 
-  strain2_refmap_file:
+  strain2_chain_file:
     type: File
-    label: "II strain refmap file"
+    label: "II strain chain file"
     format: "http://edamontology.org/format_2330"
-    doc: "Refmap file generated while making strain specific indices for the second strain"
+    doc: "Chain file to project strain II to reference genome"
 
   threads:
     type: int?
@@ -79,77 +75,98 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "I strain bigWig file"
     doc: "Generated bigWig file for the first strain"
-    outputSource: strain1_mea_createtracks/bigwig_file
+    outputSource: allele_alignreads_star_vcf_se_pe/strain1_bigwig
 
   strain2_bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "II strain bigWig file"
     doc: "Generated bigWig file for the second strain"
-    outputSource: strain2_mea_createtracks/bigwig_file
+    outputSource: allele_alignreads_star_vcf_se_pe/strain2_bigwig
 
   reference_bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "Reference bigWig file"
     doc: "Generated BigWig file for the reference genome"
-    outputSource: reference_bam_to_bigwig/bigwig_file
+    outputSource: allele_alignreads_star_vcf_se_pe/reference_bigwig
+
+  strain1_bambai_pair:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "Strain I coordinate sorted BAM alignment file (+index BAI)"
+    doc: "Coordinate sorted BAM file and BAI index file for strain I"
+    outputSource: allele_alignreads_star_vcf_se_pe/strain1_bambai_pair
+
+  strain2_bambai_pair:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "Strain II coordinate sorted BAM alignment file (+index BAI)"
+    doc: "Coordinate sorted BAM file and BAI index file for strain II"
+    outputSource: allele_alignreads_star_vcf_se_pe/strain2_bambai_pair
+
+  reference_bambai_pair:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "Reference coordinate sorted BAM alignment file (+index BAI)"
+    doc: "Coordinate sorted BAM file and BAI index file for reference genome"
+    outputSource: allele_alignreads_star_vcf_se_pe/reference_bambai_pair
 
   insilico_star_final_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "STAR final log for insilico genome"
     doc: "STAR Log.final.out for insilico genome"
-    outputSource: mea_alignreads_star_se_pe/insilico_star_final_log
+    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_final_log
 
   insilico_star_out_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR log out for insilico genome"
     doc: "STAR Log.out for insilico genome"
-    outputSource: mea_alignreads_star_se_pe/insilico_star_out_log
+    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_out_log
 
   insilico_star_progress_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR progress log for insilico genome"
     doc: "STAR Log.progress.out for insilico genome"
-    outputSource: mea_alignreads_star_se_pe/insilico_star_progress_log
+    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_progress_log
 
   insilico_star_stdout_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR stdout log for insilico genome"
     doc: "STAR Log.std.out for insilico genome"
-    outputSource: mea_alignreads_star_se_pe/insilico_star_stdout_log
+    outputSource: allele_alignreads_star_vcf_se_pe/insilico_star_stdout_log
 
   reference_star_final_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "STAR final log for reference genome"
     doc: "STAR Log.final.out for reference genome"
-    outputSource: mea_alignreads_star_se_pe/reference_star_final_log
+    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_final_log
 
   reference_star_out_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR log out for reference genome"
     doc: "STAR Log.out for reference genome"
-    outputSource: mea_alignreads_star_se_pe/reference_star_out_log
+    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_out_log
 
   reference_star_progress_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR progress log for reference genome"
     doc: "STAR Log.progress.out for reference genome"
-    outputSource: mea_alignreads_star_se_pe/reference_star_progress_log
+    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_progress_log
 
   reference_star_stdout_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR stdout log for reference genome"
     doc: "STAR Log.std.out for reference genome"
-    outputSource: mea_alignreads_star_se_pe/reference_star_stdout_log
+    outputSource: allele_alignreads_star_vcf_se_pe/reference_star_stdout_log
 
 
 steps:
@@ -166,20 +183,25 @@ steps:
       compressed_file: fastq_file_downstream
     out: [fastq_file]
 
-  mea_alignreads_star_se_pe:
-    run: ./mea-alignreads-star-se-pe.cwl
+  allele_alignreads_star_vcf_se_pe:
+    run: ./allele-alignreads-star-vcf-se-pe.cwl
     in:
       fastq_files: [extract_fastq_upstream/fastq_file, extract_fastq_downstream/fastq_file]
       insilico_star_indices_folder: insilico_star_indices_folder
       reference_star_indices_folder: star_indices_folder
+      reference_chrom_length_file: chrom_length_file
       strain1: strain1
       strain2: strain2
+      strain1_chain_file: strain1_chain_file
+      strain2_chain_file: strain2_chain_file
       threads: threads
     out:
-    - strain1_sorted_bam
-    - strain2_sorted_bam
-    - reference_sorted_bam
-    - reference_uniquely_mapped_reads_number
+    - strain1_bambai_pair
+    - strain2_bambai_pair
+    - reference_bambai_pair
+    - strain1_bigwig
+    - strain2_bigwig
+    - reference_bigwig
     - insilico_star_final_log
     - insilico_star_out_log
     - insilico_star_progress_log
@@ -189,28 +211,4 @@ steps:
     - reference_star_progress_log
     - reference_star_stdout_log
 
-  strain1_mea_createtracks:
-    run: ./mea-createtracks.cwl
-    in:
-      bam_file: mea_alignreads_star_se_pe/strain1_sorted_bam
-      reference_uniquely_mapped_reads_number: mea_alignreads_star_se_pe/reference_uniquely_mapped_reads_number
-      reference_chrom_length_file: chrom_length_file
-      refmap_file: strain1_refmap_file
-    out: [bigwig_file]
 
-  strain2_mea_createtracks:
-    run: ./mea-createtracks.cwl
-    in:
-      bam_file: mea_alignreads_star_se_pe/strain2_sorted_bam
-      reference_uniquely_mapped_reads_number: mea_alignreads_star_se_pe/reference_uniquely_mapped_reads_number
-      reference_chrom_length_file: chrom_length_file
-      refmap_file: strain2_refmap_file
-    out: [bigwig_file]
-
-  reference_bam_to_bigwig:
-    run: bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: mea_alignreads_star_se_pe/reference_sorted_bam
-      chrom_length_file: chrom_length_file
-      mapped_reads_number: mea_alignreads_star_se_pe/reference_uniquely_mapped_reads_number
-    out: [bigwig_file]
