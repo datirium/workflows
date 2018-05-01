@@ -9,6 +9,8 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_name = function(named_input, suffix, ext) {
+        suffix = suffix || "";
+        ext = ext || "";
         if (Array.isArray(named_input) && named_input.length > 0){
           return named_input[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+suffix+ext;
         } else {
@@ -73,39 +75,40 @@ outputs:
 
   strain1_bambai_pair:
     type: File
-    outputSource: strain1_samtools_sort_index/bam_bai_pair
+    outputSource: strain1_process/bambai_pair
     label: "I strain output BAM"
     doc: "Coordinate sorted BAM file mapped to the first strain genome, not projected to reference genome"
 
+  strain1_bigwig:
+    type: File
+    outputSource: strain1_process/bigwig_file
+    label: "I strain bigWig file"
+    doc: "Generated bigWig file for the first strain, projected to reference genome"
+
   strain2_bambai_pair:
     type: File
-    outputSource: strain2_samtools_sort_index/bam_bai_pair
+    outputSource: strain2_process/bambai_pair
     label: "II strain output BAM"
     doc: "Coordinate sorted BAM file mapped to the second strain genome, not projected to reference genome"
 
+  strain2_bigwig:
+    type: File
+    outputSource: strain2_process/bigwig_file
+    label: "II strain bigWig file"
+    doc: "Generated bigWig file for the second strain, projected to reference genome"
+
   reference_bambai_pair:
     type: File
-    outputSource: reference_samtools_sort/sorted_file
+    outputSource: reference_process/bambai_pair
     label: "Reference output BAM"
     doc: "Coordinate sorted BAM file mapped to reference genome"
 
-  strain1_bigwig:
-    type: File
-    label: "I strain bigWig file"
-    doc: "Generated bigWig file for the first strain, projected to reference genome"
-    outputSource: strain1_sorted_bedgraph_to_bigwig/bigwig_file
-
-  strain2_bigwig:
-    type: File
-    label: "II strain bigWig file"
-    doc: "Generated bigWig file for the second strain, projected to reference genome"
-    outputSource: strain2_sorted_bedgraph_to_bigwig/bigwig_file
-
   reference_bigwig:
     type: File
+    outputSource: reference_process/bigwig_file
     label: "Reference bigWig file"
     doc: "Generated BigWig file for the reference genome"
-    outputSource: reference_bam_to_bigwig/bigwig_file
+
 
   insilico_star_final_log:
     type: File
@@ -176,187 +179,7 @@ steps:
       - log_out
       - log_progress
       - log_std
-
-  strain1_sam_filter:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: insilico_star_aligner/aligned_file
-      script:
-        default: 'cat "$0" | grep "$1" | sed "s/$1/chr/g"  > `basename $0`'
-      param:
-        source: strain1
-        valueFrom: $(self+"_")
-    out: [filtered_file]
-
-  strain2_sam_filter:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: insilico_star_aligner/aligned_file
-      script:
-        default: 'cat "$0" | grep "$1" | sed "s/$1/chr/g"  > `basename $0`'
-      param:
-        source: strain2
-        valueFrom: $(self+"_")
-    out: [filtered_file]
-
-  strain1_samtools_sort_index:
-    run: ../tools/samtools-sort-index.cwl
-    in:
-      sort_input: strain1_sam_filter/filtered_file
-      sort_output_filename:
-        source: [fastq_files, strain1]
-        valueFrom: $(default_output_name(self[0], "_"+self[1], ".bam"))
-      threads: threads
-    out: [bam_bai_pair]
-
-  strain2_samtools_sort_index:
-    run: ../tools/samtools-sort-index.cwl
-    in:
-      sort_input: strain2_sam_filter/filtered_file
-      sort_output_filename:
-        source: [fastq_files, strain2]
-        valueFrom: $(default_output_name(self[0], "_"+self[1], ".bam"))
-      threads: threads
-    out: [bam_bai_pair]
-
-
-
-  strain1_bamtools_stats:
-    run: ../tools/bamtools-stats.cwl
-    in:
-      bam_file: strain1_samtools_sort_index/bam_bai_pair
-    out: [mapped_reads_number]
-
-  strain1_bam_to_bedgraph:
-    run: ../tools/bedtools-genomecov.cwl
-    in:
-      input_file: strain1_samtools_sort_index/bam_bai_pair
-      depth:
-        default: "-bg"
-      split:
-        default: true
-      mapped_reads_number: strain1_bamtools_stats/mapped_reads_number
-    out: [genome_coverage_file]
-
-  strain1_sort_bedgraph:
-    run: ../tools/linux-sort.cwl
-    in:
-      unsorted_file: strain1_bam_to_bedgraph/genome_coverage_file
-      key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
-
-  strain1_project_bedgraph:
-    run: ../tools/halliftover.cwl
-    in:
-      input_bed_file: strain1_sort_bedgraph/sorted_file
-      hal_file: hal_file
-      source_genome_name: strain1
-      target_genome_name: ref_strain
-    out: [projected_bed_file]
-
-  strain1_filter_projected_bedgraph:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: strain1_project_bedgraph/projected_bed_file
-      script:
-        default: 'cat "$0" | grep "$1" > `basename $0`'
-      param:
-        default: "chr"
-    out: [filtered_file]
-
-  strain1_sort_projected_bedgraph:
-    run: ../tools/custom-bedops.cwl
-    in:
-      input_file: strain1_filter_projected_bedgraph/filtered_file
-      script:
-        default: 'sort-bed "$0" > `basename $0`'
-    out: [filtered_file]
-
-  strain1_remove_overlaps:
-    run: ../tools/custom-bedops.cwl
-    in:
-      input_file: strain1_sort_projected_bedgraph/filtered_file
-      script:
-        default: bedops --partition "$0" | bedmap --echo --echo-map-id --delim "\t" - "$0" | awk '{n=split($4,reads,";"); sum=0; for(i=1;i<=n;i++) sum+=reads[i]; $4=sum; print $0 }' > `basename $0`
-    out: [filtered_file]
-
-  strain1_sorted_bedgraph_to_bigwig:
-    run: ../tools/ucsc-bedgraphtobigwig.cwl
-    in:
-      bedgraph_file: strain1_remove_overlaps/filtered_file
-      chrom_length_file: reference_chrom_length_file
-    out: [bigwig_file]
-
-
-  strain2_bamtools_stats:
-    run: ../tools/bamtools-stats.cwl
-    in:
-      bam_file: strain2_samtools_sort_index/bam_bai_pair
-    out: [mapped_reads_number]
-
-  strain2_bam_to_bedgraph:
-    run: ../tools/bedtools-genomecov.cwl
-    in:
-      input_file: strain2_samtools_sort_index/bam_bai_pair
-      depth:
-        default: "-bg"
-      split:
-        default: true
-      mapped_reads_number: strain2_bamtools_stats/mapped_reads_number
-    out: [genome_coverage_file]
-
-  strain2_sort_bedgraph:
-    run: ../tools/linux-sort.cwl
-    in:
-      unsorted_file: strain2_bam_to_bedgraph/genome_coverage_file
-      key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
-
-  strain2_project_bedgraph:
-    run: ../tools/halliftover.cwl
-    in:
-      input_bed_file: strain2_sort_bedgraph/sorted_file
-      hal_file: hal_file
-      source_genome_name: strain2
-      target_genome_name: ref_strain
-    out: [projected_bed_file]
-
-  strain2_filter_projected_bedgraph:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: strain2_project_bedgraph/projected_bed_file
-      script:
-        default: 'cat "$0" | grep "$1" > `basename $0`'
-      param:
-        default: "chr"
-    out: [filtered_file]
-
-  strain2_sort_projected_bedgraph:
-    run: ../tools/custom-bedops.cwl
-    in:
-      input_file: strain2_filter_projected_bedgraph/filtered_file
-      script:
-        default: 'sort-bed "$0" > `basename $0`'
-    out: [filtered_file]
-
-  strain2_remove_overlaps:
-    run: ../tools/custom-bedops.cwl
-    in:
-      input_file: strain2_sort_projected_bedgraph/filtered_file
-      script:
-        default: bedops --partition "$0" | bedmap --echo --echo-map-id --delim "\t" - "$0" | awk '{n=split($4,reads,";"); sum=0; for(i=1;i<=n;i++) sum+=reads[i]; $4=sum; print $0 }' > `basename $0`
-    out: [filtered_file]
-
-  strain2_sorted_bedgraph_to_bigwig:
-    run: ../tools/ucsc-bedgraphtobigwig.cwl
-    in:
-      bedgraph_file: strain2_remove_overlaps/filtered_file
-      chrom_length_file: reference_chrom_length_file
-    out: [bigwig_file]
-
-
+      - uniquely_mapped_reads_number
 
   reference_star_aligner:
     run: ../tools/star-alignreads.cwl
@@ -368,34 +191,69 @@ steps:
       threads: threads
     out:
       - aligned_file
-      - uniquely_mapped_reads_number
       - log_final
       - log_out
       - log_progress
       - log_std
+      - uniquely_mapped_reads_number
 
-  reference_samtools_sort:
-    run: ../tools/samtools-sort.cwl
+  strain1_process:
+    run: ./allele-process-strain.cwl
     in:
-      sort_input: reference_star_aligner/aligned_file
-      sort_output_filename:
-        source: fastq_files
-        valueFrom: $(default_output_name(self, "", ".bam"))
-      threads: threads
-    out: [sorted_file]
-
-  reference_bam_to_bigwig:
-    run: bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: reference_samtools_sort/sorted_file
+      sam_file: insilico_star_aligner/aligned_file
       chrom_length_file: reference_chrom_length_file
-      mapped_reads_number:
-        source: [fastq_files, reference_star_aligner/uniquely_mapped_reads_number]
-        valueFrom: |
-          ${
-            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
-          }
-    out: [bigwig_file]
+      hal_file: hal_file
+      current_strain_name: strain1
+      reference_strain_name: ref_strain
+      mapped_reads_number: insilico_star_aligner/uniquely_mapped_reads_number
+      paired:
+        source: fastq_files
+        valueFrom: $(Array.isArray(self) && self.length > 1)
+      output_file_prefix:
+        source: fastq_files
+        valueFrom: $(default_output_name(self))
+      threads: threads
+    out:
+    - bambai_pair
+    - bigwig_file
+
+  strain2_process:
+    run: ./allele-process-strain.cwl
+    in:
+      sam_file: insilico_star_aligner/aligned_file
+      chrom_length_file: reference_chrom_length_file
+      hal_file: hal_file
+      current_strain_name: strain2
+      reference_strain_name: ref_strain
+      mapped_reads_number: insilico_star_aligner/uniquely_mapped_reads_number
+      paired:
+        source: fastq_files
+        valueFrom: $(Array.isArray(self) && self.length > 1)
+      output_file_prefix:
+        source: fastq_files
+        valueFrom: $(default_output_name(self))
+      threads: threads
+    out:
+    - bambai_pair
+    - bigwig_file
+
+  reference_process:
+    run: ./allele-process-reference.cwl
+    in:
+      bam_file: insilico_star_aligner/aligned_file
+      chrom_length_file: reference_chrom_length_file
+      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+      output_file_prefix:
+        source: fastq_files
+        valueFrom: $(default_output_name(self))
+      paired:
+        source: fastq_files
+        valueFrom: $(Array.isArray(self) && self.length > 1)
+      threads: threads
+    out:
+    - bambai_pair
+    - bigwig_file
+
 
 $namespaces:
   s: http://schema.org/
