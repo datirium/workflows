@@ -39,7 +39,7 @@ inputs:
     label: "STAR indices folder for reference genome"
     doc: "Path to STAR generated indices folder for reference genome"
 
-  reference_chrom_length_file:
+  chrom_length_file:
     type: File
     label: "Chromosome length file for reference genome"
     doc: "Chromosome length file for reference genome"
@@ -85,6 +85,7 @@ outputs:
     label: "I strain bigWig file"
     doc: "Generated bigWig file for the first strain, projected to reference genome"
 
+
   strain2_bambai_pair:
     type: File
     outputSource: strain2_process/bambai_pair
@@ -96,6 +97,7 @@ outputs:
     outputSource: strain2_process/bigwig_file
     label: "II strain bigWig file"
     doc: "Generated bigWig file for the second strain, projected to reference genome"
+
 
   reference_bambai_pair:
     type: File
@@ -134,6 +136,7 @@ outputs:
     label: "STAR stdout log for insilico genome"
     doc: "STAR Log.std.out for insilico genome"
 
+
   reference_star_final_log:
     type: File
     outputSource: reference_star_aligner/log_final
@@ -157,6 +160,7 @@ outputs:
     outputSource: reference_star_aligner/log_std
     label: "STAR stdout log for reference genome"
     doc: "STAR Log.std.out for reference genome"
+
 
 steps:
 
@@ -201,14 +205,16 @@ steps:
     run: ./allele-process-strain.cwl
     in:
       sam_file: insilico_star_aligner/aligned_file
-      chrom_length_file: reference_chrom_length_file
+      chrom_length_file: chrom_length_file
       hal_file: hal_file
       current_strain_name: strain1
       reference_strain_name: ref_strain
-      mapped_reads_number: insilico_star_aligner/uniquely_mapped_reads_number
-      paired:
-        source: fastq_files
-        valueFrom: $(Array.isArray(self) && self.length > 1)
+      mapped_reads_number:
+        source: [fastq_files, insilico_star_aligner/uniquely_mapped_reads_number]
+        valueFrom:
+          ${
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
+          }
       output_file_prefix:
         source: fastq_files
         valueFrom: $(default_output_name(self))
@@ -221,14 +227,16 @@ steps:
     run: ./allele-process-strain.cwl
     in:
       sam_file: insilico_star_aligner/aligned_file
-      chrom_length_file: reference_chrom_length_file
+      chrom_length_file: chrom_length_file
       hal_file: hal_file
       current_strain_name: strain2
       reference_strain_name: ref_strain
-      mapped_reads_number: insilico_star_aligner/uniquely_mapped_reads_number
-      paired:
-        source: fastq_files
-        valueFrom: $(Array.isArray(self) && self.length > 1)
+      mapped_reads_number:
+        source: [fastq_files, insilico_star_aligner/uniquely_mapped_reads_number]
+        valueFrom:
+          ${
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
+          }
       output_file_prefix:
         source: fastq_files
         valueFrom: $(default_output_name(self))
@@ -241,14 +249,16 @@ steps:
     run: ./allele-process-reference.cwl
     in:
       bam_file: reference_star_aligner/aligned_file
-      chrom_length_file: reference_chrom_length_file
-      mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
+      chrom_length_file: chrom_length_file
+      mapped_reads_number:
+        source: [fastq_files, reference_star_aligner/uniquely_mapped_reads_number]
+        valueFrom:
+          ${
+            return (Array.isArray(self[0]) && self[0].length>1)?2*self[1]:self[1];
+          }
       output_file_prefix:
         source: fastq_files
         valueFrom: $(default_output_name(self))
-      paired:
-        source: fastq_files
-        valueFrom: $(Array.isArray(self) && self.length > 1)
       threads: threads
     out:
     - bambai_pair

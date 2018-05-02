@@ -31,11 +31,6 @@ inputs:
     label: "Prefix for all generated output files"
     doc: "Corresponds to UID"
 
-  paired:
-    type: boolean?
-    label: "If paired end"
-    doc: "For paired-end data experiment"
-
   threads:
     type: int?
     default: 2
@@ -75,10 +70,5 @@ steps:
     in:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length_file
-      mapped_reads_number:
-        source: [paired, mapped_reads_number]
-        valueFrom: |
-          ${
-            return self[0]?2*self[1]:self[1];
-          }
+      mapped_reads_number: mapped_reads_number
     out: [bigwig_file]

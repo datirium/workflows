@@ -176,7 +176,7 @@ steps:
       fastq_files: extract_fastq/fastq_file
       insilico_star_indices_folder: insilico_star_indices_folder
       reference_star_indices_folder: star_indices_folder
-      reference_chrom_length_file: chrom_length_file
+      chrom_length_file: chrom_length_file
       strain1: strain1
       strain2: strain2
       ref_strain: ref_strain
@@ -197,5 +197,4 @@ steps:
     - reference_star_out_log
     - reference_star_progress_log
     - reference_star_stdout_log
-
 
