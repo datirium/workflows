@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-addons:v0.0.2
+  dockerPull: biowardrobe2/scidap-addons:v0.0.3
 
 
 inputs:
@@ -32,13 +32,13 @@ inputs:
     doc: |
       Indexed bamfile to rank enhancer by
 
-  genome_type:
-    type: string
+  annotation_file:
+    type: File
     inputBinding:
       position: 7
       prefix: "-g"
     doc: |
-      Genome type
+      TSV genome annotation file
 
   stitch_distance:
     type: int
@@ -153,8 +153,7 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool
   -b and -c arguments are not supported
 
 s:about: |
-  ROSE
+  Updated version of the original ROSE

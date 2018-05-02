@@ -7,7 +7,10 @@
         "class": "File",
         "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
         "format": "http://edamontology.org/format_3475"},
-    "genome_type": "HG19",
+    "annotation_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv",
+        "format": "http://edamontology.org/format_3475"},
     "stitch_distance": 20000,
     "tss_distance": 2500
 }
