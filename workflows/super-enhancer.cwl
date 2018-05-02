@@ -29,10 +29,11 @@ inputs:
     secondaryFiles:
     - .bai
 
-  genome_type:
-    type: string
-    label: "Genome type"
-    doc: "Genome type"
+  annotation_file:
+    type: File
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "TAB-separated annotation file"
 
   stitch_distance:
     type: int
@@ -116,7 +117,7 @@ steps:
     in:
       binding_sites_file: makegff/gff_file
       bam_file: bam_file
-      genome_type: genome_type
+      annotation_file: annotation_file
       stitch_distance: stitch_distance
       tss_distance: tss_distance
     out:
