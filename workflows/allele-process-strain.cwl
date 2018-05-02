@@ -41,11 +41,6 @@ inputs:
     label: "Mapped to concatenated genome reads number"
     doc: "Mapped to concatenated genome reads number to calculate scaling factor"
 
-  paired:
-    type: boolean?
-    label: "If paired end"
-    doc: "For paired-end data experiment"
-
   output_file_prefix:
     type: string
     label: "Prefix for all generated output files"
@@ -63,13 +58,13 @@ outputs:
   bambai_pair:
     type: File
     outputSource: samtools_sort_index/bam_bai_pair
-    label: "Not projected strain specific output BAM"
+    label: "BAM mapped to strain genome, not projected to reference genome"
     doc: "Coordinate sorted BAM file mapped to the current strain genome, not projected to reference genome"
 
   bigwig_file:
     type: File
     label: "Strain specific bigWig file"
-    doc: "Generated bigWig file for the strain, projected to reference genome"
+    doc: "Generated bigWig file for the current strain, projected to reference genome"
     outputSource: bedgraph_to_bigwig/bigwig_file
 
 
@@ -92,7 +87,7 @@ steps:
       sort_input: filter_sam/output_file
       sort_output_filename:
         source: [output_file_prefix, current_strain_name]
-        valueFrom: $(self[0]+"_"+self[1]+".bam"))
+        valueFrom: $(self.join("_")+".bam")
       threads: threads
     out: [bam_bai_pair]
 
@@ -104,12 +99,7 @@ steps:
         default: "-bg"
       split:
         default: true
-      mapped_reads_number:
-        source: [paired, mapped_reads_number]
-        valueFrom: |
-          ${
-            return self[0]?2*self[1]:self[1];
-          }
+      mapped_reads_number: mapped_reads_number
     out: [genome_coverage_file]
 
   sort_bedgraph:
