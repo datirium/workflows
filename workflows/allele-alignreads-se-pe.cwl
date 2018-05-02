@@ -240,7 +240,7 @@ steps:
   reference_process:
     run: ./allele-process-reference.cwl
     in:
-      bam_file: insilico_star_aligner/aligned_file
+      bam_file: reference_star_aligner/aligned_file
       chrom_length_file: reference_chrom_length_file
       mapped_reads_number: reference_star_aligner/uniquely_mapped_reads_number
       output_file_prefix:
