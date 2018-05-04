@@ -35,7 +35,7 @@ inputs:
 
 outputs:
 
-  filtered_file:
+  output_file:
     type: File
     outputBinding:
       glob: $(inputs.input_file.basename)
