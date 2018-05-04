@@ -57,6 +57,7 @@ inputs:
     type: File?
     default: null
     'sd:upstreamSource': "control_file/bambai_pair"
+    'sd:localLabel': true
     label: "Use experiment as a control"
     format: "http://edamontology.org/format_2572"
     doc: "Use experiment as a control for MACS2 peak calling"
