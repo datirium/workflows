@@ -914,6 +914,10 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
+    unmapped_reads_number: 32
+    mapped_reads_number: 93
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 - job: ./rsem-calculate-expression-2.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -956,6 +960,10 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
+    unmapped_reads_number: 32
+    mapped_reads_number: 93
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 - job: ./rsem-calculate-expression-3.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -998,6 +1006,10 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
+    unmapped_reads_number: 32
+    mapped_reads_number: 93
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 - job: ./rsem-calculate-expression-4.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -1040,6 +1052,10 @@
         location: output.cnt
       - class: File
         location: output.model
+    unmapped_reads_number: 32
+    mapped_reads_number: 93
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 # ========================================================
 # samtools-index
