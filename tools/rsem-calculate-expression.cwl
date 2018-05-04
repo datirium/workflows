@@ -995,9 +995,7 @@ outputs:
         }
 
   stat_folder:
-    type:
-      - "null"
-      - Directory
+    type: Directory
     outputBinding:
       glob: |
         ${
@@ -1006,6 +1004,62 @@ outputs:
             } else {
               return inputs.output_filename + ".stat";
             }
+        }
+
+  unmapped_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: |
+        ${
+            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
+            return base+".stat/"+base+".cnt";
+        }
+      outputEval: |
+        ${
+          return parseInt(self[0].contents.split(/\r?\n/)[0].split(" ")[0]);
+        }
+
+  mapped_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: |
+        ${
+            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
+            return base+".stat/"+base+".cnt";
+        }
+      outputEval: |
+        ${
+          return parseInt(self[0].contents.split(/\r?\n/)[0].split(" ")[1]);
+        }
+
+  multimapped_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: |
+        ${
+            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
+            return base+".stat/"+base+".cnt";
+        }
+      outputEval: |
+        ${
+          return parseInt(self[0].contents.split(/\r?\n/)[0].split(" ")[2]);
+        }
+
+  total_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: |
+        ${
+            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
+            return base+".stat/"+base+".cnt";
+        }
+      outputEval: |
+        ${
+          return parseInt(self[0].contents.split(/\r?\n/)[0].split(" ")[3]);
         }
 
 
