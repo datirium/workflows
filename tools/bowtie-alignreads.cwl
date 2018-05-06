@@ -7,38 +7,41 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function(ext) {
+      if (inputs.output_filename && !ext){
+         return inputs.output_filename;
+      }
       ext = ext || ".sam";
       let root = "";
       if (inputs.output_filename){
          root = inputs.output_filename.split('.').slice(0,-1).join('.');
          return (root == "")?inputs.output_filename+ext:root+ext;
-      }
-      if (Array.isArray(inputs.upstream_filelist) && inputs.upstream_filelist.length > 0){
-        root = inputs.upstream_filelist[0].basename.split('.').slice(0,-1).join('.');
-        return (root == "")?inputs.upstream_filelist[0].basename+ext:root+ext;
       } else
-        if (inputs.upstream_filelist != null){
-          root = inputs.upstream_filelist.basename.split('.').slice(0,-1).join('.');
-          return (root == "")?inputs.upstream_filelist.basename+ext:root+ext;
+        if (Array.isArray(inputs.upstream_filelist) && inputs.upstream_filelist.length > 0){
+          root = inputs.upstream_filelist[0].basename.split('.').slice(0,-1).join('.');
+          return (root == "")?inputs.upstream_filelist[0].basename+ext:root+ext;
         } else
-          if (Array.isArray(inputs.downstream_filelist) && inputs.downstream_filelist.length > 0){
-            root = inputs.downstream_filelist[0].basename.split('.').slice(0,-1).join('.');
-            return (root == "")?inputs.downstream_filelist[0].basename+ext:root+ext;
+          if (inputs.upstream_filelist != null){
+            root = inputs.upstream_filelist.basename.split('.').slice(0,-1).join('.');
+            return (root == "")?inputs.upstream_filelist.basename+ext:root+ext;
           } else
-            if (inputs.downstream_filelist != null){
-              root = inputs.downstream_filelist.basename.split('.').slice(0,-1).join('.');
-              return (root == "")?inputs.downstream_filelist.basename+ext:root+ext;
+            if (Array.isArray(inputs.downstream_filelist) && inputs.downstream_filelist.length > 0){
+              root = inputs.downstream_filelist[0].basename.split('.').slice(0,-1).join('.');
+              return (root == "")?inputs.downstream_filelist[0].basename+ext:root+ext;
             } else
-              if (Array.isArray(inputs.crossbow_filelist) && inputs.crossbow_filelist.length > 0){
-                root = inputs.crossbow_filelist[0].basename.split('.').slice(0,-1).join('.');
-                return (root == "")?inputs.crossbow_filelist[0].basename+ext:root+ext;
+              if (inputs.downstream_filelist != null){
+                root = inputs.downstream_filelist.basename.split('.').slice(0,-1).join('.');
+                return (root == "")?inputs.downstream_filelist.basename+ext:root+ext;
               } else
-                if (inputs.crossbow_filelist != null){
-                  root = inputs.crossbow_filelist.basename.split('.').slice(0,-1).join('.');
-                  return (root == "")?inputs.crossbow_filelist.basename+ext:root+ext;
-                } else {
-                  return null;
-                }
+                if (Array.isArray(inputs.crossbow_filelist) && inputs.crossbow_filelist.length > 0){
+                  root = inputs.crossbow_filelist[0].basename.split('.').slice(0,-1).join('.');
+                  return (root == "")?inputs.crossbow_filelist[0].basename+ext:root+ext;
+                } else
+                  if (inputs.crossbow_filelist != null){
+                    root = inputs.crossbow_filelist.basename.split('.').slice(0,-1).join('.');
+                    return (root == "")?inputs.crossbow_filelist.basename+ext:root+ext;
+                  } else {
+                    return null;
+                  }
     };
 
 hints:
@@ -921,10 +924,12 @@ s:creator:
 doc: |
   Tool maps input raw reads files to reference genome using Bowtie.
 
-  `default_output_filename` function returns default name for SAM output file. In case when `sam` input is not
-  set, default filename will have `.sam` extension but format will not correspond SAM specification. To set output
-  filename manually use `output_filename` input. Default output filename is based on `output_filename` or basename of
-  `upstream_filelist`, `downstream_filelist` or `crossbow_filelist` file (if array, the first file in array is taken).
+  `default_output_filename` function returns default name for SAM output and log files. In case when `sam` and
+  `output_filename` inputs are not set, default filename will have `.sam` extension but format may not correspond SAM
+  specification. To set output filename manually use `output_filename` input. Default output filename is based on
+  `output_filename` or basename of `upstream_filelist`, `downstream_filelist` or `crossbow_filelist` file (if array,
+  the first file in array is taken). If function is called without argenments and `output_filename` input is set, it
+  will be returned from the function.
 
   For single-end input data any of the `upstream_filelist` or `downstream_filelist` inputs can be used.
 
