@@ -214,6 +214,10 @@
       class: File
       location: upstream.bw
       size: 252
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
+
 
 - job: ./bowtie-alignreads-2.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -236,6 +240,10 @@
       class: File
       location: upstream.bw
       size: 252
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
+
 
 - job: ./bowtie-alignreads-3.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -258,6 +266,9 @@
       class: File
       location: result.bw
       size: 250
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-4.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -280,6 +291,9 @@
       class: File
       location: result.bw
       size: 250
+    mapped_reads_number: 35
+    unmapped_reads_number: 90
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-5.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -302,6 +316,9 @@
       class: File
       location: upstream.bw
       size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-6.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -324,6 +341,9 @@
       class: File
       location: result.bw
       size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-7.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -340,6 +360,9 @@
       class: File
       location: result.bw
       size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-8.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -356,6 +379,9 @@
       class: File
       location: upstream.bw
       size: 179
+    mapped_reads_number: 30
+    unmapped_reads_number: 95
+    total_reads_number: 125
 
 # ========================================================
 # bowtie-build
