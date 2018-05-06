@@ -38,7 +38,7 @@ outputs:
   output_file:
     type: File
     outputBinding:
-      glob: $(inputs.input_file.basename)
+      glob: "*"
 
 
 baseCommand: [bash, '-c']
