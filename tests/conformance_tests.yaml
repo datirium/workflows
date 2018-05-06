@@ -383,6 +383,31 @@
     unmapped_reads_number: 95
     total_reads_number: 125
 
+- job: ./bowtie-alignreads-9.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file:
+      class: File
+      location: result.txt
+      size: 20562
+    refout_file: null
+    log_file:
+      class: File
+      location: result.bw
+      size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
+
 # ========================================================
 # bowtie-build
 # ========================================================
@@ -986,8 +1011,8 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
-    unmapped_reads_number: 32
-    mapped_reads_number: 93
+    unmapped_reads_number: 93
+    mapped_reads_number: 32
     multimapped_reads_number: 0
     total_reads_number: 125
 
@@ -1032,8 +1057,8 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
-    unmapped_reads_number: 32
-    mapped_reads_number: 93
+    unmapped_reads_number: 93
+    mapped_reads_number: 32
     multimapped_reads_number: 0
     total_reads_number: 125
 
@@ -1078,8 +1103,8 @@
         location: output.cnt
       - class: File
         location: output.model
-    unmapped_reads_number: 32
-    mapped_reads_number: 93
+    unmapped_reads_number: 93
+    mapped_reads_number: 32
     multimapped_reads_number: 0
     total_reads_number: 125
 
