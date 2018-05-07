@@ -1,0 +1,8 @@
+{
+  "input_files": [
+    {"class": "File", "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"},
+    {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam.bai"},
+    {"class": "File", "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam"}
+  ],
+  "basename_regex": "nothing"
+}

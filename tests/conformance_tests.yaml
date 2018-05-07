@@ -661,6 +661,24 @@
       location: chr4_100_mapped_reads.Aligned.out.bam.bai
       size: 1368
 
+- job: ./get-file-by-name-2.json
+  tool: ../expressiontools/get-file-by-name.cwl
+  output:
+    selected_file:
+      class: File
+      location: dm3_chr4.chrlist
+      size: 13
+
+- job: ./get-file-by-name-3.json
+  tool: ../expressiontools/get-file-by-name.cwl
+  output:
+    selected_file: null
+
+- job: ./get-file-by-name-4.json
+  tool: ../expressiontools/get-file-by-name.cwl
+  output:
+    selected_file: null
+
 # ========================================================
 # iaintersect
 # ========================================================
