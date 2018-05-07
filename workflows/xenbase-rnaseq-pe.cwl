@@ -50,12 +50,6 @@ inputs:
     label: "BowTie Ribosomal Indices"
     doc: "Path to Bowtie generated indices for ribosomal FASTA"
 
-  chrom_length_file:
-    type: File
-    label: "Chromosome length file"
-    format: "http://edamontology.org/format_2330"
-    doc: "Chromosome length file"
-
   threads:
     type: int?
     default: 2
@@ -248,11 +242,19 @@ steps:
         valueFrom: $(default_output_name(self, ".genes.csv"))
     out: [target_file]
 
+  get_chr_length_file:
+    run: ../expressiontools/get-file-by-name.cwl
+    in:
+      input_files: rsem_indices_folder
+      basename_regex:
+        default: "chrlist"
+    out: [selected_file]
+
   bam_to_bigwig:
     run: bam-bedgraph-bigwig.cwl
     in:
       bam_file: rename_rsem_bambai_pair/target_file
-      chrom_length_file: chrom_length_file
+      chrom_length_file: get_chr_length_file/selected_file
       mapped_reads_number:
         source: rsem_calculate_expression/mapped_reads_number
         valueFrom: $(self*2)
