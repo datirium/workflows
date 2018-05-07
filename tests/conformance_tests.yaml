@@ -2209,3 +2209,111 @@
       class: File
       location: output.bedGraph
       size: 190358
+
+# ========================================================
+# xenbase-rnaseq-se
+# ========================================================
+
+- job: ./xenbase-rnaseq-se-1.json
+  tool: ../workflows/xenbase-rnaseq-se.cwl
+  output:
+    rsem_genes_file:
+      class: File
+      location: upstream.genes.csv
+      size: 7870
+    get_stat_log:
+      class: File
+      location: upstream.stat
+      size: 13
+    fastx_statistics:
+      class: File
+      location: upstream.fastxstat
+      size: 2255
+    bigwig_file:
+      class: File
+      location: upstream.bigWig
+      size: 32816
+    bowtie_log:
+      class: File
+      location: upstream.bw
+      size: 137
+    bambai_pair:
+      class: File
+      location: upstream.bam
+      secondaryFiles:
+      - class: File
+        location: upstream.bam.bai
+        size: 1312
+    rsem_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16907
+    rsem_stat_folder:
+      class: Directory
+      basename: upstream.trimmed.stat
+      listing:
+      - class: File
+        location: upstream.trimmed.cnt
+        size: 81
+      - class: File
+        location: upstream.trimmed.theta
+        size: 3012
+      - class: File
+        location: upstream.trimmed.model
+        size: 33152
+
+# ========================================================
+# xenbase-rnaseq-pe
+# ========================================================
+
+- job: ./xenbase-rnaseq-pe-1.json
+  tool: ../workflows/xenbase-rnaseq-pe.cwl
+  output:
+    rsem_genes_file:
+      class: File
+      location: upstream.genes.csv
+      size: 7793
+    get_stat_log:
+      class: File
+      location: upstream.stat
+      size: 13
+    fastx_statistics_downstream:
+      class: File
+      location: downstream.fastxstat
+      size: 2212
+    fastx_statistics_upstream:
+      class: File
+      location: upstream.fastxstat
+      size: 2255
+    bigwig_file:
+      class: File
+      location: upstream.bigWig
+      size: 32388
+    bowtie_log:
+      class: File
+      location: upstream.bw
+      size: 137
+    bambai_pair:
+      class: File
+      location: upstream.bam
+      secondaryFiles:
+      - class: File
+        location: upstream.bam.bai
+        size: 1056
+    rsem_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16792
+    rsem_stat_folder:
+      class: Directory
+      basename: upstream.trimmed.stat
+      listing:
+      - class: File
+        location: upstream.trimmed.cnt
+        size: 75
+      - class: File
+        location: upstream.trimmed.theta
+        size: 2356
+      - class: File
+        location: upstream.trimmed.model
+        size: 44461
