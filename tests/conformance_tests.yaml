@@ -2237,7 +2237,7 @@
   output:
     rsem_genes_file:
       class: File
-      location: upstream.genes.csv
+      location: upstream.genes.tsv
       size: 7870
     get_stat_log:
       class: File
@@ -2264,7 +2264,7 @@
         size: 1312
     rsem_isoforms_file:
       class: File
-      location: upstream.isoforms.csv
+      location: upstream.isoforms.tsv
       size: 16907
     rsem_stat_folder:
       class: Directory
@@ -2293,7 +2293,7 @@
   output:
     rsem_genes_file:
       class: File
-      location: upstream.genes.csv
+      location: upstream.genes.tsv
       size: 7793
     get_stat_log:
       class: File
@@ -2324,7 +2324,7 @@
         size: 1056
     rsem_isoforms_file:
       class: File
-      location: upstream.isoforms.csv
+      location: upstream.isoforms.tsv
       size: 16792
     rsem_stat_folder:
       class: Directory
