@@ -2335,3 +2335,23 @@
       - class: File
         location: upstream.trimmed.model
         size: 44461
+
+# ========================================================
+# python-make-biowardrobe-isoforms-1.json
+# ========================================================
+
+- job: ./python-make-biowardrobe-isoforms-1.json
+  tool: ../tools/python-make-biowardrobe-isoforms.cwl
+  output:
+    biowardrobe_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16175
+
+- job: ./python-make-biowardrobe-isoforms-2.json
+  tool: ../tools/python-make-biowardrobe-isoforms.cwl
+  output:
+    biowardrobe_isoforms_file:
+      class: File
+      location: isoforms.csv
+      size: 16175
