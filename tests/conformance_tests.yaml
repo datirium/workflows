@@ -2279,6 +2279,10 @@
       - class: File
         location: upstream.trimmed.model
         size: 33152
+    biowardrobe_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16216
 
 # ========================================================
 # xenbase-rnaseq-pe
@@ -2335,6 +2339,10 @@
       - class: File
         location: upstream.trimmed.model
         size: 44461
+    biowardrobe_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16175
 
 # ========================================================
 # python-make-biowardrobe-isoforms-1.json
