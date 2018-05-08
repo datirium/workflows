@@ -1,0 +1,4 @@
+{
+  "rsem_isoforms_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/rsem_results/upstream.isoforms.results"},
+  "rsem_annotation_file": {"class": "File", "location": "./data/dm3_chr4/generated_inputs/indices/rsem_bowtie2_dm3_chr4/dm3_chr4.ti"}
+}
