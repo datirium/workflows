@@ -66,6 +66,13 @@ outputs:
     doc: "RSEM isoforms expression file"
     outputSource: rename_rsem_isoforms_file/target_file
 
+  biowardrobe_isoforms_file:
+    type: File
+    format: "http://edamontology.org/format_3752"
+    label: "Biowardrobe compatible isoforms expression file"
+    doc: "Biowardrobe compatible isoforms expression file"
+    outputSource: make_biowardrobe_isoforms/biowardrobe_isoforms_file
+
   rsem_genes_file:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -230,7 +237,7 @@ steps:
       source_file: rsem_calculate_expression/isoform_results_file
       target_filename:
         source: fastq_file_upstream
-        valueFrom: $(default_output_name(self, ".isoforms.csv"))
+        valueFrom: $(default_output_name(self, ".isoforms.tsv"))
     out: [target_file]
 
   rename_rsem_genes_file:
@@ -239,7 +246,7 @@ steps:
       source_file: rsem_calculate_expression/gene_results_file
       target_filename:
         source: fastq_file_upstream
-        valueFrom: $(default_output_name(self, ".genes.csv"))
+        valueFrom: $(default_output_name(self, ".genes.tsv"))
     out: [target_file]
 
   get_chr_length_file:
@@ -247,7 +254,7 @@ steps:
     in:
       input_files: rsem_indices_folder
       basename_regex:
-        default: "chrlist"
+        default: "chrlist$"
     out: [selected_file]
 
   bam_to_bigwig:
@@ -295,6 +302,22 @@ steps:
             return self.map(String);
           }
     out: [output_file]
+
+  get_annotation_file:
+    run: ../expressiontools/get-file-by-name.cwl
+    in:
+      input_files: rsem_indices_folder
+      basename_regex:
+        default: "ti$"
+    out: [selected_file]
+
+  make_biowardrobe_isoforms:
+    run: ../tools/python-make-biowardrobe-isoforms.cwl
+    in:
+      rsem_isoforms_file: rename_rsem_isoforms_file/target_file
+      rsem_annotation_file: get_annotation_file/selected_file
+    out: [biowardrobe_isoforms_file]
+
 
 $namespaces:
   s: http://schema.org/
