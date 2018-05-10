@@ -29,5 +29,5 @@ if(!is.na(CONTROL_FILENAME)){
     base_islands = base_islands[-mark[ ,1], ]
 }
 
-gff_islands = cbind.data.frame(base_islands[,CHROM_COL_NAME],apply(base_islands,1,function(x) gsub(" ","",paste(x, collapse="_",sep="")) ),"", base_islands[ ,"start"],base_islands[ ,"end"],"",".","",apply(base_islands,1,function(x) gsub(" ","",paste(x, collapse="_",sep=""))))
+gff_islands = cbind.data.frame(base_islands[,CHROM_COL_NAME],rownames(base_islands),"", base_islands[ ,"start"],base_islands[ ,"end"],"",".","",rownames(base_islands))
 write.table(gff_islands, GFF_FILENAME, quote=FALSE, col.names=FALSE, row.names=FALSE, append=FALSE, sep="\t")

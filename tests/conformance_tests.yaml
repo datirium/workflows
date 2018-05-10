@@ -1856,7 +1856,7 @@
     gff_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
-      size: 3659
+      size: 225
 
 - job: ./makegff-2.json
   tool: ../tools/makegff.cwl
@@ -1864,7 +1864,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 3659
+      size: 225
 
 - job: ./makegff-3.json
   tool: ../tools/makegff.cwl
@@ -1872,7 +1872,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 1404
+      size: 84
 
 - job: ./makegff-4.json
   tool: ../tools/makegff.cwl
@@ -1880,7 +1880,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 1863
+      size: 225
 
 # ========================================================
 # rose
@@ -1948,7 +1948,7 @@
     super_enhancers_table:
       class: File
       location: chr4_100_mapped_reads_SuperEnhancers.table.txt
-      size: 793
+      size: 365
     plot_points_pic:
       class: File
       location: chr4_100_mapped_reads_Plot_points.png
@@ -1956,43 +1956,43 @@
     all_enhancers_table:
       class: File
       location: chr4_100_mapped_reads_AllEnhancers.table.txt
-      size: 2399
+      size: 682
     gateway_enhancers_bed:
       class: File
       location: chr4_100_mapped_reads_Gateway_Enhancers.bed
-      size: 1963
+      size: 246
     gff_directory:
       class: Directory
       basename: "gff"
       listing:
       - class: File
         location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
-        size: 3659
+        size: 225
       - class: File
         location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
-        size: 3749
+        size: 315
     gateway_super_enhancers_bed:
       class: File
       location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
-      size: 453
+      size: 25
     enhancers_with_super_bed:
       class: File
       location: chr4_100_mapped_reads_Enhancers_withSuper.bed
-      size: 3063
+      size: 918
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
         location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 2007
+        size: 290
       - class: File
         location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 2052
+        size: 335
     stitched_enhancer_region_map:
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
-      size: 2127
+      size: 410
 
 - job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
@@ -2000,7 +2000,7 @@
     super_enhancers_table:
       class: File
       location: chr4_100_mapped_reads_SuperEnhancers.table.txt
-      size: 468
+      size: 365
     plot_points_pic:
       class: File
       location: chr4_100_mapped_reads_Plot_points.png
@@ -2008,43 +2008,43 @@
     all_enhancers_table:
       class: File
       location: chr4_100_mapped_reads_AllEnhancers.table.txt
-      size: 1501
+      size: 682
     gateway_enhancers_bed:
       class: File
       location: chr4_100_mapped_reads_Gateway_Enhancers.bed
-      size: 1065
+      size: 246
     gff_directory:
       class: Directory
       basename: "gff"
       listing:
       - class: File
         location: chr4_100_mapped_reads.Aligned.out_macs_peaks.gff
-        size: 1863
+        size: 225
       - class: File
         location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
-        size: 1953
+        size: 315
     gateway_super_enhancers_bed:
       class: File
       location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
-      size: 128
+      size: 25
     enhancers_with_super_bed:
       class: File
       location: chr4_100_mapped_reads_Enhancers_withSuper.bed
-      size: 1840
+      size: 918
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
         location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 1109
+        size: 290
       - class: File
         location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 1154
+        size: 335
     stitched_enhancer_region_map:
       class: File
       location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
-      size: 1229
+      size: 410
 
 # ========================================================
 # custom-bash

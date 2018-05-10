@@ -2,15 +2,20 @@
 # Dockerfile
 #
 # Software:         SciDAP Add-ons
-# Software Version: v0.0.3
+# Software Version: v0.0.4
 # Description:      Add-ons toolkit for BioWardrobe
 # Website:          https://github.com/Barski-lab/workflows
 # Provides:         R, ROSE (RANK ORDERING OF SUPER-ENHANCERS), Bioconductor, Samtools
 # Base Image:       biowardrobe2/scidap:v0.0.3
-# Build Cmd:        docker build --rm -t biowardrobe2/scidap-addons:v0.0.3 -f scidap-addons-Dockerfile .
-# Pull Cmd:         docker pull biowardrobe2/scidap-addons:v0.0.3
-# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-addons:v0.0.3 /bin/bash
+# Build Cmd:        docker build --rm -t biowardrobe2/scidap-addons:v0.0.4 -f scidap-addons-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap-addons:v0.0.4
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-addons:v0.0.4 /bin/bash
 #################################################################
+# Updates
+#
+# v0.0.4 - update scidap_addons_makegff.R script to use row number as a name column for generated file
+#################################################################
+
 
 ### Base Image
 FROM biowardrobe2/scidap:v0.0.3
