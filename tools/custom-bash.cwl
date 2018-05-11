@@ -21,7 +21,9 @@ inputs:
       position: 1
 
   input_file:
-    type: File
+    type:
+      - File
+      - File[]
     inputBinding:
       position: 2
 

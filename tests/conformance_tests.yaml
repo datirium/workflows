@@ -2014,6 +2014,14 @@
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 36089
 
+- job: ./custom-bash-5.json
+  tool: ../tools/custom-bash.cwl
+  output:
+    output_file:
+      class: File
+      location: concatenated.txt
+      size: 273
+
 # ========================================================
 # ucsc-bigwigtowig
 # ========================================================
