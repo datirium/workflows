@@ -1895,24 +1895,24 @@
       listing:
       - class: File
         location: custom.gff
-        size: 513
+        size: 225
       - class: File
         location: custom_20KB_STITCHED_TSS_DISTAL.gff
-        size: 603
+        size: 315
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
         location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 479
+        size: 335
       - class: File
         location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 434
+        size: 290
     super_enhancers_table:
       class: File
       location: custom_SuperEnhancers.table.txt
-      size: 353
+      size: 335
     plot_points_pic:
       class: File
       location: custom_Plot_points.png
@@ -1920,23 +1920,23 @@
     all_enhancers_table:
       class: File
       location: custom_AllEnhancers.table.txt
-      size: 796
+      size: 652
     gateway_enhancers_bed:
       class: File
       location: custom_Gateway_Enhancers.bed
-      size: 390
+      size: 246
     gateway_super_enhancers_bed:
       class: File
       location: custom_Gateway_SuperEnhancers.bed
-      size: 43
+      size: 25
     enhancers_with_super_bed:
       class: File
       location: custom_Enhancers_withSuper.bed
-      size: 1020
+      size: 858
     stitched_enhancer_region_map:
       class: File
       location: custom_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
-      size: 554
+      size: 410
 
 # ========================================================
 # super-enhancer
