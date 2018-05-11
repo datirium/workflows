@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-addons:v0.0.4
+  dockerPull: biowardrobe2/scidap-addons:v0.0.5
 
 
 inputs:
