@@ -1872,7 +1872,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 84
+      size: 169
 
 - job: ./makegff-4.json
   tool: ../tools/makegff.cwl
@@ -1961,6 +1961,18 @@
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
       size: 23753
+    rose_gateway_super_enhancers_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
+      size: 466
+
+- job: ./super-enhancer-3.json
+  tool: ../workflows/super-enhancer.cwl
+  output:
+    rose_plot_points_png:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
+      size: 23560
     rose_gateway_super_enhancers_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
