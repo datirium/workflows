@@ -1,8 +1,6 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
-requirements:
-- $import: ./metadata/envvar-global.yml
 
 hints:
 - class: DockerRequirement

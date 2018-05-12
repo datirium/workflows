@@ -2,10 +2,6 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
-requirements:
-- $import: ./metadata/envvar-global.yml
-
-
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/scidap:v0.0.3
