@@ -53,6 +53,10 @@ inputs:
     label: "TSS distance"
     doc: "Distance from TSS to exclude, 0 = no TSS exclusion"
 
+  promoter_bp:
+    type: int
+    label: "Promoter distance"
+    doc: "Promoter distance for gene names assignment"
 
 outputs:
 
@@ -144,8 +148,7 @@ steps:
     in:
       input_filename: bed_to_macs/output_file
       annotation_filename: annotation_file
-      promoter_bp:
-        default: 1000
+      promoter_bp: promoter_bp
     out: [result_file]
 
   add_island_names:
