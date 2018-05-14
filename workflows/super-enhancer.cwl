@@ -204,8 +204,8 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Workflow
-  Both islands_file and islands_control_file should be produced by the same cwl tool
+  Both `islands_file` and `islands_control_file` should be produced by the same cwl tool (iaintersect.cwl or
+  macs2-callpeak-biowardrobe-only.cwl)
 
 s:about: |
-  Workflow
+  Workflow to run Super Enhancer Analysis
