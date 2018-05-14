@@ -1945,38 +1945,50 @@
 - job: ./super-enhancer-1.json
   tool: ../workflows/super-enhancer.cwl
   output:
-    rose_plot_points_png:
+    png_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
       size: 23753
-    rose_gateway_super_enhancers_file:
+    bigbed_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+      size: 13282
+    gene_names_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
-      size: 466
+      size: 481
 
 - job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
   output:
-    rose_plot_points_png:
+    png_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
       size: 23753
-    rose_gateway_super_enhancers_file:
+    bigbed_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+      size: 13282
+    gene_names_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
-      size: 466
+      size: 481
 
 - job: ./super-enhancer-3.json
   tool: ../workflows/super-enhancer.cwl
   output:
-    rose_plot_points_png:
+    png_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
       size: 23560
-    rose_gateway_super_enhancers_file:
+    bigbed_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+      size: 13282
+    gene_names_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
-      size: 466
+      size: 481
 
 # ========================================================
 # custom-bash
