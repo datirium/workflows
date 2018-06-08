@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-addons:v0.0.5
+  dockerPull: biowardrobe2/rose:v0.0.2
 
 
 inputs:
