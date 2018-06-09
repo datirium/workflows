@@ -1,9 +1,11 @@
 #!/usr/bin/env Rscript
-library(optparse, quietly=T, verbose=F)
-library(sqldf, quietly=T, verbose=F)
-library(GenomicRanges, quietly=T, verbose=F)
-library(Rsamtools, quietly=T, verbose=F)
-library(BiocParallel, quietly=T, verbose=F)
+options(warn=-1)
+
+suppressMessages(library(optparse))
+suppressMessages(library(sqldf))
+suppressMessages(library(GenomicRanges))
+suppressMessages(library(Rsamtools))
+suppressMessages(library(BiocParallel))
 
 
 get_coverage <- function(ranges, isoforms, bam_file, is_pair, is_dutp, threads) {
@@ -85,12 +87,14 @@ option_list <- list(make_option(c("-a", "--annotation"), type="character", help=
                     make_option(c("-b", "--bam"),        type="character", help="Path to BAM file"),
                     make_option(c("-i", "--isoforms"),   type="character", help="Path to isoforms file"),
                     make_option(c("-s", "--stat"),       type="character", help="Path to statistics file"),
+                    make_option(c("-o", "--output"),     type="character", help="Output file prefix", default="./"),
                     make_option(c("-p", "--pair"),       type="logical",   help="Is paired end", default = FALSE),
                     make_option(c("-d", "--dutp"),       type="logical",   help="Is dUTP", default = FALSE),
                     make_option(c("-t", "--threads"),    type="integer",   help="Threads number", default = 1));
 
 opt_parser <- OptionParser(option_list = option_list);
 args <- parse_args(opt_parser);
+png(filename=paste(args$output, "%03d.png", sep=""))
 
 colvar <- 5
 icolor = colorRampPalette(c("#7fc97f","#beaed4","#fdc086","#386cb0","#f0027f"))(colvar)
@@ -99,9 +103,15 @@ ranges <- read.table(args$annotation, sep="\t", header=TRUE, stringsAsFactors=FA
 isoforms <- read.table(args$isoforms, sep=",", header=TRUE, stringsAsFactors=FALSE)
 stat <- read.table(args$stat, sep=" ", header=FALSE, stringsAsFactors=FALSE)
 
-cov <- get_coverage(ranges, isoforms, args$bam, args$pair, args$dutp, args$threads)
 tags_mapped = as.numeric(stat[2])
-plot(cov/(tags_mapped/1000000),
+cov_norm <- get_coverage(ranges, isoforms, args$bam, args$pair, args$dutp, args$threads)/(tags_mapped/1000000)
+write.table(cov_norm,
+            file = paste(args$output, "cov.tsv", sep=""),
+            sep="\t",
+            row.names=FALSE,
+            col.names=FALSE,
+            quote=FALSE)
+plot(cov_norm,
      type="l",
      xaxt = "n",
      main="Gene body average tag density",
@@ -110,10 +120,17 @@ plot(cov/(tags_mapped/1000000),
      lwd=3, col=icolor[floor(runif(1)*colvar)+1])
 axis(1, at=seq(0,200,40), labels=seq(0,100,20), las=1)
 
-rpkm <- isoforms$Rpkm
-
-hist(rpkm[rpkm>2 & rpkm<500],
+rpkm_filtered <- isoforms$Rpkm[isoforms$Rpkm>2 & isoforms$Rpkm<500]
+write.table(rpkm_filtered,
+            file = paste(args$output, "rpkm.tsv", sep=""),
+            sep="\t",
+            row.names=FALSE,
+            col.names=FALSE,
+            quote=FALSE)
+hist(rpkm_filtered,
      main="RPKM distribution",
      breaks=1000,
      xlab="rpkm>2 & rpkm<500",
      col=icolor[floor(runif(1)*colvar)+1])
+
+graphics.off()
