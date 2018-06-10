@@ -88,12 +88,13 @@ option_list <- list(make_option(c("-a", "--annotation"), type="character", help=
                     make_option(c("-i", "--isoforms"),   type="character", help="Path to isoforms file"),
                     make_option(c("-s", "--stat"),       type="character", help="Path to statistics file"),
                     make_option(c("-o", "--output"),     type="character", help="Output file prefix", default="./"),
-                    make_option(c("-p", "--pair"),       type="logical",   help="Is paired end", default = FALSE),
-                    make_option(c("-d", "--dutp"),       type="logical",   help="Is dUTP", default = FALSE),
+                    make_option(c("-p", "--pair"),       type="logical",   help="Is paired end", action="store_true", default = FALSE),
+                    make_option(c("-d", "--dutp"),       type="logical",   help="Is dUTP", action="store_true", default = FALSE),
                     make_option(c("-t", "--threads"),    type="integer",   help="Threads number", default = 1));
 
 opt_parser <- OptionParser(option_list = option_list);
 args <- parse_args(opt_parser);
+
 png(filename=paste(args$output, "%03d.png", sep=""))
 
 colvar <- 5
