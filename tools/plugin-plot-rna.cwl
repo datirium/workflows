@@ -100,12 +100,12 @@ outputs:
       glob: "*.png"
 
   coverage_file:
-    type: File[]
+    type: File
     outputBinding:
       glob: "*cov.tsv"
 
   rpkm_file:
-    type: File[]
+    type: File
     outputBinding:
       glob: "*rpkm.tsv"
 
