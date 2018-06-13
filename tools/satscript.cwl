@@ -69,6 +69,14 @@ inputs:
     doc: |
       Output suffixes for reads, islands, surface and saturation files.
 
+  res_dpi:
+    type:
+      - "null"
+      - int
+    inputBinding:
+      position: 10
+      prefix: "-r"
+    doc: "Output picture file resolution, dpi"
 
 outputs:
 
