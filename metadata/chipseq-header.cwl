@@ -10,7 +10,6 @@ inputs:
     label: "Conditions"
   alias:
     type: string
-    "sd:showAs": "title"
     label: "Experiment short name/Alias"
   catalog:
     type: string?
