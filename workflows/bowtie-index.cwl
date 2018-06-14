@@ -13,7 +13,6 @@ inputs:
     type: string
     label: "Genome"
     doc: "Used by BioWardrobe to set genome"
-    "sd:showAs": "title"
 
   fasta_input_file:
     type: File
