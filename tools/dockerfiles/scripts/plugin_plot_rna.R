@@ -84,7 +84,7 @@ get_coverage <- function(ranges, isoforms, bam_file, is_pair, is_dutp, threads) 
 }
 
 option_list <- list(make_option(c("-a", "--annotation"), type="character", help="Path to annotation file"),
-                    make_option(c("-b", "--bam"),        type="character", help="Path to BAM file"),
+                    make_option(c("-b", "--bam"),        type="character", help="Path to BAM file (+BAI)"),
                     make_option(c("-i", "--isoforms"),   type="character", help="Path to isoforms file"),
                     make_option(c("-s", "--stat"),       type="character", help="Path to statistics file"),
                     make_option(c("-o", "--output"),     type="character", help="Output file prefix", default="./"),
@@ -121,17 +121,18 @@ plot(cov_norm,
      lwd=3, col=icolor[floor(runif(1)*colvar)+1])
 axis(1, at=seq(0,200,40), labels=seq(0,100,20), las=1)
 
-rpkm_filtered <- isoforms$Rpkm[isoforms$Rpkm>2 & isoforms$Rpkm<500]
-write.table(rpkm_filtered,
+rpkm_hist <- hist(isoforms$Rpkm[isoforms$Rpkm>2 & isoforms$Rpkm<500],
+                  main="RPKM distribution",
+                  breaks=1000,
+                  xlab="rpkm>2 & rpkm<500",
+                  col=icolor[floor(runif(1)*colvar)+1])
+
+write.table(data.frame(mids=rpkm_hist$mids, counts=rpkm_hist$counts, density=rpkm_hist$density),
             file = paste(args$output, "rpkm.tsv", sep=""),
             sep="\t",
             row.names=FALSE,
-            col.names=FALSE,
+            col.names=TRUE,
             quote=FALSE)
-hist(rpkm_filtered,
-     main="RPKM distribution",
-     breaks=1000,
-     xlab="rpkm>2 & rpkm<500",
-     col=icolor[floor(runif(1)*colvar)+1])
+
 
 graphics.off()
