@@ -13,7 +13,7 @@ requirements:
         } else {
           return inputs.output_prefix;
         }
-    };
+    }
 
 
 hints:
