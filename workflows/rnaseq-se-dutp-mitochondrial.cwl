@@ -152,12 +152,12 @@ outputs:
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats/statistics_file
 
-  bam_merged:
+  bam_merged_index:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: merge_original_and_mitochondrial/output
+    outputSource: merge_original_and_mitochondrial_index/bam_bai_pair
 
   bowtie_log:
     type: File
@@ -272,9 +272,19 @@ steps:
     in:
       output_name:
         source: extract_fastq/fastq_file
-        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_merged.bam')
       input: [ samtools_sort_index/bam_bai_pair, samtools_sort_index_mitochondrial/bam_bai_pair ]
     out: [output]
+
+  merge_original_and_mitochondrial_index:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: merge_original_and_mitochondrial/output
+      sort_output_filename:
+        source: extract_fastq_upstream/fastq_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
+      threads: threads
+    out: [bam_bai_pair]
 
   bam_to_bigwig_upstream:
     run: bam-bedgraph-bigwig.cwl
