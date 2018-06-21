@@ -2,39 +2,45 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- $import: ./metadata/envvar-global.yml
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var default_output_filename = function() {
-      let ext = ".sam";
+  - var default_output_filename = function(ext) {
+      if (inputs.output_filename && !ext){
+         return inputs.output_filename;
+      }
+      ext = ext || ".sam";
       let root = "";
-      if (Array.isArray(inputs.upstream_filelist) && inputs.upstream_filelist.length > 0){
-        root = inputs.upstream_filelist[0].basename.split('.').slice(0,-1).join('.');
-        return (root == "")?inputs.upstream_filelist[0].basename+ext:root+ext;
+      if (inputs.output_filename){
+         root = inputs.output_filename.split('.').slice(0,-1).join('.');
+         return (root == "")?inputs.output_filename+ext:root+ext;
       } else
-        if (inputs.upstream_filelist != null){
-          root = inputs.upstream_filelist.basename.split('.').slice(0,-1).join('.');
-          return (root == "")?inputs.upstream_filelist.basename+ext:root+ext;
+        if (Array.isArray(inputs.upstream_filelist) && inputs.upstream_filelist.length > 0){
+          root = inputs.upstream_filelist[0].basename.split('.').slice(0,-1).join('.');
+          return (root == "")?inputs.upstream_filelist[0].basename+ext:root+ext;
         } else
-          if (Array.isArray(inputs.downstream_filelist) && inputs.downstream_filelist.length > 0){
-            root = inputs.downstream_filelist[0].basename.split('.').slice(0,-1).join('.');
-            return (root == "")?inputs.downstream_filelist[0].basename+ext:root+ext;
+          if (inputs.upstream_filelist != null){
+            root = inputs.upstream_filelist.basename.split('.').slice(0,-1).join('.');
+            return (root == "")?inputs.upstream_filelist.basename+ext:root+ext;
           } else
-            if (inputs.downstream_filelist != null){
-              root = inputs.downstream_filelist.basename.split('.').slice(0,-1).join('.');
-              return (root == "")?inputs.downstream_filelist.basename+ext:root+ext;
+            if (Array.isArray(inputs.downstream_filelist) && inputs.downstream_filelist.length > 0){
+              root = inputs.downstream_filelist[0].basename.split('.').slice(0,-1).join('.');
+              return (root == "")?inputs.downstream_filelist[0].basename+ext:root+ext;
             } else
-              if (Array.isArray(inputs.crossbow_filelist) && inputs.crossbow_filelist.length > 0){
-                root = inputs.crossbow_filelist[0].basename.split('.').slice(0,-1).join('.');
-                return (root == "")?inputs.crossbow_filelist[0].basename+ext:root+ext;
+              if (inputs.downstream_filelist != null){
+                root = inputs.downstream_filelist.basename.split('.').slice(0,-1).join('.');
+                return (root == "")?inputs.downstream_filelist.basename+ext:root+ext;
               } else
-                if (inputs.crossbow_filelist != null){
-                  root = inputs.crossbow_filelist.basename.split('.').slice(0,-1).join('.');
-                  return (root == "")?inputs.crossbow_filelist.basename+ext:root+ext;
-                } else {
-                  return null;
-                }
+                if (Array.isArray(inputs.crossbow_filelist) && inputs.crossbow_filelist.length > 0){
+                  root = inputs.crossbow_filelist[0].basename.split('.').slice(0,-1).join('.');
+                  return (root == "")?inputs.crossbow_filelist[0].basename+ext:root+ext;
+                } else
+                  if (inputs.crossbow_filelist != null){
+                    root = inputs.crossbow_filelist.basename.split('.').slice(0,-1).join('.');
+                    return (root == "")?inputs.crossbow_filelist.basename+ext:root+ext;
+                  } else {
+                    return null;
+                  }
     };
 
 hints:
@@ -107,14 +113,7 @@ inputs:
       - string
     inputBinding:
       position: 90
-      valueFrom: |
-        ${
-            if (self == null){
-              return default_output_filename();
-            } else {
-              return self;
-            }
-        }
+      valueFrom: $(default_output_filename())
     default: null
     doc: |
       Generates default output filename on the base of upstream_filelist/downstream_filelist files
@@ -779,18 +778,13 @@ inputs:
     doc: |
       verbose output (for debugging)
 
+
 outputs:
+
   sam_file:
     type: File?
     outputBinding:
-      glob: |
-        ${
-           if (inputs.output_filename == null){
-             return default_output_filename();
-           } else {
-             return inputs.output_filename;
-           }
-        }
+      glob: $(default_output_filename())
 
   refout_file:
     type: File[]?
@@ -813,16 +807,41 @@ outputs:
       glob: $(inputs.max)
 
   log_file:
-    type: File?
+    type: File
     outputBinding:
-      glob: |
+      glob: $(default_output_filename(".bw"))
+
+  unmapped_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename(".bw"))
+      outputEval: |
         ${
-           if (inputs.output_filename == null){
-             return default_output_filename().split('.').slice(0,-1).join('.') + ".bw";
-           } else {
-             let root = inputs.output_filename.split('.').slice(0,-1).join('.');
-             return (root == "")?inputs.output_filename+'.bw':root+'.bw';
-           }
+          let unmappedRegex = /align\:.*/;
+          return parseInt(self[0].contents.match(unmappedRegex)[0].split(" ")[1]);
+        }
+
+  mapped_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename(".bw"))
+      outputEval: |
+        ${
+          let mappedRegex = /alignment\:.*/;
+          return parseInt(self[0].contents.match(mappedRegex)[0].split(" ")[1]);
+        }
+
+  total_reads_number:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: $(default_output_filename(".bw"))
+      outputEval: |
+        ${
+          let totalRegex = /processed\:.*/;
+          return parseInt(self[0].contents.match(totalRegex)[0].split(" ")[1]);
         }
 
 baseCommand:
@@ -847,13 +866,7 @@ arguments:
     position: 84
   - valueFrom: |
       ${
-        if (inputs.output_filename == null){
-          return ' 2> ' + default_output_filename().split('.').slice(0,-1).join('.') + '.bw';
-        } else {
-          let root = inputs.output_filename.split('.').slice(0,-1).join('.');
-          let log_filename = (root == "")?inputs.output_filename+'.bw':root+'.bw';
-          return ' 2> ' + log_filename;
-        }
+        return ' 2> ' + default_output_filename(".bw");
       }
     position: 100000
     shellQuote: false
@@ -910,15 +923,16 @@ s:creator:
 doc: |
   Tool maps input raw reads files to reference genome using Bowtie.
 
-  `default_output_filename` function returns default name for SAM output file. In case when `sam` input is not
-  set, default filename will have `.sam` extension but format will not correspond SAM specification. To set output
-  filename manually use `output_filename` input. Default output filename is based on basename of `upstream_filelist`,
-  `downstream_filelist` or `crossbow_filelist` file (if array, the first file in array is taken).
+  `default_output_filename` function returns default name for SAM output and log files. In case when `sam` and
+  `output_filename` inputs are not set, default filename will have `.sam` extension but format may not correspond SAM
+  specification. To set output filename manually use `output_filename` input. Default output filename is based on
+  `output_filename` or basename of `upstream_filelist`, `downstream_filelist` or `crossbow_filelist` file (if array,
+  the first file in array is taken). If function is called without argenments and `output_filename` input is set, it
+  will be returned from the function.
 
   For single-end input data any of the `upstream_filelist` or `downstream_filelist` inputs can be used.
 
-  Log filename (`log_file` output) is generated on the base of `output_filename` or value returned from
-  `default_output_filename` function.
+  Log filename (`log_file` output) is generated by `default_output_filename` function with ex='.bw'
 
   `indices_folder` defines folder to contain Bowtie indices. Based on the first found file with `rev.1.ebwt` or
   `rev.1.ebwtl` extension, bowtie index prefix is returned from input's `valueFrom` field.

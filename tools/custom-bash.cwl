@@ -2,10 +2,6 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
-requirements:
-- $import: ./metadata/envvar-global.yml
-
-
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/scidap:v0.0.3
@@ -21,7 +17,9 @@ inputs:
       position: 1
 
   input_file:
-    type: File
+    type:
+      - File
+      - File[]
     inputBinding:
       position: 2
 
@@ -38,7 +36,7 @@ outputs:
   output_file:
     type: File
     outputBinding:
-      glob: $(inputs.input_file.basename)
+      glob: "*"
 
 
 baseCommand: [bash, '-c']

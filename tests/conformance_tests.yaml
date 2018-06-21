@@ -214,6 +214,10 @@
       class: File
       location: upstream.bw
       size: 252
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
+
 
 - job: ./bowtie-alignreads-2.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -236,6 +240,10 @@
       class: File
       location: upstream.bw
       size: 252
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
+
 
 - job: ./bowtie-alignreads-3.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -258,6 +266,9 @@
       class: File
       location: result.bw
       size: 250
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-4.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -280,6 +291,9 @@
       class: File
       location: result.bw
       size: 250
+    mapped_reads_number: 35
+    unmapped_reads_number: 90
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-5.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -302,6 +316,9 @@
       class: File
       location: upstream.bw
       size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-6.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -324,6 +341,9 @@
       class: File
       location: result.bw
       size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-7.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -340,6 +360,9 @@
       class: File
       location: result.bw
       size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 - job: ./bowtie-alignreads-8.json
   tool: ../tools/bowtie-alignreads.cwl
@@ -356,6 +379,34 @@
       class: File
       location: upstream.bw
       size: 179
+    mapped_reads_number: 30
+    unmapped_reads_number: 95
+    total_reads_number: 125
+
+- job: ./bowtie-alignreads-9.json
+  tool: ../tools/bowtie-alignreads.cwl
+  output:
+    aligned_file:
+      class: File
+      location: aligned.txt
+      size: 11626
+    unaligned_file:
+      class: File
+      location: unaligned.txt
+      size: 3789
+    multimapped_file: null
+    sam_file:
+      class: File
+      location: result.txt
+      size: 20562
+    refout_file: null
+    log_file:
+      class: File
+      location: result.bw
+      size: 168
+    mapped_reads_number: 94
+    unmapped_reads_number: 31
+    total_reads_number: 125
 
 # ========================================================
 # bowtie-build
@@ -610,6 +661,24 @@
       location: chr4_100_mapped_reads.Aligned.out.bam.bai
       size: 1368
 
+- job: ./get-file-by-name-2.json
+  tool: ../expressiontools/get-file-by-name.cwl
+  output:
+    selected_file:
+      class: File
+      location: dm3_chr4.chrlist
+      size: 13
+
+- job: ./get-file-by-name-3.json
+  tool: ../expressiontools/get-file-by-name.cwl
+  output:
+    selected_file: null
+
+- job: ./get-file-by-name-4.json
+  tool: ../expressiontools/get-file-by-name.cwl
+  output:
+    selected_file: null
+
 # ========================================================
 # iaintersect
 # ========================================================
@@ -846,6 +915,7 @@
       class: File
       location: chr4_100_mapped_reads.Aligned.out.bam.bai
       size: 11034
+      secondaryFiles: []
 
 - job: ./rename-2.json
   tool: ../tools/rename.cwl
@@ -854,6 +924,19 @@
       class: File
       location: renamed.bam
       size: 11034
+      secondaryFiles: []
+
+- job: ./rename-3.json
+  tool: ../tools/rename.cwl
+  output:
+    target_file:
+      class: File
+      location: renamed.bam
+      size: 11034
+      secondaryFiles:
+      - class: File
+        location: renamed.bam.bai
+        size: 1368
 
 # ========================================================
 # rsem-calculate-expression
@@ -900,6 +983,10 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
+    unmapped_reads_number: 32
+    mapped_reads_number: 93
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 - job: ./rsem-calculate-expression-2.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -942,6 +1029,10 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
+    unmapped_reads_number: 93
+    mapped_reads_number: 32
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 - job: ./rsem-calculate-expression-3.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -984,6 +1075,10 @@
         location: upstream.theta
       - class: File
         location: upstream.cnt
+    unmapped_reads_number: 93
+    mapped_reads_number: 32
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 - job: ./rsem-calculate-expression-4.json
   tool: ../tools/rsem-calculate-expression.cwl
@@ -1026,6 +1121,10 @@
         location: output.cnt
       - class: File
         location: output.model
+    unmapped_reads_number: 93
+    mapped_reads_number: 32
+    multimapped_reads_number: 0
+    total_reads_number: 125
 
 # ========================================================
 # samtools-index
@@ -1757,7 +1856,7 @@
     gff_file:
       class: File
       location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
-      size: 3659
+      size: 225
 
 - job: ./makegff-2.json
   tool: ../tools/makegff.cwl
@@ -1765,7 +1864,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 3659
+      size: 225
 
 - job: ./makegff-3.json
   tool: ../tools/makegff.cwl
@@ -1773,7 +1872,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 1404
+      size: 169
 
 - job: ./makegff-4.json
   tool: ../tools/makegff.cwl
@@ -1781,7 +1880,7 @@
     gff_file:
       class: File
       location: custom.gff
-      size: 1863
+      size: 225
 
 # ========================================================
 # rose
@@ -1796,24 +1895,24 @@
       listing:
       - class: File
         location: custom.gff
-        size: 513
+        size: 225
       - class: File
         location: custom_20KB_STITCHED_TSS_DISTAL.gff
-        size: 603
+        size: 315
     mapped_gff_directory:
       class: Directory
       basename: "mappedGFF"
       listing:
       - class: File
         location: custom_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 479
+        size: 335
       - class: File
         location: custom_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 434
+        size: 290
     super_enhancers_table:
       class: File
       location: custom_SuperEnhancers.table.txt
-      size: 353
+      size: 335
     plot_points_pic:
       class: File
       location: custom_Plot_points.png
@@ -1821,23 +1920,23 @@
     all_enhancers_table:
       class: File
       location: custom_AllEnhancers.table.txt
-      size: 796
+      size: 652
     gateway_enhancers_bed:
       class: File
       location: custom_Gateway_Enhancers.bed
-      size: 390
+      size: 246
     gateway_super_enhancers_bed:
       class: File
       location: custom_Gateway_SuperEnhancers.bed
-      size: 43
+      size: 25
     enhancers_with_super_bed:
       class: File
       location: custom_Enhancers_withSuper.bed
-      size: 1020
+      size: 858
     stitched_enhancer_region_map:
       class: File
       location: custom_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
-      size: 554
+      size: 410
 
 # ========================================================
 # super-enhancer
@@ -1846,106 +1945,47 @@
 - job: ./super-enhancer-1.json
   tool: ../workflows/super-enhancer.cwl
   output:
-    super_enhancers_table:
+    png_file:
       class: File
-      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
-      size: 793
-    plot_points_pic:
-      class: File
-      location: chr4_100_mapped_reads_Plot_points.png
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
       size: 23753
-    all_enhancers_table:
+    bigbed_file:
       class: File
-      location: chr4_100_mapped_reads_AllEnhancers.table.txt
-      size: 2399
-    gateway_enhancers_bed:
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+    gene_names_file:
       class: File
-      location: chr4_100_mapped_reads_Gateway_Enhancers.bed
-      size: 1963
-    gff_directory:
-      class: Directory
-      basename: "gff"
-      listing:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
-        size: 3659
-      - class: File
-        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
-        size: 3749
-    gateway_super_enhancers_bed:
-      class: File
-      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
-      size: 453
-    enhancers_with_super_bed:
-      class: File
-      location: chr4_100_mapped_reads_Enhancers_withSuper.bed
-      size: 3063
-    mapped_gff_directory:
-      class: Directory
-      basename: "mappedGFF"
-      listing:
-      - class: File
-        location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 2007
-      - class: File
-        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 2052
-    stitched_enhancer_region_map:
-      class: File
-      location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
-      size: 2127
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
+      size: 481
 
 - job: ./super-enhancer-2.json
   tool: ../workflows/super-enhancer.cwl
   output:
-    super_enhancers_table:
+    png_file:
       class: File
-      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
-      size: 468
-    plot_points_pic:
-      class: File
-      location: chr4_100_mapped_reads_Plot_points.png
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
       size: 23753
-    all_enhancers_table:
+    bigbed_file:
       class: File
-      location: chr4_100_mapped_reads_AllEnhancers.table.txt
-      size: 1501
-    gateway_enhancers_bed:
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+    gene_names_file:
       class: File
-      location: chr4_100_mapped_reads_Gateway_Enhancers.bed
-      size: 1065
-    gff_directory:
-      class: Directory
-      basename: "gff"
-      listing:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out_macs_peaks.gff
-        size: 1863
-      - class: File
-        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL.gff
-        size: 1953
-    gateway_super_enhancers_bed:
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
+      size: 481
+
+- job: ./super-enhancer-3.json
+  tool: ../workflows/super-enhancer.cwl
+  output:
+    png_file:
       class: File
-      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bed
-      size: 128
-    enhancers_with_super_bed:
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.png
+      size: 23560
+    bigbed_file:
       class: File
-      location: chr4_100_mapped_reads_Enhancers_withSuper.bed
-      size: 1840
-    mapped_gff_directory:
-      class: Directory
-      basename: "mappedGFF"
-      listing:
-      - class: File
-        location: chr4_100_mapped_reads_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 1109
-      - class: File
-        location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_chr4_100_mapped_reads.Aligned.out.bam_MAPPED.gff
-        size: 1154
-    stitched_enhancer_region_map:
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+    gene_names_file:
       class: File
-      location: chr4_100_mapped_reads_20KB_STITCHED_TSS_DISTAL_ENHANCER_REGION_MAP.txt
-      size: 1229
+      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
+      size: 481
 
 # ========================================================
 # custom-bash
@@ -1982,6 +2022,14 @@
       class: File
       location: chr4_100_mapped_reads.Aligned.out.sam
       size: 36089
+
+- job: ./custom-bash-5.json
+  tool: ../tools/custom-bash.cwl
+  output:
+    output_file:
+      class: File
+      location: concatenated.txt
+      size: 273
 
 # ========================================================
 # ucsc-bigwigtowig
@@ -2128,3 +2176,139 @@
       class: File
       location: output.bedGraph
       size: 190358
+
+# ========================================================
+# xenbase-rnaseq-se
+# ========================================================
+
+- job: ./xenbase-rnaseq-se-1.json
+  tool: ../workflows/xenbase-rnaseq-se.cwl
+  output:
+    rsem_genes_file:
+      class: File
+      location: upstream.genes.tsv
+      size: 7870
+    get_stat_log:
+      class: File
+      location: upstream.stat
+      size: 13
+    fastx_statistics:
+      class: File
+      location: upstream.fastxstat
+      size: 2255
+    bigwig_file:
+      class: File
+      location: upstream.bigWig
+      size: 32816
+    bowtie_log:
+      class: File
+      location: upstream.bw
+      size: 137
+    bambai_pair:
+      class: File
+      location: upstream.bam
+      secondaryFiles:
+      - class: File
+        location: upstream.bam.bai
+        size: 1312
+    rsem_isoforms_file:
+      class: File
+      location: upstream.isoforms.tsv
+      size: 16907
+    rsem_stat_folder:
+      class: Directory
+      basename: upstream.trimmed.stat
+      listing:
+      - class: File
+        location: upstream.trimmed.cnt
+        size: 81
+      - class: File
+        location: upstream.trimmed.theta
+        size: 3012
+      - class: File
+        location: upstream.trimmed.model
+        size: 33152
+    biowardrobe_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16216
+
+# ========================================================
+# xenbase-rnaseq-pe
+# ========================================================
+
+- job: ./xenbase-rnaseq-pe-1.json
+  tool: ../workflows/xenbase-rnaseq-pe.cwl
+  output:
+    rsem_genes_file:
+      class: File
+      location: upstream.genes.tsv
+      size: 7793
+    get_stat_log:
+      class: File
+      location: upstream.stat
+      size: 13
+    fastx_statistics_downstream:
+      class: File
+      location: downstream.fastxstat
+      size: 2212
+    fastx_statistics_upstream:
+      class: File
+      location: upstream.fastxstat
+      size: 2255
+    bigwig_file:
+      class: File
+      location: upstream.bigWig
+      size: 32388
+    bowtie_log:
+      class: File
+      location: upstream.bw
+      size: 137
+    bambai_pair:
+      class: File
+      location: upstream.bam
+      secondaryFiles:
+      - class: File
+        location: upstream.bam.bai
+        size: 1056
+    rsem_isoforms_file:
+      class: File
+      location: upstream.isoforms.tsv
+      size: 16792
+    rsem_stat_folder:
+      class: Directory
+      basename: upstream.trimmed.stat
+      listing:
+      - class: File
+        location: upstream.trimmed.cnt
+        size: 75
+      - class: File
+        location: upstream.trimmed.theta
+        size: 2356
+      - class: File
+        location: upstream.trimmed.model
+        size: 44461
+    biowardrobe_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16175
+
+# ========================================================
+# python-make-biowardrobe-isoforms-1.json
+# ========================================================
+
+- job: ./python-make-biowardrobe-isoforms-1.json
+  tool: ../tools/python-make-biowardrobe-isoforms.cwl
+  output:
+    biowardrobe_isoforms_file:
+      class: File
+      location: upstream.isoforms.csv
+      size: 16175
+
+- job: ./python-make-biowardrobe-isoforms-2.json
+  tool: ../tools/python-make-biowardrobe-isoforms.cwl
+  output:
+    biowardrobe_isoforms_file:
+      class: File
+      location: isoforms.csv
+      size: 16175
