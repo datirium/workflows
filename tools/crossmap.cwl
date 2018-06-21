@@ -3,8 +3,6 @@ class: CommandLineTool
 
 
 requirements:
-
-  - $import: ./metadata/envvar-global.yml
   - class: InlineJavascriptRequirement
     expressionLib:
     - var get_output_filename = function(ext) {

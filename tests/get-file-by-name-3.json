@@ -1,0 +1,4 @@
+{
+  "input_files": {"class": "Directory", "location": "./data/dm3_chr4/generated_inputs/indices/rsem_bowtie2_dm3_chr4"},
+  "basename_regex": "nothing"
+}
