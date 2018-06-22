@@ -281,7 +281,7 @@ steps:
     in:
       sort_input: merge_original_and_mitochondrial/output
       sort_output_filename:
-        source: extract_fastq_upstream/fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
