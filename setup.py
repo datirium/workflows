@@ -76,10 +76,8 @@ setup(
 
     install_requires=[
         'setuptools',
-        'cwltool',
         'jsonmerge',
-        'ruamel.yaml < 0.15',
-        'apache-airflow >= 1.9.0, < 2'
+        'ruamel.yaml < 0.15'
     ],
 
     zip_safe=True,
