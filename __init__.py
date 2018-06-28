@@ -21,13 +21,11 @@
 
 import os
 import logging
-from functools import lru_cache
 from json import dumps
 
 _logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=256)
 def available(workflow=None):
     workflows_folder = os.path.abspath(os.path.dirname(os.path.abspath(__file__))+"/workflows")
 
