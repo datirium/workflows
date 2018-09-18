@@ -92,13 +92,13 @@ inputs:
       prefix: -o
       valueFrom: |
         ${
-            if (self == null || inputs.trigger == false){
+            if (self == "" || inputs.trigger == false){
               return default_output_name();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Write the final sorted output to FILE, rather than to standard output
 
@@ -131,7 +131,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.sort_output_filename == null || inputs.trigger == false){
+            if (inputs.sort_output_filename == "" || inputs.trigger == false){
               return default_output_name();
             } else {
               return inputs.sort_output_filename;

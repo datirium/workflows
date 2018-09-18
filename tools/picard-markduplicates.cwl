@@ -156,13 +156,13 @@ inputs:
       separate: false
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
 
   output_metrics_filename:
     type:
@@ -175,13 +175,13 @@ inputs:
       separate: false
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_metrics_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
 
 
   remove_dup:
@@ -330,7 +330,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename();
             } else {
               return inputs.output_filename;
@@ -342,7 +342,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_metrics_filename == null){
+            if (inputs.output_metrics_filename == ""){
               return default_output_metrics_filename();
             } else {
               return inputs.output_metrics_filename;

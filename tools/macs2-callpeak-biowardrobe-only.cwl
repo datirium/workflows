@@ -114,13 +114,13 @@ inputs:
       prefix: -n
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       The name string of the experiment. MACS will use this string NAME to create output files like ‘NAME_peaks.xls’,
       ‘NAME_negative_peaks.xls’, ‘NAME_peaks.bed’ , ‘NAME_summits.bed’, ‘NAME_model.r’ and so on.
@@ -559,7 +559,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_peaks.xls');
             } else {
               return inputs.output_prefix + '_peaks.xls';
@@ -571,7 +571,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_peaks.narrowPeak');
             } else {
               return inputs.output_prefix + '_peaks.narrowPeak';
@@ -583,7 +583,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_peaks.broadPeak');
             } else {
               return inputs.output_prefix + '_peaks.broadPeak';
@@ -595,7 +595,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_peaks.gappedPeak');
             } else {
               return inputs.output_prefix + '_peaks.gappedPeak';
@@ -607,7 +607,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_summits.bed');
             } else {
               return inputs.output_prefix + '_summits.bed';
@@ -619,7 +619,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_model.r');
             } else {
               return inputs.output_prefix + '_model.r';
@@ -631,7 +631,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_treat_pileup.bdg');
             } else {
               return inputs.output_prefix + '_treat_pileup.bdg';
@@ -643,7 +643,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs_control_lambda.bdg');
             } else {
               return inputs.output_prefix + '_control_lambda.bdg';
@@ -655,7 +655,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_macs.log');
             } else {
               return inputs.output_prefix + '.log';
@@ -667,7 +667,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_fragment_stat.tsv');
             } else {
               return inputs.output_prefix + '_fragment_stat.tsv';
@@ -680,7 +680,7 @@ outputs:
       loadContents: true
       glob: |
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_fragment_stat.tsv');
             } else {
               return inputs.output_prefix + '_fragment_stat.tsv';
@@ -694,7 +694,7 @@ outputs:
       loadContents: true
       glob: |
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_fragment_stat.tsv');
             } else {
               return inputs.output_prefix + '_fragment_stat.tsv';
@@ -708,7 +708,7 @@ outputs:
       loadContents: true
       glob: |
         ${
-            if (inputs.output_prefix == null){
+            if (inputs.output_prefix == ""){
               return default_output_filename('_fragment_stat.tsv');
             } else {
               return inputs.output_prefix + '_fragment_stat.tsv';
@@ -724,7 +724,7 @@ baseCommand: [python, 'run.py', 'macs2 callpeak']
 arguments:
   - valueFrom:
       ${
-          if (inputs.output_prefix == null){
+          if (inputs.output_prefix == ""){
             return ' 2> ' + default_output_filename('_macs.log');
           } else {
             return ' 2> ' + inputs.output_prefix + '.log';

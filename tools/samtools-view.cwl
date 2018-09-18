@@ -89,13 +89,13 @@ inputs:
       prefix: -o
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_name();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Output to file
 

@@ -71,13 +71,13 @@ inputs:
       position: 12
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       If set, writes the output bigWig file to output_filename,
       otherwise generates filename from default_output_filename()
@@ -88,7 +88,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename();
             } else {
               return inputs.output_filename;

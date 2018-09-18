@@ -6,7 +6,7 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-        if (inputs.output_filename == null){
+        if (inputs.output_filename == ""){
           let ext = ".gff";
           let root = inputs.islands_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.islands_file.basename+ext:root+ext;
@@ -34,7 +34,7 @@ inputs:
     inputBinding:
       position: 6
       valueFrom: $(default_output_filename())
-    default: null
+    default: ""
 
   islands_control_file:
     type: File?

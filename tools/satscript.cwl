@@ -7,7 +7,7 @@ requirements:
   expressionLib:
   - var get_output_prefix = function(ext) {
         ext = ext || "";
-        if (inputs.output_prefix == null){
+        if (inputs.output_prefix == ""){
           let root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.bam_file.basename+ext:root+ext;
         } else {
@@ -55,7 +55,7 @@ inputs:
       position: 8
       prefix: "-o"
       valueFrom: $(get_output_prefix("_default_"))
-    default: null
+    default: ""
     doc: "Output filename prefix"
 
   output_suffixes:

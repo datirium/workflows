@@ -76,19 +76,20 @@ inputs:
       separate: false
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return get_bed_type();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Type of BED file in a form of bedN[+[P]]. By default bed3 to three required BED fields
 
   bed_template:
     type:
       - "null"
+      - string
       - File
     inputBinding:
       position: 6
@@ -96,13 +97,13 @@ inputs:
       separate: false
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return get_bed_template();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       For non-standard "bedPlus" fields put a definition of each field in a row in AutoSql format.
       By default includes only three required BED fields: chrom, chromStart, chromEnd
@@ -195,13 +196,13 @@ inputs:
       position: 22
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Output filename
 
@@ -212,7 +213,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-          if (inputs.output_filename == null){
+          if (inputs.output_filename == ""){
             return default_output_filename();
           } else {
             return inputs.output_filename;
