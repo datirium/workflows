@@ -83,13 +83,13 @@ inputs:
       prefix: "-S"
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       File for SAM output (default: stdout)
 
@@ -828,7 +828,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-           if (inputs.output_filename == null){
+           if (inputs.output_filename == ""){
              return default_output_filename();
            } else {
              return inputs.output_filename;
@@ -840,7 +840,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-           if (inputs.output_filename == null){
+           if (inputs.output_filename == ""){
              return default_output_filename().split('.').slice(0,-1).join('.') + ".log";
            } else {
              return inputs.output_filename.split('.').slice(0,-1).join('.') + ".log";
@@ -876,7 +876,7 @@ arguments:
     position: 84
   - valueFrom: |
       ${
-        if (inputs.output_filename == null){
+        if (inputs.output_filename == ""){
           return ' 2> ' + default_output_filename().split('.').slice(0,-1).join('.') + '.log';
         } else {
           return ' 2> ' + inputs.output_filename.split('.').slice(0,-1).join('.') + '.log';

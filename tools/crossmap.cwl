@@ -17,7 +17,7 @@ requirements:
           alt_ext = "";
         }
         ext = (ext || ext=="")?ext:alt_ext;
-        if (inputs.output_basename == null){
+        if (inputs.output_basename == ""){
           let root = inputs.input_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.input_file.basename+ext:root+ext;
         } else {
@@ -26,7 +26,7 @@ requirements:
       };
     - var get_log_filename = function() {
         var ext = ".log";
-        if (inputs.output_basename == null){
+        if (inputs.output_basename == ""){
           let root = inputs.input_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.input_file.basename+ext:root+ext;
         } else {
@@ -75,7 +75,7 @@ inputs:
     inputBinding:
       position: 4
       valueFrom: $(get_output_filename(""))
-    default: null
+    default: ""
     doc: |
       Name for the generated output file
 

@@ -189,13 +189,13 @@ inputs:
       prefix: -n
       valueFrom: |
         ${
-            if (self == null || inputs.trigger == false){
+            if (self == "" || inputs.trigger == false){
               return default_name();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       The name string of the experiment. MACS will use this string NAME to create output files like ‘NAME_peaks.xls’,
       ‘NAME_negative_peaks.xls’, ‘NAME_peaks.bed’ , ‘NAME_summits.bed’, ‘NAME_model.r’ and so on.
@@ -640,7 +640,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.peak_xls_file_staged, '_macs_peaks.xls');
             } else {
               return inputs.name + '_peaks.xls';
@@ -652,7 +652,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.narrow_peak_file_staged, '_macs_peaks.narrowPeak');
             } else {
               return inputs.name + '_peaks.narrowPeak';
@@ -664,7 +664,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.broad_peak_file_staged, '_macs_peaks.broadPeak');
             } else {
               return inputs.name + '_peaks.broadPeak';
@@ -676,7 +676,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.gapped_peak_file_staged, '_macs_peaks.gappedPeak');
             } else {
               return inputs.name + '_peaks.gappedPeak';
@@ -688,7 +688,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.peak_summits_file_staged, '_macs_summits.bed');
             } else {
               return inputs.name + '_summits.bed';
@@ -700,7 +700,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.moder_r_file_staged, '_macs_model.r');
             } else {
               return inputs.name + '_model.r';
@@ -712,7 +712,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.treat_pileup_bdg_file_staged, '_macs_treat_pileup.bdg');
             } else {
               return inputs.name + '_treat_pileup.bdg';
@@ -724,7 +724,7 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(inputs.control_lambda_bdg_file_staged, '_macs_control_lambda.bdg');
             } else {
               return inputs.name + '_control_lambda.bdg';
@@ -736,7 +736,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.name == null || inputs.trigger == false){
+            if (inputs.name == "" || inputs.trigger == false){
               return default_name(null, '_macs.log');
             } else {
               return inputs.name + '.log';
@@ -748,7 +748,7 @@ baseCommand: [bash, '-c']
 arguments:
   - valueFrom:
       ${
-          if (inputs.name == null || inputs.trigger == false ){
+          if (inputs.name == "" || inputs.trigger == false ){
             return ' 2>> ' + default_name(null, '_macs.log');
           } else {
             return ' 2>> ' + inputs.name + '.log';

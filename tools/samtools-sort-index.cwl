@@ -98,13 +98,13 @@ inputs:
       prefix: -o
       valueFrom: |
         ${
-            if (self == null || inputs.trigger == false){
+            if (self == "" || inputs.trigger == false){
               return default_bam();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Write the final sorted output to FILE. Only out.bam|out.cram.
       If output file extension is set to SAM, tool will fail on the index step
@@ -145,7 +145,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.sort_output_filename == null || inputs.trigger == false){
+            if (inputs.sort_output_filename == "" || inputs.trigger == false){
               return default_bam();
             } else {
               return inputs.sort_output_filename;
@@ -197,7 +197,7 @@ arguments:
     prefix: -@
   - valueFrom: |
       ${
-          if (inputs.sort_output_filename == null || inputs.trigger == false){
+          if (inputs.sort_output_filename == "" || inputs.trigger == false){
             return default_bam();
           } else {
             return inputs.sort_output_filename;
@@ -206,7 +206,7 @@ arguments:
     position: 26
   - valueFrom: |
       ${
-          if (inputs.sort_output_filename == null || inputs.trigger == false){
+          if (inputs.sort_output_filename == "" || inputs.trigger == false){
             return default_bam() + ext();
           } else {
             return inputs.sort_output_filename + ext();

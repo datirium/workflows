@@ -45,13 +45,13 @@ inputs:
       separate: false
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename('_iaintersect.tsv');
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Base output file name, tsv
 
@@ -65,13 +65,13 @@ inputs:
       separate: false
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename('_iaintersect.log');
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Log filename
 
@@ -114,7 +114,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-          if (inputs.log_filename == null){
+          if (inputs.log_filename == ""){
             return default_output_filename('_iaintersect.log');
           } else {
             return inputs.log_filename;
@@ -126,7 +126,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-          if (inputs.output_filename == null){
+          if (inputs.output_filename == ""){
             return default_output_filename('_iaintersect.tsv');
           } else {
             return inputs.output_filename;

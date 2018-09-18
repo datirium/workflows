@@ -483,13 +483,13 @@ inputs:
       prefix: --outFileNamePrefix
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_name_prefix();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       string: output files name prefix (including full or relative path). Can
       only be defined on the command line.

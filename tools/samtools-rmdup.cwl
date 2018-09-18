@@ -88,13 +88,13 @@ inputs:
       position: 11
       valueFrom: |
         ${
-            if (self == null || inputs.trigger == false){
+            if (self == "" || inputs.trigger == false){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Writes the output bam file to output_filename if set,
       otherwise generates output_filename on the base of bam_file
@@ -105,7 +105,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null || inputs.trigger == false){
+            if (inputs.output_filename == "" || inputs.trigger == false){
               return default_output_filename();
             } else {
               return inputs.output_filename;
@@ -126,7 +126,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-          if (inputs.output_filename == null || inputs.trigger == false){
+          if (inputs.output_filename == "" || inputs.trigger == false){
             return default_output_filename().split('.').slice(0,-1).join('.') + '.rmdup';
           } else {
             return inputs.output_filename.split('.').slice(0,-1).join('.') + '.rmdup';
@@ -138,7 +138,7 @@ baseCommand: [bash, '-c']
 arguments:
   - valueFrom: |
       ${
-        if (inputs.output_filename == null || inputs.trigger == false){
+        if (inputs.output_filename == "" || inputs.trigger == false){
           return " > " + default_output_filename().split('.').slice(0,-1).join('.') + ".rmdup 2>&1";
         } else {
           return " > " + inputs.output_filename.split('.').slice(0,-1).join('.') + ".rmdup 2>&1";

@@ -65,13 +65,13 @@ inputs:
       prefix: --output
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_prefix();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Set the prefix to save output files. Default: ""
 

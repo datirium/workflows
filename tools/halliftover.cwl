@@ -6,7 +6,7 @@ requirements:
     expressionLib:
     - var default_output_filename = function() {
         var ext = ".bed";
-        if (inputs.output_filename == null){
+        if (inputs.output_filename == ""){
           let root = inputs.input_bed_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.input_bed_file.basename+ext:root+ext;
         } else {
@@ -82,7 +82,7 @@ inputs:
     inputBinding:
       position: 8
       valueFrom: $(default_output_filename())
-    default: null
+    default: ""
     doc: |
       Output filename
 

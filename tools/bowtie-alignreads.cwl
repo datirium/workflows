@@ -6,12 +6,12 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function(ext) {
-      if (inputs.output_filename && !ext){
+      if (inputs.output_filename != "" && !ext){
          return inputs.output_filename;
       }
       ext = ext || ".sam";
       let root = "";
-      if (inputs.output_filename){
+      if (inputs.output_filename != ""){
          root = inputs.output_filename.split('.').slice(0,-1).join('.');
          return (root == "")?inputs.output_filename+ext:root+ext;
       } else
@@ -114,7 +114,7 @@ inputs:
     inputBinding:
       position: 90
       valueFrom: $(default_output_filename())
-    default: null
+    default: ""
     doc: |
       Generates default output filename on the base of upstream_filelist/downstream_filelist files
 

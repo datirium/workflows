@@ -92,13 +92,13 @@ inputs:
       position: 104
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       The name of the sample analyzed.
       All output files are prefixed by this name
@@ -886,7 +886,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".isoforms.results";
             } else {
               return inputs.output_filename + ".isoforms.results";
@@ -900,7 +900,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".genes.results";
             } else {
               return inputs.output_filename + ".genes.results";
@@ -914,7 +914,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".alleles.results";
             } else {
               return inputs.output_filename + ".alleles.results";
@@ -928,7 +928,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".genome.bam";
             } else {
               return inputs.output_filename + ".genome.bam";
@@ -942,7 +942,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".transcript.bam";
             } else {
               return inputs.output_filename + ".transcript.bam";
@@ -956,7 +956,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".transcript.sorted.bam";
             } else {
               return inputs.output_filename + ".transcript.sorted.bam";
@@ -971,7 +971,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".genome.sorted.bam";
             } else {
               return inputs.output_filename + ".genome.sorted.bam";
@@ -986,7 +986,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".time";
             } else {
               return inputs.output_filename + ".time";
@@ -998,7 +998,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename() + ".stat";
             } else {
               return inputs.output_filename + ".stat";
@@ -1011,8 +1011,11 @@ outputs:
       loadContents: true
       glob: |
         ${
-            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
-            return base+".stat/"+base+".cnt";
+            if (inputs.output_filename == ""){
+              return default_output_filename() + ".stat/" + default_output_filename() + ".cnt";
+            } else {
+              return inputs.output_filename + ".stat/" + inputs.output_filename + ".cnt";
+            }
         }
       outputEval: |
         ${
@@ -1025,8 +1028,11 @@ outputs:
       loadContents: true
       glob: |
         ${
-            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
-            return base+".stat/"+base+".cnt";
+            if (inputs.output_filename == ""){
+              return default_output_filename() + ".stat/" + default_output_filename() + ".cnt";
+            } else {
+              return inputs.output_filename + ".stat/" + inputs.output_filename + ".cnt";
+            }
         }
       outputEval: |
         ${
@@ -1039,8 +1045,11 @@ outputs:
       loadContents: true
       glob: |
         ${
-            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
-            return base+".stat/"+base+".cnt";
+            if (inputs.output_filename == ""){
+              return default_output_filename() + ".stat/" + default_output_filename() + ".cnt";
+            } else {
+              return inputs.output_filename + ".stat/" + inputs.output_filename + ".cnt";
+            }
         }
       outputEval: |
         ${
@@ -1053,8 +1062,11 @@ outputs:
       loadContents: true
       glob: |
         ${
-            let base = inputs.output_filename?inputs.output_filename:default_output_filename();
-            return base+".stat/"+base+".cnt";
+            if (inputs.output_filename == ""){
+              return default_output_filename() + ".stat/" + default_output_filename() + ".cnt";
+            } else {
+              return inputs.output_filename + ".stat/" + inputs.output_filename + ".cnt";
+            }
         }
       outputEval: |
         ${

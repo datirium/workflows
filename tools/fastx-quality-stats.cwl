@@ -55,13 +55,13 @@ inputs:
       prefix: -o
       valueFrom: |
         ${
-            if (self == null){
+            if (self == ""){
               return default_output_filename();
             } else {
               return self;
             }
         }
-    default: null
+    default: ""
     doc: |
       Output file to store generated statistics. If not provided - return from default_output_filename function
 
@@ -71,7 +71,7 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.output_filename == null){
+            if (inputs.output_filename == ""){
               return default_output_filename();
             } else {
               return inputs.output_filename;
