@@ -4,7 +4,6 @@ class: ExpressionTool
 requirements:
   - class: InlineJavascriptRequirement
 
-class: ExpressionTool
 id: "files_to_folder"
 inputs:
   input_files:

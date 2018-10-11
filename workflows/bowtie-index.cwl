@@ -25,7 +25,7 @@ outputs:
     type: Directory
     label: "Bowtie indices folder"
     doc: "Folder which includes all Bowtie generated indices files"
-    outputSource: files_to_folder/folder
+    outputSource: bowtie_generate_indices/indices
 
   annotation_file:
     type: File?
@@ -52,11 +52,11 @@ steps:
       index_base_name: genome
     out: [indices]
 
-  files_to_folder:
-    run: ../expressiontools/files-to-folder.cwl
-    in:
-      input_files: bowtie_generate_indices/indices
-    out: [folder]
+#  files_to_folder:
+#    run: ../expressiontools/files-to-folder.cwl
+#    in:
+#      input_files: bowtie_generate_indices/indices
+#    out: [folder]
 
 $namespaces:
   s: http://schema.org/

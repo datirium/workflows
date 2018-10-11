@@ -2,14 +2,14 @@ cwlVersion: v1.0
 class: Workflow
 
 requirements:
-  - class: SubworkflowFeatureRequirement
-  - class: ScatterFeatureRequirement
-  - class: StepInputExpressionRequirement
-  - class: InlineJavascriptRequirement
-  - class: MultipleInputFeatureRequirement
+- class: SubworkflowFeatureRequirement
+- class: ScatterFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: InlineJavascriptRequirement
+- class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/chipseq-header.cwl"
+- "https://raw.githubusercontent.com/datirium/workflows/master/metadata/chipseq-header.cwl"
 
 'sd:upstream':
   bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
@@ -17,15 +17,15 @@ requirements:
 
 inputs:
 
-# MAIN
-#        1       |       2       |       3       |       4
-# ---------------------------------------------------------------
-#|        indices_folder         |         control_file          |
-# ---------------------------------------------------------------
-#|          broad_peak           |                               |
-# ---------------------------------------------------------------
-#|      fastq_file_upstream      |      fastq_file_downstream    |
-# ---------------------------------------------------------------
+  # MAIN
+  #        1       |       2       |       3       |       4
+  # ---------------------------------------------------------------
+  #|        indices_folder         |         control_file          |
+  # ---------------------------------------------------------------
+  #|          broad_peak           |                               |
+  # ---------------------------------------------------------------
+  #|      fastq_file_upstream      |      fastq_file_downstream    |
+  # ---------------------------------------------------------------
 
   indices_folder:
     type: Directory
@@ -79,15 +79,15 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
 
-# ADVANCED
-#        1       |       2       |       3       |       4
-# ---------------------------------------------------------------
-#|      exp_fragment_size        |     force_fragment_size       |
-# ---------------------------------------------------------------
-#|          clip_3p_end          |         clip_5p_end           |
-# ---------------------------------------------------------------
-#|      remove_duplicates        |                               |
-# ---------------------------------------------------------------
+  # ADVANCED
+  #        1       |       2       |       3       |       4
+  # ---------------------------------------------------------------
+  #|      exp_fragment_size        |     force_fragment_size       |
+  # ---------------------------------------------------------------
+  #|          clip_3p_end          |         clip_5p_end           |
+  # ---------------------------------------------------------------
+  #|      remove_duplicates        |                               |
+  # ---------------------------------------------------------------
 
   exp_fragment_size:
     type: int?
@@ -129,7 +129,7 @@ inputs:
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
-# SYSTEM DEPENDENT
+  # SYSTEM DEPENDENT
 
   threads:
     type: int?
@@ -154,6 +154,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
+    "sd:visualPlugins":
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   fastx_statistics_downstream:
     type: File
@@ -161,6 +168,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
+    "sd:visualPlugins":
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   bowtie_log:
     type: File
@@ -266,6 +280,11 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
+    "sd:preview":
+      "sd:visualPlugins":
+      - pie:
+        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+        data: [$2, $3, $4, $5]
 
   macs2_fragment_stat:
     type: File?
@@ -375,17 +394,17 @@ steps:
       buffer_size:
         default: 10000
     out:
-      - peak_xls_file
-      - narrow_peak_file
-      - peak_summits_file
-      - broad_peak_file
-      - moder_r_file
-      - gapped_peak_file
-      - treat_pileup_bdg_file
-      - control_lambda_bdg_file
-      - macs_log
-      - macs2_stat_file
-      - macs2_fragments_calculated
+    - peak_xls_file
+    - narrow_peak_file
+    - peak_summits_file
+    - broad_peak_file
+    - moder_r_file
+    - gapped_peak_file
+    - treat_pileup_bdg_file
+    - control_lambda_bdg_file
+    - macs_log
+    - macs2_stat_file
+    - macs2_fragments_calculated
 
   bam_to_bigwig:
     run: bam-bedgraph-bigwig.cwl
@@ -398,41 +417,41 @@ steps:
     out: [bigwig_file]
 
   get_stat:
-      run: ../tools/python-get-stat-chipseq.cwl
-      in:
-        bowtie_log: bowtie_aligner/log_file
-        rmdup_log: samtools_rmdup/rmdup_log
-      out:
-        - output_file
-        - mapped_reads
+    run: ../tools/python-get-stat-chipseq.cwl
+    in:
+      bowtie_log: bowtie_aligner/log_file
+      rmdup_log: samtools_rmdup/rmdup_log
+    out:
+    - output_file
+    - mapped_reads
 
   island_intersect:
-      run: ../tools/iaintersect.cwl
-      in:
-        input_filename: macs2_callpeak/peak_xls_file
-        annotation_filename: annotation_file
-        promoter_bp:
-          default: 1000
-      out: [result_file, log_file]
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: macs2_callpeak/peak_xls_file
+      annotation_filename: annotation_file
+      promoter_bp:
+        default: 1000
+    out: [result_file, log_file]
 
   average_tag_density:
-      run: ../tools/atdp.cwl
-      in:
-        input_file: samtools_sort_index_after_rmdup/bam_bai_pair
-        annotation_filename: annotation_file
-        fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
-        avd_window_bp:
-          default: 5000
-        avd_smooth_bp:
-          default: 50
-        ignore_chr:
-          default: chrM
-        double_chr:
-          default: "chrX chrY"
-        avd_heat_window_bp:
-          default: 200
-        mapped_reads: get_stat/mapped_reads
-      out: [result_file, log_file]
+    run: ../tools/atdp.cwl
+    in:
+      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      annotation_filename: annotation_file
+      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      avd_window_bp:
+        default: 5000
+      avd_smooth_bp:
+        default: 50
+      ignore_chr:
+        default: chrM
+      double_chr:
+        default: "chrX chrY"
+      avd_heat_window_bp:
+        default: 200
+      mapped_reads: get_stat/mapped_reads
+    out: [result_file, log_file]
 
 
 $namespaces:

@@ -77,7 +77,7 @@ setup(
     install_requires=[
         'setuptools',
         'jsonmerge',
-        'ruamel.yaml < 0.15'
+        'ruamel.yaml <= 0.15.51'
     ],
 
     zip_safe=True,
