@@ -3,6 +3,11 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
+#- class: InitialWorkDirRequirement
+#  listing:
+#    - class: Directory
+#      basename: $(inputs.genome_dir)
+#      listing: []
 
 hints:
 - class: DockerRequirement
@@ -44,7 +49,7 @@ inputs:
 
   genome_dir:
     type: string
-    default: "./"
+    default: "."
     inputBinding:
       position: 1
       prefix: --genomeDir
@@ -66,7 +71,7 @@ inputs:
       These files should be plain text FASTA files, they *cannot* be zipped.
 
   limit_io_buffer_size:
-    type: int?
+    type: long?
     inputBinding:
       position: 1
       prefix: --limitIObufferSize
@@ -121,7 +126,7 @@ inputs:
       string: chain files for genomic liftover
 
   limit_genome_generate_ram:
-    type: int?
+    type: long?
     inputBinding:
       position: 1
       prefix: --limitGenomeGenerateRAM
@@ -144,10 +149,10 @@ inputs:
     inputBinding:
       position: 1
       prefix: --sjdbGTFtagExonParentGene
-    doc: 'gene_id
+    doc: |
+      gene_id
       string: tag name to be used as exons'' gene-parents (default "gene_id" works
       for GTF files)
-      '
 
   threads:
     type: int?
@@ -180,10 +185,10 @@ inputs:
     inputBinding:
       position: 1
       prefix: --sjdbOverhang
-    doc: '100
+    doc: |
+      default: 100
       int>0: length of the donor/acceptor sequence on each side of the junctions,
       ideally = (mate_length - 1)
-      '
 
   genome_sa_index_n_bases:
     type: int?
@@ -197,76 +202,60 @@ inputs:
 outputs:
 
   indices:
-    type: File[]
+    type: Directory
     outputBinding:
-      glob: "*"
-      outputEval: |
-        ${
-          var output_array = [];
-          for (var i = 0; i < self.length; i++){
-            if (self[i].class == "File"){
-              output_array.push(self[i]);
-            }
-          }
-          return output_array;
-        }
+      glob: $(inputs.genome_dir)
+
+  chr_name_length:
+    type: File
+    outputBinding:
+      glob: "chrNameLength.txt"
 
 baseCommand: [STAR]
 arguments: ["--runMode", "genomeGenerate"]
+
 $namespaces:
- s: http://schema.org/
+  s: http://schema.org/
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:mainEntity:
- class: s:SoftwareSourceCode
- s:name: STAR
- s:about: 'Aligns RNA-seq reads to a reference genome using uncompressed suffix arrays.
-   STAR has a potential for accurately aligning long (several kilobases) reads that
-   are emerging from the third-generation sequencing technologies.
+s:name: "star-alignreads"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/star-alignreads.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
 
-   '
- s:url: https://github.com/alexdobin/STAR
- s:codeRepository: https://github.com/alexdobin/STAR.git
-
- s:license:
- - https://opensource.org/licenses/GPL-3.0
-
- s:targetProduct:
-   class: s:SoftwareApplication
-   s:softwareVersion: 2.5.0b
-   s:applicationCategory: commandline tool
- s:programmingLanguage: C++
- s:publication:
- - class: s:ScholarlyArticle
-   id: http://dx.doi.org/10.1093/bioinformatics/bts635
-
- s:author:
- - class: s:Person
-   id: mailto:dobin@cshl.edu
-   s:name: Alexander Dobin
-   s:email: mailto:dobin@cshl.edu
-#    foaf:fundedBy: "NHGRI (NIH) grant U54HG004557"
-   s:worksFor:
-   - class: s:Organization
-     s:name: Cold Spring Harbor Laboratory, Cold Spring Harbor, NY, USA
-s:downloadUrl: https://github.com/common-workflow-language/workflows/blob/master/tools/STAR.cwl
-s:codeRepository: https://github.com/common-workflow-language/workflows
 s:isPartOf:
- class: s:CreativeWork
- s:name: Common Workflow Language
- s:url: http://commonwl.org/
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
 
-s:author:
- class: s:Person
- s:name: Andrey Kartashov
- s:email: mailto:Andrey.Kartashov@cchmc.org
- s:sameAs:
- - id: http://orcid.org/0000-0001-9102-5681
- s:worksFor:
- - class: s:Organization
-   s:name: Cincinnati Children's Hospital Medical Center
-   s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
-   s:department:
-   - class: s:Organization
-     s:name: Barski Lab
+s:mainEntity:
+  $import: ./metadata/star-metadata.yaml
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Andrey Kartashov
+        s:email: mailto:Andrey.Kartashov@cchmc.org
+        s:sameAs:
+        - id: http://orcid.org/0000-0001-9102-5681
+
+doc: |
+  Runs STAR genomeGenerated. Returns directory with index
