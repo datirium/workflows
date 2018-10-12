@@ -211,7 +211,7 @@ steps:
     out: [selected_file]
 
   bam_to_bigwig:
-    run: bam-bedgraph-bigwig.cwl
+    run: ../subworkflows/bam-bedgraph-bigwig.cwl
     in:
       bam_file: rename_rsem_bambai_pair/target_file
       chrom_length_file: get_chr_length_file/selected_file

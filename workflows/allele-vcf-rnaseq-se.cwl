@@ -170,7 +170,7 @@ steps:
     out: [fastq_file]
 
   allele_vcf_alignreads_se_pe:
-    run: ./allele-vcf-alignreads-se-pe.cwl
+    run: ../subworkflows/allele-vcf-alignreads-se-pe.cwl
     in:
       fastq_files: extract_fastq/fastq_file
       insilico_star_indices_folder: insilico_star_indices_folder
