@@ -14,17 +14,49 @@ inputs:
     label: "Genome"
     doc: "Used by BioWardrobe to set genome"
 
-  fasta_input_file:
+  fasta:
     type: File
     label: "FASTA input file"
     format: "http://edamontology.org/format_1929"
     doc: "Reference genome input FASTA file"
 
-  annotation_input_file:
-    type: File?
+  effective_genome_size:
+    type: string
+    label: "Effective genome size"
+    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
+
+  annotation_gtf:
+    type: File
     label: "GTF input file"
     format: "http://edamontology.org/format_2306"
     doc: "Annotation input file"
+
+  annotation_tab:
+    type: File
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
+
+  genome_sa_sparse_d:
+    type: int?
+    default: 2
+    label: "Use 2 to decrease needed RAM for STAR"
+    doc: |
+      int>0: suffux array sparsity, i.e. distance between indices: use bigger
+      numbers to decrease needed RAM at the cost of mapping speed reduction
+    'sd:layout':
+      advanced: true
+
+  limit_genome_generate_ram:
+    type: long?
+    inputBinding:
+      position: 1
+      prefix: --limitGenomeGenerateRAM
+    doc: |
+      31000000000
+      int>0: maximum available RAM (bytes) for genome generation
+    'sd:layout':
+      advanced: true
 
   threads:
     type: int?
@@ -35,22 +67,24 @@ inputs:
 
 outputs:
 
-  indices_folder:
+  star_indices:
     type: Directory
     label: "STAR indices folder"
     doc: "Folder which includes all STAR generated indices files"
     outputSource: star_generate_indices/indices
 
-  annotation_file:
-    type: File?
+  annotation:
+    type: File
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
+    outputSource: annotation_tab
 
   genome_size:
-    type: string?
+    type: string
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
+    outputSource: effective_genome_size
 
   chrom_length:
     type: File
@@ -64,8 +98,12 @@ steps:
   star_generate_indices:
     run: ../tools/star-genomegenerate.cwl
     in:
-      genome_fasta_files: fasta_input_file
-      sjdb_gtf_file: annotation_input_file
+      genome_dir:
+        default: "."
+      genome_sa_sparse_d: genome_sa_sparse_d
+      limit_genome_generate_ram: limit_genome_generate_ram
+      genome_fasta_files: fasta
+      sjdb_gtf_file: annotation_gtf
       threads: threads
     out: [indices, chr_name_length]
 
