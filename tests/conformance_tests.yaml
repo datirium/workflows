@@ -55,7 +55,7 @@
 # ========================================================
 
 - job: ./bam-bedgraph-bigwig-1.json
-  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  tool: ../subworkflows/bam-bedgraph-bigwig.cwl
   output:
     bedgraph_file:
       class: File
@@ -67,7 +67,7 @@
       size: 33486
 
 - job: ./bam-bedgraph-bigwig-2.json
-  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  tool: ../subworkflows/bam-bedgraph-bigwig.cwl
   output:
     bedgraph_file:
       class: File
@@ -79,7 +79,7 @@
       size: 33653
 
 - job: ./bam-bedgraph-bigwig-3.json
-  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  tool: ../subworkflows/bam-bedgraph-bigwig.cwl
   output:
     bedgraph_file:
       class: File
@@ -91,7 +91,7 @@
       size: 33653
 
 - job: ./bam-bedgraph-bigwig-4.json
-  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  tool: ../subworkflows/bam-bedgraph-bigwig.cwl
   output:
     bedgraph_file:
       class: File
@@ -103,7 +103,7 @@
       size: 33653
 
 - job: ./bam-bedgraph-bigwig-5.json
-  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  tool: ../subworkflows/bam-bedgraph-bigwig.cwl
   output:
     bedgraph_file:
       class: File
@@ -115,7 +115,7 @@
       size: 33500
 
 - job: ./bam-bedgraph-bigwig-6.json
-  tool: ../workflows/bam-bedgraph-bigwig.cwl
+  tool: ../subworkflows/bam-bedgraph-bigwig.cwl
   output:
     bedgraph_file:
       class: File
@@ -2294,7 +2294,7 @@
       size: 16175
 
 # ========================================================
-# python-make-biowardrobe-isoforms-1.json
+# python-make-biowardrobe-isoforms
 # ========================================================
 
 - job: ./python-make-biowardrobe-isoforms-1.json
@@ -2312,3 +2312,369 @@
       class: File
       location: isoforms.csv
       size: 16175
+
+# ========================================================
+# homer-maketagdirectory
+# ========================================================
+
+- job: ./homer-maketagdirectory-1.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 342
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+
+- job: ./homer-maketagdirectory-2.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 356
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+
+- job: ./homer-maketagdirectory-3.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 360
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+
+- job: ./homer-maketagdirectory-4.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4327
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 468952
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51920
+      - class: File
+        location: tagInfo.txt
+        size: 363
+      - class: File
+        location: tagCountDistribution.txt
+        size: 97
+
+- job: ./homer-maketagdirectory-5.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4327
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 468952
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51920
+      - class: File
+        location: tagInfo.txt
+        size: 380
+      - class: File
+        location: tagCountDistribution.txt
+        size: 97
+
+- job: ./homer-maketagdirectory-6.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4327
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 468952
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51920
+      - class: File
+        location: tagInfo.txt
+        size: 379
+      - class: File
+        location: tagCountDistribution.txt
+        size: 97
+
+- job: ./homer-maketagdirectory-7.json
+  tool: ../tools/homer-maketagdirectory.cwl
+  output:
+    output_tag_folder:
+      class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 636
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 3748
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 400
+      - class: File
+        location: tagCountDistribution.txt
+        size: 97
+
+# ========================================================
+# deseq-advanced
+# ========================================================
+
+- job: ./deseq-advanced-1.json
+  tool: ../tools/deseq-advanced.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_results.tsv
+      size: 105674
+
+- job: ./deseq-advanced-2.json
+  tool: ../tools/deseq-advanced.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_results.tsv
+      size: 83897
+
+- job: ./deseq-advanced-3.json
+  tool: ../tools/deseq-advanced.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_results.tsv
+      size: 82790
+
+- job: ./deseq-advanced-4.json
+  tool: ../tools/deseq-advanced.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_results.tsv
+      size: 82791
+
+- job: ./deseq-advanced-5.json
+  tool: ../tools/deseq-advanced.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_genes.tsv
+      size: 86271
+
+- job: ./deseq-advanced-6.json
+  tool: ../tools/deseq-advanced.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_common_tss.tsv
+      size: 93473
+
+# ========================================================
+# group-isoforms
+# ========================================================
+
+- job: ./group-isoforms-1.json
+  tool: ../tools/group-isoforms.cwl
+  output:
+    genes_file:
+      class: File
+      location: u1_1000.genes.tsv
+      size: 43255
+    common_tss_file:
+      class: File
+      location: u1_1000.common_tss.tsv
+      size: 46428
+
+- job: ./group-isoforms-2.json
+  tool: ../tools/group-isoforms.cwl
+  output:
+    genes_file:
+      class: File
+      location: 1000.genes.tsv
+      size: 43255
+    common_tss_file:
+      class: File
+      location: u1_1000.common_tss.tsv
+      size: 46428
+
+- job: ./group-isoforms-3.json
+  tool: ../tools/group-isoforms.cwl
+  output:
+    genes_file:
+      class: File
+      location: u1_1000.genes.tsv
+      size: 43255
+    common_tss_file:
+      class: File
+      location: 1000.common_tss.tsv
+      size: 46428
+
+# ========================================================
+# heatmap-prepare
+# ========================================================
+
+- job: ./heatmap-prepare-1.json
+  tool: ../subworkflows/heatmap-prepare.cwl
+  output:
+    tag_folder:
+    - class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 373
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+
+- job: ./heatmap-prepare-2.json
+  tool: ../subworkflows/heatmap-prepare.cwl
+  output:
+    tag_folder:
+    - class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 373
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+    - class: Directory
+      basename: "copy_chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 383
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+
+- job: ./heatmap-prepare-3.json
+  tool: ../subworkflows/heatmap-prepare.cwl
+  output:
+    tag_folder:
+    - class: Directory
+      basename: "copy_chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 383
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108
+    - class: Directory
+      basename: "chr4_100_mapped_reads"
+      listing:
+      - class: File
+        location: chr4.tags.tsv
+        size: 4092
+      - class: File
+        location: tagLengthDistribution.txt
+        size: 507
+      - class: File
+        location: tagAutocorrelation.txt
+        size: 51918
+      - class: File
+        location: tagInfo.txt
+        size: 373
+      - class: File
+        location: tagCountDistribution.txt
+        size: 108

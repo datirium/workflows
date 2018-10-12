@@ -47,7 +47,7 @@ outputs:
 steps:
 
   sra_to_fastq:
-    run: xenbase-sra-to-fastq-se.cwl
+    run: ../subworkflows/xenbase-sra-to-fastq-se.cwl
     in:
       sra_input_file: sra_input_file
       illumina_adapters_file: illumina_adapters_file
@@ -55,7 +55,7 @@ steps:
     out: [fastq]
 
   fastq_to_bigwig:
-    run: xenbase-fastq-bowtie-bigwig-se-pe.cwl
+    run: ../subworkflows/xenbase-fastq-bowtie-bigwig-se-pe.cwl
     in:
       upstream_fastq: sra_to_fastq/fastq
       bowtie2_indices_folder: bowtie2_indices_folder
