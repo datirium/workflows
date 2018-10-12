@@ -1,0 +1,13 @@
+{
+  "bam_file": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/copy_chr4_100_mapped_reads.Aligned.out.bam"
+    }],
+  "fragment_size": [150, 150],
+  "total_reads": [94, 94]
+}
