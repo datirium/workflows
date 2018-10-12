@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Barski-lab/workflows.svg?branch=master)](https://travis-ci.org/Barski-lab/workflows)
+[![Build Status](https://travis-ci.org/datirium/workflows.svg?branch=master)](https://travis-ci.org/datirium/workflows)
 # workflows
 CWL workflows for [BioWardrobe](https://biowardrobe.com/) project
 
