@@ -21,13 +21,14 @@ inputs:
     doc: "Reference genome input FASTA file"
 
 outputs:
-  indices_folder:
+
+  indices:
     type: Directory
     label: "Bowtie indices folder"
     doc: "Folder which includes all Bowtie generated indices files"
     outputSource: bowtie_generate_indices/indices
 
-  annotation_file:
+  annotation:
     type: File?
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
@@ -51,12 +52,6 @@ steps:
       fasta_file: fasta_input_file
       index_base_name: genome
     out: [indices]
-
-#  files_to_folder:
-#    run: ../expressiontools/files-to-folder.cwl
-#    in:
-#      input_files: bowtie_generate_indices/indices
-#    out: [folder]
 
 $namespaces:
   s: http://schema.org/

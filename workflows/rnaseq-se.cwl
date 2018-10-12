@@ -26,20 +26,20 @@ inputs:
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:upstreamSource': "star_index/indices_folder"
+    'sd:upstreamSource': "genome_indices/star_indices"
     doc: "Path to STAR generated indices"
 
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    'sd:upstreamSource': "bowtie_index/indices_folder"
+    'sd:upstreamSource': "genome_indices/ribosomal_indices"
     doc: "Path to Bowtie generated indices"
 
   chrom_length_file:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    'sd:upstreamSource': "star_index/chrom_length"
+    'sd:upstreamSource': "genome_indices/chrom_length"
     doc: "Chromosome length file"
 
   annotation_file:
@@ -48,8 +48,9 @@ inputs:
     format:
       - "http://edamontology.org/format_2306"
       - "http://edamontology.org/format_3475"
-    'sd:upstreamSource': "star_index/annotation_file"
+    'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
+
 
 # Advanced inputs
 

@@ -5,9 +5,9 @@ requirements:
 - class: InlineJavascriptRequirement
 #- class: InitialWorkDirRequirement
 #  listing:
-#    - class: Directory
-#      basename: $(inputs.genome_dir)
-#      listing: []
+#    - entry: $(inputs.genome_dir)
+#      entryname: ""
+#      writable: true
 
 hints:
 - class: DockerRequirement
@@ -48,13 +48,13 @@ inputs:
       transcripts
 
   genome_dir:
+#    type: Directory
     type: string
     default: "."
     inputBinding:
       position: 1
       prefix: --genomeDir
-    doc: |
-      string: path to the directory where genome files are stored
+    doc: "Directory where genome index files are stored"
 
   genome_fasta_files:
     type:
