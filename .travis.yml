@@ -16,3 +16,6 @@ branches:
   - master
 notifications:
   email: false
+addons:
+  hosts:
+    - schema.org

@@ -1,0 +1,23 @@
+{
+  "bam_file": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
+      "format": "http://edamontology.org/format_2572"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.copy.bam",
+      "format": "http://edamontology.org/format_2572"
+    }],
+  "peak_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/generated_inputs/iaintersect/chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.tsv",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "fragment_size": [150, 150],
+  "total_reads": [94, 94],
+  "hist_region_size": 2000,
+  "hist_bin_size": 20,
+  "heatmap_filename": "output.heatmap"
+}

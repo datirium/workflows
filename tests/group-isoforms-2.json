@@ -1,0 +1,4 @@
+{
+  "isoforms_file": {"class": "File", "location": "./data/dm3_chr4/main_inputs/geep/u1_1000.isoforms.csv"},
+  "genes_filename": "1000.genes.tsv"
+}
