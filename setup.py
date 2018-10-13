@@ -51,7 +51,7 @@ try:
                 except CalledProcessError:
                     pass
             return egg_info.tags(self)
-
+        vtags = property(tags)
 
     tagger = EggInfoFromGit
 except ImportError:
@@ -61,10 +61,8 @@ except ImportError:
 setup(
     name='biowardrobe-cwl-workflows',
     description="Wrapped BioWardrobe's CWL files",
-    long_description="""
-    Wrapped BioWardrobe's (https://biowardrobe.com) Common Workflow Language files
-    Details: https://github.com/datirium/workflows/blob/v1.0.2/README.md
-    """,  # open(README).read(),
+    long_description=open(README).read(),
+    long_description_content_type="text/markdown",
     version='1.0',
     url='https://github.com/datirium/workflows',
     download_url='https://github.com/datirium/workflows',
@@ -76,8 +74,7 @@ setup(
 
     install_requires=[
         'setuptools',
-        'jsonmerge',
-        'ruamel.yaml <= 0.15.51'
+        'jsonmerge'
     ],
 
     zip_safe=True,
