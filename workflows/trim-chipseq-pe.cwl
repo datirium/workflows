@@ -12,7 +12,7 @@ requirements:
   - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/chipseq-header.cwl"
 
 'sd:upstream':
-  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+  genome_indices: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl"
   control_file: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl"
 
 inputs:
@@ -29,26 +29,26 @@ inputs:
 
   indices_folder:
     type: Directory
-    'sd:upstreamSource': "bowtie_index/indices_folder"
+    'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "Indexed genome folder (bowtie)"
     doc: "Path to indexed genome folder by **bowtie**"
 
   annotation_file:
     type: File
-    'sd:upstreamSource': "bowtie_index/annotation_file"
+    'sd:upstreamSource': "genome_indices/annotation"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
 
   genome_size:
     type: string
-    'sd:upstreamSource': "bowtie_index/genome_size"
+    'sd:upstreamSource': "genome_indices/genome_size"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
-    'sd:upstreamSource': "bowtie_index/chrom_length"
+    'sd:upstreamSource': "genome_indices/chrom_length"
     label: "Chromosomes length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosomes length file"
@@ -155,6 +155,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   fastx_statistics_downstream:
     type: File
@@ -162,6 +169,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   bowtie_log:
     type: File
@@ -267,6 +281,11 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+        data: [$2, $3, $4, $5]
 
   macs2_fragment_stat:
     type: File?

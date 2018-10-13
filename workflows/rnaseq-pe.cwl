@@ -145,6 +145,13 @@ outputs:
     label: "FASTQ upstream statistics"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   fastx_statistics_downstream:
     type: File
@@ -152,6 +159,13 @@ outputs:
     label: "FASTQ downstream statistics"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   bambai_pair:
     type: File
@@ -194,6 +208,11 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+        data: [$2, $3, $4, $5]
 
 
 steps:
@@ -312,6 +331,7 @@ steps:
         pair_end:
           default: true
       out: [output_file]
+
 
 $namespaces:
   s: http://schema.org/

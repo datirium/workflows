@@ -14,21 +14,26 @@ inputs:
     type: string
     label: "Genome"
     doc: "Used by BioWardrobe to set genome"
-    sd:preview:
+
+  genome_lable:
+    type: string?
+    label: "Genome label"
+    doc: "Genome label is used by web-ui to show label"
+    'sd:preview':
       position: 1
 
   genome_description:
     type: string?
     label: "Genome description"
-    doc: "Genome description"
-    sd:preview:
+    doc: "Genome description is used by web-ui to show description"
+    'sd:preview':
       position: 2
 
   genome_details:
     type: string?
-    label: "Genome description"
-    doc: "Genome description"
-    sd:preview:
+    label: "Genome details"
+    doc: "Genome details"
+    'sd:preview':
       position: 3
 
   fasta:
@@ -42,6 +47,12 @@ inputs:
     label: "Ribosomal DNA sequence FASTA file"
     format: "http://edamontology.org/format_1929"
     doc: "Ribosomal DNA sequence FASTA file"
+
+  fasta_mitochondrial:
+    type: File?
+    label: "Mitochondrial chromosome sequence FASTA file"
+    format: "http://edamontology.org/format_1929"
+    doc: "Mitochondrial chromosome sequence FASTA file"
 
   effective_genome_size:
     type: string
@@ -145,6 +156,12 @@ outputs:
     doc: "Ribosomal DNA Bowtie generated indices folder"
     outputSource: ribosomal_generate_indices/indices
 
+  mitochondrial_indices:
+    type: Directory
+    label: "Mitochondrial chromosome index folder"
+    doc: "Mitochondrial chromosome index folder"
+    outputSource: mitochondrial_generate_indices/indices
+
   annotation_gtf:
     type: File
     label: "GTF input file"
@@ -184,6 +201,15 @@ steps:
       limit_genome_generate_ram: limit_genome_generate_ram
       threads: threads
     out: [indices, chr_name_length]
+
+  mitochondrial_generate_indices:
+    run: ../tools/star-genomegenerate.cwl
+    in:
+      genome_fasta_files: mitochondrial_fasta
+      sjdb_gtf_file: annotation_gtf
+      genome_sa_sparse_d: genome_sa_sparse_d
+      threads: threads
+    out: [indices]
 
   bowtie_generate_indices:
     run: ../tools/bowtie-build.cwl
@@ -228,7 +254,7 @@ s:creator:
     s:streetAddress: "3559 Kroger Ave"
 
 doc: >
-  Creates indices for STAR v2.5.3a (03/17/2017) & bowtie v1.2.0 (12/30/2016).
+  Makes genome indices for STAR v2.5.3a (03/17/2017) & bowtie v1.2.0 (12/30/2016).
 
 s:about: |
   Creates indices for:

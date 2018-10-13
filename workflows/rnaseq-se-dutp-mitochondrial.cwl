@@ -8,12 +8,11 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-- "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
+  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
 
 'sd:upstream':
-  star_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
-  star_index_mitochondrial: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/star-index.cwl"
-  bowtie_index: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/bowtie-index.cwl"
+  genome_indices: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl"
+
 
 inputs:
 
@@ -28,26 +27,26 @@ inputs:
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:upstreamSource': "star_index/indices_folder"
+    'sd:upstreamSource': "genome_indices/star_indices"
     doc: "Path to STAR generated indices"
 
   star_indices_folder_mitochondrial:
     type: Directory
     label: "STAR indices mitochondrial folder"
-    'sd:upstreamSource': "star_index_mitochondrial/indices_folder"
+    'sd:upstreamSource': "genome_indices/mitochondrial_indices"
     doc: "Path to STAR generated indices for mitochondrial dna"
 
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    'sd:upstreamSource': "bowtie_index/indices_folder"
+    'sd:upstreamSource': "genome_indices/ribosomal_indices"
     doc: "Path to Bowtie generated indices"
 
   chrom_length_file:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    'sd:upstreamSource': "star_index/chrom_length"
+    'sd:upstreamSource': "genome_indices/chrom_length"
     doc: "Chromosome length file"
 
   annotation_file:
@@ -56,7 +55,7 @@ inputs:
     format:
       - "http://edamontology.org/format_2306"
       - "http://edamontology.org/format_3475"
-    'sd:upstreamSource': "star_index/annotation_file"
+    'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
 
 # Advanced inputs
@@ -151,6 +150,13 @@ outputs:
     label: "FASTQ statistics"
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   bam_merged_index:
     type: File
@@ -193,6 +199,11 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+        data: [$2, $3, $4, $5]
 
 steps:
 

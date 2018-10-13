@@ -1,6 +1,7 @@
 cwlVersion: v1.0
 class: Workflow
 
+
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
@@ -9,6 +10,10 @@ requirements:
 
 'sd:metadata':
   - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
+
+'sd:upstream':
+  genome_indices: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl"
+
 
 inputs:
 
@@ -29,20 +34,20 @@ inputs:
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "genome_indices/star_indices"
     doc: "Path to STAR generated indices"
 
   bowtie_indices_folder:
     type: Directory
     label: "BowTie Ribosomal Indices"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/bowtie-index.cwl"
+    'sd:upstreamSource': "genome_indices/ribosomal_indices"
     doc: "Path to Bowtie generated indices"
 
   chrom_length_file:
     type: File
     label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "genome_indices/chrom_length"
     doc: "Chromosome length file"
 
   annotation_file:
@@ -51,8 +56,9 @@ inputs:
     format:
       - "http://edamontology.org/format_2306"
       - "http://edamontology.org/format_3475"
-    'sd:parent': "https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/star-index.cwl"
+    'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
+
 
 # Advanced inputs
 
@@ -88,6 +94,7 @@ inputs:
       advanced: true
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
+
 
 outputs:
 
@@ -146,6 +153,13 @@ outputs:
     label: "FASTQ upstream statistics"
     doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   fastx_statistics_downstream:
     type: File
@@ -153,6 +167,13 @@ outputs:
     label: "FASTQ downstream statistics"
     doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
+    'sd:visualPlugins':
+    - line:
+      Title: 'Base frequency plot'
+      xAxisTitle: 'Nucleotide position'
+      yAxisTitle: 'Frequency'
+      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+      data: [$12, $13, $14, $15, $16]
 
   bambai_pair:
     type: File
@@ -195,6 +216,11 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+        data: [$2, $3, $4, $5]
 
   trim_report_upstream:
     type: File
@@ -207,6 +233,7 @@ outputs:
     label: "TrimGalore report Downstream"
     doc: "TrimGalore generated log for downstream FASTQ"
     outputSource: trim_fastq/report_file_pair
+
 
 steps:
 
@@ -400,6 +427,7 @@ steps:
           default: true
       out: [output_file]
 
+
 $namespaces:
   s: http://schema.org/
 
@@ -450,8 +478,7 @@ doc: |
   Runs RNA-Seq BioWardrobe basic analysis with strand specific pair-end data file.
 
 s:about: |
-  Note: should be updated
-  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  Modified original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for a **pair-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
 
