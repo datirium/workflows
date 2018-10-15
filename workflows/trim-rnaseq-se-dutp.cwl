@@ -7,7 +7,7 @@ requirements:
   - class: InlineJavascriptRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/Barski-lab/workflows/master/metadata/rnaseq-header.cwl"
+  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
 
 'sd:upstream':
   genome_indices: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl"

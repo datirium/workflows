@@ -64,7 +64,7 @@ inputs:
 
   broad_peak:
     type: boolean
-    #'sd:parent': "https://raw.githubusercontent.com/SciDAP/workflows/master/tags/antibody-dummy.cwl"
+    # 'sd:parent': "https://raw.githubusercontent.com/datirium/workflows/master/tags/antibody-dummy.cwl"
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
