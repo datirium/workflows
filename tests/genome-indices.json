@@ -1,0 +1,32 @@
+{
+  "genome": "dm3_chr4",
+  "fasta": {
+    "class": "File", 
+    "location": "./data/dm3_chr4/main_inputs/fasta/chr4.fa",
+    "format":"http://edamontology.org/format_1929"
+  },
+  "fasta_ribosomal": {
+    "class": "File",
+    "location": "./data/dm3_chr4/main_inputs/fasta/ribo.fa",
+    "format":"http://edamontology.org/format_1929"
+  },
+  "fasta_mitochondrial": {
+    "class": "File",
+    "location": "./data/dm3_chr4/main_inputs/fasta/chr4.fa",
+    "format":"http://edamontology.org/format_1929"
+  },
+  "annotation_gtf": {
+    "class": "File", 
+    "location": "./data/dm3_chr4/main_inputs/gtf/dm3_ch4.gtf",
+    "format":"http://edamontology.org/format_2306"
+  },
+  "annotation_tab": {
+    "class": "File", 
+    "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv",
+    "format":"http://edamontology.org/format_3475"
+  },
+  "threads": 1,
+  "effective_genome_size": "2.7e9",
+  "genome_sa_index_n_bases": 9,
+  "genome_sa_sparse_d": 1
+}

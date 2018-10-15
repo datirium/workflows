@@ -15,7 +15,7 @@ inputs:
     label: "Genome"
     doc: "Used by BioWardrobe to set genome"
 
-  genome_lable:
+  genome_label:
     type: string?
     label: "Genome label"
     doc: "Genome label is used by web-ui to show label"
