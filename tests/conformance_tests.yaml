@@ -2680,3 +2680,36 @@
       - class: File
         location: tagCountDistribution.txt
         size: 108
+
+# ========================================================
+# genome-indices
+# ========================================================
+
+- job: ./genome-indices.json
+  tool: ../workflows/genome-indices.cwl
+  output:
+    bowtie_indices:
+      class: Directory
+      listing:
+      - class: File
+        location: dm3_chr4.1.ebwt
+        size: 4580786
+      - class: File
+        location: dm3_chr4.2.ebwt
+        size: 42248
+      - class: File
+        location: dm3_chr4.3.ebwt
+        size: 26
+      - class: File
+        location: dm3_chr4.4.ebwt
+        size: 337940
+      - class: File
+        location: dm3_chr4.log
+      - class: File
+        location: dm3_chr4.rev.1.ebwt
+        size: 4580786
+      - class: File
+        location: dm3_chr4.rev.2.ebwt
+        size: 42248
+    star_indices:
+      class: Directory
