@@ -73,7 +73,25 @@ inputs:
 
   genome_sa_index_n_bases:
     type: int?
-    label: "length (bases) of the SA pre-indexing string"
+    label: "length of the SA pre-indexing string"
+    doc: |
+      For small genomes, the parameter --genomeSAindexNbases must to be scaled down, with a typical value of
+      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9,
+      for 100 kiloBase genome, this is equal to 7.
+
+      default: 14
+
+      int: length (bases) of the SA pre-indexing string.
+      Typically between 10 and 15. Longer strings will use much more memory,
+      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases
+      must be scaled down to min(14, log2(GenomeLength)/2 - 1).
+    'sd:layout':
+      advanced: true
+
+  genome_sa_index_n_bases_mitochondrial:
+    type: int?
+    default: 6
+    label: "length (mitochondrial) of the SA pre-indexing string"
     doc: |
       For small genomes, the parameter --genomeSAindexNbases must to be scaled down, with a typical value of
       min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9,
@@ -199,15 +217,18 @@ steps:
       sjdb_gtf_file: annotation_gtf
       genome_sa_sparse_d: genome_sa_sparse_d
       limit_genome_generate_ram: limit_genome_generate_ram
+      genome_sa_index_n_bases: genome_sa_index_n_bases
+      genome_chr_bin_n_bits: genome_chr_bin_n_bits
       threads: threads
     out: [indices, chr_name_length]
 
   mitochondrial_generate_indices:
     run: ../tools/star-genomegenerate.cwl
     in:
-      genome_fasta_files: mitochondrial_fasta
+      genome_fasta_files: fasta_mitochondrial
       sjdb_gtf_file: annotation_gtf
       genome_sa_sparse_d: genome_sa_sparse_d
+      genome_sa_index_n_bases: genome_sa_index_n_bases_mitochondrial
       threads: threads
     out: [indices]
 
@@ -221,7 +242,7 @@ steps:
   ribosomal_generate_indices:
     run: ../tools/bowtie-build.cwl
     in:
-      fasta_file: ribosomal_fasta
+      fasta_file: fasta_ribosomal
       index_base_name: genome
     out: [indices]
 

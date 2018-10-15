@@ -28,5 +28,6 @@
   "threads": 1,
   "effective_genome_size": "2.7e9",
   "genome_sa_index_n_bases": 9,
+  "genome_sa_index_n_bases_mitochondrial": 9,
   "genome_sa_sparse_d": 1
 }
