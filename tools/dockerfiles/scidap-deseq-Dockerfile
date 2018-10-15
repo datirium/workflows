@@ -1,0 +1,82 @@
+#################################################################
+# Dockerfile
+#
+# Software:         BioWardrobe DESeq script
+# Software Version: v0.0.5
+# Description:      Dockerized version of DESeq/DESeq2 script from BioWardrobe
+# Website:          https://github.com/Barski-lab/workflows
+# Provides:         DESeq/DESeq2 script from BioWardrobe
+#                   argparse 1.1.1
+#                   BiocParallel
+#                   run_deseq.R
+#                   get_gene_n_tss.R
+# Base Image:       biowardrobe2/deseq:v0.0.1
+# Build Cmd:        docker build --rm -t biowardrobe2/scidap-deseq:v0.0.5 -f scidap-deseq-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap-deseq:v0.0.5
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.5
+#################################################################
+# BiocParallel version depends on Bioconductor version from the
+# base image. Argparse and FindPython are set to the specific
+# versions to garantee that they will work on R 3.2.3-4 inherited
+# from the base image.
+#
+# v0.0.5
+# Update get_gene_n_tss.R to v0.0.2.
+# If arguments --gene and --tss are not provided, generate default values
+# based on the --isoforms input
+#
+# v0.0.4
+# - fix bug when loading TSV files by run_deseq.R (v0.0.3) script
+# - support loading both *.csv and *.tsv files
+#   file type is identified from file's extension,
+#   by default csv
+#
+# v0.0.3
+# - add get_gene_n_tss.R script to group isoforms CSV file by
+#   gene and common tss
+#
+# v0.0.2
+# - the output file's rows order corresponds to the rows order of
+#   the first CSV file in the untreated group
+# - DESeq/DESeq2 always compares untreated_vs_treated groups
+# - fixed sign for log2FoldChange column
+#################################################################
+
+
+### Base Image
+FROM biowardrobe2/deseq:v0.0.1
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+ENV VER_ARGPARSE 1.1.1
+ENV URL_ARGPARSE "https://github.com/trevorld/argparse/archive/v${VER_ARGPARSE}.tar.gz"
+
+ENV VER_FINDPYTHON 1.0.3
+ENV URL_FINDPYTHON "https://github.com/trevorld/findpython/archive/v${VER_FINDPYTHON}.tar.gz"
+
+COPY ./scripts/install_from_source.R /tmp/install_from_source.R
+COPY ./scripts/install_from_bioconductor.R /tmp/install_from_bioconductor.R
+COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq.R
+COPY ./scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
+
+### Installing Argparse and FindPython packages from source
+RUN Rscript /tmp/install_from_source.R "${URL_FINDPYTHON}" && \
+    Rscript /tmp/install_from_source.R "${URL_ARGPARSE}" && \
+
+### Installing BiocParallel package from Bioconductor
+    Rscript /tmp/install_from_bioconductor.R BiocParallel && \
+
+### Installing run_deseq.R R script
+    chmod +x /usr/local/bin/run_deseq.R && \
+    chmod +x /usr/local/bin/get_gene_n_tss.R && \
+
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
