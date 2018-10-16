@@ -2688,6 +2688,20 @@
 - job: ./genome-indices.json
   tool: ../workflows/genome-indices.cwl
   output:
+    annotation:
+      "class": "File"
+      "location": "dm3_chr4.tsv"
+      "format": "http://edamontology.org/format_3475"
+      "size": 76091
+      "checksum": "sha1$cf8ab9e588bbf4a615957bc08f6ebd266a5caf9f"
+
+    annotation_gtf:
+      "class": "File"
+      "location": "dm3_chr4.gtf"
+      "format": "http://edamontology.org/format_2306"
+      "size": 654793
+      "checksum": "sha1$4042189265e6ae0be8a91612af20fe91a96c33fc"
+
     bowtie_indices:
       class: Directory
       listing:
@@ -2713,3 +2727,99 @@
         size: 42248
     star_indices:
       class: Directory
+      listing: [
+          {
+              "class": "File",
+              "location": "chrStart.txt",
+              "checksum": "sha1$e7d5943b1935016596245ae5b92d9f7753c8024f",
+              "size": 10
+          },
+          {
+              "class": "File",
+              "location": "chrNameLength.txt",
+              "checksum": "sha1$a88ca947e71c1df79a066231188baf9b12a42839",
+              "size": 13
+          },
+          {
+              "class": "File",
+              "location": "chrLength.txt",
+              "size": 8
+          },
+          {
+              "class": "File",
+              "location": "sjdbList.fromGTF.out.tab",
+              "size": 19133
+          },
+          {
+              "class": "File",
+              "location": "exonInfo.tab",
+              "checksum": "sha1$1988a84da386207c3530b591706d238eeda3083f",
+              "size": 45281
+          },
+          {
+              "class": "File",
+              "location": "sjdbList.out.tab",
+              "checksum": "sha1$3c44a5e9e93706ce5693c2c0e616584ea11bab55",
+              "size": 19133
+          },
+          {
+              "class": "File",
+              "location": "SAindex",
+              "checksum": "sha1$56655d0b746a1e27f4d31ad203c21d0e6dcbd38c",
+              "size": 1529259
+          },
+          {
+              "class": "File",
+              "location": "chrName.txt",
+              "checksum": "sha1$68d9aa7a68656619041a22fb54a1f6792ba0af7c",
+              "size": 5
+          },
+          {
+              "class": "File",
+              "location": "Log.out",
+              "checksum": "sha1$5f3e316fedecddc8cb64e995fc4ca1fb56308795",
+              "size": 16144
+          },
+          {
+              "class": "File",
+              "location": "geneInfo.tab",
+              "checksum": "sha1$a11cbcfab4faa6734e54e6fd77222f4fada25134",
+              "size": 3728
+          },
+          {
+              "class": "File",
+              "location": "SA",
+              "checksum": "sha1$28daf553a7cab1fd7e2044d696f9227d88d716ea",
+              "size": 12623799
+          },
+          {
+              "class": "File",
+              "location": "sjdbInfo.txt",
+              "checksum": "sha1$8a3ac69041200c11bfa24412cbaf5965ee25b029",
+              "size": 20033
+          },
+          {
+              "class": "File",
+              "location": "exonGeTrInfo.tab",
+              "checksum": "sha1$571244fe981ec3c513f83444d3f9639ac3dec3ff",
+              "size": 74437
+          },
+          {
+              "class": "File",
+              "location": "transcriptInfo.tab",
+              "checksum": "sha1$ad39be7b8a6284ad4193139b8b3a123f2ab2bb97",
+              "size": 13759
+          },
+          {
+              "class": "File",
+              "location": "Genome",
+              "checksum": "sha1$0c2578cf07e7bfb13fb7c802f97067d0e3941744",
+              "size": 1752156
+          },
+          {
+              "class": "File",
+              "location": "genomeParameters.txt",
+              "checksum": "sha1$b043db35c3fd7d9053c9a5fa39c08664097657e0",
+              "size": 737
+          }
+      ]
