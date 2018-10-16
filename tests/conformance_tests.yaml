@@ -2702,29 +2702,212 @@
       "size": 654793
       "checksum": "sha1$4042189265e6ae0be8a91612af20fe91a96c33fc"
 
-    bowtie_indices:
+    bowtie_indices:            
       class: Directory
-      listing:
-      - class: File
-        location: dm3_chr4.1.ebwt
-        size: 4580786
-      - class: File
-        location: dm3_chr4.2.ebwt
-        size: 42248
-      - class: File
-        location: dm3_chr4.3.ebwt
-        size: 26
-      - class: File
-        location: dm3_chr4.4.ebwt
-        size: 337940
-      - class: File
-        location: dm3_chr4.log
-      - class: File
-        location: dm3_chr4.rev.1.ebwt
-        size: 4580786
-      - class: File
-        location: dm3_chr4.rev.2.ebwt
-        size: 42248
+      "listing": [
+      {
+        "basename": "dm3_chr4.log",
+        "class": "File",
+        "location": "dm3_chr4.log"
+      },
+      {
+        "basename": "dm3_chr4.rev.1.ebwt",
+        "checksum": "sha1$a9494d2538f8b0b511faf490eac1b29081fe212f",
+        "class": "File",
+        "location": "dm3_chr4.rev.1.ebwt",
+        "size": 4580786
+      },
+      {
+        "basename": "dm3_chr4.1.ebwt",
+        "checksum": "sha1$a290242a03e2f3ba2952eb7b8dfaec99f15a39d2",
+        "class": "File",
+        "location": "dm3_chr4.1.ebwt",
+        "size": 4580786
+      },
+      {
+        "basename": "dm3_chr4.3.ebwt",
+        "checksum": "sha1$a54e1f43531cdfa6005faef0846dff1cf2410260",
+        "class": "File",
+        "location": "dm3_chr4.3.ebwt",
+        "size": 26
+      },
+      {
+        "basename": "dm3_chr4.2.ebwt",
+        "checksum": "sha1$89db8735ca3e7b5d9219fca84b43371804857e9c",
+        "class": "File",
+        "location": "dm3_chr4.2.ebwt",
+        "size": 168976
+      },
+      {
+        "basename": "dm3_chr4.rev.2.ebwt",
+        "checksum": "sha1$e05e877955a5adfce6990953e1cf06596cc677f8",
+        "class": "File",
+        "location": "dm3_chr4.rev.2.ebwt",
+        "size": 168976
+      },
+      {
+        "basename": "dm3_chr4.4.ebwt",
+        "checksum": "sha1$a3bcb9e4c9eb489d5fbd068bdeb85475b4473d51",
+        "class": "File",
+        "location": "dm3_chr4.4.ebwt",
+        "size": 337940
+      }
+      ]
+
+    chrom_length:
+      "class": "File"
+      "checksum": "sha1$a88ca947e71c1df79a066231188baf9b12a42839"
+      "location": "chrNameLength.txt"
+      "size": 13
+    genome_size: "2.7e9"
+    mitochondrial_indices: {
+        "class": "Directory",
+        "listing": [
+            {
+                "checksum": "sha1$e7d5943b1935016596245ae5b92d9f7753c8024f",
+                "class": "File",
+                "location": "chrStart.txt",
+                "size": 10
+            },
+            {
+                "checksum": "sha1$a88ca947e71c1df79a066231188baf9b12a42839",
+                "class": "File",
+                "location": "chrNameLength.txt",
+                "size": 13
+            },
+            {
+                "checksum": "sha1$3290b01acd24d637a79bb152d19f282ec2656c96",
+                "class": "File",
+                "location": "chrLength.txt",
+                "size": 8
+            },
+            {
+                "checksum": "sha1$3c44a5e9e93706ce5693c2c0e616584ea11bab55",
+                "class": "File",
+                "location": "sjdbList.fromGTF.out.tab",
+                "size": 19133
+            },
+            {
+                "checksum": "sha1$1988a84da386207c3530b591706d238eeda3083f",
+                "class": "File",
+                "location": "exonInfo.tab",
+                "size": 45281
+            },
+            {
+                "checksum": "sha1$3c44a5e9e93706ce5693c2c0e616584ea11bab55",
+                "class": "File",
+                "location": "sjdbList.out.tab",
+                "size": 19133
+            },
+            {
+                "checksum": "sha1$56655d0b746a1e27f4d31ad203c21d0e6dcbd38c",
+                "class": "File",
+                "location": "SAindex",
+                "size": 1529259
+            },
+            {
+                "checksum": "sha1$68d9aa7a68656619041a22fb54a1f6792ba0af7c",
+                "class": "File",
+                "location": "chrName.txt",
+                "size": 5
+            },
+            {
+                "class": "File",
+                "location": "Log.out"
+            },
+            {
+                "checksum": "sha1$a11cbcfab4faa6734e54e6fd77222f4fada25134",
+                "class": "File",
+                "location": "geneInfo.tab",
+                "size": 3728
+            },
+            {
+                "checksum": "sha1$28daf553a7cab1fd7e2044d696f9227d88d716ea",
+                "class": "File",
+                "location": "SA",
+                "size": 12623799
+            },
+            {
+                "checksum": "sha1$8a3ac69041200c11bfa24412cbaf5965ee25b029",
+                "class": "File",
+                "location": "sjdbInfo.txt",
+                "size": 20033
+            },
+            {
+                "checksum": "sha1$571244fe981ec3c513f83444d3f9639ac3dec3ff",
+                "class": "File",
+                "location": "exonGeTrInfo.tab",
+                "size": 74437
+            },
+            {
+                "checksum": "sha1$ad39be7b8a6284ad4193139b8b3a123f2ab2bb97",
+                "class": "File",
+                "location": "transcriptInfo.tab",
+                "size": 13759
+            },
+            {
+                "checksum": "sha1$0c2578cf07e7bfb13fb7c802f97067d0e3941744",
+                "class": "File",
+                "location": "Genome",
+                "size": 1752156
+            },
+            {
+                "class": "File",
+                "location": "genomeParameters.txt",
+                "size": 737
+            }
+        ]
+    }
+    ribosomal_indices: {
+        "class": "Directory",
+        "listing": [
+            {
+                "class": "File",
+                "location": "dm3_chr4.log"
+            },
+            {
+                "checksum": "sha1$55ec2314d00e3a2fddb71f9ead1c0df7613f84e6",
+                "class": "File",
+                "location": "dm3_chr4.rev.1.ebwt",
+                "size": 4198049
+            },
+            {
+                "checksum": "sha1$486c283b0d513dd38eb23871d804c96893c59cfe",
+                "class": "File",
+                "location": "dm3_chr4.1.ebwt",
+                "size": 4198049
+            },
+            {
+                "basename": "dm3_chr4.3.ebwt",
+                "checksum": "sha1$3cf3122a52df1531299532e0e86a253ca79846f0",
+                "class": "File",
+                "location": "dm3_chr4.3.ebwt",
+                "size": 17
+            },
+            {
+                "basename": "dm3_chr4.2.ebwt",
+                "checksum": "sha1$702064bbd58641f26f8b3f499afb2943d36fa9ab",
+                "class": "File",
+                "location": "dm3_chr4.2.ebwt",
+                "size": 1508
+            },
+            {
+                "basename": "dm3_chr4.rev.2.ebwt",
+                "checksum": "sha1$3231c65141f4e864ac65d984d3dcee2919ea19db",
+                "class": "File",
+                "location": "dm3_chr4.rev.2.ebwt",
+                "size": 1508
+            },
+            {
+                "basename": "dm3_chr4.4.ebwt",
+                "checksum": "sha1$533f53e2c887c5d0729641398e263545de2945d0",
+                "class": "File",
+                "location": "dm3_chr4.4.ebwt",
+                "size": 3007
+            }
+        ]
+    }
+
     star_indices:
       class: Directory
       listing: [
@@ -2776,9 +2959,7 @@
           },
           {
               "class": "File",
-              "location": "Log.out",
-              "checksum": "sha1$5f3e316fedecddc8cb64e995fc4ca1fb56308795",
-              "size": 16144
+              "location": "Log.out"
           },
           {
               "class": "File",
@@ -2819,7 +3000,6 @@
           {
               "class": "File",
               "location": "genomeParameters.txt",
-              "checksum": "sha1$b043db35c3fd7d9053c9a5fa39c08664097657e0",
               "size": 737
           }
       ]
