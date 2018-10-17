@@ -214,7 +214,7 @@ steps:
     run: ../tools/star-genomegenerate.cwl
     in:
       genome_fasta_files: fasta
-      sjdb_gtf_file: annotation_gtf
+      sjdb_gtf_file: input_annotation_gtf
       genome_sa_sparse_d: genome_sa_sparse_d
       limit_genome_generate_ram: limit_genome_generate_ram
       genome_sa_index_n_bases: genome_sa_index_n_bases
@@ -226,7 +226,7 @@ steps:
     run: ../tools/star-genomegenerate.cwl
     in:
       genome_fasta_files: fasta_mitochondrial
-      sjdb_gtf_file: annotation_gtf
+      sjdb_gtf_file: input_annotation_gtf
       genome_sa_sparse_d: genome_sa_sparse_d
       genome_sa_index_n_bases: genome_sa_index_n_bases_mitochondrial
       threads: threads
