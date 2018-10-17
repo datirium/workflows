@@ -59,9 +59,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "bowtie-index"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/dummy/bowtie-index.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:name: "Generate genome index bowtie"
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/dummy/bowtie-index.cwl
+s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -100,11 +100,9 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: >
-  Workflow makes indices for bowtie v1.2.0 (12/30/2016).
+  Generates indices for bowtie v1.2.0 (12/30/2016).
 
 s:about: |
   Workflow makes indices for [bowtie](http://bowtie-bio.sourceforge.net/tutorial.shtml) v1.2.0 (12/30/2016).
 
-  It performs the following steps:
-  1. Executes `bowtie-index` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input, returns results as a group of main and secondary files
-  2. Transforms results from the previous step into Direcotry data type
+  Executes `bowtie-index` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input, returns results as a directory

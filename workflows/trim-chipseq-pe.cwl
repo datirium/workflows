@@ -511,7 +511,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "trim-chipseq-pe"
+s:name: "Trim Galore ChIP-Seq pipeline paired-end"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/datirium/trim-chipseq-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -547,11 +547,18 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: >
-  Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data files.
+  ChIP-Seq basic analysis workflow for a paired-end experiment with Trim Galore.
 
 s:about: |
-  Runs ChIP-Seq BioWardrobe basic analysis with paired-end input data (upstream and downstream
-  FASTQ file).
+  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  **ChIP-Seq** basic analysis workflow for a **paired-end** experiment with Trim Galore.
+
+  _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
+  and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
+  apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data.
+
+  A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
+
 
   In outputs it returns coordinate sorted BAM file alongside with index BAI file,
   quality statistics for both the input FASTQ files, reads coverage in a form of BigWig file,
