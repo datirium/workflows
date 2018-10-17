@@ -302,9 +302,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "rnaseq-se"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/rnaseq-se.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
+s:name: "RNA-Seq pipeline single-read"
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-se.cwl
+s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:

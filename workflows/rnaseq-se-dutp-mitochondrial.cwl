@@ -404,7 +404,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "rnaseq-se-dutp-mitochondrial"
+s:name: "RNA-Seq pipeline single-read stranded mitochondrial"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-se-dutp-mitochondrial.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0

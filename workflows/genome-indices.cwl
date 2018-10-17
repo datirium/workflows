@@ -252,7 +252,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "genome-indices"
+s:name: "Generate genome indices for STAR & bowtie"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -275,7 +275,7 @@ s:creator:
     s:streetAddress: "3559 Kroger Ave"
 
 doc: >
-  Makes genome indices for STAR v2.5.3a (03/17/2017) & bowtie v1.2.0 (12/30/2016).
+  Generates genome indices for STAR v2.5.3a (03/17/2017) & bowtie v1.2.0 (12/30/2016).
 
 s:about: |
   Creates indices for:
@@ -284,10 +284,8 @@ s:about: |
 
   It performs the following steps:
 
-  1. Runs `STAR --runMode genomeGenerate` to generate indices, based on [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) and [GTF](http://mblab.wustl.edu/GTF2.html) input files, returns results as an array of files
-  2. Transforms array of files into [Direcotry](http://www.commonwl.org/v1.0/CommandLineTool.html#Directory) data type
-  3. Separates *chrNameLength.txt* file as an output
-
-  1. Executes `bowtie-build` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input, returns results as a group of main and secondary files
-  2. Transforms results from the previous step into Direcotry data type
+  1. `STAR --runMode genomeGenerate` to generate indices, based on [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) and [GTF](http://mblab.wustl.edu/GTF2.html) input files, returns results as an array of files
+  2. Outputs indices as [Direcotry](http://www.commonwl.org/v1.0/CommandLineTool.html#Directory) data type
+  3. Separates *chrNameLength.txt* file from Directory output
+  4. `bowtie-build` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input, returns results as a group of main and secondary files
 
