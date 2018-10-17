@@ -15,7 +15,7 @@
     "location": "./data/dm3_chr4/main_inputs/fasta/chr4.fa",
     "format":"http://edamontology.org/format_1929"
   },
-  "annotation_gtf": {
+  "input_annotation_gtf": {
     "class": "File", 
     "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.gtf",
     "format":"http://edamontology.org/format_2306"
