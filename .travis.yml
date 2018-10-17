@@ -10,7 +10,7 @@ install:
 - pip install --upgrade cwltool==1.0.20180912090223
 - pip install --upgrade cwltest
 - pip install --upgrade ruamel.yaml==0.15.69
-script: bash run_test.sh --junit-xml=result.xml RUNNER=cwltool
+script: bash run_test.sh -n171 --verbose --junit-xml=result.xml RUNNER=cwltool
 branches:
   only:
   - master
