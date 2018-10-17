@@ -455,7 +455,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "trim-chipseq-se"
+s:name: "Trim Galore ChIP-Seq pipeline single-read"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-chipseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -491,12 +491,15 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: >
-  Runs ChIP-Seq BioWardrobe basic analysis with single-end data file.
+  ChIP-Seq basic analysis workflow for a single-read experiment with Trim Galore.
 
 s:about: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **ChIP-Seq** basic analysis for a **single-end** experiment.
-  A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
+  **ChIP-Seq** basic analysis workflow for a **single-read** experiment with Trim Galore.
+
+  _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
+  and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
+  apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data.
 
   In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
   statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
