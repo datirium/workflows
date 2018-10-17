@@ -432,8 +432,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "rnaseq-se-dutp-mitochondrial"
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-se-dutp-mitochondrial.cwl
+s:name: "RNA-Seq pipeline paired-end stranded mitochondrial"
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-pe-dutp-mitochondrial.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -456,7 +456,7 @@ s:creator:
     - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  RNA-Seq strand specific mitochondrial workflow for pair-end experiment based on original BioWardrobe's basic analysis.
+  RNA-Seq strand specific mitochondrial workflow for pair-end experiment based on BioWardrobe's basic analysis.
 
 s:about: |
   Slightly changed original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)

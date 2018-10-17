@@ -455,9 +455,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "chipseq-se"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/workflows/scidap/chipseq-se.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:name: "trim-chipseq-se"
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-chipseq-se.cwl
+s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
