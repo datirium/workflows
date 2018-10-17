@@ -59,7 +59,7 @@ inputs:
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
-  annotation_gtf:
+  input_annotation_gtf:
     type: File
     label: "GTF input file"
     format: "http://edamontology.org/format_2306"
@@ -185,7 +185,7 @@ outputs:
     label: "GTF input file"
     format: "http://edamontology.org/format_2306"
     doc: "Annotation input file"
-    outputSource: annotation_gtf
+    outputSource: input_annotation_gtf
 
   annotation:
     type: File
