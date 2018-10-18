@@ -65,11 +65,11 @@ inputs:
     format: "http://edamontology.org/format_2306"
     doc: "Annotation input file"
 
-  annotation_tab:
-    type: File
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
+#  annotation_tab:
+#    type: File
+#    label: "Annotation file"
+#    format: "http://edamontology.org/format_3475"
+#    doc: "Tab-separated annotation file"
 
   genome_sa_index_n_bases:
     type: int?
@@ -187,12 +187,12 @@ outputs:
     doc: "Annotation input file"
     outputSource: input_annotation_gtf
 
-  annotation:
-    type: File
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
-    outputSource: annotation_tab
+#  annotation:
+#    type: File
+#    label: "Annotation file"
+#    format: "http://edamontology.org/format_3475"
+#    doc: "Tab-separated annotation file"
+#    outputSource: annotation_tab
 
   genome_size:
     type: string
