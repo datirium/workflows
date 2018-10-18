@@ -180,12 +180,12 @@ outputs:
     doc: "Mitochondrial chromosome index folder"
     outputSource: mitochondrial_generate_indices/indices
 
-  annotation_gtf:
-    type: File
-    label: "GTF input file"
-    format: "http://edamontology.org/format_2306"
-    doc: "Annotation input file"
-    outputSource: input_annotation_gtf
+#  annotation_gtf:
+#    type: File
+#    label: "GTF input file"
+#    format: "http://edamontology.org/format_2306"
+#    doc: "Annotation input file"
+#    outputSource: input_annotation_gtf
 
 #  annotation:
 #    type: File
