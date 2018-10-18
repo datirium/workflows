@@ -9,11 +9,11 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-- "https://raw.githubusercontent.com/datirium/workflows/master/metadata/chipseq-header.cwl"
+  - "../metadata/chipseq-header.cwl"
 
 'sd:upstream':
-  genome_indices: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl"
-  control_file: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl"
+  genome_indices: "genome-indices.cwl"
+  control_file: "chipseq-pe.cwl"
 
 inputs:
 

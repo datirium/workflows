@@ -8,23 +8,39 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
 
+'sd:upstream':
+  chipseq_sample:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
+  chipseq_control:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
 
 inputs:
 
   islands_file:
     type: File
     label: "XLS called peaks file"
+    'sd:upstreamSource': "chipseq_sample/macs2_called_peaks"
+    'sd:localLabel': true
     format: "http://edamontology.org/format_3468"
     doc: "XLS file to include information about peaks returned by iaintersect.cwl or macs2-callpeak-biowardrobe-only.cwl"
 
   islands_control_file:
     type: File?
+    'sd:upstreamSource': "chipseq_control/macs2_called_peaks"
+    'sd:localLabel': true
     label: "XLS called peaks file (control)"
     format: "http://edamontology.org/format_3468"
     doc: "XLS file to include information about peaks returned by iaintersect.cwl or macs2-callpeak-biowardrobe-only.cwl for control"
 
   bambai_pair:
     type: File
+    'sd:upstreamSource': "chipseq_sample/bambai_pair"
     secondaryFiles:
     - .bai
     label: "Coordinate sorted BAM alignment file (+index BAI)"
@@ -45,18 +61,27 @@ inputs:
 
   stitch_distance:
     type: int
+    default: 20000
     label: "Stitching distance"
     doc: "Linking distance for stitching"
+    'sd:layout':
+      advanced: true
 
   tss_distance:
     type: int
+    default: 2500
     label: "TSS distance"
     doc: "Distance from TSS to exclude, 0 = no TSS exclusion"
+    'sd:layout':
+      advanced: true
 
   promoter_bp:
     type: int
+    default: 1000
     label: "Promoter distance"
     doc: "Promoter distance for gene names assignment"
+    'sd:layout':
+      advanced: true
 
 outputs:
 

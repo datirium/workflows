@@ -8,10 +8,10 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
-  - "https://raw.githubusercontent.com/datirium/workflows/master/metadata/rnaseq-header.cwl"
+  - "../metadata/rnaseq-header.cwl"
 
 'sd:upstream':
-  genome_indices: "https://raw.githubusercontent.com/datirium/workflows/master/workflows/genome-indices.cwl"
+  genome_indices: "genome-indices.cwl"
 
 
 inputs:
