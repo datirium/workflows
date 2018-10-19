@@ -13,7 +13,7 @@ requirements:
 
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
-  control_file: "chipseq-pe.cwl"
+  control_file: "trim-chipseq-pe.cwl"
 
 inputs:
 
