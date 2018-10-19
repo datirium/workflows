@@ -60,7 +60,7 @@ inputs:
     doc: "Chromosome length file"
 
   stitch_distance:
-    type: int
+    type: int?
     default: 20000
     label: "Stitching distance"
     doc: "Linking distance for stitching"
@@ -68,7 +68,7 @@ inputs:
       advanced: true
 
   tss_distance:
-    type: int
+    type: int?
     default: 2500
     label: "TSS distance"
     doc: "Distance from TSS to exclude, 0 = no TSS exclusion"
@@ -76,7 +76,7 @@ inputs:
       advanced: true
 
   promoter_bp:
-    type: int
+    type: int?
     default: 1000
     label: "Promoter distance"
     doc: "Promoter distance for gene names assignment"

@@ -335,7 +335,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "trim-rnaseq-se"
+s:name: "Trim Galore RNA-Seq pipeline single-read"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-rnaseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0

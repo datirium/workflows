@@ -434,7 +434,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "trim-rnaseq-pe-dutp"
+s:name: "Trim Galore RNA-Seq pipeline paired-end strand specific"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-rnaseq-pe-dutp.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
