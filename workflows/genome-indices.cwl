@@ -126,7 +126,7 @@ inputs:
 
   genome_sa_sparse_d:
     type: int?
-    label: "Use 2 to decrease needed RAM for STAR"
+    label: "Genome SA sparse (Use 2 to decrease RAM usage)"
     doc: |
       default: 1
 
@@ -137,6 +137,7 @@ inputs:
 
   limit_genome_generate_ram:
     type: long?
+    label: "Genome Generate RAM (31G default)"
     inputBinding:
       position: 1
       prefix: --limitGenomeGenerateRAM
