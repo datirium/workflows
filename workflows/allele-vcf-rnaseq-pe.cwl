@@ -11,18 +11,6 @@ requirements:
 
 inputs:
 
-  fastq_file_upstream:
-    type: File
-    label: "FASTQ upstream input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
-
-  fastq_file_downstream:
-    type: File
-    label: "FASTQ downstream input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
-
   star_indices_folder:
     type: Directory
     label: "STAR indices folder for reference genome"
@@ -66,6 +54,18 @@ inputs:
     default: 2
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
+
+  fastq_file_upstream:
+    type: File
+    label: "FASTQ upstream input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
+
+  fastq_file_downstream:
+    type: File
+    label: "FASTQ downstream input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
 
 
 outputs:

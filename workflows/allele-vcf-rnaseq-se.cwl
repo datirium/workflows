@@ -10,12 +10,6 @@ requirements:
 
 inputs:
 
-  fastq_file:
-    type: File
-    label: "FASTQ input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format"
-
   star_indices_folder:
     type: Directory
     label: "STAR indices folder for reference genome"
@@ -60,6 +54,11 @@ inputs:
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
 
+  fastq_file:
+    type: File
+    label: "FASTQ input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Reads data in a FASTQ format"
 
 outputs:
 

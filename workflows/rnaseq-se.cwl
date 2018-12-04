@@ -16,12 +16,6 @@ inputs:
 
 # General inputs
 
-  fastq_file:
-    type: File
-    label: "FASTQ input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format"
-
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
@@ -50,6 +44,11 @@ inputs:
     'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
 
+  fastq_file:
+    type: File
+    label: "FASTQ input file"
+    format: "http://edamontology.org/format_1930"
+    doc: "Reads data in a FASTQ format"
 
 # Advanced inputs
 
