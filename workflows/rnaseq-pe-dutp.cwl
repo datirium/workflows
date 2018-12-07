@@ -266,7 +266,7 @@ steps:
     out: [bam_bai_pair]
 
   bam_to_bigwig_upstream:
-    run: bam-bedgraph-bigwig.cwl
+    run: ../subworkflows/bam-bedgraph-bigwig.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length_file
@@ -288,7 +288,7 @@ steps:
     out: [bigwig_file]
 
   bam_to_bigwig_downstream:
-    run: bam-bedgraph-bigwig.cwl
+    run: ../subworkflows/bam-bedgraph-bigwig.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length_file

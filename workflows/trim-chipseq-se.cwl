@@ -403,7 +403,7 @@ steps:
       - macs2_fragments_calculated
 
   bam_to_bigwig:
-    run: bam-bedgraph-bigwig.cwl
+    run: ../subworkflows/bam-bedgraph-bigwig.cwl
     in:
       bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length

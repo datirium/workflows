@@ -26,37 +26,45 @@ from subprocess import check_output, CalledProcessError
 from time import strftime, gmtime
 import setuptools.command.egg_info as egg_info_cmd
 from setuptools.command.egg_info import egg_info
+import pkg_resources
 
 SETUP_DIR = path.dirname(__file__)
 README = path.join(SETUP_DIR, 'README.md')
 
-try:
-    class EggInfoFromGit(egg_info):
-        """Tag the build with git commit timestamp.
+SETUPTOOLS_VER = pkg_resources.get_distribution(
+    "setuptools").version.split('.')
 
-        If a build tag has already been set (e.g., "egg_info -b", building
-        from source package), leave it alone.
-        """
+RECENT_SETUPTOOLS = int(SETUPTOOLS_VER[0]) > 40 or (
+    int(SETUPTOOLS_VER[0]) == 40 and int(SETUPTOOLS_VER[1]) > 0) or (
+        int(SETUPTOOLS_VER[0]) == 40 and int(SETUPTOOLS_VER[1]) == 0 and
+        int(SETUPTOOLS_VER[2]) > 0)
 
-        def git_timestamp_tag(self):
-            gitinfo = check_output(
-                ['git', 'log', '--first-parent', '--max-count=1',
-                 '--format=format:%ct', '.']).strip()
-            return strftime('.%Y%m%d%H%M%S', gmtime(int(gitinfo)))
+class EggInfoFromGit(egg_info):
+    """Tag the build with git commit timestamp.
 
-        def tags(self):
-            if self.tag_build is None:
-                try:
-                    self.tag_build = self.git_timestamp_tag()
-                except CalledProcessError:
-                    pass
-            return egg_info.tags(self)
+    If a build tag has already been set (e.g., "egg_info -b", building
+    from source package), leave it alone.
+    """
+
+    def git_timestamp_tag(self):
+        gitinfo = check_output(
+            ['git', 'log', '--first-parent', '--max-count=1',
+             '--format=format:%ct', '.']).strip()
+        return strftime('.%Y%m%d%H%M%S', gmtime(int(gitinfo)))
+
+    def tags(self):
+        if self.tag_build is None:
+            try:
+                self.tag_build = self.git_timestamp_tag()
+            except CalledProcessError:
+                pass
+        return egg_info.tags(self)
+
+    if RECENT_SETUPTOOLS:
         vtags = property(tags)
 
-    tagger = EggInfoFromGit
-except ImportError:
-    tagger = egg_info_cmd.egg_info
 
+tagger = EggInfoFromGit
 
 setup(
     name='biowardrobe-cwl-workflows',
