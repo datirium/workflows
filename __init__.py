@@ -40,3 +40,6 @@ def available(workflow=None):
         raise Exception("Can't find workflow %s" % workflow)
 
     return all_workflows[workflow] if workflow else all_workflows
+
+
+from .workflows_create import create_biowardrobe_workflow as workflow
