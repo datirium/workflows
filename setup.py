@@ -20,11 +20,10 @@
  ****************************************************************************"""
 
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from os import symlink, path
 from subprocess import check_output, CalledProcessError
 from time import strftime, gmtime
-import setuptools.command.egg_info as egg_info_cmd
 from setuptools.command.egg_info import egg_info
 import pkg_resources
 
@@ -38,6 +37,7 @@ RECENT_SETUPTOOLS = int(SETUPTOOLS_VER[0]) > 40 or (
     int(SETUPTOOLS_VER[0]) == 40 and int(SETUPTOOLS_VER[1]) > 0) or (
         int(SETUPTOOLS_VER[0]) == 40 and int(SETUPTOOLS_VER[1]) == 0 and
         int(SETUPTOOLS_VER[2]) > 0)
+
 
 class EggInfoFromGit(egg_info):
     """Tag the build with git commit timestamp.
@@ -86,6 +86,13 @@ setup(
     ],
 
     zip_safe=True,
+
+    entry_points={
+        'console_scripts': [
+            "workflows-init=biowardrobe_cwl_workflows.workflows_init:generate_biowardrobe_workflow"
+        ]
+    },
+
     include_package_data=True,
     package_data={
         'biowardrobe_cwl_workflows': ['workflows/*.cwl',
