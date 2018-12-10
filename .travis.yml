@@ -7,9 +7,9 @@ python:
 os:
 - linux
 install:
-- pip install --upgrade cwltool==1.0.20180912090223
+- pip install --upgrade cwltool==1.0.20181201184214
 - pip install --upgrade cwltest
-- pip install --upgrade ruamel.yaml==0.15.69
+- pip install --upgrade ruamel.yaml==0.15.77
 #script: bash run_test.sh -n171 --verbose --junit-xml=result.xml RUNNER=cwltool
 #/home/travis/virtualenv/python3.6.3/bin/cwltool
 #script: cd ./tests/ && cwltool --debug --outdir=/tmp/tmpul0j1uu1 ../workflows/genome-indices.cwl ./genome-indices.json
