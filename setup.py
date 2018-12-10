@@ -96,6 +96,7 @@ setup(
     include_package_data=True,
     package_data={
         'biowardrobe_cwl_workflows': ['workflows/*.cwl',
+                                      'subworkflows/*.cwl',
                                       'expressiontools/*.cwl',
                                       'metadata/*.cwl',
                                       'tools/*.cwl',
