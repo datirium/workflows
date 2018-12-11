@@ -13,7 +13,7 @@ inputs:
   genome:
     type: string
     label: "Genome"
-    doc: "Used by BioWardrobe to set genome"
+    doc: "Output files base string"
 
   genome_label:
     type: string?
