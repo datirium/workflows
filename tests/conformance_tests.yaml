@@ -415,27 +415,45 @@
 - job: ./bowtie-build-1.json
   tool: ../tools/bowtie-build.cwl
   output:
-    indices:
-    - class: File
-      location: dm3_chr4.1.ebwt
-      size: 4580786
-    - class: File
-      location: dm3_chr4.2.ebwt
-      size: 42248
-    - class: File
-      location: dm3_chr4.3.ebwt
-      size: 26
-    - class: File
-      location: dm3_chr4.4.ebwt
-      size: 337940
-    - class: File
-      location: dm3_chr4.log
-    - class: File
-      location: dm3_chr4.rev.1.ebwt
-      size: 4580786
-    - class: File
-      location: dm3_chr4.rev.2.ebwt
-      size: 42248
+    indices: {
+      "class": "Directory",
+      "listing": [
+      {
+        "basename": "dm3_chr4.log",
+        "class": "File"
+      },
+      {
+        "basename": "dm3_chr4.2.ebwt",
+        "class": "File",
+        "size": 42248
+      },
+      {
+        "basename": "dm3_chr4.rev.2.ebwt",
+        "class": "File",
+        "size": 42248
+      },
+      {
+        "basename": "dm3_chr4.4.ebwt",
+        "class": "File",
+        "size": 337940
+      },
+      {
+        "basename": "dm3_chr4.rev.1.ebwt",
+        "class": "File",
+        "size": 4580786
+      },
+      {
+        "basename": "dm3_chr4.3.ebwt",
+        "class": "File",
+        "size": 26
+      },
+      {
+        "basename": "dm3_chr4.1.ebwt",
+        "class": "File",
+        "size": 4580786
+      }
+      ]
+    }
 
 # ========================================================
 # bzip2-compress
@@ -2714,77 +2732,77 @@
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: heatmap_1.json
-        size: 1973
+    - class: File
+      location: heatmap_1.json
+      size: 1973
 
 - job: ./split-heatmap-2.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: heatmap_1.json
-        size: 1973
+    - class: File
+      location: heatmap_1.json
+      size: 1973
 
 - job: ./split-heatmap-3.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: heatmap_1.json
-        size: 1973
-      - class: File
-        location: heatmap_2.json
-        size: 1973
+    - class: File
+      location: heatmap_1.json
+      size: 1973
+    - class: File
+      location: heatmap_2.json
+      size: 1973
 
 - job: ./split-heatmap-4.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: heatmap_1.json
-        size: 1973
-      - class: File
-        location: heatmap_2.json
-        size: 1973
+    - class: File
+      location: heatmap_1.json
+      size: 1973
+    - class: File
+      location: heatmap_2.json
+      size: 1973
 
 - job: ./split-heatmap-5.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: heatmap_1.json
-        size: 1973
-      - class: File
-        location: heatmap_2.json
-        size: 1973
+    - class: File
+      location: heatmap_1.json
+      size: 1973
+    - class: File
+      location: heatmap_2.json
+      size: 1973
 
 - job: ./split-heatmap-6.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out.json
-        size: 1973
-      - class: File
-        location: copy_chr4_100_mapped_reads.Aligned.out.json
-        size: 1973
+    - class: File
+      location: chr4_100_mapped_reads.Aligned.out.json
+      size: 1973
+    - class: File
+      location: copy_chr4_100_mapped_reads.Aligned.out.json
+      size: 1973
 
 - job: ./split-heatmap-7.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out.json
-        size: 1973
+    - class: File
+      location: chr4_100_mapped_reads.Aligned.out.json
+      size: 1973
 
 - job: ./split-heatmap-8.json
   tool: ../tools/split-heatmap.cwl
   output:
     refactored_heatmap_file:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out.json
-        size: 1973
+    - class: File
+      location: chr4_100_mapped_reads.Aligned.out.json
+      size: 1973
 
 # ========================================================
 # genome-indices
@@ -3117,20 +3135,20 @@
   tool: ../workflows/heatmap.cwl
   output:
     heatmap_file:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out.json
-        size: 289146
+    - class: File
+      location: chr4_100_mapped_reads.Aligned.out.json
+      size: 289146
 
 - job: ./heatmap-2.json
   tool: ../workflows/heatmap.cwl
   output:
     heatmap_file:
-      - class: File
-        location: chr4_100_mapped_reads.Aligned.out.json
-        size: 289146
-      - class: File
-        location: copy_chr4_100_mapped_reads.Aligned.out.json
-        size: 289146
+    - class: File
+      location: chr4_100_mapped_reads.Aligned.out.json
+      size: 289146
+    - class: File
+      location: copy_chr4_100_mapped_reads.Aligned.out.json
+      size: 289146
 
 # ========================================================
 # chipseq-se
