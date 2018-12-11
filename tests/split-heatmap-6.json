@@ -1,0 +1,16 @@
+{
+  "heatmap_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/generated_inputs/homer/heatmap/heatmap_2.tsv"
+  },
+  "output_filename": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/copy_chr4_100_mapped_reads.Aligned.out.bam"
+    }
+  ]
+}

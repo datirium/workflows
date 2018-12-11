@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/homer:v0.0.1
+  dockerPull: biowardrobe2/homer:v0.0.2
 
 
 inputs:
@@ -24,22 +24,20 @@ inputs:
     inputBinding:
       position: 7
       prefix: "-d"
-    doc: "Tag folders from homer-maketagdirectory tool"
+    doc: "Tag folders from homer-make-tag-directory tool"
 
-  hist_region_size:
+  hist_width:
     type:
-      - "null"
       - int
       - string
     inputBinding:
       position: 8
       prefix: "-size"
     doc: |
-      Histogram size from center of the peak.
-      Default: size given by actual coordinates in peak/BED file
       Possible values:
         "#" - performs analysis on the "#" bp surrounding the peak centers
         "#,#" - performs analysis from "#" to "#" relative to peak center
+        "given" - set size to actual coordinates in peak/BED file
 
   hist_bin_size:
     type: int
@@ -47,7 +45,7 @@ inputs:
       position: 9
       prefix: "-hist"
     doc: |
-      Bin size, bp. If hist_region_size is "given" or skipped, this
+      Bin size, bp. If hist_width is "given" or skipped, this
       parameter will set the number of bins to divide each region into
 
   export_heatmap:
@@ -141,8 +139,8 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/homer-metadata.yaml
 
-s:name: "homer-annotatepeaks-hist"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/homer-annotatepeaks-hist.cwl
+s:name: "homer-annotate-peaks-hist"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/homer-annotate-peaks-hist.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -178,6 +176,11 @@ s:creator:
 
 doc: |
   Tool is used to produce histogram or heatmaps only. Rest of the functionality is not implemented intentionally.
+  If TSS analysis needed, input peak_file should be centered on TSS, where the 'center' of the peak in the actual TSS.
+  For example:
+    1	chr4	978796	978796	-
+    2	chr4	1052109	1052109	+
+    3	chr4	1105422	1105422	-
 
   Skipped arguments:
 

@@ -4,12 +4,17 @@
       "class": "File",
       "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
       "format": "http://edamontology.org/format_2572"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/bam_bai/copy_chr4_100_mapped_reads.Aligned.out.bam",
+      "format": "http://edamontology.org/format_2572"
     }],
   "genelist_file": {
     "class": "File",
     "location": "./data/dm3_chr4/generated_inputs/genelist/chr4.isoforms.genelist.tsv",
     "format": "http://edamontology.org/format_3475"
   },
-  "fragment_size": [150],
-  "total_reads": [94]
+  "fragment_size": [150, 150],
+  "total_reads": [94, 94]
 }

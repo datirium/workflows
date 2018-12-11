@@ -767,8 +767,8 @@ s:mainEntity:
   $import: ./metadata/macs2-metadata.yaml
 
 s:name: "macs2-callpeak"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/macs2-callpeak.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://github.com/Barski-lab/workflows/tree/master/tools/macs2-callpeak.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:

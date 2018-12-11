@@ -48,8 +48,8 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "macs2-stat"
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/macs2-stat.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://github.com/Barski-lab/workflows/tree/master/tools/macs2-stat.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
