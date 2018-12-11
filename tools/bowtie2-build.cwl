@@ -235,8 +235,8 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/bowtie2-metadata.yaml
 
-s:downloadUrl: https://raw.githubusercontent.com/SciDAP/workflows/master/tools/bowtie2-build.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://github.com/Barski-lab/workflows/blob/master/tools/bowtie2-build.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:

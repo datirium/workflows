@@ -1,0 +1,7 @@
+{
+  "heatmap_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/generated_inputs/homer/heatmap/heatmap_2.tsv"
+  },
+  "output_filename": ["heatmap_1.bam", "heatmap_2.bam"]
+}

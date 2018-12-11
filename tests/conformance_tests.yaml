@@ -416,28 +416,26 @@
   tool: ../tools/bowtie-build.cwl
   output:
     indices:
-      class: Directory
-      listing:
-      - class: File
-        location: dm3_chr4.1.ebwt
-        size: 4580786
-      - class: File
-        location: dm3_chr4.2.ebwt
-        size: 42248
-      - class: File
-        location: dm3_chr4.3.ebwt
-        size: 26
-      - class: File
-        location: dm3_chr4.4.ebwt
-        size: 337940
-      - class: File
-        location: dm3_chr4.log
-      - class: File
-        location: dm3_chr4.rev.1.ebwt
-        size: 4580786
-      - class: File
-        location: dm3_chr4.rev.2.ebwt
-        size: 42248
+    - class: File
+      location: dm3_chr4.1.ebwt
+      size: 4580786
+    - class: File
+      location: dm3_chr4.2.ebwt
+      size: 42248
+    - class: File
+      location: dm3_chr4.3.ebwt
+      size: 26
+    - class: File
+      location: dm3_chr4.4.ebwt
+      size: 337940
+    - class: File
+      location: dm3_chr4.log
+    - class: File
+      location: dm3_chr4.rev.1.ebwt
+      size: 4580786
+    - class: File
+      location: dm3_chr4.rev.2.ebwt
+      size: 42248
 
 # ========================================================
 # bzip2-compress
@@ -2316,11 +2314,11 @@
       size: 16175
 
 # ========================================================
-# homer-maketagdirectory
+# homer-make-tag-directory
 # ========================================================
 
-- job: ./homer-maketagdirectory-1.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-1.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2342,8 +2340,8 @@
         location: tagCountDistribution.txt
         size: 108
 
-- job: ./homer-maketagdirectory-2.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-2.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2365,8 +2363,8 @@
         location: tagCountDistribution.txt
         size: 108
 
-- job: ./homer-maketagdirectory-3.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-3.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2388,8 +2386,8 @@
         location: tagCountDistribution.txt
         size: 108
 
-- job: ./homer-maketagdirectory-4.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-4.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2411,8 +2409,8 @@
         location: tagCountDistribution.txt
         size: 97
 
-- job: ./homer-maketagdirectory-5.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-5.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2434,8 +2432,8 @@
         location: tagCountDistribution.txt
         size: 97
 
-- job: ./homer-maketagdirectory-6.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-6.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2457,8 +2455,8 @@
         location: tagCountDistribution.txt
         size: 97
 
-- job: ./homer-maketagdirectory-7.json
-  tool: ../tools/homer-maketagdirectory.cwl
+- job: ./homer-make-tag-directory-7.json
+  tool: ../tools/homer-make-tag-directory.cwl
   output:
     output_tag_folder:
       class: Directory
@@ -2680,6 +2678,113 @@
       - class: File
         location: tagCountDistribution.txt
         size: 108
+
+# ========================================================
+# homer-annotate-peaks-hist
+# ========================================================
+
+- job: ./homer-annotate-peaks-hist-1.json
+  tool: ../tools/homer-annotate-peaks-hist.cwl
+  output:
+    histogram_file:
+      class: File
+      location: output.heatmap
+      size: 25710
+
+- job: ./homer-annotate-peaks-hist-2.json
+  tool: ../tools/homer-annotate-peaks-hist.cwl
+  output:
+    histogram_file:
+      class: File
+      location: output.heatmap
+      size: 23806
+
+- job: ./homer-annotate-peaks-hist-3.json
+  tool: ../tools/homer-annotate-peaks-hist.cwl
+  output:
+    histogram_file:
+      class: File
+      location: output.hist
+
+# ========================================================
+# split-heatmap
+# ========================================================
+
+- job: ./split-heatmap-1.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: heatmap_1.json
+        size: 1973
+
+- job: ./split-heatmap-2.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: heatmap_1.json
+        size: 1973
+
+- job: ./split-heatmap-3.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: heatmap_1.json
+        size: 1973
+      - class: File
+        location: heatmap_2.json
+        size: 1973
+
+- job: ./split-heatmap-4.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: heatmap_1.json
+        size: 1973
+      - class: File
+        location: heatmap_2.json
+        size: 1973
+
+- job: ./split-heatmap-5.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: heatmap_1.json
+        size: 1973
+      - class: File
+        location: heatmap_2.json
+        size: 1973
+
+- job: ./split-heatmap-6.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: chr4_100_mapped_reads.Aligned.out.json
+        size: 1973
+      - class: File
+        location: copy_chr4_100_mapped_reads.Aligned.out.json
+        size: 1973
+
+- job: ./split-heatmap-7.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: chr4_100_mapped_reads.Aligned.out.json
+        size: 1973
+
+- job: ./split-heatmap-8.json
+  tool: ../tools/split-heatmap.cwl
+  output:
+    refactored_heatmap_file:
+      - class: File
+        location: chr4_100_mapped_reads.Aligned.out.json
+        size: 1973
 
 # ========================================================
 # genome-indices
@@ -3003,3 +3108,825 @@
 #              "size": 737
 #          }
 #      ]
+
+# ========================================================
+# heatmap
+# ========================================================
+
+- job: ./heatmap-1.json
+  tool: ../workflows/heatmap.cwl
+  output:
+    heatmap_file:
+      - class: File
+        location: chr4_100_mapped_reads.Aligned.out.json
+        size: 289146
+
+- job: ./heatmap-2.json
+  tool: ../workflows/heatmap.cwl
+  output:
+    heatmap_file:
+      - class: File
+        location: chr4_100_mapped_reads.Aligned.out.json
+        size: 289146
+      - class: File
+        location: copy_chr4_100_mapped_reads.Aligned.out.json
+        size: 289146
+
+# ========================================================
+# chipseq-se
+# ========================================================
+
+- job: ./chipseq-se-1.json
+  tool: ../workflows/chipseq-se.cwl
+  output:
+    atdp_log:
+      class: File
+      location: upstream_atdp.log
+    atdp_result:
+      class: File
+      location: upstream_atdp.tsv
+      size: 191373
+    bambai_pair:
+      class: File
+      location: upstream.bam
+      secondaryFiles:
+      - class: File
+        location: upstream.bam.bai
+        size: 1440
+    bigwig:
+      class: File
+      location: upstream.bigWig
+      size: 32950
+    bowtie_log:
+      class: File
+      location: upstream.bw
+      size: 168
+    fastx_statistics:
+      class: File
+      location: upstream.fastxstat
+      size: 2255
+    get_stat_log:
+      class: File
+      location: upstream.stat
+      size: 12
+    iaintersect_log:
+      class: File
+      location: upstream_macs_peaks_iaintersect.log
+    iaintersect_result:
+      class: File
+      location: upstream_macs_peaks_iaintersect.tsv
+      size: 277
+    macs2_broad_peaks: null
+    macs2_called_peaks:
+      class: File
+      location: upstream_macs_peaks.xls
+    macs2_fragment_stat:
+      class: File
+      location: upstream_fragment_stat.tsv
+      size: 9
+    macs2_gapped_peak: null
+    macs2_log:
+      class: File
+      location: upstream_macs.log
+    macs2_moder_r: null
+    macs2_narrow_peaks:
+      class: File
+      location: upstream_macs_peaks.narrowPeak
+      size: 70
+    macs2_peak_summits:
+      class: File
+      location: upstream_macs_summits.bed
+      size: 46
+    samtools_rmdup_log:
+      class: File
+      location: upstream.rmdup
+
+# ========================================================
+# chipseq-pe
+# ========================================================
+
+- job: ./chipseq-pe-1.json
+  tool: ../workflows/chipseq-pe.cwl
+  output:
+    atdp_log:
+      class: File
+      location: upstream_atdp.log
+    atdp_result:
+      class: File
+      location: upstream_atdp.tsv
+      size: 139615
+    bambai_pair:
+      class: File
+      location: upstream.bam
+      secondaryFiles:
+      - class: File
+        location: upstream.bam.bai
+        size: 1128
+    bigwig:
+      class: File
+      location: upstream.bigWig
+      size: 25842
+    bowtie_log:
+      class: File
+      location: upstream.bw
+      size: 179
+    fastx_statistics_upstream:
+      class: File
+      location: upstream.fastxstat
+      size: 2255
+    fastx_statistics_downstream:
+      class: File
+      location: downstream.fastxstat
+      size: 2212
+    get_stat_log:
+      class: File
+      location: upstream.stat
+      size: 12
+    iaintersect_log:
+      class: File
+      location: upstream_macs_peaks_iaintersect.log
+    iaintersect_result:
+      class: File
+      location: upstream_macs_peaks_iaintersect.tsv
+      size: 271
+    macs2_broad_peaks: null
+    macs2_called_peaks:
+      class: File
+      location: upstream_macs_peaks.xls
+    macs2_fragment_stat:
+      class: File
+      location: upstream_fragment_stat.tsv
+      size: 9
+    macs2_gapped_peak: null
+    macs2_log:
+      class: File
+      location: upstream_macs.log
+    macs2_moder_r: null
+    macs2_narrow_peaks:
+      class: File
+      location: upstream_macs_peaks.narrowPeak
+      size: 70
+    macs2_peak_summits:
+      class: File
+      location: upstream_macs_summits.bed
+      size: 46
+    samtools_rmdup_log:
+      class: File
+      location: upstream.rmdup
+
+# ========================================================
+# rnaseq-se
+# ========================================================
+
+- job: ./rnaseq-se-1.json
+  tool: ../workflows/rnaseq-se.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1416
+    bigwig:
+      location: "upstream.bigWig"
+      class: File
+      size: 32958
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 137
+    fastx_statistics:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2255
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 15
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9216
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7182
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14244
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 190
+    star_stdout_log: null
+
+# ========================================================
+# rnaseq-pe
+# ========================================================
+
+- job: ./rnaseq-pe-1.json
+  tool: ../workflows/rnaseq-pe.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1368
+    bigwig:
+      location: "upstream.bigWig"
+      class: File
+      size: 33657
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 137
+    fastx_statistics_downstream:
+      location: "downstream.fastxstat"
+      class: File
+      size: 2212
+    fastx_statistics_upstream:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2255
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 14
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9277
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7228
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14315
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 190
+    star_stdout_log: null
+
+# ========================================================
+# rnaseq-se-dutp
+# ========================================================
+
+- job: ./rnaseq-se-dutp-1.json
+  tool: ../workflows/rnaseq-se-dutp.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1416
+    bigwig_upstream:
+      location: "upstream_upstream.bigWig"
+      class: File
+      size: 25949
+    bigwig_downstream:
+      location: "upstream_downstream.bigWig"
+      class: File
+      size: 25932
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 137
+    fastx_statistics:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2255
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 15
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9170
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7142
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14179
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 190
+    star_stdout_log: null
+
+# ========================================================
+# rnaseq-pe-dutp
+# ========================================================
+
+- job: ./rnaseq-pe-dutp-1.json
+  tool: ../workflows/rnaseq-pe-dutp.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1368
+    bigwig_upstream:
+      location: "upstream_upstream.bigWig"
+      class: File
+      size: 32779
+    bigwig_downstream:
+      location: "upstream_downstream.bigWig"
+      class: File
+      size: 32829
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 137
+    fastx_statistics_upstream:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2255
+    fastx_statistics_downstream:
+      location: "downstream.fastxstat"
+      class: File
+      size: 2212
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 14
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9207
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7173
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14222
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 190
+    star_stdout_log: null
+
+# ========================================================
+# trim-chipseq-se
+# ========================================================
+
+- job: ./trim-chipseq-se-1.json
+  tool: ../workflows/trim-chipseq-se.cwl
+  output:
+    atdp_log:
+      location: "upstream_atdp.log"
+      class: File
+    atdp_result:
+      location: "upstream_atdp.tsv"
+      class: File
+      size: 187212
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1440
+    bigwig:
+      location: "upstream.bigWig"
+      class: File
+      size: 32878
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 168
+    fastx_statistics:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2257
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 12
+    iaintersect_log:
+      location: "upstream_macs_peaks_iaintersect.log"
+      class: File
+    iaintersect_result:
+      location: "upstream_macs_peaks_iaintersect.tsv"
+      class: File
+      size: 277
+    macs2_broad_peaks: null
+    macs2_called_peaks:
+      location: "upstream_macs_peaks.xls"
+      class: File
+    macs2_fragment_stat:
+      location: "upstream_fragment_stat.tsv"
+      class: File
+      size: 9
+    macs2_gapped_peak: null
+    macs2_log:
+      location: "upstream_macs.log"
+      class: File
+    macs2_moder_r: null
+    macs2_narrow_peaks:
+      location: "upstream_macs_peaks.narrowPeak"
+      class: File
+      size: 70
+    macs2_peak_summits:
+      location: "upstream_macs_summits.bed"
+      class: File
+      size: 46
+    samtools_rmdup_log:
+      location: "upstream.rmdup"
+      class: File
+    trim_report:
+      location: "upstream.fastq_trimming_report.txt"
+      class: File
+
+# ========================================================
+# trim-chipseq-pe
+# ========================================================
+
+- job: ./trim-chipseq-pe-1.json
+  tool: ../workflows/trim-chipseq-pe.cwl
+  output:
+    atdp_log:
+      location: "upstream_atdp.log"
+      class: File
+    atdp_result:
+      location: "upstream_atdp.tsv"
+      class: File
+      size: 119074
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 984
+    bigwig:
+      location: "upstream.bigWig"
+      class: File
+      size: 25755
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 178
+    fastx_statistics_downstream:
+      location: "downstream.fastxstat"
+      class: File
+      size: 2062
+    fastx_statistics_upstream:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2116
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 11
+    iaintersect_log:
+      location: "upstream_macs_peaks_iaintersect.log"
+      class: File
+    iaintersect_result:
+      location: "upstream_macs_peaks_iaintersect.tsv"
+      class: File
+      size: 271
+    macs2_broad_peaks: null
+    macs2_called_peaks:
+      location: "upstream_macs_peaks.xls"
+      class: File
+    macs2_fragment_stat:
+      location: "upstream_fragment_stat.tsv"
+      class: File
+      size: 9
+    macs2_gapped_peak: null
+    macs2_log:
+      location: "upstream_macs.log"
+      class: File
+    macs2_moder_r: null
+    macs2_narrow_peaks:
+      location: "upstream_macs_peaks.narrowPeak"
+      class: File
+      size: 70
+    macs2_peak_summits:
+      location: "upstream_macs_summits.bed"
+      class: File
+      size: 46
+    samtools_rmdup_log:
+      location: "upstream.rmdup"
+      class: File
+    trim_report_downstream:
+      location: "downstream.fastq_trimming_report.txt"
+      class: File
+    trim_report_upstream:
+      location: "upstream.fastq_trimming_report.txt"
+      class: File
+
+# ========================================================
+# trim-rnaseq-se
+# ========================================================
+
+- job: ./trim-rnaseq-se-1.json
+  tool: ../workflows/trim-rnaseq-se.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1392
+    bigwig:
+      location: "upstream.bigWig"
+      class: File
+      size: 33016
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 137
+    fastx_statistics:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2257
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 14
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9208
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7180
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14237
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 190
+    star_stdout_log: null
+    trim_report:
+      location: "upstream.fastq_trimming_report.txt"
+      class: File
+
+# ========================================================
+# trim-rnaseq-pe
+# ========================================================
+
+- job: ./trim-rnaseq-pe-1.json
+  tool: ../workflows/trim-rnaseq-pe.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1200
+    bigwig:
+      location: "upstream.bigWig"
+      class: File
+      size: 32737
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 135
+    fastx_statistics_downstream:
+      location: "downstream.fastxstat"
+      class: File
+      size: 2062
+    fastx_statistics_upstream:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2116
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 13
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9237
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7203
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14275
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 157
+    star_stdout_log: null
+    trim_report_downstream:
+      location: "downstream.fastq_trimming_report.txt"
+      class: File
+    trim_report_upstream:
+      location: "upstream.fastq_trimming_report.txt"
+      class: File
+
+# ========================================================
+# trim-rnaseq-se-dutp
+# ========================================================
+
+- job: ./trim-rnaseq-se-dutp-1.json
+  tool: ../workflows/trim-rnaseq-se-dutp.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1392
+    bigwig_downstream:
+      location: "upstream_downstream.bigWig"
+      class: File
+      size: 25918
+    bigwig_upstream:
+      location: "upstream_upstream.bigWig"
+      class: File
+      size: 25973
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 137
+    fastx_statistics:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2257
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 14
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9170
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7142
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14179
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 190
+    star_stdout_log: null
+    trim_report:
+      location: "upstream.fastq_trimming_report.txt"
+      class: File
+
+# ========================================================
+# trim-rnaseq-pe-dutp
+# ========================================================
+
+- job: ./trim-rnaseq-pe-dutp-1.json
+  tool: ../workflows/trim-rnaseq-pe-dutp.cwl
+  output:
+    bambai_pair:
+      location: "upstream.bam"
+      class: File
+      secondaryFiles:
+      - location: "upstream.bam.bai"
+        class: File
+        size: 1200
+    bigwig_downstream:
+      location: "upstream_downstream.bigWig"
+      class: File
+      size: 32360
+    bigwig_upstream:
+      location: "upstream_upstream.bigWig"
+      class: File
+      size: 32273
+    bowtie_log:
+      location: "upstream.bw"
+      class: File
+      size: 135
+    fastx_statistics_downstream:
+      location: "downstream.fastxstat"
+      class: File
+      size: 2062
+    fastx_statistics_upstream:
+      location: "upstream.fastxstat"
+      class: File
+      size: 2116
+    get_stat_log:
+      location: "upstream.stat"
+      class: File
+      size: 13
+    rpkm_common_tss:
+      location: "upstream.common_tss.tsv"
+      class: File
+      size: 9181
+    rpkm_genes:
+      location: "upstream.genes.tsv"
+      class: File
+      size: 7147
+    rpkm_isoforms:
+      location: "upstream.isoforms.csv"
+      class: File
+      size: 14190
+    star_final_log:
+      location: "upstream.Log.final.out"
+      class: File
+    star_out_log:
+      location: "upstream.Log.out"
+      class: File
+    star_progress_log:
+      location: "upstream.Log.progress.out"
+      class: File
+    star_sj_log:
+      location: "upstream.SJ.out.tab"
+      class: File
+      size: 157
+    star_stdout_log: null
+    trim_report_downstream:
+      location: "downstream.fastq_trimming_report.txt"
+      class: File
+    trim_report_upstream:
+      location: "upstream.fastq_trimming_report.txt"
+      class: File

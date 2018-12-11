@@ -38,7 +38,7 @@ outputs:
 steps:
 
   make_tag_directory:
-    run: ../tools/homer-maketagdirectory.cwl
+    run: ../tools/homer-make-tag-directory.cwl
     in:
       bam_file: bam_file
       fragment_size: fragment_size
@@ -98,7 +98,7 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Workflow runs homer-maketagdirectory.cwl tool using scatter for the following inputs
+  Workflow runs homer-make-tag-directory.cwl tool using scatter for the following inputs
     - bam_file
     - fragment_size
     - total_reads
@@ -112,4 +112,4 @@ doc: |
   `bam_file`, `fragment_size` and `total_reads` arrays should have the identical order.
 
 s:about: |
-  Runs homer-maketagdirectory.cwl with the scatter using dot product of the inputs bam_file, fragment_size and total_reads.
+  Runs homer-make-tag-directory.cwl with the scatter using dot product of the inputs bam_file, fragment_size and total_reads.

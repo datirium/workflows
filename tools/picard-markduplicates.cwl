@@ -378,8 +378,8 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/picard-metadata.yaml
 
-s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/tools/picard-markduplicates.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
+s:downloadUrl: https://github.com/Barski-lab/workflows/tree/master/tools/picard-markduplicates.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
