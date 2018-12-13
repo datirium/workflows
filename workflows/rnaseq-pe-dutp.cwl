@@ -192,6 +192,20 @@ outputs:
     doc: "Calculated rpkm values, grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
+  rpkm_genes:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "RPKM, grouped by gene name"
+    doc: "Calculated rpkm values, grouped by gene name"
+    outputSource: group_isoforms/genes_file
+
+  rpkm_common_tss:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "RPKM, grouped by common TSS"
+    doc: "Calculated rpkm values, grouped by common TSS"
+    outputSource: group_isoforms/common_tss_file
+
   get_stat_log:
     type: File?
     label: "Bowtie, STAR and GEEP combined log"
@@ -338,6 +352,14 @@ steps:
       exclude_chr: exclude_chr
       threads: threads
     out: [isoforms_file]
+
+  group_isoforms:
+    run: ../tools/group-isoforms.cwl
+    in:
+      isoforms_file: rpkm_calculation/isoforms_file
+    out:
+      - genes_file
+      - common_tss_file
 
   get_stat:
       run: ../tools/python-get-stat-rnaseq.cwl
