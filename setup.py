@@ -69,7 +69,7 @@ tagger = EggInfoFromGit
 setup(
     name='biowardrobe-cwl-workflows',
     description="Wrapped BioWardrobe's CWL files",
-    long_description=open(README).read(),
+    long_description=open(README, 'r+', encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     version='1.0',
     url='https://github.com/datirium/workflows',
