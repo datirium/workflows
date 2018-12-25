@@ -72,21 +72,20 @@ inputs:
 # ADVANCED
 
   extract_method:
-    type: enum
+    type:
+      type: enum
+      symbols: ["string", "regex"]
     default: "regex"
     'sd:layout':
       advanced: true
     label: "UMI extract method 'string' or 'regex'"
-    symbols:
-      - "string"
-      - "regex"
     doc: |
       How to extract the umi +/- cell barcodes, Choose from
       'string' or 'regex'
 
   bc_pattern:
     type: string
-    default: "(?P<umi_1>.{4})G{1}.*"
+    default: "(?P<umi_1>.{4})(?P<discard_1>G).*"
     'sd:layout':
       advanced: true
     label: "Barcode pattern"
@@ -151,6 +150,7 @@ outputs:
   output:
     type: File
     label: "clipped file"
+    format: "http://edamontology.org/format_1930"
     doc: "clipped fastq file"
     outputSource: extract_umi/output
 
@@ -232,8 +232,23 @@ outputs:
   trim_report:
     type: File
     label: "TrimGalore report"
+    format: "http://edamontology.org/format_2330"
     doc: "TrimGalore generated log"
     outputSource: trim_fastq/report_file
+
+  trimed_file:
+    type: File
+    label: "TrimGalore report"
+    format: "http://edamontology.org/format_1930"
+    doc: "TrimGalore generated log"
+    outputSource: trim_fastq/trimmed_file
+
+  bambai_pair:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "Coordinate sorted BAM alignment file (+index BAI)"
+    doc: "Coordinate sorted BAM file and BAI index file"
+    outputSource: samtools_sort_index/bam_bai_pair
 
 
 steps:
@@ -262,6 +277,7 @@ steps:
     run: ../tools/trimgalore.cwl
     in:
       input_file: extract_umi/output
+      adapter: adapter
       dont_gzip:
         default: true
       length:
@@ -309,6 +325,16 @@ steps:
       - log_std
       - log_sj
 
+  samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: star_aligner/aligned_file
+      sort_output_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
+      threads: threads
+    out: [bam_bai_pair]
+
 
 
 $namespaces:
@@ -346,7 +372,7 @@ doc: |
   CLIP-Seq workflow for single-read experiment.
 
 s:about: |
-  '''CLIP''' ('''cross-linking immunoprecipitation''') is a method used in molecular biology that combines UV cross-linking with
+  ```CLIP``` (```cross-linking immunoprecipitation```) is a method used in molecular biology that combines UV cross-linking with
   immunoprecipitation in order to analyse protein interactions with RNA or to precisely locate RNA modifications (e.g. m6A).
   (Uhl|Houwaart|Corrado|Wright|Backofen|2017)(Ule|Jensen|Ruggiu|Mele|2003)(Sugimoto|König|Hussain|Zupan|2012)(Zhang|Darnell|2011)
   (Ke| Alemu| Mertens| Gantman|2015) CLIP-based techniques can be used to map RNA binding protein binding sites or RNA modification
@@ -364,7 +390,9 @@ s:about: |
   (CIMS) to refine RNA-binding maps to single-nucleotide resolution. Once IP conditions are established, HITS-CLIP takes ~8 d to prepare
   RNA for sequencing. Established pipelines for data analysis, including those for CIMS, take 3–4 d.
 
-  ==Workflow==
+  Workflow
+  ============
+
   CLIP begins with the in-vivo cross-linking of RNA-protein complexes using ultraviolet light (UV).
   Upon UV exposure, covalent bonds are formed between proteins and nucleic acids that are in close proximity.
   (Darnell|2012) The cross-linked cells are then lysed, and the protein of interest is isolated via immunoprecipitation.
@@ -376,12 +404,3 @@ s:about: |
   (König| McGlincy| Ule|2012) After ligating RNA linkers to the RNA 5' ends, cDNA is synthesized via RT-PCR.
   High-throughput sequencing is then used to generate reads containing distinct barcodes that identify the last cDNA nucleotide.
   Interaction sites can be identified by mapping the reads back to the transcriptome.
-
-
-
-
-
-
-
-
-

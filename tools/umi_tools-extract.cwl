@@ -29,7 +29,10 @@ hints:
 inputs:
 
   extract_method:
-    type: string
+    type:
+      type: enum
+      symbols: ["string", "regex"]
+    default: regex
     inputBinding:
       prefix: --extract-method=
       separate: false
@@ -99,7 +102,7 @@ inputs:
 
   input_file:
     type: File
-    format: "http://edamontology.org/format_1930"
+#    format: "http://edamontology.org/format_1930"
     label: "FASTQ file to read from"
     inputBinding:
       prefix: -I
@@ -107,7 +110,7 @@ inputs:
 
   input_file_pair:
     type: File?
-    format: "http://edamontology.org/format_1930"
+#    format: "http://edamontology.org/format_1930"
     label: "FASTQ file for read pairs"
     inputBinding:
       prefix: --read2-in=
