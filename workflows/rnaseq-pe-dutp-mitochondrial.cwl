@@ -157,11 +157,11 @@ outputs:
     outputSource: fastx_quality_stats_upstream/statistics_file
     'sd:visualPlugins':
     - line:
-      Title: 'Base frequency plot'
-      xAxisTitle: 'Nucleotide position'
-      yAxisTitle: 'Frequency'
-      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-      data: [$12, $13, $14, $15, $16]
+        Title: 'Base frequency plot'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Frequency'
+        colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+        data: [$12, $13, $14, $15, $16]
 
   fastx_statistics_downstream:
     type: File
@@ -171,11 +171,11 @@ outputs:
     outputSource: fastx_quality_stats_downstream/statistics_file
     'sd:visualPlugins':
     - line:
-      Title: 'Base frequency plot'
-      xAxisTitle: 'Nucleotide position'
-      yAxisTitle: 'Frequency'
-      colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-      data: [$12, $13, $14, $15, $16]
+        Title: 'Base frequency plot'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Frequency'
+        colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+        data: [$12, $13, $14, $15, $16]
 
   bam_merged_index:
     type: File
@@ -221,8 +221,8 @@ outputs:
     'sd:preview':
       'sd:visualPlugins':
       - pie:
-        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
-        data: [$2, $3, $4, $5]
+          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          data: [$2, $3, $4, $5]
 
 steps:
 
