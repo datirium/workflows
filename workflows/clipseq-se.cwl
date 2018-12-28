@@ -239,8 +239,8 @@ outputs:
   trimed_file:
     type: File
     label: "TrimGalore report"
-    format: "http://edamontology.org/format_1930"
     doc: "TrimGalore generated log"
+    format: "http://edamontology.org/format_1930"
     outputSource: trim_fastq/trimmed_file
 
   bambai_pair:
@@ -249,6 +249,23 @@ outputs:
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_sort_index/bam_bai_pair
+
+  dedup_output:
+    type: File
+    label: "deduped CLIP file"
+    outputSource: dedup_umi/output
+
+  dedup_error_log:
+    type: File
+    label: "deduped CLIP error log file"
+    doc: "deduped CLIP error log file"
+    outputSource: dedup_umi/error_log
+
+  dedup_log:
+    type: File
+    label: "deduped CLIP log file"
+    doc: "deduped CLIP log file"
+    outputSource: dedup_umi/log
 
 #  get_stat_log:
 #    type: File?
@@ -346,6 +363,12 @@ steps:
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
+
+  dedup_umi:
+    run: ../tools/umi_tools-dedup.cwl
+    in:
+      input_file: samtools_sort_index/bam_bai_pair
+    out: [output, log, error_log]
 
 #  get_stat:
 #      run: ../tools/python-get-stat-rnaseq.cwl

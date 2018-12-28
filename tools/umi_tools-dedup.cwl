@@ -47,7 +47,6 @@ inputs:
 
   input_file:
     type: File
-#    format: "http://edamontology.org/format_1930"
     label: "BAM file to read from"
     inputBinding:
       prefix: -I
@@ -55,7 +54,6 @@ inputs:
 
   input_pair:
     type: boolean?
-#    format: "http://edamontology.org/format_1930"
     label: "BAM is paired end?"
     doc: |
          BAM is paired end - output both read pairs. This will also
