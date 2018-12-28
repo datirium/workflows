@@ -3,23 +3,6 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
-  expressionLib:
-  - var ext = function() {
-      if (inputs.out_format && inputs.out_format == 'SAM'){
-        return '.sam';
-      } else if (inputs.out_format && inputs.out_format == 'CRAM') {
-        return '.cram';
-      } else {
-        return '.bam';
-      }
-    };
-  - var default_output_name = function() {
-      if (inputs.trigger == true){
-        return inputs.sort_input.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ext();
-      } else {
-        return inputs.sort_input.location.split('/').slice(-1)[0];
-      }
-    };
 
 hints:
 - class: DockerRequirement

@@ -250,6 +250,18 @@ outputs:
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_sort_index/bam_bai_pair
 
+#  get_stat_log:
+#    type: File?
+#    label: "Bowtie, STAR and GEEP combined log"
+#    format: "http://edamontology.org/format_2330"
+#    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
+#    outputSource: get_stat/output_file
+#    'sd:preview':
+#      'sd:visualPlugins':
+#      - pie:
+#        colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+#        data: [$2, $3, $4, $5]
+
 
 steps:
 
@@ -335,6 +347,13 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+#  get_stat:
+#      run: ../tools/python-get-stat-rnaseq.cwl
+#      in:
+#        star_log: star_aligner/log_final
+#        bowtie_log: bowtie_aligner/log_file
+#        rpkm_isoforms: rpkm_calculation/isoforms_file
+#      out: [output_file]
 
 
 $namespaces:
