@@ -22,24 +22,6 @@ inputs:
     'sd:upstreamSource': "genome_indices/star_indices"
     doc: "Path to STAR generated indices"
 
-  star_indices_folder_mitochondrial:
-    type: Directory
-    label: "STAR indices mitochondrial folder"
-    'sd:upstreamSource': "genome_indices/mitochondrial_indices"
-    doc: "Path to STAR generated indices for mitochondrial dna"
-
-  bowtie_indices_folder:
-    type: Directory
-    label: "BowTie Ribosomal Indices"
-    'sd:upstreamSource': "genome_indices/ribosomal_indices"
-    doc: "Path to Bowtie generated indices"
-
-  indices_folder:
-    type: Directory
-    'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Indexed genome folder (bowtie)"
-    doc: "Path to indexed genome folder by **bowtie**"
-
   annotation_file:
     type: File
     'sd:upstreamSource': "genome_indices/annotation"
@@ -59,6 +41,12 @@ inputs:
     label: "Chromosomes length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosomes length file"
+
+  clipper_species:
+    type: string
+    default: "mm10"
+    label: "Species string for clipper (hg38, mm10)"
+    doc: "species: one of ce10 ce11 dm3 hg19 GRCh38 mm9 mm10"
 
   fastq_file:
     type: File
@@ -368,6 +356,14 @@ steps:
     run: ../tools/umi_tools-dedup.cwl
     in:
       input_file: samtools_sort_index/bam_bai_pair
+    out: [output, log, error_log]
+
+
+  clipper:
+    run: ../tools/clipper.cwl
+    in:
+      input_file: dedup_umi/output
+      species:
     out: [output, log, error_log]
 
 #  get_stat:
