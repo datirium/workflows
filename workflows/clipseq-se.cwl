@@ -255,6 +255,19 @@ outputs:
     doc: "deduped CLIP log file"
     outputSource: dedup_umi/log
 
+  clipper_tsv:
+    type: File
+    outputSource: clipper/output_tsv
+
+  clipper_bed:
+    type: File
+    outputSource: clipper/output_bed
+
+  clipper_pickle:
+    type: File
+    outputSource: clipper/output_pickle
+
+
 #  get_stat_log:
 #    type: File?
 #    label: "Bowtie, STAR and GEEP combined log"
@@ -358,13 +371,12 @@ steps:
       input_file: samtools_sort_index/bam_bai_pair
     out: [output, log, error_log]
 
-
   clipper:
     run: ../tools/clipper.cwl
     in:
       input_file: dedup_umi/output
       species:
-    out: [output, log, error_log]
+    out: [output_tsv, output_bed, output_pickle]
 
 #  get_stat:
 #      run: ../tools/python-get-stat-rnaseq.cwl
@@ -410,7 +422,10 @@ doc: |
   CLIP-Seq workflow for single-read experiment.
 
 s:about: |
-  ```CLIP``` (```cross-linking immunoprecipitation```) is a method used in molecular biology that combines UV cross-linking with
+  Cross-Linking ImmunoPrecipitation
+  =================================
+
+  `CLIP` (`cross-linking immunoprecipitation`) is a method used in molecular biology that combines UV cross-linking with
   immunoprecipitation in order to analyse protein interactions with RNA or to precisely locate RNA modifications (e.g. m6A).
   (Uhl|Houwaart|Corrado|Wright|Backofen|2017)(Ule|Jensen|Ruggiu|Mele|2003)(Sugimoto|König|Hussain|Zupan|2012)(Zhang|Darnell|2011)
   (Ke| Alemu| Mertens| Gantman|2015) CLIP-based techniques can be used to map RNA binding protein binding sites or RNA modification
@@ -419,7 +434,7 @@ s:about: |
 
   The identification of sites where RNA-binding proteins (RNABPs) interact with target RNAs opens the door to understanding
   the vast complexity of RNA regulation. UV cross-linking and immunoprecipitation (CLIP) is a transformative technology in which RNAs
-  purified from ~in vivo~ cross-linked RNA-protein complexes are sequenced to reveal footprints of RNABP:RNA contacts.
+  purified from _in vivo_ cross-linked RNA-protein complexes are sequenced to reveal footprints of RNABP:RNA contacts.
   CLIP combined with high-throughput sequencing (HITS-CLIP) is a generalizable strategy to produce transcriptome-wide maps of RNA
   binding with higher accuracy and resolution than standard RNA immunoprecipitation (RIP) profiling or purely computational approaches.
 
@@ -429,7 +444,7 @@ s:about: |
   RNA for sequencing. Established pipelines for data analysis, including those for CIMS, take 3–4 d.
 
   Workflow
-  ============
+  --------
 
   CLIP begins with the in-vivo cross-linking of RNA-protein complexes using ultraviolet light (UV).
   Upon UV exposure, covalent bonds are formed between proteins and nucleic acids that are in close proximity.
