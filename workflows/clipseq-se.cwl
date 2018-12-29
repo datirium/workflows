@@ -228,7 +228,7 @@ outputs:
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: samtools_sort_index/bam_bai_pair
+    outputSource: samtools_sort_index1/bam_bai_pair
 
   dedup_output:
     type: File
@@ -347,7 +347,7 @@ steps:
       - log_std
       - log_sj
 
-  samtools_sort_index:
+  samtools_sort_index1:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_aligner/aligned_file
@@ -360,13 +360,23 @@ steps:
   dedup_umi:
     run: ../tools/umi_tools-dedup.cwl
     in:
-      input_file: samtools_sort_index/bam_bai_pair
+      input_file: samtools_sort_index1/bam_bai_pair
     out: [output, log, error_log]
+
+  samtools_sort_index2:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: dedup_umi/output
+      sort_output_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.deduped.bam')
+      threads: threads
+    out: [bam_bai_pair]
 
   clipper:
     run: ../tools/clipper.cwl
     in:
-      input_file: dedup_umi/output
+      input_file: samtools_sort_index2/bam_bai_pair
       species: clipper_species
     out: [output_tsv, output_bed, output_pickle]
 

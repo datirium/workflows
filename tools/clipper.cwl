@@ -78,7 +78,7 @@ inputs:
       valueFrom: |
         ${
           if (inputs.outfile == "") {
-            return inputs.bam.nameroot + ".peakClusters.bed";
+            return inputs.input_file.nameroot + ".peakClusters.bed";
           }
           else {
             return inputs.outfile;
@@ -92,7 +92,7 @@ outputs:
       glob: |
         ${
           if (inputs.outfile == "") {
-            return inputs.bam.nameroot + ".peakClusters.bed.tsv";
+            return inputs.input_file.nameroot + ".peakClusters.bed.tsv";
           }
           else {
             return inputs.outfile + ".tsv";
@@ -105,7 +105,7 @@ outputs:
       glob: |
         ${
           if (inputs.outfile == "") {
-            return inputs.bam.nameroot + ".peakClusters.bed";
+            return inputs.input_file.nameroot + ".peakClusters.bed";
           }
           else {
             return inputs.outfile;
@@ -117,7 +117,7 @@ outputs:
       glob: |
         ${
           if (inputs.outfile == "") {
-            return inputs.bam.nameroot + ".peakClusters.bed.pickle";
+            return inputs.input_file.nameroot + ".peakClusters.bed.pickle";
           }
           else {
             return inputs.outfile + ".pickle";
