@@ -91,14 +91,6 @@ inputs:
       '--small_rna'. If no adapter can be detected within the first 1 million sequences
       of the first file specified Trim Galore defaults to '--illumina'.
 
-  remove_duplicates:
-    type: boolean?
-    default: false
-    'sd:layout':
-      advanced: true
-    label: "Remove duplicates"
-    doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
-
   exclude_chr:
     type: string?
     'sd:layout':
@@ -375,7 +367,7 @@ steps:
     run: ../tools/clipper.cwl
     in:
       input_file: dedup_umi/output
-      species:
+      species: clipper_species
     out: [output_tsv, output_bed, output_pickle]
 
 #  get_stat:
