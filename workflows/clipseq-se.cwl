@@ -42,7 +42,7 @@ inputs:
     format: "http://edamontology.org/format_2330"
     doc: "Chromosomes length file"
 
-  clipper_species:
+  species:
     type: string
     default: "mm10"
     label: "Species string for clipper (hg38, mm10)"
@@ -247,17 +247,25 @@ outputs:
     doc: "deduped CLIP log file"
     outputSource: dedup_umi/log
 
-  clipper_tsv:
+  output_bed:
     type: File
-    outputSource: clipper/output_tsv
+    outputSource: bamtobed/output_bed
 
-  clipper_bed:
+  peaks_bed:
     type: File
-    outputSource: clipper/output_bed
+    outputSource: tagstopeak/peaks_bed
 
-  clipper_pickle:
-    type: File
-    outputSource: clipper/output_pickle
+#  clipper_tsv:
+#    type: File
+#    outputSource: clipper/output_tsv
+#
+#  clipper_bed:
+#    type: File
+#    outputSource: clipper/output_bed
+#
+#  clipper_pickle:
+#    type: File
+#    outputSource: clipper/output_pickle
 
 
 #  get_stat_log:
@@ -373,13 +381,32 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
-  clipper:
-    run: ../tools/clipper.cwl
+  bamtobed:
+    run: ../tools/bedtools-bamtobed.cwl
     in:
-      input_file: samtools_sort_index2/bam_bai_pair
-      species: clipper_species
-    out: [output_tsv, output_bed, output_pickle]
+      infile: samtools_sort_index2/bam_bai_pair
+    out: [output_bed]
 
+  tagstopeak:
+    run: ../tools/clip-toolkit-tag2peak.cwl
+    in:
+      infile: bamtobed/output_bed
+      big:
+        default: true
+      separate_strands:
+        default: true
+      valley_seeking:
+        default: true
+      dbkey: species
+    out: [peaks_bed]
+
+#  clipper:
+#    run: ../tools/clipper.cwl
+#    in:
+#      input_file: samtools_sort_index2/bam_bai_pair
+#      species: species
+#    out: [output_tsv, output_bed, output_pickle]
+#
 #  get_stat:
 #      run: ../tools/python-get-stat-rnaseq.cwl
 #      in:
