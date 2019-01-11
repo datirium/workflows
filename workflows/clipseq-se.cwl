@@ -141,6 +141,13 @@ outputs:
     doc: "clipped fastq file"
     outputSource: extract_umi/output
 
+  rebosomal_bowtie_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "Bowtie alignment log"
+    doc: "Bowtie alignment log file"
+    outputSource: ribosomal_bowtie_aligner/log_file
+
   error_log:
     type: File
     label: "clipped error log file"
@@ -362,6 +369,26 @@ steps:
       - log_std
       - log_sj
 
+  ribosomal_bowtie_aligner:
+    run: ../tools/bowtie-alignreads.cwl
+    in:
+      upstream_filelist: trim_fastq/trimmed_file
+      indices_folder: bowtie_indices_folder
+      clip_3p_end: clip_3p_end
+      clip_5p_end: clip_5p_end
+      v:
+        default: 3
+      m:
+        default: 1
+      best:
+        default: true
+      strata:
+        default: true
+      sam:
+        default: true
+      threads: threads
+    out: [log_file]
+
   samtools_sort_index1:
     run: ../tools/samtools-sort-index.cwl
     in:
@@ -413,7 +440,6 @@ steps:
         default: true
       valley_seeking:
         default: true
-      dbkey: species
     out: [peaks_bed]
 
 
