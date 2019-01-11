@@ -127,6 +127,13 @@ inputs:
 
 outputs:
 
+  bigwig:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "BigWig file"
+    doc: "Generated BigWig file"
+    outputSource: bam_to_bigwig/bigwig_file
+
   output:
     type: File
     label: "clipped file"
@@ -381,6 +388,15 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  bam_to_bigwig:
+    run: ../subworkflows/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index2/bam_bai_pair
+      chrom_length_file: chrom_length
+      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
+    out: [bigwig_file]
+
   bamtobed:
     run: ../tools/bedtools-bamtobed.cwl
     in:
@@ -399,6 +415,7 @@ steps:
         default: true
       dbkey: species
     out: [peaks_bed]
+
 
 #  clipper:
 #    run: ../tools/clipper.cwl
