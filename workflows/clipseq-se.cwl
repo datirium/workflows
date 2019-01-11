@@ -22,6 +22,12 @@ inputs:
     'sd:upstreamSource': "genome_indices/star_indices"
     doc: "Path to STAR generated indices"
 
+  bowtie_indices_folder:
+    type: Directory
+    label: "BowTie Ribosomal Indices"
+    'sd:upstreamSource': "genome_indices/ribosomal_indices"
+    doc: "Path to Bowtie generated indices"
+
   annotation_file:
     type: File
     'sd:upstreamSource': "genome_indices/annotation"
