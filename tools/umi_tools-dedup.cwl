@@ -92,7 +92,46 @@ outputs:
 baseCommand: [umi_tools, dedup]
 
 
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
 label: "Deduplicate BAM files based on the first mapping co-ordinate and the UMI attached to the read"
+s:name: "Deduplicate BAM files based on the first mapping co-ordinate and the UMI attached to the read"
+
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/umi_tools-dedup.cwl
+s:codeRepository: https://github.com/datirium/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Datirium, LLC"
+  s:logo: "https://datirium.com/assets/images/datirium_llc.svg"
+  s:email: mailto:support@datirium.com
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45226"
+    s:streetAddress: "3559 Kroger Ave"
+  s:member:
+  - class: s:Person
+    s:name: Artem BArski
+    s:email: mailto:Artem.Barski@datirum.com
+  - class: s:Person
+    s:name: Andrey Kartashov
+    s:email: mailto:Andrey.Kartashov@datirium.com
+    s:sameAs:
+    - id: http://orcid.org/0000-0001-9102-5681
+
 
 doc: |
   dedup.py - Deduplicate reads that are coded with a UMI

@@ -6,16 +6,21 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var get_output_filename = function() {
-        if (inputs.output_filename == null){
-          return inputs.star_log.location.split('/').slice(-1)[0].replace(/\.*Log\.final\.out$/i,'')+".stat";
-        } else {
+        if (inputs.output_filename) {
           return inputs.output_filename;
         }
+        return inputs.star_log.location.split('/').slice(-1)[0].replace(/\.*Log\.final\.out$/i,'')+".stat";
+    };
+  - var get_formatted_output_filename = function() {
+      if (inputs.formatted_output_filename) {
+            return inputs.formatted_output_filename;
+         }
+      return inputs.star_log.location.split('/').slice(-1)[0].replace(/\.*Log\.final\.out$/i,'')+"_stats.tsv";
     };
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap:v0.0.2
+  dockerPull: biowardrobe2/scidap:v0.0.3
 
 
 inputs:
@@ -25,7 +30,7 @@ inputs:
     default: |
       # !/usr/bin/env python
       import sys, re
-      TOTAL, ALIGNED, RIBO, SUPRESSED, USED = 0, 0, 0, 0, 0
+      TOTAL, ALIGNED, RIBO, MULTIMAPPED, USED = 0, 0, 0, 0, 0
       with open(sys.argv[1], 'r') as star_log:
           for line in star_log:
               if 'Number of input reads' in line:
@@ -33,7 +38,7 @@ inputs:
               if 'Uniquely mapped reads number' in line:
                   ALIGNED = int(line.split('|')[1])
               if 'Number of reads mapped to too many loci' in line:
-                  SUPPRESSED = int(line.split('|')[1])
+                  MULTIMAPPED = int(line.split('|')[1])
       with open(sys.argv[2], 'r') as bowtie_log:
           for line in bowtie_log:
               if 'alignment:' in line:
@@ -50,13 +55,19 @@ inputs:
                   continue
               line_splitted = line.split(',')
               USED += int(line_splitted[key_index])
-      if len(sys.argv) > 4 and sys.argv[4] == "--pair":
+      if len(sys.argv) > 5 and sys.argv[5] == "--pair":
           USED = USED/2
-      print TOTAL, ALIGNED, RIBO, SUPPRESSED, USED
+      print TOTAL, ALIGNED, RIBO, MULTIMAPPED, USED
+
+      with open(sys.argv[4], 'w') as fof:
+          fof.write("Tags total\tTranscriptome\tMulti-mapped\tOutside annotation\tUnmapped\tRibosomal contamination\t")
+          fof.write(str(TOTAL) + "\t" + str(USED) + "\t" + str(MULTIMAPPED) + "\t" + str(ALIGNED-USED) + "\t" + str(TOTAL-ALIGNED-MULTIMAPPED) + "\t" + str(RIBO))
+
+
     inputBinding:
       position: 5
     doc: |
-      Python script to get TOTAL, ALIGNED, RIBO, SUPRESSED, USED values from log files
+      Python script to get TOTAL, ALIGNED, RIBO, MULTIMAPPED, USED values from log files
 
   star_log:
     type: File
@@ -82,25 +93,37 @@ inputs:
   pair_end:
     type: boolean?
     inputBinding:
-      position: 9
+      position: 10
       prefix: --pair
     doc: |
       If true, USED values is divided on 2
 
   output_filename:
     type:
-    - "null"
-    - string
+    - string?
     doc: |
       Name for generated output file
+
+  formatted_output_filename:
+    type:
+    - string?
+    inputBinding:
+      position: 9
+      valueFrom: $(get_formatted_output_filename())
+    default: ""
+    doc: |
+      Name for generated formatted output file
 
 
 outputs:
 
   output_file:
+    type: stdout
+
+  formatted_output_file:
     type: File
     outputBinding:
-      glob: $(get_output_filename())
+      glob: $(get_formatted_output_filename())
 
   total_reads:
     type: int
@@ -138,10 +161,8 @@ outputs:
       outputEval: $(parseInt(self[0].contents.split(' ')[4]))
 
 baseCommand: [python, '-c']
-arguments:
-  - valueFrom: $(" > " + get_output_filename())
-    position: 100000
-    shellQuote: false
+
+stdout: $(get_output_filename())
 
 $namespaces:
   s: http://schema.org/
@@ -150,8 +171,10 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "python-get-stat-rnaseq"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/python-get-stat-rnaseq.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
+label: "python-get-stat-rnaseq"
+
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/python-get-stat-rnaseq.cwl
+s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -161,28 +184,26 @@ s:isPartOf:
 
 s:creator:
 - class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:legalName: "Datirium, LLC"
+  s:logo: "https://datirium.com/assets/images/datirium_llc.svg"
+  s:email: mailto:support@datirium.com
   s:location:
   - class: s:PostalAddress
     s:addressCountry: "USA"
     s:addressLocality: "Cincinnati"
     s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
+    s:postalCode: "45226"
+    s:streetAddress: "3559 Kroger Ave"
+  s:member:
+  - class: s:Person
+    s:name: Artem BArski
+    s:email: mailto:Artem.Barski@datirum.com
+  - class: s:Person
+    s:name: Andrey Kartashov
+    s:email: mailto:Andrey.Kartashov@datirium.com
+    s:sameAs:
+    - id: http://orcid.org/0000-0001-9102-5681
+
 
 doc: |
   Tool processes and combines log files generated by STAR/Bowtie aligners and GEEP rpkm results file.

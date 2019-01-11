@@ -29,9 +29,7 @@ inputs:
       Prefix is selected on the base of input file extension
 
   chrom_length_file:
-    type:
-    - "null"
-    - File
+    type: File?
     inputBinding:
       position: 17
       prefix: "-g"
@@ -52,8 +50,7 @@ inputs:
 
   scale:
     type:
-    - "null"
-    - float
+    - float?
     inputBinding:
       position: 6
       prefix: -scale
@@ -66,8 +63,7 @@ inputs:
 
   mapped_reads_number:
     type:
-    - "null"
-    - int
+    - int?
     inputBinding:
       position: 7
       prefix: -scale
@@ -86,8 +82,7 @@ inputs:
 
   split:
     type:
-    - "null"
-    - boolean
+    - boolean?
     inputBinding:
       position: 8
       prefix: "-split"
@@ -101,8 +96,7 @@ inputs:
 
   strand:
     type:
-    - "null"
-    - string
+    - string?
     inputBinding:
       position: 9
       prefix: "-strand"
@@ -113,8 +107,7 @@ inputs:
 
   pairchip:
     type:
-    - "null"
-    - boolean
+    - boolean?
     inputBinding:
       position: 10
       prefix: "-pc"
@@ -123,8 +116,7 @@ inputs:
 
   du:
     type:
-    - "null"
-    - boolean
+    - boolean?
     inputBinding:
       position: 11
       prefix: "-du"
@@ -134,8 +126,7 @@ inputs:
 
   fragment_size:
     type:
-    - "null"
-    - int
+    - int?
     inputBinding:
       position: 12
       prefix: "-fs"
@@ -144,8 +135,7 @@ inputs:
 
   max:
     type:
-    - "null"
-    - int
+    - int?
     inputBinding:
       position: 13
       prefix: "-max"
@@ -157,8 +147,7 @@ inputs:
 
   m5:
     type:
-    - "null"
-    - boolean
+    - boolean?
     inputBinding:
       position: 14
       prefix: "-5"
@@ -167,8 +156,7 @@ inputs:
 
   m3:
     type:
-    - "null"
-    - boolean
+    - boolean?
     inputBinding:
       position: 15
       prefix: "-3"
@@ -177,34 +165,20 @@ inputs:
 
   output_filename:
     type:
-    - "null"
-    - string
+    - string?
     doc: |
       Name for generated output file
 
 outputs:
   genome_coverage_file:
-    type: File
-    outputBinding:
-      glob: |
-        ${
-          if (inputs.output_filename == null){
-            return default_output_filename();
-          } else {
-            return inputs.output_filename;
-          }
-        }
+    type: stdout
     doc: |
       Generated genome coverage output file
 
 stdout: |
   ${
-    if (inputs.output_filename == null){
-      return default_output_filename();
-    } else {
-      return inputs.output_filename;
-    }
-  }
+      return inputs.output_filename ? inputs.output_filename : default_output_filename();
+   }
 
 baseCommand: ["bedtools", "genomecov"]
 

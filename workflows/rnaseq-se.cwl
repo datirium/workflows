@@ -178,12 +178,19 @@ outputs:
     doc: "Calculated rpkm values, grouped by common TSS"
     outputSource: group_isoforms/common_tss_file
 
-  get_stat_log:
+  old_stat_log:
     type: File?
     label: "Bowtie, STAR and GEEP combined log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
+
+  get_stat_log:
+    type: File?
+    label: "Bowtie, STAR and GEEP combined log"
+    format: "http://edamontology.org/format_2330"
+    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
+    outputSource: get_stat/formatted_output_file
     'sd:preview':
       'sd:visualPlugins':
       - pie:

@@ -113,20 +113,20 @@ inputs:
       prefix: --filter-cell-barcode
     label: "Filter the cell barcodes"
 
+
 outputs:
   output:
     type: File
     outputBinding:
       glob: |
        ${
-            if (inputs.output_file == ""){
-              var _f = inputs.input_file.location.split('/').slice(-1)[0].split('.');
-              return _f.slice(0,-1).join('.') + '-extracted.' + _f.slice(-1)[0];
-            } else {
-              return inputs.output_file;
-            }
+          if (inputs.output_file == ""){
+            var _f = inputs.input_file.location.split('/').slice(-1)[0].split('.');
+            return _f.slice(0,-1).join('.') + '-extracted.' + _f.slice(-1)[0];
+          } else {
+            return inputs.output_file;
+          }
         }
-
 
   output_pair:
     type: File?
@@ -147,7 +147,46 @@ outputs:
 baseCommand: [umi_tools, extract]
 
 
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- http://schema.org/docs/schema_org_rdfa.html
+
 label: "Extract UMI barcode from a read and add it to the read name"
+s:name: "Extract UMI barcode from a read and add it to the read name"
+
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/umi_tools-exctract.cwl
+s:codeRepository: https://github.com/datirium/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Datirium, LLC"
+  s:logo: "https://datirium.com/assets/images/datirium_llc.svg"
+  s:email: mailto:support@datirium.com
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45226"
+    s:streetAddress: "3559 Kroger Ave"
+  s:member:
+  - class: s:Person
+    s:name: Artem BArski
+    s:email: mailto:Artem.Barski@datirum.com
+  - class: s:Person
+    s:name: Andrey Kartashov
+    s:email: mailto:Andrey.Kartashov@datirium.com
+    s:sameAs:
+    - id: http://orcid.org/0000-0001-9102-5681
+
 
 doc: |
     extract.py - Extract UMI from fastq
@@ -378,3 +417,4 @@ s:about: |
                             Level of Gzip compression to use. Default (6)
                             matchesGNU gzip rather than python gzip default (which
                             is 9)
+
