@@ -180,7 +180,7 @@ outputs:
 
   old_stat_log:
     type: File?
-    label: "Bowtie, STAR and GEEP combined log"
+    label: "Old Bowtie, STAR and GEEP combined log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
@@ -300,7 +300,7 @@ steps:
         star_log: star_aligner/log_final
         bowtie_log: bowtie_aligner/log_file
         rpkm_isoforms: rpkm_calculation/isoforms_file
-      out: [output_file]
+      out: [output_file, formatted_output_file]
 
 $namespaces:
   s: http://schema.org/
