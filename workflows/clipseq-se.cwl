@@ -35,12 +35,6 @@ inputs:
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
 
-  genome_size:
-    type: string
-    'sd:upstreamSource': "genome_indices/genome_size"
-    label: "Effective genome size"
-    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
-
   chrom_length:
     type: File
     'sd:upstreamSource': "genome_indices/chrom_length"
@@ -60,10 +54,10 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
-#  output_file:
-#    type: string
+  #  output_file:
+  #    type: string
 
-# ADVANCED
+  # ADVANCED
 
   extract_method:
     type:
@@ -121,7 +115,7 @@ inputs:
     doc: "Number of bases to clip from the 5p end"
 
 
-# SYSTEM DEPENDENT
+  # SYSTEM DEPENDENT
 
   threads:
     type: int?
@@ -208,12 +202,12 @@ outputs:
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats_original/statistics_file
     'sd:visualPlugins':
-    - line:
-        Title: 'Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-        data: [$12, $13, $14, $15, $16]
+      - line:
+          Title: 'Base frequency plot'
+          xAxisTitle: 'Nucleotide position'
+          yAxisTitle: 'Frequency'
+          colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+          data: [$12, $13, $14, $15, $16]
 
   fastx_statistics_after:
     type: File
@@ -222,12 +216,12 @@ outputs:
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats_after/statistics_file
     'sd:visualPlugins':
-    - line:
-        Title: 'Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-        data: [$12, $13, $14, $15, $16]
+      - line:
+          Title: 'Base frequency plot'
+          xAxisTitle: 'Nucleotide position'
+          yAxisTitle: 'Frequency'
+          colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
+          data: [$12, $13, $14, $15, $16]
 
   trim_report:
     type: File
@@ -275,30 +269,46 @@ outputs:
     type: File
     outputSource: tagstopeak/peaks_bed
 
-#  clipper_tsv:
-#    type: File
-#    outputSource: clipper/output_tsv
-#
-#  clipper_bed:
-#    type: File
-#    outputSource: clipper/output_bed
-#
-#  clipper_pickle:
-#    type: File
-#    outputSource: clipper/output_pickle
+  get_stat_log:
+    type: File?
+    label: "Old Bowtie, STAR and GEEP combined log"
+    format: "http://edamontology.org/format_2330"
+    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
+    outputSource: stats_and_transformations/output_file
 
+  get_formatted_stats:
+    type: File?
+    label: "Bowtie, STAR and GEEP mapping stats"
+    format: "http://edamontology.org/format_2330"
+    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
+    outputSource: stats_and_transformations/formatted_output_file
+    'sd:preview':
+      'sd:visualPlugins':
+        - pie:
+            colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
+            data: [$2, $3, $4, $5]
 
-#  get_stat_log:
-#    type: File?
-#    label: "Bowtie, STAR and GEEP combined log"
-#    format: "http://edamontology.org/format_2330"
-#    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
-#    outputSource: get_stat/output_file
-#    'sd:preview':
-#      'sd:visualPlugins':
-#      - pie:
-#          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
-#          data: [$2, $3, $4, $5]
+# Remove in the future BioWardrobe plugs
+  atdp_result:
+    type: File
+    label: "ATDP results"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated results"
+    outputSource: stats_and_transformations/fake_atdp_file
+
+  transformed_peaks:
+    type: File
+    label: "Transformed peaks"
+    format: "http://edamontology.org/format_3475"
+    outputSource: stats_and_transformations/transformed_peaks
+
+  iaintersect_result:
+    type: File
+    label: "Island intersect results"
+    format: "http://edamontology.org/format_3475"
+    doc: "Iaintersect generated results"
+    outputSource: island_intersect/result_file
+
 
 
 steps:
@@ -333,16 +343,6 @@ steps:
       length:
         default: 30
     out: [trimmed_file, report_file]
-
-#  rename:
-#    run: ../tools/rename.cwl
-#    in:
-#      source_file: trim_fastq/trimmed_file
-#      target_filename:
-#        source: extract_fastq/fastq_file
-#        valueFrom: $(self.basename)
-#    out:
-#      - target_file
 
   fastx_quality_stats_after:
     run: ../tools/fastx-quality-stats.cwl
@@ -427,7 +427,7 @@ steps:
       bam_file: samtools_sort_index2/bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
+    #     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
     out: [bigwig_file]
 
   bamtobed:
@@ -446,30 +446,141 @@ steps:
         default: true
       valley_seeking:
         default: true
+      dbkey: species
     out: [peaks_bed]
 
+  stats_and_transformations:
+    in:
+      star_log: star_aligner/log_final
+      bowtie_log: bowtie_aligner/log_file
+      rpkm_isoforms: rpkm_calculation/isoforms_file
+    out: [output_file, formatted_output_filename, fake_atdp_file, transformed_peaks]
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+        - class: ShellCommandRequirement
+        - class: InlineJavascriptRequirement
+          expressionLib:
+            - var get_output_filename = function() {
+                return inputs.star_log.location.split('/').slice(-1)[0].replace(/_extracted_trimmed\.*Log\.final\.out$/i,'');
+              }
+      hints:
+        - class: DockerRequirement
+          dockerPull: biowardrobe2/scidap:v0.0.3
 
-#  clipper:
-#    run: ../tools/clipper.cwl
-#    in:
-#      input_file: samtools_sort_index2/bam_bai_pair
-#      species: species
-#    out: [output_tsv, output_bed, output_pickle]
-#
-#  get_stat:
-#      run: ../tools/python-get-stat-rnaseq.cwl
-#      in:
-#        star_log: star_aligner/log_final
-#        bowtie_log: bowtie_aligner/log_file
-#        rpkm_isoforms: rpkm_calculation/isoforms_file
-#      out: [output_file]
+      inputs:
+        script:
+          type: string?
+          default: |
+            # !/usr/bin/env python
+            import sys, re
+            TOTAL, ALIGNED, RIBO, MULTIMAPPED, USED = 0, 0, 0, 0, 0
+            with open(sys.argv[1], 'r') as star_log:
+                for line in star_log:
+                    if 'Number of input reads' in line:
+                        TOTAL = int(line.split('|')[1])
+                    if 'Uniquely mapped reads number' in line:
+                        ALIGNED = int(line.split('|')[1])
+                    if 'Number of reads mapped to too many loci' in line:
+                        MULTIMAPPED = int(line.split('|')[1])
+            with open(sys.argv[2], 'r') as bowtie_log:
+                for line in bowtie_log:
+                    if 'alignment:' in line:
+                        RIBO = int(line.split('alignment:')[1].split()[0])
+            with open(sys.argv[3], 'r') as dedup_log:
+                for line in dedup_log:
+                    if 'Number of reads out:' in line:
+                        USED = int(line.split('Number of reads out:')[1])
 
+            print TOTAL, ALIGNED, MULTIMAPPED, USED
+
+            with open(sys.argv[4]+"_stats.tsv", 'w') as fof:
+                fof.write("Reads total\tReads used\tMulti-mapped\tDuplicates\tUnmapped\tRibosomal contamination\n")
+                fof.write(str(TOTAL) + "\t" + str(USED) + "\t" + str(MULTIMAPPED) + "\t" + str(ALIGNED-USED) + "\t" + str(TOTAL-ALIGNED-MULTIMAPPED) + "\t" + str(RIBO) + "\n")
+
+            # TODO: Get rid of! No need without biowardrobe!
+            with open(sys.argv[4]+"_atdp.tsv", 'w') as fof:
+                fof.write("X\tY\n")
+                for i in range(-5000, 5000):
+                  fof.write(str(i) + "\t0\n")
+
+            # TODO: Get rid of! No need with right iaintersect!
+            with open(sys.argv[4]+"_peaks.tsv", 'w') as fof:
+                fof.write("chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname\n")
+                with open(sys.argv[5], 'r') as peak_file:
+                    for line in peak_file:
+                      tmpa=line.split()
+                      fof.write(tmpa[0]+"\t"+tmpa[1]+"\t"+tmpa[2]+"\t"+str(int(tmpa[2])-int(tmpa[1]))+"\t0\t0\t0\t"+tmpa[4]+"\t0\t"+tmpa[3]+"\n")
+
+          inputBinding:
+            position: 5
+
+        star_log:
+          type: File
+          inputBinding:
+            position: 6
+
+        bowtie_log:
+          type: File
+          inputBinding:
+            position: 7
+
+        dedup_log:
+          type: File
+          inputBinding:
+            position: 8
+
+        output_filename:
+          type:
+            - string?
+          inputBinding:
+            position: 9
+            valueFrom: $(get_output_filename())
+          default: ""
+
+        peaks:
+          type: File
+          inputBinding:
+            position: 10
+
+      outputs:
+        output_file:
+          type: stdout
+
+        formatted_output_file:
+          type: File
+          outputBinding:
+            glob: $(get_output_filename()+"_stats.tsv")
+
+        fake_atdp_file:
+          type: File
+          outputBinding:
+            glob: $(get_output_filename()+"_atdp.tsv")
+
+        transformed_peaks:
+          type: File
+          outputBinding:
+            glob: $(get_output_filename()+"_peaks.tsv")
+
+      baseCommand: [python, '-c']
+
+      stdout: $(get_output_filename()+".stat")
+
+  island_intersect:
+      run: ../tools/iaintersect.cwl
+      in:
+        input_filename: stats_and_transformations/transformed_peaks
+        annotation_filename: annotation_file
+        promoter_bp:
+          default: 1000
+      out: [result_file, log_file]
 
 $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+  - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "CLIP-Seq pipeline for single-read experiment NNNNG"
 label: "CLIP-Seq pipeline for single-read experiment NNNNG"
@@ -484,17 +595,17 @@ s:isPartOf:
   s:url: http://commonwl.org/
 
 s:creator:
-- class: s:Organization
-  s:legalName: "Datirium, LLC"
-  s:member:
-  - class: s:Person
-    s:name: Artem BArski
-    s:email: mailto:Artem.Barski@datirum.com
-  - class: s:Person
-    s:name: Andrey Kartashov
-    s:email: mailto:Andrey.Kartashov@datirium.com
-    s:sameAs:
-    - id: http://orcid.org/0000-0001-9102-5681
+  - class: s:Organization
+    s:legalName: "Datirium, LLC"
+    s:member:
+      - class: s:Person
+        s:name: Artem BArski
+        s:email: mailto:Artem.Barski@datirum.com
+      - class: s:Person
+        s:name: Andrey Kartashov
+        s:email: mailto:Andrey.Kartashov@datirium.com
+        s:sameAs:
+          - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
   CLIP-Seq workflow for single-read experiment.

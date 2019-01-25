@@ -68,7 +68,7 @@ inputs:
         ${
             if (inputs.output_file == ""){
               var _f = inputs.input_file.location.split('/').slice(-1)[0].split('.');
-              return _f.slice(0,-1).join('.') + '-extracted.' + _f.slice(-1)[0];
+              return _f.slice(0,-1).join('.') + '_extracted.' + _f.slice(-1)[0];
             } else {
               return inputs.output_file;
             }
@@ -122,7 +122,7 @@ outputs:
        ${
           if (inputs.output_file == ""){
             var _f = inputs.input_file.location.split('/').slice(-1)[0].split('.');
-            return _f.slice(0,-1).join('.') + '-extracted.' + _f.slice(-1)[0];
+            return _f.slice(0,-1).join('.') + '_extracted.' + _f.slice(-1)[0];
           } else {
             return inputs.output_file;
           }
