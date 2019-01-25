@@ -454,7 +454,7 @@ steps:
       star_log: star_aligner/log_final
       bowtie_log: bowtie_aligner/log_file
       rpkm_isoforms: rpkm_calculation/isoforms_file
-    out: [output_file, formatted_output_filename, fake_atdp_file, transformed_peaks]
+    out: [output_file, formatted_output_file, fake_atdp_file, transformed_peaks]
     run:
       cwlVersion: v1.0
       class: CommandLineTool
