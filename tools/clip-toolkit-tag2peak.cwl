@@ -12,51 +12,49 @@ hints:
 inputs:
 
   big:
-    type:
-      - boolean?
+    type: boolean?
     inputBinding:
       position: 1
       prefix: '-big'
-    doc: "big input file"
+    label: "big input file"
 
 
   separate_strands:
-    type:
-      - boolean?
+    type: boolean?
     inputBinding:
       position: 1
       prefix: '-ss'
-    doc: |
-      separate the two strands
+    label: "separate the two strands"
 
   dbkey:
-    type:
-      - string?
+    type: string?
     inputBinding:
       position: 1
       prefix: '--dbkey'
-    doc: |
-      [string]: species to retrieve the default gene bed file (mm10|hg19)
+    label: "[string]: species to retrieve the default gene bed file (mm10|hg19)"
+
+  gene:
+    type: File?
+    inputBinding:
+      position: 1
+      prefix: '--gene'
+    label: "[file]: custom gene bed file for scan statistics (will override --dbkey)"
 
   valley_seeking:
-    type:
-      - boolean?
+    type: boolean?
     inputBinding:
       position: 1
       prefix: '--valley-seeking'
-    doc: |
-      find candidate peaks by valley seeking
+    label: "find candidate peaks by valley seeking"
 
   infile:
     type: File
     inputBinding:
       position: 4
-    doc: |
-      <tag.bed> : BED file of unique CLIP tags, input
+    label: "<tag.bed> : BED file of unique CLIP tags, input"
 
   outfile:
-    type:
-      - string?
+    type: string?
     inputBinding:
       position: 5
       valueFrom: |
@@ -64,8 +62,7 @@ inputs:
           return inputs.outfile == "" ? inputs.infile.nameroot + ".peaks.bed" : inputs.outfile;
         }
     default: ""
-    doc: |
-      <peak.bed>: BED file of called peaks, output
+    label: "<peak.bed>: BED file of called peaks, output"
 
 outputs:
   peaks_bed:

@@ -291,14 +291,14 @@ outputs:
 # Remove in the future BioWardrobe plugs
   atdp_result:
     type: File
-    label: "ATDP results"
+    label: "Fake ATDP results for BioWardrobe"
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated results"
     outputSource: stats_and_transformations/fake_atdp_file
 
   transformed_peaks:
     type: File
-    label: "Transformed peaks"
+    label: "Transformed peaks Mimics MACS2"
     format: "http://edamontology.org/format_3475"
     outputSource: stats_and_transformations/transformed_peaks
 
@@ -436,6 +436,53 @@ steps:
       infile: samtools_sort_index2/bam_bai_pair
     out: [output_bed]
 
+  tagstopeak_transformations:
+    in:
+      annotation: annotation_file
+    out: [transformed_annotation]
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+        - class: ShellCommandRequirement
+
+      hints:
+        - class: DockerRequirement
+          dockerPull: biowardrobe2/scidap:v0.0.3
+
+      inputs:
+        script:
+          type: string?
+          default: |
+            # !/usr/bin/env python
+            import sys, re, math
+            with open("transformed_annotation.tsv", 'w') as fof:
+                with open(sys.argv[1], 'r') as afile:
+                    next(afile) # header line
+                    for line in afile:
+                      al=line.split()
+                      # orig                      3                         6       7         8                            11
+                      # bin     name    chrom   strand  txStart txEnd   cdsStart  cdsEnd  exonCount exonStarts  exonEnds  score   name2   cdsStartStat    cdsEndStat      exonFrames
+                      # req
+                      # chrom chromStart chromEnd name score strand thickStart thickEnd itemRgb blockCount blockSizes blockStarts
+                      blkStarts= ','.join([str(int(x)-int(al[4])) for x in al[9].split(',') if x])
+                      blkSizes=','.join([str(-int(e)+int(al[10].split(',')[i])) for i, e in enumerate([x for x in al[9].split(',') if x])])
+                      fof.write(al[2]+"\t"+al[4]+"\t"+al[5]+"\t"+al[1]+"\t"+al[11]+"\t"+al[3]+"\t"+al[6]+"\t"+al[7]+"\t0\t"+al[8]+"\t"+blkSizes+"\t"+blkStarts+"\n")
+
+          inputBinding:
+            position: 2
+        annotation:
+          type: File
+          inputBinding:
+            position: 3
+
+      outputs:
+        transformed_annotation:
+          type: File
+          outputBinding:
+            glob: "transformed_annotation.tsv"
+      baseCommand: [python, '-c']
+
   tagstopeak:
     run: ../tools/clip-toolkit-tag2peak.cwl
     in:
@@ -446,14 +493,15 @@ steps:
         default: true
       valley_seeking:
         default: true
-      dbkey: species
+      gene: tagstopeak_transformations/transformed_annotation
     out: [peaks_bed]
 
   stats_and_transformations:
     in:
       star_log: star_aligner/log_final
-      bowtie_log: bowtie_aligner/log_file
-      rpkm_isoforms: rpkm_calculation/isoforms_file
+      bowtie_log: ribosomal_bowtie_aligner/log_file
+      dedup_log: dedup_umi/log
+      peaks: tagstopeak/peaks_bed
     out: [output_file, formatted_output_file, fake_atdp_file, transformed_peaks]
     run:
       cwlVersion: v1.0
@@ -474,7 +522,7 @@ steps:
           type: string?
           default: |
             # !/usr/bin/env python
-            import sys, re
+            import sys, re, math
             TOTAL, ALIGNED, RIBO, MULTIMAPPED, USED = 0, 0, 0, 0, 0
             with open(sys.argv[1], 'r') as star_log:
                 for line in star_log:
@@ -502,7 +550,7 @@ steps:
             # TODO: Get rid of! No need without biowardrobe!
             with open(sys.argv[4]+"_atdp.tsv", 'w') as fof:
                 fof.write("X\tY\n")
-                for i in range(-5000, 5000):
+                for i in range(-5000, 5001):
                   fof.write(str(i) + "\t0\n")
 
             # TODO: Get rid of! No need with right iaintersect!
@@ -511,7 +559,8 @@ steps:
                 with open(sys.argv[5], 'r') as peak_file:
                     for line in peak_file:
                       tmpa=line.split()
-                      fof.write(tmpa[0]+"\t"+tmpa[1]+"\t"+tmpa[2]+"\t"+str(int(tmpa[2])-int(tmpa[1]))+"\t0\t0\t0\t"+tmpa[4]+"\t0\t"+tmpa[3]+"\n")
+                      pis=[x.split('=')[1] for x in re.split(r'[\[\]]',tmpa[3])[1:] if x.strip()]
+                      fof.write(tmpa[0]+"\t"+tmpa[1]+"\t"+tmpa[2]+"\t"+str(int(tmpa[2])-int(tmpa[1]))+"\t0\t"+pis[1]+"\t"+str(-math.log10(float(pis[3])))+"\t"+tmpa[4]+"\t0\t"+tmpa[3]+"\n")
 
           inputBinding:
             position: 5
