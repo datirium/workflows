@@ -35,7 +35,7 @@ inputs:
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
 
-  chrom_length:
+  chrom_length_file:
     type: File
     'sd:upstreamSource': "genome_indices/chrom_length"
     label: "Chromosomes length file"
