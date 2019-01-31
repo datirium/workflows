@@ -604,10 +604,11 @@ steps:
           outputBinding:
             glob: $(get_output_filename()+"_atdp.tsv")
 
+        # faking MACS2 peaks name file
         transformed_peaks:
           type: File
           outputBinding:
-            glob: $(get_output_filename()+"_peaks.tsv")
+            glob: $(get_output_filename()+"_macs_peaks.tsv")
 
       baseCommand: [python, '-c']
 
