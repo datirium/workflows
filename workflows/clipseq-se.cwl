@@ -134,12 +134,12 @@ outputs:
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/bigwig_file
 
-  output:
-    type: File
-    label: "clipped file"
-    format: "http://edamontology.org/format_1930"
-    doc: "clipped fastq file"
-    outputSource: extract_umi/output
+#  output:
+#    type: File
+#    label: "clipped file"
+#    format: "http://edamontology.org/format_1930"
+#    doc: "clipped fastq file"
+#    outputSource: extract_umi/output
 
   rebosomal_bowtie_log:
     type: File
@@ -225,25 +225,19 @@ outputs:
 
   trim_report:
     type: File
-    label: "TrimGalore report"
+    label: "trimm report"
     format: "http://edamontology.org/format_2330"
     doc: "TrimGalore generated log"
     outputSource: trim_fastq/report_file
 
-  trimed_file:
-    type: File
-    label: "TrimGalore report"
-    doc: "TrimGalore generated log"
-    format: "http://edamontology.org/format_1930"
-    outputSource: trim_fastq/trimmed_file
-
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
-    label: "Coordinate sorted BAM alignment file (+index BAI)"
-    doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: samtools_sort_index1/bam_bai_pair
+    label: "Deduped BAM alignment file"
+    doc: "Coordinate sorted BAM file and BAI index file (+index BAI)"
+    outputSource: samtools_sort_index2/bam_bai_pair
 
+ # @depricate
   dedup_output:
     type: File
     label: "deduped CLIP file"
@@ -417,7 +411,7 @@ steps:
       sort_input: dedup_umi/output
       sort_output_filename:
         source: extract_fastq/fastq_file
-        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.deduped.bam')
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
     out: [bam_bai_pair]
 
@@ -427,6 +421,9 @@ steps:
       bam_file: samtools_sort_index2/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+      bigwig_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bigWig')
     #     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
     out: [bigwig_file]
 
@@ -551,10 +548,10 @@ steps:
             with open(sys.argv[4]+"_atdp.tsv", 'w') as fof:
                 fof.write("X\tY\n")
                 for i in range(-5000, 5001):
-                  fof.write(str(i) + "\t0\n")
+                  fof.write(str(i) + "\t1\n")
 
             # TODO: Get rid of! No need with right iaintersect!
-            with open(sys.argv[4]+"_peaks.tsv", 'w') as fof:
+            with open(sys.argv[4]+"_macs_peaks.tsv", 'w') as fof:
                 fof.write("chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname\n")
                 with open(sys.argv[5], 'r') as peak_file:
                     for line in peak_file:
