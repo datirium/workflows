@@ -262,7 +262,7 @@ outputs:
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
 
- get_stat_formatted_log:
+  get_stat_formatted_log:
     type: File?
     label: "Bowtie & Samtools Rmdup combined formatted log"
     format: "http://edamontology.org/format_3475"
@@ -407,39 +407,39 @@ steps:
     out: [bigwig_file]
 
   get_stat:
-      run: ../tools/python-get-stat-chipseq.cwl
-      in:
-        bowtie_log: bowtie_aligner/log_file
-        rmdup_log: samtools_rmdup/rmdup_log
-      out: [output_file, formatted_output_file, mapped_reads]
+    run: ../tools/python-get-stat-chipseq.cwl
+    in:
+      bowtie_log: bowtie_aligner/log_file
+      rmdup_log: samtools_rmdup/rmdup_log
+    out: [output_file, formatted_output_file, mapped_reads]
 
   island_intersect:
-      run: ../tools/iaintersect.cwl
-      in:
-        input_filename: macs2_callpeak/peak_xls_file
-        annotation_filename: annotation_file
-        promoter_bp:
-          default: 1000
-      out: [result_file, log_file]
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: macs2_callpeak/peak_xls_file
+      annotation_filename: annotation_file
+      promoter_bp:
+        default: 1000
+    out: [result_file, log_file]
 
   average_tag_density:
-      run: ../tools/atdp.cwl
-      in:
-        input_file: samtools_sort_index_after_rmdup/bam_bai_pair
-        annotation_filename: annotation_file
-        fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
-        avd_window_bp:
-          default: 5000
-        avd_smooth_bp:
-          default: 50
-        ignore_chr:
-          default: chrM
-        double_chr:
-          default: "chrX chrY"
-        avd_heat_window_bp:
-          default: 200
-        mapped_reads: get_stat/mapped_reads
-      out: [result_file, log_file]
+    run: ../tools/atdp.cwl
+    in:
+      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      annotation_filename: annotation_file
+      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      avd_window_bp:
+        default: 5000
+      avd_smooth_bp:
+        default: 50
+      ignore_chr:
+        default: chrM
+      double_chr:
+        default: "chrX chrY"
+      avd_heat_window_bp:
+        default: 200
+      mapped_reads: get_stat/mapped_reads
+    out: [result_file, log_file]
 
 
 $namespaces:

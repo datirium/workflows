@@ -18,7 +18,7 @@ requirements:
             return inputs.formatted_output_filename;
         }
         let root = inputs.bowtie_log.basename.split('.').slice(0,-1).join('.');
-        let ext = ".stat";
+        let ext = "_stats.tsv";
         return (root == "")?inputs.bowtie_log.basename+ext:root+ext;
     };
 
