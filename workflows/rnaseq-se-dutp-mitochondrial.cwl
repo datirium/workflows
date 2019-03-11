@@ -314,7 +314,7 @@ steps:
   bam_to_bigwig_upstream:
     run: ../subworkflows/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: merge_original_and_mitochondrial/output
+      bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
       bigwig_filename:
@@ -332,7 +332,7 @@ steps:
   bam_to_bigwig_downstream:
     run: ../subworkflows/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: merge_original_and_mitochondrial/output
+      bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number:
         source: star_aligner/uniquely_mapped_reads_number
@@ -372,7 +372,7 @@ steps:
   rpkm_calculation:
     run: ../tools/geep.cwl
     in:
-      bam_file: merge_original_and_mitochondrial/output
+      bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       annotation_file: annotation_file
       dutp:
         default: true
