@@ -257,10 +257,17 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "Bowtie & Samtools Rmdup combined log"
+    label: "Old Bowtie & Samtools Rmdup combined log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
+
+ get_stat_formatted_log:
+    type: File?
+    label: "Bowtie & Samtools Rmdup combined formatted log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
+    outputSource: get_stat/formatted_output_file
     'sd:preview':
       'sd:visualPlugins':
       - pie:
@@ -273,6 +280,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_callpeak/macs2_stat_file
+
+  preseq_estimates:
+    type: File?
+    label: "Preseq estimates"
+    format: "http://edamontology.org/format_3475"
+    doc: "Preseq estimated results"
+    outputSource: preseq/estimates_file
 
 steps:
 
@@ -316,6 +330,14 @@ steps:
       sort_input: bowtie_aligner/sam_file
       threads: threads
     out: [bam_bai_pair]
+
+  preseq:
+    run: ../tools/preseq-lc-extrap.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      pe_mode:
+        default: true
+    out: [estimates_file]
 
   samtools_rmdup:
     run: ../tools/samtools-rmdup.cwl
@@ -389,9 +411,7 @@ steps:
       in:
         bowtie_log: bowtie_aligner/log_file
         rmdup_log: samtools_rmdup/rmdup_log
-      out:
-        - output_file
-        - mapped_reads
+      out: [output_file, formatted_output_file, mapped_reads]
 
   island_intersect:
       run: ../tools/iaintersect.cwl
@@ -428,6 +448,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
+label: "ChIP-Seq pipeline single-read"
 s:name: "ChIP-Seq pipeline single-read"
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows

@@ -90,6 +90,15 @@ inputs:
     doc: |
       RPKM calcualted by GEEP, grouped by isoforms
 
+  formatted_output_filename:
+    type: string?
+    inputBinding:
+      position: 9
+      valueFrom: $(get_formatted_output_filename())
+    default: ""
+    doc: |
+      Name for generated formatted output file
+
   pair_end:
     type: boolean?
     inputBinding:
@@ -99,20 +108,9 @@ inputs:
       If true, USED values is divided on 2
 
   output_filename:
-    type:
-    - string?
+    type: string?
     doc: |
       Name for generated output file
-
-  formatted_output_filename:
-    type:
-    - string?
-    inputBinding:
-      position: 9
-      valueFrom: $(get_formatted_output_filename())
-    default: ""
-    doc: |
-      Name for generated formatted output file
 
 
 outputs:
@@ -196,7 +194,7 @@ s:creator:
     s:streetAddress: "3559 Kroger Ave"
   s:member:
   - class: s:Person
-    s:name: Artem BArski
+    s:name: Artem Barski
     s:email: mailto:Artem.Barski@datirum.com
   - class: s:Person
     s:name: Andrey Kartashov
