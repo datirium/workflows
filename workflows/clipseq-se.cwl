@@ -615,13 +615,13 @@ steps:
       stdout: $(get_output_filename()+".stat")
 
   island_intersect:
-      run: ../tools/iaintersect.cwl
-      in:
-        input_filename: stats_and_transformations/transformed_peaks
-        annotation_filename: annotation_file
-        promoter_bp:
-          default: 1000
-      out: [result_file, log_file]
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: stats_and_transformations/transformed_peaks
+      annotation_filename: annotation_file
+      promoter_bp:
+        default: 1000
+    out: [result_file, log_file]
 
 $namespaces:
   s: http://schema.org/
