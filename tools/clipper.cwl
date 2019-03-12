@@ -12,8 +12,8 @@ requirements:
     ramMin: 32000
 
 hints:
-- class: DockerRequirement
-  dockerPull: scidap/clipper:v0.2.0
+  - class: DockerRequirement
+    dockerPull: scidap/clipper:v0.2.0
 
 baseCommand: [clipper]
 
@@ -59,8 +59,8 @@ inputs:
   gene:
     type: string?
     inputBinding:
-     position: 8
-     prefix: --gene
+      position: 8
+      prefix: --gene
 
   savepickle:
     type: boolean

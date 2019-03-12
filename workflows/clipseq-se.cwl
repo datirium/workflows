@@ -134,12 +134,12 @@ outputs:
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/bigwig_file
 
-#  output:
-#    type: File
-#    label: "clipped file"
-#    format: "http://edamontology.org/format_1930"
-#    doc: "clipped fastq file"
-#    outputSource: extract_umi/output
+  #  output:
+  #    type: File
+  #    label: "clipped file"
+  #    format: "http://edamontology.org/format_1930"
+  #    doc: "clipped fastq file"
+  #    outputSource: extract_umi/output
 
   rebosomal_bowtie_log:
     type: File
@@ -237,7 +237,7 @@ outputs:
     doc: "Coordinate sorted BAM file and BAI index file (+index BAI)"
     outputSource: samtools_sort_index2/bam_bai_pair
 
- # @depricate
+  # @depricate
   dedup_output:
     type: File
     label: "deduped CLIP file"
@@ -281,8 +281,19 @@ outputs:
         - pie:
             colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
             data: [$2, $3, $4, $5]
+  clipper_tsv:
+    type: File
+    outputSource: clipper/output_tsv
 
-# Remove in the future BioWardrobe plugs
+  clipper_bed:
+    type: File
+    outputSource: clipper/output_bed
+
+  clipper_pickle:
+    type: File
+    outputSource: clipper/output_pickle
+
+  # Remove in the future BioWardrobe plugs
   atdp_result:
     type: File
     label: "Fake ATDP results for BioWardrobe"
@@ -493,6 +504,13 @@ steps:
       gene: tagstopeak_transformations/transformed_annotation
     out: [peaks_bed]
 
+  clipper:
+    run: ../tools/clipper.cwl
+    in:
+      input_file: samtools_sort_index2/bam_bai_pair
+      species: species
+    out: [output_tsv, output_bed, output_pickle]
+
   stats_and_transformations:
     in:
       star_log: star_aligner/log_final
@@ -508,7 +526,7 @@ steps:
         - class: InlineJavascriptRequirement
           expressionLib:
             - var get_output_filename = function() {
-                return inputs.star_log.location.split('/').slice(-1)[0].replace(/_extracted_trimmed\.*Log\.final\.out$/i,'');
+              return inputs.star_log.location.split('/').slice(-1)[0].replace(/_extracted_trimmed\.*Log\.final\.out$/i,'');
               }
       hints:
         - class: DockerRequirement
