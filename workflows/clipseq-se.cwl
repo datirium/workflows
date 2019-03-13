@@ -281,9 +281,6 @@ outputs:
         - pie:
             colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
             data: [$2, $3, $4, $5]
-  clipper_tsv:
-    type: File
-    outputSource: clipper/output_tsv
 
   clipper_bed:
     type: File
@@ -516,7 +513,8 @@ steps:
       star_log: star_aligner/log_final
       bowtie_log: ribosomal_bowtie_aligner/log_file
       dedup_log: dedup_umi/log
-      peaks: tagstopeak/peaks_bed
+      peaks: clipper/output_bed
+      # peaks: tagstopeak/peaks_bed
     out: [output_file, formatted_output_file, fake_atdp_file, transformed_peaks]
     run:
       cwlVersion: v1.0
@@ -568,14 +566,22 @@ steps:
                 for i in range(-5000, 5001):
                   fof.write(str(i) + "\t1\n")
 
-            # TODO: Get rid of! No need with right iaintersect!
+            # TODO: Get rid of! No need with right iaintersect! clv toolkit
+            #with open(sys.argv[4]+"_macs_peaks.tsv", 'w') as fof:
+            #    fof.write("chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname\n")
+            #    with open(sys.argv[5], 'r') as peak_file:
+            #        for line in peak_file:
+            #          tmpa=line.split()
+            #          pis=[x.split('=')[1] for x in re.split(r'[\[\]]',tmpa[3])[1:] if x.strip()]
+            #          fof.write(tmpa[0]+"\t"+tmpa[1]+"\t"+tmpa[2]+"\t"+str(int(tmpa[2])-int(tmpa[1]))+"\t0\t"+pis[1]+"\t"+str(-math.log10(float(pis[3])))+"\t"+tmpa[4]+"\t0\t"+tmpa[3]+"\n")
+
+            # TODO: Get rid of! No need with right iaintersect! clv toolkit
             with open(sys.argv[4]+"_macs_peaks.tsv", 'w') as fof:
                 fof.write("chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname\n")
                 with open(sys.argv[5], 'r') as peak_file:
                     for line in peak_file:
                       tmpa=line.split()
-                      pis=[x.split('=')[1] for x in re.split(r'[\[\]]',tmpa[3])[1:] if x.strip()]
-                      fof.write(tmpa[0]+"\t"+tmpa[1]+"\t"+tmpa[2]+"\t"+str(int(tmpa[2])-int(tmpa[1]))+"\t0\t"+pis[1]+"\t"+str(-math.log10(float(pis[3])))+"\t"+tmpa[4]+"\t0\t"+tmpa[3]+"\n")
+                      fof.write(tmpa[0]+"\t"+tmpa[1]+"\t"+tmpa[2]+"\t"+str(int(tmpa[2])-int(tmpa[1]))+"\t0\t0\t"+str(-math.log10(float(tmpa[4])))+"\t"+tmpa[4]+"\t0\t"+tmpa[3]+"\n")
 
           inputBinding:
             position: 5
