@@ -52,8 +52,8 @@ inputs:
       print TOTAL, ALIGNED, SUPRESSED, USED
 
       with open(sys.argv[3], 'w') as fof:
-          fof.write("Tags total\tTranscriptome\tMulti-mapped\tOutside annotation\tUnmapped\tRibosomal contamination\n")
-          fof.write(str(TOTAL) + "\t" + str(USED) + "\t" + str(MULTIMAPPED) + "\t" + str(ALIGNED-USED) + "\t" + str(TOTAL-ALIGNED-MULTIMAPPED) + "\t" + str(RIBO) + "\n")
+          fof.write("Tags total\tMapped\tMulti-mapped\tUnmapped\tDuplicates\n")
+          fof.write(str(TOTAL) + "\t" + str(USED) + "\t" + str(SUPRESSED) + "\t" + str(TOTAL-ALIGNED-SUPRESSED) + "\t" + str(ALIGNED-USED) + "\n")
 
     inputBinding:
       position: 5
