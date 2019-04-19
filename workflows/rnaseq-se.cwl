@@ -180,7 +180,7 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "Old Bowtie, STAR and GEEP combined log"
+    label: "BioWardrobe compatible log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file

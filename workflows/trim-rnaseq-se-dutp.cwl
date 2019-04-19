@@ -188,14 +188,21 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "Bowtie, STAR and GEEP combined log"
+    label: "BioWardrobe compatible log"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/output_file
+
+  get_formatted_stats:
+    type: File?
+    label: "Bowtie, STAR and GEEP mapping stats"
+    format: "http://edamontology.org/format_2330"
+    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
+    outputSource: get_stat/formatted_output_file
     'sd:preview':
       'sd:visualPlugins':
       - pie:
-          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
           data: [$2, $3, $4, $5]
 
   trim_report:
@@ -360,7 +367,7 @@ steps:
         star_log: star_aligner/log_final
         bowtie_log: bowtie_aligner/log_file
         rpkm_isoforms: rpkm_calculation/isoforms_file
-      out: [output_file]
+      out: [output_file, formatted_output_file]
 
 $namespaces:
   s: http://schema.org/
