@@ -276,10 +276,17 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "Bowtie & Samtools Rmdup combined log"
+    label: "BioWardrobe compatible Bowtie & Samtools Rmdup combined log"
     format: "http://edamontology.org/format_2330"
-    doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
+    doc: "BioWardrobe compatible processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
+
+  get_stat_formatted_log:
+    type: File?
+    label: "Bowtie & Samtools Rmdup combined formatted log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
+    outputSource: get_stat/formatted_output_file
     'sd:preview':
       'sd:visualPlugins':
       - pie:
@@ -472,9 +479,7 @@ steps:
       in:
         bowtie_log: bowtie_aligner/log_file
         rmdup_log: samtools_rmdup/rmdup_log
-      out:
-        - output_file
-        - mapped_reads
+      out: [output_file, formatted_output_file, mapped_reads]
 
   island_intersect:
       run: ../tools/iaintersect.cwl
