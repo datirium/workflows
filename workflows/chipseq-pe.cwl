@@ -354,6 +354,8 @@ steps:
       threads: threads
       q:
         default: true
+      X:
+        default: 500
     out: [sam_file, log_file]
 
   samtools_sort_index:
