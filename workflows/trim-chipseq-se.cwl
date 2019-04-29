@@ -168,7 +168,6 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-
   bowtie_log:
     type: File
     label: "BOWTIE alignment log"

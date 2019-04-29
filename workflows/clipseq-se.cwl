@@ -202,12 +202,18 @@ outputs:
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats_original/statistics_file
     'sd:visualPlugins':
-      - line:
-          Title: 'Base frequency plot'
-          xAxisTitle: 'Nucleotide position'
-          yAxisTitle: 'Frequency'
-          colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-          data: [$12, $13, $14, $15, $16]
+    - line:
+        Title: 'Original Base frequency plot'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Frequency'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$13, $14, $15, $16, $17]
+    - boxplot:
+        Title: 'Original Quality Control'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Quality score'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$11, $7, $8, $9, $12]
 
   fastx_statistics_after:
     type: File
@@ -216,12 +222,18 @@ outputs:
     doc: "fastx_quality_stats generated FASTQ file quality statistics file"
     outputSource: fastx_quality_stats_after/statistics_file
     'sd:visualPlugins':
-      - line:
-          Title: 'Base frequency plot'
-          xAxisTitle: 'Nucleotide position'
-          yAxisTitle: 'Frequency'
-          colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-          data: [$12, $13, $14, $15, $16]
+    - line:
+        Title: 'After Clipper Base frequency plot'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Frequency'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$13, $14, $15, $16, $17]
+    - boxplot:
+        Title: 'After Clipper Quality Control'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Quality score'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$11, $7, $8, $9, $12]
 
   trim_report:
     type: File
