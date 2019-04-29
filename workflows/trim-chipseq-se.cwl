@@ -159,8 +159,15 @@ outputs:
         Title: 'Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-        data: [$12, $13, $14, $15, $16]
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$13, $14, $15, $16, $17]
+    - boxplot:
+        Title: 'Quality Control'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Quality score'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$11, $7, $8, $9, $12]
+
 
   bowtie_log:
     type: File
@@ -216,6 +223,7 @@ outputs:
         type: 'alignment'
         format: 'bam'
         name: "BAM Track"
+        displayMode: "SQUISHED"
 
   macs2_called_peaks:
     type: File?
