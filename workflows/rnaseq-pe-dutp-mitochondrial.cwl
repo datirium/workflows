@@ -157,13 +157,13 @@ outputs:
     outputSource: fastx_quality_stats_upstream/statistics_file
     'sd:visualPlugins':
     - line:
-        Title: 'Base frequency plot'
+        Title: 'Upstream Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
-        Title: 'Quality Control'
+        Title: 'Upstream Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -177,11 +177,17 @@ outputs:
     outputSource: fastx_quality_stats_downstream/statistics_file
     'sd:visualPlugins':
     - line:
-        Title: 'Base frequency plot'
+        Title: 'Downstream Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-        data: [$12, $13, $14, $15, $16]
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$13, $14, $15, $16, $17]
+    - boxplot:
+        Title: 'Downstream Quality Control'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Quality score'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$11, $7, $8, $9, $12]
 
   bam_merged_index:
     type: File
