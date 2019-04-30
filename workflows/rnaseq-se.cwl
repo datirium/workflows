@@ -93,6 +93,12 @@ outputs:
     label: "BigWig file"
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "BigWig Track"
+        height: 120
 
   star_final_log:
     type: File
