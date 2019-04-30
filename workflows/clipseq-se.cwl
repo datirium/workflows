@@ -254,6 +254,13 @@ outputs:
     label: "Deduped BAM alignment file"
     doc: "Coordinate sorted BAM file and BAI index file (+index BAI)"
     outputSource: samtools_sort_index2/bam_bai_pair
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
 
   # @depricate
   dedup_output:

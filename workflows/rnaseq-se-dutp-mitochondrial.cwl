@@ -182,6 +182,13 @@ outputs:
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: merge_original_and_mitochondrial_index/bam_bai_pair
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
 
   bowtie_log:
     type: File
