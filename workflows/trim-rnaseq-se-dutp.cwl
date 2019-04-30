@@ -96,9 +96,8 @@ outputs:
     outputSource: bam_to_bigwig_upstream/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
-        Title: 'Base frequency plot'
-        type: 'wig' # Use format?
-        url: ".bigWig"
+        id: 'igvbrowser'
+        type: 'wig'
         name: "BigWig Upstream"
         height: 100
 
