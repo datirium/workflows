@@ -147,6 +147,12 @@ outputs:
     label: "BigWig file"
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "BigWig Track"
+        height: 120
 
   fastx_statistics_upstream:
     type: File
@@ -236,6 +242,13 @@ outputs:
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
 
   macs2_called_peaks:
     type: File?
