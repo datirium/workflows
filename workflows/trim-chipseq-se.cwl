@@ -202,14 +202,14 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated results"
     outputSource: average_tag_density/result_file
-    'sd:visualPlugins':
-    - scatter:
-        Title: 'Average Tag Density'
-        xAxisTitle: 'Distance From TSS (bases)'
-        yAxisTitle: 'Average Tag Density (per bp)'
-        colors: ["#b3de69"]
-        height: 600
-        data: [$1, $2]
+#    'sd:visualPlugins':
+#    - scatter:
+#        Title: 'Average Tag Density'
+#        xAxisTitle: 'Distance From TSS (bases)'
+#        yAxisTitle: 'Average Tag Density (per bp)'
+#        colors: ["#b3de69"]
+#        height: 600
+#        data: [$1, $2]
 
   samtools_rmdup_log:
     type: File
