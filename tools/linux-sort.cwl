@@ -4,7 +4,10 @@ class: CommandLineTool
 requirements:
   - class: InlineJavascriptRequirement
     expressionLib:
-    - var default_output_filename = function() {
+    - var get_output_filename = function() {
+          if (inputs.output_filename) {
+            return inputs.output_filename;
+          }
           return inputs.unsorted_file.location.split('/').slice(-1)[0];
       };
 
@@ -31,35 +34,16 @@ inputs:
       start a key at POS1, end it at POS2 (origin 1)
 
   output_filename:
-    type:
-    - "null"
-    - string
+    type: string?
     doc: |
       Name for generated output file
 
 outputs:
   sorted_file:
-    type: File
-    outputBinding:
-      glob: |
-        ${
-          if (inputs.output_filename == null){
-            return default_output_filename();
-          } else {
-            return inputs.output_filename;
-          }
-        }
-    doc: |
-      Sorted file
+    type: stdout
 
-stdout: |
-  ${
-    if (inputs.output_filename == null){
-      return default_output_filename();
-    } else {
-      return inputs.output_filename;
-    }
-  }
+
+stdout: $(get_output_filename())
 
 baseCommand: ["sort"]
 

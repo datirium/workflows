@@ -10,7 +10,6 @@ hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/rose:v0.0.2
 
-
 inputs:
 
   binding_sites_file:
@@ -18,18 +17,15 @@ inputs:
     inputBinding:
       position: 5
       prefix: "-i"
-    doc: |
-      GFF or BED file of binding sites used to make enhancers
+    doc: GFF file of binding sites used to make enhancers
 
   bam_file:
     type: File
     inputBinding:
       position: 6
       prefix: "-r"
-    secondaryFiles:
-      - .bai
-    doc: |
-      Indexed bamfile to rank enhancer by
+    secondaryFiles: [".bai"]
+    doc: Indexed BAM+BAI file to rank enhancer by
 
   annotation_file:
     type: File
@@ -151,8 +147,7 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: |
-  -b and -c arguments are not supported
+doc: Tool runs ROSE to get Super Enhancers regions
 
 s:about: |
   Updated version of the original ROSE

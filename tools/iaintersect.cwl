@@ -16,29 +16,23 @@ hints:
 inputs:
 
   input_filename:
-    type:
-      - File
+    type: File
     inputBinding:
       position: 1
       prefix: --in=
       separate: false
-    doc: |
-      Input filename with MACS2 peak calling results, tsv
+    doc: Input filename with MACS2 peak calling results, tsv
 
   annotation_filename:
-    type:
-      - File
+    type: File
     inputBinding:
       position: 2
       prefix: --a=
       separate: false
-    doc: |
-      Annotation file, tsv
+    doc: Annotation file, tsv
 
   output_filename:
-    type:
-      - "null"
-      - string
+    type: string?
     inputBinding:
       position: 3
       prefix: --out=
@@ -56,9 +50,7 @@ inputs:
       Base output file name, tsv
 
   log_filename:
-    type:
-      - "null"
-      - string
+    type: string?
     inputBinding:
       position: 4
       prefix: --log=
@@ -76,9 +68,7 @@ inputs:
       Log filename
 
   promoter_bp:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 5
       prefix: --promoter=
@@ -87,9 +77,7 @@ inputs:
       Promoter region around TSS, base pairs
 
   upstream_bp:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 6
       prefix: --upstream=
@@ -98,9 +86,7 @@ inputs:
       Upstream region before promoter, base pairs
 
   ignore_chr:
-    type:
-      - "null"
-      - string
+    type: string?
     inputBinding:
       position: 7
       prefix: --sam_ignorechr=

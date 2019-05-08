@@ -2501,7 +2501,7 @@
 # ========================================================
 
 - job: ./deseq-advanced-1.json
-  tool: ../tools/deseq-advanced.cwl
+  tool: ../tools/deseq.cwl
   output:
     diff_expr_file:
       class: File
@@ -2509,7 +2509,7 @@
       size: 105674
 
 - job: ./deseq-advanced-2.json
-  tool: ../tools/deseq-advanced.cwl
+  tool: ../tools/deseq.cwl
   output:
     diff_expr_file:
       class: File
@@ -2517,7 +2517,7 @@
       size: 83897
 
 - job: ./deseq-advanced-3.json
-  tool: ../tools/deseq-advanced.cwl
+  tool: ../tools/deseq.cwl
   output:
     diff_expr_file:
       class: File
@@ -2525,7 +2525,7 @@
       size: 82790
 
 - job: ./deseq-advanced-4.json
-  tool: ../tools/deseq-advanced.cwl
+  tool: ../tools/deseq.cwl
   output:
     diff_expr_file:
       class: File
@@ -2533,7 +2533,7 @@
       size: 82791
 
 - job: ./deseq-advanced-5.json
-  tool: ../tools/deseq-advanced.cwl
+  tool: ../tools/deseq.cwl
   output:
     diff_expr_file:
       class: File
@@ -2541,7 +2541,7 @@
       size: 86271
 
 - job: ./deseq-advanced-6.json
-  tool: ../tools/deseq-advanced.cwl
+  tool: ../tools/deseq.cwl
   output:
     diff_expr_file:
       class: File
