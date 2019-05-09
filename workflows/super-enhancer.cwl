@@ -21,6 +21,12 @@ requirements:
 
 inputs:
 
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
+
   islands_file:
     type: File
     label: "XLS called peaks file"

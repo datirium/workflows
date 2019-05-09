@@ -2,7 +2,18 @@ cwlVersion: v1.0
 class: Workflow
 
 'sd:upstream':
-  rnaseq_sample:
+  rnaseq_sample_untreated:
+    - "rnaseq-se.cwl"
+    - "rnaseq-pe.cwl"
+    - "rnaseq-se-dutp.cwl"
+    - "rnaseq-pe-dutp.cwl"
+    - "rnaseq-se-dutp-mitochondrial.cwl"
+    - "rnaseq-pe-dutp-mitochondrial.cwl"
+    - "trim-rnaseq-pe.cwl"
+    - "trim-rnaseq-se.cwl"
+    - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-se-dutp.cwl"
+  rnaseq_sample_treated:
     - "rnaseq-se.cwl"
     - "rnaseq-pe.cwl"
     - "rnaseq-se-dutp.cwl"
@@ -17,21 +28,32 @@ class: Workflow
 
 inputs:
 
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
+
   untreated_files:
     type: File[]
-    label: "Untreated input CSV/TSV files"
     format:
      - "http://edamontology.org/format_3752"
      - "http://edamontology.org/format_3475"
+    label: "Untreated input CSV/TSV files"
     doc: "Untreated input CSV/TSV files"
+    'sd:upstreamSource': "rnaseq_sample_untreated/rpkm_common_tss"
+    'sd:localLabel': true
+
 
   treated_files:
     type: File[]
-    label: "Treated input CSV/TSV files"
     format:
      - "http://edamontology.org/format_3752"
      - "http://edamontology.org/format_3475"
+    label: "Treated input CSV/TSV files"
     doc: "Treated input CSV/TSV files"
+    'sd:upstreamSource': "rnaseq_sample_treated/rpkm_common_tss"
+    'sd:localLabel': true
 
   untreated_col_suffix:
     type: string?
