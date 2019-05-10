@@ -94,6 +94,9 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "DESeq generated list of differentially expressed items grouped by isoforms, genes or common TSS"
     outputSource: deseq/diff_expr_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        Title: 'Combined DESeq results'
 
 
 steps:
