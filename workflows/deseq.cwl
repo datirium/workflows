@@ -98,6 +98,25 @@ outputs:
     - syncfusiongrid:
         Title: 'Combined DESeq results'
 
+  plot_lfc_vs_mean:
+    type: File
+    label: "Plot of normalised mean versus log2 fold change"
+    format: "http://edamontology.org/format_3603"
+    doc: "Plot of the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples"
+    outputSource: deseq/plot_lfc_vs_mean
+    'sd:visualPlugins':
+    - image:
+        Caption: 'LFC vs mean'
+
+  gene_expr_heatmap:
+    type: File
+    label: "Heatmap of the 30 most highly expressed genes"
+    format: "http://edamontology.org/format_3603"
+    doc: "Heatmap showing the expression data of the 30 most highly expressed genes based on the variance stabilisation transformed data"
+    outputSource: deseq/gene_expr_heatmap
+    'sd:visualPlugins':
+    - image:
+        Caption: 'The 30 most highly expressed genes'
 
 steps:
 
@@ -109,14 +128,14 @@ steps:
       treated_col_suffix: treated_col_suffix
       output_filename: output_filename
       threads: threads
-    out: [diff_expr_file]
+    out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap]
     run:
       cwlVersion: v1.0
       class: CommandLineTool
       requirements:
       - class: InlineJavascriptRequirement
       - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap-deseq:v0.0.5
+        dockerPull: biowardrobe2/scidap-deseq:v0.0.6
       inputs:
         untreated_files:
           type: File[]
@@ -159,6 +178,14 @@ steps:
           type: File
           outputBinding:
             glob: $(inputs.output_filename)
+        plot_lfc_vs_mean:
+          type: File
+          outputBinding:
+            glob: "*001.png"
+        gene_expr_heatmap:
+          type: File
+          outputBinding:
+            glob: "*002.png"
       baseCommand: [run_deseq.R]
 
 $namespaces:

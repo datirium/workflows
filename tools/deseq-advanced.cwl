@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.5
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.6
 
 
 inputs:
@@ -69,11 +69,19 @@ inputs:
 outputs:
 
   diff_expr_file:
-    type:
-      - File
+    type: File
     outputBinding:
       glob: $(inputs.output_filename)
 
+  plot_lfc_vs_mean:
+    type: File
+    outputBinding:
+      glob: "*001.png"
+
+  gene_expr_heatmap:
+    type: File
+    outputBinding:
+      glob: "*002.png"
 
 baseCommand: [run_deseq.R]
 
