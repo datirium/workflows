@@ -2501,52 +2501,88 @@
 # ========================================================
 
 - job: ./deseq-advanced-1.json
-  tool: ../tools/deseq.cwl
+  tool: ../tools/deseq-advanced.cwl
   output:
     diff_expr_file:
       class: File
       location: deseq_results.tsv
       size: 105674
+    plot_lfc_vs_mean:
+      class: File
+      location: deseq_results_001.png
+    gene_expr_heatmap:
+      class: File
+      location: deseq_results_002.png
 
 - job: ./deseq-advanced-2.json
-  tool: ../tools/deseq.cwl
+  tool: ../tools/deseq-advanced.cwl
   output:
     diff_expr_file:
       class: File
       location: deseq_results.tsv
       size: 83897
+    plot_lfc_vs_mean:
+      class: File
+      location: deseq_results_001.png
+    gene_expr_heatmap:
+      class: File
+      location: deseq_results_002.png
 
 - job: ./deseq-advanced-3.json
-  tool: ../tools/deseq.cwl
+  tool: ../tools/deseq-advanced.cwl
   output:
     diff_expr_file:
       class: File
       location: deseq_results.tsv
       size: 82790
+    plot_lfc_vs_mean:
+      class: File
+      location: deseq_results_001.png
+    gene_expr_heatmap:
+      class: File
+      location: deseq_results_002.png
 
 - job: ./deseq-advanced-4.json
-  tool: ../tools/deseq.cwl
+  tool: ../tools/deseq-advanced.cwl
   output:
     diff_expr_file:
       class: File
       location: deseq_results.tsv
       size: 82791
+    plot_lfc_vs_mean:
+      class: File
+      location: deseq_results_001.png
+    gene_expr_heatmap:
+      class: File
+      location: deseq_results_002.png
 
 - job: ./deseq-advanced-5.json
-  tool: ../tools/deseq.cwl
+  tool: ../tools/deseq-advanced.cwl
   output:
     diff_expr_file:
       class: File
       location: deseq_genes.tsv
       size: 86271
+    plot_lfc_vs_mean:
+      class: File
+      location: deseq_genes_001.png
+    gene_expr_heatmap:
+      class: File
+      location: deseq_genes_002.png
 
 - job: ./deseq-advanced-6.json
-  tool: ../tools/deseq.cwl
+  tool: ../tools/deseq-advanced.cwl
   output:
     diff_expr_file:
       class: File
       location: deseq_common_tss.tsv
       size: 93473
+    plot_lfc_vs_mean:
+      class: File
+      location: deseq_common_tss_001.png
+    gene_expr_heatmap:
+      class: File
+      location: deseq_common_tss_002.png
 
 # ========================================================
 # group-isoforms
