@@ -1897,7 +1897,7 @@
   output:
     gff_file:
       class: File
-      location: custom.gff
+      location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
       size: 225
 
 - job: ./makegff-3.json
@@ -1905,7 +1905,7 @@
   output:
     gff_file:
       class: File
-      location: custom.gff
+      location: chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.gff
       size: 169
 
 - job: ./makegff-4.json
@@ -1913,7 +1913,7 @@
   output:
     gff_file:
       class: File
-      location: custom.gff
+      location: chr4_100_mapped_reads.Aligned.out_macs_peaks.gff
       size: 225
 
 # ========================================================
