@@ -3448,9 +3448,9 @@
       class: File
       size: 14
     get_formatted_stats:
-      location: "upstream_formatted.tsv"
+      location: "upstream_stats.tsv"
       class: File
-      size: 149
+      size: 107
     rpkm_common_tss:
       location: "upstream.common_tss.tsv"
       class: File
@@ -3708,11 +3708,11 @@
       secondaryFiles:
       - location: "upstream.bam.bai"
         class: File
-        size: 984
+        size: 1008
     bigwig:
       location: "upstream.bigWig"
       class: File
-      size: 25755
+      size: 25764
     bowtie_log:
       location: "upstream.bw"
       class: File
@@ -3730,9 +3730,9 @@
       class: File
       size: 11
     get_stat_formatted_log:
-      location: "upstream_formatted.tsv"
+      location: "upstream_stats.tsv"
       class: File
-      size: 124
+      size: 64
     iaintersect_log:
       location: "upstream_macs_peaks_iaintersect.log"
       class: File
