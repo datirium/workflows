@@ -9,6 +9,7 @@ os:
 install:
 - pip install --upgrade cwltool==1.0.20181201184214
 - pip install --upgrade cwltest
+- pip install --upgrade schema-salad==3.0.20181206233650
 - pip install --upgrade ruamel.yaml==0.15.77
 #script: bash run_test.sh -n171 --verbose --junit-xml=result.xml RUNNER=cwltool
 #/home/travis/virtualenv/python3.6.3/bin/cwltool
