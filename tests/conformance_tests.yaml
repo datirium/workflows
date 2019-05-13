@@ -2000,10 +2000,10 @@
       size: 23753
     bigbed_file:
       class: File
-      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.bb
+      location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.bb
     gene_names_file:
       class: File
-      location: chr4_100_mapped_reads.Aligned.out_super_enhancer.tsv
+      location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.tsv
       size: 481
 
 - job: ./super-enhancer-3.json
