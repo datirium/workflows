@@ -880,8 +880,8 @@
       size: 12
     formatted_output_file:
       class: File
-      location: upstream_formatted.tsv
-      size: 125
+      location: upstream_stats.tsv
+      size: 67
 
 - job: ./python-get-stat-chipseq-2.json
   tool: ../tools/python-get-stat-chipseq.cwl
@@ -896,8 +896,8 @@
       size: 12
     formatted_output_file:
       class: File
-      location: upstream_formatted.tsv
-      size: 125
+      location: upstream_stats.tsv
+      size: 67
 
 # ========================================================
 # python-get-stat-rnaseq
@@ -917,8 +917,8 @@
       size: 14
     formatted_output_file:
       class: File
-      location: chr4_100_mapped_reads_formatted.tsv
-      size: 149
+      location: chr4_100_mapped_reads_stats.tsv
+      size: 107
 
 - job: ./python-get-stat-rnaseq-2.json
   tool: ../tools/python-get-stat-rnaseq.cwl
@@ -934,8 +934,8 @@
       size: 15
     formatted_output_file:
       class: File
-      location: chr4_100_mapped_reads_formatted.tsv
-      size: 150
+      location: chr4_100_mapped_reads_stats.tsv
+      size: 109
   doc: We use pair-end, but treat it as single-end, so the output has not correct read numbers from biological point of view
 
 # ========================================================
