@@ -97,6 +97,13 @@ outputs:
     'sd:visualPlugins':
     - syncfusiongrid:
         Title: 'Combined DESeq results'
+    - scatter:
+        Title: 'Volcano'
+        xAxisTitle: 'log fold change'
+        yAxisTitle: 'pAdj'
+        colors: ["#b3de69"]
+        height: 600
+        data: [$9, $11]
 
   plot_lfc_vs_mean:
     type: File
