@@ -2,6 +2,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
+- class: InlineJavascriptRequirement
 - class: DockerRequirement
   dockerPull: biowardrobe2/rose:v0.0.2
 
