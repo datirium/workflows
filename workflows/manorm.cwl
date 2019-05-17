@@ -55,15 +55,16 @@ inputs:
     'sd:localLabel': true
 
   fragment_size_first:
-    type: int
+    type: int?
     label: "First fragment size"
     doc: "Fragment size, int"
+    default: 150
 
   fragment_size_second:
-    type: int
+    type: int?
     label: "Second fragment size"
     doc: "Fragment size, int"
-
+    default: 150
 
 outputs:
 
