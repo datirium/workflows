@@ -151,6 +151,9 @@ s:creator:
       - class: s:Person
         s:name: Artem BArski
         s:email: mailto:Artem.Barski@datirum.com
+  - class: s:Organization
+    s:legalName: "Cincinnati Children's Hospital Medical Center"
+    s:member:
       - class: s:Person
         s:name: Michael Kotliar
         s:email: mailto:michael.kotliar@cchmc.org
