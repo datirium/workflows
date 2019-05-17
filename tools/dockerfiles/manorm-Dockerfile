@@ -1,0 +1,73 @@
+#################################################################
+# Dockerfile
+#
+# Software:         BioWardrobe MAnorm script
+# Software Version: v0.0.1
+# Description:      Dockerized version of MAnorm script from BioWardrobe
+# Website:          https://github.com/Barski-lab/workflows
+# Provides:         MAnorm script from BioWardrobe
+#                   bedtools2 2.26.0
+#                   R.methodsS3 1.7.1
+#                   R.oo 1.22.0
+#                   R.utils 2.8.0
+#                   R.basic 0.53.0
+#                   affy
+# Base Image:       biowardrobe2/scidap-addons:v0.0.6
+# Build Cmd:        docker build --rm -t biowardrobe2/manorm:v0.0.1 -f manorm-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/manorm:v0.0.1
+# Run Cmd:          docker run --rm -ti biowardrobe2/manorm:v0.0.1
+#################################################################
+
+### Base Image
+FROM biowardrobe2/scidap-addons:v0.0.6
+MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+ENV VER_BEDTOOLS 2.26.0
+ENV URL_BEDTOOLS "https://github.com/arq5x/bedtools2/releases/download/v${VER_BEDTOOLS}/bedtools-${VER_BEDTOOLS}.tar.gz"
+
+ENV VER_R_METHODS_S3 1.7.1
+ENV URL_R_METHODS_S3 "https://cran.r-project.org/src/contrib/R.methodsS3_${VER_R_METHODS_S3}.tar.gz"
+
+ENV VER_R_OO 1.22.0
+ENV URL_R_OO "https://cran.r-project.org/src/contrib/R.oo_${VER_R_OO}.tar.gz"
+
+ENV VER_R_UTILS 2.8.0
+ENV URL_R_UTILS "https://cran.r-project.org/src/contrib/R.utils_${VER_R_UTILS}.tar.gz"
+
+ENV VER_R_BASIC 0.53.0
+ENV URL_R_BASIC "http://www.braju.com/R/repos/R.basic_${VER_R_BASIC}.tar.gz"
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+COPY ./scripts/install_from_source.R /tmp/install_from_source.R
+COPY ./scripts/install_from_bioconductor.R /tmp/install_from_bioconductor.R
+
+COPY ./scripts/run_manorm.sh /usr/local/bin/run_manorm.sh
+COPY ./scripts/manorm.R /usr/local/bin/manorm.R
+
+### Installing R.methodsS3, R.oo, R.utils, R.basic
+RUN Rscript /tmp/install_from_source.R "${URL_R_METHODS_S3}" && \
+    Rscript /tmp/install_from_source.R "${URL_R_OO}" && \
+    Rscript /tmp/install_from_source.R "${URL_R_UTILS}" && \
+    Rscript /tmp/install_from_source.R "${URL_R_BASIC}" && \
+### Installing affy package from Bioconductor
+    Rscript /tmp/install_from_bioconductor.R affy && \
+### Installing Bedtools2
+    wget -q -O - $URL_BEDTOOLS | tar -zxv && \
+    cd bedtools2 && \
+    make -j 4 && \
+    cd .. && \
+    cp ./bedtools2/bin/* /usr/local/bin/ && \
+### Installing run_manorm.sh and manorm.R scripts
+    chmod +x /usr/local/bin/run_manorm.sh && \
+    chmod +x /usr/local/bin/manorm.R && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
