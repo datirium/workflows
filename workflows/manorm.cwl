@@ -34,7 +34,7 @@ inputs:
   peak_file_first:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "First TSV peak file"
+    label: "ChIP-Seq sample one"
     doc: "TSV peak file, formatted as iaintersect output"
     'sd:upstreamSource': "first_chipseq_sample/iaintersect_result"
     'sd:localLabel': true
@@ -42,7 +42,7 @@ inputs:
   peak_file_second:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Second TSV peak file"
+    label: "ChIP-Seq sample two"
     doc: "TSV peak file, formatted as iaintersect output"
     'sd:upstreamSource': "second_chipseq_sample/iaintersect_result"
     'sd:localLabel': true
@@ -53,7 +53,6 @@ inputs:
     label: "First BAM file"
     doc: "BAM alignment file"
     'sd:upstreamSource': "first_chipseq_sample/bambai_pair"
-    'sd:localLabel': true
 
   bam_file_second:
     type: File
@@ -61,7 +60,6 @@ inputs:
     label: "Second BAM file"
     doc: "BAM alignment file"
     'sd:upstreamSource': "second_chipseq_sample/bambai_pair"
-    'sd:localLabel': true
 
   annotation_file:
     type: File
@@ -69,19 +67,22 @@ inputs:
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
-    'sd:localLabel': true
 
   fragment_size_first:
     type: int?
     label: "First fragment size"
     doc: "Fragment size, int"
     default: 150
+    'sd:layout':
+      advanced: true
 
   fragment_size_second:
     type: int?
     label: "Second fragment size"
     doc: "Fragment size, int"
     default: 150
+    'sd:layout':
+      advanced: true
 
   output_filename:
     type: string?
