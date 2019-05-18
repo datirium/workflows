@@ -307,10 +307,21 @@ s:creator:
           - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  MAnorm: a robust model for quantitative comparison of ChIP-Seq data sets
+  MAnorm is a robust model for quantitative comparison of ChIP-Seq data sets of TFs (transcription factors) or epigenetic modifications.
 
 s:about: |
-  MAnorm: a robust model for quantitative comparison of ChIP-Seq data sets
-  =====================================
+  What is MAnorm?
+  --------------
 
-  ChIP-Seq is widely used to characterize genome-wide binding patterns of transcription factors and other chromatin-associated proteins. Although comparison of ChIP-Seq data sets is critical for understanding cell type-dependent and cell state-specific binding, and thus the study of cell-specific gene regulation, few quantitative approaches have been developed. Here, we present a simple and effective method, MAnorm, for quantitative comparison of ChIP-Seq data sets describing transcription factor binding sites and epigenetic modifications. The quantitative binding differences inferred by MAnorm showed strong correlation with both the changes in expression of target genes and the binding of cell type-specific regulators.
+  MAnorm is a robust model for quantitative comparison of ChIP-Seq data sets of TFs (transcription factors) or epigenetic modifications and you can use it for:
+
+  * Normalization of two ChIP-seq samples
+  * Quantitative comparison (differential analysis) of two ChIP-seq samples
+  * Evaluating the overlap enrichment of the protein binding sites(peaks)
+  * Elucidating underlying mechanisms of cell-type specific gene regulation
+
+  How MAnorm works?
+  ----------------
+
+  MAnorm uses common peaks of two samples as a reference to build the rescaling model for normalization, which is based on the empirical assumption that if a chromatin-associated protein has a substantial number of peaks shared in two conditions, the binding at these common regions will tend to be determined by similar mechanisms, and thus should exhibit similar global binding intensities across samples. The observed differences on common peaks are presumed to reflect the scaling relationship of ChIP-Seq signals between two samples, which can be applied to all peaks.
+
