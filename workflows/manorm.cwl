@@ -270,8 +270,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "MAnorm: a robust model for quantitative comparison of ChIP-Seq data sets"
-label: "MAnorm: a robust model for quantitative comparison of ChIP-Seq data sets"
+s:name: "MAnorm - quantitative comparison of ChIP-Seq data"
+label: "MAnorm - quantitative comparison of ChIP-Seq data"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/manorm.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
