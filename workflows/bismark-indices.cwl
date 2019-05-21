@@ -39,12 +39,6 @@ outputs:
     doc: "Bismark generated indices folder"
     outputSource: prepare_indices/indices_folder
 
-  genome_directory:
-    type: Directory
-    label: "Genome folder"
-    doc: "Genome folder with FASTA files"
-    outputSource: genome_folder
-
 
 steps:
 

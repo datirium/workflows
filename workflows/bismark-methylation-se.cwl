@@ -33,12 +33,6 @@ inputs:
     doc: "Path to Bismark generated indices folder"
     'sd:upstreamSource': "genome/indices_folder"
 
-  genome_folder:
-    type: Directory
-    label: "Genome folder"
-    doc: "Genome folder with FASTA files"
-    'sd:upstreamSource': "genome/genome_directory"
-
   threads:
     type: int?
     default: 1
@@ -140,7 +134,7 @@ steps:
   bismark_extract_methylation:
     run: ../tools/bismark-extract-methylation.cwl
     in:
-      genome_folder: genome_folder
+      genome_folder: indices_folder
       bam_file: bismark_align/bam_file
       threads: threads
     out:
