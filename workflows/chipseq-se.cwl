@@ -479,6 +479,8 @@ $schemas:
 
 label: "ChIP-Seq pipeline single-read"
 s:name: "ChIP-Seq pipeline single-read"
+s:alternateName: "ChIP-Seq basic analysis workflow for a single-read experiment"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -513,10 +515,7 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  ChIP-Seq basic analysis workflow for a single-read experiment.
-
-s:about: |
+doc: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **ChIP-Seq** basic analysis workflow for a **single-read** experiment.
   A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.

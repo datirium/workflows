@@ -325,7 +325,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "xenbase-rnaseq-pe"
+s:name: "Xenbase RNA-Seq pipeline paired-end"
+label: "Xenbase RNA-Seq pipeline paired-end"
+s:alternateName: "XenBase workflow for analysing RNA-Seq paired-end data"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/xenbase-rnaseq-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -361,9 +364,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  XenBase workflow for analysing RNA-Seq paired-end data
-
-s:about: |
   1. Convert input SRA file into pair of upsrtream and downstream FASTQ files (run fastq-dump)
   2. Analyze quality of FASTQ files (run fastqc with each of the FASTQ files)
   3. If any of the following fields in fastqc generated report is marked as failed for at least one of input FASTQ files:

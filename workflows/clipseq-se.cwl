@@ -680,6 +680,7 @@ $schemas:
 
 s:name: "CLIP-Seq pipeline for single-read experiment NNNNG"
 label: "CLIP-Seq pipeline for single-read experiment NNNNG"
+s:alternateName: "CLIP-Seq workflow for single-read experiment"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/clipseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -704,9 +705,6 @@ s:creator:
           - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  CLIP-Seq workflow for single-read experiment.
-
-s:about: |
   Cross-Linking ImmunoPrecipitation
   =================================
 

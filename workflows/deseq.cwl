@@ -203,6 +203,8 @@ $schemas:
 
 s:name: "DESeq - differential gene expression analysis"
 label: "DESeq - differential gene expression analysis"
+s:alternateName: "Differential gene expression analysis based on the negative binomial distribution"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -226,9 +228,6 @@ s:creator:
           - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Differential gene expression analysis based on the negative binomial distribution
-
-s:about: |
   Differential gene expression analysis
   =====================================
 

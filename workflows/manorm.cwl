@@ -273,6 +273,7 @@ $schemas:
 
 s:name: "MAnorm - quantitative comparison of ChIP-Seq data"
 label: "MAnorm - quantitative comparison of ChIP-Seq data"
+s:alternateName: "MAnorm is a robust model for quantitative comparison of ChIP-Seq data sets of TFs (transcription factors) or epigenetic modifications."
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/manorm.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -309,9 +310,6 @@ s:creator:
           - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  MAnorm is a robust model for quantitative comparison of ChIP-Seq data sets of TFs (transcription factors) or epigenetic modifications.
-
-s:about: |
   What is MAnorm?
   --------------
 
@@ -326,4 +324,3 @@ s:about: |
   ----------------
 
   MAnorm uses common peaks of two samples as a reference to build the rescaling model for normalization, which is based on the empirical assumption that if a chromatin-associated protein has a substantial number of peaks shared in two conditions, the binding at these common regions will tend to be determined by similar mechanisms, and thus should exhibit similar global binding intensities across samples. The observed differences on common peaks are presumed to reflect the scaling relationship of ChIP-Seq signals between two samples, which can be applied to all peaks.
-

@@ -76,7 +76,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "xenbase-chipseq-se"
+s:name: "Xenbase ChIP-Seq pipeline single-read"
+label: "Xenbase ChIP-Seq pipeline single-read"
+s:alternateName: "XenBase workflow for analysing ChIP-Seq single-read data"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/xenbase-chipseq-se.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -112,9 +115,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  XenBase workflow for analysing ChIP-Seq single-end data
-
-s:about: |
   1. Convert input SRA file into FASTQ file (run fastq-dump)
   2. Analyze quality of FASTQ file (run fastqc)
   3. If any of the following fields in fastqc generated report is marked as failed:

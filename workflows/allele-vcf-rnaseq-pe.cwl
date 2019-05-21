@@ -218,7 +218,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "allele-vcf-rnaseq-pe"
+s:name: "RNA-seq (VCF) alelle specific pipeline for paired-end data"
+label: "RNA-seq (VCF) alelle specific pipeline for paired-end data"
+s:alternateName: "Allele specific RNA-Seq (using vcf) paired-end workflow"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/allele-vcf-rnaseq-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -255,4 +258,3 @@ s:creator:
 
 doc: |
   Allele specific RNA-Seq (using vcf) paired-end workflow
-

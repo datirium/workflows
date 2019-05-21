@@ -157,6 +157,9 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "Generate genome index STAR RNA"
+label: "Generate genome index STAR RNA"
+s:alternateName: "Generates indices for STAR v2.5.3a (03/17/2017)"
+
 s:downloadUrl: https://raw.githubusercontent.com/barski-lab/workflows/master/workflows/scidap/star-index.cwl
 s:codeRepository: https://github.com/barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -196,14 +199,10 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-doc: >
-  Generates indices for STAR v2.5.3a (03/17/2017).
-
-s:about: |
+doc: |
   Workflow makes indices for [STAR](https://github.com/alexdobin/STAR) v2.5.3a (03/17/2017) PMID: [23104886](https://www.ncbi.nlm.nih.gov/pubmed/23104886).
 
   It performs the following steps:
   1. Runs `STAR --runMode genomeGenerate` to generate indices, based on [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) and [GTF](http://mblab.wustl.edu/GTF2.html) input files, returns results as an array of files
   2. Transforms array of files into [Direcotry](http://www.commonwl.org/v1.0/CommandLineTool.html#Directory) data type
   3. Separates *chrNameLength.txt* file as an output
-

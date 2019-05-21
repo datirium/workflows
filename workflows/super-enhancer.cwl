@@ -322,6 +322,8 @@ $schemas:
 
 s:name: "Super-enhancer post ChIP-Seq analysis"
 label: "Super-enhancer post ChIP-Seq analysis"
+s:alternateName: "Super Enhancer Analysis by Richard A. Young"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/super-enhancer.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -357,9 +359,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Super Enhancer Analysis by Richard A. Young
-
-s:about: |
   Super-enhancers, consist of clusters of enhancers that are densely occupied by the master regulators and Mediator.
   Super-enhancers differ from typical enhancers in size, transcription factor density and content, ability to activate transcription,
   and sensitivity to perturbation.

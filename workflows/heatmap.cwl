@@ -131,7 +131,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "heatmap"
+s:name: "Generate ATDP heatmap using Homer"
+label: "Generate ATDP heatmap using Homer"
+s:alternateName: "Generate ATDP heatmap centered on TSS from an array of input BAM files and genelist TSV file"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/heatmap.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -172,11 +175,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Generates ATDP heatmap centered on TSS from an array of input BAM files and genelist TSV file.
-  Returns array of heatmap JSON files with the names that have the same basenames as input BAM files,
-  but with .json extension
-
-s:about: |
-  Generates ATDP heatmap centered on TSS from an array of input BAM files and genelist TSV file.
+  Generate ATDP heatmap centered on TSS from an array of input BAM files and genelist TSV file.
   Returns array of heatmap JSON files with the names that have the same basenames as input BAM files,
   but with .json extension

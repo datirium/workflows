@@ -203,7 +203,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "allele-vcf-rnaseq-se"
+s:name: "RNA-seq (VCF) alelle specific pipeline for single-read data"
+label: "RNA-seq (VCF) alelle specific pipeline for single-read data"
+s:alternateName: "Allele specific RNA-Seq (using vcf) single-read workflow"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/allele-vcf-rnaseq-se.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -240,4 +243,3 @@ s:creator:
 
 doc: |
   Allele specific RNA-Seq (using vcf) single-read workflow
-

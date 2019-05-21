@@ -81,7 +81,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "xenbase-chipseq-pe"
+s:name: "Xenbase ChIP-Seq pipeline paired-end"
+label: "Xenbase ChIP-Seq pipeline paired-end"
+s:alternateName: "XenBase workflow for analysing ChIP-Seq paired-end data"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/xenbase-chipseq-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -117,9 +120,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  XenBase workflow for analysing ChIP-Seq paired-end data
-
-s:about: |
   1. Convert input SRA file into pair of upsrtream and downstream FASTQ files (run fastq-dump)
   2. Analyze quality of FASTQ files (run fastqc with each of the FASTQ files)
   3. If any of the following fields in fastqc generated report is marked as failed for at least one of input FASTQ files:
@@ -136,4 +136,3 @@ s:about: |
   9. Generate genome coverage BED file (run bedtools genomecov)
   10. Sort genearted BED file (run sort)
   11. Generate genome coverage bigWig file from BED file (run bedGraphToBigWig)
-
