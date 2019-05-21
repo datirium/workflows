@@ -54,9 +54,6 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
-  #  output_file:
-  #    type: string
-
   # ADVANCED
 
   extract_method:
@@ -113,9 +110,6 @@ inputs:
       advanced: true
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
-
-
-  # SYSTEM DEPENDENT
 
   threads:
     type: int?

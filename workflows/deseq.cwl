@@ -44,7 +44,6 @@ inputs:
     'sd:upstreamSource': "rnaseq_sample_untreated/rpkm_common_tss"
     'sd:localLabel': true
 
-
   treated_files:
     type: File[]
     format:

@@ -5,6 +5,8 @@ class: Workflow
 requirements:
   - class: SubworkflowFeatureRequirement
 
+'sd:metadata':
+  - "../metadata/chipseq-header.cwl"
 
 inputs:
 

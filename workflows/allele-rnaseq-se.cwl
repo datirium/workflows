@@ -9,6 +9,10 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
+
 inputs:
 
   star_indices_folder:

@@ -17,16 +17,6 @@ requirements:
 
 inputs:
 
-  # MAIN
-  #        1       |       2       |       3       |       4
-  # ---------------------------------------------------------------
-  #|        indices_folder         |         control_file          |
-  # ---------------------------------------------------------------
-  #|          broad_peak           |                               |
-  # ---------------------------------------------------------------
-  #|      fastq_file_upstream      |      fastq_file_downstream    |
-  # ---------------------------------------------------------------
-
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
@@ -79,16 +69,6 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
 
-  # ADVANCED
-  #        1       |       2       |       3       |       4
-  # ---------------------------------------------------------------
-  #|      exp_fragment_size        |     force_fragment_size       |
-  # ---------------------------------------------------------------
-  #|          clip_3p_end          |         clip_5p_end           |
-  # ---------------------------------------------------------------
-  #|      remove_duplicates        |                               |
-  # ---------------------------------------------------------------
-
   exp_fragment_size:
     type: int?
     default: 150
@@ -128,8 +108,6 @@ inputs:
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
-
-  # SYSTEM DEPENDENT
 
   threads:
     type: int?

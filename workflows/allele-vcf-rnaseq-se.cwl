@@ -8,6 +8,10 @@ requirements:
 - class: InlineJavascriptRequirement
 
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
+
 inputs:
 
   star_indices_folder:

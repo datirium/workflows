@@ -9,6 +9,27 @@ requirements:
 
 inputs:
 
+  genome_label:
+    type: string?
+    label: "Genome label"
+    doc: "Genome label is used by web-ui to show label"
+    'sd:preview':
+      position: 1
+
+  genome_description:
+    type: string?
+    label: "Genome description"
+    doc: "Genome description is used by web-ui to show description"
+    'sd:preview':
+      position: 2
+
+  genome_details:
+    type: string?
+    label: "Genome details"
+    doc: "Genome details"
+    'sd:preview':
+      position: 3
+
   genome:
     type: string
     label: "Genome"

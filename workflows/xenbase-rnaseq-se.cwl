@@ -19,6 +19,10 @@ requirements:
       };
 
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
+
 inputs:
 
   fastq_file:
