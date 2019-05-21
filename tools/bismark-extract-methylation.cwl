@@ -100,8 +100,8 @@ s:mainEntity:
   $import: ./metadata/bismark-metadata.yaml
 
 s:name: "bismark-extract-methylation"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/bismark-extract-methylation.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/bismark-extract-methylation.cwl
+s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -163,7 +163,7 @@ s:about: |
   DESCRIPTION
 
   The following is a brief description of all options to control the Bismark
-  methylation extractor. The script reads in a bisulfite read alignment results file 
+  methylation extractor. The script reads in a bisulfite read alignment results file
   produced by the Bismark bisulfite mapper (in BAM/CRAM/SAM format) and extracts the
   methylation information for individual cytosines. This information is found in the
   methylation call field which can contain the following characters:
@@ -298,11 +298,11 @@ s:about: |
 
   -h/--help                Displays this help file and exits.
 
-  --mbias_only             The methylation extractor will read the entire file but only output the M-bias table and plots as 
+  --mbias_only             The methylation extractor will read the entire file but only output the M-bias table and plots as
                           well as a report (optional) and then quit. Default: OFF.
 
   --mbias_off              The methylation extractor will process the entire file as usual but doesn't write out any M-bias report.
-                          Only recommended for users who deliberately want to keep an earlier version of the M-bias report. 
+                          Only recommended for users who deliberately want to keep an earlier version of the M-bias report.
                           Default: OFF.
 
   --parallel <int>         May also be --multicore <int>. Sets the number of cores to be used for the methylation extraction process.
@@ -329,7 +329,7 @@ s:about: |
   ==========================
 
   --bedGraph               After finishing the methylation extraction, the methylation output is written into a
-                          sorted bedGraph file that reports the position of a given cytosine and its methylation 
+                          sorted bedGraph file that reports the position of a given cytosine and its methylation
                           state (in %, see details below). The methylation extractor output is temporarily split up into
                           temporary files, one per chromosome (written into the current directory or folder
                           specified with -o/--output); these temp files are then used for sorting and deleted
@@ -337,7 +337,7 @@ s:about: |
                           '--CX_context' may be used to report all cytosines irrespective of sequence context
                           (this will take MUCH longer!). The default folder for temporary files during the sorting
                           process is the output directory. The bedGraph conversion step is performed by the external
-                          module 'bismark2bedGraph'; this script needs to reside in the same folder as the 
+                          module 'bismark2bedGraph'; this script needs to reside in the same folder as the
                           bismark_methylation_extractor itself.
 
   --zero_based             Write out an additional coverage file (ending in .zero.cov) that uses 0-based genomic start
@@ -358,7 +358,7 @@ s:about: |
 
   --buffer_size <string>   This allows you to specify the main memory sort buffer when sorting the methylation information.
                           Either specify a percentage of physical memory by appending % (e.g. --buffer_size 50%) or
-        a multiple of 1024 bytes, e.g. 'K' multiplies by 1024, 'M' by 1048576 and so on for 'T' etc. 
+        a multiple of 1024 bytes, e.g. 'K' multiplies by 1024, 'M' by 1048576 and so on for 'T' etc.
                           (e.g. --buffer_size 20G). For more information on sort type 'info sort' on a command line.
                           Defaults to 2G.
 
