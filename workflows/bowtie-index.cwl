@@ -9,6 +9,27 @@ requirements:
 
 inputs:
 
+  genome_label:
+    type: string?
+    label: "Genome label"
+    doc: "Genome label is used by web-ui to show label"
+    'sd:preview':
+      position: 1
+
+  genome_description:
+    type: string?
+    label: "Genome description"
+    doc: "Genome description is used by web-ui to show description"
+    'sd:preview':
+      position: 2
+
+  genome_details:
+    type: string?
+    label: "Genome details"
+    doc: "Genome details"
+    'sd:preview':
+      position: 3
+
   genome:
     type: string
     label: "Genome"
@@ -60,6 +81,9 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "Generate genome index bowtie"
+label: "Generate genome index bowtie"
+s:alternateName: "Generates indices for Bowtie"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/dummy/bowtie-index.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -99,10 +123,7 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0001-9102-5681
 
-doc: >
-  Generates indices for bowtie v1.2.0 (12/30/2016).
-
-s:about: |
+doc: |
   Workflow makes indices for [bowtie](http://bowtie-bio.sourceforge.net/tutorial.shtml) v1.2.0 (12/30/2016).
-
-  Executes `bowtie-index` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input, returns results as a directory
+  Executes `bowtie-index` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input,
+  returns results as a directory

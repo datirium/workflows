@@ -54,9 +54,6 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
-  #  output_file:
-  #    type: string
-
   # ADVANCED
 
   extract_method:
@@ -113,9 +110,6 @@ inputs:
       advanced: true
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
-
-
-  # SYSTEM DEPENDENT
 
   threads:
     type: int?
@@ -680,6 +674,7 @@ $schemas:
 
 s:name: "CLIP-Seq pipeline for single-read experiment NNNNG"
 label: "CLIP-Seq pipeline for single-read experiment NNNNG"
+s:alternateName: "CLIP-Seq workflow for single-read experiment"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/clipseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -704,9 +699,6 @@ s:creator:
           - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  CLIP-Seq workflow for single-read experiment.
-
-s:about: |
   Cross-Linking ImmunoPrecipitation
   =================================
 

@@ -420,6 +420,9 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "Trim Galore RNA-Seq pipeline paired-end"
+label: "Trim Galore RNA-Seq pipeline paired-end"
+s:alternateName: "Run RNA-Seq BioWardrobe basic analysis with pair-end data file"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-rnaseq-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -460,9 +463,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq BioWardrobe basic analysis with pair-end data file.
-
-s:about: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for a **pair-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
@@ -475,13 +475,3 @@ s:about: |
   5. Generate BigWig file on the base of sorted BAM file
   6. Map input FASTQ files to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
-
-
-
-
-
-
-
-
-
-

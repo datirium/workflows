@@ -9,6 +9,10 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
+
 inputs:
 
   star_indices_folder:
@@ -217,7 +221,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "allele-rnaseq-pe"
+s:name: "RNA-seq alelle specific pipeline for paired-end data"
+label: "RNA-seq alelle specific pipeline for paired-end data"
+s:alternateName: "Allele specific RNA-Seq paired-end workflow"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/allele-rnaseq-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -254,4 +261,3 @@ s:creator:
 
 doc: |
   Allele specific RNA-Seq paired-end workflow
-

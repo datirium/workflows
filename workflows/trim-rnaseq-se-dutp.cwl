@@ -401,6 +401,9 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "Trim Galore RNA-Seq pipeline single-read strand specific"
+label: "Trim Galore RNA-Seq pipeline single-read strand specific"
+s:alternateName: "Run RNA-Seq dUTP BioWardrobe basic analysis with strand specific single-end data file"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-rnaseq-se-dutp.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -441,9 +444,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Runs RNA-Seq dUTP BioWardrobe basic analysis with strand specific single-end data file.
-
-s:about: |
   Note: should be updated
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for a **single-end** experiment.
@@ -457,13 +457,3 @@ s:about: |
   5. Generate BigWig file on the base of sorted BAM file
   6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
-
-
-
-
-
-
-
-
-
-

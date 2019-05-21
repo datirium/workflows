@@ -416,6 +416,9 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "RNA-Seq pipeline paired-end strand specific"
+label: "RNA-Seq pipeline paired-end strand specific"
+s:alternateName: "RNA-Seq basic analysis workflow for strand specific paired-end experiment"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-pe-dutp.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -456,9 +459,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  RNA-Seq basic analysis workflow for strand specific paired-end experiment.
-
-s:about: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for a **paired-end** experiment.
   A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
@@ -470,13 +470,3 @@ s:about: |
   4. Generate BigWig file on the base of sorted BAM file
   5. Map input FASTQ files to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   6. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
-
-
-
-
-
-
-
-
-
-

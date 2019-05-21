@@ -19,6 +19,10 @@ requirements:
       };
 
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
+
 inputs:
 
   fastq_file:
@@ -276,7 +280,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "xenbase-rnaseq-se"
+s:name: "Xenbase RNA-Seq pipeline single-read"
+label: "Xenbase RNA-Seq pipeline single-read"
+s:alternateName: "XenBase workflow for analysing RNA-Seq single-read data"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/xenbase-rnaseq-se.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -312,9 +319,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  XenBase workflow for analysing RNA-Seq single-end data
-
-s:about: |
   1. Convert input SRA file into pair of upsrtream and downstream FASTQ files (run fastq-dump)
   2. Analyze quality of FASTQ files (run fastqc with each of the FASTQ files)
   3. If any of the following fields in fastqc generated report is marked as failed for at least one of input FASTQ files:

@@ -471,6 +471,9 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "RNA-Seq pipeline paired-end stranded mitochondrial"
+label: "RNA-Seq pipeline paired-end stranded mitochondrial"
+s:alternateName: "RNA-Seq strand specific mitochondrial workflow for pair-end experiment based on BioWardrobe's basic analysis"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-pe-dutp-mitochondrial.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -494,9 +497,6 @@ s:creator:
     - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  RNA-Seq strand specific mitochondrial workflow for pair-end experiment based on BioWardrobe's basic analysis.
-
-s:about: |
   Slightly changed original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **RNA-Seq** basic analysis for **strand specific pair-end** experiment.
   An additional steps were added to map data to mitochondrial chromosome only and then merge the output.
@@ -510,13 +510,3 @@ s:about: |
   5. Generate BigWig file on the base of sorted BAM file
   6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using `GEEP` reads-counting utility; export results to file
-
-
-
-
-
-
-
-
-
-

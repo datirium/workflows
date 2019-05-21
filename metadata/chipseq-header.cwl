@@ -3,11 +3,17 @@ class: Workflow
 
 inputs:
 
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
+
   cells:
     type: string
     label: "Cells"
     sd:preview:
-      position: 1
+      position: 2
 
   conditions:
     type: string
@@ -15,16 +21,9 @@ inputs:
     sd:preview:
       position: 3
 
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 2
-
   catalog:
     type: string?
     label: "Catalog #"
 
 outputs: []
 steps: []
-

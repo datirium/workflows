@@ -153,7 +153,10 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "bismark-methylation"
+s:name: "Bismark Methylation - pipeline to map bisulfite converted sequence reads and determine cytosine methylation states"
+label: "Bismark Methylation - pipeline to map bisulfite converted sequence reads and determine cytosine methylation states"
+s:alternateName: "Bismark Methylation Pipeline used for Methylation (BS-Seq) data analysis"
+
 s:downloadUrl: https://github.com/Barski-lab/workflows/blob/master/workflows/bismark-methylation.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -189,10 +192,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Bismark Methylation pipeline.
-
-s:about: |
-
   Sequence reads are first cleaned from adapters and transformed into fully bisulfite-converted forward (C->T) and reverse
   read (G->A conversion of the forward strand) versions, before they are aligned to similarly converted versions of the
   genome (also C->T and G->A converted). Sequence reads that produce a unique best alignment from the four alignment processes

@@ -17,16 +17,6 @@ requirements:
 
 inputs:
 
-# MAIN
-#        1       |       2       |       3       |       4
-# ---------------------------------------------------------------
-#|        indices_folder         |         control_file          |
-# ---------------------------------------------------------------
-#|          broad_peak           |                               |
-# ---------------------------------------------------------------
-#|                          fastq_file                           |
-# ---------------------------------------------------------------
-
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
@@ -74,16 +64,6 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
-# ADVANCED
-#        1       |       2       |       3       |       4
-# ---------------------------------------------------------------
-#|      exp_fragment_size        |     force_fragment_size       |
-# ---------------------------------------------------------------
-#|          clip_3p_end          |         clip_5p_end           |
-# ---------------------------------------------------------------
-#|      remove_duplicates        |                               |
-# ---------------------------------------------------------------
-
   exp_fragment_size:
     type: int?
     default: 150
@@ -123,8 +103,6 @@ inputs:
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
-
-# SYSTEM DEPENDENT
 
   threads:
     type: int?
@@ -479,6 +457,8 @@ $schemas:
 
 label: "ChIP-Seq pipeline single-read"
 s:name: "ChIP-Seq pipeline single-read"
+s:alternateName: "ChIP-Seq basic analysis workflow for a single-read experiment"
+
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -513,10 +493,7 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: >
-  ChIP-Seq basic analysis workflow for a single-read experiment.
-
-s:about: |
+doc: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **ChIP-Seq** basic analysis workflow for a **single-read** experiment.
   A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
