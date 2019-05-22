@@ -133,7 +133,7 @@ outputs:
       "File contains nearest gene information, the M-A values and normalized read
        density of each peak, common peaks from two samples are merged together.
        Coordinates in a result file is under 1-based coordinate-system"
-    outputSource: restore_columns/restored_peak_file
+    outputSource: restore_columns/output_file
     'sd:visualPlugins':
     - syncfusiongrid:
         Title: 'MAnorm Common Peak Results'
@@ -294,48 +294,29 @@ steps:
       - read_density_on_common_peaks_plot
 
   filter_columns:
+    run: ../tools/custom-bash.cwl
     in:
-      peak_file: manorm/ma_values_file
+      input_file: manorm/ma_values_file
       script:
         default: >
           cat $0 | grep -v "start" | awk
           'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
           {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t"NR"\t0\t0\t0\t0"}' > `basename $0`
-    out: [filtered_peak_file]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      inputs:
-        script:
-          type: string
-          inputBinding:
-            position: 1
-        peak_file:
-          type: File
-          inputBinding:
-            position: 2
-      outputs:
-        filtered_peak_file:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: [bash, '-c']
+    out: [output_file]
 
   assign_genes:
       run: ../tools/iaintersect.cwl
       in:
-        input_filename: filter_columns/filtered_peak_file
+        input_filename: filter_columns/output_file
         annotation_filename: annotation_file
         promoter_bp:
           default: 1000
       out: [result_file]
 
   restore_columns:
+    run: ../tools/custom-bash.cwl
     in:
-      peak_files: [assign_genes/result_file, manorm/ma_values_file]
+      input_file: [assign_genes/result_file, manorm/ma_values_file]
       script:
         default: |
           cat $0 | grep -v "start" | sort -k 11n > sorted_iaintersect_result.tsv
@@ -343,28 +324,7 @@ steps:
           echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tsummit\tM_value\tA_value\tP_value\tPeak_Group\tnormalized_read_density_in_sample_1\tnormalized_read_density_in_sample_2" > `basename $0`;
           cat sorted_iaintersect_result.tsv | paste - manorm_result.tsv | cut -f 1-9,15,19-25 >> `basename $0`
           rm sorted_iaintersect_result.tsv manorm_result.tsv
-    out: [restored_peak_file]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      inputs:
-        script:
-          type: string
-          inputBinding:
-            position: 1
-        peak_files:
-          type: File[]
-          inputBinding:
-            position: 2
-      outputs:
-        restored_peak_file:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: [bash, '-c']
+    out: [output_file]
 
 
 $namespaces:
