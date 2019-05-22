@@ -256,6 +256,19 @@ outputs:
     - image:
         Caption: 'Read density on common peaks'
 
+  manorm_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "MAnorm stderr log"
+    doc: "MAnorm stderr log"
+    outputSource: manorm/stderr_log
+
+  manorm_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "MAnorm stdout log"
+    doc: "MAnorm stdout log"
+    outputSource: manorm/stdout_log
 
 steps:
 
@@ -292,6 +305,8 @@ steps:
       - ma_after_normalization_plot
       - ma_with_P_value_plot
       - read_density_on_common_peaks_plot
+      - stderr_log
+      - stdout_log
 
   filter_columns:
     run: ../tools/custom-bash.cwl
