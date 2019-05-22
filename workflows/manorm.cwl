@@ -33,32 +33,32 @@ inputs:
 
   peak_file_first:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "ChIP-Seq sample one"
-    doc: "TSV peak file, formatted as iaintersect output"
-    'sd:upstreamSource': "first_chipseq_sample/iaintersect_result"
+    format: "http://edamontology.org/format_3468"
+    label: "ChIP-Seq sample 1"
+    doc: "XLS peak file from sample 1, formatted as MACS2 output"
+    'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
   peak_file_second:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "ChIP-Seq sample two"
-    doc: "TSV peak file, formatted as iaintersect output"
-    'sd:upstreamSource': "second_chipseq_sample/iaintersect_result"
+    format: "http://edamontology.org/format_3468"
+    label: "ChIP-Seq sample 2"
+    doc: "XLS peak file from sample 2, formatted as MACS2 output"
+    'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
   bam_file_first:
     type: File
     format: "http://edamontology.org/format_2572"
-    label: "First BAM file"
-    doc: "BAM alignment file"
+    label: "BAM file from sample 1"
+    doc: "BAM alignment file from sample 1"
     'sd:upstreamSource': "first_chipseq_sample/bambai_pair"
 
   bam_file_second:
     type: File
     format: "http://edamontology.org/format_2572"
-    label: "Second BAM file"
-    doc: "BAM alignment file"
+    label: "BAM file from sample 2"
+    doc: "BAM alignment file from sample 2"
     'sd:upstreamSource': "second_chipseq_sample/bambai_pair"
 
   annotation_file:
@@ -68,95 +68,234 @@ inputs:
     doc: "Tab-separated annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
 
-  fragment_size_first:
+  shift_size_first:
     type: int?
-    label: "First fragment size"
-    doc: "Fragment size, int"
-    default: 150
+    label: "Reads shift size for sample 1"
+    doc: |
+      "Reads shift size of sample 1. This value is used to shift reads towards 3' direction
+       to determine the precise binding site. Set as half of the fragment length.
+       Default 100"
     'sd:layout':
       advanced: true
 
-  fragment_size_second:
+  shift_size_second:
     type: int?
-    label: "Second fragment size"
-    doc: "Fragment size, int"
-    default: 150
+    label: "Reads shift size for sample 2"
+    doc: |
+      "Reads shift size of sample 2. This value is used to shift reads towards 5' direction
+       to determine the precise binding site. Set as half of the fragment length.
+       Default 100"
     'sd:layout':
       advanced: true
 
-  output_filename:
-    type: string?
-    label: "MAnorm output TSV filename"
-    doc: "MAnorm output TSV filename"
-    default: "manorm_common_peak.tsv"
+  paired_end:
+    type: boolean?
+    label: "Process as paired-end data"
+    doc: |
+      "If enebled the middle point of each read pair is used to represent
+       the genomic locus of underlying DNA fragment. shift_size_first and
+       shift_size_second are ignored with this option on"
     'sd:layout':
       advanced: true
+
+  m_value_cutoff:
+    type: float?
+    label: "M-value (log2-ratio) cutoff"
+    doc: "Absolute M-value (log2-ratio) cutoff to define biased (differential binding) peaks. Default: 1.0"
+    'sd:layout':
+      advanced: true
+
+  p_value_cutoff:
+    type: float?
+    label: "P-value cutoff"
+    doc: "P-value cutoff to define biased peaks. Default: 0.01"
+    'sd:layout':
+      advanced: true
+
+  window_size:
+    type: int?
+    label: "Window size"
+    doc: |
+      "Window size to count reads and calculate read densities. 2000 is recommended for
+      sharp histone marks like H3K4me3 and H3K27ac, and 1000 for TFs or DNase-seq.
+      Default: 2000"
+    'sd:layout':
+      advanced: true
+
 
 outputs:
 
   common_peak_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "MAnorm common peak resutls, TSV"
-    doc: "MAnorm generated list of common peaks with assigned genes"
+    label: "MAnorm common peak file with assigned genes"
+    doc: |
+      "File contains nearest gene information, the M-A values and normalized read
+       density of each peak, common peaks from two samples are merged together.
+       Coordinates in a result file is under 1-based coordinate-system"
     outputSource: restore_columns/restored_peak_file
     'sd:visualPlugins':
     - syncfusiongrid:
         Title: 'MAnorm Common Peak Results'
 
+  above_m_cutoff_peak_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Above M-value cutoff peak file"
+    doc: "Above M-value cutoff peak file"
+    outputSource: manorm/above_m_cutoff_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Above M-value cutoff peaks"
+        height: 120
+
+  below_m_cutoff_peak_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Below M-value cutoff peak file"
+    doc: "Below M-value cutoff peak file"
+    outputSource: manorm/below_m_cutoff_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Below M-value cutoff peaks"
+        height: 120
+
+  unbiased_peak_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Unbiased peak file"
+    doc: "Unbiased peak file"
+    outputSource: manorm/unbiased_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Unbiased peaks"
+        height: 120
+
+  m_values_wig_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Genome track file for M-values"
+    doc: "Genome track file for M-values"
+    outputSource: manorm/m_values_wig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "M-values"
+        height: 120
+
+  a_values_wig_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Genome track file for A-values"
+    doc: "Genome track file for A-values"
+    outputSource: manorm/a_values_wig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "A-values"
+        height: 120
+
+  p_values_wig_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Genome track file for P-values"
+    doc: "Genome track file for P-values"
+    outputSource: manorm/p_values_wig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "P-values"
+        height: 120
+
+  ma_before_normalization_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "MA-values before normalization plot"
+    doc: "MA-values before normalization plot"
+    outputSource: manorm/ma_before_normalization_plot
+    'sd:visualPlugins':
+    - image:
+        Caption: 'MA-values before normalization'
+
+  ma_after_normalization_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "MA-values after normalization plot"
+    doc: "MA-values after normalization plot"
+    outputSource: manorm/ma_after_normalization_plot
+    'sd:visualPlugins':
+    - image:
+        Caption: 'MA-values after normalization'
+
+  ma_with_P_value_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "MA-values with P-values plot"
+    doc: "MA-values with P-values plot"
+    outputSource: manorm/ma_with_P_value_plot
+    'sd:visualPlugins':
+    - image:
+        Caption: 'MA-values with P-values'
+
+  read_density_on_common_peaks_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Read density on common peaks plot"
+    doc: "Read density on common peaks plot"
+    outputSource: manorm/read_density_on_common_peaks_plot
+    'sd:visualPlugins':
+    - image:
+        Caption: 'Read density on common peaks'
+
 
 steps:
 
   manorm:
+    run: ../tools/manorm.cwl
     in:
       peak_file_first: peak_file_first
       peak_file_second: peak_file_second
-      bam_file_first: bam_file_first
-      bam_file_second: bam_file_second
-      fragment_size_first: fragment_size_first
-      fragment_size_second: fragment_size_second
-    out: [common_peak_file]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/manorm:v0.0.1
-      inputs:
-        peak_file_first:
-          type: File
-          inputBinding:
-            position: 5
-        peak_file_second:
-          type: File
-          inputBinding:
-            position: 6
-        bam_file_first:
-          type: File
-          inputBinding:
-            position: 7
-        bam_file_second:
-          type: File
-          inputBinding:
-            position: 9
-        fragment_size_first:
-          type: int
-          inputBinding:
-            position: 10
-        fragment_size_second:
-          type: int
-          inputBinding:
-            position: 11
-      outputs:
-        common_peak_file:
-          type: File
-          outputBinding:
-            glob: "MAnorm_result_commonPeak_merged.xls"
-      baseCommand: ["run_manorm.sh"]
+      peak_format:
+        default: "macs2"
+      read_file_first: bam_file_first
+      read_file_second: bam_file_second
+      read_format:
+        default: "bam"
+      shift_size_first: shift_size_first
+      shift_size_second: shift_size_second
+      paired_end: paired_end
+      m_value_cutoff: m_value_cutoff
+      p_value_cutoff: p_value_cutoff
+      window_size: window_size
+      sample_name_first:
+        default: "sample_1"
+      sample_name_second:
+        default: "sample_2"
+    out:
+      - ma_values_file
+      - above_m_cutoff_peak_file
+      - below_m_cutoff_peak_file
+      - unbiased_peak_file
+      - m_values_wig_file
+      - a_values_wig_file
+      - p_values_wig_file
+      - ma_before_normalization_plot
+      - ma_after_normalization_plot
+      - ma_with_P_value_plot
+      - read_density_on_common_peaks_plot
 
   filter_columns:
     in:
-      peak_file: manorm/common_peak_file
+      peak_file: manorm/ma_values_file
       script:
         default: >
           cat $0 | grep -v "start" | awk
@@ -186,60 +325,23 @@ steps:
       baseCommand: [bash, '-c']
 
   assign_genes:
+      run: ../tools/iaintersect.cwl
       in:
-        peak_file: filter_columns/filtered_peak_file
-        annotation_file: annotation_file
-        output_filename: output_filename
+        input_filename: filter_columns/filtered_peak_file
+        annotation_filename: annotation_file
         promoter_bp:
           default: 1000
-      out: [peaks_and_genes_file]
-      run:
-        cwlVersion: v1.0
-        class: CommandLineTool
-        requirements:
-        - class: DockerRequirement
-          dockerPull: biowardrobe2/iaintersect:v0.0.2
-        inputs:
-          peak_file:
-            type: File
-            inputBinding:
-              position: 1
-              prefix: --in=
-              separate: false
-          annotation_file:
-            type: File
-            inputBinding:
-              position: 2
-              prefix: --a=
-              separate: false
-          output_filename:
-            type: string
-            inputBinding:
-              position: 3
-              prefix: --out=
-              separate: false
-          promoter_bp:
-            type: int
-            inputBinding:
-              position: 4
-              prefix: --promoter=
-              separate: false
-        outputs:
-          peaks_and_genes_file:
-            type: File
-            outputBinding:
-              glob: $(inputs.output_filename)
-        baseCommand: [iaintersect]
+      out: [result_file]
 
   restore_columns:
     in:
-      peak_files: [assign_genes/peaks_and_genes_file, manorm/common_peak_file]
+      peak_files: [assign_genes/result_file, manorm/ma_values_file]
       script:
         default: |
           cat $0 | grep -v "start" | sort -k 11n > sorted_iaintersect_result.tsv
           cat $1 | grep -v "start" > manorm_result.tsv
-          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tdescription\t#raw_read_1\t#raw_read_2\tM_value_rescaled\tA_value_rescaled\t-log10(p-value)" > `basename $0`;
-          cat sorted_iaintersect_result.tsv | paste - manorm_result.tsv | cut -f 1-9,15,19-24 >> `basename $0`
+          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tsummit\tM_value\tA_value\tP_value\tPeak_Group\tnormalized_read_density_in_sample_1\tnormalized_read_density_in_sample_2" > `basename $0`;
+          cat sorted_iaintersect_result.tsv | paste - manorm_result.tsv | cut -f 1-9,15,19-25 >> `basename $0`
           rm sorted_iaintersect_result.tsv manorm_result.tsv
     out: [restored_peak_file]
     run:

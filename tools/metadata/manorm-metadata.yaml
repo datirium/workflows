@@ -1,0 +1,4 @@
+class: s:SoftwareSourceCode
+s:name: "MAnorm"
+s:about: |
+  MAnorm is a robust model for quantitative comparison of ChIP-Seq data sets of TFs (transcription factors) or epigenetic modifications.
