@@ -153,9 +153,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "Bismark Methylation - pipeline to map bisulfite converted sequence reads and determine cytosine methylation states"
-label: "Bismark Methylation - pipeline to map bisulfite converted sequence reads and determine cytosine methylation states"
-s:alternateName: "Bismark Methylation Pipeline used for Methylation (BS-Seq) data analysis"
+s:name: "Bismark Methylation - pipeline for BS-Seq data analysis"
+label: "Bismark Methylation - pipeline for BS-Seq data analysis"
+s:alternateName: "Bisulfite-Sequencing analysis pipeline to map bisulfite converted sequence reads and determine cytosine methylation states"
 
 s:downloadUrl: https://github.com/Barski-lab/workflows/blob/master/workflows/bismark-methylation.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
