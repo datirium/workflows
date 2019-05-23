@@ -25,11 +25,10 @@ inputs:
     'sd:preview':
       position: 3
 
-  fasta:
-    type: File
-    label: "Genome FASTA file"
-    format: "http://edamontology.org/format_1929"
-    doc: "Reference genome FASTA file"
+  genome_folder:
+    type: Directory
+    label: "Folder with the genome FASTA files"
+    doc: "Folder with the genome FASTA files (*.fa, *.fasta)"
 
 
 outputs:
@@ -43,33 +42,10 @@ outputs:
 
 steps:
 
-  fasta_to_folder:
-    in:
-      fasta: fasta
-    out: [genome_folder]
-    run:
-      cwlVersion: v1.0
-      class: ExpressionTool
-      requirements:
-      - class: InlineJavascriptRequirement
-      inputs:
-        fasta:
-          type: File
-      outputs:
-        genome_folder: Directory
-      expression: |
-        ${
-          return { "genome_folder": {
-            "class": "Directory",
-            "basename": inputs.fasta.basename.split('.').slice(0,-1).join('.'),
-            "listing": [inputs.fasta]
-          }};
-        }
-
   prepare_indices:
     run: ../tools/bismark-prepare-genome.cwl
     in:
-      genome_folder: fasta_to_folder/genome_folder
+      genome_folder: genome_folder
     out: [indices_folder]
 
 
@@ -118,5 +94,5 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Copy input fasta file to the folder and run bismark_genome_preparation script to prepare indices for Bismark Methylation Analysis.
-  Bowtie2 aligner is used by default. The name of the output indices folder is equal to the fasta file basename without extension.
+  Run bismark_genome_preparation script to prepare indices for Bismark Methylation Analysis.
+  Bowtie2 aligner is used by default. The name of the output indices folder is equal to the genome folder name.
