@@ -292,6 +292,14 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Preseq estimated results"
     outputSource: preseq/estimates_file
+    'sd:visualPlugins':
+    - scatter:
+        Title: 'Preseq Estimates'
+        xAxisTitle: 'Total reads count'
+        yAxisTitle: 'Expected distinct reads count'
+        colors: ["#4b78a3"]
+        height: 400
+        data: [$1, $2]
 
 steps:
 
