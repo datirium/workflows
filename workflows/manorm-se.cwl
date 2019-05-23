@@ -11,13 +11,9 @@ requirements:
 'sd:upstream':
   first_chipseq_sample:
     - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
   second_chipseq_sample:
     - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
   genome_indices:
     - "genome-indices.cwl"
@@ -34,7 +30,7 @@ inputs:
   peak_file_first:
     type: File
     format: "http://edamontology.org/format_3468"
-    label: "ChIP-Seq sample 1"
+    label: "ChIP-Seq SE sample 1"
     doc: "XLS peak file from sample 1, formatted as MACS2 output"
     'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
@@ -42,7 +38,7 @@ inputs:
   peak_file_second:
     type: File
     format: "http://edamontology.org/format_3468"
-    label: "ChIP-Seq sample 2"
+    label: "ChIP-Seq SE sample 2"
     doc: "XLS peak file from sample 2, formatted as MACS2 output"
     'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
@@ -85,16 +81,6 @@ inputs:
       "Reads shift size of sample 2. This value is used to shift reads towards 5' direction
        to determine the precise binding site. Set as half of the fragment length.
        Default 100"
-    'sd:layout':
-      advanced: true
-
-  paired_end:
-    type: boolean?
-    label: "Process as paired-end data"
-    doc: |
-      "If enebled the middle point of each read pair is used to represent
-       the genomic locus of underlying DNA fragment. shift_size_first and
-       shift_size_second are ignored with this option on"
     'sd:layout':
       advanced: true
 
@@ -285,7 +271,6 @@ steps:
         default: "bam"
       shift_size_first: shift_size_first
       shift_size_second: shift_size_second
-      paired_end: paired_end
       m_value_cutoff: m_value_cutoff
       p_value_cutoff: p_value_cutoff
       window_size: window_size
@@ -348,11 +333,11 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "MAnorm - quantitative comparison of ChIP-Seq data"
-label: "MAnorm - quantitative comparison of ChIP-Seq data"
-s:alternateName: "MAnorm is a robust model for quantitative comparison of ChIP-Seq data sets of TFs (transcription factors) or epigenetic modifications."
+s:name: "MAnorm SE - quantitative comparison of ChIP-Seq single-read data"
+label: "MAnorm SE - quantitative comparison of ChIP-Seq single-read data"
+s:alternateName: "MAnorm is a robust model for quantitative comparison of ChIP-Seq single-read data sets of TFs (transcription factors) or epigenetic modifications"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/manorm.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/manorm-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -401,3 +386,50 @@ doc: |
   ----------------
 
   MAnorm uses common peaks of two samples as a reference to build the rescaling model for normalization, which is based on the empirical assumption that if a chromatin-associated protein has a substantial number of peaks shared in two conditions, the binding at these common regions will tend to be determined by similar mechanisms, and thus should exhibit similar global binding intensities across samples. The observed differences on common peaks are presumed to reflect the scaling relationship of ChIP-Seq signals between two samples, which can be applied to all peaks.
+
+  What do the inputs mean?
+  ----------------
+
+  ### General
+
+  **Experiment short name/Alias**
+
+  * short name for you experiment to identify among the others
+
+  **ChIP-Seq SE sample 1**
+  * previously analyzed ChIP-Seq single-read experiment to be used as Sample 1
+
+  **ChIP-Seq SE sample 2**
+
+  * previously analyzed ChIP-Seq single-read experiment to be used as Sample 2
+
+  **Genome**
+
+  * Reference genome to be used for gene assigning
+
+  ### Advanced
+
+  **Reads shift size for sample 1**
+
+  * This value is used to shift reads towards 3' direction to determine
+    the precise binding site. Set as half of the fragment length. Default 100
+
+  **Reads shift size for sample 2**
+
+  * This value is used to shift reads towards 5' direction to determine
+    the precise binding site. Set as half of the fragment length. Default 100
+
+  **M-value (log2-ratio) cutoff**
+
+  * Absolute M-value (log2-ratio) cutoff to define biased (differential binding)
+    peaks. Default: 1.0
+
+  **P-value cutoff**
+
+  * P-value cutoff to define biased peaks. Default: 0.01
+
+  **Window size**
+
+  * Window size to count reads and calculate read densities. 2000 is recommended for
+    sharp histone marks like H3K4me3 and H3K27ac, and 1000 for TFs or DNase-seq.
+    Default: 2000
