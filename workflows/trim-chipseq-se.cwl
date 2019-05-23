@@ -17,16 +17,6 @@ requirements:
 
 inputs:
 
-# MAIN
-#        1       |       2       |       3       |       4
-# ---------------------------------------------------------------
-#|        indices_folder         |         control_file          |
-# ---------------------------------------------------------------
-#|          broad_peak           |                               |
-# ---------------------------------------------------------------
-#|                          fastq_file                           |
-# ---------------------------------------------------------------
-
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
@@ -73,16 +63,6 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
-# ADVANCED
-#        1       |       2       |       3       |       4
-# ---------------------------------------------------------------
-#|      exp_fragment_size        |     force_fragment_size       |
-# ---------------------------------------------------------------
-#|          clip_3p_end          |         clip_5p_end           |
-# ---------------------------------------------------------------
-#|      remove_duplicates        |                               |
-# ---------------------------------------------------------------
-
   exp_fragment_size:
     type: int?
     default: 150
@@ -122,8 +102,6 @@ inputs:
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
-
-# SYSTEM DEPENDENT
 
   threads:
     type: int?
@@ -313,6 +291,13 @@ outputs:
     doc: "TrimGalore generated log"
     outputSource: trim_fastq/report_file
 
+  preseq_estimates:
+    type: File?
+    label: "Preseq estimates"
+    format: "http://edamontology.org/format_3475"
+    doc: "Preseq estimated results"
+    outputSource: preseq/estimates_file
+
 steps:
 
   extract_fastq:
@@ -379,6 +364,12 @@ steps:
       sort_input: bowtie_aligner/sam_file
       threads: threads
     out: [bam_bai_pair]
+
+  preseq:
+    run: ../tools/preseq-lc-extrap.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+    out: [estimates_file]
 
   samtools_rmdup:
     run: ../tools/samtools-rmdup.cwl

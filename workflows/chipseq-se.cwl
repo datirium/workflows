@@ -342,8 +342,6 @@ steps:
     run: ../tools/preseq-lc-extrap.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      pe_mode:
-        default: true
     out: [estimates_file]
 
   samtools_rmdup:
