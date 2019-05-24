@@ -2,18 +2,18 @@ cwlVersion: v1.0
 class: Workflow
 
 requirements:
-- class: SubworkflowFeatureRequirement
-- class: ScatterFeatureRequirement
-- class: StepInputExpressionRequirement
-- class: InlineJavascriptRequirement
-- class: MultipleInputFeatureRequirement
+  - class: SubworkflowFeatureRequirement
+  - class: ScatterFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
 
 'sd:metadata':
   - "../metadata/chipseq-header.cwl"
 
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
-  control_file: "chipseq-pe.cwl"
+  control_file: "trim-atacseq-se.cwl"
 
 inputs:
 
@@ -57,17 +57,11 @@ inputs:
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
-  fastq_file_upstream:
+  fastq_file:
     type: File
-    label: "FASTQ upstream input file"
+    label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
-
-  fastq_file_downstream:
-    type: File
-    label: "FASTQ downstream input file"
-    format: "http://edamontology.org/format_1930"
-    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after single end sequencing"
 
   exp_fragment_size:
     type: int?
@@ -132,41 +126,21 @@ outputs:
         name: "BigWig Track"
         height: 120
 
-  fastx_statistics_upstream:
+  fastx_statistics:
     type: File
-    label: "FASTQ upstream statistics"
+    label: "FASTQ statistics"
     format: "http://edamontology.org/format_2330"
-    doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_upstream/statistics_file
+    doc: "fastx_quality_stats generated FASTQ file quality statistics file"
+    outputSource: fastx_quality_stats/statistics_file
     'sd:visualPlugins':
     - line:
-        Title: 'Upstream Base frequency plot'
+        Title: 'Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
-        Title: 'Upstream Quality Control'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Quality score'
-        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-        data: [$11, $7, $8, $9, $12]
-
-  fastx_statistics_downstream:
-    type: File
-    label: "FASTQ downstream statistics"
-    format: "http://edamontology.org/format_2330"
-    doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
-    outputSource: fastx_quality_stats_downstream/statistics_file
-    'sd:visualPlugins':
-    - line:
-        Title: 'Downstream Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-        data: [$13, $14, $15, $16, $17]
-    - boxplot:
-        Title: 'Downstream Quality Control'
+        Title: 'Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -287,9 +261,9 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "Old Bowtie & Samtools Rmdup combined log"
+    label: "BioWardrobe compatible Bowtie & Samtools Rmdup combined log"
     format: "http://edamontology.org/format_2330"
-    doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
+    doc: "BioWardrobe compatible processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
 
   get_stat_formatted_log:
@@ -311,6 +285,12 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_callpeak/macs2_stat_file
 
+  trim_report:
+    type: File
+    label: "TrimGalore report"
+    doc: "TrimGalore generated log"
+    outputSource: trim_fastq/report_file
+
   preseq_estimates:
     type: File?
     label: "Preseq estimates"
@@ -328,35 +308,44 @@ outputs:
 
 steps:
 
-  extract_fastq_upstream:
+  extract_fastq:
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: fastq_file_upstream
+      compressed_file: fastq_file
     out: [fastq_file]
 
-  extract_fastq_downstream:
-    run: ../tools/extract-fastq.cwl
+  trim_fastq:
+    run: ../tools/trimgalore.cwl
     in:
-      compressed_file: fastq_file_downstream
-    out: [fastq_file]
+      input_file: extract_fastq/fastq_file
+      dont_gzip:
+        default: true
+      length:
+        default: 30
+    out:
+      - trimmed_file
+      - report_file
 
-  fastx_quality_stats_upstream:
+  rename:
+    run: ../tools/rename.cwl
+    in:
+      source_file: trim_fastq/trimmed_file
+      target_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.basename)
+    out:
+      - target_file
+
+  fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: extract_fastq_upstream/fastq_file
-    out: [statistics_file]
-
-  fastx_quality_stats_downstream:
-    run: ../tools/fastx-quality-stats.cwl
-    in:
-      input_file: extract_fastq_downstream/fastq_file
+      input_file: rename/target_file
     out: [statistics_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
-      upstream_filelist: extract_fastq_upstream/fastq_file
-      downstream_filelist: extract_fastq_downstream/fastq_file
+      upstream_filelist: rename/target_file
       indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -388,8 +377,6 @@ steps:
     run: ../tools/preseq-lc-extrap.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      pe_mode:
-        default: true
     out: [estimates_file]
 
   samtools_rmdup:
@@ -397,6 +384,8 @@ steps:
     in:
       trigger: remove_duplicates
       bam_file: samtools_sort_index/bam_bai_pair
+      single_end:
+        default: true
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
@@ -432,21 +421,21 @@ steps:
       q_value:
         default: 0.05
       format_mode:
-        default: BAMPE
+        default: BAM
       buffer_size:
         default: 10000
     out:
-    - peak_xls_file
-    - narrow_peak_file
-    - peak_summits_file
-    - broad_peak_file
-    - moder_r_file
-    - gapped_peak_file
-    - treat_pileup_bdg_file
-    - control_lambda_bdg_file
-    - macs_log
-    - macs2_stat_file
-    - macs2_fragments_calculated
+      - peak_xls_file
+      - narrow_peak_file
+      - peak_summits_file
+      - broad_peak_file
+      - moder_r_file
+      - gapped_peak_file
+      - treat_pileup_bdg_file
+      - control_lambda_bdg_file
+      - macs_log
+      - macs2_stat_file
+      - macs2_fragments_calculated
 
   bam_to_bigwig:
     run: ../subworkflows/bam-bedgraph-bigwig.cwl
@@ -454,44 +443,44 @@ steps:
       bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: get_stat/mapped_reads
-      pairchip:
-        default: true
+      fragment_size:
+        default: 9
     out: [bigwig_file]
 
   get_stat:
-    run: ../tools/python-get-stat-chipseq.cwl
-    in:
-      bowtie_log: bowtie_aligner/log_file
-      rmdup_log: samtools_rmdup/rmdup_log
-    out: [output_file, formatted_output_file, mapped_reads]
+      run: ../tools/python-get-stat-chipseq.cwl
+      in:
+        bowtie_log: bowtie_aligner/log_file
+        rmdup_log: samtools_rmdup/rmdup_log
+      out: [output_file, formatted_output_file, mapped_reads]
 
   island_intersect:
-    run: ../tools/iaintersect.cwl
-    in:
-      input_filename: macs2_callpeak/peak_xls_file
-      annotation_filename: annotation_file
-      promoter_bp:
-        default: 1000
-    out: [result_file, log_file]
+      run: ../tools/iaintersect.cwl
+      in:
+        input_filename: macs2_callpeak/peak_xls_file
+        annotation_filename: annotation_file
+        promoter_bp:
+          default: 1000
+      out: [result_file, log_file]
 
   average_tag_density:
-    run: ../tools/atdp.cwl
-    in:
-      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
-      annotation_filename: annotation_file
-      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
-      avd_window_bp:
-        default: 5000
-      avd_smooth_bp:
-        default: 50
-      ignore_chr:
-        default: chrM
-      double_chr:
-        default: "chrX chrY"
-      avd_heat_window_bp:
-        default: 200
-      mapped_reads: get_stat/mapped_reads
-    out: [result_file, log_file]
+      run: ../tools/atdp.cwl
+      in:
+        input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+        annotation_filename: annotation_file
+        fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+        avd_window_bp:
+          default: 5000
+        avd_smooth_bp:
+          default: 50
+        ignore_chr:
+          default: chrM
+        double_chr:
+          default: "chrX chrY"
+        avd_heat_window_bp:
+          default: 200
+        mapped_reads: get_stat/mapped_reads
+      out: [result_file, log_file]
 
 
 $namespaces:
@@ -500,11 +489,11 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-label: "ChIP-Seq pipeline paired-end"
-s:name: "ChIP-Seq pipeline paired-end"
-s:alternateName: "ChIP-Seq basic analysis workflow for a paired-end experiment"
+s:name: "Trim Galore ATAC-Seq pipeline single-read"
+label: "Trim Galore ATAC-Seq pipeline single-read"
+s:alternateName: "ATAC-Seq basic analysis workflow for a single-read experiment with Trim Galore"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-atacseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -540,31 +529,41 @@ s:creator:
 
 doc: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **ChIP-Seq** basic analysis workflow for a **paired-end** experiment.
-  A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
+  **ChIP-Seq** basic analysis workflow for a **single-read** experiment with Trim Galore.
+  The pipeline was adapted for ATAC-Seq single-read data analysis by updating genome coverage step.
 
-  The pipeline produces a sorted BAM file alongside with index BAI file, quality
-  statistics of the input FASTQ file, coverage by estimated fragments as a BigWig file, peaks calling
+  _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
+  and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
+  apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data.
+
+  In outputs it returns coordinate sorted BAM file alongside with index BAI file, quality
+  statistics of the input FASTQ file, reads coverage in a form of BigWig file, peaks calling
   data in a form of narrowPeak or broadPeak files, islands with the assigned nearest genes and
-  region type, data for average tag density plot.
+  region type, data for average tag density plot (on the base of BAM file).
 
   Workflow starts with step *fastx\_quality\_stats* from FASTX-Toolkit
   to calculate quality statistics for input FASTQ file.
 
   At the same time `bowtie` is used to align
   reads from input FASTQ file to reference genome *bowtie\_aligner*. The output of this step
-  is an unsorted SAM file which is being sorted and indexed by `samtools sort` and `samtools index`
+  is unsorted SAM file which is being sorted and indexed by `samtools sort` and `samtools index`
   *samtools\_sort\_index*.
 
-  Depending on workflow’s input parameters indexed and sorted BAM file
+  Based on workflow’s input parameters indexed and sorted BAM file
   can be processed by `samtools rmdup` *samtools\_rmdup* to get rid of duplicated reads.
-  If removing duplicates is not required the original BAM and BAI
-  files are returned. Otherwise step *samtools\_sort\_index\_after\_rmdup* repeat `samtools sort` and `samtools index` with BAM and BAI files without duplicates.
+  If removing duplicates is not required the original input BAM and BAI
+  files return. Otherwise step *samtools\_sort\_index\_after\_rmdup* repeat `samtools sort` and `samtools index` with BAM and BAI files.
 
-  Next `macs2 callpeak` performs peak calling *macs2\_callpeak* and the next step
-  reports *macs2\_island\_count*  the number of islands and estimated fragment size. If the latter
-  is less that 80bp (hardcoded in the workflow) `macs2 callpeak` is rerun again with forced fixed
-  fragment size value (*macs2\_callpeak\_forced*). It is also possible to force MACS2 to use pre set  fragment size in the first place.
+  Right after that `macs2 callpeak` performs peak calling *macs2\_callpeak*. On the base of returned outputs the next step
+  *macs2\_island\_count* calculates the number of islands and estimated fragment size. If the last
+  one is less that 80bp (hardcoded in the workflow) `macs2 callpeak` is rerun again with forced fixed
+  fragment size value (*macs2\_callpeak\_forced*). If at the very beginning it was set in workflow
+  input parameters to force run peak calling with fixed fragment size, this step is skipped and the
+  original peak calling results are saved.
+
+  In the next step workflow again calculates the number of islands and estimates fragment size (*macs2\_island\_count\_forced*)
+  for the data obtained from *macs2\_callpeak\_forced* step. If the last one was skipped the results from *macs2\_island\_count\_forced* step
+  are equal to the ones obtained from *macs2\_island\_count* step.
 
   Next step (*macs2\_stat*) is used to define which of the islands and estimated fragment size should be used
   in workflow output: either from *macs2\_island\_count* step or from *macs2\_island\_count\_forced* step. If input
@@ -573,11 +572,15 @@ doc: |
   if trigger is False the step returns [fragments\_old, fragments\_old, islands\_old], where sufix "old" defines
   results obtained from *macs2\_island\_count* step and sufix "new" - from *macs2\_island\_count\_forced* step.
 
-  The following two steps (*bamtools\_stats* and *bam\_to\_bigwig*) are used to calculate coverage from BAM file and save it in BigWig format. For that purpose bamtools stats returns the number of
-  mapped reads  which is then used as scaling factor by bedtools genomecov when it performs coverage
-  calculation and saves it as a BEDgraph file whichis then  sorted and converted to BigWig format by
-  bedGraphToBigWig tool from UCSC utilities. Step *get\_stat* is used to return a text file with statistics
+  The following two steps (*bamtools\_stats* and *bam\_to\_bigwig*) are used to calculate coverage on the base
+  of input BAM file and save it in BigWig format. For that purpose bamtools stats returns the number of
+  mapped reads number which is then used as scaling factor by bedtools genomecov when it performs coverage
+  calculation and saves it in BED format. The last one is then being sorted and converted to BigWig format by
+  bedGraphToBigWig tool from UCSC utilities. To adapt the pipeline for ATAC-Seq data analysis we calculate genome
+  coverage using only the first 9 bp from every read.
+
+  Step *get\_stat* is used to return a text file with statistics
   in a form of [TOTAL, ALIGNED, SUPRESSED, USED] reads count.
 
-  Step *island\_intersect* assigns nearest genes and regions to the islands obtained from *macs2\_callpeak\_forced*.
-  Step *average\_tag\_density* is used to calculate data for average tag density plot from the BAM file.
+  Step *island\_intersect* assigns genes and regions to the islands obtained from *macs2\_callpeak\_forced*.
+  Step *average\_tag\_density* is used to calculate data for average tag density plot on the base of BAM file.
