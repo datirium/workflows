@@ -529,8 +529,8 @@ s:creator:
 
 doc: |
   The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **ChIP-Seq** basic analysis workflow for a **single-read** experiment with Trim Galore.
-  The pipeline was adapted for ATAC-Seq single-read data analysis by updating genome coverage step.
+  **ChIP-Seq** basic analysis workflow for a **single-read** experiment with Trim Galore. The pipeline was adapted for
+  ATAC-Seq single-read data analysis by updating genome coverage step.
 
   _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
   and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
