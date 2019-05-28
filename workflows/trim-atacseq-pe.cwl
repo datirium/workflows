@@ -109,6 +109,14 @@ inputs:
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
+  exclude_chromosome:
+    type: string?
+    default: "chrM"
+    'sd:layout':
+      advanced: true
+    label: "Exclude chromosomes"
+    doc: "Space separated list of chromosomes to be excluded"
+
   threads:
     type: int?
     default: 2
@@ -435,10 +443,17 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  filter_bam:
+    run: ../tools/samtools-filter.cwl
+    in:
+      bam_bai_pair: samtools_sort_index/bam_bai_pair
+      exclude_chromosome: exclude_chromosome
+    out: [filtered_bam_bai_pair]
+
   preseq:
     run: ../tools/preseq-lc-extrap.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: filter_bam/filtered_bam_bai_pair
       pe_mode:
         default: true
       extrapolation:
@@ -449,7 +464,7 @@ steps:
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: filter_bam/filtered_bam_bai_pair
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
