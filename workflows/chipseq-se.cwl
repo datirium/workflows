@@ -350,6 +350,8 @@ steps:
     run: ../tools/preseq-lc-extrap.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
+      extrapolation:
+        default: 1000000000
     out: [estimates_file]
 
   samtools_rmdup:
