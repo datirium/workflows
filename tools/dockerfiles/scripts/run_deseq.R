@@ -5,10 +5,10 @@ options("width"=200)
 
 suppressMessages(library(argparse))
 suppressMessages(library(BiocParallel))
-
+suppressMessages(library(pheatmap))
 
 ##########################################################################################
-# v0.0.3
+# v0.0.5
 #
 # All input CSV/TSV files should have the following header (case-sensitive)
 # <RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm>         - CSV
@@ -26,6 +26,8 @@ suppressMessages(library(BiocParallel))
 # RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
 #
 # DESeq/DESeq2 always compares untreated_vs_treated groups
+#
+# Additionally we calculate -LOG10(pval) and -LOG10(padj)
 ##########################################################################################
 
 
@@ -78,6 +80,9 @@ args <- parser$parse_args(commandArgs(trailingOnly = TRUE))
 # Set threads
 register(MulticoreParam(args$threads))
 
+# Set graphics output
+output_nameroot = head(unlist(strsplit(basename(args$output), ".", fixed = TRUE)), 1)
+png(filename=paste(output_nameroot, "_%03d.png", sep=""))
 
 # Define conditions for DESeq
 conditions <- c(rep("untreated", length(args$untreated)), rep("treated", length(args$treated)))
@@ -96,19 +101,40 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
     suppressMessages(library(DESeq2))
     dse <- DESeqDataSetFromMatrix(countData=collected_isoforms[read_count_cols], colData=column_data, design=~conditions)
     dsq <- DESeq(dse)
-    DESeqRes <- as.data.frame(results(dsq, contrast=c("conditions", "treated", "untreated"))[,c(2,5,6)])
+    res <- results(dsq, contrast=c("conditions", "treated", "untreated"))
+
+    plotMA(res)
+
+    vsd <- assay(varianceStabilizingTransformation(dse))
+    rownames(vsd) <- collected_isoforms[,c("GeneId")]
+    mat <- vsd[order(rowMeans(counts(dsq, normalized=TRUE)), decreasing=TRUE)[1:30],]
+
+    DESeqRes <- as.data.frame(res[,c(2,5,6)])
 } else {
     print("Run DESeq")
     suppressMessages(library(DESeq))
     cds <- newCountDataSet(collected_isoforms[read_count_cols], conditions)
     cdsF <- estimateSizeFactors(cds)
     cdsD <- estimateDispersions(cdsF, method="blind", sharingMode="fit-only", fitType="local")
-    DESeqRes <- nbinomTest(cdsD, "untreated", "treated")
-    isinfl <- is.infinite(DESeqRes$log2FoldChange)
-    DESeqRes$log2FoldChange[isinfl] <- log2((DESeqRes$baseMeanB[isinfl]+0.1)/(DESeqRes$baseMeanA[isinfl]+0.1))
-    DESeqRes <- DESeqRes[,c(6,7,8)]
+    res <- nbinomTest(cdsD, "untreated", "treated")
+    infLFC <- is.infinite(res$log2FoldChange)
+    res$log2FoldChange[infLFC] <- log2((res$baseMeanB[infLFC]+0.1)/(res$baseMeanA[infLFC]+0.1))
+
+    plotMA(res)
+
+    vsd <- exprs(varianceStabilizingTransformation(cdsD))
+    rownames(vsd) <- collected_isoforms[,c("GeneId")]
+    mat <- vsd[order(rowMeans(counts(cdsD, normalized=TRUE)), decreasing=TRUE)[1:30],]
+
+    DESeqRes <- res[,c(6,7,8)]
 }
 
+# Expression data heatmap of the 30 most highly expressed genes
+pheatmap(mat=mat,
+         annotation_col=column_data,
+         cluster_rows=FALSE,
+         show_rownames=TRUE,
+         cluster_cols=FALSE)
 
 # Filter DESeq/DESeq2 output
 DESeqRes$log2FoldChange[is.na(DESeqRes$log2FoldChange)] <- 0;
@@ -117,6 +143,9 @@ DESeqRes[is.na(DESeqRes)] <- 1;
 
 # Export results to file
 collected_isoforms <- data.frame(cbind(collected_isoforms[, !colnames(collected_isoforms) %in% read_count_cols], DESeqRes), check.names=F, check.rows=F)
+collected_isoforms[,"-LOG10(pval)"] <- -log(as.numeric(collected_isoforms$pval), 10)
+collected_isoforms[,"-LOG10(padj)"] <- -log(as.numeric(collected_isoforms$padj), 10)
+
 write.table(collected_isoforms,
             file=args$output,
             sep="\t",
@@ -124,3 +153,4 @@ write.table(collected_isoforms,
             col.names=TRUE,
             quote=FALSE)
 print(paste("Export results to ", args$output, sep=""))
+graphics.off()
