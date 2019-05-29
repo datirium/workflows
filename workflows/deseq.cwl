@@ -99,10 +99,10 @@ outputs:
     - scatter:
         Title: 'Volcano'
         xAxisTitle: 'log fold change'
-        yAxisTitle: 'pAdj'
+        yAxisTitle: '-log10(pAdj)'
         colors: ["#b3de69"]
         height: 600
-        data: [$9, $11]
+        data: [$9, $13]
 
   plot_lfc_vs_mean:
     type: File
@@ -127,6 +127,7 @@ outputs:
 steps:
 
   deseq:
+    run: ../tools/deseq-advanced.cwl
     in:
       untreated_files: untreated_files
       treated_files: treated_files
@@ -135,64 +136,7 @@ steps:
       output_filename: output_filename
       threads: threads
     out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: InlineJavascriptRequirement
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap-deseq:v0.0.6
-      inputs:
-        untreated_files:
-          type: File[]
-          inputBinding:
-            position: 5
-            prefix: "-u"
-          doc: "Untreated input CSV/TSV files"
-        treated_files:
-          type: File[]
-          inputBinding:
-            position: 6
-            prefix: "-t"
-          doc: "Treated input CSV/TSV files"
-        untreated_col_suffix:
-          type: string?
-          inputBinding:
-            position: 7
-            prefix: "-un"
-          doc: "Suffix for untreated RPKM column name"
-        treated_col_suffix:
-          type: string?
-          inputBinding:
-            position: 8
-            prefix: "-tn"
-          doc: "Suffix for treated RPKM column name"
-        output_filename:
-          type: string
-          inputBinding:
-            position: 9
-            prefix: "-o"
-          doc: "Output TSV filename"
-        threads:
-          type: int?
-          inputBinding:
-            position: 10
-            prefix: '-p'
-          doc: "Run script using multiple threads"
-      outputs:
-        diff_expr_file:
-          type: File
-          outputBinding:
-            glob: $(inputs.output_filename)
-        plot_lfc_vs_mean:
-          type: File
-          outputBinding:
-            glob: "*001.png"
-        gene_expr_heatmap:
-          type: File
-          outputBinding:
-            glob: "*002.png"
-      baseCommand: [run_deseq.R]
+
 
 $namespaces:
   s: http://schema.org/

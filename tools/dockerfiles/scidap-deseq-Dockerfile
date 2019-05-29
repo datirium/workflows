@@ -2,7 +2,7 @@
 # Dockerfile
 #
 # Software:         BioWardrobe DESeq script
-# Software Version: v0.0.6
+# Software Version: v0.0.7
 # Description:      Dockerized version of DESeq/DESeq2 script from BioWardrobe
 # Website:          https://github.com/Barski-lab/workflows
 # Provides:         DESeq/DESeq2 script from BioWardrobe
@@ -12,14 +12,18 @@
 #                   get_gene_n_tss.R
 #                   pheatmap 1.0.10
 # Base Image:       biowardrobe2/deseq:v0.0.1
-# Build Cmd:        docker build --rm -t biowardrobe2/scidap-deseq:v0.0.6 -f scidap-deseq-Dockerfile .
-# Pull Cmd:         docker pull biowardrobe2/scidap-deseq:v0.0.6
-# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.6
+# Build Cmd:        docker build --rm -t biowardrobe2/scidap-deseq:v0.0.7 -f scidap-deseq-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap-deseq:v0.0.7
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.7
 #################################################################
 # BiocParallel version depends on Bioconductor version from the
 # base image. Argparse and FindPython are set to the specific
 # versions to garantee that they will work on R 3.2.3-4 inherited
 # from the base image.
+#
+# v0.0.7
+# - update run_deseq.R (v0.0.5)
+#   * add -LOG10(pval) and -LOG10(padj) columns
 #
 # v0.0.6
 # - update run_deseq.R (v0.0.4)

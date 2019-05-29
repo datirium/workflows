@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.6
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.7
 
 
 inputs:
@@ -171,4 +171,3 @@ s:about: |
                         Output TSV filename
   -p THREADS, --threads THREADS
                         Threads
-
