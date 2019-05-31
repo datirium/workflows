@@ -200,6 +200,9 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Iaintersect generated results"
     outputSource: island_intersect/result_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        Title: 'Islands list'
 
   atdp_log:
     type: File
@@ -257,6 +260,12 @@ outputs:
     format: "http://edamontology.org/format_3613"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
     outputSource: macs2_callpeak/narrow_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Narrow peaks"
+        height: 120
 
   macs2_broad_peaks:
     type: File?
@@ -264,6 +273,12 @@ outputs:
     format: "http://edamontology.org/format_3614"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
     outputSource: macs2_callpeak/broad_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Broad peaks"
+        height: 120
 
   macs2_peak_summits:
     type: File?
@@ -281,10 +296,16 @@ outputs:
 
   macs2_gapped_peak:
     type: File?
-    label: "Gapped peak"
+    label: "Gapped peaks"
     format: "http://edamontology.org/format_3586"
     doc: "Contains both the broad region and narrow peaks"
     outputSource: macs2_callpeak/gapped_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Gapped peaks"
+        height: 120
 
   macs2_log:
     type: File?

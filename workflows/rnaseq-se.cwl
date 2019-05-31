@@ -189,6 +189,9 @@ outputs:
     label: "RPKM, grouped by gene name"
     doc: "Calculated rpkm values, grouped by gene name"
     outputSource: group_isoforms/genes_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        Title: 'RPKM, grouped by gene name'
 
   rpkm_common_tss:
     type: File
