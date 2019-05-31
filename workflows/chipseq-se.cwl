@@ -299,15 +299,6 @@ outputs:
       - pie:
           colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
           data: [$2, $3, $4, $5]
-    'sd:visualPlugins':
-    - scatter:
-        id: 'preseq'
-        Title: 'Preseq Marker'
-        xAxisTitle: 'Total reads count'
-        yAxisTitle: 'Expected distinct reads count'
-        colors: ["#ff2100"]
-        height: 400
-        data: [$1, $2]
 
   macs2_fragment_stat:
     type: File?
@@ -324,7 +315,6 @@ outputs:
     outputSource: preseq/estimates_file
     'sd:visualPlugins':
     - scatter:
-        id: 'preseq'
         Title: 'Preseq Estimates'
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'
