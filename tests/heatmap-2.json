@@ -16,5 +16,6 @@
     "format": "http://edamontology.org/format_3475"
   },
   "fragment_size": [150, 150],
-  "total_reads": [94, 94]
+  "total_reads": [94, 94],
+  "alias": "alias"
 }
