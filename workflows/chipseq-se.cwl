@@ -287,6 +287,15 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup log"
     outputSource: get_stat/output_file
+    'sd:visualPlugins':
+    - scatter:
+        id: 'preseq'
+        Title: 'Preseq Estimates'
+        xAxisTitle: 'Total reads count'
+        yAxisTitle: 'Expected distinct reads count'
+        colors: ["#ff2100"]
+        height: 400
+        data: [$1, $4]
 
   get_stat_formatted_log:
     type: File?
@@ -315,6 +324,7 @@ outputs:
     outputSource: preseq/estimates_file
     'sd:visualPlugins':
     - scatter:
+        id: 'preseq'
         Title: 'Preseq Estimates'
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'
