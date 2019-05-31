@@ -289,7 +289,6 @@ outputs:
     outputSource: get_stat/output_file
     'sd:visualPlugins':
     - scatter:
-        id: 'preseq'
         Title: 'Preseq Estimates'
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'
@@ -324,7 +323,6 @@ outputs:
     outputSource: preseq/estimates_file
     'sd:visualPlugins':
     - scatter:
-        id: 'preseq'
         Title: 'Preseq Estimates'
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'
