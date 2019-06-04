@@ -91,7 +91,20 @@ outputs:
     label: "Methylation bias plot"
     doc: "QC data showing methylation bias across read lengths"
     format: "http://edamontology.org/format_3475"
-    outputSource: bismark_extract_methylation/mbias_plot
+    outputSource: refactore_mbias_plot/refactored_mbias_plot
+    'sd:visualPlugins':
+    - line:
+        Title: 'M-Bias Plot (% methylation)'
+        xAxisTitle: 'Position (bp)'
+        yAxisTitle: '% methylation'
+        colors: ["#b3de69", "#888888", "#fb8072"]
+        data: [$2, $6, $10]
+    - line:
+        Title: 'M-Bias Plot (# count methylated)'
+        xAxisTitle: 'Position (bp)'
+        yAxisTitle: '# count methylated'
+        colors: ["#b3de69", "#888888", "#fb8072"]
+        data: [$3, $7, $11]
 
   bedgraph_cov_file:
     type: File
@@ -173,6 +186,57 @@ steps:
       - bismark_cov_file
       - splitting_report_file
 
+  refactore_mbias_plot:
+    in:
+      mbias_plot: bismark_extract_methylation/mbias_plot
+    out: [refactored_mbias_plot]
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: InitialWorkDirRequirement
+        listing:
+          - entryname: refactore.py
+            entry: |
+                #!/usr/bin/env python
+                import sys
+                prefix_list, i, prefix, lines = ["CpG", "CHG", "CHH"], 0, "", {}
+                with open(sys.argv[1], 'r') as infile:
+                    for line in infile:
+                        if line.strip():
+                            if "context" in line:
+                                prefix = ""
+                            if "position" in line:
+                                prefix = prefix_list[i]
+                                i += 1
+                                continue
+                            if not prefix:
+                                continue
+                            data = line.split()
+                            pos = int(data[0])
+                            insert_data = {prefix + " count methylated":   data[1],
+                                          prefix + " count unmethylated": data[2],
+                                          prefix + " % methylation":      data[3] if (data[1] != "0" and data[2] != "0") else 0,
+                                          prefix + " coverage":           data[4] if (data[1] != "0" and data[2] != "0") else 0}
+                            if pos in lines:
+                                lines[pos].update(insert_data)
+                            else:
+                                lines[pos] = insert_data
+                print("positions\tCHG % methylation\tCHG count methylated\tCHG count unmethylated\tCHG coverage\tCHH % methylation\tCHH count methylated\tCHH count unmethylated\tCHH coverage\tCpG % methylation\tCpG count methylated\tCpG count unmethylated\tCpG coverage")
+                for k, v in sorted(lines.items()):
+                  print str(k), "\t", "\t".join([str(t) for s,t in sorted(v.items())])
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/python-pandas:v0.0.1
+      inputs:
+        mbias_plot:
+          type: File
+          inputBinding:
+            position: 1
+      outputs:
+        refactored_mbias_plot:
+          type: stdout
+      stdout: "mbias_plot.tsv"
+      baseCommand: ["python", "refactore.py"]
 
 $namespaces:
   s: http://schema.org/
