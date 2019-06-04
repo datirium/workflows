@@ -36,13 +36,27 @@ inputs:
   threads:
     type: int?
     default: 1
-    label: "Number of cores to use"
+    label: "Number of processes/threads to use"
     doc: "Sets the number of parallel instances of Bismark to be run concurrently"
     'sd:layout':
       advanced: true
 
 
 outputs:
+
+  bambai_pair:
+    type: File
+    label: "Bismark aligned BAM file"
+    doc: "Bismark aligned coordinate sorted BAM file and BAI index file"
+    format: "http://edamontology.org/format_2572"
+    outputSource: samtools_sort_index/bam_bai_pair
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
 
   bismark_align_log_file:
     type: File
@@ -85,6 +99,12 @@ outputs:
     doc: "Methylation statuses in bedGraph format"
     format: "http://edamontology.org/format_3583"
     outputSource: bismark_extract_methylation/bedgraph_cov_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Methylation statuses"
+        height: 120
 
   bismark_cov_file:
     type: File
@@ -131,11 +151,18 @@ steps:
       threads: threads
     out: [bam_file, log_file]
 
+  samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: bismark_align/bam_file
+      threads: threads
+    out: [bam_bai_pair]
+
   bismark_extract_methylation:
     run: ../tools/bismark-extract-methylation.cwl
     in:
       genome_folder: indices_folder
-      bam_file: bismark_align/bam_file
+      bam_file: samtools_sort_index/bam_bai_pair
       threads: threads
     out:
       - chg_context_file
