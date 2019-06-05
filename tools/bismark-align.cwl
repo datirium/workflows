@@ -5,7 +5,7 @@ class: CommandLineTool
 requirements:
 - class: InlineJavascriptRequirement
 - class: DockerRequirement
-  dockerPull: biowardrobe2/bismark:v0.0.1
+  dockerPull: biowardrobe2/bismark:v0.0.2
 
 
 inputs:
@@ -13,40 +13,47 @@ inputs:
   indices_folder:
     type: Directory
     inputBinding:
-      position: 2
+      position: 3
     label: "Bismark indices folder"
     doc: "Path to Bismark generated indices folder"
 
   fastq_file:
     type: File
     inputBinding:
-      position: 3
+      position: 4
     label: "FASTQ file"
     doc: "Uncompressed or gzipped FASTQ file, single-end"
 
-  threads:
+  processes:
     type: int?
     inputBinding:
       position: 1
       prefix: "--multicore"
-    default: 1
-    label: "Number of cores to use"
-    doc: "Sets the number of parallel instances of Bismark to be run concurrently"
+    label: "Number of Bismark instances to run"
+    doc: "Set the number of parallel Bismark instances to run concurrently. Each Bismark instance runs four Bowtie2 aligners"
+
+  threads:
+    type: int?
+    inputBinding:
+      position: 2
+      prefix: "-p"
+    label: "Number of Bowtie2 threads to use"
+    doc: "Set the number of threads for each Bowtie2 aligner"
 
 
 outputs:
 
   bam_file:
     type: File
-    label: "BAM file"
-    doc: "BAM file"
+    label: "BAM alignment file"
+    doc: "Bismark generated BAM alignment file"
     outputBinding:
       glob: "*.bam"
 
-  log_file:
+  alignment_report:
     type: File
-    label: "Bismark log file"
-    doc: "Bismark generated log file"
+    label: "Bismark alignment and methylation report"
+    doc: "Bismark generated alignment and methylation summary report"
     outputBinding:
       glob: "*.txt"
 
@@ -64,8 +71,8 @@ s:mainEntity:
   $import: ./metadata/bismark-metadata.yaml
 
 s:name: "bismark-align"
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/bismark-align.cwl
-s:codeRepository: https://github.com/datirium/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/bismark-align.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:

@@ -5,7 +5,7 @@ class: CommandLineTool
 requirements:
 - class: InlineJavascriptRequirement
 - class: DockerRequirement
-  dockerPull: biowardrobe2/bismark:v0.0.1
+  dockerPull: biowardrobe2/bismark:v0.0.2
 - class: InitialWorkDirRequirement
   listing: |
     ${
@@ -50,8 +50,8 @@ s:mainEntity:
   $import: ./metadata/bismark-metadata.yaml
 
 s:name: "bismark-prepare-genome"
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/bismark-prepare-genome.cwl
-s:codeRepository: https://github.com/datirium/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/bismark-prepare-genome.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
