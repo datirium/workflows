@@ -74,6 +74,18 @@ outputs:
     format: "http://edamontology.org/format_2330"
     outputSource: bismark_align/alignment_report
 
+  bismark_alignment_report_formatted:
+    type: File
+    label: "Bismark alignment and methylation report formatted for pie chart"
+    doc: "Bismark generated alignment and methylation summary report formatted for pie chart"
+    format: "http://edamontology.org/format_3475"
+    outputSource: refactore_bismark_alignment_report/alignment_report_formatted
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          data: [$2, $3, $4, $5]
+
   chg_context_file:
     type: File
     label: "CHG methylation call"
@@ -218,6 +230,11 @@ steps:
       mbias_report: bismark_extract_methylation/mbias_plot
     out: [collected_report]
 
+  refactore_bismark_alignment_report:
+    run: ../tools/python-get-stat-bismark.cwl
+    in:
+      alignment_report: bismark_align/alignment_report
+    out: [alignment_report_formatted]
 
 $namespaces:
   s: http://schema.org/
