@@ -14,21 +14,37 @@ inputs:
     default: |
       #!/usr/bin/env python
       import sys, re
-      TOTAL, UNIQUE, UNMAPPED, MULTIMAPPED, DISCARDED = 0, 0, 0, 0, 0
+      TOTAL, UNIQUE, UNMAPPED, MULTIMAPPED, DISCARDED, CPG, CHG, CHH, ECPG, ECHG, ECHH = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       with open(sys.argv[1], 'r') as alignment_report:
         for line in alignment_report:
+          line = line.strip()
           if "Sequences analysed in total:" in line:
-            TOTAL = int(line.split("\t")[1])
+            TOTAL = line.split("\t")[1]
           if 'different alignments:' in line:
-            UNIQUE = int(line.split("\t")[1])
+            UNIQUE = line.split("\t")[1]
           if 'under any condition:' in line:
-            UNMAPPED = int(line.split("\t")[1])
+            UNMAPPED = line.split("\t")[1]
           if 'not map uniquely:' in line:
-            MULTIMAPPED = int(line.split("\t")[1])
+            MULTIMAPPED = line.split("\t")[1]
           if 'could not be extracted:' in line:
-            DISCARDED = int(line.split("\t")[1])
-      print "Sequences analysed in total\tNumber of alignments with a unique best hit from the different alignments\tSequences with no alignments under any condition\tSequences did not map uniquely\tSequences which were discarded because genomic sequence could not be extracted"
-      print str(TOTAL) + "\t" + str(UNIQUE) + "\t" + str(UNMAPPED) + "\t" + str(MULTIMAPPED) + "\t" + str(DISCARDED)
+            DISCARDED = line.split("\t")[1]
+          if 'C methylated in CpG context:' in line:
+            CPG = line.split("\t")[1].strip("%")
+          if 'C methylated in CHG context:' in line:
+            CHG = line.split("\t")[1].strip("%")
+          if 'C methylated in CHH context:' in line:
+            CHH = line.split("\t")[1].strip("%")
+      with open(sys.argv[2], 'r') as splitting_report:
+        for line in splitting_report:
+          line = line.strip()
+          if 'C methylated in CpG context:' in line:
+            ECPG = line.split("\t")[1].strip("%")
+          if 'C methylated in CHG context:' in line:
+            ECHG = line.split("\t")[1].strip("%")
+          if 'C methylated in CHH context:' in line:
+            ECHH = line.split("\t")[1].strip("%")
+      print "Sequences analysed in total\tNumber of alignments with a unique best hit from the different alignments\tSequences with no alignments under any condition\tSequences did not map uniquely\tSequences which were discarded because genomic sequence could not be extracted\tC methylated in CpG context\tC methylated in CHG context\tC methylated in CHH context\tC methylated in CpG context after extraction\tC methylated in CHG context after extraction\tC methylated in CHH context after extraction"
+      print TOTAL + "\t" + UNIQUE + "\t" + UNMAPPED + "\t" + MULTIMAPPED + "\t" + DISCARDED + "\t" + CPG + "\t" + CHG + "\t" + CHH + "\t" + ECPG + "\t" + ECHG + "\t" + ECHH
     inputBinding:
       position: 1
     doc: "Python script to get TOTAL, ALIGNED, SUPPRESSED, USED values from log files"
@@ -39,14 +55,19 @@ inputs:
       position: 6
     doc: "Bismark generated alignment and methylation summary report"
 
+  splitting_report:
+    type: File
+    inputBinding:
+      position: 7
+    doc: "Bismark generated splitting report"
 
 outputs:
 
-  alignment_report_formatted:
+  collected_report_formatted:
     type: stdout
-    doc: "Refactored Bismark alignment report to be visualized as Pie Chart"
+    doc: "Combined Bismark alignment and splitting reports"
 
-stdout: "alignment_report_formatted.tsv"
+stdout: "collected_report_formatted.tsv"
 baseCommand: [python, '-c']
 
 

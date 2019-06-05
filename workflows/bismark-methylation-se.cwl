@@ -74,18 +74,6 @@ outputs:
     format: "http://edamontology.org/format_2330"
     outputSource: bismark_align/alignment_report
 
-  bismark_alignment_report_formatted:
-    type: File
-    label: "Bismark alignment and methylation report formatted for pie chart"
-    doc: "Bismark generated alignment and methylation summary report formatted for pie chart"
-    format: "http://edamontology.org/format_3475"
-    outputSource: refactore_bismark_alignment_report/alignment_report_formatted
-    'sd:preview':
-      'sd:visualPlugins':
-      - pie:
-          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
-          data: [$2, $3, $4, $5]
-
   chg_context_file:
     type: File
     label: "CHG methylation call"
@@ -165,6 +153,17 @@ outputs:
     format: "http://edamontology.org/format_2331"
     outputSource: bismark_report/collected_report
 
+  collected_report_formatted:
+    type: File
+    label: "Combined Bismark alignment and splitting reports"
+    doc: "Bismark generated alignment and splitting reports. Combined"
+    format: "http://edamontology.org/format_3475"
+    outputSource: format_bismark_report/collected_report_formatted
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          data: [$2, $3, $4, $5]
 
 steps:
 
@@ -230,11 +229,12 @@ steps:
       mbias_report: bismark_extract_methylation/mbias_plot
     out: [collected_report]
 
-  refactore_bismark_alignment_report:
+  format_bismark_report:
     run: ../tools/python-get-stat-bismark.cwl
     in:
       alignment_report: bismark_align/alignment_report
-    out: [alignment_report_formatted]
+      splitting_report: bismark_extract_methylation/splitting_report
+    out: [collected_report_formatted]
 
 $namespaces:
   s: http://schema.org/
