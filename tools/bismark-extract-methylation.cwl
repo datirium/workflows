@@ -5,7 +5,7 @@ class: CommandLineTool
 requirements:
 - class: InlineJavascriptRequirement
 - class: DockerRequirement
-  dockerPull: biowardrobe2/bismark:v0.0.1
+  dockerPull: biowardrobe2/bismark:v0.0.2
 
 
 inputs:
@@ -13,26 +13,30 @@ inputs:
   genome_folder:
     type: Directory
     label: "Genome folder"
-    doc: "Genome folder with FASTA (fa, fasta) files."
+    doc: |
+      "Genome folder with FASTA (fa, fasta) files.
+       Bismark generated indices folder can be used also"
     inputBinding:
       position: 2
       prefix: "--genome_folder"
 
   bam_file:
     type: File
-    label: "BAM file"
-    doc: "BAM file alligned by Bismark"
+    label: "BAM alignment file"
+    doc: "Bismark generated BAM alignment file"
     inputBinding:
       position: 3
 
-  threads:
+  processes:
     type: int?
-    label: "Number of cores to use"
-    doc: "Sets the number of parallel instances of Bismark to be run concurrently"
+    label: "Number of Bismark instances to run"
+    doc: |
+      "Set the number of parallel Bismark instances to run concurrently.
+       Each Bismark instance simultainously runs the methylation extractor,
+       samtools stream and GZIP streams"
     inputBinding:
       position: 1
       prefix: "--multicore"
-    default: 1
 
 
 outputs:
@@ -65,21 +69,35 @@ outputs:
     outputBinding:
       glob: "*M-bias.txt"
 
-  bedgraph_cov_file:
+  mbias_plot_png:
     type: File
-    label: "Methylation statuses in bedGraph format"
-    doc: "Methylation statuses in bedGraph format"
+    label: "Methylation bias plot (PNG)"
+    doc: "QC data showing methylation bias across read lengths"
+    outputBinding:
+      glob: "*.png"
+
+  bedgraph_coverage_file:
+    type: File
+    label: "Methylation statuses bedGraph coverage file"
+    doc: "Coverage text file summarising cytosine methylation values in bedGraph format (tab-delimited; 0-based start coords, 1-based end coords)"
     outputBinding:
       glob: "*bedGraph.gz"
 
-  bismark_cov_file:
+  bismark_coverage_file:
     type: File
-    label: "Genome-wide cytosine methylation report"
-    doc: "Coverage text file summarising cytosine methylation values"
+    label: "Methylation statuses Bismark coverage file"
+    doc: "Coverage text file summarising cytosine methylation values in Bismark format (tab-delimited, 1-based genomic coords)"
     outputBinding:
       glob: "*bismark.cov.gz"
 
-  splitting_report_file:
+  genome_wide_methylation_report:
+    type: File
+    label: "Genome-wide cytosine methylation report"
+    doc: "Genome-wide methylation report for all cytosines in the genome"
+    outputBinding:
+      glob: "*CpG_report.txt"
+
+  splitting_report:
     type: File
     label: "Methylation extraction log"
     doc: "Log file giving summary statistics about methylation extraction"
@@ -87,7 +105,7 @@ outputs:
       glob: "*splitting_report.txt"
 
 
-baseCommand: ["bismark_methylation_extractor", "--comprehensive", "--bedgraph"]
+baseCommand: ["bismark_methylation_extractor", "--comprehensive", "--bedgraph", "--cytosine_report"]
 
 
 $namespaces:
@@ -100,8 +118,8 @@ s:mainEntity:
   $import: ./metadata/bismark-metadata.yaml
 
 s:name: "bismark-extract-methylation"
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/bismark-extract-methylation.cwl
-s:codeRepository: https://github.com/datirium/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/bismark-extract-methylation.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -157,13 +175,21 @@ doc: |
     will be considered irrespective of whether they were actually covered by any reads in the experiment or not.
     For this to work one has to also specify the genome that was used for the Bismark alignments using the
     option --genome_folder <path>. As for the bedGraph mode, this will only consider cytosines in CpG context.
-
+  --cytosine_report
+    After the conversion to bedGraph has completed, the option '--cytosine_report' produces a
+    genome-wide methylation report for all cytosines in the genome. By default, the output uses 1-based
+    chromosome coordinates (zero-based start coords are optional) and reports CpG context only (all
+    cytosine context is optional). The output considers all Cs on both forward and reverse strands and
+    reports their position, strand, trinucleotide content and methylation state (counts are 0 if not
+    covered). The cytosine report conversion step is performed by the external module
+    'coverage2cytosine'; this script needs to reside in the same folder as the bismark_methylation_extractor
+    itself.
 
 s:about: |
   DESCRIPTION
 
   The following is a brief description of all options to control the Bismark
-  methylation extractor. The script reads in a bisulfite read alignment results file
+  methylation extractor. The script reads in a bisulfite read alignment results file 
   produced by the Bismark bisulfite mapper (in BAM/CRAM/SAM format) and extracts the
   methylation information for individual cytosines. This information is found in the
   methylation call field which can contain the following characters:
@@ -298,11 +324,11 @@ s:about: |
 
   -h/--help                Displays this help file and exits.
 
-  --mbias_only             The methylation extractor will read the entire file but only output the M-bias table and plots as
+  --mbias_only             The methylation extractor will read the entire file but only output the M-bias table and plots as 
                           well as a report (optional) and then quit. Default: OFF.
 
   --mbias_off              The methylation extractor will process the entire file as usual but doesn't write out any M-bias report.
-                          Only recommended for users who deliberately want to keep an earlier version of the M-bias report.
+                          Only recommended for users who deliberately want to keep an earlier version of the M-bias report. 
                           Default: OFF.
 
   --parallel <int>         May also be --multicore <int>. Sets the number of cores to be used for the methylation extraction process.
@@ -329,7 +355,7 @@ s:about: |
   ==========================
 
   --bedGraph               After finishing the methylation extraction, the methylation output is written into a
-                          sorted bedGraph file that reports the position of a given cytosine and its methylation
+                          sorted bedGraph file that reports the position of a given cytosine and its methylation 
                           state (in %, see details below). The methylation extractor output is temporarily split up into
                           temporary files, one per chromosome (written into the current directory or folder
                           specified with -o/--output); these temp files are then used for sorting and deleted
@@ -337,7 +363,7 @@ s:about: |
                           '--CX_context' may be used to report all cytosines irrespective of sequence context
                           (this will take MUCH longer!). The default folder for temporary files during the sorting
                           process is the output directory. The bedGraph conversion step is performed by the external
-                          module 'bismark2bedGraph'; this script needs to reside in the same folder as the
+                          module 'bismark2bedGraph'; this script needs to reside in the same folder as the 
                           bismark_methylation_extractor itself.
 
   --zero_based             Write out an additional coverage file (ending in .zero.cov) that uses 0-based genomic start
@@ -358,7 +384,7 @@ s:about: |
 
   --buffer_size <string>   This allows you to specify the main memory sort buffer when sorting the methylation information.
                           Either specify a percentage of physical memory by appending % (e.g. --buffer_size 50%) or
-        a multiple of 1024 bytes, e.g. 'K' multiplies by 1024, 'M' by 1048576 and so on for 'T' etc.
+        a multiple of 1024 bytes, e.g. 'K' multiplies by 1024, 'M' by 1048576 and so on for 'T' etc. 
                           (e.g. --buffer_size 20G). For more information on sort type 'info sort' on a command line.
                           Defaults to 2G.
 
