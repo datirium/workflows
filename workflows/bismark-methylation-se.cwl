@@ -21,12 +21,6 @@ inputs:
     label: "FASTQ file"
     doc: "Uncompressed or gzipped FASTQ file, single-end"
 
-  adapters_file:
-    type: File
-    format: "http://edamontology.org/format_1929"
-    label: "Adapters file"
-    doc: "FASTA file containing adapters"
-
   indices_folder:
     type: Directory
     label: "Bismark indices folder"
@@ -165,32 +159,32 @@ outputs:
           colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
           data: [$2, $3, $4, $5]
 
+  trim_adapters_report:
+    type: File
+    label: "TrimGalore report"
+    doc: "TrimGalore generated report"
+    format: "http://edamontology.org/format_2330"
+    outputSource: trim_adapters/report_file
+
+
 steps:
 
   trim_adapters:
-    run: ../tools/trimmomatic.cwl
+    run: ../tools/trimgalore.cwl
     in:
-      fastq_file_upstream: fastq_file
-      adapters_file: adapters_file
-      lib_type:
-        default: "SE"
-      illuminaclip_step_param:
-        default: "2:30:10"
-      leading_step:
+      input_file: fastq_file
+      dont_gzip:
+        default: true
+      length:
         default: 30
-      trailing_step:
-        default: 30
-      sliding_window_step:
-        default: "5:30"
-      minlen_step:
-        default: 25
-      threads: threads
-    out: [upstream_trimmed_file]
+    out:
+      - trimmed_file
+      - report_file
 
   bismark_align:
     run: ../tools/bismark-align.cwl
     in:
-      fastq_file: trim_adapters/upstream_trimmed_file
+      fastq_file: trim_adapters/trimmed_file
       indices_folder: indices_folder
       processes: processes
       threads: threads
