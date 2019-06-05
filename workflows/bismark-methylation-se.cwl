@@ -50,13 +50,13 @@ outputs:
     doc: "Bismark aligned coordinate sorted BAM file and BAI index file"
     format: "http://edamontology.org/format_2572"
     outputSource: samtools_sort_index/bam_bai_pair
-    'sd:visualPlugins':
-    - igvbrowser:
-        id: 'igvbrowser'
-        type: 'alignment'
-        format: 'bam'
-        name: "BAM Track"
-        displayMode: "SQUISHED"
+    # 'sd:visualPlugins':
+    # - igvbrowser:
+    #     id: 'igvbrowser'
+    #     type: 'alignment'
+    #     format: 'bam'
+    #     name: "BAM Track"
+    #     displayMode: "SQUISHED"
 
   bismark_align_log_file:
     type: File
@@ -112,12 +112,12 @@ outputs:
     doc: "Methylation statuses in bedGraph format"
     format: "http://edamontology.org/format_3583"
     outputSource: bismark_extract_methylation/bedgraph_cov_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "Methylation statuses"
-        height: 120
+    # 'sd:visualPlugins':
+    # - igvbrowser:
+    #     id: 'igvbrowser'
+    #     type: 'bed'
+    #     name: "Methylation statuses"
+    #     height: 120
 
   bismark_cov_file:
     type: File
