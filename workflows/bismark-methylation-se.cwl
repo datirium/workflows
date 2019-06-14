@@ -203,7 +203,6 @@ steps:
       genome_folder: indices_folder
       bam_file: samtools_sort_index/bam_bai_pair
       processes: processes
-      threads: threads
     out:
       - chg_context_file
       - chh_context_file
