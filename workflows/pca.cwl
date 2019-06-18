@@ -87,6 +87,15 @@ outputs:
     label: "PCA analysis results"
     doc: "PCA analysis results exported as TSV"
     outputSource: pca/pca_file
+    'sd:visualPlugins':
+    - scatter3d:
+        Title: 'PCA'
+        xAxisTitle: 'PCA1'
+        yAxisTitle: 'PCA2'
+        zAxisTitle: 'PCA3'
+        colors: ["#b3de69", "#888888", "#fb8072"]
+        height: 600
+        data: [$1, $2, $3]
 
 
 steps:
