@@ -31,13 +31,13 @@ inputs:
     doc: "Isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/rpkm_isoforms"
     'sd:localLabel': true
-    
+
   legend_name:
     type: string[]
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
-    'sd:upstreamSource': "rnaseq_sample/alias"
-    'sd:localLabel': true
+    # 'sd:upstreamSource': "rnaseq_sample/alias"
+    # 'sd:localLabel': true
 
 outputs:
 
