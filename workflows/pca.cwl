@@ -30,13 +30,14 @@ inputs:
     label: "Isoform expression files"
     doc: "Isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/rpkm_isoforms"
-
+    'sd:localLabel': true
+    
   legend_name:
     type: string[]
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/alias"
-
+    'sd:localLabel': true
 
 outputs:
 
@@ -185,7 +186,7 @@ s:creator:
 
 doc: |
   Principal Component Analysis
-  =====================================
+  ============================
 
   Principal component analysis (PCA) is a statistical procedure that uses an orthogonal transformation to convert
   a set of observations of possibly correlated variables (entities each of which takes on various numerical values)
