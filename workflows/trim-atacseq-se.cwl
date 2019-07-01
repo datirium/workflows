@@ -202,7 +202,7 @@ outputs:
         xAxisTitle: 'Distance From TSS (bases)'
         yAxisTitle: 'Average Tag Density (per bp)'
         colors: ["#b3de69"]
-        height: 600
+        height: 500
         data: [$1, $2]
 
   samtools_rmdup_log:
@@ -346,7 +346,7 @@ outputs:
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'
         colors: ["#4b78a3"]
-        height: 400
+        height: 500
         data: [$1, $2]
 
 steps:
