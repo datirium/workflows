@@ -55,6 +55,7 @@ outputs:
     outputSource: samtools_sort_index/bam_bai_pair
     # 'sd:visualPlugins':
     # - igvbrowser:
+    #     tab: 'IGV Genome Browser'
     #     id: 'igvbrowser'
     #     type: 'alignment'
     #     format: 'bam'
@@ -114,6 +115,7 @@ outputs:
     outputSource: bismark_extract_methylation/bedgraph_coverage_file
     # 'sd:visualPlugins':
     # - igvbrowser:
+    #     tab: 'IGV Genome Browser'
     #     id: 'igvbrowser'
     #     type: 'bed'
     #     name: "Methylation statuses"
@@ -153,6 +155,10 @@ outputs:
     doc: "Bismark generated alignment and splitting reports. Combined"
     format: "http://edamontology.org/format_3475"
     outputSource: format_bismark_report/collected_report_formatted
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:

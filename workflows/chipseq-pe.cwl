@@ -199,7 +199,7 @@ outputs:
     outputSource: island_intersect/result_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Binding Sites Table'
+        tab: 'Peak Calling'
         Title: 'Islands list'
 
   atdp_log:
@@ -217,7 +217,7 @@ outputs:
     outputSource: average_tag_density/result_file
     'sd:visualPlugins':
     - scatter:
-        tab: 'Average Tag Density'
+        tab: 'QC Plots'
         Title: 'Average Tag Density'
         xAxisTitle: 'Distance From TSS (bases)'
         yAxisTitle: 'Average Tag Density (per bp)'
@@ -240,6 +240,7 @@ outputs:
     outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'alignment'
         format: 'bam'
@@ -261,6 +262,7 @@ outputs:
     outputSource: macs2_callpeak/narrow_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Narrow peaks"
@@ -274,6 +276,7 @@ outputs:
     outputSource: macs2_callpeak/broad_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Broad peaks"
@@ -352,7 +355,7 @@ outputs:
     outputSource: preseq/estimates_file
     'sd:visualPlugins':
     - scatter:
-        tab: 'Recommendations'
+        tab: 'QC Plots'
         Title: 'Preseq Estimates'
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'

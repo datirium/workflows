@@ -104,6 +104,7 @@ outputs:
     outputSource: bam_to_bigwig/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
         name: "BigWig Track"
@@ -152,12 +153,14 @@ outputs:
     outputSource: fastx_quality_stats_upstream/statistics_file
     'sd:visualPlugins':
     - line:
+        tab: 'QC Plots'
         Title: 'Upstream Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
+        tab: 'QC Plots'
         Title: 'Upstream Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
@@ -172,12 +175,14 @@ outputs:
     outputSource: fastx_quality_stats_downstream/statistics_file
     'sd:visualPlugins':
     - line:
+        tab: 'QC Plots'
         Title: 'Downstream Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
+        tab: 'QC Plots'
         Title: 'Downstream Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
@@ -192,6 +197,7 @@ outputs:
     outputSource: samtools_sort_index/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'alignment'
         format: 'bam'
@@ -220,6 +226,7 @@ outputs:
     outputSource: group_isoforms/genes_file
     'sd:visualPlugins':
     - syncfusiongrid:
+        tab: 'Gene Expression'
         Title: 'RPKM, grouped by gene name'
 
   rpkm_common_tss:
@@ -242,6 +249,10 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
     outputSource: get_stat/formatted_output_file
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:

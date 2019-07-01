@@ -129,6 +129,7 @@ outputs:
     outputSource: bam_to_bigwig/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
         name: "BigWig Track"
@@ -142,12 +143,14 @@ outputs:
     outputSource: fastx_quality_stats/statistics_file
     'sd:visualPlugins':
     - line:
+        tab: 'QC Plots'
         Title: 'Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
+        tab: 'QC Plots'
         Title: 'Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
@@ -176,6 +179,7 @@ outputs:
     outputSource: island_intersect/result_file
     'sd:visualPlugins':
     - syncfusiongrid:
+        tab: 'Peak Calling'
         Title: 'Islands list'
 
   atdp_log:
@@ -193,6 +197,7 @@ outputs:
     outputSource: average_tag_density/result_file
     'sd:visualPlugins':
     - scatter:
+        tab: 'QC Plots'
         Title: 'Average Tag Density'
         xAxisTitle: 'Distance From TSS (bases)'
         yAxisTitle: 'Average Tag Density (per bp)'
@@ -215,6 +220,7 @@ outputs:
     outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'alignment'
         format: 'bam'
@@ -236,6 +242,7 @@ outputs:
     outputSource: macs2_callpeak/narrow_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Narrow peaks"
@@ -249,6 +256,7 @@ outputs:
     outputSource: macs2_callpeak/broad_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Broad peaks"
@@ -276,6 +284,7 @@ outputs:
     outputSource: macs2_callpeak/gapped_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Gapped peaks"
@@ -301,6 +310,10 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
     outputSource: get_stat/formatted_output_file
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:
@@ -328,6 +341,7 @@ outputs:
     outputSource: preseq/estimates_file
     'sd:visualPlugins':
     - scatter:
+        tab: 'QC Plots'
         Title: 'Preseq Estimates'
         xAxisTitle: 'Total reads count'
         yAxisTitle: 'Expected distinct reads count'
