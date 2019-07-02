@@ -1,0 +1,9 @@
+class: s:SoftwareSourceCode
+s:name: "RGT"
+s:about: |
+  Regulatory Genomics Toolbox  is a python library and set of tools  for the integrative analysis of
+  high throughput regulatory genomics data. This library has been used for implementation of several
+  tools as ChIP-Seq differential peak callers (ODIN and THOR), DNase-Seq footprinting method (HINT)
+  and the visualization tool RGT-Viz. It is implemented in a object oriented fashion in python
+  including basic infrastructure for manipulation of genomic data. This project is developed and
+  maintained by Computational Biology and Bioinformatics Research Group, RWTH University Hostpital.
