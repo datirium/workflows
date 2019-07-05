@@ -133,12 +133,12 @@ outputs:
     doc: "Postprocessed ChIP-seq signals from the second biological condition samples"
     outputSource: thor/cond_2_bigwig_file
 
-  thor_log:
+  thor_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "rgt-THOR log"
-    doc: "rgt-THOR log"
-    outputSource: thor/stdout_log
+    label: "rgt-THOR stderr log"
+    doc: "rgt-THOR stderr log"
+    outputSource: thor/stderr_log
 
 
 steps:
@@ -158,7 +158,7 @@ steps:
       - diffpeaks_bed_file
       - cond_1_bigwig_file
       - cond_2_bigwig_file
-      - stdout_log
+      - stderr_log
 
 
 $namespaces:
