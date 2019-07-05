@@ -112,12 +112,12 @@ outputs:
     label: "Estimated differential peaks"
     doc: "Estimated differential peaks"
     outputSource: thor/diffpeaks_bed_file
-    # 'sd:visualPlugins':
-    # - igvbrowser:
-    #     id: 'igvbrowser'
-    #     type: 'bed'
-    #     name: "Differential peaks"
-    #     height: 120
+    'sd:visualPlugins':
+    - igvbrowser:
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Differential peaks"
+        height: 120
 
   cond_1_bigwig_file:
     type: File[]
