@@ -70,7 +70,7 @@ inputs:
       advanced: true
 
   housekeeping_genes_bed_file:
-    type: File?
+    type: File
     format: "http://edamontology.org/format_3003"
     label: "Housekeeping genes file"
     doc: "Define housekeeping genes (BED format) used for normalizing"
@@ -78,7 +78,7 @@ inputs:
       advanced: true
 
   deadzones_bed_file:
-    type: File?
+    type: File
     format: "http://edamontology.org/format_3003"
     label: "Dead zones file"
     doc: "Define blacklisted genomic regions avoided for analysis"
