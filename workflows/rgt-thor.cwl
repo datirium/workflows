@@ -37,6 +37,8 @@ inputs:
 
   bambai_pair_cond_1:
     type: File[]
+    secondaryFiles:
+      - .bai
     format: "http://edamontology.org/format_2572"
     label: "Biological condition 1"
     doc: "Coordinate sorted BAM alignment and index BAI files for the first biological condition"
@@ -45,6 +47,8 @@ inputs:
 
   bambai_pair_cond_2:
     type: File[]
+    secondaryFiles:
+      - .bai
     format: "http://edamontology.org/format_2572"
     label: "Biological condition 2"
     doc: "Coordinate sorted BAM alignment and index BAI files for the second biological condition"
