@@ -126,6 +126,13 @@ outputs:
     label: "First biological condition ChIP-seq signals"
     doc: "Postprocessed ChIP-seq signals from the first biological condition samples"
     outputSource: thor/cond_1_bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Biological condition 1"
+        height: 120
 
   cond_2_bigwig_file:
     type: File[]
@@ -133,6 +140,13 @@ outputs:
     label: "Second biological condition ChIP-seq signals"
     doc: "Postprocessed ChIP-seq signals from the second biological condition samples"
     outputSource: thor/cond_2_bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Biological condition 2"
+        height: 120
 
   thor_stderr_log:
     type: File
