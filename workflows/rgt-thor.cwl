@@ -74,16 +74,16 @@ inputs:
     format: "http://edamontology.org/format_3003"
     label: "Housekeeping genes file"
     doc: "Define housekeeping genes (BED format) used for normalizing"
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
   deadzones_bed_file:
     type: File?
     format: "http://edamontology.org/format_3003"
     label: "Dead zones file"
     doc: "Define blacklisted genomic regions avoided for analysis"
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
   pvalue_cutoff:
     type: float?
