@@ -32,8 +32,8 @@ inputs:
   alias:
     type: string
     label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
+    # sd:preview:
+    #   position: 1
 
   bambai_pair_cond_1:
     type: File[]
@@ -66,31 +66,31 @@ inputs:
     type: boolean?
     label: "Merge peaks closer than fragment size"
     doc: "Merge peaks which have a distance less than the estimated mean fragment size (recommended for histone data)"
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
   housekeeping_genes_bed_file:
     type: File?
     format: "http://edamontology.org/format_3003"
     label: "Housekeeping genes file"
     doc: "Define housekeeping genes (BED format) used for normalizing"
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
   deadzones_bed_file:
     type: File?
     format: "http://edamontology.org/format_3003"
     label: "Dead zones file"
     doc: "Define blacklisted genomic regions avoided for analysis"
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
   pvalue_cutoff:
     type: float?
     label: "P-value cutoff for peak detection"
     doc: "P-value cutoff for peak detection. Call only peaks with p-value lower than cutoff. [default: 0.1]"
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
   extension_size:
     type:
@@ -100,8 +100,8 @@ inputs:
     doc: |
       Read's extension size for BAM files (comma separated list for each BAM file in config file).
       If option is not chosen, estimate extension sizes
-    'sd:layout':
-      advanced: true
+    # 'sd:layout':
+    #   advanced: true
 
 
 outputs:
@@ -112,12 +112,12 @@ outputs:
     label: "Estimated differential peaks"
     doc: "Estimated differential peaks"
     outputSource: thor/diffpeaks_bed_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "Differential peaks"
-        height: 120
+    # 'sd:visualPlugins':
+    # - igvbrowser:
+    #     id: 'igvbrowser'
+    #     type: 'bed'
+    #     name: "Differential peaks"
+    #     height: 120
 
   cond_1_bigwig_file:
     type: File[]
