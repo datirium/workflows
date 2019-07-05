@@ -8,23 +8,23 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-# 'sd:upstream':
-#   first_biological_condition:
-#     - "chipseq-se.cwl"
-#     - "chipseq-pe.cwl"
-#     - "trim-chipseq-se.cwl"
-#     - "trim-chipseq-pe.cwl"
-#     - "trim-atacseq-se.cwl"
-#     - "trim-atacseq-pe.cwl"
-#   second_biological_condition:
-#     - "chipseq-se.cwl"
-#     - "chipseq-pe.cwl"
-#     - "trim-chipseq-se.cwl"
-#     - "trim-chipseq-pe.cwl"
-#     - "trim-atacseq-se.cwl"
-#     - "trim-atacseq-pe.cwl"
-#   genome_indices:
-#     - "genome-indices.cwl"
+'sd:upstream':
+  first_biological_condition:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-se.cwl"
+    - "trim-atacseq-pe.cwl"
+  second_biological_condition:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-se.cwl"
+    - "trim-atacseq-pe.cwl"
+  genome_indices:
+    - "genome-indices.cwl"
 
 
 inputs:
@@ -42,8 +42,8 @@ inputs:
     format: "http://edamontology.org/format_2572"
     label: "Biological condition 1"
     doc: "Coordinate sorted BAM alignment and index BAI files for the first biological condition"
-    # 'sd:upstreamSource': "first_biological_condition/bambai_pair"
-    # 'sd:localLabel': true
+    'sd:upstreamSource': "first_biological_condition/bambai_pair"
+    'sd:localLabel': true
 
   bambai_pair_cond_2:
     type: File[]
@@ -52,15 +52,15 @@ inputs:
     format: "http://edamontology.org/format_2572"
     label: "Biological condition 2"
     doc: "Coordinate sorted BAM alignment and index BAI files for the second biological condition"
-    # 'sd:upstreamSource': "second_biological_condition/bambai_pair"
-    # 'sd:localLabel': true
+    'sd:upstreamSource': "second_biological_condition/bambai_pair"
+    'sd:localLabel': true
 
   chrom_length_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Chromosome length file"
     doc: "Chromosome length file"
-    # 'sd:upstreamSource': "genome_indices/chrom_length"
+    'sd:upstreamSource': "genome_indices/chrom_length"
 
   merge_peaks:
     type: boolean?
