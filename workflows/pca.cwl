@@ -49,6 +49,7 @@ outputs:
     outputSource: pca/pca1_vs_pca2_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'PCA1 vs PCA2'
 
   pca2_vs_pca3_plot:
@@ -59,6 +60,7 @@ outputs:
     outputSource: pca/pca2_vs_pca3_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'PCA2 vs PCA3'
 
   variance_plot:
@@ -69,6 +71,7 @@ outputs:
     outputSource: pca/variance_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'Variances'
 
   pca_3d_plot:
@@ -79,6 +82,7 @@ outputs:
     outputSource: pca/pca_3d_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'First three principal components'
 
   pca_file:
@@ -89,6 +93,7 @@ outputs:
     outputSource: pca/pca_file
     'sd:visualPlugins':
     - scatter3d:
+        tab: '3D Plots'
         Title: 'PCA'
         xAxisTitle: 'PCA1'
         yAxisTitle: 'PCA2'

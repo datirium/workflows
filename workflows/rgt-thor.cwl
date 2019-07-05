@@ -114,6 +114,7 @@ outputs:
     outputSource: thor/diffpeaks_bed_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Differential peaks"

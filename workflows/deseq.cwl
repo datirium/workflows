@@ -95,8 +95,10 @@ outputs:
     outputSource: deseq/diff_expr_file
     'sd:visualPlugins':
     - syncfusiongrid:
+        tab: 'Differential Gene Expression'
         Title: 'Combined DESeq results'
     - scatter:
+        tab: 'Plots'
         Title: 'Volcano'
         xAxisTitle: 'log fold change'
         yAxisTitle: '-log10(pAdj)'
@@ -112,6 +114,7 @@ outputs:
     outputSource: deseq/plot_lfc_vs_mean
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'LFC vs mean'
 
   gene_expr_heatmap:
@@ -122,6 +125,7 @@ outputs:
     outputSource: deseq/gene_expr_heatmap
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'The 30 most highly expressed genes'
 
 steps:

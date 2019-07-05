@@ -122,6 +122,7 @@ outputs:
     outputSource: restore_columns/output_file
     'sd:visualPlugins':
     - syncfusiongrid:
+        tab: 'Differential Peak Calling'
         Title: 'MAnorm Common Peak Results'
 
   above_m_cutoff_peak_file:
@@ -132,6 +133,7 @@ outputs:
     outputSource: manorm/above_m_cutoff_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Above M-value cutoff peaks"
@@ -145,6 +147,7 @@ outputs:
     outputSource: manorm/below_m_cutoff_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Below M-value cutoff peaks"
@@ -158,6 +161,7 @@ outputs:
     outputSource: manorm/unbiased_peak_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
         name: "Unbiased peaks"
@@ -171,6 +175,7 @@ outputs:
     outputSource: manorm/m_values_wig_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
         name: "M-values"
@@ -184,6 +189,7 @@ outputs:
     outputSource: manorm/a_values_wig_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
         name: "A-values"
@@ -197,6 +203,7 @@ outputs:
     outputSource: manorm/p_values_wig_file
     'sd:visualPlugins':
     - igvbrowser:
+        tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
         name: "P-values"
@@ -210,6 +217,7 @@ outputs:
     outputSource: manorm/ma_before_normalization_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'MA-values before normalization'
 
   ma_after_normalization_plot:
@@ -220,6 +228,7 @@ outputs:
     outputSource: manorm/ma_after_normalization_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'MA-values after normalization'
 
   ma_with_P_value_plot:
@@ -230,6 +239,7 @@ outputs:
     outputSource: manorm/ma_with_P_value_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'MA-values with P-values'
 
   read_density_on_common_peaks_plot:
@@ -240,6 +250,7 @@ outputs:
     outputSource: manorm/read_density_on_common_peaks_plot
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'Read density on common peaks'
 
   manorm_stderr_log:
