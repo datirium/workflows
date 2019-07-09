@@ -3209,9 +3209,6 @@
 - job: ./chipseq-se-1.json
   tool: ../workflows/chipseq-se.cwl
   output:
-    atdp_log:
-      class: File
-      location: upstream_atdp.log
     atdp_result:
       class: File
       location: upstream_atdp.tsv
@@ -3235,17 +3232,6 @@
       class: File
       location: upstream.fastxstat
       size: 2255
-    get_stat_log:
-      class: File
-      location: upstream.stat
-      size: 12
-    get_stat_formatted_log:
-      class: File
-      location: upstream_stats.tsv
-      size: 65
-    iaintersect_log:
-      class: File
-      location: upstream_macs_peaks_iaintersect.log
     iaintersect_result:
       class: File
       location: upstream_macs_peaks_iaintersect.tsv
@@ -3254,26 +3240,15 @@
     macs2_called_peaks:
       class: File
       location: upstream_macs_peaks.xls
-    macs2_fragment_stat:
-      class: File
-      location: upstream_fragment_stat.tsv
-      size: 9
-    macs2_gapped_peak: null
-    macs2_log:
-      class: File
-      location: upstream_macs.log
-    macs2_moder_r: null
     macs2_narrow_peaks:
       class: File
       location: upstream_macs_peaks.narrowPeak
       size: 70
-    macs2_peak_summits:
+    preseq_estimates: null
+    workflow_statistics:
       class: File
-      location: upstream_macs_summits.bed
-      size: 46
-    samtools_rmdup_log:
-      class: File
-      location: upstream.rmdup
+      location: upstream_stats.tsv
+      size: 65
 
 # ========================================================
 # chipseq-pe

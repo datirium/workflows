@@ -203,10 +203,10 @@ outputs:
 
   chrom_length:
     type: File
-    label: "Chromosome length file"
+    label: "Chromosome lengths file"
     format: "http://edamontology.org/format_2330"
     outputSource: star_generate_indices/chr_name_length
-    doc: "Chromosome length file"
+    doc: "Chromosome lengths file"
 
 
 steps:
