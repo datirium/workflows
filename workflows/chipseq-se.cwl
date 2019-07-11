@@ -145,7 +145,7 @@ outputs:
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'Quality Control Plot'
+        Title: 'Base Quality Plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -373,7 +373,6 @@ steps:
       - peak_xls_file
       - narrow_peak_file
       - broad_peak_file
-      - macs_log
       - macs2_fragments_calculated
 
   bam_to_bigwig:
