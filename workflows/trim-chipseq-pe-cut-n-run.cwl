@@ -228,6 +228,9 @@ steps:
       bambai_pair: bambai_pair
       min_fragment_length: min_fragment_size
       max_fragment_length: max_fragment_size
+      output_filename:
+        source: bambai_pair
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.')+'_filtered.bam')
       threads: threads
     out:
       - filtered_bam_file
