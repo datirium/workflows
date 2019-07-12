@@ -60,8 +60,9 @@ inputs:
 
   group_by:
     type:
-      type: enum
-      symbols: ["isoforms", "genes", "common tss"]
+      - "null"
+      - type: enum
+        symbols: ["isoforms", "genes", "common tss"]
     default: "genes"
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
