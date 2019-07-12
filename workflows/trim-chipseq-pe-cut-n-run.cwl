@@ -26,6 +26,16 @@ requirements:
 
 inputs:
 
+  bambai_pair:
+    type: File
+    secondaryFiles:
+      - .bai
+    'sd:upstreamSource': "base_experiment/bambai_pair"
+    'sd:localLabel': true
+    format: "http://edamontology.org/format_2572"
+    label: "ChIP-Seq paired-end experiment"
+    doc: "Coordinate sorted BAM alignment and index BAI files"
+
   alignment_log:
     type: File
     'sd:upstreamSource': "base_experiment/bowtie_log"
@@ -39,15 +49,6 @@ inputs:
     format: "http://edamontology.org/format_2330"
     label: "Remove duplicates log"
     doc: "Remove duplicates log file from Samtools"
-
-  bambai_pair:
-    type: File
-    secondaryFiles:
-      - .bai
-    'sd:upstreamSource': "base_experiment/bambai_pair"
-    format: "http://edamontology.org/format_2572"
-    label: "ChIP-Seq paired-end experiment"
-    doc: "Coordinate sorted BAM alignment and index BAI files"
 
   annotation_file:
     type: File
