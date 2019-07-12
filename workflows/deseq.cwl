@@ -1,8 +1,16 @@
 cwlVersion: v1.0
 class: Workflow
 
+
+requirements:
+  - class: SubworkflowFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
+
+
 'sd:upstream':
-  rnaseq_sample_untreated:
+  rnaseq_cond_1:
     - "rnaseq-se.cwl"
     - "rnaseq-pe.cwl"
     - "rnaseq-se-dutp.cwl"
@@ -13,7 +21,7 @@ class: Workflow
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
-  rnaseq_sample_treated:
+  rnaseq_cond_2:
     - "rnaseq-se.cwl"
     - "rnaseq-pe.cwl"
     - "rnaseq-se-dutp.cwl"
@@ -34,53 +42,35 @@ inputs:
     sd:preview:
       position: 1
 
-  untreated_files:
+  rpkm_isoforms_cond_1:
     type: File[]
-    format:
-     - "http://edamontology.org/format_3752"
-     - "http://edamontology.org/format_3475"
-    label: "Untreated input CSV/TSV files"
-    doc: "Untreated input CSV/TSV files"
-    'sd:upstreamSource': "rnaseq_sample_untreated/rpkm_common_tss"
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "CSV/TSV input files grouped by isoforms (condition 1, aka 'untreated')"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
     'sd:localLabel': true
 
-  treated_files:
+  rpkm_isoforms_cond_2:
     type: File[]
-    format:
-     - "http://edamontology.org/format_3752"
-     - "http://edamontology.org/format_3475"
-    label: "Treated input CSV/TSV files"
-    doc: "Treated input CSV/TSV files"
-    'sd:upstreamSource': "rnaseq_sample_treated/rpkm_common_tss"
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "CSV/TSV input files grouped by isoforms (condition 2, aka 'treated')"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms"
     'sd:localLabel': true
 
-  untreated_col_suffix:
-    type: string?
-    label: "Untreated RPKM column suffix"
-    doc: "Suffix for untreated RPKM column name"
-    'sd:layout':
-      advanced: true
-
-  treated_col_suffix:
-    type: string?
-    label: "Treated RPKM column suffix"
-    doc: "Suffix for treated RPKM column name"
-    'sd:layout':
-      advanced: true
-
-  output_filename:
-    type: string?
-    label: "Output TSV filename"
-    doc: "Output TSV filename"
-    default: "deseq_results.tsv"
-    'sd:layout':
-      advanced: true
+  group_by:
+    type:
+      type: enum
+      symbols: ["isoforms", "genes", "common tss"]
+    default: "genes"
+    label: "Group by"
+    doc: "Grouping method for features: isoforms, genes or common tss"
 
   threads:
     type: int?
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
-    default: 2
+    default: 1
     'sd:layout':
       advanced: true
 
@@ -89,13 +79,13 @@ outputs:
 
   diff_expr_file:
     type: File
-    label: "DESeq resutls, TSV"
+    label: "Differentially expressed features grouped by isoforms, genes or common TSS"
     format: "http://edamontology.org/format_3475"
-    doc: "DESeq generated list of differentially expressed items grouped by isoforms, genes or common TSS"
+    doc: "DESeq generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
     outputSource: deseq/diff_expr_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Differential Gene Expression'
+        tab: 'Differential Expression Analysis'
         Title: 'Combined DESeq results'
     - scatter:
         tab: 'Volcano Plot'
@@ -119,25 +109,62 @@ outputs:
 
   gene_expr_heatmap:
     type: File
-    label: "Heatmap of the 30 most highly expressed genes"
+    label: "Heatmap of the 30 most highly expressed features"
     format: "http://edamontology.org/format_3603"
-    doc: "Heatmap showing the expression data of the 30 most highly expressed genes based on the variance stabilisation transformed data"
+    doc: "Heatmap showing the expression data of the 30 most highly expressed features grouped by isoforms, genes or common TSS, based on the variance stabilisation transformed data"
     outputSource: deseq/gene_expr_heatmap
     'sd:visualPlugins':
     - image:
         tab: 'Other Plots'
-        Caption: 'The 30 most highly expressed genes'
+        Caption: 'The 30 most highly expressed features'
 
 steps:
+
+  group_isoforms_cond_1:
+    run: ../subworkflows/group-isoforms-batch.cwl
+    in:
+      isoforms_file: rpkm_isoforms_cond_1
+    out:
+      - genes_file
+      - common_tss_file
+
+  group_isoforms_cond_2:
+    run: ../subworkflows/group-isoforms-batch.cwl
+    in:
+      isoforms_file: rpkm_isoforms_cond_2
+    out:
+      - genes_file
+      - common_tss_file
 
   deseq:
     run: ../tools/deseq-advanced.cwl
     in:
-      untreated_files: untreated_files
-      treated_files: treated_files
-      untreated_col_suffix: untreated_col_suffix
-      treated_col_suffix: treated_col_suffix
-      output_filename: output_filename
+      untreated_files:
+        source: [group_by, rpkm_isoforms_cond_1, group_isoforms_cond_1/genes_file, group_isoforms_cond_1/common_tss_file]
+        valueFrom: |
+          ${
+              if (self[0] == "isoforms") {
+                return self[1];
+              } else if (self[0] == "genes") {
+                return self[2];
+              } else {
+                return self[3];
+              }
+          }
+      treated_files:
+        source: [group_by, rpkm_isoforms_cond_2, group_isoforms_cond_2/genes_file, group_isoforms_cond_2/common_tss_file]
+        valueFrom: |
+          ${
+              if (self[0] == "isoforms") {
+                return self[1];
+              } else if (self[0] == "genes") {
+                return self[2];
+              } else {
+                return self[3];
+              }
+          }
+      output_filename:
+        default: "deseq_results.tsv"
       threads: threads
     out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap]
 
