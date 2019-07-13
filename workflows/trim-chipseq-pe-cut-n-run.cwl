@@ -115,6 +115,20 @@ inputs:
 
 outputs:
 
+  bigwig:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage"
+    doc: "Genome coverage in bigWig format"
+    outputSource: bam_to_bigwig/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome Coverage"
+        height: 120
+
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
@@ -129,20 +143,6 @@ outputs:
         format: 'bam'
         name: "Filtered Nucleotide Sequence Alignments"
         displayMode: "SQUISHED"
-
-  bigwig:
-    type: File
-    format: "http://edamontology.org/format_3006"
-    label: "Genome coverage"
-    doc: "Genome coverage in bigWig format"
-    outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "Genome Coverage"
-        height: 120
 
   iaintersect_result:
     type: File
