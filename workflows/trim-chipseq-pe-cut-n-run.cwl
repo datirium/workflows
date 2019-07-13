@@ -229,9 +229,6 @@ steps:
       bambai_pair: bambai_pair
       min_fragment_length: min_fragment_size
       max_fragment_length: max_fragment_size
-      output_filename:
-        source: bambai_pair
-        valueFrom: $(self.basename.split('.').slice(0,-1).join('.')+'_filtered.bam')
       threads: threads
     out:
       - filtered_bam_file
@@ -364,9 +361,9 @@ s:creator:
 
 doc: |
   Experimental pipeline for Cut-n-Run analysis. Uses mapping results from the following experiment types:
-  
+
   - `chipseq-pe.cwl`
   - `trim-chipseq-pe.cwl`
   - `trim-atacseq-pe.cwl`
-  
+
   Note, the upstream analyses should not have duplicates removed
