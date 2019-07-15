@@ -12,9 +12,11 @@ requirements:
   first_chipseq_sample:
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-pe.cwl"
   second_chipseq_sample:
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-pe.cwl"
   genome_indices:
     - "genome-indices.cwl"
 
