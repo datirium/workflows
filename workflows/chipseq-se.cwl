@@ -125,6 +125,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
+        optional: true
         type: 'wig'
         name: "Genome Coverage"
         height: 120
@@ -244,7 +245,7 @@ outputs:
     'sd:visualPlugins':
     - tableView:
         vertical: true
-        tab: 'Overview'    
+        tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:
@@ -389,7 +390,7 @@ steps:
     in:
       bowtie_log: bowtie_aligner/log_file
       rmdup_log: samtools_rmdup/rmdup_log
-    out: 
+    out:
       - formatted_output_file
       - mapped_reads
 

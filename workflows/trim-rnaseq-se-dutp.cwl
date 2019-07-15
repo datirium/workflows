@@ -183,6 +183,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
+        optional: true
         type: 'alignment'
         format: 'bam'
         name: "BAM Track"
