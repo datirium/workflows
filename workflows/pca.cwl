@@ -33,7 +33,9 @@ inputs:
     'sd:localLabel': true
 
   legend_name:
-    type: string[]
+    type:
+      - "null"
+      - string[]
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
     # 'sd:upstreamSource': "rnaseq_sample/alias"
@@ -120,14 +122,16 @@ steps:
       class: CommandLineTool
       requirements:
       - class: DockerRequirement
-        dockerPull: biowardrobe2/pca:v0.0.2
+        dockerPull: biowardrobe2/pca:v0.0.3
       inputs:
         expression_file:
           type: File[]
           inputBinding:
             prefix: "-i"
         legend_name:
-          type: string[]
+          type:
+            - "null"
+            - string[]
           inputBinding:
             prefix: "-n"
       outputs:
