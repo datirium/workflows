@@ -220,9 +220,9 @@ steps:
       script:
         default: |
           cat $0 | grep -v "start" | sort -k 11n > sorted_iaintersect_result.tsv
-          cat $1 > thor_result.tsv
-          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tname\tscore\tcondition\tcolor\thits" > `basename $0`;
-          cat sorted_iaintersect_result.tsv | paste - thor_result.tsv | cut -f 1-9,15,19-21,24,26 >> `basename $0`
+          cat $1 | tr ";" "\t" > thor_result.tsv
+          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tname\tscore\tcondition\tcolor\tcounts-1\tcounts-2\tp-value" > `basename $0`;
+          cat sorted_iaintersect_result.tsv | paste - thor_result.tsv | cut -f 1-9,15,19-21,24,26-28 >> `basename $0`
           rm sorted_iaintersect_result.tsv thor_result.tsv
     out: [output_file]
 
