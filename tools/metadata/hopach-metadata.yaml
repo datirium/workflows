@@ -1,0 +1,4 @@
+class: s:SoftwareSourceCode
+s:name: "hopach"
+s:about: |
+  Hierarchical Ordered Partitioning and Collapsing Hybrid (HOPACH)
