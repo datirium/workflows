@@ -108,18 +108,18 @@ outputs:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Combined expression file ordered by hopach clustering results"
-    doc: "Combined by RefseqId, GeneId, Chrom, TxStart, TxEnd and Strand expression file. Rows order correspond to the hopach clustering resutls"
+    doc: "Combined by RefseqId, GeneId, Chrom, TxStart, TxEnd and Strand expression file. Rows order correspond to the Hopach clustering results"
     outputSource: hopach/ordered_genelist
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'HOPACH Clustering Analysis'
-        Title: 'HOPACH ordered expression data'
+        tab: 'Hopach Clustering Analysis'
+        Title: 'Hopach ordered expression data'
 
   distance_matrix_png:
     type: File
     label: "Distance Matrix"
     format: "http://edamontology.org/format_3603"
-    doc: "Distance matrix. Row and column orderings correspond to the main HOPACH clusters"
+    doc: "Distance matrix plot. Clusters of similar features will appear as blocks on the diagonal of the matrix"
     outputSource: hopach/distance_matrix_png
     'sd:visualPlugins':
     - image:
@@ -130,13 +130,26 @@ outputs:
     type: File
     label: "Heatmap"
     format: "http://edamontology.org/format_3603"
-    doc: "Heatmap. Row ordering corresponds to the main HOPACH clusters"
+    doc: "Heatmap plot. Row ordering corresponds to the Hopach clustering results"
     outputSource: hopach/heatmap_png
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
         Caption: 'Heatmap'
 
+  variability_plot_png:
+    type: File
+    label: "Cluster Variability"
+    format: "http://edamontology.org/format_3603"
+    doc: |
+      Cluster variability plot. Every horizontal bar represents a feature.
+      If the bar is all or mostly one color, then the feature is estimated to
+      belong strongly to that cluster
+    outputSource: hopach/variability_plot_png
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Cluster Variability'
 
 steps:
 
@@ -163,6 +176,12 @@ steps:
                 return self[3];
               }
           }
+      export_heatmap:
+        default: true
+      export_distance_matrix:
+        default: true
+      export_variability_plot:
+        default: true
       legend_names: legend_names
       target_column: target_column
       dist_metric: dist_metric
@@ -174,6 +193,7 @@ steps:
       - ordered_genelist
       - distance_matrix_png
       - heatmap_png
+      - variability_plot_png
 
 
 $namespaces:

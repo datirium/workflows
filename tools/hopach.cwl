@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/hopach:v0.0.3
+  dockerPull: biowardrobe2/hopach:v0.0.4
 
 
 inputs:
@@ -58,6 +58,24 @@ inputs:
       prefix: "--keep"
     doc: "Keep discarded by --min parameter rows at the end of the file. Default: false"
 
+  export_heatmap:
+    type: boolean?
+    inputBinding:
+      prefix: "--heatmap"
+    doc: "Export heatmap to png. Default: false"
+
+  export_distance_matrix:
+    type: boolean?
+    inputBinding:
+      prefix: "--distmatrix"
+    doc: "Export distance matrix to png. Default: false"
+
+  export_variability_plot:
+    type: boolean?
+    inputBinding:
+      prefix: "--variability"
+    doc: "Export clsuter variability plot to png. Default: false"
+
   threshold:
     type: float?
     inputBinding:
@@ -89,16 +107,22 @@ outputs:
     doc: "Combined genelist file ordered by hopach clustering results"
 
   distance_matrix_png:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_dist_matrix.png"
     doc: "Distance matrix ordered by hopach clustering results"
 
   heatmap_png:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_heatmap.png"
     doc: "Heatmap ordered by hopach clustering results"
+
+  variability_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_variablility.png"
+    doc: "Cluster variability plot"
 
   stderr_log:
     type: File
@@ -169,38 +193,41 @@ s:creator:
 
 doc: |
   Runs hopach clustering algorithm with the combined by specific columns genelist files.
-  Return ordered combined genelist file, distance matrix and heatmap.
+  Return ordered combined genelist file and optional distance matrix, cluster variability and heatmap plots.
   Works with minimum two genelist files.
 
 s:about: |
-  usage: ../hopach_order.R [-h] -i INPUT [INPUT ...] [-n NAME [NAME ...]]
-                          [-t TARGET] [-c COMBINE [COMBINE ...]]
-                          [-d {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-                          [-l] [-k] [-m MIN] [-p PALETTE [PALETTE ...]]
-                          [-o OUTPUT]
+  usage: hopach_order.R [-h] --input INPUT [INPUT ...] [--name NAME [NAME ...]]
+                        [--target TARGET] [--combine COMBINE [COMBINE ...]]
+                        [--dist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+                        [--logtransform] [--keep] [--heatmap] [--distmatrix]
+                        [--variability] [--min MIN]
+                        [--palette PALETTE [PALETTE ...]] [--output OUTPUT]
 
   Hopach Ordering
 
   optional arguments:
     -h, --help            show this help message and exit
-    -i INPUT [INPUT ...], --input INPUT [INPUT ...]
+    --input INPUT [INPUT ...]
                           Input CSV/TSV genelist files
-    -n NAME [NAME ...], --name NAME [NAME ...]
+    --name NAME [NAME ...]
                           Names, the order corresponds to input. Default:
                           basename of --input files
-    -t TARGET, --target TARGET
-                          Target column name to be used by Hopach. Default: Rpkm
-    -c COMBINE [COMBINE ...], --combine COMBINE [COMBINE ...]
+    --target TARGET       Target column name to be used by Hopach. Default: Rpkm
+    --combine COMBINE [COMBINE ...]
                           Combine inputs by columns names. Default: RefseqId,
                           GeneId, Chrom, TxStart, TxEnd, Strand
-    -d {cosangle,abscosangle,euclid,abseuclid,cor,abscor}, --dist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+    --dist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
                           Distance metric. Default: cosangle
-    -l, --logtransform    Log2 transform input data prior running hopach.
+    --logtransform        Log2 transform input data prior running hopach.
                           Default: false
-    -k, --keep            Keep discarded values at the end of the file. Default:
+    --keep                Keep discarded values at the end of the file. Default:
                           false
-    -m MIN, --min MIN     Min value for target column value. Default: 0
-    -p PALETTE [PALETTE ...], --palette PALETTE [PALETTE ...]
+    --heatmap             Export heatmap to png. Default: false
+    --distmatrix          Export distance matrix to png. Default: false
+    --variability         Export clsuter variability plot to png. Default: false
+    --min MIN             Min value for target column value. Default: 0
+    --palette PALETTE [PALETTE ...]
                           Palette color names. Default: black, red, yellow
-    -o OUTPUT, --output OUTPUT
-                          Output prefix. Default: ordered_genelist
+    --output OUTPUT       Output prefix. Default: ordered_genelist
+

@@ -49,15 +49,15 @@ inputs:
 
   fastq_file_upstream:
     type: File
-    label: "FASTQ upstream input file"
+    label: "FASTQ 1 input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
     type: File
-    label: "FASTQ downstream input file"
+    label: "FASTQ 2 input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
 # Advanced inputs
 
@@ -149,20 +149,20 @@ outputs:
   fastx_statistics_upstream:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "FASTQ upstream statistics"
-    doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
+    label: "FASTQ 1 statistics"
+    doc: "fastx_quality_stats generated FASTQ 1 quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'Upstream Base frequency plot'
+        Title: 'FASTQ 1 Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'Upstream Quality Control'
+        Title: 'FASTQ 1 Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -171,20 +171,20 @@ outputs:
   fastx_statistics_downstream:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "FASTQ downstream statistics"
-    doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
+    label: "FASTQ 2 statistics"
+    doc: "fastx_quality_stats generated FASTQ 2 quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'Downstream Base frequency plot'
+        Title: 'FASTQ 2 Base frequency plot'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'Downstream Quality Control'
+        Title: 'FASTQ 2 Quality Control'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]

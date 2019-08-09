@@ -27,15 +27,15 @@ inputs:
 
   fastq_file_upstream:
     type: File
-    label: "FASTQ upstream input file"
+    label: "FASTQ 1 input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
     type: File
-    label: "FASTQ downstream input file"
+    label: "FASTQ 2 input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fasta_file_adapters:
     type: File
@@ -100,15 +100,15 @@ outputs:
   fastx_statistics_upstream:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "FASTQ upstream statistics"
-    doc: "fastx_quality_stats generated upstream FASTQ quality statistics file"
+    label: "FASTQ 2 statistics"
+    doc: "fastx_quality_stats generated FASTQ 1 quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
 
   fastx_statistics_downstream:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "FASTQ downstream statistics"
-    doc: "fastx_quality_stats generated downstream FASTQ quality statistics file"
+    label: "FASTQ 2 statistics"
+    doc: "fastx_quality_stats generated FASTQ 2 quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
 
   get_stat_log:

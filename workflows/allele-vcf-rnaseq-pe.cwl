@@ -61,15 +61,15 @@ inputs:
 
   fastq_file_upstream:
     type: File
-    label: "FASTQ upstream input file"
+    label: "FASTQ 1 input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Upstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
     type: File
-    label: "FASTQ downstream input file"
+    label: "FASTQ 2 input file"
     format: "http://edamontology.org/format_1930"
-    doc: "Downstream reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
 
 outputs:
