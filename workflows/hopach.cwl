@@ -93,6 +93,30 @@ inputs:
     label: "Log2 transform"
     doc: "Log2 transform input data prior running hopach clustering"
 
+  export_heatmap:
+    type: boolean?
+    default: false
+    label: "Export heatmap"
+    doc: "Export heatmap plot to png"
+    'sd:layout':
+      advanced: true
+
+  export_distance_matrix:
+    type: boolean?
+    default: false
+    label: "Export distance matrix plot"
+    doc: "Export distance matrix plot to png"
+    'sd:layout':
+      advanced: true
+
+  export_variability_plot:
+    type: boolean?
+    default: false
+    label: "Export cluster variability plot"
+    doc: "Export cluster variability plot"
+    'sd:layout':
+      advanced: true
+
   palette:
     type:
       - "null"
@@ -100,6 +124,8 @@ inputs:
     default: ["black", "red", "yellow"]
     label: "Custom palette color list"
     doc: "Color list for custom palette"
+    'sd:layout':
+      advanced: true
 
 
 outputs:
@@ -176,12 +202,9 @@ steps:
                 return self[3];
               }
           }
-      export_heatmap:
-        default: true
-      export_distance_matrix:
-        default: true
-      export_variability_plot:
-        default: true
+      export_heatmap: export_heatmap
+      export_distance_matrix: export_distance_matrix
+      export_variability_plot: export_variability_plot
       legend_names: legend_names
       target_column: target_column
       dist_metric: dist_metric
