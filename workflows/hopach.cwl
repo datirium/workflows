@@ -83,7 +83,7 @@ inputs:
       - "null"
       - type: enum
         symbols: ["mean", "median"]
-    default: "null"
+    default: "mean"
     label: "Center row values"
     doc: "Center row values"
 
