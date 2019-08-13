@@ -165,7 +165,7 @@ outputs:
         Title: 'Hopach ordered expression data'
 
   distance_matrix_png:
-    type: File
+    type: File?
     label: "Distance Matrix"
     format: "http://edamontology.org/format_3603"
     doc: "Distance matrix plot. Clusters of similar features will appear as blocks on the diagonal of the matrix"
@@ -176,7 +176,7 @@ outputs:
         Caption: 'Distance Matrix'
 
   heatmap_png:
-    type: File
+    type: File?
     label: "Heatmap"
     format: "http://edamontology.org/format_3603"
     doc: "Heatmap plot. Row ordering corresponds to the Hopach clustering results"
@@ -187,7 +187,7 @@ outputs:
         Caption: 'Heatmap'
 
   variability_plot_png:
-    type: File
+    type: File?
     label: "Cluster Variability"
     format: "http://edamontology.org/format_3603"
     doc: |
