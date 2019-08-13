@@ -95,8 +95,7 @@ inputs:
     doc: "The maximum fragment size needed for read/pair inclusion"
 
   exp_fragment_size:
-    type: int?
-    default: 150
+    type: int
     label: "Expected fragment size"
     doc: "Expected fragment size for read extenstion towards 3' end if force_fragment_size was set to True or if calculated by MACS2 fragment size was less that 80 bp"
 
