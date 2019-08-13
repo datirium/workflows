@@ -94,17 +94,6 @@ inputs:
     label: "Maximum fragment size"
     doc: "The maximum fragment size needed for read/pair inclusion"
 
-  exp_fragment_size:
-    type: int
-    label: "Expected fragment size"
-    doc: "Expected fragment size for read extenstion towards 3' end if force_fragment_size was set to True or if calculated by MACS2 fragment size was less that 80 bp"
-
-  force_fragment_size:
-    type: boolean?
-    default: false
-    label: "Force peak calling with expected fragment size"
-    doc: "Make MACS2 don't build the shifting model and use expected fragment size for read extenstion towards 3' end"
-
   threads:
     type: int?
     default: 2
@@ -242,7 +231,7 @@ steps:
     out: [bam_bai_pair]
 
   macs2_callpeak:
-    run: ../tools/macs2-callpeak-biowardrobe-only.cwl
+    run: ../tools/macs2-callpeak.cwl
     in:
       treatment_file: samtools_sort_index/bam_bai_pair
       control_file: control_file
@@ -254,9 +243,6 @@ steps:
         default: "4 40"
       verbose:
         default: 3
-      nomodel: force_fragment_size
-      extsize: exp_fragment_size
-      bw: exp_fragment_size
       broad: broad_peak
       call_summits:
         source: broad_peak
@@ -273,7 +259,6 @@ steps:
       - peak_xls_file
       - narrow_peak_file
       - broad_peak_file
-      - macs2_fragments_calculated
 
   bam_to_bigwig:
     run: ../subworkflows/bam-bedgraph-bigwig.cwl
@@ -281,7 +266,6 @@ steps:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: get_statistics/mapped_reads
-      fragment_size: macs2_callpeak/macs2_fragments_calculated
       pairchip:
         default: true
     out: [bigwig_file]
@@ -300,7 +284,6 @@ steps:
       in:
         input_file: samtools_sort_index/bam_bai_pair
         annotation_filename: annotation_file
-        fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
         avd_window_bp:
           default: 5000
         avd_smooth_bp:

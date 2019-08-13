@@ -11,10 +11,10 @@ requirements:
       if (inputs.trigger == false && input_staged){
         return input_staged.basename;
       } else {
-        if (Object.prototype.toString.call(inputs.treatment) === '[object Array]'){
-          return inputs.treatment[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+sufix;
+        if (Object.prototype.toString.call(inputs.treatment_file) === '[object Array]'){
+          return inputs.treatment_file[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+sufix;
         } else {
-          return inputs.treatment.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+sufix;
+          return inputs.treatment_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+sufix;
         }
       }
     }
@@ -119,7 +119,7 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      if [ "$0" = True ]
+      if [ "$0" = "true" ]
       then
         ls | grep -v ${@: -1}.log | xargs rm -f
         macs2 callpeak "${@:1}"
@@ -136,6 +136,8 @@ inputs:
     default: true
     inputBinding:
       position: 2
+      valueFrom: |
+        ${return self?"true":"false"}
     doc: |
       If true - run MACS2, if false - return staged files
 
@@ -167,7 +169,7 @@ inputs:
     type: File?
     doc: For staging in a case of trigger is set to false
 
-  treatment:
+  treatment_file:
     type:
       - File
       - type: array
@@ -202,7 +204,7 @@ inputs:
       So please avoid any confliction between these filenames and your existing files.
       DEFAULT: generated on the base of the treatment input
 
-  control:
+  control_file:
     type:
       - "null"
       - File
