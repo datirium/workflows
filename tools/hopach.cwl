@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/hopach:v0.0.4
+  dockerPull: biowardrobe2/hopach:v0.0.5
 
 
 inputs:
@@ -51,6 +51,27 @@ inputs:
     inputBinding:
       prefix: "--logtransform"
     doc: "Log2 transform input data prior running hopach. Default: false"
+
+  center:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["mean", "median"]
+    inputBinding:
+      prefix: "--center"
+    doc: "Center rows. Default: not centered"
+
+  normalize:
+    type: boolean?
+    inputBinding:
+      prefix: "--norm"
+    doc: "Normalize rows. Default: not normalized"
+
+  reorder_columns:
+    type: boolean?
+    inputBinding:
+      prefix: "--reordercol"
+    doc: "Reorder heatmap columns. Default: false"
 
   keep_discarded:
     type: boolean?

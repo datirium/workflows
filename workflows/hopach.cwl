@@ -72,11 +72,26 @@ inputs:
     label: "Target column threshold value"
     doc: "Min value for target column"
 
-  keep_discarded:
+  logtransform:
     type: boolean?
     default: false
-    label: "Append discarded by threshold rows at the bottom"
-    doc: "Keep discarded by threshold parameter rows at the end of the output file"
+    label: "Log2 transform"
+    doc: "Log2 transform input data prior running hopach clustering"
+
+  center:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["mean", "median"]
+    default: "null"
+    label: "Center row values"
+    doc: "Center row values"
+
+  normalize:
+    type: boolean?
+    default: false
+    label: "Normalize row values"
+    doc: "Normalize row values"
 
   dist_metric:
     type:
@@ -84,20 +99,28 @@ inputs:
       - type: enum
         symbols: ["cosangle", "abscosangle", "euclid", "abseuclid", "cor", "abscor"]
     default: "cosangle"
-    label: "Distance metric"
+    label: "Distance metric for clustering"
     doc: "Algorithm to be used for distance matrix calculation before running hopach clustering"
 
-  logtransform:
+  keep_discarded:
     type: boolean?
     default: false
-    label: "Log2 transform"
-    doc: "Log2 transform input data prior running hopach clustering"
+    label: "Append discarded by threshold rows at the bottom"
+    doc: "Keep discarded by threshold parameter rows at the end of the output file"
 
   export_heatmap:
     type: boolean?
     default: false
     label: "Export heatmap"
     doc: "Export heatmap plot to png"
+    'sd:layout':
+      advanced: true
+
+  reorder_columns:
+    type: boolean?
+    default: false
+    label: "Reorder heatmap columns"
+    doc: "Reorder heatmap columns"
     'sd:layout':
       advanced: true
 
@@ -209,6 +232,9 @@ steps:
       target_column: target_column
       dist_metric: dist_metric
       logtransform: logtransform
+      center: center
+      normalize: normalize
+      reorder_columns: reorder_columns
       keep_discarded: keep_discarded
       threshold: threshold
       palette: palette
