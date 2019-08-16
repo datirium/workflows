@@ -39,7 +39,7 @@ inputs:
     'sd:upstreamSource': "rnaseq_sample/rpkm_isoforms"
     'sd:localLabel': true
 
-  legend_names:
+  expression_aliases:
     type:
       - "null"
       - string[]
@@ -64,21 +64,49 @@ inputs:
         symbols: ["Rpkm", "TotalReads"]
     default: "Rpkm"
     label: "Target column"
-    doc: "Target column name from expression files to be used by Hopach"
+    doc: "Target column name from expression files to be used by hopach"
 
-  threshold:
+  row_min:
     type: float?
     default: 0
-    label: "Target column threshold value"
+    label: "Min value for target column"
     doc: "Min value for target column"
 
-  logtransform:
+  keep_discarded:
     type: boolean?
     default: false
-    label: "Log2 transform"
-    doc: "Log2 transform input data prior running hopach clustering"
+    label: "Keep discarded rows"
+    doc: "Keep discarded by threshold parameter rows at the end of the output file"
 
-  center:
+  cluster_method:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["row", "column", "both"]
+    default: "both"
+    label: "Cluster method"
+    doc: "Cluster method"
+
+  row_dist_metric:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["cosangle", "abscosangle", "euclid", "abseuclid", "cor", "abscor"]
+    default: "cosangle"
+    label: "Distance metric for row clustering"
+    doc: "Algorithm to be used for distance matrix calculation before running hopach row clustering"
+    'sd:layout':
+      advanced: true
+
+  row_logtransform:
+    type: boolean?
+    default: true
+    label: "Log2 row transform"
+    doc: "Log2 transform input data to prior running hopach row clustering"
+    'sd:layout':
+      advanced: true
+
+  row_center:
     type:
       - "null"
       - type: enum
@@ -86,57 +114,52 @@ inputs:
     default: "mean"
     label: "Center row values"
     doc: "Center row values"
+    'sd:layout':
+      advanced: true
 
-  normalize:
+  row_normalize:
     type: boolean?
-    default: false
+    default: true
     label: "Normalize row values"
     doc: "Normalize row values"
+    'sd:layout':
+      advanced: true
 
-  dist_metric:
+  col_dist_metric:
     type:
       - "null"
       - type: enum
         symbols: ["cosangle", "abscosangle", "euclid", "abseuclid", "cor", "abscor"]
-    default: "cosangle"
-    label: "Distance metric for clustering"
-    doc: "Algorithm to be used for distance matrix calculation before running hopach clustering"
-
-  keep_discarded:
-    type: boolean?
-    default: false
-    label: "Append discarded by threshold rows at the bottom"
-    doc: "Keep discarded by threshold parameter rows at the end of the output file"
-
-  export_heatmap:
-    type: boolean?
-    default: false
-    label: "Export heatmap"
-    doc: "Export heatmap plot to png"
+    default: "euclid"
+    label: "Distance metric for column clustering"
+    doc: "Algorithm to be used for distance matrix calculation before running hopach column clustering"
     'sd:layout':
       advanced: true
 
-  reorder_columns:
+  col_logtransform:
     type: boolean?
-    default: false
-    label: "Reorder heatmap columns"
-    doc: "Reorder heatmap columns"
+    default: true
+    label: "Log2 column transform"
+    doc: "Log2 transform input data to prior running hopach column clustering"
     'sd:layout':
       advanced: true
 
-  export_distance_matrix:
-    type: boolean?
-    default: false
-    label: "Export distance matrix plot"
-    doc: "Export distance matrix plot to png"
+  col_center:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["mean", "median"]
+    default: "mean"
+    label: "Center column values"
+    doc: "Center column values"
     'sd:layout':
       advanced: true
 
-  export_variability_plot:
+  col_normalize:
     type: boolean?
-    default: false
-    label: "Export cluster variability plot"
-    doc: "Export cluster variability plot"
+    default: true
+    label: "Normalize column values"
+    doc: "Normalize column values"
     'sd:layout':
       advanced: true
 
@@ -153,52 +176,61 @@ inputs:
 
 outputs:
 
-  ordered_genelist:
+  clustering_results:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Combined expression file ordered by hopach clustering results"
-    doc: "Combined by RefseqId, GeneId, Chrom, TxStart, TxEnd and Strand expression file. Rows order correspond to the Hopach clustering results"
-    outputSource: hopach/ordered_genelist
+    label: "Combined clustered expression file"
+    doc: "Combined by RefseqId, GeneId, Chrom, TxStart, TxEnd and Strand clustered expression file"
+    outputSource: hopach/clustering_results
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Hopach Clustering Analysis'
-        Title: 'Hopach ordered expression data'
+        tab: 'Hopach Clustering Results'
+        Title: 'Combined clustered expression file'
 
-  distance_matrix_png:
+  column_clustering_labels:
     type: File?
-    label: "Distance Matrix"
-    format: "http://edamontology.org/format_3603"
-    doc: "Distance matrix plot. Clusters of similar features will appear as blocks on the diagonal of the matrix"
-    outputSource: hopach/distance_matrix_png
+    format: "http://edamontology.org/format_3475"
+    label: "Column cluster labels"
+    doc: "Column cluster labels"
+    outputSource: hopach/column_clustering_labels
     'sd:visualPlugins':
-    - image:
-        tab: 'Plots'
-        Caption: 'Distance Matrix'
+    - syncfusiongrid:
+        tab: 'Hopach Clustering Results'
+        Title: 'Column cluster labels'
 
   heatmap_png:
-    type: File?
+    type: File
     label: "Heatmap"
     format: "http://edamontology.org/format_3603"
-    doc: "Heatmap plot. Row ordering corresponds to the Hopach clustering results"
+    doc: "Heatmap plot"
     outputSource: hopach/heatmap_png
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
         Caption: 'Heatmap'
 
-  variability_plot_png:
+  row_distance_matrix_png:
     type: File?
-    label: "Cluster Variability"
+    label: "Row Distance Matrix"
     format: "http://edamontology.org/format_3603"
-    doc: |
-      Cluster variability plot. Every horizontal bar represents a feature.
-      If the bar is all or mostly one color, then the feature is estimated to
-      belong strongly to that cluster
-    outputSource: hopach/variability_plot_png
+    doc: "Row distance matrix plot. Clusters of similar features will appear as blocks on the diagonal of the matrix"
+    outputSource: hopach/row_distance_matrix_png
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
-        Caption: 'Cluster Variability'
+        Caption: 'Row Distance Matrix'
+
+  col_distance_matrix_png:
+    type: File?
+    label: "Column Distance Matrix"
+    format: "http://edamontology.org/format_3603"
+    doc: "Column distance matrix plot. Clusters of similar features will appear as blocks on the diagonal of the matrix"
+    outputSource: hopach/col_distance_matrix_png
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Column Distance Matrix'
+
 
 steps:
 
@@ -213,7 +245,7 @@ steps:
   hopach:
     run: ../tools/hopach.cwl
     in:
-      genelist_files:
+      expression_files:
         source: [group_by, expression_files, group_isoforms/genes_file, group_isoforms/common_tss_file]
         valueFrom: |
           ${
@@ -225,24 +257,26 @@ steps:
                 return self[3];
               }
           }
-      export_heatmap: export_heatmap
-      export_distance_matrix: export_distance_matrix
-      export_variability_plot: export_variability_plot
-      legend_names: legend_names
+      expression_aliases: expression_aliases
       target_column: target_column
-      dist_metric: dist_metric
-      logtransform: logtransform
-      center: center
-      normalize: normalize
-      reorder_columns: reorder_columns
+      cluster_method: cluster_method
+      row_dist_metric: row_dist_metric
+      col_dist_metric: col_dist_metric
+      row_logtransform: row_logtransform
+      col_logtransform: col_logtransform
+      row_center: row_center
+      col_center: col_center
+      row_normalize: row_normalize
+      col_normalize: col_normalize
+      row_min: row_min
       keep_discarded: keep_discarded
-      threshold: threshold
       palette: palette
     out:
-      - ordered_genelist
-      - distance_matrix_png
+      - clustering_results
+      - column_clustering_labels
       - heatmap_png
-      - variability_plot_png
+      - row_distance_matrix_png
+      - col_distance_matrix_png
 
 
 $namespaces:

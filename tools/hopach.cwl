@@ -4,146 +4,166 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/hopach:v0.0.5
+  dockerPull: biowardrobe2/hopach:v0.0.6
 
 
 inputs:
 
-  genelist_files:
+  expression_files:
     type: File[]
     inputBinding:
       prefix: "--input"
-    doc: "Genelist TSV or CSV files with RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand, TotalReads, Rpkm columns"
+    doc: "Input CSV/TSV files with RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand, TotalReads, Rpkm columns"
 
-  legend_names:
+  expression_aliases:
     type:
       - "null"
       - string[]
     inputBinding:
       prefix: "--name"
-    doc: "Genelist file aliases to make the legend for generated plots. Order corresponds to the genelist files. Default: basename of genelist files"
+    doc: "Input aliases, the order corresponds to --input order. Default: basename of --input files"
 
   target_column:
     type: string?
     inputBinding:
       prefix: "--target"
-    doc: "Column name from genelist files to be used by Hopach. Default: Rpkm"
+    doc: "Target column to be used by hopach clustering. Default: Rpkm"
 
-  group_by:
+  combine:
     type:
       - "null"
       - string[]
     inputBinding:
       prefix: "--combine"
-    doc: "Column name list from genelist files to be used for grouping. Default: RefseqId GeneId Chrom TxStart TxEnd Strand"
+    doc: "Combine inputs by columns names. Default: RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand"
 
-  dist_metric:
+  cluster_method:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["row", "column", "both"]
+    inputBinding:
+      prefix: "--method"
+    doc: "Cluster method. Default: both"
+
+  row_dist_metric:
     type:
       - "null"
       - type: enum
         symbols: ["cosangle", "abscosangle", "euclid", "abseuclid", "cor", "abscor"]
     inputBinding:
-      prefix: "--dist"
-    doc: "Distance metric. Default: cosangle"
+      prefix: "--rowdist"
+    doc: "Distance metric for row clustering. Default: cosangle"
 
-  logtransform:
+  col_dist_metric:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["cosangle", "abscosangle", "euclid", "abseuclid", "cor", "abscor"]
+    inputBinding:
+      prefix: "--coldist"
+    doc: "Distance metric for column clustering. Default: euclid"
+
+  row_logtransform:
     type: boolean?
     inputBinding:
-      prefix: "--logtransform"
-    doc: "Log2 transform input data prior running hopach. Default: false"
+      prefix: "--rowlogtransform"
+    doc: "Log2 transform input data prior to running row clustering. Default: false"
 
-  center:
+  col_logtransform:
+    type: boolean?
+    inputBinding:
+      prefix: "--collogtransform"
+    doc: "Log2 transform input data prior to running column clustering. Default: false"
+
+  row_center:
     type:
       - "null"
       - type: enum
         symbols: ["mean", "median"]
     inputBinding:
-      prefix: "--center"
-    doc: "Center rows. Default: not centered"
+      prefix: "--rowcenter"
+    doc: "Center rows prior to running row clustering. Default: not centered"
 
-  normalize:
+  col_center:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["mean", "median"]
+    inputBinding:
+      prefix: "--colcenter"
+    doc: "Center columns prior to running column clustering. Default: not centered"
+
+  row_normalize:
     type: boolean?
     inputBinding:
-      prefix: "--norm"
-    doc: "Normalize rows. Default: not normalized"
+      prefix: "--rownorm"
+    doc: "Normalize rows prior to running row clustering. Default: not normalized"
 
-  reorder_columns:
+  col_normalize:
     type: boolean?
     inputBinding:
-      prefix: "--reordercol"
-    doc: "Reorder heatmap columns. Default: false"
+      prefix: "--colnorm"
+    doc: "Normalize columns prior to running column clustering. Default: not normalized"
+
+  row_min:
+    type: float?
+    inputBinding:
+      prefix: "--rowmin"
+    doc: "Exclude rows from clustering by the min value of a target column. Default: 0"
 
   keep_discarded:
     type: boolean?
     inputBinding:
-      prefix: "--keep"
-    doc: "Keep discarded by --min parameter rows at the end of the file. Default: false"
+      prefix: "--rowkeep"
+    doc: "Append excluded rows to the output table after clustering is finished. Default: false"    
 
-  export_heatmap:
-    type: boolean?
-    inputBinding:
-      prefix: "--heatmap"
-    doc: "Export heatmap to png. Default: false"
-
-  export_distance_matrix:
-    type: boolean?
-    inputBinding:
-      prefix: "--distmatrix"
-    doc: "Export distance matrix to png. Default: false"
-
-  export_variability_plot:
-    type: boolean?
-    inputBinding:
-      prefix: "--variability"
-    doc: "Export clsuter variability plot to png. Default: false"
-
-  threshold:
-    type: float?
-    inputBinding:
-      prefix: "--min"
-    doc: "Min value for target column. Default: 0"
-  
   palette:
     type:
       - "null"
       - string[]
     inputBinding:
       prefix: "--palette"
-    doc: "Color list for custom palette. Default: black red yellow"
+    doc: "Palette color names. Default: red, black, green"
 
   output_prefix:
     type: string?
     inputBinding:
       prefix: "--output"
-    doc: "Output file prefix"
+    doc: "Output prefix. Default: hopach"
 
 
 outputs:
 
-
-  ordered_genelist:
+  clustering_results:
     type: File
     outputBinding:
-      glob: "*_raw_data.tsv"
-    doc: "Combined genelist file ordered by hopach clustering results"
-
-  distance_matrix_png:
-    type: File?
-    outputBinding:
-      glob: "*_dist_matrix.png"
-    doc: "Distance matrix ordered by hopach clustering results"
+      glob: "*_clustering.tsv"
+    doc: "Hopach clustering results"
 
   heatmap_png:
-    type: File?
+    type: File
     outputBinding:
       glob: "*_heatmap.png"
     doc: "Heatmap ordered by hopach clustering results"
 
-  variability_plot_png:
+  column_clustering_labels:
     type: File?
     outputBinding:
-      glob: "*_variablility.png"
-    doc: "Cluster variability plot"
+      glob: "*_column_clustering_labels.tsv"
+    doc: "Hopach column clustering labels"
+
+  row_distance_matrix_png:
+    type: File?
+    outputBinding:
+      glob: "*_row_dist_matrix.png"
+    doc: "Row distance matrix"
+
+  col_distance_matrix_png:
+    type: File?
+    outputBinding:
+      glob: "*_column_dist_matrix.png"
+    doc: "Column distance matrix"
 
   stderr_log:
     type: File
@@ -213,8 +233,7 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Runs hopach clustering algorithm with the combined by specific columns genelist files.
-  Return ordered combined genelist file and optional distance matrix, cluster variability and heatmap plots.
+  Runs hopach clustering algorithm with the combined by specific columns input files.
   Works with minimum two genelist files.
 
 s:about: |
