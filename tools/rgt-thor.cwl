@@ -37,7 +37,7 @@ inputs:
       position: 6
       itemSeparator: ","
     secondaryFiles:
-      - .bai
+    - .bai
     doc: "Alignment and index files for the first biological condition"
 
   bambai_pair_cond_2:
@@ -46,7 +46,7 @@ inputs:
       position: 7
       itemSeparator: ","
     secondaryFiles:
-      - .bai
+    - .bai
     doc: "Alignment and index files for the second biological condition"
 
   chrom_length_file:
@@ -195,7 +195,7 @@ inputs:
       prefix: "--size"
       position: 27
     doc: "Number of bins the HMM's training set constists of. [default: 10000]"
-  
+
   pvalue_filter_percentile:
     type: int?
     inputBinding:
@@ -242,32 +242,36 @@ inputs:
 outputs:
 
   diffpeaks_bed_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "*[!-uncor]-diffpeaks.bed"
 
   diffpeaks_narrowpeak_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "*[!-uncor]-diffpeaks.narrowPeak"
 
   uncor_diffpeaks_bed_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "*-uncor-diffpeaks.bed"
 
   uncor_diffpeaks_narrowpeak_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "*-uncor-diffpeaks.narrowPeak"
 
   cond_1_bigwig_file:
-    type: File[]
+    type:
+      - "null"
+      - File[]
     outputBinding:
       glob: "*-s1-rep*.bw"
 
   cond_2_bigwig_file:
-    type: File[]
+    type:
+      - "null"
+      - File[]
     outputBinding:
       glob: "*-s2-rep*.bw"
 
@@ -276,20 +280,14 @@ outputs:
     outputBinding:
       glob: "*-setup.info"
 
-  stderr_log:
-    type: File
-    outputBinding:
-      glob: "thor_stderr.log"
-
   stdout_log:
-    type: File
-    outputBinding:
-      glob: "thor_stdout.log"
+    type: stdout
+
+  stderr_log:
+    type: stderr
 
 
 baseCommand: ["bash", "-c"]
-
-
 stderr: thor_stderr.log
 stdout: thor_stdout.log
 
@@ -347,7 +345,7 @@ doc: |
   The following arguments are skipped: --report (tool fails to execute)
 
 s:about: |
-  Usage: 
+  Usage:
   rgt-THOR [options] CONFIG
 
   THOR detects differential peaks in multiple ChIP-seq profiles associated
@@ -355,8 +353,8 @@ s:about: |
 
   Copyright (C) 2014-2016  Manuel Allhoff (allhoff@aices.rwth-aachen.de)
 
-  This program comes with ABSOLUTELY NO WARRANTY. This is free 
-  software, and you are welcome to redistribute it under certain 
+  This program comes with ABSOLUTELY NO WARRANTY. This is free
+  software, and you are welcome to redistribute it under certain
   conditions. Please see LICENSE file for details.
 
   Options:

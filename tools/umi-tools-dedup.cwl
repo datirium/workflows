@@ -1,8 +1,15 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function(ext) {
+        var ext = inputs.bam_file.basename.split('.').slice(-1)[0];
+        var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
+        return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
+    };
 
 hints:
 - class: DockerRequirement
@@ -11,85 +18,51 @@ hints:
 
 inputs:
 
-
-  dedup_log:
-    type: string
-    default: "dedup.log"
-    label: "filename for a file with logging information"
+  bam_file:
+    type: File
+    secondaryFiles:
+    - .bai
     inputBinding:
-      prefix: -L
-      position: 7
+      prefix: "-I"
 
-  error_log:
-    type: string
-    default: "dedup_error.log"
-    label: "filename for a file with errors information"
+    doc: "Input BAM file"
+
+  paired_end:
+    type: boolean?
     inputBinding:
-      prefix: -E
-      position: 7
+      prefix: "--paired"
+    doc: |
+         Inputs BAM file is paired end - output both read pairs.
+         This will also force the use of the template length to
+         determine reads with the same mapping coordinates.
 
-  output_file:
+  output_filename:
     type: string?
-    label: "filename for a file where output is to go"
     inputBinding:
       prefix: -S
       position: 8
-      valueFrom: |
-        ${
-            if (inputs.output_file == ""){
-              var _f = inputs.input_file.location.split('/').slice(-1)[0].split('.');
-              return _f.slice(0,-1).join('.') + '-dedup.' + _f.slice(-1)[0];
-            } else {
-              return inputs.output_file;
-            }
-        }
+      valueFrom: $(default_output_filename())
     default: ""
-
-  input_file:
-    type: File
-    label: "BAM file to read from"
-    inputBinding:
-      prefix: -I
-      position: 8
-
-  input_pair:
-    type: boolean?
-    label: "BAM is paired end?"
-    doc: |
-         BAM is paired end - output both read pairs. This will also
-         force the use of the template length to determine reads with
-         the same mapping coordinates.
-    inputBinding:
-      prefix: --paired
-      position: 3
+    doc: "Output filename"
 
 
 outputs:
-  output:
-    type: File
-    outputBinding:
-      glob: |
-       ${
-            if (inputs.output_file == ""){
-              var _f = inputs.input_file.location.split('/').slice(-1)[0].split('.');
-              return _f.slice(0,-1).join('.') + '-dedup.' + _f.slice(-1)[0];
-            } else {
-              return inputs.output_file;
-            }
-        }
 
-  log:
+  dedup_bam_file:
     type: File
     outputBinding:
-      glob: $(inputs.dedup_log)
+      glob: $(default_output_filename())
 
-  error_log:
-    type: File
-    outputBinding:
-      glob: $(inputs.error_log)
+  stdout_log:
+    type: stdout
+
+  stderr_log:
+    type: stderr
 
 
 baseCommand: [umi_tools, dedup]
+stderr: umi_tools_dedup_stderr.log
+stdout: umi_tools_dedup_stdout.log
 
 
 $namespaces:
@@ -98,11 +71,7 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-label: "Deduplicate BAM files based on the first mapping co-ordinate and the UMI attached to the read"
-s:name: "Deduplicate BAM files based on the first mapping co-ordinate and the UMI attached to the read"
-
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/tools/umi_tools-dedup.cwl
-s:codeRepository: https://github.com/datirium/workflows
+s:name: "umi-tools-dedup"
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -112,28 +81,35 @@ s:isPartOf:
 
 s:creator:
 - class: s:Organization
-  s:legalName: "Datirium, LLC"
-  s:logo: "https://datirium.com/assets/images/datirium_llc.svg"
-  s:email: mailto:support@datirium.com
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
   s:location:
   - class: s:PostalAddress
     s:addressCountry: "USA"
     s:addressLocality: "Cincinnati"
     s:addressRegion: "OH"
-    s:postalCode: "45226"
-    s:streetAddress: "3559 Kroger Ave"
-  s:member:
-  - class: s:Person
-    s:name: Artem BArski
-    s:email: mailto:Artem.Barski@datirum.com
-  - class: s:Person
-    s:name: Andrey Kartashov
-    s:email: mailto:Andrey.Kartashov@datirium.com
-    s:sameAs:
-    - id: http://orcid.org/0000-0001-9102-5681
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Allergy and Immunology"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
 
 
 doc: |
+  Deduplicate BAM files based on the first mapping co-ordinate and the UMI attached to the read
+  Only -I, --paired and -S parameters are implemented.
+
+s:about: |
   dedup.py - Deduplicate reads that are coded with a UMI
   =========================================================
 

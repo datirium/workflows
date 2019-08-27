@@ -138,8 +138,6 @@ steps:
   star_generate_indices:
     run: ../tools/star-genomegenerate.cwl
     in:
-      genome_dir:
-        default: "."
       genome_fasta_files: fasta
       sjdb_gtf_file: annotation_gtf
       genome_sa_sparse_d: genome_sa_sparse_d

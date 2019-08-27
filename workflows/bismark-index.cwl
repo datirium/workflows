@@ -82,7 +82,7 @@ s:name: "Generate genome indices for Bismark"
 label: "Generate genome indices for Bismark"
 s:alternateName: "Prepare indices for Bismark Methylation Pipeline. Bowtie2 aligner is used by default"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/bismark-indices.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/bismark-index.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

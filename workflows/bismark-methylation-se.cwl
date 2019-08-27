@@ -4,7 +4,7 @@ class: Workflow
 
 'sd:upstream':
   genome:
-    - "bismark-indices.cwl"
+    - "bismark-index.cwl"
 
 
 inputs:

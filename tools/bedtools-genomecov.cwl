@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-          let ext = (inputs.depth == "-bg" || inputs.depth == "-bga")?".bedGraph":".tab";
+          var ext = (inputs.depth == "-bg" || inputs.depth == "-bga")?".bedGraph":".tab";
           return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ext;
         };
 
@@ -49,8 +49,7 @@ inputs:
       for the genome file provided (intputs.chrom_length_file)
 
   scale:
-    type:
-    - float?
+    type: float?
     inputBinding:
       position: 6
       prefix: -scale
@@ -62,8 +61,7 @@ inputs:
       - (FLOAT)
 
   mapped_reads_number:
-    type:
-    - int?
+    type: int?
     inputBinding:
       position: 7
       prefix: -scale
@@ -81,8 +79,7 @@ inputs:
       Optional parameter to calculate scale as 1000000/mapped_reads_number if inputs.scale is not provided
 
   split:
-    type:
-    - boolean?
+    type: boolean?
     inputBinding:
       position: 8
       prefix: "-split"
@@ -95,8 +92,7 @@ inputs:
       fields (i.e., columns 10,11,12).
 
   strand:
-    type:
-    - string?
+    type: string?
     inputBinding:
       position: 9
       prefix: "-strand"
@@ -106,8 +102,7 @@ inputs:
       - (STRING): can be + or -
 
   pairchip:
-    type:
-    - boolean?
+    type: boolean?
     inputBinding:
       position: 10
       prefix: "-pc"
@@ -115,8 +110,7 @@ inputs:
       pair-end chip seq experiment
 
   du:
-    type:
-    - boolean?
+    type: boolean?
     inputBinding:
       position: 11
       prefix: "-du"
@@ -125,8 +119,7 @@ inputs:
       Works for BAM files only
 
   fragment_size:
-    type:
-    - int?
+    type: int?
     inputBinding:
       position: 12
       prefix: "-fs"
@@ -134,8 +127,7 @@ inputs:
       Set fixed fragment size
 
   max:
-    type:
-    - int?
+    type: int?
     inputBinding:
       position: 13
       prefix: "-max"
@@ -146,8 +138,7 @@ inputs:
       - (INTEGER)
 
   m5:
-    type:
-    - boolean?
+    type: boolean?
     inputBinding:
       position: 14
       prefix: "-5"
@@ -155,8 +146,7 @@ inputs:
       Calculate coverage of 5" positions (instead of entire interval)
 
   m3:
-    type:
-    - boolean?
+    type: boolean?
     inputBinding:
       position: 15
       prefix: "-3"
@@ -164,8 +154,7 @@ inputs:
       Calculate coverage of 3" positions (instead of entire interval)
 
   output_filename:
-    type:
-    - string?
+    type: string?
     doc: |
       Name for generated output file
 
@@ -178,7 +167,7 @@ outputs:
 stdout: |
   ${
       return inputs.output_filename ? inputs.output_filename : default_output_filename();
-   }
+  }
 
 baseCommand: ["bedtools", "genomecov"]
 

@@ -1457,7 +1457,7 @@ outputs:
       glob: "*Log.final.out*"
       outputEval: |
         ${
-          let uniquelyMappedReadsNumberRegex = /Uniquely mapped reads number.*/;
+          var uniquelyMappedReadsNumberRegex = /Uniquely mapped reads number.*/;
           return parseInt(self[0].contents.match(uniquelyMappedReadsNumberRegex)[0].split(/\|\t/g)[1]);
         }
 

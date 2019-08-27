@@ -48,8 +48,6 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "group-isoforms-batch"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/subworkflows/group-isoforms-batch.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:

@@ -9,7 +9,7 @@ requirements:
   - var get_output_filename = function(ext) {
         ext = ext || "";
         if (inputs.output_filename == null){
-          let root = inputs.rsem_isoforms_file.basename.split('.').slice(0,-1).join('.');
+          var root = inputs.rsem_isoforms_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.rsem_isoforms_file.basename+ext:root+ext;
         } else {
           return inputs.output_filename;

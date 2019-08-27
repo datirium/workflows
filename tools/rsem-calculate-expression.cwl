@@ -962,7 +962,8 @@ outputs:
               return inputs.output_filename + ".transcript.sorted.bam";
             }
         }
-    secondaryFiles: ${return self.basename + ".bai"}
+    secondaryFiles:
+    - .bai
 
   genome_sorted_bam_bai_pair:
     type:
@@ -977,7 +978,8 @@ outputs:
               return inputs.output_filename + ".genome.sorted.bam";
             }
         }
-    secondaryFiles: ${return self.basename + ".bai"}
+    secondaryFiles:
+    - .bai
 
   align_time_file:
     type:
@@ -1091,7 +1093,7 @@ arguments:
       ${
           for (var i = 0; i < inputs.indices_folder.listing.length; i++) {
               if (inputs.indices_folder.listing[i].basename.split('.').slice(-1)[0] == 'grp'){
-                let name = inputs.indices_folder.listing[i].basename.split('.').slice(0,-1).join('.');
+                var name = inputs.indices_folder.listing[i].basename.split('.').slice(0,-1).join('.');
                 return inputs.indices_folder.listing[i].path.split('/').slice(0,-1).join('/') + '/' + name;
               }
           }

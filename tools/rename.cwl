@@ -1,6 +1,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
@@ -8,9 +9,11 @@ requirements:
         return inputs.target_filename.split('/').slice(-1)[0];
     }
 
+
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap:v0.0.2
+  dockerPull: biowardrobe2/scidap:v0.0.3
+
 
 inputs:
 
@@ -26,8 +29,7 @@ inputs:
       position: 1
 
   source_file:
-    type:
-      - File
+    type: File
     inputBinding:
       position: 5
 
@@ -37,7 +39,9 @@ inputs:
       position: 6
       valueFrom: $(get_target_name())
 
+
 outputs:
+
   target_file:
     type: File
     outputBinding:
@@ -53,6 +57,7 @@ outputs:
 
 
 baseCommand: [bash, '-c']
+
 
 $namespaces:
   s: http://schema.org/

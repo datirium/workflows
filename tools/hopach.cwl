@@ -165,17 +165,11 @@ outputs:
       glob: "*_column_dist_matrix.png"
     doc: "Column distance matrix"
 
-  stderr_log:
-    type: File
-    outputBinding:
-      glob: "hopach_stderr.log"
-    doc: "Hopach stderr log"
-
   stdout_log:
-    type: File
-    outputBinding:
-      glob: "hopach_stdout.log"
-    doc: "Hopach stdout log"
+    type: stdout
+
+  stderr_log:
+    type: stderr
 
 
 baseCommand: ["hopach_order.R"]

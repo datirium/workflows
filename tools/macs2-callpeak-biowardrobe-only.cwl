@@ -8,12 +8,12 @@ requirements:
   - var default_output_filename = function(sufix) {
       sufix = sufix || "_macs";
       if (Object.prototype.toString.call(inputs.treatment_file) === '[object Array]'){
-        let basename = inputs.treatment_file[0].basename;
-        let root = basename.split('.').slice(0,-1).join('.');
+        var basename = inputs.treatment_file[0].basename;
+        var root = basename.split('.').slice(0,-1).join('.');
         return (root == "")?basename+sufix:root+sufix;
       } else {
-        let basename = inputs.treatment_file.basename;
-        let root = basename.split('.').slice(0,-1).join('.');
+        var basename = inputs.treatment_file.basename;
+        var root = basename.split('.').slice(0,-1).join('.');
         return (root == "")?basename+sufix:root+sufix;
       }
     }

@@ -220,6 +220,9 @@ steps:
       limit_genome_generate_ram: limit_genome_generate_ram
       genome_sa_index_n_bases: genome_sa_index_n_bases
       genome_chr_bin_n_bits: genome_chr_bin_n_bits
+      genome_dir:
+        source: genome
+        valueFrom: $(self + "_star")
       threads: threads
     out: [indices, chr_name_length]
 
@@ -230,6 +233,9 @@ steps:
       sjdb_gtf_file: input_annotation_gtf
       genome_sa_sparse_d: genome_sa_sparse_d
       genome_sa_index_n_bases: genome_sa_index_n_bases_mitochondrial
+      genome_dir:
+        source: genome
+        valueFrom: $(self + "_star_mito")
       threads: threads
     out: [indices]
 
@@ -237,14 +243,18 @@ steps:
     run: ../tools/bowtie-build.cwl
     in:
       fasta_file: fasta
-      index_base_name: genome
+      index_base_name:
+        source: genome
+        valueFrom: $(self + "_bowtie")
     out: [indices]
 
   ribosomal_generate_indices:
     run: ../tools/bowtie-build.cwl
     in:
       fasta_file: fasta_ribosomal
-      index_base_name: genome
+      index_base_name:
+        source: genome
+        valueFrom: $(self + "_bowtie_ribo")
     out: [indices]
 
 $namespaces:

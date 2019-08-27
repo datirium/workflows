@@ -1,15 +1,21 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_filename = function(ext) {
+        var ext = inputs.alignment_files[0].basename.split('.').slice(-1)[0];
+        var root = inputs.alignment_files[0].basename.split('.').slice(0,-1).join('.');
+        return inputs.output_filename?inputs.output_filename:root+"_merged."+ext;
+    };
 
 
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.4
-  dockerFile: >
-    $import: ./dockerfiles/samtools-Dockerfile
+
 
 inputs:
 
@@ -17,83 +23,84 @@ inputs:
     type: boolean?
     inputBinding:
       position: 6
-      prefix: '-1'
-    doc: |
-      Compress level 1
+      prefix: "-1"
+    doc: "Compress level 1"
 
   compression_level:
     type: int?
     inputBinding:
       position: 7
-      prefix: -l
-    doc: |
-      Compression level, from 0 to 9 [-1]
+      prefix: "-l"
+    doc: "Compression level, from 0 to 9 [-1]"
 
   uncompressed:
     type: boolean?
     inputBinding:
       position: 8
-      prefix: -u
-    doc: |
-      uncompressed BAM output
+      prefix: "-u"
+    doc: "uncompressed BAM output"
 
   samheader:
     type: File?
     inputBinding:
       position: 9
-      prefix: -h
-    doc: |
-      Copy the header in FILE to <out.bam> [in1.bam]
+      prefix: "-h"
+    doc: "Copy the header in FILE to <out.bam> [in1.bam]"
 
   reference_fasta:
     type: File?
     inputBinding:
       position: 10
-      prefix: --reference
-    doc: |
-      Reference sequence FASTA FILE [null]
+      prefix: "--reference"
+    doc: "Reference sequence FASTA FILE [null]"
 
   attach_rg_tag:
     type: string?
     inputBinding:
       position: 11
-      prefix: -r
-    doc: |
-      Attach RG tag (inferred from file names)
+      prefix: "-r"
+    doc: "Attach RG tag (inferred from file names)"
 
   threads:
     type: int?
     inputBinding:
       position: 12
-      prefix: -@
-    doc: |
-      number of BAM compression threads [0]
+      prefix: "-@"
+    doc: "Number of BAM compression threads [0]"
 
-  output_name:
-    type: string
+  output_filename:
+    type: string?
     inputBinding:
       position: 99
-    default: "merged.bam"
-    doc: |
-      Output to file
+      valueFrom: $(default_output_filename())
+    default: ""
+    doc: "Output filename"
 
-  input:
-    type:
-      - File
-      - type: array
-        items: File
+  alignment_files:
+    type: File[]
     inputBinding:
       position: 100
-    doc: |
-      Input SAM, BAM, or CRAM file.
+    doc: "Input SAM, BAM, or CRAM files"
+
 
 outputs:
-  output:
+
+  merged_alignment_file:
     type: File
     outputBinding:
-      glob: $(inputs.output_name)
+      glob: $(default_output_filename())
+
+  stdout_log:
+    type: stdout
+
+  stderr_log:
+    type: stderr
+
 
 baseCommand: [samtools, merge]
+stdout: samtools_merge_stdout.log
+stderr: samtools_merge_stderr.log
+
 
 $namespaces:
   s: http://schema.org/
@@ -104,8 +111,6 @@ $schemas:
 s:mainEntity:
   $import: ./metadata/samtools-metadata.yaml
 
-s:downloadUrl: https://github.com/SciDAP/workflows/blob/master/tools/samtools-view.cwl
-s:codeRepository: https://github.com/SciDAP/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -113,20 +118,35 @@ s:isPartOf:
   s:name: Common Workflow Language
   s:url: http://commonwl.org/
 
-s:author:
-  class: s:Person
-  s:name: Andrey Kartashov
-  s:email: mailto:Andrey.Kartashov@cchmc.org
-  s:sameAs:
-  - id: http://orcid.org/0000-0001-9102-5681
-  s:worksFor:
+s:creator:
+- class: s:Organization
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: "45229"
+    s:streetAddress: "3333 Burnet Ave"
+    s:telephone: "+1(513)636-4200"
+  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+  s:department:
   - class: s:Organization
-    s:name: Cincinnati Children's Hospital Medical Center
-    s:location: 3333 Burnet Ave, Cincinnati, OH 45229-3026
+    s:legalName: "Allergy and Immunology"
     s:department:
     - class: s:Organization
-      s:name: Barski Lab
+      s:legalName: "Barski Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
 doc: |
+  If output_filename is not provided, the default output name for merged file is generated as follows:
+  name without extestion of alignment_files[0] + suffix "_merged" + extension of alignment_files[0]
+
   samtools-merge.cwl is developed for CWL consortium
   Usage: samtools merge [-nurlf] [-h inh.sam] [-b <bamlist.fofn>] <out.bam> <in1.bam> [<in2.bam> ... <inN.bam>]
 

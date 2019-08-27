@@ -11,7 +11,7 @@ hints:
 
 
 inputs:
-  fastq_file:
+  reads_file:
     type:
       - File
     inputBinding:
@@ -150,6 +150,11 @@ outputs:
       - File
     outputBinding:
       glob: '*.zip'
+  html_file:
+    type:
+      - File
+    outputBinding:
+      glob: '*.html'
   summary_file:
     type:
       - File
@@ -316,4 +321,3 @@ s:about: |
      -d --dir         Selects a directory to be used for temporary files written when
                       generating report images. Defaults to system temp directory if
                       not specified.
-

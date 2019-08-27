@@ -1,17 +1,20 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function(ext) {
-        let root = inputs.input_filename.basename.split('.').slice(0,-1).join('.');
+        var root = inputs.input_filename.basename.split('.').slice(0,-1).join('.');
         return (root == "")?inputs.input_filename.basename+ext:root+ext;
     };
+
 
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/iaintersect:v0.0.2
+
 
 inputs:
 
@@ -21,7 +24,7 @@ inputs:
       position: 1
       prefix: --in=
       separate: false
-    doc: Input filename with MACS2 peak calling results, tsv
+    doc: "Input filename with MACS2 peak calling results, tsv"
 
   annotation_filename:
     type: File
@@ -29,7 +32,7 @@ inputs:
       position: 2
       prefix: --a=
       separate: false
-    doc: Annotation file, tsv
+    doc: "Annotation file, tsv"
 
   output_filename:
     type: string?
@@ -94,7 +97,9 @@ inputs:
     doc: |
       The chromosome to be ignored, string
 
+
 outputs:
+
   log_file:
     type: File
     outputBinding:
@@ -121,6 +126,7 @@ outputs:
 
 
 baseCommand: [iaintersect]
+
 
 $namespaces:
   s: http://schema.org/
