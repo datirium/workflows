@@ -235,7 +235,7 @@ outputs:
 steps:
 
   group_isoforms:
-    run: ../subworkflows/group-isoforms-batch.cwl
+    run: ../tools/group-isoforms-batch.cwl
     in:
       isoforms_file: expression_files
     out:

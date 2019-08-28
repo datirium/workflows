@@ -358,7 +358,7 @@ steps:
     out: [bam_bai_pair]
 
   bam_to_bigwig_upstream:
-    run: ../subworkflows/bam-bedgraph-bigwig.cwl
+    run: ../tools/bam-bedgraph-bigwig.cwl
     in:
       bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       chrom_length_file: chrom_length_file
@@ -376,7 +376,7 @@ steps:
     out: [bigwig_file]
 
   bam_to_bigwig_downstream:
-    run: ../subworkflows/bam-bedgraph-bigwig.cwl
+    run: ../tools/bam-bedgraph-bigwig.cwl
     in:
       bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       chrom_length_file: chrom_length_file

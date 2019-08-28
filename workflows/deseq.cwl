@@ -122,7 +122,7 @@ outputs:
 steps:
 
   group_isoforms_cond_1:
-    run: ../subworkflows/group-isoforms-batch.cwl
+    run: ../tools/group-isoforms-batch.cwl
     in:
       isoforms_file: rpkm_isoforms_cond_1
     out:
@@ -130,7 +130,7 @@ steps:
       - common_tss_file
 
   group_isoforms_cond_2:
-    run: ../subworkflows/group-isoforms-batch.cwl
+    run: ../tools/group-isoforms-batch.cwl
     in:
       isoforms_file: rpkm_isoforms_cond_2
     out:

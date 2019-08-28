@@ -69,7 +69,7 @@ outputs:
 steps:
 
   make_tag_folders:
-    run: ../subworkflows/heatmap-prepare.cwl
+    run: ../tools/heatmap-prepare.cwl
     in:
       bam_file: bam_file
       fragment_size: fragment_size
