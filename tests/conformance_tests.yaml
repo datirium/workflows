@@ -545,12 +545,12 @@
 # ========================================================
 
 - job: ./fastqc-results-trigger-1.json
-  tool: ../expressiontools/fastqc-results-trigger.cwl
+  tool: ../tools/fastqc-results-trigger.cwl
   output:
     trigger: false
 
 - job: ./fastqc-results-trigger-2.json
-  tool: ../expressiontools/fastqc-results-trigger.cwl
+  tool: ../tools/fastqc-results-trigger.cwl
   output:
     trigger: true
 
@@ -579,7 +579,7 @@
 # ========================================================
 
 - job: ./files-to-folder-1.json
-  tool: ../expressiontools/files-to-folder.cwl
+  tool: ../tools/files-to-folder.cwl
   output:
     folder:
       class: Directory
@@ -593,7 +593,7 @@
         size: 1368
 
 - job: ./files-to-folder-2.json
-  tool: ../expressiontools/files-to-folder.cwl
+  tool: ../tools/files-to-folder.cwl
   output:
     folder:
       class: Directory
@@ -672,7 +672,7 @@
 # ========================================================
 
 - job: ./get-file-by-name-1.json
-  tool: ../expressiontools/get-file-by-name.cwl
+  tool: ../tools/get-file-by-name.cwl
   output:
     selected_file:
       class: File
@@ -680,7 +680,7 @@
       size: 1368
 
 - job: ./get-file-by-name-2.json
-  tool: ../expressiontools/get-file-by-name.cwl
+  tool: ../tools/get-file-by-name.cwl
   output:
     selected_file:
       class: File
@@ -688,12 +688,12 @@
       size: 13
 
 - job: ./get-file-by-name-3.json
-  tool: ../expressiontools/get-file-by-name.cwl
+  tool: ../tools/get-file-by-name.cwl
   output:
     selected_file: null
 
 - job: ./get-file-by-name-4.json
-  tool: ../expressiontools/get-file-by-name.cwl
+  tool: ../tools/get-file-by-name.cwl
   output:
     selected_file: null
 
