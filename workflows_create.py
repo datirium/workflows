@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import logging
-from cwl_airflow_parser.cwldag import CWLDAG
+from cwl_airflow.cwldag import CWLDAG
 from datetime import timedelta
 
 from biowardrobe_cwl_workflows import available
 
-from cwl_airflow_parser import CWLJobGatherer, CWLJobDispatcher
+from cwl_airflow import CWLJobGatherer, CWLJobDispatcher
 
 _logger = logging.getLogger(__name__)
 
