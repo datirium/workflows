@@ -197,7 +197,7 @@ inputs:
 
 outputs:
 
-  indices:
+  indices_folder:
     type: Directory
     outputBinding:
       glob: $(inputs.index_base_name)
