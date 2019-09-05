@@ -1300,3 +1300,114 @@
     samtools_rmdup_log:
       location: upstream.rmdup
       class: File
+
+# ========================================================
+# rnaseq-se-dutp
+# ========================================================
+
+- job: ./rnaseq-se-dutp-1.json
+  tool: ../workflows/rnaseq-se-dutp.cwl
+  output:
+    bambai_pair:
+      location: upstream.bam
+      class: File
+      secondaryFiles:
+      - location: upstream.bam.bai
+        class: File
+    bigwig_downstream:
+      location: upstream_downstream.bigWig
+      class: File
+    bigwig_upstream:
+      location: upstream_upstream.bigWig
+      class: File
+    bowtie_log:
+      location: upstream.bw
+      class: File
+    fastx_statistics:
+      location: upstream.fastxstat
+      class: File
+    get_formatted_stats:
+      location: upstream_stats.tsv
+      class: File
+    get_stat_log:
+      location: upstream.stat
+      class: File
+    rpkm_common_tss:
+      location: upstream.common_tss.tsv
+      class: File
+    rpkm_genes:
+      location: upstream.genes.tsv
+      class: File
+    rpkm_isoforms:
+      location: upstream.isoforms.csv
+      class: File
+    star_final_log:
+      location: upstream.Log.final.out
+      class: File
+    star_out_log:
+      location: upstream.Log.out
+      class: File
+    star_progress_log:
+      location: upstream.Log.progress.out
+      class: File
+    star_sj_log:
+      location: upstream.SJ.out.tab
+      class: File
+    star_stdout_log: null
+
+# ========================================================
+# rnaseq-pe-dutp
+# ========================================================
+
+- job: ./rnaseq-pe-dutp-1.json
+  tool: ../workflows/rnaseq-pe-dutp.cwl
+  output:
+    bambai_pair:
+      location: upstream.bam
+      class: File
+      secondaryFiles:
+      - location: upstream.bam.bai
+        class: File
+    bigwig_downstream:
+      location: upstream_downstream.bigWig
+      class: File
+    bigwig_upstream:
+      location: upstream_upstream.bigWig
+      class: File
+    bowtie_log:
+      location: upstream.bw
+      class: File
+    fastx_statistics_downstream:
+      location: downstream.fastxstat
+      class: File
+    fastx_statistics_upstream:
+      location: upstream.fastxstat
+      class: File
+    get_formatted_stats:
+      location: upstream_stats.tsv
+      class: File
+    get_stat_log:
+      location: upstream.stat
+      class: File
+    rpkm_common_tss:
+      location: upstream.common_tss.tsv
+      class: File
+    rpkm_genes:
+      location: upstream.genes.tsv
+      class: File
+    rpkm_isoforms:
+      location: upstream.isoforms.csv
+      class: File
+    star_final_log:
+      location: upstream.Log.final.out
+      class: File
+    star_out_log:
+      location: upstream.Log.out
+      class: File
+    star_progress_log:
+      location: upstream.Log.progress.out
+      class: File
+    star_sj_log:
+      location: upstream.SJ.out.tab
+      class: File
+    star_stdout_log: null
