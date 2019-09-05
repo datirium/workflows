@@ -10,5 +10,5 @@
     "format": "http://edamontology.org/format_2306"
   },
   "genome": "star_indices",
-  "threads": 1
+  "threads": 2
 }

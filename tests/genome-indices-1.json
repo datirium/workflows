@@ -1,7 +1,7 @@
 {
   "genome": "dm3",
   "effective_genome_size": "dm",
-  "threads": 1,
+  "threads": 2,
   "fasta":{
     "class": "File",
     "location": "./data/dm3_chr4/main_inputs/fasta/chr4.fa",
