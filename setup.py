@@ -83,6 +83,7 @@ setup(
     install_requires=[
         'setuptools',
         'jsonmerge'
+        'cwl_airflow'
     ],
 
     zip_safe=True,

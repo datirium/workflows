@@ -9,12 +9,12 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
+'sd:metadata':
+- "../metadata/advanced-header.cwl"
+
+
 'sd:upstream':
   rnaseq_sample:
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
     - "rnaseq-se-dutp-mitochondrial.cwl"
     - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
@@ -24,12 +24,6 @@ requirements:
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
 
   expression_files:
     type: File[]
@@ -231,6 +225,20 @@ outputs:
         tab: 'Plots'
         Caption: 'Column Distance Matrix'
 
+  hopach_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HOPACH stdout log"
+    doc: "HOPACH stdout log"
+    outputSource: hopach/stdout_log        
+
+  hopach_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HOPACH stderr log"
+    doc: "HOPACH stderr log"
+    outputSource: hopach/stderr_log
+
 
 steps:
 
@@ -277,6 +285,8 @@ steps:
       - heatmap_png
       - row_distance_matrix_png
       - col_distance_matrix_png
+      - stdout_log
+      - stderr_log
 
 
 $namespaces:

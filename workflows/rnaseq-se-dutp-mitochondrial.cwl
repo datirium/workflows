@@ -7,8 +7,10 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
 
+
 'sd:metadata':
   - "../metadata/rnaseq-header.cwl"
+
 
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
@@ -367,8 +369,8 @@ steps:
         source: extract_fastq/fastq_file
         valueFrom: |
           ${
-            let root = self.basename.split('.').slice(0,-1).join('.');
-            let ext = "_upstream.bigWig";
+            var root = self.basename.split('.').slice(0,-1).join('.');
+            var ext = "_upstream.bigWig";
             return (root == "")?self.basename+ext:root+ext;
           }
       strand:
@@ -387,8 +389,8 @@ steps:
         source: extract_fastq/fastq_file
         valueFrom: |
           ${
-            let root = self.basename.split('.').slice(0,-1).join('.');
-            let ext = "_downstream.bigWig";
+            var root = self.basename.split('.').slice(0,-1).join('.');
+            var ext = "_downstream.bigWig";
             return (root == "")?self.basename+ext:root+ext;
           }
       strand:

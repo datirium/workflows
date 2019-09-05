@@ -6,14 +6,14 @@
 # Description:      Dockerized version of DESeq/DESeq2 script from BioWardrobe
 # Website:          https://github.com/Barski-lab/workflows
 # Provides:         run_deseq.R
-#                   get_gene_n_tss.R
+#                   get_gene_n_tss.R 
 #                   BiocManager       1.30.4
 #                   BiocParallel      1.18.0
 #                   DESeq             1.36.0
 #                   DESeq2            1.24.0
 #                   argparse          latest
 #                   pheatmap          latest
-# Base Image:       r-base:3.6.0
+# Base Image:       r-base:3.6.0 
 # Build Cmd:        docker build --rm -t biowardrobe2/scidap-deseq:v0.0.8 -f scidap-deseq-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/scidap-deseq:v0.0.8
 # Run Cmd:          docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.8 /bin/bash

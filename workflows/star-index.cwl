@@ -1,151 +1,131 @@
 cwlVersion: v1.0
 class: Workflow
 
+
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: ScatterFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
 
+
+'sd:metadata':
+  - "../metadata/indices-header.cwl"
+
+
 inputs:
 
-  genome_label:
-    type: string?
-    label: "Genome label"
-    doc: "Genome label is used by web-ui to show label"
-    'sd:preview':
-      position: 1
+  genome:
+    type: string
+    label: "Genome type"
+    doc: "Genome type, such as mm10, hg19, hg38, etc"
 
-  genome_description:
-    type: string?
-    label: "Genome description"
-    doc: "Genome description is used by web-ui to show description"
-    'sd:preview':
-      position: 2
-
-  genome_details:
-    type: string?
-    label: "Genome details"
-    doc: "Genome details"
-    'sd:preview':
-      position: 3
-
-  fasta:
+  fasta_file:
     type: File
-    label: "FASTA input file"
     format: "http://edamontology.org/format_1929"
-    doc: "Reference genome input FASTA file"
+    label: "Reference genome FASTA file"
+    doc: "Reference genome FASTA file. Includes all chromosomes"
 
-  annotation_gtf:
-    type: File
-    label: "GTF input file"
+  annotation_gtf_file:
+    type: File?
     format: "http://edamontology.org/format_2306"
-    doc: "Annotation input file"
-
-  annotation_tab:
-    type: File
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
+    label: "GTF annotation file"
+    doc: "GTF annotation file"
 
   genome_sa_sparse_d:
     type: int?
     default: 2
-    label: "Use 2 to decrease needed RAM for STAR"
+    label: "Suffix array sparsity (use 2 to decrease needed RAM)"
     doc: |
-      int>0: suffux array sparsity, i.e. distance between indices: use bigger
-      numbers to decrease needed RAM at the cost of mapping speed reduction
+      Suffix array sparsity, i.e. distance between indices: use bigger
+      numbers to decrease needed RAMat the cost of mapping speed reduction"
     'sd:layout':
       advanced: true
 
   genome_sa_index_n_bases:
     type: int?
-    label: "length of the SA pre-indexing string"
+    label: "Length of SA pre-indexing string"
     doc: |
-      For small genomes, the parameter --genomeSAindexNbases must to be scaled down, with a typical value of
-      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9,
-      for 100 kiloBase genome, this is equal to 7.
-
+      Length (bases) of the SA pre-indexing string. Typically between 10 and 15. Longer strings will use much more memory,
+      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases must be scaled down to
+      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9, for 100 kiloBase genome,
+      this is equal to 7.
       default: 14
-
-      int: length (bases) of the SA pre-indexing string.
-      Typically between 10 and 15. Longer strings will use much more memory,
-      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases
-      must be scaled down to min(14, log2(GenomeLength)/2 - 1).
     'sd:layout':
       advanced: true
 
   genome_chr_bin_n_bits:
     type: int?
-    label: "Genome Chr Bin NBits"
+    label: "Number of bins allocated for each chromosome"
     doc: |
-      If you are using a genome with a large (>5,000) number of references (chrosomes/scaﬀolds),
-      you may need to reduce the --genomeChrBinNbits to reduce RAM consumption.
-      The following scaling is recommended: --genomeChrBinNbits = min(18,log2[max(GenomeLength/NumberOfReferences,ReadLength)]).
-      For example, for 3 gigaBase genome with 100,000 chromosomes/scaﬀolds, this is equal to 15.
-
+      If you are using a genome with a large (>5,000) number of references (chrosomes/scaﬀolds), you may need to reduce the
+      --genomeChrBinNbits to reduce RAM consumption. For a genome with large number of contigs, it is recommended to scale
+      this parameter as min(18, log2[max(GenomeLength/NumberOfReferences,ReadLength)]).
       default: 18
-
-      int: =log2(chrBin), where chrBin is the size of the bins for genome storage:
-      each chromosome will occupy an integer number of bins.
-      For a genome with large number of contigs, it is recommended to scale this parameter
-      as min(18, log2[max(GenomeLength/NumberOfReferences,ReadLength)]).
     'sd:layout':
       advanced: true
 
   limit_genome_generate_ram:
     type: long?
-    inputBinding:
-      position: 1
-      prefix: --limitGenomeGenerateRAM
-    doc: |
-      31000000000
-      int>0: maximum available RAM (bytes) for genome generation
+    label: "Limit maximum available RAM (bytes) for genome generation"
+    doc: "Maximum available RAM (bytes) for genome generation. Default 31000000000"
     'sd:layout':
       advanced: true
 
   threads:
     type: int?
-    label: "Number of threads to run tools"
+    label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
     'sd:layout':
       advanced: true
 
+
 outputs:
 
-  star_indices:
+  indices_folder:
     type: Directory
-    label: "STAR indices folder"
-    doc: "Folder which includes all STAR generated indices files"
-    outputSource: star_generate_indices/indices
+    outputSource: star_generate_indices/indices_folder
+    label: "STAR indices"
+    doc: "STAR generated indices folder"
 
-  annotation:
+  chrom_length_file:
     type: File
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
-    outputSource: annotation_tab
-
-  chrom_length:
-    type: File
-    label: "Chromosome length file"
     format: "http://edamontology.org/format_2330"
-    outputSource: star_generate_indices/chr_name_length
+    outputSource: star_generate_indices/chrom_length
+    label: "Chromosome length file"
     doc: "Chromosome length file"
+    
+  stdout_log:
+    type: File
+    label: "STAR stdout log"
+    doc: "STAR generated stdout log"
+    outputSource: star_generate_indices/stdout_log
+
+  stderr_log:
+    type: File
+    label: "STAR stderr log"
+    doc: "STAR generated stderr log"
+    outputSource: star_generate_indices/stderr_log
+
 
 steps:
 
   star_generate_indices:
     run: ../tools/star-genomegenerate.cwl
     in:
-      genome_fasta_files: fasta
-      sjdb_gtf_file: annotation_gtf
+      genome_dir: genome
+      genome_fasta_files: fasta_file
+      sjdb_gtf_file: annotation_gtf_file
       genome_sa_sparse_d: genome_sa_sparse_d
-      limit_genome_generate_ram: limit_genome_generate_ram
       genome_sa_index_n_bases: genome_sa_index_n_bases
       genome_chr_bin_n_bits: genome_chr_bin_n_bits
+      limit_genome_generate_ram: limit_genome_generate_ram
       threads: threads
-    out: [indices, chr_name_length]
+    out:
+    - indices_folder
+    - chrom_length
+    - stdout_log
+    - stderr_log
 
 
 $namespaces:
@@ -154,8 +134,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "Generate genome index STAR RNA"
-label: "Generate genome index STAR RNA"
+s:name: "Build STAR indices"
+label: "Build STAR indices"
 s:alternateName: "Generates indices for STAR v2.5.3a (03/17/2017)"
 
 s:downloadUrl: https://raw.githubusercontent.com/barski-lab/workflows/master/workflows/scidap/star-index.cwl
@@ -198,9 +178,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Workflow makes indices for [STAR](https://github.com/alexdobin/STAR) v2.5.3a (03/17/2017) PMID: [23104886](https://www.ncbi.nlm.nih.gov/pubmed/23104886).
-
-  It performs the following steps:
-  1. Runs `STAR --runMode genomeGenerate` to generate indices, based on [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) and [GTF](http://mblab.wustl.edu/GTF2.html) input files, returns results as an array of files
-  2. Transforms array of files into [Direcotry](http://www.commonwl.org/v1.0/CommandLineTool.html#Directory) data type
-  3. Separates *chrNameLength.txt* file as an output
+  Workflow runs [STAR](https://github.com/alexdobin/STAR) v2.5.3a (03/17/2017) PMID: [23104886](https://www.ncbi.nlm.nih.gov/pubmed/23104886)
+  to build indices for reference genome provided in a single FASTA file as fasta_file input and GTF annotation file from annotation_gtf_file input.
+  Generated indices are saved in a folder with the name that corresponds to the input genome.

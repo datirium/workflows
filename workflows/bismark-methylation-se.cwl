@@ -7,13 +7,11 @@ class: Workflow
     - "bismark-index.cwl"
 
 
-inputs:
+'sd:metadata':
+  - "../metadata/chipseq-header.cwl"
 
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
+
+inputs:
 
   fastq_file:
     type: File

@@ -2,74 +2,83 @@
 # Dockerfile
 #
 # Software:         hopach
-# Software Version: v0.0.2
-# Description:      R package to run Hierarchical Ordered Partitioning and Collapsing Hybrid (HOPACH)
+# Software Version: v0.0.6
+# Description:      Hierarchical Ordered Partitioning and Collapsing Hybrid (HOPACH)
 # Website:          https://www.bioconductor.org/packages/release/bioc/html/hopach.html
-# Provides:         hopach 2.30.0
-#                   argparse 1.1.1
-#                   FindPython 1.0.3
-#                   jsonlite 1.5
-#                   hopach_order.R
-# Base Image:       biowardrobe2/scidap-addons:v0.0.6
-# Build Cmd:        docker build --rm -t biowardrobe2/hopach:v0.0.2 -f hopach-Dockerfile .
-# Pull Cmd:         docker pull biowardrobe2/hopach:v0.0.2
-# Run Cmd:          docker run --rm -ti biowardrobe2/hopach:v0.0.2
+# Provides:         hopach 2.44.0
+# Base Image:       r-base:3.6.0
+# Build Cmd:        docker build --rm -t biowardrobe2/hopach:v0.0.6 -f hopach-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/hopach:v0.0.6
+# Run Cmd:          docker run --rm -ti biowardrobe2/hopach:v0.0.6 /bin/bash
 #################################################################
+#
+# v0.0.6
+#   Update hopach_order.R script.
+#   - Support three clustering methods: row, column, both
+#
+# v0.0.5
+#   Update hopach_order.R script.
+#   - Bug fix
+#   - Center and normalize input data before clustering
+#   - Optionally reorder heatmap columns
+#   
+# v0.0.4
+#   Update hopach_order.R script.
+#   Optionally exports heatmap, distance matrix and cluster variability plots.
+#
+# v0.0.3
+#   switch to r-base:3.6.0
+#   install
+#     BiocManager   1.30.4
+#     hopach        2.44.0
+#     argparse      latest
+#     gplots        latest
+#     RColorBrewer  latest
+#     pheatmap      latest
+#
 # v0.0.2
-# Update hopach_order.R script.
-# Only those rows are discarded, where all the elements are less
-# than the value set by --min argument
+#   Update hopach_order.R script.
+#   Only those rows are discarded, where all the elements are less
+#   than the value set by --min argument
 #
-# Hopach version depends on Bioconductor version.
-# For biowardrobe2/scidap-addons:v0.0.6 Bioconductor 3.2 is used,
-# so there is no way to set version for Hopach other than 2.30.0
+#   Hopach version depends on Bioconductor version.
+#   For biowardrobe2/scidap-addons:v0.0.6 Bioconductor 3.2 is used,
+#   so there is no way to set version for Hopach other than 2.30.0
 #
-# Argparse, FindPython and jsonlite are set to the specific
-# versions to garantee that they will work on R 3.2.3-4 inherited
-# from the base image.
+#   Argparse, FindPython and jsonlite are set to the specific
+#   versions to garantee that they will work on R 3.2.3-4 inherited
+#   from the base image.
 #################################################################
 
 
 ### Base Image
-FROM biowardrobe2/scidap-addons:v0.0.6
-MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+FROM r-base:3.6.0
+LABEL maintainer="misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
-
 
 ################## BEGIN INSTALLATION ######################
 
 WORKDIR /tmp
 
-ENV VER_ARGPARSE 1.1.1
-ENV URL_ARGPARSE "https://github.com/trevorld/argparse/archive/v${VER_ARGPARSE}.tar.gz"
-
-ENV VER_FINDPYTHON 1.0.3
-ENV URL_FINDPYTHON "https://github.com/trevorld/findpython/archive/v${VER_FINDPYTHON}.tar.gz"
-
-ENV VER_JSONLITE 1.5
-ENV URL_JSONLITE "https://github.com/jeroen/jsonlite/archive/v${VER_JSONLITE}.tar.gz"
-
+ENV VERSION_BIOCMANAGER 1.30.4
+ENV URL_BIOCMANAGER "https://cran.r-project.org/src/contrib/BiocManager_${VERSION_BIOCMANAGER}.tar.gz"
 
 COPY ./scripts/install_from_source.R /tmp/install_from_source.R
-COPY ./scripts/install_from_bioconductor.R /tmp/install_from_bioconductor.R
 COPY ./scripts/hopach_order.R /usr/local/bin/hopach_order.R
-
 
 ### Installing dependencies
 RUN apt-get update && \
-    apt-get install libxml2-dev -y && \
-
-### Installing Argparse and FindPython packages from source
-    Rscript /tmp/install_from_source.R "${URL_FINDPYTHON}" && \
-    Rscript /tmp/install_from_source.R "${URL_JSONLITE}" && \
-    Rscript /tmp/install_from_source.R "${URL_ARGPARSE}" && \
-
-### Installing Hopach packages from Bioconductor
-    Rscript /tmp/install_from_bioconductor.R hopach && \
-
-### Installing hopach_order.R R script
+    apt-get install -y python3-dev python3-pip libxml2-dev libcurl4-openssl-dev && \
+    pip3 install argparse && \
+### Installing biocmanager, argparse, gplots, RColorBrewer, hopach, 
+    Rscript /tmp/install_from_source.R "${URL_BIOCMANAGER}" && \
+    R -e 'install.packages("argparse", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("gplots", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("RColorBrewer", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("pheatmap", repo = "https://cloud.r-project.org/")' && \
+    R -e "BiocManager::install(c('hopach'))" && \
+### Installing hopach_order.R script
     chmod +x /usr/local/bin/hopach_order.R && \
-
 ### Cleaning
     apt-get clean && \
     apt-get purge && \

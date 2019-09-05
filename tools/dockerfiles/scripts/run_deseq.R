@@ -26,7 +26,7 @@ suppressMessages(library(pheatmap))
 # RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
 #
 # DESeq/DESeq2 always compares untreated_vs_treated groups
-#
+# 
 # Additionally we calculate -LOG10(pval) and -LOG10(padj)
 ##########################################################################################
 

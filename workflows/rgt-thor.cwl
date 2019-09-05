@@ -8,17 +8,17 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
+'sd:metadata':
+- "../metadata/advanced-header.cwl"
+
+
 'sd:upstream':
   first_biological_condition:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
   second_biological_condition:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
@@ -28,12 +28,6 @@ requirements:
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
 
   bambai_pair_cond_1:
     type: File[]

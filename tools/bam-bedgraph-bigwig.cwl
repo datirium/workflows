@@ -1,11 +1,14 @@
 cwlVersion: v1.0
 class: Workflow
 
+
 requirements:
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
 
+
 inputs:
+
   bam_file:
     type: File
     label: "Input BAM file"
@@ -13,71 +16,63 @@ inputs:
 
   chrom_length_file:
     type: File
-    label: "Chromosome length file"
     doc: "Tab delimited chromosome length file: <chromName><TAB><chromSize>"
 
   scale:
     type: float?
-    label: "Genome coverage scaling coefficient"
     doc: "Coefficient to scale the genome coverage by a constant factor"
 
   mapped_reads_number:
     type: int?
-    label: "Mapped reads number"
     doc: |
       Parameter to calculate scale as 1000000/mapped_reads_number. Ignored by bedtools-genomecov.cwl in
       bam_to_bedgraph step if scale is provided
 
   pairchip:
     type: boolean?
-    label: "Enable paired-end genome coverage calculation"
     doc: "Enable paired-end genome coverage calculation"
 
   fragment_size:
     type: int?
-    label: "Fixed fragment size"
     doc: "Set fixed fragment size for genome coverage calculation"
 
   strand:
     type: string?
-    label: "Enable strand specific genome coverage calculation"
     doc: "Calculate genome coverage of intervals from a specific strand"
 
   bigwig_filename:
     type: string?
-    label: "bigWig output filename"
     doc: "Output filename for generated bigWig"
 
   bedgraph_filename:
     type: string?
-    label: "bedGraph output filename"
     doc: "Output filename for generated bedGraph"
 
   split:
     type: boolean?
-    label: "Split reads by 'N' and 'D'"
     doc: "Calculate genome coverage for each part of the splitted by 'N' and 'D' read"
 
   dutp:
     type: boolean?
-    label: "Enable dUTP"
     doc: "Change strand af the mate read, so both reads come from the same strand"
 
 
 outputs:
+
   bigwig_file:
     type: File
     outputSource: sorted_bedgraph_to_bigwig/bigwig_file
-    label: "bigWig output file"
-    doc: "bigWig output file"
+    doc: "Output bigWig file"
 
   bedgraph_file:
     type: File
     outputSource: sort_bedgraph/sorted_file
     label: "bedGraph output file"
-    doc: "bedGraph output file"
+    doc: "Output bedGraph file"
+
 
 steps:
+
   bam_to_bedgraph:
     run: ../tools/bedtools-genomecov.cwl
     in:
@@ -119,6 +114,7 @@ steps:
       output_filename: bigwig_filename
     out: [bigwig_file]
 
+
 $namespaces:
   s: http://schema.org/
 
@@ -126,8 +122,6 @@ $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
 s:name: "bam-bedgraph-bigwig"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/bam-bedgraph-bigwig.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
@@ -166,9 +160,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Workflow converts input BAM file into bigWig and bedGraph files
-
-s:about: |
   Workflow converts input BAM file into bigWig and bedGraph files.
 
   Input BAM file should be sorted by coordinates (required by `bam_to_bedgraph` step).

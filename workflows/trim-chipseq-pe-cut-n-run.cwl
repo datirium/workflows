@@ -13,11 +13,9 @@ requirements:
 
 'sd:upstream':
   base_experiment:
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
   control_experiment:
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
   genome_indices:

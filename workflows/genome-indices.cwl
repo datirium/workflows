@@ -8,142 +8,100 @@ requirements:
 - class: InlineJavascriptRequirement
 
 
+'sd:metadata':
+  - "../metadata/indices-header.cwl"
+
+
 inputs:
 
   genome:
     type: string
-    label: "Genome"
-    doc: "Output files base string"
-
-  genome_label:
-    type: string?
-    label: "Genome label"
-    doc: "Genome label is used by web-ui to show label"
-    'sd:preview':
-      position: 1
-
-  genome_description:
-    type: string?
-    label: "Genome description"
-    doc: "Genome description is used by web-ui to show description"
-    'sd:preview':
-      position: 2
-
-  genome_details:
-    type: string?
-    label: "Genome details"
-    doc: "Genome details"
-    'sd:preview':
-      position: 3
+    label: "Genome type"
+    doc: "Genome type, such as mm10, hg19, hg38, etc"
 
   fasta:
     type: File
-    label: "Genome FASTA file"
     format: "http://edamontology.org/format_1929"
-    doc: "Reference genome FASTA file"
+    label: "Reference genome FASTA file"
+    doc: "Reference genome FASTA file. Includes all chromosomes"
 
   fasta_ribosomal:
-    type: File?
-    label: "Ribosomal DNA sequence FASTA file"
+    type: File
     format: "http://edamontology.org/format_1929"
-    doc: "Ribosomal DNA sequence FASTA file"
+    label: "Ribosomal DNA FASTA file"
+    doc: "Ribosomal DNA FASTA file"
 
   fasta_mitochondrial:
-    type: File?
-    label: "Mitochondrial chromosome sequence FASTA file"
+    type: File
     format: "http://edamontology.org/format_1929"
-    doc: "Mitochondrial chromosome sequence FASTA file"
+    label: "Mitochondrial DNA FASTA file"
+    doc: "Mitochondrial DNA FASTA file"
 
   effective_genome_size:
     type: string
     label: "Effective genome size"
-    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
+    doc: "MACS2 effective genome sizes: hs, mm, ce, dm or number, for example 2.7e9"
 
   input_annotation_gtf:
     type: File
-    label: "GTF input file"
     format: "http://edamontology.org/format_2306"
-    doc: "Annotation input file"
+    label: "GTF annotation file"
+    doc: "GTF annotation file. Includes reference genome and mitochondrial DNA annotations"
 
   annotation_tab:
     type: File
-    label: "Annotation file"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
+    label: "TSV annotation file"
+    doc: "Tab-separated annotation file. Includes reference genome and mitochondrial DNA annotations"
 
   genome_sa_index_n_bases:
     type: int?
-    label: "length of the SA pre-indexing string"
+    label: "Length of SA pre-indexing string for reference genome indices"
     doc: |
-      For small genomes, the parameter --genomeSAindexNbases must to be scaled down, with a typical value of
-      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9,
-      for 100 kiloBase genome, this is equal to 7.
-
+      Length (bases) of the SA pre-indexing string. Typically between 10 and 15. Longer strings will use much more memory,
+      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases must be scaled down to
+      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9, for 100 kiloBase genome,
+      this is equal to 7.
       default: 14
-
-      int: length (bases) of the SA pre-indexing string.
-      Typically between 10 and 15. Longer strings will use much more memory,
-      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases
-      must be scaled down to min(14, log2(GenomeLength)/2 - 1).
     'sd:layout':
       advanced: true
 
   genome_sa_index_n_bases_mitochondrial:
     type: int?
-    default: 6
-    label: "length (mitochondrial) of the SA pre-indexing string"
+    label: "Length of SA pre-indexing string for mitochondrial DNA indices"
     doc: |
-      For small genomes, the parameter --genomeSAindexNbases must to be scaled down, with a typical value of
-      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9,
-      for 100 kiloBase genome, this is equal to 7.
-
+      Length (bases) of the SA pre-indexing string. Typically between 10 and 15. Longer strings will use much more memory,
+      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases must be scaled down to
+      min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is equal to 9, for 100 kiloBase genome,
+      this is equal to 7.
       default: 14
-
-      int: length (bases) of the SA pre-indexing string.
-      Typically between 10 and 15. Longer strings will use much more memory,
-      but allow faster searches. For small genomes, the parameter –genomeSAindexNbases
-      must be scaled down to min(14, log2(GenomeLength)/2 - 1).
     'sd:layout':
       advanced: true
 
   genome_chr_bin_n_bits:
     type: int?
-    label: "Genome Chr Bin NBits"
+    label: "Number of bins allocated for each chromosome of reference genome"
     doc: |
-      If you are using a genome with a large (>5,000) number of references (chrosomes/scaﬀolds),
-      you may need to reduce the --genomeChrBinNbits to reduce RAM consumption.
-      The following scaling is recommended: --genomeChrBinNbits = min(18,log2[max(GenomeLength/NumberOfReferences,ReadLength)]).
-      For example, for 3 gigaBase genome with 100,000 chromosomes/scaﬀolds, this is equal to 15.
-
+      If you are using a genome with a large (>5,000) number of references (chrosomes/scaﬀolds), you may need to reduce the
+      --genomeChrBinNbits to reduce RAM consumption. For a genome with large number of contigs, it is recommended to scale
+      this parameter as min(18, log2[max(GenomeLength/NumberOfReferences,ReadLength)]).
       default: 18
-
-      int: =log2(chrBin), where chrBin is the size of the bins for genome storage:
-      each chromosome will occupy an integer number of bins.
-      For a genome with large number of contigs, it is recommended to scale this parameter
-      as min(18, log2[max(GenomeLength/NumberOfReferences,ReadLength)]).
     'sd:layout':
       advanced: true
 
   genome_sa_sparse_d:
     type: int?
-    label: "Genome SA sparse (Use 2 to decrease RAM usage)"
+    label: "Suffix array sparsity for reference genome and mitochondrial DNA indices"
     doc: |
-      default: 1
-
-      int>0: suffux array sparsity, i.e. distance between indices: use bigger
-      numbers to decrease needed RAM at the cost of mapping speed reduction
+      Suffix array sparsity, i.e. distance between indices: use bigger
+      numbers to decrease needed RAMat the cost of mapping speed reduction"
     'sd:layout':
       advanced: true
 
   limit_genome_generate_ram:
     type: long?
-    label: "Genome Generate RAM (31G default)"
-    inputBinding:
-      position: 1
-      prefix: --limitGenomeGenerateRAM
-    doc: |
-      31000000000
-      int>0: maximum available RAM (bytes) for genome generation
+    label: "Limit maximum available RAM (bytes) for reference genome indices generation"
+    doc: "Maximum available RAM (bytes) for genome generation. Default 31000000000"
     'sd:layout':
       advanced: true
 
@@ -159,54 +117,102 @@ outputs:
 
   star_indices:
     type: Directory
-    label: "STAR indices folder"
-    doc: "Folder which includes all STAR generated indices folder"
-    outputSource: star_generate_indices/indices
+    outputSource: star_generate_indices/indices_folder
+    label: "STAR genome indices"
+    doc: "STAR generated genome indices folder"
 
+  star_indices_stdout_log:
+    type: File
+    outputSource: star_generate_indices/stdout_log
+    label: "STAR stdout log for genome indices"
+    doc: "STAR generated stdout log for genome indices"
+    
+  star_indices_stderr_log:
+    type: File
+    outputSource: star_generate_indices/stderr_log
+    label: "STAR stderr log for genome indices"
+    doc: "STAR generated stderr log for genome indices"
+    
   bowtie_indices:
     type: Directory
-    label: "Bowtie indices folder"
-    doc: "Folder which includes all Bowtie generated indices folder"
-    outputSource: bowtie_generate_indices/indices
+    outputSource: bowtie_generate_indices/indices_folder
+    label: "Bowtie genome indices"
+    doc: "Bowtie generated genome indices folder"
+
+  bowtie_indices_stdout_log:
+    type: File
+    outputSource: bowtie_generate_indices/stdout_log
+    label: "Bowtie stdout log for genome indices"
+    doc: "Bowtie generated stdout log for genome indices"
+    
+  bowtie_indices_stderr_log:
+    type: File
+    outputSource: bowtie_generate_indices/stderr_log
+    label: "Bowtie stderr log genome indices"
+    doc: "Bowtie generated stderr log for genome indices"
 
   ribosomal_indices:
     type: Directory
-    label: "Ribosomal DNA indices folder"
-    doc: "Ribosomal DNA Bowtie generated indices folder"
-    outputSource: ribosomal_generate_indices/indices
+    outputSource: ribosomal_generate_indices/indices_folder
+    label: "Bowtie ribosomal DNA indices"
+    doc: "Bowtie generated ribosomal DNA indices folder"
+
+  ribosomal_indices_stdout_log:
+    type: File
+    outputSource: ribosomal_generate_indices/stdout_log
+    label: "Bowtie stdout log for ribosomal DNA indices"
+    doc: "Bowtie generated stdout log for ribosomal DNA indices"
+    
+  ribosomal_indices_stderr_log:
+    type: File
+    outputSource: ribosomal_generate_indices/stderr_log
+    label: "Bowtie stderr log for ribosomal DNA indices"
+    doc: "Bowtie generated stderr log for ribosomal DNA indices"
 
   mitochondrial_indices:
     type: Directory
-    label: "Mitochondrial chromosome index folder"
-    doc: "Mitochondrial chromosome index folder"
-    outputSource: mitochondrial_generate_indices/indices
+    outputSource: mitochondrial_generate_indices/indices_folder
+    label: "STAR mitochondrial DNA indices"
+    doc: "STAR generated mitochondrial DNA indices folder"
+    
+  mitochondrial_indices_stdout_log:
+    type: File
+    outputSource: mitochondrial_generate_indices/stdout_log
+    label: "STAR stdout log for mitochondrial DNA indices"
+    doc: "STAR generated stdout log for mitochondrial DNA indices"
+    
+  mitochondrial_indices_stderr_log:
+    type: File
+    outputSource: mitochondrial_generate_indices/stderr_log
+    label: "STAR stderr log for mitochondrial DNA indices"
+    doc: "STAR generated stderr log for mitochondrial DNA indices"
 
   annotation_gtf:
     type: File
-    label: "GTF input file"
     format: "http://edamontology.org/format_2306"
-    doc: "Annotation input file"
     outputSource: input_annotation_gtf
-
+    label: "GTF annotation file"
+    doc: "GTF annotation file. Includes reference genome and mitochondrial DNA annotations"
+    
   annotation:
     type: File
-    label: "Annotation file"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
     outputSource: annotation_tab
-
+    label: "TSV annotation file"
+    doc: "Tab-separated annotation file. Includes reference genome and mitochondrial DNA annotations"
+    
   genome_size:
     type: string
-    label: "Effective genome size"
-    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
     outputSource: effective_genome_size
-
+    label: "Effective genome size"
+    doc: "MACS2 effective genome sizes: hs, mm, ce, dm or number, for example 2.7e9"
+    
   chrom_length:
     type: File
-    label: "Chromosome lengths file"
     format: "http://edamontology.org/format_2330"
-    outputSource: star_generate_indices/chr_name_length
-    doc: "Chromosome lengths file"
+    outputSource: star_generate_indices/chrom_length
+    label: "Genome chromosome length file"
+    doc: "Genome chromosome length file"
 
 
 steps:
@@ -222,9 +228,13 @@ steps:
       genome_chr_bin_n_bits: genome_chr_bin_n_bits
       genome_dir:
         source: genome
-        valueFrom: $(self + "_star")
+        valueFrom: $(self + "_star_genome")
       threads: threads
-    out: [indices, chr_name_length]
+    out:
+    - indices_folder
+    - chrom_length
+    - stdout_log
+    - stderr_log
 
   mitochondrial_generate_indices:
     run: ../tools/star-genomegenerate.cwl
@@ -235,9 +245,13 @@ steps:
       genome_sa_index_n_bases: genome_sa_index_n_bases_mitochondrial
       genome_dir:
         source: genome
-        valueFrom: $(self + "_star_mito")
+        valueFrom: $(self + "_star_mitochondrial")
       threads: threads
-    out: [indices]
+    out:
+    - indices_folder
+    - chrom_length
+    - stdout_log
+    - stderr_log
 
   bowtie_generate_indices:
     run: ../tools/bowtie-build.cwl
@@ -245,8 +259,11 @@ steps:
       fasta_file: fasta
       index_base_name:
         source: genome
-        valueFrom: $(self + "_bowtie")
-    out: [indices]
+        valueFrom: $(self + "_bowtie_genome")
+    out:
+    - indices_folder
+    - stdout_log
+    - stderr_log
 
   ribosomal_generate_indices:
     run: ../tools/bowtie-build.cwl
@@ -254,8 +271,12 @@ steps:
       fasta_file: fasta_ribosomal
       index_base_name:
         source: genome
-        valueFrom: $(self + "_bowtie_ribo")
-    out: [indices]
+        valueFrom: $(self + "_bowtie_ribosomal")
+    out:
+    - indices_folder
+    - stdout_log
+    - stderr_log
+
 
 $namespaces:
   s: http://schema.org/

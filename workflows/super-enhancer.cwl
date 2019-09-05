@@ -7,25 +7,21 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
 
+
+'sd:metadata':
+  - "../metadata/advanced-header.cwl"
+
+
 'sd:upstream':
   chipseq_sample:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
   chipseq_control:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
 
+    
 inputs:
-
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
 
   islands_file:
     type: File

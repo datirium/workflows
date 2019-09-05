@@ -2,34 +2,22 @@ cwlVersion: v1.0
 class: Workflow
 
 
+'sd:metadata':
+  - "../metadata/indices-header.cwl"
+
+
 inputs:
 
-  genome_label:
-    type: string?
-    label: "Genome label"
-    doc: "Genome label is used by web-ui to show label"
-    'sd:preview':
-      position: 1
+  genome:
+    type: string
+    label: "Genome type"
+    doc: "Genome type, such as mm10, hg19, hg38, etc"
 
-  genome_description:
-    type: string?
-    label: "Genome description"
-    doc: "Genome description is used by web-ui to show description"
-    'sd:preview':
-      position: 2
-
-  genome_details:
-    type: string?
-    label: "Genome details"
-    doc: "Genome details"
-    'sd:preview':
-      position: 3
-
-  genome_fasta:
+  fasta_file:
     type: File
     format: "http://edamontology.org/format_1929"
-    label: "Genome FASTA file (*.fa or *.fasta, also ending in .gz)"
-    doc: "Reference genome FASTA file (*.fa or *.fasta, also ending in .gz)"
+    label: "Reference genome FASTA file (*.fa or *.fasta, or *.gz)"
+    doc: "Reference genome FASTA file (*.fa or *.fasta, or *.gz). Includes all chromosomes"
 
 
 outputs:
@@ -40,12 +28,25 @@ outputs:
     doc: "Bismark generated indices folder"
     outputSource: prepare_indices/indices_folder
 
+  stdout_log:
+    type: File
+    label: "Bismark stdout log"
+    doc: "Bismark generated stdout log"
+    outputSource: prepare_indices/stdout_log
+
+  stderr_log:
+    type: File
+    label: "Bismark stderr log"
+    doc: "Bismark generated stderr log"
+    outputSource: prepare_indices/stderr_log
+
 
 steps:
 
   fasta_to_folder:
     in:
-      genome_fasta: genome_fasta
+      genome_fasta: fasta_file
+      genome_type: genome
     out: [genome_folder]
     run:
       cwlVersion: v1.0
@@ -54,13 +55,14 @@ steps:
       - class: InlineJavascriptRequirement
       inputs:
         genome_fasta: File
+        genome_type: string
       outputs:
         genome_folder: Directory
       expression: |
         ${
             return { "genome_folder": {
               "class": "Directory",
-              "basename": inputs.genome_fasta.basename.split('.').slice(0,-1).join('.'),
+              "basename": inputs.genome_type,
               "listing": [inputs.genome_fasta]
             }};
         }
@@ -69,7 +71,10 @@ steps:
     run: ../tools/bismark-prepare-genome.cwl
     in:
       genome_folder: fasta_to_folder/genome_folder
-    out: [indices_folder]
+    out:
+    - indices_folder
+    - stdout_log
+    - stderr_log
 
 
 $namespaces:
@@ -78,9 +83,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "Generate genome indices for Bismark"
-label: "Generate genome indices for Bismark"
-s:alternateName: "Prepare indices for Bismark Methylation Pipeline. Bowtie2 aligner is used by default"
+s:name: "Build Bismark indices"
+label: "Build Bismark indices"
+s:alternateName: "Build indices for Bismark Methylation Pipeline. Bowtie2 aligner is used by default"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/bismark-index.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -117,5 +122,5 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Copy genome_fasta file to the folder and run run bismark_genome_preparation script to prepare indices for Bismark Methylation Analysis.
-  Bowtie2 aligner is used by default. The name of the output indices folder is equal to the genome_fasta file basename without extension.
+  Copy fasta_file file to the folder and run run bismark_genome_preparation script to prepare indices for Bismark Methylation Analysis.
+  Bowtie2 aligner is used by default. The name of the output indices folder is equal to the genome input.

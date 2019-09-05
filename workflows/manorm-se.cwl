@@ -8,13 +8,15 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
+'sd:metadata':
+- "../metadata/advanced-header.cwl"
+
+
 'sd:upstream':
   first_chipseq_sample:
-    - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
   second_chipseq_sample:
-    - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
   genome_indices:
@@ -22,12 +24,6 @@ requirements:
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
 
   peak_file_first:
     type: File
