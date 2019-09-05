@@ -1194,3 +1194,109 @@
       location: upstream.SJ.out.tab
       class: File
     star_stdout_log: null
+
+# ========================================================
+# chipseq-se
+# ========================================================
+
+- job: ./chipseq-se-1.json
+  tool: ../workflows/chipseq-se.cwl
+  output:
+    atdp_result:
+      location: upstream_atdp.tsv
+      class: File
+    bambai_pair:
+      location: upstream.bam
+      class: File
+      secondaryFiles:
+      - location: upstream.bam.bai
+        class: File
+    bigwig:
+      location: upstream.bigWig
+      class: File
+    bowtie_log:
+      location: upstream.bw
+      class: File
+    fastx_statistics:
+      location: upstream.fastxstat
+      class: File
+    iaintersect_result:
+      location: upstream_macs_peaks_iaintersect.tsv
+      class: File
+    macs2_broad_peaks: null
+    macs2_called_peaks:
+      location: upstream_macs_peaks.xls
+      class: File
+    macs2_narrow_peaks:
+      location: upstream_macs_peaks.narrowPeak
+      class: File
+    preseq_estimates: null
+    workflow_statistics:
+      location: upstream_stats.tsv
+      class: File
+
+# ========================================================
+# chipseq-pe
+# ========================================================
+
+- job: ./chipseq-pe-1.json
+  tool: ../workflows/chipseq-pe.cwl
+  output:
+    atdp_log:
+      location: upstream_atdp.log
+      class: File
+    atdp_result:
+      location: upstream_atdp.tsv
+      class: File
+    bambai_pair:
+      location: upstream.bam
+      class: File
+      secondaryFiles:
+      - location: upstream.bam.bai
+        class: File
+    bigwig:
+      location: upstream.bigWig
+      class: File
+    bowtie_log:
+      location: upstream.bw
+      class: File
+    fastx_statistics_downstream:
+      location: downstream.fastxstat
+      class: File
+    fastx_statistics_upstream:
+      location: upstream.fastxstat
+      class: File
+    get_stat_formatted_log:
+      location: upstream_stats.tsv
+      class: File
+    get_stat_log:
+      location: upstream.stat
+      class: File
+    iaintersect_log:
+      location: upstream_macs_peaks_iaintersect.log
+      class: File
+    iaintersect_result:
+      location: upstream_macs_peaks_iaintersect.tsv
+      class: File
+    macs2_broad_peaks: null
+    macs2_called_peaks:
+      location: upstream_macs_peaks.xls
+      class: File
+    macs2_fragment_stat:
+      location: upstream_fragment_stat.tsv
+      class: File
+    macs2_gapped_peak: null
+    macs2_log:
+      location: upstream_macs.log
+      class: File
+    macs2_moder_r: null
+    macs2_narrow_peaks:
+      location: upstream_macs_peaks.narrowPeak
+      class: File
+    macs2_peak_summits:
+      location: upstream_macs_summits.bed
+      class: File
+    preseq_estimates: null
+    samtools_rmdup_log:
+      location: upstream.rmdup
+      class: File
