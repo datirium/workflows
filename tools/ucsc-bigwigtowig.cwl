@@ -6,9 +6,9 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-          let basename = inputs.bigwig_file.location.split('/').slice(-1)[0];
-          let root = basename.split('.').slice(0,-1).join('.');
-          let ext = ".wig";
+          var basename = inputs.bigwig_file.location.split('/').slice(-1)[0];
+          var root = basename.split('.').slice(0,-1).join('.');
+          var ext = ".wig";
           return (root == "")?basename+ext:root+ext;
         };
 

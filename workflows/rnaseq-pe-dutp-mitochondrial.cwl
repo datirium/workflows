@@ -7,8 +7,10 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
 
+
 'sd:metadata':
 - "../metadata/rnaseq-header.cwl"
+
 
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
@@ -380,16 +382,16 @@ steps:
   merge_original_and_mitochondrial:
     run: ../tools/samtools-merge.cwl
     in:
-      output_name:
+      output_filename:
         source: extract_fastq_upstream/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'_merged.bam')
-      input: [ samtools_sort_index/bam_bai_pair, samtools_sort_index_mitochondrial/bam_bai_pair ]
-    out: [output]
+      alignment_files: [ samtools_sort_index/bam_bai_pair, samtools_sort_index_mitochondrial/bam_bai_pair ]
+    out: [merged_alignment_file]
 
   merge_original_and_mitochondrial_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: merge_original_and_mitochondrial/output
+      sort_input: merge_original_and_mitochondrial/merged_alignment_file
       sort_output_filename:
         source: extract_fastq_upstream/fastq_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
@@ -397,7 +399,7 @@ steps:
     out: [bam_bai_pair]
 
   bam_to_bigwig_upstream:
-    run: ../subworkflows/bam-bedgraph-bigwig.cwl
+    run: ../tools/bam-bedgraph-bigwig.cwl
     in:
       bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       chrom_length_file: chrom_length_file
@@ -406,8 +408,8 @@ steps:
         source: extract_fastq_upstream/fastq_file
         valueFrom: |
           ${
-            let root = self.basename.split('.').slice(0,-1).join('.');
-            let ext = "_upstream.bigWig";
+            var root = self.basename.split('.').slice(0,-1).join('.');
+            var ext = "_upstream.bigWig";
             return (root == "")?self.basename+ext:root+ext;
           }
       strand:
@@ -415,7 +417,7 @@ steps:
     out: [bigwig_file]
 
   bam_to_bigwig_downstream:
-    run: ../subworkflows/bam-bedgraph-bigwig.cwl
+    run: ../tools/bam-bedgraph-bigwig.cwl
     in:
       bam_file: merge_original_and_mitochondrial_index/bam_bai_pair
       chrom_length_file: chrom_length_file
@@ -426,8 +428,8 @@ steps:
         source: extract_fastq_upstream/fastq_file
         valueFrom: |
           ${
-            let root = self.basename.split('.').slice(0,-1).join('.');
-            let ext = "_downstream.bigWig";
+            var root = self.basename.split('.').slice(0,-1).join('.');
+            var ext = "_downstream.bigWig";
             return (root == "")?self.basename+ext:root+ext;
           }
       strand:

@@ -1,78 +1,65 @@
 cwlVersion: v1.0
 class: Workflow
 
+
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: ScatterFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
 
+
+'sd:metadata':
+  - "../metadata/indices-header.cwl"
+
+
 inputs:
-
-  genome_label:
-    type: string?
-    label: "Genome label"
-    doc: "Genome label is used by web-ui to show label"
-    'sd:preview':
-      position: 1
-
-  genome_description:
-    type: string?
-    label: "Genome description"
-    doc: "Genome description is used by web-ui to show description"
-    'sd:preview':
-      position: 2
-
-  genome_details:
-    type: string?
-    label: "Genome details"
-    doc: "Genome details"
-    'sd:preview':
-      position: 3
 
   genome:
     type: string
-    label: "Genome"
-    doc: "Used by BioWardrobe to set genome"
+    label: "Genome type"
+    doc: "Genome type, such as mm10, hg19, hg38, etc"
 
-  fasta_input_file:
+  fasta_file:
     type: File
-    label: "FASTA input file"
     format: "http://edamontology.org/format_1929"
-    doc: "Reference genome input FASTA file"
+    label: "Reference genome FASTA file"
+    doc: "Reference genome FASTA file. Includes all chromosomes"
+
 
 outputs:
 
-  indices:
+  indices_folder:
     type: Directory
-    label: "Bowtie indices folder"
-    doc: "Folder which includes all Bowtie generated indices files"
-    outputSource: bowtie_generate_indices/indices
+    label: "Bowtie indices"
+    doc: "Bowtie generated indices folder"
+    outputSource: bowtie_build/indices_folder
 
-  annotation:
-    type: File?
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
+  stdout_log:
+    type: File
+    label: "Bowtie stdout log"
+    doc: "Bowtie generated stdout log"
+    outputSource: bowtie_build/stdout_log
 
-  genome_size:
-    type: string?
-    label: "Effective genome size"
-    doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
+  stderr_log:
+    type: File
+    label: "Bowtie stderr log"
+    doc: "Bowtie generated stderr log"
+    outputSource: bowtie_build/stderr_log
 
-  chrom_length:
-    type: File?
-    label: "Chromosome length file"
-    format: "http://edamontology.org/format_2330"
-    doc: "Chromosome length file"
 
 steps:
-  bowtie_generate_indices:
+
+  bowtie_build:
     run: ../tools/bowtie-build.cwl
     in:
-      fasta_file: fasta_input_file
+      fasta_file: fasta_file
       index_base_name: genome
-    out: [indices]
+    out:
+    - indices_folder
+    - stdout_log
+    - stderr_log
+
 
 $namespaces:
   s: http://schema.org/
@@ -80,9 +67,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "Generate genome index bowtie"
-label: "Generate genome index bowtie"
-s:alternateName: "Generates indices for Bowtie"
+s:name: "Build Bowtie indices"
+label: "Build Bowtie indices"
+s:alternateName: "Build Bowtie indices"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/dummy/bowtie-index.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -124,6 +111,6 @@ s:creator:
         - id: http://orcid.org/0000-0001-9102-5681
 
 doc: |
-  Workflow makes indices for [bowtie](http://bowtie-bio.sourceforge.net/tutorial.shtml) v1.2.0 (12/30/2016).
-  Executes `bowtie-index` to generate indices requires genome [FASTA](http://zhanglab.ccmb.med.umich.edu/FASTA/) file as input,
-  returns results as a directory
+  Workflow runs [Bowtie](http://bowtie-bio.sourceforge.net/tutorial.shtml) v1.2.0 (12/30/2016) to build indices for reference
+  genome provided in a single FASTA file as fasta_file input. Generated indices are saved in a folder with the name that
+  corresponds to the input genome

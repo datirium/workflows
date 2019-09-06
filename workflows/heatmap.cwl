@@ -7,13 +7,11 @@ requirements:
   - class: SubworkflowFeatureRequirement
 
 
-inputs:
+'sd:metadata':
+- "../metadata/advanced-header.cwl"
 
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
+
+inputs:
 
   bam_file:
     type: File[]
@@ -69,7 +67,7 @@ outputs:
 steps:
 
   make_tag_folders:
-    run: ../subworkflows/heatmap-prepare.cwl
+    run: ../tools/heatmap-prepare.cwl
     in:
       bam_file: bam_file
       fragment_size: fragment_size

@@ -83,6 +83,7 @@ setup(
     install_requires=[
         'setuptools',
         'jsonmerge'
+        'cwl_airflow'
     ],
 
     zip_safe=True,
@@ -96,8 +97,6 @@ setup(
     include_package_data=True,
     package_data={
         'biowardrobe_cwl_workflows': ['workflows/*.cwl',
-                                      'subworkflows/*.cwl',
-                                      'expressiontools/*.cwl',
                                       'metadata/*.cwl',
                                       'tools/*.cwl',
                                       'tools/metadata/*.yaml',

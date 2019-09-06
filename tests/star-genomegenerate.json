@@ -1,7 +1,0 @@
-{
-  "genome_fasta_files":[{"class": "File", "path": "/Users/kot4or/temp/cwl_workflow_test_data/dm3_chr4/fasta/chr4.fa"}],
-  "sjdb_gtf_file": {"class": "File", "path":"/Users/kot4or/temp/cwl_workflow_test_data/dm3_chr4/gtf/dm3_chr4.gtf"},
-  "threads": 8,
-  "sjdb_overhang": 100,
-  "genome_sa_index_n_bases": 10
-}

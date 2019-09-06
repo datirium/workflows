@@ -80,7 +80,7 @@ inputs:
     inputBinding:
       prefix: "--n1"
     doc: |
-      "Name of sample 1, which is used in output files. If not specified,
+      "Name of sample 1, which is used in output files. If not specified, 
        the name of the peak file will be used as the sample name"
 
   sample_name_second:
@@ -132,7 +132,7 @@ inputs:
       "Window size to count reads and calculate read densities. 2000 is recommended for
       sharp histone marks like H3K4me3 and H3K27ac, and 1000 for TFs or DNase-seq.
       Default: 2000"
-
+  
   summit_distance:
     type: int?
     inputBinding:
@@ -177,7 +177,7 @@ outputs:
     outputBinding:
       glob: "output_tracks/*_M_values.wig"
     doc: "Genome track file for M-values"
-
+    
   a_values_wig_file:
     type: File
     outputBinding:
@@ -214,21 +214,17 @@ outputs:
       glob: "output_figures/*_read_density_on_common_peaks.png"
     doc: "Read density on common peaks plot"
 
-  stderr_log:
-    type: File
-    outputBinding:
-      glob: "manorm_stderr.log"
-    doc: "MAnorm stderr log"
-
   stdout_log:
-    type: File
-    outputBinding:
-      glob: "manorm_stdout.log"
-    doc: "MAnorm stdout log"
+    type: stdout
+
+  stderr_log:
+    type: stderr
+
 
 baseCommand: ["manorm"]
 stderr: manorm_stderr.log
 stdout: manorm_stdout.log
+
 
 $namespaces:
   s: http://schema.org/

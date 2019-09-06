@@ -27,5 +27,5 @@
     "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/downstream.fastq",
     "format": "http://edamontology.org/format_1930"
   },
-  "threads": 4
+  "threads": 2
 }

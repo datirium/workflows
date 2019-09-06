@@ -1,5 +1,5 @@
 class: s:SoftwareSourceCode
-s:name: "bowtie2"
+s:name: "bedtools"
 s:about: >
   A software suite for the comparison, manipulation and annotation of genomic features
   in browser extensible data (BED) and general feature format (GFF) format.

@@ -14,7 +14,7 @@
 
 ### Base Image
 FROM biowardrobe2/scidap:v0.0.3
-MAINTAINER Michael Kotliar "misha.kotliar@gmail.com"
+LABEL maintainer="misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
 ################## BEGIN INSTALLATION ######################
@@ -36,7 +36,6 @@ RUN apt-get clean all &&\
     pip install bx-python && \
     apt-get clean && \
     apt-get purge && \
-
 ### Installing crossmap
     pip install crossmap==$VERSION
 

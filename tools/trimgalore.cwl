@@ -1,21 +1,58 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_log_name = function() {
-      let lognames = {};
+      var lognames = {};
       lognames["pair"] = (inputs.paired && inputs.input_file_pair) ? inputs.input_file_pair.basename+'_trimming_report.txt':null;
       lognames["single"] = inputs.input_file.basename+'_trimming_report.txt';
       return lognames;
     }
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      var listing = [inputs.input_file]
+      if (inputs.input_file_pair){
+        listing.push(inputs.input_file_pair);
+      }
+      return listing;
+    }
+
 
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/trimgalore:v0.4.4
 
 inputs:
+
+  bash_script:
+    type: string?
+    default: |
+      #!/bin/bash
+      if [ "$0" = "true" ]
+      then
+        echo "Run: trimgalore " ${@:1}
+        trim_galore "${@:1}"
+      else
+        echo "Skip run trimgalore"
+      fi
+    inputBinding:
+      position: 1
+    doc: |
+      Bash function to run trimgalore with all input parameters or skip it if trigger is false
+
+  trigger:
+    type: boolean?
+    default: true
+    inputBinding:
+      position: 2
+      valueFrom: $(self?"true":"false")
+    doc: |
+      If true - run trimgalore, if false - return input fastq files, previously staged into output directory.
+      Use valueFrom to return string instead of boolean to make sure that value is printed to command line in both cases
 
   input_file:
     type:
@@ -415,15 +452,32 @@ inputs:
 
 
 outputs:
+
   trimmed_file:
     type: File
     outputBinding:
-      glob: $((inputs.paired && inputs.input_file_pair) ? "*_val_1.fq*":"*_trimmed.fq*")
-
+      glob: |
+        ${
+            if (inputs.trigger == false){
+              return inputs.input_file.basename;
+            } else if (inputs.paired && inputs.input_file_pair){
+              return "*_val_1.fq*";
+            } else {
+              return "*_trimmed.fq*";
+            }
+        }
+      
   trimmed_file_pair:
     type: File?
     outputBinding:
-      glob: "*_val_2.fq*"
+      glob: |
+        ${
+            if (inputs.paired && inputs.input_file_pair && inputs.trigger == false){
+              return inputs.input_file_pair.basename;
+            } else {
+              return "*_val_2.fq*";
+            }
+        }
 
   unpaired_file_1:
     type: File?
@@ -445,7 +499,9 @@ outputs:
     outputBinding:
       glob: $(default_log_name()['pair'])
 
-baseCommand: [trim_galore]
+
+baseCommand: [bash, '-c']
+
 
 $namespaces:
   s: http://schema.org/
@@ -500,6 +556,8 @@ doc: |
 
   For paired-end data processing both `input_file_pair` and `paired` should be set. If either of them is not set,
   the other one becomes unset automatically.
+
+  If input trigger was set to false, skip running trimaglore and return unchanged input files
 
 s:about: |
   trim_galore [options] <filename(s)>

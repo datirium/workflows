@@ -8,7 +8,7 @@ requirements:
   - var get_output_prefix = function(ext) {
         ext = ext || "";
         if (inputs.output_prefix == ""){
-          let root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
+          var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.bam_file.basename+ext:root+ext;
         } else {
           return inputs.output_prefix;
@@ -18,7 +18,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/satscript:v0.0.1
+  dockerPull: biowardrobe2/satscript:v0.0.2
 
 
 inputs:
@@ -65,9 +65,9 @@ inputs:
     inputBinding:
       position: 9
       prefix: "-s"
-    default: ["reads.png", "islands.png", "surface.png", "saturation.txt"]
+    default: ["reads.png", "islands.png", "surface.png", "frip.png", "saturation.txt"]
     doc: |
-      Output suffixes for reads, islands, surface and saturation files.
+      Output suffixes for reads, islands, surface, frip and saturation files.
 
   res_dpi:
     type:
@@ -95,10 +95,15 @@ outputs:
     outputBinding:
       glob: $("*"+inputs.output_suffixes[2])
 
-  saturation_file:
+  frip_file:
     type: File
     outputBinding:
       glob: $("*"+inputs.output_suffixes[3])
+
+  saturation_file:
+    type: File
+    outputBinding:
+      glob: $("*"+inputs.output_suffixes[4])
 
 
 baseCommand: ["SatScript"]

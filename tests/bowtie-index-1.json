@@ -1,0 +1,8 @@
+{
+  "fasta_file":{
+    "class": "File",
+    "location": "./data/dm3_chr4/main_inputs/fasta/chr4.fa",
+    "format": "http://edamontology.org/format_1929"
+  },
+  "genome": "bowtie_indices"
+}

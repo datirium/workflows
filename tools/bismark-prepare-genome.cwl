@@ -34,10 +34,19 @@ outputs:
     label: "Bismark indices folder"
     doc: "Bismark generated indices folder"
     outputBinding:
-      glob: "*"
+      glob: $(inputs.genome_folder.basename)
+
+  stdout_log:
+    type: stdout
+
+  stderr_log:
+    type: stderr
 
 
 baseCommand: ["bismark_genome_preparation"]
+stderr: bismark_build_stderr.log
+stdout: bismark_build_stdout.log
+
 
 
 $namespaces:

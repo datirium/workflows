@@ -1,0 +1,36 @@
+{
+  "rpkm_isoforms_cond_1": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u1_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/main_inputs/geep/u2_1000.isoforms.csv",
+       "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u3_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    }
+  ],
+  "rpkm_isoforms_cond_2": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t1_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t2_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t3_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    }
+  ]
+}

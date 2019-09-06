@@ -1,6 +1,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
@@ -18,7 +19,6 @@ requirements:
         }
       }
     }
-
 - class: InitialWorkDirRequirement
   listing: |
     ${
@@ -107,11 +107,11 @@ requirements:
       return listing;
     }
 
+
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/macs2:v2.1.1
-  dockerFile: >
-    $import: ./dockerfiles/macs2-Dockerfile
+
 
 inputs:
 
@@ -128,8 +128,7 @@ inputs:
       fi
     inputBinding:
       position: 1
-    doc: |
-      Bash function to run MACS2 callpeak with all input parameters or skip it if trigger is false
+    doc: "Bash function to run MACS2 callpeak with all input parameters or skip it if trigger is false"
 
   trigger:
     type: boolean?
@@ -138,42 +137,48 @@ inputs:
       position: 2
       valueFrom: |
         ${return self?"true":"false"}
-    doc: |
-      If true - run MACS2, if false - return staged files
+    doc: "If true - run MACS2, if false - return staged files"
 
   peak_xls_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   narrow_peak_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   broad_peak_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   gapped_peak_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   peak_summits_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   moder_r_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   treat_pileup_bdg_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   control_lambda_bdg_file_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
+
   macs_log_staged:
     type: File?
-    doc: For staging in a case of trigger is set to false
+    doc: "For staging in a case of trigger is set to false"
 
   treatment_file:
     type:
       - File
-      - type: array
-        items: File
+      - File[]
     inputBinding:
       position: 10
       prefix: -t
@@ -182,10 +187,8 @@ inputs:
       Check –format for detail. If you have more than one alignment files, you can specify them as `-t A B C`.
       MACS will pool up all these files together.
 
-  name:
-    type:
-      - "null"
-      - string
+  output_prefix:
+    type: string?
     inputBinding:
       position: 999
       prefix: -n
@@ -208,18 +211,17 @@ inputs:
     type:
       - "null"
       - File
-      - type: array
-        items: File
+      - File[]
     inputBinding:
       position: 12
       prefix: -c
-    doc: |
-      The control or mock data file. Please follow the same direction as for -t/–treatment.
+    doc: "The control or mock data file. Please follow the same direction as for -t/–treatment"
 
   format_mode:
     type:
       - "null"
-      - string
+      - type: enum
+        symbols: ["AUTO", "BAM", "SAM", "BED", "ELAND", "ELANDMULTI", "ELANDEXPORT", "BOWTIE", "BAMPE"]
     inputBinding:
       position: 13
       prefix: -f
@@ -233,9 +235,7 @@ inputs:
       DEFAULT: AUTO
 
   genome_size:
-    type:
-      - "null"
-      - string
+    type: string?
     inputBinding:
       position: 14
       prefix: -g
@@ -251,9 +251,7 @@ inputs:
       DEFAULT: hs
 
   keep_dup:
-    type:
-      - "null"
-      - string
+    type: string?
     inputBinding:
       position: 15
       prefix: --keep-dup
@@ -270,9 +268,7 @@ inputs:
       DEFAULT: 1
 
   buffer_size:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 16
       prefix: --buffer-size
@@ -290,9 +286,7 @@ inputs:
       DEFAULT: 100000
 
   bdg:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 17
       prefix: --bdg
@@ -305,9 +299,7 @@ inputs:
       DEFAULT: False
 
   trackline:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 18
       prefix: --trackline
@@ -318,9 +310,7 @@ inputs:
       DEFAULT: False
 
   spmr:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 19
       prefix: --SPMR
@@ -330,9 +320,7 @@ inputs:
       DEFAULT: False
 
   tsize:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 20
       prefix: --tsize
@@ -341,9 +329,7 @@ inputs:
       DEFAULT: False
 
   bw:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 21
       prefix: --bw
@@ -353,9 +339,7 @@ inputs:
       DEFAULT: 300
 
   mfold:
-    type:
-      - "null"
-      - string
+    type: string?
     inputBinding:
       position: 22
       prefix: -m
@@ -372,9 +356,7 @@ inputs:
       DEFAULT: 5 50
 
   fix_bimodal:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 23
       prefix: --fix-bimodal
@@ -386,9 +368,7 @@ inputs:
       DEFAULT: False
 
   nomodel:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 24
       prefix: --nomodel
@@ -398,9 +378,7 @@ inputs:
       DEFAULT: False
 
   shift:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 25
       prefix: --shift
@@ -416,9 +394,7 @@ inputs:
       DEFAULT: 0
 
   extsize:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 26
       prefix: --extsize
@@ -433,9 +409,7 @@ inputs:
       DEFAULT: 200
 
   q_value:
-    type:
-      - "null"
-      - float
+    type: float?
     inputBinding:
       position: 27
       prefix: -q
@@ -445,9 +419,7 @@ inputs:
       DEFAULT: 0.05
 
   p_value:
-    type:
-      - "null"
-      - float
+    type: float?
     inputBinding:
       position: 28
       prefix: -p
@@ -458,9 +430,7 @@ inputs:
       DEFAULT: null
 
   to_large:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 29
       prefix: --to-large
@@ -472,9 +442,7 @@ inputs:
       DEFAULT: False
 
   ratio:
-    type:
-      - "null"
-      - float
+    type: float?
     inputBinding:
       position: 30
       prefix: --ratio
@@ -484,9 +452,7 @@ inputs:
       DEFAULT: null
 
   down_sample:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 31
       prefix: --down-sample
@@ -501,9 +467,7 @@ inputs:
       DEFAULT: False
 
   seed:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 32
       prefix: --seed
@@ -513,9 +477,7 @@ inputs:
       DEFAULT: null
 
   nolambda:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 33
       prefix: --nolambda
@@ -526,9 +488,7 @@ inputs:
       DEFAULT: False
 
   slocal:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 34
       prefix: --slocal
@@ -544,9 +504,7 @@ inputs:
       DEFAULT: 1000
 
   llocal:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 35
       prefix: --llocal
@@ -561,9 +519,7 @@ inputs:
       DEFAULT: 10000.
 
   broad:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 36
       prefix: --broad
@@ -574,9 +530,7 @@ inputs:
       DEFAULT: False
 
   broad_cutoff:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 37
       prefix: --broad-cutoff
@@ -587,9 +541,7 @@ inputs:
       DEFAULT: 0.1
 
   cutoff_analysis:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 38
       prefix: --cutoff-analysis
@@ -602,9 +554,7 @@ inputs:
       DEFAULT: False
 
   call_summits:
-    type:
-      - "null"
-      - boolean
+    type: boolean?
     inputBinding:
       position: 39
       prefix: --call-summits
@@ -614,9 +564,7 @@ inputs:
       DEFAULT: False
 
   fe_cutoff:
-    type:
-      - "null"
-      - float
+    type: float?
     inputBinding:
       position: 40
       prefix: --fe-cutoff
@@ -627,25 +575,25 @@ inputs:
       DEFAULT: 1.0
 
   verbose:
-    type:
-      - "null"
-      - int
+    type: int?
     inputBinding:
       position: 41
       prefix: --verbose
     doc: |
       Log level
 
+
 outputs:
+
   peak_xls_file:
     type: File?
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.peak_xls_file_staged, '_macs_peaks.xls');
             } else {
-              return inputs.name + '_peaks.xls';
+              return inputs.output_prefix + '_peaks.xls';
             }
         }
 
@@ -654,10 +602,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.narrow_peak_file_staged, '_macs_peaks.narrowPeak');
             } else {
-              return inputs.name + '_peaks.narrowPeak';
+              return inputs.output_prefix + '_peaks.narrowPeak';
             }
         }
 
@@ -666,10 +614,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.broad_peak_file_staged, '_macs_peaks.broadPeak');
             } else {
-              return inputs.name + '_peaks.broadPeak';
+              return inputs.output_prefix + '_peaks.broadPeak';
             }
         }
 
@@ -678,10 +626,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.gapped_peak_file_staged, '_macs_peaks.gappedPeak');
             } else {
-              return inputs.name + '_peaks.gappedPeak';
+              return inputs.output_prefix + '_peaks.gappedPeak';
             }
         }
 
@@ -690,10 +638,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.peak_summits_file_staged, '_macs_summits.bed');
             } else {
-              return inputs.name + '_summits.bed';
+              return inputs.output_prefix + '_summits.bed';
             }
         }
 
@@ -702,10 +650,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.moder_r_file_staged, '_macs_model.r');
             } else {
-              return inputs.name + '_model.r';
+              return inputs.output_prefix + '_model.r';
             }
         }
 
@@ -714,10 +662,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.treat_pileup_bdg_file_staged, '_macs_treat_pileup.bdg');
             } else {
-              return inputs.name + '_treat_pileup.bdg';
+              return inputs.output_prefix + '_treat_pileup.bdg';
             }
         }
 
@@ -726,10 +674,10 @@ outputs:
     outputBinding:
       glob:
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(inputs.control_lambda_bdg_file_staged, '_macs_control_lambda.bdg');
             } else {
-              return inputs.name + '_control_lambda.bdg';
+              return inputs.output_prefix + '_control_lambda.bdg';
             }
         }
 
@@ -738,10 +686,10 @@ outputs:
     outputBinding:
       glob: |
         ${
-            if (inputs.name == "" || inputs.trigger == false){
+            if (inputs.output_prefix == "" || inputs.trigger == false){
               return default_name(null, '_macs.log');
             } else {
-              return inputs.name + '.log';
+              return inputs.output_prefix + '.log';
             }
         }
 
@@ -750,14 +698,15 @@ baseCommand: [bash, '-c']
 arguments:
   - valueFrom:
       ${
-          if (inputs.name == "" || inputs.trigger == false ){
+          if (inputs.output_prefix == "" || inputs.trigger == false ){
             return ' 2>> ' + default_name(null, '_macs.log');
           } else {
-            return ' 2>> ' + inputs.name + '.log';
+            return ' 2>> ' + inputs.output_prefix + '.log';
           }
       }
     position: 100000
     shellQuote: false
+
 
 $namespaces:
   s: http://schema.org/

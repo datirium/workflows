@@ -21,7 +21,7 @@ requirements:
   - class: InlineJavascriptRequirement
     expressionLib:
     - var default_output_filename = function(input_file, ext) {
-          let root = input_file.basename.split('.').slice(0,-1).join('.');
+          var root = input_file.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.input_file.basename+ext:root+ext;
       };
 

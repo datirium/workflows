@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function(ext) {
-        let root = inputs.input_file.basename.split('.').slice(0,-1).join('.');
+        var root = inputs.input_file.basename.split('.').slice(0,-1).join('.');
         return (root == "")?inputs.input_file.basename+ext:root+ext;
     };
 - class: InitialWorkDirRequirement
@@ -46,7 +46,7 @@ inputs:
     inputBinding:
       position: 1
     doc: |
-      Bash function to run samtools sort with all input parameters or skip it if trigger is false
+      Bash function to run refgene-sort and atdp
 
   input_file:
     type:

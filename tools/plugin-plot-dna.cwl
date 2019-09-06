@@ -8,7 +8,7 @@ requirements:
   - var get_output_prefix = function(ext) {
         ext = ext || "";
         if (inputs.output_prefix == ""){
-          let root = inputs.bambai_pair.basename.split('.').slice(0,-1).join('.');
+          var root = inputs.bambai_pair.basename.split('.').slice(0,-1).join('.');
           return (root == "")?inputs.bambai_pair.basename+ext:root+ext;
         } else {
           return inputs.output_prefix;
@@ -36,7 +36,7 @@ inputs:
       position: 6
       prefix: "-b"
     secondaryFiles:
-      - .bai
+    - .bai
     doc: "Indexed BAM + BAI files"
 
   output_prefix:

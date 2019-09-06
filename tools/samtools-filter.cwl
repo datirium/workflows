@@ -17,21 +17,24 @@ inputs:
     default: |
       #!/bin/bash
       echo "Filtering BAM file"
-      samtools idxstats $0 | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -o $2 $0
+      echo "samtools idxstats $0 | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -o $3 $0"
+      samtools idxstats $0 | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -o $3 $0
       echo "Sorting BAM file"
-      samtools sort $2 -o $2
+      echo "samtools sort $3 -o $3"
+      samtools sort $3 -o $3
       echo "Indexing BAM file"
-      samtools index $2
+      echo "samtools index $3"
+      samtools index $3
     inputBinding:
       position: 5
-    doc: Script to exclude chromosomes from the BAM file
+    doc: "Script to exclude chromosomes from the BAM file and filter reads by quality"
 
   bam_bai_pair:
     type: File
     inputBinding:
       position: 6
     secondaryFiles:
-      - .bai
+    - .bai
     doc: Indexed BAM+BAI files
 
   exclude_chromosome:
@@ -40,10 +43,17 @@ inputs:
       position: 7
     doc: "Space separated list of the chromosemes to exclude"
 
+  quality:
+    type: int?
+    inputBinding:
+      position: 8
+    default: 0
+    doc: "Skip alignments with MAPQ smaller than INT. Default 0"
+      
   output_filename:
     type: string?
     inputBinding:
-      position: 8
+      position: 9
       valueFrom: |
         ${
           return (self == "")?inputs.bam_bai_pair.basename:self;
@@ -59,7 +69,7 @@ outputs:
     outputBinding:
       glob: "*.bam"
     secondaryFiles:
-      - .bai
+    - .bai
     doc: "Filtered BAM+BAI files"
 
 
@@ -111,7 +121,8 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Excludes chromosomes from the input BAM file
+  Excludes chromosomes from the input BAM file. Filters reads by quality.
+  If there is only one chromosome present, you cannot exclude it
 
 s:about: |
   Excludes chromosomes from the input BAM file

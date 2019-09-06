@@ -4,16 +4,14 @@ class: Workflow
 
 'sd:upstream':
   genome:
-    - "bismark-indices.cwl"
+    - "bismark-index.cwl"
+
+
+'sd:metadata':
+  - "../metadata/chipseq-header.cwl"
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
 
   fastq_file:
     type: File

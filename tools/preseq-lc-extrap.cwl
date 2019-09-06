@@ -7,8 +7,8 @@ requirements:
     expressionLib:
     - var get_output_filename = function(input_file) {
           if (inputs.estimates_filename == "") {
-            let ext = "_preseq_estimates.tsv";
-            let root = input_file.basename.split('.').slice(0,-1).join('.');
+            var ext = "_preseq_estimates.tsv";
+            var root = input_file.basename.split('.').slice(0,-1).join('.');
             return (root == "")?inputs.input_file.basename+ext:root+ext;
           } else {
             return inputs.estimates_filename;

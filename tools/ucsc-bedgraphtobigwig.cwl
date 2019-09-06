@@ -1,15 +1,17 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
-          let basename = inputs.bedgraph_file.location.split('/').slice(-1)[0];
-          let root = basename.split('.').slice(0,-1).join('.');
-          let ext = ".bigWig";
+          var basename = inputs.bedgraph_file.location.split('/').slice(-1)[0];
+          var root = basename.split('.').slice(0,-1).join('.');
+          var ext = ".bigWig";
           return (root == "")?basename+ext:root+ext;
         };
+
 
 hints:
 - class: DockerRequirement
@@ -17,6 +19,7 @@ hints:
 
 
 inputs:
+
   bedgraph_file:
     type: File
     inputBinding:
@@ -74,7 +77,9 @@ inputs:
       If set, writes the output bigWig file to output_filename,
       otherwise generates filename from default_output_filename()
 
+
 outputs:
+
   bigwig_file:
     type: File
     outputBinding:
@@ -87,7 +92,9 @@ outputs:
             }
         }
 
+
 baseCommand: ["bedGraphToBigWig"]
+
 
 $namespaces:
   s: http://schema.org/

@@ -2,12 +2,12 @@ cwlVersion: v1.0
 class: Workflow
 
 
+'sd:metadata':
+- "../metadata/advanced-header.cwl"
+
+
 'sd:upstream':
   rnaseq_sample:
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
     - "rnaseq-se-dutp-mitochondrial.cwl"
     - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
@@ -18,13 +18,7 @@ class: Workflow
 
 inputs:
 
-  alias:
-    type: string
-    label: "Experiment short name/alias"
-    sd:preview:
-      position: 1
-
-  expression_file:
+  expression_files:
     type: File[]
     format: "http://edamontology.org/format_3752"
     label: "Isoform expression files"
@@ -32,7 +26,7 @@ inputs:
     'sd:upstreamSource': "rnaseq_sample/rpkm_isoforms"
     'sd:localLabel': true
 
-  legend_name:
+  expression_aliases:
     type:
       - "null"
       - string[]
@@ -104,59 +98,37 @@ outputs:
         height: 600
         data: [$1, $2, $3]
 
+  pca_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "PCA stdout log"
+    doc: "PCA stdout log"
+    outputSource: pca/stdout_log        
 
+  pca_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "PCA stderr log"
+    doc: "PCA stderr log"
+    outputSource: pca/stderr_log
+
+    
 steps:
 
   pca:
+    run: ../tools/pca.cwl
     in:
-      expression_file: expression_file
-      legend_name: legend_name
+      expression_files: expression_files
+      expression_aliases: expression_aliases
     out:
     - pca1_vs_pca2_plot
     - pca2_vs_pca3_plot
     - variance_plot
     - pca_3d_plot
     - pca_file
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/pca:v0.0.3
-      inputs:
-        expression_file:
-          type: File[]
-          inputBinding:
-            prefix: "-i"
-        legend_name:
-          type:
-            - "null"
-            - string[]
-          inputBinding:
-            prefix: "-n"
-      outputs:
-        pca1_vs_pca2_plot:
-          type: File
-          outputBinding:
-            glob: "*001.png"
-        pca2_vs_pca3_plot:
-          type: File
-          outputBinding:
-            glob: "*002.png"
-        variance_plot:
-          type: File
-          outputBinding:
-            glob: "*003.png"
-        pca_3d_plot:
-          type: File
-          outputBinding:
-            glob: "*004.png"
-        pca_file:
-          type: File
-          outputBinding:
-            glob: "*.tsv"
-      baseCommand: ["run_pca.R"]
-
+    - stdout_log
+    - stderr_log
+    
 
 $namespaces:
   s: http://schema.org/

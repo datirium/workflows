@@ -13,11 +13,9 @@ requirements:
 
 'sd:upstream':
   base_experiment:
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
   control_experiment:
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
   genome_indices:
@@ -261,7 +259,7 @@ steps:
       - broad_peak_file
 
   bam_to_bigwig:
-    run: ../subworkflows/bam-bedgraph-bigwig.cwl
+    run: ../tools/bam-bedgraph-bigwig.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
       chrom_length_file: chrom_length
