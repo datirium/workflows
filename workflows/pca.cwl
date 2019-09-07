@@ -2,12 +2,12 @@ cwlVersion: v1.0
 class: Workflow
 
 
-'sd:metadata':
-- "../metadata/advanced-header.cwl"
-
-
 'sd:upstream':
   rnaseq_sample:
+    - "rnaseq-se.cwl"
+    - "rnaseq-pe.cwl"
+    - "rnaseq-se-dutp.cwl"
+    - "rnaseq-pe-dutp.cwl"
     - "rnaseq-se-dutp-mitochondrial.cwl"
     - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
@@ -17,6 +17,12 @@ class: Workflow
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Experiment short name/alias"
+    sd:preview:
+      position: 1
 
   expression_files:
     type: File[]

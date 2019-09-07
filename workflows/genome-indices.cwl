@@ -8,16 +8,30 @@ requirements:
 - class: InlineJavascriptRequirement
 
 
-'sd:metadata':
-  - "../metadata/indices-header.cwl"
-
-
 inputs:
 
   genome:
     type: string
     label: "Genome type"
     doc: "Genome type, such as mm10, hg19, hg38, etc"
+
+  genome_label:
+    type: string?
+    label: "Genome label"
+    sd:preview:
+      position: 1
+
+  genome_description:
+    type: string?
+    label: "Genome description"
+    sd:preview:
+      position: 2
+
+  genome_details:
+    type: string
+    label: "Genome details"
+    sd:preview:
+      position: 3
 
   fasta:
     type: File

@@ -9,12 +9,12 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-'sd:metadata':
-- "../metadata/advanced-header.cwl"
-
-
 'sd:upstream':
   rnaseq_cond_1:
+    - "rnaseq-se.cwl"
+    - "rnaseq-pe.cwl"
+    - "rnaseq-se-dutp.cwl"
+    - "rnaseq-pe-dutp.cwl"
     - "rnaseq-se-dutp-mitochondrial.cwl"
     - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
@@ -22,6 +22,10 @@ requirements:
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
   rnaseq_cond_2:
+    - "rnaseq-se.cwl"
+    - "rnaseq-pe.cwl"
+    - "rnaseq-se-dutp.cwl"
+    - "rnaseq-pe-dutp.cwl"
     - "rnaseq-se-dutp-mitochondrial.cwl"
     - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
@@ -31,6 +35,12 @@ requirements:
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
 
   rpkm_isoforms_cond_1:
     type: File[]

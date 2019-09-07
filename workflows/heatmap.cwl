@@ -7,11 +7,13 @@ requirements:
   - class: SubworkflowFeatureRequirement
 
 
-'sd:metadata':
-- "../metadata/advanced-header.cwl"
-
-
 inputs:
+
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
 
   bam_file:
     type: File[]

@@ -9,12 +9,12 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-'sd:metadata':
-- "../metadata/advanced-header.cwl"
-
-
 'sd:upstream':
   rnaseq_sample:
+    - "rnaseq-se.cwl"
+    - "rnaseq-pe.cwl"
+    - "rnaseq-se-dutp.cwl"
+    - "rnaseq-pe-dutp.cwl"
     - "rnaseq-se-dutp-mitochondrial.cwl"
     - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
@@ -24,6 +24,12 @@ requirements:
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
 
   expression_files:
     type: File[]
