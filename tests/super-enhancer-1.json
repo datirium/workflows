@@ -17,5 +17,6 @@
         "format": "http://edamontology.org/format_2330"},
     "stitch_distance": 20000,
     "tss_distance": 2500,
-    "promoter_bp": 1000
+    "promoter_bp": 1000,
+    "alias": "alias"
 }

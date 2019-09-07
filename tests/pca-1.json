@@ -30,5 +30,6 @@
          "location": "./data/dm3_chr4/main_inputs/geep/t3_1000.isoforms.csv",
          "format": "http://edamontology.org/format_3752"
       }
-    ]
+    ],
+    "alias": "alias"
   }

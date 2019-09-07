@@ -16,5 +16,6 @@
       "format": "http://edamontology.org/format_3752"
     }
   ],
-  "group_by": "isoforms"
+  "group_by": "isoforms",
+  "alias": "alias"
 }

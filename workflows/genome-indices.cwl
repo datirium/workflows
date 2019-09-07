@@ -28,7 +28,7 @@ inputs:
       position: 2
 
   genome_details:
-    type: string
+    type: string?
     label: "Genome details"
     sd:preview:
       position: 3
