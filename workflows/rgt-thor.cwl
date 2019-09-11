@@ -94,6 +94,7 @@ inputs:
 
   pvalue_cutoff:
     type: float?
+    default: 0.1
     label: "P-value cutoff for peak detection"
     doc: "P-value cutoff for peak detection. Call only peaks with p-value lower than cutoff. [default: 0.1]"
     'sd:layout':
