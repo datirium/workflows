@@ -17,8 +17,6 @@ requirements:
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
-  genome_indices:
-    - "genome-indices.cwl"
 
 
 inputs:
@@ -64,7 +62,7 @@ inputs:
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
-    'sd:upstreamSource': "genome_indices/annotation"
+    'sd:upstreamSource': "first_chipseq_sample/genome_indices/annotation"
 
   shift_size_first:
     type: int?
