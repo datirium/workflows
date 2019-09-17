@@ -38,8 +38,8 @@ inputs:
       - string[]
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
-    # 'sd:upstreamSource': "rnaseq_sample/alias"
-    # 'sd:localLabel': true
+    'sd:upstreamSource': "rnaseq_sample/alias"
+
 
 outputs:
 
