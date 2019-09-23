@@ -222,7 +222,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        optional: false
+        optional: true
         type: 'alignment'
         format: 'bam'
         name: "BAM Track"
