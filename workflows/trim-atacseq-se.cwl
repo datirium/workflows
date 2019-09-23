@@ -341,7 +341,7 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Preseq estimated results"
     outputSource: preseq/estimates_file
-    'sd:visualPlugins1':
+    'sd:visualPlugins':
     - scatter:
         tab: 'QC Plots'
         Title: 'Preseq Estimates'
