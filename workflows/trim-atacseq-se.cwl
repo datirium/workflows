@@ -247,6 +247,7 @@ outputs:
         id: 'igvbrowser'
         type: 'bed'
         name: "Narrow peaks"
+        displayMode: "COLLAPSE"
         height: 120
 
   macs2_broad_peaks:
