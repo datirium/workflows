@@ -57,6 +57,18 @@ inputs:
     doc: "BAM alignment file from sample 2"
     'sd:upstreamSource': "second_chipseq_sample/bambai_pair"
 
+  sample_name_first:
+    type: string?
+    label: "ChIP-Seq PE sample 1 alias"
+    doc: "Alias to make the legend on generated plots for sample 1"
+    'sd:upstreamSource': "first_chipseq_sample/alias"
+
+  sample_name_second:
+    type: string?
+    label: "ChIP-Seq PE sample 2 alias"
+    doc: "Alias to make the legend on generated plots for sample 2"
+    'sd:upstreamSource': "second_chipseq_sample/alias"
+
   annotation_file:
     type: File
     label: "Annotation file"
@@ -287,10 +299,8 @@ steps:
       m_value_cutoff: m_value_cutoff
       p_value_cutoff: p_value_cutoff
       window_size: window_size
-      sample_name_first:
-        default: "sample_1"
-      sample_name_second:
-        default: "sample_2"
+      sample_name_first: sample_name_first
+      sample_name_second: sample_name_second
     out:
       - ma_values_file
       - above_m_cutoff_peak_file
