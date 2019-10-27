@@ -68,6 +68,12 @@ inputs:
     label: "TSV annotation file"
     doc: "Tab-separated annotation file. Includes reference genome and mitochondrial DNA annotations"
 
+  cytoband:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "CytoBand file for IGV browser"
+    doc: "Tab-separated cytoBand file for IGV browser"
+  
   genome_sa_index_n_bases:
     type: int?
     label: "Length of SA pre-indexing string for reference genome indices"
@@ -214,7 +220,42 @@ outputs:
     outputSource: annotation_tab
     label: "TSV annotation file"
     doc: "Tab-separated annotation file. Includes reference genome and mitochondrial DNA annotations"
-    
+  
+  fasta_output:
+    type: File
+    format: "http://edamontology.org/format_1929"
+    outputSource: fasta
+    label: "Reference genome FASTA file"
+    doc: "Reference genome FASTA file. Includes all chromosomes"
+
+  fasta_fai_output:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    outputSource: index_fasta/fai_file
+    label: "FAI index for genome FASTA file"
+    doc: "Tab-separated FAI index file"
+
+  cytoband_output:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    outputSource: cytoband
+    label: "CytoBand file for IGV browser"
+    doc: "Tab-separated cytoBand file for IGV browser"
+  
+  annotation_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    outputSource: sort_annotation_bed/sorted_file
+    label: "Sorted BED annotation file"
+    doc: "Sorted BED annotation file"
+  
+  annotation_bed_tbi:
+    type: File
+    format: "http://edamontology.org/format_3004"
+    outputSource: annotation_bed_to_bigbed/bigbed_file
+    label: "Sorted bigBed annotation file"
+    doc: "Sorted bigBed annotation file"
+
   genome_size:
     type: string
     outputSource: effective_genome_size
@@ -290,6 +331,98 @@ steps:
     - indices_folder
     - stdout_log
     - stderr_log
+
+  index_fasta:
+    run: ../tools/samtools-faidx.cwl
+    in:
+      fasta_file: fasta
+    out:
+    - fai_file
+
+  convert_annotation_to_bed:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: InlineJavascriptRequirement
+        expressionLib:
+        - var default_output_filename = function() {
+                var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
+                return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
+              };
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        script:
+          type: string?
+          default: |
+            import fileinput
+            for line in fileinput.input():
+                if "txStart" in line:
+                  continue
+                cols = line.split("\t")
+                refName = cols[1]
+                chrom = cols[2]
+                txStart = cols[4]
+                txEnd = cols[5]
+                txStart1 = cols[6]
+                txEnd1 = cols[7]
+                try: 
+                    name = cols[12]
+                except Exception:
+                    name = cols[11]
+                    pass
+                strand = cols[3]
+                exonCount = cols[8]
+                cdsStart = cols[9].split(',')[0:-1]
+                cdsEnd = cols[10].split(',')[0:-1]
+                startEndPairs = zip(cdsStart, cdsEnd)
+                sizes =  ','.join(map(lambda pair: str(int(pair[1])-int(pair[0])), startEndPairs))
+                deltas = ','.join(map(lambda offset: str(int(offset)-int(txStart)), cdsStart))
+                if 'fix' in chrom or '_' in chrom:
+                    continue
+                output = [chrom, txStart, txEnd, name, '1000', strand, txStart1, txEnd1, '.', exonCount, sizes, deltas]
+                print "\t".join(output)
+          inputBinding:
+            position: 5
+          doc: "Python script to get convert TSV annotation file to BED"
+        annotation_tsv_file:
+          type: File
+          inputBinding:
+            position: 6
+          doc: "Annotation TSV file"
+      outputs:
+        annotation_bed_file:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: ["python", "-c"]
+      stdout: $(default_output_filename())
+    in:
+      annotation_tsv_file: annotation_tab
+    out:
+    - annotation_bed_file
+
+  sort_annotation_bed:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: convert_annotation_to_bed/annotation_bed_file
+      key:
+        default: ["1,1","2,2n"]
+    out: [sorted_file]
+
+  annotation_bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
+    in:
+      input_bed: sort_annotation_bed/sorted_file
+      chrom_length_file: star_generate_indices/chrom_length
+      bed_type:
+        default: "bed4+8"
+      output_filename:
+        source: sort_annotation_bed/sorted_file
+        valueFrom: $(self.basename + ".tbi")
+    out: [bigbed_file]
 
 
 $namespaces:

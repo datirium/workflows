@@ -279,6 +279,22 @@
     star_indices_stdout_log:
       location: star_build_stdout.log
       class: File
+    fasta_output:
+      location: chr4.fa
+      class: File
+    fasta_fai_output:
+      location: chr4.fa.fai
+      class: File
+    cytoband_output:
+      location: chr4.maf
+      class: File
+    annotation_bed:
+      location: dm3_chr4.bed
+      class: File
+    annotation_bed_tbi:
+      location: dm3_chr4.bed.tbi
+      class: File
+  doc: "For cytoband_output we used the fake file"
 
 # ========================================================
 # trim-rnaseq-se
