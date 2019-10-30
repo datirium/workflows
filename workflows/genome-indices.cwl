@@ -72,8 +72,8 @@ inputs:
   cytoband:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "CytoBand file for IGV browser"
-    doc: "Tab-separated cytoBand file for IGV browser"
+    label: "Compressed cytoBand file for IGV browser"
+    doc: "Compressed tab-separated cytoBand file for IGV browser"
 
   genome_sa_index_n_bases:
     type: int?
@@ -239,7 +239,7 @@ outputs:
   cytoband_output:
     type: File
     format: "http://edamontology.org/format_3475"
-    outputSource: cytoband
+    outputSource: extract_cytoband/output_file
     label: "CytoBand file for IGV browser"
     doc: "Tab-separated cytoBand file for IGV browser"
   
@@ -289,6 +289,41 @@ steps:
         default: ["chrM"]
     out:
     - fasta_file
+
+  extract_cytoband:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: InitialWorkDirRequirement
+        listing: |
+          ${
+            return  [
+                      {
+                        "entry": inputs.input_file,
+                        "entryname": inputs.input_file.basename,
+                        "writable": true
+                      }
+                    ]
+          }
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        input_file:
+          type: File
+          inputBinding:
+            position: 1
+      outputs:
+        output_file:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: [gunzip]
+    in:
+      input_file: cytoband
+    out:
+    - output_file
 
   prepare_annotation:
     run:

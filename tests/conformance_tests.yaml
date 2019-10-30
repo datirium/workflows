@@ -284,7 +284,7 @@
       location: chr4.fa.fai
       class: File
     cytoband_output:
-      location: chr4.maf
+      location: downstream.fastq
       class: File
     annotation_bed:
       location: refgene.bed
