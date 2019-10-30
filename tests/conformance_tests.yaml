@@ -145,12 +145,10 @@
   output:
     annotation:
       class: File
-      location: dm3_chr4.tsv
-      format: http://edamontology.org/format_3475
+      location: refgene.tsv
     annotation_gtf:
       class: File
-      location: dm3_chr4.gtf
-      format: http://edamontology.org/format_2306
+      location: refgene.gtf
     bowtie_indices:
       location: dm3_bowtie_genome
       class: Directory
@@ -289,10 +287,10 @@
       location: chr4.maf
       class: File
     annotation_bed:
-      location: dm3_chr4.bed
+      location: refgene.bed
       class: File
     annotation_bed_tbi:
-      location: dm3_chr4.bed.tbi
+      location: refgene.bed.tbi
       class: File
   doc: "For cytoband_output we used the fake file"
 
