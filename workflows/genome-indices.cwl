@@ -341,7 +341,9 @@ steps:
             gunzip $1 -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> refgene.txt
             if [ "$#" -ge 2 ]; then
               FILTER=${@:2}
-              echo "Filter refgene.txt to include only $FILTER"
+              FILTER=$( IFS=$','; echo "${FILTER[*]}" )
+              FILTER=(${FILTER//, / })
+              echo "Filtering by" ${FILTER[*]}
               cat refgene.txt | awk -v filter="$FILTER" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
               mv refGene_filtered.txt refgene.txt
             fi
@@ -361,6 +363,7 @@ steps:
         chromosome_list:
           type:
             - "null"
+            - string
             - string[]
           inputBinding:
             position: 8
