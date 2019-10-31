@@ -51,6 +51,11 @@ inputs:
       - string[]
     label: "Chromosome list to be included into the reference genome FASTA file"
     doc: "Filter chromosomes while extracting FASTA from 2bit"
+  
+  # chromosome_list:
+  #   type: string?
+  #   label: "Comma or space separated chromosome list to be used in indices"
+  #   doc: "Filter chromosomes while extracting FASTA from 2bit"
 
   effective_genome_size:
     type: string
@@ -341,9 +346,11 @@ steps:
             gunzip $1 -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> refgene.txt
             if [ "$#" -ge 2 ]; then
               FILTER=${@:2}
-              echo "Filter refgene.txt to include only $FILTER"
-              cat refgene.txt | awk -v filter="$FILTER" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
-              mv refGene_filtered.txt refgene.txt
+              FILTER=$( IFS=$','; echo "${FILTER[*]}" )
+              FILTER=(${FILTER//, / })
+              echo "Filtering by" ${FILTER[*]}
+              cat refgene.txt | awk -v filter="${FILTER[*]}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
+              mv refgene_filtered.txt refgene.txt
             fi
             cut -f 2- refgene.txt | genePredToGtf file stdin refgene.gtf
             echo -e "bin\tname\tchrom\tstrand\ttxStart\ttxEnd\tcdsStart\tcdsEnd\texonCount\texonStarts\texonEnds\tscore\tname2\tcdsStartStat\tcdsEndStat\texonFrames" > refgene.tsv
@@ -361,6 +368,7 @@ steps:
         chromosome_list:
           type:
             - "null"
+            - string
             - string[]
           inputBinding:
             position: 8

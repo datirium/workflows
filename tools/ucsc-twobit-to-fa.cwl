@@ -27,8 +27,9 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
+      set -e
       if [[ $0 == *.fasta ]] || [[ $0 == *.fa ]]; then
-          echo "Skipping"
+          echo "Skip extract step"
       elif [[ $0 == *.gz ]]; then
           gunzip -c $0 > "${0%%.*}".fa
           rm $0
@@ -37,7 +38,11 @@ inputs:
           rm $0
       fi
       if [ "$#" -ge 1 ]; then
-          samtools faidx "${0%%.*}".fa ${@:1} > t.fa
+          FILTER=${@:1}
+          FILTER=$( IFS=$','; echo "${FILTER[*]}" )
+          FILTER=(${FILTER//, / })
+          echo "Filtering by" ${FILTER[*]}
+          samtools faidx "${0%%.*}".fa ${FILTER[*]} > t.fa
           mv t.fa "${0%%.*}".fa
           rm "${0%%.*}".fa.fai
       fi
@@ -55,10 +60,11 @@ inputs:
   chr_list:
     type:
       - "null"
+      - string
       - string[]
     inputBinding:
       position: 8
-    doc: "List of the chromosomes to be included into the output file. Valid only for 2bit"
+    doc: "List of the chromosomes to be included into the output file. If pass as string, should be comma-separated"
 
 outputs:
 
