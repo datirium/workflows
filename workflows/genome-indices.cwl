@@ -340,8 +340,9 @@ steps:
             gunzip $0 -c | grep -v "exonCount" > refgene.txt
             gunzip $1 -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> refgene.txt
             if [ "$#" -ge 2 ]; then
-              echo "Filter refgene.txt to include only ${@:2}"
-              cat refgene.txt | awk -v filter="${@:2}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
+              FILTER=${@:2}
+              echo "Filter refgene.txt to include only $FILTER"
+              cat refgene.txt | awk -v filter="$FILTER" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
               mv refGene_filtered.txt refgene.txt
             fi
             cut -f 2- refgene.txt | genePredToGtf file stdin refgene.gtf
