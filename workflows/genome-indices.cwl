@@ -33,7 +33,7 @@ inputs:
     sd:preview:
       position: 3
 
-  genome_2bit_file:
+  genome_file:
     type: File
     format: "http://edamontology.org/format_3009"
     label: "Reference genome file (*.2bit, *.fasta, *.fa, *.fa.gz, *.fasta.gz)"
@@ -276,7 +276,7 @@ steps:
   extract_fasta:
     run: ../tools/ucsc-twobit-to-fa.cwl
     in:
-      reference_file: genome_2bit_file
+      reference_file: genome_file
       chr_list: chromosome_list
     out:
     - fasta_file
@@ -284,7 +284,7 @@ steps:
   extract_mitochondrial_fasta:
     run: ../tools/ucsc-twobit-to-fa.cwl
     in:
-      reference_file: genome_2bit_file
+      reference_file: genome_file
       chr_list:
         default: ["chrM"]
     out:
