@@ -51,6 +51,11 @@ inputs:
       - string[]
     label: "Chromosome list to be included into the reference genome FASTA file"
     doc: "Filter chromosomes while extracting FASTA from 2bit"
+  
+  # chromosome_list:
+  #   type: string?
+  #   label: "Comma or space separated chromosome list to be used in indices"
+  #   doc: "Filter chromosomes while extracting FASTA from 2bit"
 
   effective_genome_size:
     type: string
