@@ -344,7 +344,7 @@ steps:
               FILTER=$( IFS=$','; echo "${FILTER[*]}" )
               FILTER=(${FILTER//, / })
               echo "Filtering by" ${FILTER[*]}
-              cat refgene.txt | awk -v filter="$FILTER" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
+              cat refgene.txt | awk -v filter="${FILTER[*]}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
               mv refgene_filtered.txt refgene.txt
             fi
             cut -f 2- refgene.txt | genePredToGtf file stdin refgene.gtf
