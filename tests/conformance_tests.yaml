@@ -145,12 +145,10 @@
   output:
     annotation:
       class: File
-      location: dm3_chr4.tsv
-      format: http://edamontology.org/format_3475
+      location: refgene.tsv
     annotation_gtf:
       class: File
-      location: dm3_chr4.gtf
-      format: http://edamontology.org/format_2306
+      location: refgene.gtf
     bowtie_indices:
       location: dm3_bowtie_genome
       class: Directory
@@ -279,6 +277,22 @@
     star_indices_stdout_log:
       location: star_build_stdout.log
       class: File
+    fasta_output:
+      location: chr4.fa
+      class: File
+    fasta_fai_output:
+      location: chr4.fa.fai
+      class: File
+    cytoband_output:
+      location: downstream.fastq
+      class: File
+    annotation_bed:
+      location: refgene.bed
+      class: File
+    annotation_bed_tbi:
+      location: refgene.bed.tbi
+      class: File
+  doc: "For cytoband_output we used the fake file"
 
 # ========================================================
 # trim-rnaseq-se
