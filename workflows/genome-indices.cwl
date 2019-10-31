@@ -36,14 +36,14 @@ inputs:
   genome_2bit_file:
     type: File
     format: "http://edamontology.org/format_3009"
-    label: "2bit compressed reference genome file"
-    doc: "2bit compressed reference genome file. All chromosomes are included"
+    label: "Reference genome file (*.2bit, *.fasta, *.fa, *.fa.gz, *.fasta.gz)"
+    doc: "Reference genome file (*.2bit, *.fasta, *.fa, *.fa.gz, *.fasta.gz). All chromosomes are included"
 
   fasta_ribosomal:
     type: File
     format: "http://edamontology.org/format_1929"
-    label: "Ribosomal DNA FASTA file"
-    doc: "Ribosomal DNA FASTA file"
+    label: "Ribosomal DNA file (*.fasta, *.fa)"
+    doc: "Ribosomal DNA file (*.fasta, *.fa)"
 
   chromosome_list:
     type:
@@ -276,7 +276,7 @@ steps:
   extract_fasta:
     run: ../tools/ucsc-twobit-to-fa.cwl
     in:
-      twobit_file: genome_2bit_file
+      reference_file: genome_2bit_file
       chr_list: chromosome_list
     out:
     - fasta_file
@@ -284,7 +284,7 @@ steps:
   extract_mitochondrial_fasta:
     run: ../tools/ucsc-twobit-to-fa.cwl
     in:
-      twobit_file: genome_2bit_file
+      reference_file: genome_2bit_file
       chr_list:
         default: ["chrM"]
     out:
@@ -339,7 +339,7 @@ steps:
             #!/bin/bash
             gunzip $0 -c | grep -v "exonCount" > refgene.txt
             gunzip $1 -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> refgene.txt
-            if [ "$#" -gt 2 ]; then
+            if [ "$#" -ge 2 ]; then
               echo "Filter refgene.txt to include only ${@:2}"
               cat refgene.txt | awk -v filter="${@:2}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
               mv refGene_filtered.txt refgene.txt

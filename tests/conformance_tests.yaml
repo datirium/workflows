@@ -136,163 +136,163 @@
       location: bismark_build_stdout.log
       class: File
 
-# ========================================================
-# genome-index
-# ========================================================
+# # ========================================================
+# # genome-index
+# # ========================================================
 
-- job: ./genome-indices-1.json
-  tool: ../workflows/genome-indices.cwl
-  output:
-    annotation:
-      class: File
-      location: refgene.tsv
-    annotation_gtf:
-      class: File
-      location: refgene.gtf
-    bowtie_indices:
-      location: dm3_bowtie_genome
-      class: Directory
-      listing:
-      - class: File
-        location: dm3_bowtie_genome.3.ebwt
-      - class: File
-        location: dm3_bowtie_genome.2.ebwt
-      - class: File
-        location: dm3_bowtie_genome.rev.2.ebwt
-      - class: File
-        location: dm3_bowtie_genome.4.ebwt
-      - class: File
-        location: dm3_bowtie_genome.rev.1.ebwt
-      - class: File
-        location: dm3_bowtie_genome.1.ebwt
-    bowtie_indices_stderr_log:
-      location: bowtie_stderr.log
-      class: File
-    bowtie_indices_stdout_log:
-      location: bowtie_stdout.log
-      class: File
-    chrom_length:
-      location: chrNameLength.txt
-      class: File
-    genome_size: dm
-    mitochondrial_indices:
-      location: dm3_star_mitochondrial
-      class: Directory
-      listing:
-      - class: File
-        location: chrStart.txt
-      - class: File
-        location: chrNameLength.txt
-      - class: File
-        location: chrLength.txt
-      - class: File
-        location: sjdbList.fromGTF.out.tab
-      - class: File
-        location: exonInfo.tab
-      - class: File
-        location: sjdbList.out.tab
-      - class: File
-        location: SAindex
-      - class: File
-        location: chrName.txt
-      - class: File
-        location: geneInfo.tab
-      - class: File
-        location: SA
-      - class: File
-        location: sjdbInfo.txt
-      - class: File
-        location: exonGeTrInfo.tab
-      - class: File
-        location: transcriptInfo.tab
-      - class: File
-        location: Genome
-      - class: File
-        location: genomeParameters.txt
-    mitochondrial_indices_stderr_log:
-      location: star_build_stderr.log
-      class: File
-    mitochondrial_indices_stdout_log:
-      location: star_build_stdout.log
-      class: File
-    ribosomal_indices:
-      location: dm3_bowtie_ribosomal
-      class: Directory
-      listing:
-      - class: File
-        location: dm3_bowtie_ribosomal.rev.2.ebwt
-      - class: File
-        location: dm3_bowtie_ribosomal.1.ebwt
-      - class: File
-        location: dm3_bowtie_ribosomal.2.ebwt
-      - class: File
-        location: dm3_bowtie_ribosomal.rev.1.ebwt
-      - class: File
-        location: dm3_bowtie_ribosomal.3.ebwt
-      - class: File
-        location: dm3_bowtie_ribosomal.4.ebwt
-    ribosomal_indices_stderr_log:
-      location: bowtie_stderr.log
-      class: File
-    ribosomal_indices_stdout_log:
-      location: bowtie_stdout.log
-      class: File
-    star_indices:
-      location: dm3_star_genome
-      class: Directory
-      listing:
-      - class: File
-        location: chrStart.txt
-      - class: File
-        location: chrNameLength.txt
-      - class: File
-        location: chrLength.txt
-      - class: File
-        location: sjdbList.fromGTF.out.tab
-      - class: File
-        location: exonInfo.tab
-      - class: File
-        location: sjdbList.out.tab
-      - class: File
-        location: SAindex
-      - class: File
-        location: chrName.txt
-      - class: File
-        location: geneInfo.tab
-      - class: File
-        location: SA
-      - class: File
-        location: sjdbInfo.txt
-      - class: File
-        location: exonGeTrInfo.tab
-      - class: File
-        location: transcriptInfo.tab
-      - class: File
-        location: Genome
-      - class: File
-        location: genomeParameters.txt
-    star_indices_stderr_log:
-      location: star_build_stderr.log
-      class: File
-    star_indices_stdout_log:
-      location: star_build_stdout.log
-      class: File
-    fasta_output:
-      location: chr4.fa
-      class: File
-    fasta_fai_output:
-      location: chr4.fa.fai
-      class: File
-    cytoband_output:
-      location: downstream.fastq
-      class: File
-    annotation_bed:
-      location: refgene.bed
-      class: File
-    annotation_bed_tbi:
-      location: refgene.bed.tbi
-      class: File
-  doc: "For cytoband_output we used the fake file"
+# - job: ./genome-indices-1.json
+#   tool: ../workflows/genome-indices.cwl
+#   output:
+#     annotation:
+#       class: File
+#       location: refgene.tsv
+#     annotation_gtf:
+#       class: File
+#       location: refgene.gtf
+#     bowtie_indices:
+#       location: dm3_bowtie_genome
+#       class: Directory
+#       listing:
+#       - class: File
+#         location: dm3_bowtie_genome.3.ebwt
+#       - class: File
+#         location: dm3_bowtie_genome.2.ebwt
+#       - class: File
+#         location: dm3_bowtie_genome.rev.2.ebwt
+#       - class: File
+#         location: dm3_bowtie_genome.4.ebwt
+#       - class: File
+#         location: dm3_bowtie_genome.rev.1.ebwt
+#       - class: File
+#         location: dm3_bowtie_genome.1.ebwt
+#     bowtie_indices_stderr_log:
+#       location: bowtie_stderr.log
+#       class: File
+#     bowtie_indices_stdout_log:
+#       location: bowtie_stdout.log
+#       class: File
+#     chrom_length:
+#       location: chrNameLength.txt
+#       class: File
+#     genome_size: dm
+#     mitochondrial_indices:
+#       location: dm3_star_mitochondrial
+#       class: Directory
+#       listing:
+#       - class: File
+#         location: chrStart.txt
+#       - class: File
+#         location: chrNameLength.txt
+#       - class: File
+#         location: chrLength.txt
+#       - class: File
+#         location: sjdbList.fromGTF.out.tab
+#       - class: File
+#         location: exonInfo.tab
+#       - class: File
+#         location: sjdbList.out.tab
+#       - class: File
+#         location: SAindex
+#       - class: File
+#         location: chrName.txt
+#       - class: File
+#         location: geneInfo.tab
+#       - class: File
+#         location: SA
+#       - class: File
+#         location: sjdbInfo.txt
+#       - class: File
+#         location: exonGeTrInfo.tab
+#       - class: File
+#         location: transcriptInfo.tab
+#       - class: File
+#         location: Genome
+#       - class: File
+#         location: genomeParameters.txt
+#     mitochondrial_indices_stderr_log:
+#       location: star_build_stderr.log
+#       class: File
+#     mitochondrial_indices_stdout_log:
+#       location: star_build_stdout.log
+#       class: File
+#     ribosomal_indices:
+#       location: dm3_bowtie_ribosomal
+#       class: Directory
+#       listing:
+#       - class: File
+#         location: dm3_bowtie_ribosomal.rev.2.ebwt
+#       - class: File
+#         location: dm3_bowtie_ribosomal.1.ebwt
+#       - class: File
+#         location: dm3_bowtie_ribosomal.2.ebwt
+#       - class: File
+#         location: dm3_bowtie_ribosomal.rev.1.ebwt
+#       - class: File
+#         location: dm3_bowtie_ribosomal.3.ebwt
+#       - class: File
+#         location: dm3_bowtie_ribosomal.4.ebwt
+#     ribosomal_indices_stderr_log:
+#       location: bowtie_stderr.log
+#       class: File
+#     ribosomal_indices_stdout_log:
+#       location: bowtie_stdout.log
+#       class: File
+#     star_indices:
+#       location: dm3_star_genome
+#       class: Directory
+#       listing:
+#       - class: File
+#         location: chrStart.txt
+#       - class: File
+#         location: chrNameLength.txt
+#       - class: File
+#         location: chrLength.txt
+#       - class: File
+#         location: sjdbList.fromGTF.out.tab
+#       - class: File
+#         location: exonInfo.tab
+#       - class: File
+#         location: sjdbList.out.tab
+#       - class: File
+#         location: SAindex
+#       - class: File
+#         location: chrName.txt
+#       - class: File
+#         location: geneInfo.tab
+#       - class: File
+#         location: SA
+#       - class: File
+#         location: sjdbInfo.txt
+#       - class: File
+#         location: exonGeTrInfo.tab
+#       - class: File
+#         location: transcriptInfo.tab
+#       - class: File
+#         location: Genome
+#       - class: File
+#         location: genomeParameters.txt
+#     star_indices_stderr_log:
+#       location: star_build_stderr.log
+#       class: File
+#     star_indices_stdout_log:
+#       location: star_build_stdout.log
+#       class: File
+#     fasta_output:
+#       location: chr4.fa
+#       class: File
+#     fasta_fai_output:
+#       location: chr4.fa.fai
+#       class: File
+#     cytoband_output:
+#       location: downstream.fastq
+#       class: File
+#     annotation_bed:
+#       location: refgene.bed
+#       class: File
+#     annotation_bed_tbi:
+#       location: refgene.bed.tbi
+#       class: File
+#   doc: "For cytoband_output we used the fake file"
 
 # ========================================================
 # trim-rnaseq-se
