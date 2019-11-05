@@ -24,7 +24,9 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      samtools stats $0 | grep SN | cut -f 2-
+      samtools stats $0 > all_statistics.log
+      cat all_statistics.log | grep SN | cut -f 2- > sn_section.log
+      cat all_statistics.log
     inputBinding:
       position: 4
     doc: "samtools stats with optional filtering criteria passes as $1"
@@ -55,7 +57,7 @@ outputs:
     type: int
     outputBinding:
       loadContents: true
-      glob: $(default_output_filename())
+      glob: sn_section.log
       outputEval: |
         ${
           var s = self[0].contents.substring(self[0].contents.indexOf("raw total sequences"));
@@ -67,7 +69,7 @@ outputs:
     type: int
     outputBinding:
       loadContents: true
-      glob: $(default_output_filename())
+      glob: sn_section.log
       outputEval: |
         ${
           var s = self[0].contents.substring(self[0].contents.indexOf("reads mapped"));
@@ -79,7 +81,7 @@ outputs:
     type: int
     outputBinding:
       loadContents: true
-      glob: $(default_output_filename())
+      glob: sn_section.log
       outputEval: |
         ${
           var s = self[0].contents.substring(self[0].contents.indexOf("average length"));
