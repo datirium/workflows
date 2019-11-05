@@ -81,6 +81,11 @@ inputs:
                 "alias": "reads/pairs removed because of length cutoff",
                 "function": cut_int,
                 "pair_end_specific": False
+            },
+            "Sequences removed because they became shorter": {
+                "alias": "reads/pairs removed because of length cutoff",
+                "function": cut_int,
+                "pair_end_specific": False
             }
         }
 
@@ -241,6 +246,8 @@ inputs:
                             collected_results[header][res_key] = res_function(value)
                 except Exception:
                     pass
+            if collected_results[header]["trimming mode"] == "single-end":
+                collected_results[header]["number of reads/pairs analysed for length validation"] = fastq["total reads processed"]
             collected_results[header]["fastq"].append(fastq)
 
 
@@ -314,8 +321,9 @@ inputs:
                 argsl = sys.argv[1:]
             args,_ = arg_parser().parse_known_args(argsl)
             args = normalize_args(args)
-            export_results_json(collect_stats(args), args.output)
-            export_results_table(collect_stats(args), args.output)
+            collected_data = collect_stats(args)
+            export_results_json(collected_data, args.output)
+            export_results_table(collected_data, args.output)
 
 
         if __name__ == "__main__":
