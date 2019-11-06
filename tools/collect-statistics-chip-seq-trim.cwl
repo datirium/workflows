@@ -160,22 +160,22 @@ inputs:
 
         MACS2 = {
             "total fragments in treatment": {
-                "alias": "total fragments in treatment",
+                "alias": "total reads/pairs in treatment",
                 "function": int,
                 "pair_end_specific": False
             },
             "total tags in treatment": {
-                "alias": "total tags in treatment",
+                "alias": "total reads/pairs in treatment",
                 "function": int,
                 "pair_end_specific": False
             },
             "fragments after filtering in treatment": {
-                "alias": "fragments after filtering in treatment",
+                "alias": "reads/pairs after filtering in treatment",
                 "function": int,
                 "pair_end_specific": False
             },
             "tags after filtering in treatment": {
-                "alias": "tags after filtering in treatment",
+                "alias": "reads/pairs after filtering in treatment",
                 "function": int,
                 "pair_end_specific": False
             },
@@ -286,6 +286,9 @@ inputs:
                 prev_start, prev_end, prev_chr = start, end, chr
             collected_results[header]["number of peaks called"] = count
             collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
+            in_treatment = collected_results[header]["reads/pairs after filtering in treatment"]
+            mapped = collected_results["BAM statistics after filtering"]["reads/pairs mapped"]
+            collected_results[header]["fraction of reads in peaks"] = round(float(in_treatment)/float(mapped),2)
 
 
         def process_preseq_results(filepath, collected_results, header, threashold=0.001):
