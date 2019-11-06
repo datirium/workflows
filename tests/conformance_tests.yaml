@@ -557,10 +557,10 @@
       location: upstream.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_stats.tsv
+      location: upstream_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.stat
+      location: upstream_collected_statistics_report.yaml
       class: File
     iaintersect_log:
       location: upstream_macs_peaks_iaintersect.log
@@ -593,6 +593,13 @@
     trim_report:
       location: upstream.fastq_trimming_report.txt
       class: File
+    bam_statistics_report:
+      location: upstream_bam_statistics_report.txt
+      class: File
+    bam_statistics_report_after_filtering:
+      location: upstream_bam_statistics_report_after_filtering.txt
+      class: File
+
 
 # ========================================================
 # trim-chipseq-pe
@@ -629,7 +636,7 @@
       location: upstream_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream_collected_statistics_report.json
+      location: upstream_collected_statistics_report.yaml
       class: File
     iaintersect_log:
       location: upstream_macs_peaks_iaintersect.log

@@ -18,7 +18,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap:v0.0.3
+  dockerPull: rackspacedot/python37
 
 
 inputs:
@@ -30,8 +30,7 @@ inputs:
         import os
         import sys
         import argparse
-        import json
-
+        import yaml
 
         def cut_int(s):
             return int(s.strip().split()[0])
@@ -300,9 +299,9 @@ inputs:
             return (collected_results)
 
 
-        def export_results_json(collected_data, filepath):
-            with open(filepath+".json", 'w') as output_stream:
-                output_stream.write(json.dumps(collected_data, indent=4))
+        def export_results_yaml(collected_data, filepath):
+            with open(filepath+".yaml", 'w') as output_stream:
+                output_stream.write(yaml.dump(collected_data))
 
 
         def export_results_table(collected_data, filepath):
@@ -322,7 +321,7 @@ inputs:
             args,_ = arg_parser().parse_known_args(argsl)
             args = normalize_args(args)
             collected_data = collect_stats(args)
-            export_results_json(collected_data, args.output)
+            export_results_yaml(collected_data, args.output)
             export_results_table(collected_data, args.output)
 
 
@@ -378,10 +377,10 @@ inputs:
 
 outputs:
 
-  collected_statistics_json:
+  collected_statistics_yaml:
     type: File
     outputBinding:
-      glob: $(get_output_prefix()+".json")
+      glob: $(get_output_prefix()+".yaml")
 
   collected_statistics_tsv:
     type: File

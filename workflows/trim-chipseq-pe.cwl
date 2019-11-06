@@ -325,10 +325,10 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "JSON formatted combined log"
-    format: "http://edamontology.org/format_3464"
-    doc: "JSON formatted combined log"
-    outputSource: get_stat/collected_statistics_json
+    label: "YAML formatted combined log"
+    format: "http://edamontology.org/format_3750"
+    doc: "YAML formatted combined log"
+    outputSource: get_stat/collected_statistics_yaml
 
   get_stat_formatted_log:
     type: File?
@@ -596,7 +596,7 @@ steps:
         bam_statistics_report: get_bam_statistics/log_file
         bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
         macs2_called_peaks: macs2_callpeak/peak_xls_file
-      out: [collected_statistics_json, collected_statistics_tsv, mapped_reads]
+      out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads]
 
   island_intersect:
       run: ../tools/iaintersect.cwl
