@@ -31,6 +31,7 @@ inputs:
         import sys
         import argparse
         import yaml
+        import math
 
         def cut_int(s):
             return int(s.strip().split()[0])
@@ -194,6 +195,7 @@ inputs:
             general_parser.add_argument("--bamstats",        help="Path to bam statistics report file",                   required=True)
             general_parser.add_argument("--bamstatsfilter",  help="Path to bam statistics report file after filtering",   required=True)
             general_parser.add_argument("--macs2",           help="Path to MACS2 called peaks xls file",                  required=True)
+            general_parser.add_argument("--preseq",          help="Path to Preseq output file",                           required=False)
             general_parser.add_argument("--output",          help="Output filename prefix",                               required=True)
             return general_parser
 
@@ -286,6 +288,23 @@ inputs:
             collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
 
 
+        def process_preseq_results(filepath, collected_results, header, threashold=5):
+            if not collected_results.get(header, None):
+                collected_results[header] = {}
+            px, py = 0, 0
+            for line in open_file(filepath):
+                if "TOTAL_READS" in line:
+                    continue
+                values = [float(l.strip()) for l in line.strip().split()]
+                dx, dy = values[0]-px, values[1]-py
+                px, py = values[0], values[1]
+                if dx != 0:
+                    angle = math.degrees(math.atan2(dy, dx))
+                    if angle <= threashold:
+                        collected_results[header]["maximum library diversity"] = values[0]
+                        break
+
+
         def collect_stats(args):
             collected_results = {}
             process_trimgalore_report(args.trim1, collected_results)
@@ -295,7 +314,9 @@ inputs:
             process_custom_report(args.bamstats, collected_results, "BAM statistics", BAMSTATS, bool(args.trim2))
             process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.trim2))
             process_custom_report(args.macs2, collected_results, "Peak calling statistics", MACS2)
-            process_macs2_xls(args.macs2, collected_results, "Peak calling statistics")    
+            process_macs2_xls(args.macs2, collected_results, "Peak calling statistics")
+            if args.preseq:
+                process_preseq_results(args.preseq, collected_results, "Library preparation")
             return (collected_results)
 
 
@@ -345,31 +366,37 @@ inputs:
   bowtie_alignment_report:
     type: File
     inputBinding:
-      position: 9
+      position: 8
       prefix: "--bowtie"
 
   bam_statistics_report:
     type: File
     inputBinding:
-      position: 8
+      position: 9
       prefix: "--bamstats"
 
   bam_statistics_after_filtering_report:
     type: File
     inputBinding:
-      position: 11
+      position: 10
       prefix: "--bamstatsfilter"
 
   macs2_called_peaks:
     type: File
     inputBinding:
-      position: 13
+      position: 11
       prefix: "--macs2"
+
+  preseq_results:
+    type: File?
+    inputBinding:
+      position: 12
+      prefix: "--preseq"
 
   output_prefix:
     type: string?
     inputBinding:
-      position: 16
+      position: 13
       prefix: "--output"
       valueFrom: $(get_output_prefix())
     default: ""
