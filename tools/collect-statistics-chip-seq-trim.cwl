@@ -288,7 +288,7 @@ inputs:
             collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
 
 
-        def process_preseq_results(filepath, collected_results, header, threashold=5):
+        def process_preseq_results(filepath, collected_results, header, threashold=0.001):
             if not collected_results.get(header, None):
                 collected_results[header] = {}
             px, py = 0, 0
