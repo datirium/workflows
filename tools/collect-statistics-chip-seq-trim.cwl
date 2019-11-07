@@ -335,8 +335,123 @@ inputs:
                 multimapped = collected_data["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0)
                 unmapped = collected_data["alignment statistics"]["reads/pairs unmapped"]
                 filtered = collected_data["BAM statistics"]["reads/pairs mapped"] - collected_data["BAM statistics after filtering"]["reads/pairs mapped"]
-                output_stream.write("Tags total\tMapped\tMulti-mapped\tUnmapped\tFiltered\n")
-                output_stream.write("\t".join(str(l) for l in [total, mapped, multimapped, unmapped, filtered]))
+                header = [
+                            "Tags total",
+                            "Mapped",
+                            "Multi-mapped",
+                            "Unmapped",
+                            "Filtered",
+
+                            "alignment statistics",
+                            "total reads/pairs processed",
+                            "reads/pairs with at least one reported alignmen",
+                            "reads/pairs suppressed due to multimapping",
+                            "reads/pairs unmapped",
+                            
+                            "BAM statistics",
+                            "total reads/pairs",
+                            "reads/pairs mapped",
+                            "reads/pairs unmapped",
+                            "insert size average",
+                            "insert size standard deviation",
+                            "reads average length",
+                            "reads average quality",
+                            "reads maximum length",
+
+                            "BAM statistics after filtering"
+                            "total reads/pairs",
+                            "reads/pairs mapped",
+                            "reads/pairs unmapped",
+                            "insert size average",
+                            "insert size standard deviation",
+                            "reads average length",
+                            "reads average quality",
+                            "reads maximum length",
+                
+                            "Peak calling statistics",
+                            "number of peaks called",
+                            "mean peak size",
+                            "total reads/pairs in treatment",
+                            "reads/pairs after filtering in treatment",
+                            "redundant rate in treatment",
+                            "fraction of reads in peaks",
+
+                            "adapter trimming statistics",
+                            "trimming mode",
+                            "adapter sequence",
+                            "quality phred score cutoff",
+                            "minimum required adapter overlap",
+                            "maximum trimming error rate",
+                            "minimum required read length",
+                            "number of reads/pairs analysed for length validation",
+                            "reads/pairs removed because of length cutoff",
+                            "fastq1: total reads processed",
+                            "fastq1: reads with adapters"]
+
+                if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
+                    header.append("fastq2: total reads processed")
+                    header.append("fastq2: reads with adapters")
+
+                output_stream.write("\t".join(header)+"\n")
+
+                data = [
+                        total,
+                        mapped,
+                        multimapped,
+                        unmapped,
+                        filtered,
+
+                        "",
+                        collected_data["alignment statistics"]["total reads/pairs processed"],
+                        collected_data["alignment statistics"]["reads/pairs with at least one reported alignment"],
+                        collected_data["alignment statistics"]["reads/pairs suppressed due to multimapping"],
+                        collected_data["alignment statistics"]["reads/pairs unmapped"],
+                        
+                        "",
+                        collected_data["BAM statistics"]["total reads/pairs"],
+                        collected_data["BAM statistics"]["reads/pairs mapped"],
+                        collected_data["BAM statistics"]["reads/pairs unmapped"],
+                        collected_data["BAM statistics"]["insert size average"],
+                        collected_data["BAM statistics"]["insert size standard deviation"],
+                        collected_data["BAM statistics"]["reads average length"],
+                        collected_data["BAM statistics"]["reads average quality"],
+                        collected_data["BAM statistics"]["reads maximum length"],
+                        
+                        "",
+                        collected_data["BAM statistics after filtering"]["total reads/pairs"],
+                        collected_data["BAM statistics after filtering"]["reads/pairs mapped"],
+                        collected_data["BAM statistics after filtering"]["reads/pairs unmapped"],
+                        collected_data["BAM statistics after filtering"]["insert size average"],
+                        collected_data["BAM statistics after filtering"]["insert size standard deviation"],
+                        collected_data["BAM statistics after filtering"]["reads average length"],
+                        collected_data["BAM statistics after filtering"]["reads average quality"],
+                        collected_data["BAM statistics after filtering"]["reads maximum length"],
+                        
+                        "",
+                        collected_data["Peak calling statistics"]["number of peaks called"],
+                        collected_data["Peak calling statistics"]["mean peak size"],
+                        collected_data["Peak calling statistics"]["total reads/pairs in treatment"],
+                        collected_data["Peak calling statistics"]["reads/pairs after filtering in treatment"],
+                        collected_data["Peak calling statistics"]["redundant rate in treatment"],
+                        collected_data["Peak calling statistics"]["fraction of reads in peaks"],
+                        
+                        "",
+                        collected_data["adapter trimming statistics"]["trimming mode"],
+                        collected_data["adapter trimming statistics"]["adapter sequence"],
+                        collected_data["adapter trimming statistics"]["quality phred score cutoff"],
+                        collected_data["adapter trimming statistics"]["minimum required adapter overlap"],
+                        collected_data["adapter trimming statistics"]["maximum trimming error rate"],
+                        collected_data["adapter trimming statistics"]["minimum required read length"],
+                        collected_data["adapter trimming statistics"]["number of reads/pairs analysed for length validation"],
+                        collected_data["adapter trimming statistics"]["reads/pairs removed because of length cutoff"],
+                        collected_data["adapter trimming statistics"]["fastq"][0]["total reads processed"],
+                        collected_data["adapter trimming statistics"]["fastq"][0]["reads with adapters"]]
+
+                if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
+                    data.append(collected_data["adapter trimming statistics"]["fastq"][1]["total reads processed"])
+                    data.append(collected_data["adapter trimming statistics"]["fastq"][1]["reads with adapters"])
+
+                output_stream.write("\t".join(str(l) for l in data))
 
 
         def main(argsl=None):
