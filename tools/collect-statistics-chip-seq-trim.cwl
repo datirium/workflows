@@ -328,6 +328,19 @@ inputs:
                 output_stream.write(yaml.dump(collected_data))
 
 
+        def export_results_markdown(collected_data, filepath):
+            with open(filepath+".md", 'w') as output_stream:
+                for line in yaml.dump(collected_data).split("\n"):
+                    if not line.strip():
+                        continue
+                    if line.startswith("    ") or line.startswith("  - "):
+                        output_stream.write(line+"\n")
+                    elif line.startswith("  "):
+                        output_stream.write("- "+line+"\n")
+                    else:
+                        output_stream.write("## "+line+"\n")
+
+
         def export_results_table(collected_data, filepath):
             with open(filepath+".tsv", 'w') as output_stream:
                 total = collected_data["alignment statistics"]["total reads/pairs processed"]
@@ -462,6 +475,7 @@ inputs:
             collected_data = collect_stats(args)
             export_results_yaml(collected_data, args.output)
             export_results_table(collected_data, args.output)
+            export_results_markdown(collected_data, args.output)
 
 
         if __name__ == "__main__":
@@ -531,6 +545,11 @@ outputs:
     type: File
     outputBinding:
       glob: $(get_output_prefix()+".tsv")
+
+  collected_statistics_md:
+    type: File
+    outputBinding:
+      glob: $(get_output_prefix()+".md")
 
   mapped_reads:
     type: int

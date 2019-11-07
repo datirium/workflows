@@ -330,6 +330,13 @@ outputs:
     doc: "YAML formatted combined log"
     outputSource: get_stat/collected_statistics_yaml
 
+  get_stat_markdown:
+    type: File?
+    label: "Markdown formatted combined log"
+    format: "http://edamontology.org/format_3835"
+    doc: "Markdown formatted combined log"
+    outputSource: get_stat/collected_statistics_md
+
   get_stat_formatted_log:
     type: File?
     label: "Bowtie & Samtools Rmdup combined formatted log"
@@ -597,7 +604,7 @@ steps:
         bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
         macs2_called_peaks: macs2_callpeak/peak_xls_file
         preseq_results: preseq/estimates_file
-      out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads]
+      out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
   island_intersect:
       run: ../tools/iaintersect.cwl
