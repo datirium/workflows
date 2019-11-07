@@ -417,7 +417,7 @@ inputs:
                         "",
                         collected_data["alignment statistics"]["total reads/pairs processed"],
                         collected_data["alignment statistics"]["reads/pairs with at least one reported alignment"],
-                        collected_data["alignment statistics"]["reads/pairs suppressed due to multimapping"],
+                        collected_data["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0),
                         collected_data["alignment statistics"]["reads/pairs unmapped"],
                         
                         "",
