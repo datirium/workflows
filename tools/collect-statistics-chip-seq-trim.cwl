@@ -325,16 +325,18 @@ inputs:
 
         def export_results_yaml(collected_data, filepath):
             with open(filepath+".yaml", 'w') as output_stream:
-                output_stream.write(yaml.dump(collected_data))
+                output_stream.write(yaml.dump(collected_data, width=1000))
 
 
         def export_results_markdown(collected_data, filepath):
             with open(filepath+".md", 'w') as output_stream:
-                for line in yaml.dump(collected_data).split("\n"):
+                for line in yaml.dump(collected_data, width=1000).split("\n"):
                     if not line.strip():
                         continue
-                    if line.startswith("    ") or line.startswith("  - "):
+                    if line.startswith("  - "):
                         output_stream.write(line+"\n")
+                    elif line.startswith("    "):
+                        output_stream.write("<br>"+line+"\n")
                     elif line.startswith("  "):
                         output_stream.write("- "+line+"\n")
                     else:
