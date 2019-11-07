@@ -357,7 +357,7 @@ inputs:
 
                             "alignment statistics",
                             "total reads/pairs processed",
-                            "reads/pairs with at least one reported alignmen",
+                            "reads/pairs with at least one reported alignment",
                             "reads/pairs suppressed due to multimapping",
                             "reads/pairs unmapped",
                             
@@ -371,7 +371,7 @@ inputs:
                             "reads average quality",
                             "reads maximum length",
 
-                            "BAM statistics after filtering"
+                            "BAM statistics after filtering",
                             "total reads/pairs",
                             "reads/pairs mapped",
                             "reads/pairs unmapped",
