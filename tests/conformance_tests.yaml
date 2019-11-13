@@ -1338,6 +1338,7 @@
       class: File
     get_stat_markdown:
       location: upstream_collected_statistics_report.md
+      class: File
     iaintersect_log:
       location: upstream_macs_peaks_iaintersect.log
       class: File
