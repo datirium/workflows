@@ -189,13 +189,14 @@ inputs:
 
         def arg_parser():
             general_parser = argparse.ArgumentParser()
-            general_parser.add_argument("--trim1",           help="Path to Trimgalore report file for FASTQ 1",           required=True)
+            general_parser.add_argument("--trim1",           help="Path to Trimgalore report file for FASTQ 1. Optional", required=False)
             general_parser.add_argument("--trim2",           help="Path to Trimgalore report file for FASTQ 2. Optional", required=False)
             general_parser.add_argument("--bowtie",          help="Path to Bowtie report file",                           required=True)
             general_parser.add_argument("--bamstats",        help="Path to bam statistics report file",                   required=True)
             general_parser.add_argument("--bamstatsfilter",  help="Path to bam statistics report file after filtering",   required=True)
             general_parser.add_argument("--macs2",           help="Path to MACS2 called peaks xls file",                  required=True)
             general_parser.add_argument("--preseq",          help="Path to Preseq output file",                           required=False)
+            general_parser.add_argument("--paired",          help="Process as paired-end. Default: False",                action="store_true")
             general_parser.add_argument("--output",          help="Output filename prefix",                               required=True)
             return general_parser
 
@@ -310,12 +311,13 @@ inputs:
 
         def collect_stats(args):
             collected_results = {}
-            process_trimgalore_report(args.trim1, collected_results)
+            if args.trim1:
+                process_trimgalore_report(args.trim1, collected_results)
             if args.trim2:
                 process_trimgalore_report(args.trim2, collected_results)
             process_custom_report(args.bowtie, collected_results, "alignment statistics", BOWTIE)
-            process_custom_report(args.bamstats, collected_results, "BAM statistics", BAMSTATS, bool(args.trim2))
-            process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.trim2))
+            process_custom_report(args.bamstats, collected_results, "BAM statistics", BAMSTATS, bool(args.paired))
+            process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.paired))
             process_custom_report(args.macs2, collected_results, "Peak calling statistics", MACS2)
             process_macs2_xls(args.macs2, collected_results, "Peak calling statistics")
             if args.preseq:
@@ -389,23 +391,22 @@ inputs:
                             "total reads/pairs in treatment",
                             "reads/pairs after filtering in treatment",
                             "redundant rate in treatment",
-                            "fraction of reads in peaks",
+                            "fraction of reads in peaks"]
 
-                            "adapter trimming statistics",
-                            "trimming mode",
-                            "adapter sequence",
-                            "quality phred score cutoff",
-                            "minimum required adapter overlap",
-                            "maximum trimming error rate",
-                            "minimum required read length",
-                            "number of reads/pairs analysed for length validation",
-                            "reads/pairs removed because of length cutoff",
-                            "fastq1: total reads processed",
-                            "fastq1: reads with adapters"]
-
-                if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
-                    header.append("fastq2: total reads processed")
-                    header.append("fastq2: reads with adapters")
+                if collected_data.get("adapter trimming statistics", None):
+                    header.extend(["adapter trimming statistics",
+                                "trimming mode",
+                                "adapter sequence",
+                                "quality phred score cutoff",
+                                "minimum required adapter overlap",
+                                "maximum trimming error rate",
+                                "minimum required read length",
+                                "number of reads/pairs analysed for length validation",
+                                "reads/pairs removed because of length cutoff",
+                                "fastq1: total reads processed",
+                                "fastq1: reads with adapters"])
+                    if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
+                        header.extend(["fastq2: total reads processed", "fastq2: reads with adapters"])
 
                 output_stream.write("\t".join(header)+"\n")
 
@@ -448,23 +449,23 @@ inputs:
                         collected_data["Peak calling statistics"]["total reads/pairs in treatment"],
                         collected_data["Peak calling statistics"]["reads/pairs after filtering in treatment"],
                         collected_data["Peak calling statistics"]["redundant rate in treatment"],
-                        collected_data["Peak calling statistics"]["fraction of reads in peaks"],
-                        
-                        "",
-                        collected_data["adapter trimming statistics"]["trimming mode"],
-                        collected_data["adapter trimming statistics"]["adapter sequence"],
-                        collected_data["adapter trimming statistics"]["quality phred score cutoff"],
-                        collected_data["adapter trimming statistics"]["minimum required adapter overlap"],
-                        collected_data["adapter trimming statistics"]["maximum trimming error rate"],
-                        collected_data["adapter trimming statistics"]["minimum required read length"],
-                        collected_data["adapter trimming statistics"]["number of reads/pairs analysed for length validation"],
-                        collected_data["adapter trimming statistics"]["reads/pairs removed because of length cutoff"],
-                        collected_data["adapter trimming statistics"]["fastq"][0]["total reads processed"],
-                        collected_data["adapter trimming statistics"]["fastq"][0]["reads with adapters"]]
+                        collected_data["Peak calling statistics"]["fraction of reads in peaks"]]
 
-                if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
-                    data.append(collected_data["adapter trimming statistics"]["fastq"][1]["total reads processed"])
-                    data.append(collected_data["adapter trimming statistics"]["fastq"][1]["reads with adapters"])
+                if collected_data.get("adapter trimming statistics", None):
+                    data.extend(["",
+                                collected_data["adapter trimming statistics"]["trimming mode"],
+                                collected_data["adapter trimming statistics"]["adapter sequence"],
+                                collected_data["adapter trimming statistics"]["quality phred score cutoff"],
+                                collected_data["adapter trimming statistics"]["minimum required adapter overlap"],
+                                collected_data["adapter trimming statistics"]["maximum trimming error rate"],
+                                collected_data["adapter trimming statistics"]["minimum required read length"],
+                                collected_data["adapter trimming statistics"]["number of reads/pairs analysed for length validation"],
+                                collected_data["adapter trimming statistics"]["reads/pairs removed because of length cutoff"],
+                                collected_data["adapter trimming statistics"]["fastq"][0]["total reads processed"],
+                                collected_data["adapter trimming statistics"]["fastq"][0]["reads with adapters"]])
+                    if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
+                        data.extend([collected_data["adapter trimming statistics"]["fastq"][1]["total reads processed"],
+                                    collected_data["adapter trimming statistics"]["fastq"][1]["reads with adapters"]])
 
                 output_stream.write("\t".join(str(l) for l in data))
 
@@ -473,7 +474,7 @@ inputs:
             if argsl is None:
                 argsl = sys.argv[1:]
             args,_ = arg_parser().parse_known_args(argsl)
-            args = normalize_args(args)
+            args = normalize_args(args, skip_list=["paired"])
             collected_data = collect_stats(args)
             export_results_yaml(collected_data, args.output)
             export_results_table(collected_data, args.output)
@@ -486,7 +487,7 @@ inputs:
       position: 5
 
   trimgalore_report_fastq_1:
-    type: File
+    type: File?
     inputBinding:
       position: 6
       prefix: "--trim1"
@@ -527,10 +528,16 @@ inputs:
       position: 12
       prefix: "--preseq"
 
+  paired_end:
+    type: boolean?
+    inputBinding:
+      position: 13
+      prefix: "--paired"
+
   output_prefix:
     type: string?
     inputBinding:
-      position: 13
+      position: 14
       prefix: "--output"
       valueFrom: $(get_output_prefix())
     default: ""

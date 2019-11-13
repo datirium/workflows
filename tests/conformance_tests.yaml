@@ -1282,9 +1282,22 @@
       location: upstream_macs_peaks.narrowPeak
       class: File
     preseq_estimates: null
-    workflow_statistics:
-      location: upstream_stats.tsv
+    workflow_statistics_tsv:
+      location: upstream_collected_statistics_report.tsv
       class: File
+    workflow_statistics_yaml:
+      location: upstream_collected_statistics_report.yaml
+      class: File
+    workflow_statistics_markdown:
+      location: upstream_collected_statistics_report.md
+      class: File
+    bam_statistics_report:
+      location: upstream_bam_statistics_report.txt
+      class: File
+    bam_statistics_report_after_filtering:
+      location: upstream_bam_statistics_report_after_filtering.txt
+      class: File
+
 
 # ========================================================
 # chipseq-pe
@@ -1318,11 +1331,13 @@
       location: upstream.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_stats.tsv
+      location: upstream_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.stat
+      location: upstream_collected_statistics_report.yaml
       class: File
+    get_stat_markdown:
+      location: upstream_collected_statistics_report.md
     iaintersect_log:
       location: upstream_macs_peaks_iaintersect.log
       class: File
@@ -1350,6 +1365,12 @@
     preseq_estimates: null
     samtools_rmdup_log:
       location: upstream.rmdup
+      class: File
+    bam_statistics_report:
+      location: upstream_bam_statistics_report.txt
+      class: File
+    bam_statistics_report_after_filtering:
+      location: upstream_bam_statistics_report_after_filtering.txt
       class: File
 
 # ========================================================

@@ -571,7 +571,6 @@ steps:
       bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: get_stat/mapped_reads
-      fragment_size: macs2_callpeak/macs2_fragments_calculated
       pairchip:
         default: true
     out: [bigwig_file]
@@ -604,6 +603,8 @@ steps:
         bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
         macs2_called_peaks: macs2_callpeak/peak_xls_file
         preseq_results: preseq/estimates_file
+        paired_end:
+          default: True
       out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
   island_intersect:

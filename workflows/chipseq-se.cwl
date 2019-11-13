@@ -5,8 +5,13 @@ requirements:
   - class: SubworkflowFeatureRequirement
   - class: ScatterFeatureRequirement
   - class: StepInputExpressionRequirement
-  - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
+  - class: InlineJavascriptRequirement
+    expressionLib:
+    - var get_root = function(basename) {
+          return basename.split('.').slice(0,1).join('.');
+      };
+
 
 'sd:metadata':
   - "../metadata/chipseq-header.cwl"
@@ -236,12 +241,26 @@ outputs:
         name: "Broad peaks"
         height: 120
 
-  workflow_statistics:
+  workflow_statistics_yaml:
+    type: File?
+    label: "YAML formatted combined log"
+    format: "http://edamontology.org/format_3750"
+    doc: "YAML formatted combined log"
+    outputSource: get_statistics/collected_statistics_yaml
+
+  workflow_statistics_markdown:
+    type: File?
+    label: "Markdown formatted combined log"
+    format: "http://edamontology.org/format_3835"
+    doc: "Markdown formatted combined log"
+    outputSource: get_statistics/collected_statistics_md
+
+  workflow_statistics_tsv:
     type: File
     label: "Workflow execution statistics"
     format: "http://edamontology.org/format_3475"
     doc: "Overall workflow execution statistics from bowtie_aligner and samtools_rmdup steps"
-    outputSource: get_statistics/formatted_output_file
+    outputSource: get_statistics/collected_statistics_tsv
     'sd:visualPlugins':
     - tableView:
         vertical: true
@@ -251,6 +270,20 @@ outputs:
       - pie:
           colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
           data: [$2, $3, $4, $5]
+
+  bam_statistics_report:
+    type: File
+    label: "BAM statistics report (original)"
+    format: "http://edamontology.org/format_2330"
+    doc: "BAM statistics report (right after alignment and sorting)"
+    outputSource: get_bam_statistics/log_file
+
+  bam_statistics_report_after_filtering:
+    type: File
+    label: "BAM statistics report (after filtering)"
+    format: "http://edamontology.org/format_2330"
+    doc: "BAM statistics report (after all filters applied)"
+    outputSource: get_bam_statistics_after_filtering/log_file
 
   preseq_estimates:
     type: File?
@@ -385,14 +418,33 @@ steps:
       fragment_size: macs2_callpeak/macs2_fragments_calculated
     out: [bigwig_file]
 
-  get_statistics:
-    run: ../tools/python-get-stat-chipseq.cwl
+  get_bam_statistics:
+    run: ../tools/samtools-stats.cwl
     in:
-      bowtie_log: bowtie_aligner/log_file
-      rmdup_log: samtools_rmdup/rmdup_log
-    out:
-      - formatted_output_file
-      - mapped_reads
+      bambai_pair: samtools_sort_index/bam_bai_pair
+      output_filename:
+        source: samtools_sort_index/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
+    out: [log_file]
+
+  get_bam_statistics_after_filtering:
+    run: ../tools/samtools-stats.cwl
+    in:
+      bambai_pair: samtools_sort_index_after_rmdup/bam_bai_pair
+      output_filename:
+        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
+    out: [log_file]
+
+  get_statistics:
+      run: ../tools/collect-statistics-chip-seq-trim.cwl
+      in:
+        bowtie_alignment_report: bowtie_aligner/log_file
+        bam_statistics_report: get_bam_statistics/log_file
+        bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
+        macs2_called_peaks: macs2_callpeak/peak_xls_file
+        preseq_results: preseq/estimates_file
+      out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
   island_intersect:
     run: ../tools/iaintersect.cwl
