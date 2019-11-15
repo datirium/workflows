@@ -336,6 +336,9 @@ outputs:
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
     outputSource: get_stat/collected_statistics_md
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
   get_stat_formatted_log:
     type: File?
@@ -594,7 +597,7 @@ steps:
     out: [log_file]
 
   get_stat:
-      run: ../tools/collect-statistics-chip-seq-trim.cwl
+      run: ../tools/collect-statistics-chip-seq.cwl
       in:
         trimgalore_report_fastq_1: trim_fastq/report_file
         trimgalore_report_fastq_2: trim_fastq/report_file_pair

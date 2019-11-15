@@ -254,6 +254,9 @@ outputs:
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
     outputSource: get_statistics/collected_statistics_md
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
   workflow_statistics_tsv:
     type: File
@@ -437,7 +440,7 @@ steps:
     out: [log_file]
 
   get_statistics:
-      run: ../tools/collect-statistics-chip-seq-trim.cwl
+      run: ../tools/collect-statistics-chip-seq.cwl
       in:
         bowtie_alignment_report: bowtie_aligner/log_file
         bam_statistics_report: get_bam_statistics/log_file
