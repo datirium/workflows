@@ -323,10 +323,10 @@ inputs:
             process_custom_report(args.bowtie, collected_results, "alignment statistics", BOWTIE)
             process_custom_report(args.bamstats, collected_results, "BAM statistics", BAMSTATS, bool(args.paired))
             process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.paired))
-            process_custom_report(args.macs2, collected_results, "Peak calling statistics", MACS2)
-            process_macs2_xls(args.macs2, collected_results, "Peak calling statistics")
+            process_custom_report(args.macs2, collected_results, "peak calling statistics", MACS2)
+            process_macs2_xls(args.macs2, collected_results, "peak calling statistics")
             if args.preseq:
-                process_preseq_results(args.preseq, collected_results, "Library preparation")
+                process_preseq_results(args.preseq, collected_results, "library preparation")
             return (collected_results)
 
 
@@ -347,7 +347,7 @@ inputs:
                     elif line.startswith("  "):
                         output_stream.write("- "+line+"\n")
                     else:
-                        output_stream.write("## "+line+"\n")
+                        output_stream.write("### "+line+"\n")
 
 
         def export_results_table(collected_data, filepath):
@@ -390,7 +390,7 @@ inputs:
                             "reads average quality",
                             "reads maximum length",
                 
-                            "Peak calling statistics",
+                            "peak calling statistics",
                             "number of peaks called",
                             "mean peak size",
                             "total reads/pairs in treatment",
@@ -449,12 +449,12 @@ inputs:
                         collected_data["BAM statistics after filtering"]["reads maximum length"],
                         
                         "",
-                        collected_data["Peak calling statistics"]["number of peaks called"],
-                        collected_data["Peak calling statistics"]["mean peak size"],
-                        collected_data["Peak calling statistics"]["total reads/pairs in treatment"],
-                        collected_data["Peak calling statistics"]["reads/pairs after filtering in treatment"],
-                        collected_data["Peak calling statistics"]["redundant rate in treatment"],
-                        collected_data["Peak calling statistics"]["fraction of reads in peaks"]]
+                        collected_data["peak calling statistics"]["number of peaks called"],
+                        collected_data["peak calling statistics"]["mean peak size"],
+                        collected_data["peak calling statistics"]["total reads/pairs in treatment"],
+                        collected_data["peak calling statistics"]["reads/pairs after filtering in treatment"],
+                        collected_data["peak calling statistics"]["redundant rate in treatment"],
+                        collected_data["peak calling statistics"]["fraction of reads in peaks"]]
 
                 if collected_data.get("adapter trimming statistics", None):
                     data.extend(["",
