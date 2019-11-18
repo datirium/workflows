@@ -10,9 +10,9 @@ requirements:
         if (inputs.output_prefix) {
           return inputs.output_prefix;
         }
-        var root = inputs.bowtie_alignment_report.basename.split('.').slice(0,-1).join('.');
+        var root = inputs.star_alignment_report.basename.split('.').slice(0,-1).join('.');
         var suffix = "_collected_statistics_report";
-        return (root == "")?inputs.bowtie_alignment_report.basename+suffix:root+suffix;
+        return (root == "")?inputs.star_alignment_report.basename+suffix:root+suffix;
     };
 
 
@@ -32,13 +32,17 @@ inputs:
         import argparse
         import yaml
         import math
+        import re
+
 
         def cut_int(s):
             return int(s.strip().split()[0])
 
-
         def cut_float(s):
             return float(s.strip().split()[0])
+
+        def cut_percent(s):
+            return float(s.strip().replace("%", "").split()[0])
 
 
         TRIMGALORE = {
@@ -90,6 +94,55 @@ inputs:
             "Sequences removed because they became shorter": {
                 "alias": "reads/pairs removed because of length cutoff",
                 "function": cut_int,
+                "pair_end_specific": False
+            }
+        }
+
+
+        STAR = {
+            "Number of input reads": {
+                "alias": "total reads/pairs processed",
+                "function": int,
+                "pair_end_specific": False
+            },
+            "Uniquely mapped reads number": {
+                "alias": "uniquely mapped reads/pairs number",
+                "function": int,
+                "pair_end_specific": False
+            },
+            "Mismatch rate per base, %": {
+                "alias": "mismatch rate per base, %",
+                "function": cut_percent,
+                "pair_end_specific": False
+            },
+            "Deletion rate per base": {
+                "alias": "deletion rate per base, %",
+                "function": cut_percent,
+                "pair_end_specific": False
+            },
+            "Number of reads mapped to multiple loci": {
+                "alias": "reads/pairs mapped to multiple loci",
+                "function": int,
+                "pair_end_specific": False
+            },
+            "Number of reads mapped to too many loci": {
+                "alias": "reads/pairs suppressed due to mapping to too many loci",
+                "function": int,
+                "pair_end_specific": False
+            },
+            "reads unmapped: too many mismatches": {
+                "alias": "reads/pairs unmapped due to too many mismatches, %",
+                "function": cut_percent,
+                "pair_end_specific": False
+            },
+            "reads unmapped: too short": {
+                "alias": "reads/pairs unmapped due to too short, %",
+                "function": cut_percent,
+                "pair_end_specific": False
+            },
+            "reads unmapped: other": {
+                "alias": "reads/pairs unmapped due to other reasons, %",
+                "function": cut_percent,
                 "pair_end_specific": False
             }
         }
@@ -163,46 +216,16 @@ inputs:
         }
 
 
-        MACS2 = {
-            "total fragments in treatment": {
-                "alias": "total reads/pairs in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "total tags in treatment": {
-                "alias": "total reads/pairs in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "fragments after filtering in treatment": {
-                "alias": "reads/pairs after filtering in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "tags after filtering in treatment": {
-                "alias": "reads/pairs after filtering in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "Redundant rate in treatment": {
-                "alias": "redundant rate in treatment",
-                "function": float,
-                "pair_end_specific": False
-            }
-        }
-
-
         def arg_parser():
             general_parser = argparse.ArgumentParser()
-            general_parser.add_argument("--trim1",           help="Path to Trimgalore report file for FASTQ 1. Optional", required=False)
-            general_parser.add_argument("--trim2",           help="Path to Trimgalore report file for FASTQ 2. Optional", required=False)
-            general_parser.add_argument("--bowtie",          help="Path to Bowtie report file",                           required=True)
-            general_parser.add_argument("--bamstats",        help="Path to bam statistics report file",                   required=True)
-            general_parser.add_argument("--bamstatsfilter",  help="Path to bam statistics report file after filtering",   required=True)
-            general_parser.add_argument("--macs2",           help="Path to MACS2 called peaks xls file",                  required=True)
-            general_parser.add_argument("--preseq",          help="Path to Preseq output file",                           required=False)
-            general_parser.add_argument("--paired",          help="Process as paired-end. Default: False",                action="store_true")
-            general_parser.add_argument("--output",          help="Output filename prefix",                               required=True)
+            general_parser.add_argument("--trim1",           help="Path to Trimgalore report file for FASTQ 1",           required=False)
+            general_parser.add_argument("--trim2",           help="Path to Trimgalore report file for FASTQ 2",           required=False)
+            general_parser.add_argument("--star",            help="Path to STAR report file",                             required=False)
+            general_parser.add_argument("--bowtie",          help="Path to Bowtie report file",                           required=False)
+            general_parser.add_argument("--bamstats",        help="Path to bam statistics report file",                   required=False)
+            general_parser.add_argument("--isoforms",        help="Path to isoforms file",                                required=False)
+            general_parser.add_argument("--paired",          help="Process as paired-end",                           action="store_true")
+            general_parser.add_argument("--output",          help="Output filename prefix",               default="collected_statistics")
             return general_parser
 
 
@@ -225,7 +248,7 @@ inputs:
             return lines
 
 
-        def split_line(l, delimiter=":"):
+        def split_line(l, delimiter):
             return [i.strip() for i in l.split(delimiter)]
 
 
@@ -236,34 +259,34 @@ inputs:
             raise Exception
 
 
-        def process_trimgalore_report(filepath, collected_results, header="adapter trimming statistics"):
+        def process_trimgalore_report(filepath, collected_results, header, key_dict, pair_end, delimiter):
             if not collected_results.get(header, None):
                 collected_results[header] = {"fastq": []}
             fastq = {}
             for line in open_file(filepath):
                 try:
-                    key, value = split_line(line)
+                    key, value = split_line(line, delimiter)
                     if "Total reads processed" in line:
                         fastq["total reads processed"] = int(value.strip().replace(",",""))
                     elif "Reads with adapters" in line:
                         fastq["reads with adapters"] = int(value.strip().replace(",","").split()[0])
                     else:
-                        res_key, res_function, pair_end_specific = get_correspondent_key(TRIMGALORE, key)
+                        res_key, res_function, pair_end_specific = get_correspondent_key(key_dict, key)
                         if not collected_results[header].get(res_key, None):
                             collected_results[header][res_key] = res_function(value)
                 except Exception:
                     pass
-            if collected_results[header]["trimming mode"] == "single-end":
+            if not pair_end:
                 collected_results[header]["number of reads/pairs analysed for length validation"] = fastq["total reads processed"]
             collected_results[header]["fastq"].append(fastq)
 
 
-        def process_custom_report(filepath, collected_results, header, key_dict, pair_end=False):
+        def process_custom_report(filepath, collected_results, header, key_dict, pair_end, delimiter):
             if not collected_results.get(header, None):
                 collected_results[header] = {}
             for line in open_file(filepath):
                 try:
-                    key, value = split_line(line)
+                    key, value = split_line(line, delimiter)
                     res_key, res_function, pair_end_specific = get_correspondent_key(key_dict, key)
                     if not collected_results[header].get(res_key, None):
                         if pair_end_specific and pair_end:
@@ -274,59 +297,72 @@ inputs:
                     pass
 
 
-        def process_macs2_xls(filepath, collected_results, header):
+        def process_isoforms_report(filepath, collected_results, header, pair_end):
             if not collected_results.get(header, None):
                 collected_results[header] = {}
-            count, length, prev_start, prev_end, prev_chr = 0, 0, 0, 0, ""
+            total_reads_index = None
+            used_reads = 0
             for line in open_file(filepath):
-                if "#" in line or "start" in line:
+                if re.match ('.*RefseqId.*|.*GeneId.*|.*Chrom.*|.*TotalReads.*', line) and total_reads_index is None:
+                    total_reads_index = line.split(',').index('TotalReads')
                     continue
-                line_list = [l.strip() for l in line.strip().split()]
-                chr = line_list[0]
-                start = int(line_list[1])
-                end = int(line_list[2])
-                if start == prev_start and end == prev_end and chr == prev_chr:
-                    continue
-                count = count + 1
-                length = length + end - start
-                prev_start, prev_end, prev_chr = start, end, chr
-            collected_results[header]["number of peaks called"] = count
-            collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
-            in_treatment = collected_results[header]["reads/pairs after filtering in treatment"]
-            mapped = collected_results["BAM statistics after filtering"]["reads/pairs mapped"]
-            collected_results[header]["fraction of reads in peaks"] = round(float(in_treatment)/float(mapped),2)
-
-
-        def process_preseq_results(filepath, collected_results, header, threashold=0.001):
-            if not collected_results.get(header, None):
-                collected_results[header] = {}
-            px, py = 0, 0
-            for line in open_file(filepath):
-                if "TOTAL_READS" in line:
-                    continue
-                values = [float(l.strip()) for l in line.strip().split()]
-                dx, dy = values[0]-px, values[1]-py
-                px, py = values[0], values[1]
-                if dx != 0:
-                    angle = math.degrees(math.atan2(dy, dx))
-                    if angle <= threashold:
-                        collected_results[header]["maximum library diversity"] = values[0]
-                        break
+                line_splitted = line.split(',')
+                used_reads += int(line_splitted[total_reads_index])
+            if pair_end:
+                used_reads = used_reads/2
+                print("Paired reads for isoform", used_reads)
+            collected_results[header]["number of reads/pairs in transcriptome"] = used_reads
 
 
         def collect_stats(args):
             collected_results = {}
+            
             if args.trim1:
-                process_trimgalore_report(args.trim1, collected_results)
+                process_trimgalore_report(filepath=args.trim1,
+                                        collected_results=collected_results,
+                                        header="adapter trimming statistics",
+                                        key_dict=TRIMGALORE,
+                                        pair_end=args.paired,
+                                        delimiter=":")
+
             if args.trim2:
-                process_trimgalore_report(args.trim2, collected_results)
-            process_custom_report(args.bowtie, collected_results, "alignment statistics", BOWTIE)
-            process_custom_report(args.bamstats, collected_results, "BAM statistics", BAMSTATS, bool(args.paired))
-            process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.paired))
-            process_custom_report(args.macs2, collected_results, "Peak calling statistics", MACS2)
-            process_macs2_xls(args.macs2, collected_results, "Peak calling statistics")
-            if args.preseq:
-                process_preseq_results(args.preseq, collected_results, "Library preparation")
+                process_trimgalore_report(filepath=args.trim2,
+                                        collected_results=collected_results,
+                                        header="adapter trimming statistics",
+                                        key_dict=TRIMGALORE,
+                                        pair_end=args.paired,
+                                        delimiter=":")
+
+            if args.star:
+                process_custom_report(filepath=args.star,
+                                    collected_results=collected_results,
+                                    header="alignment statistics",
+                                    key_dict=STAR,
+                                    pair_end=args.paired,
+                                    delimiter="|")
+
+            if args.bowtie:
+                process_custom_report(filepath=args.bowtie,
+                                    collected_results=collected_results,
+                                    header="ribosomal alignment statistics",
+                                    key_dict=BOWTIE,
+                                    pair_end=args.paired,
+                                    delimiter=":")
+
+            if args.isoforms:
+                process_isoforms_report(filepath=args.isoforms,
+                                        collected_results=collected_results,
+                                        header="alignment statistics",
+                                        pair_end=args.paired)
+
+            if args.bamstats:
+                process_custom_report(filepath=args.bamstats,
+                                    collected_results=collected_results,
+                                    header="BAM statistics",
+                                    key_dict=BAMSTATS,
+                                    pair_end=args.paired,
+                                    delimiter=":")
+
             return (collected_results)
 
 
@@ -347,29 +383,46 @@ inputs:
                     elif line.startswith("  "):
                         output_stream.write("- "+line+"\n")
                     else:
-                        output_stream.write("## "+line+"\n")
+                        output_stream.write("### "+line+"\n")
 
 
         def export_results_table(collected_data, filepath):
             with open(filepath+".tsv", 'w') as output_stream:
-                total = collected_data["alignment statistics"]["total reads/pairs processed"]
-                mapped = collected_data["BAM statistics after filtering"]["reads/pairs mapped"]
-                multimapped = collected_data["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0)
-                unmapped = collected_data["alignment statistics"]["reads/pairs unmapped"]
-                filtered = collected_data["BAM statistics"]["reads/pairs mapped"] - collected_data["BAM statistics after filtering"]["reads/pairs mapped"]
+                total_reads= collected_data["alignment statistics"]["total reads/pairs processed"]
+                uniquely_mapped_reads = collected_data["alignment statistics"]["uniquely mapped reads/pairs number"]
+                transcriptome_reads = collected_data["alignment statistics"]["number of reads/pairs in transcriptome"]
+                multimapped_reads = collected_data["alignment statistics"]["reads/pairs suppressed due to mapping to too many loci"]
+                not_transcriptome_reads = uniquely_mapped_reads - transcriptome_reads
+                unmapped_reads = total_reads - uniquely_mapped_reads - multimapped_reads
+                ribosomal_reads = collected_data["ribosomal alignment statistics"]["reads/pairs with at least one reported alignment"]
+
+
                 header = [
                             "Tags total",
-                            "Mapped",
+                            "Transcriptome",
                             "Multi-mapped",
+                            "Outside annotation",
                             "Unmapped",
-                            "Filtered",
+                            "Ribosomal contamination",
 
                             "alignment statistics",
+                            "total reads/pairs processed",
+                            "uniquely mapped reads/pairs number",
+                            "reads/pairs mapped to multiple loci",
+                            "reads/pairs suppressed due to mapping to too many loci",
+                            "mismatch rate per base, %",
+                            "deletion rate per base, %",
+                            "reads/pairs unmapped due to too many mismatches, %",
+                            "reads/pairs unmapped due to too short, %",
+                            "reads/pairs unmapped due to other reasons, %",
+                            "number of reads/pairs in transcriptome",
+
+                            "ribosomal alignment statistics",
                             "total reads/pairs processed",
                             "reads/pairs with at least one reported alignment",
                             "reads/pairs suppressed due to multimapping",
                             "reads/pairs unmapped",
-                            
+
                             "BAM statistics",
                             "total reads/pairs",
                             "reads/pairs mapped",
@@ -378,25 +431,7 @@ inputs:
                             "insert size standard deviation",
                             "reads average length",
                             "reads average quality",
-                            "reads maximum length",
-
-                            "BAM statistics after filtering",
-                            "total reads/pairs",
-                            "reads/pairs mapped",
-                            "reads/pairs unmapped",
-                            "insert size average",
-                            "insert size standard deviation",
-                            "reads average length",
-                            "reads average quality",
-                            "reads maximum length",
-                
-                            "Peak calling statistics",
-                            "number of peaks called",
-                            "mean peak size",
-                            "total reads/pairs in treatment",
-                            "reads/pairs after filtering in treatment",
-                            "redundant rate in treatment",
-                            "fraction of reads in peaks"]
+                            "reads maximum length"]
 
                 if collected_data.get("adapter trimming statistics", None):
                     header.extend(["adapter trimming statistics",
@@ -416,18 +451,31 @@ inputs:
                 output_stream.write("\t".join(header)+"\n")
 
                 data = [
-                        total,
-                        mapped,
-                        multimapped,
-                        unmapped,
-                        filtered,
+                        total_reads,
+                        transcriptome_reads,
+                        multimapped_reads,
+                        not_transcriptome_reads,
+                        unmapped_reads,
+                        ribosomal_reads,
 
                         "",
                         collected_data["alignment statistics"]["total reads/pairs processed"],
-                        collected_data["alignment statistics"]["reads/pairs with at least one reported alignment"],
-                        collected_data["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0),
-                        collected_data["alignment statistics"]["reads/pairs unmapped"],
+                        collected_data["alignment statistics"]["uniquely mapped reads/pairs number"],
+                        collected_data["alignment statistics"]["reads/pairs mapped to multiple loci"],
+                        collected_data["alignment statistics"]["reads/pairs suppressed due to mapping to too many loci"],
+                        collected_data["alignment statistics"]["mismatch rate per base, %"],
+                        collected_data["alignment statistics"]["deletion rate per base, %"],
+                        collected_data["alignment statistics"]["reads/pairs unmapped due to too many mismatches, %"],
+                        collected_data["alignment statistics"]["reads/pairs unmapped due to too short, %"],
+                        collected_data["alignment statistics"]["reads/pairs unmapped due to other reasons, %"],
+                        collected_data["alignment statistics"]["number of reads/pairs in transcriptome"],
                         
+                        "",
+                        collected_data["ribosomal alignment statistics"]["total reads/pairs processed"],
+                        collected_data["ribosomal alignment statistics"]["reads/pairs with at least one reported alignment"],
+                        collected_data["ribosomal alignment statistics"].get("reads/pairs suppressed due to multimapping", 0),
+                        collected_data["ribosomal alignment statistics"]["reads/pairs unmapped"],
+
                         "",
                         collected_data["BAM statistics"]["total reads/pairs"],
                         collected_data["BAM statistics"]["reads/pairs mapped"],
@@ -436,25 +484,7 @@ inputs:
                         collected_data["BAM statistics"]["insert size standard deviation"],
                         collected_data["BAM statistics"]["reads average length"],
                         collected_data["BAM statistics"]["reads average quality"],
-                        collected_data["BAM statistics"]["reads maximum length"],
-                        
-                        "",
-                        collected_data["BAM statistics after filtering"]["total reads/pairs"],
-                        collected_data["BAM statistics after filtering"]["reads/pairs mapped"],
-                        collected_data["BAM statistics after filtering"]["reads/pairs unmapped"],
-                        collected_data["BAM statistics after filtering"]["insert size average"],
-                        collected_data["BAM statistics after filtering"]["insert size standard deviation"],
-                        collected_data["BAM statistics after filtering"]["reads average length"],
-                        collected_data["BAM statistics after filtering"]["reads average quality"],
-                        collected_data["BAM statistics after filtering"]["reads maximum length"],
-                        
-                        "",
-                        collected_data["Peak calling statistics"]["number of peaks called"],
-                        collected_data["Peak calling statistics"]["mean peak size"],
-                        collected_data["Peak calling statistics"]["total reads/pairs in treatment"],
-                        collected_data["Peak calling statistics"]["reads/pairs after filtering in treatment"],
-                        collected_data["Peak calling statistics"]["redundant rate in treatment"],
-                        collected_data["Peak calling statistics"]["fraction of reads in peaks"]]
+                        collected_data["BAM statistics"]["reads maximum length"]]
 
                 if collected_data.get("adapter trimming statistics", None):
                     data.extend(["",
@@ -503,46 +533,40 @@ inputs:
       position: 7
       prefix: "--trim2"
 
-  bowtie_alignment_report:
-    type: File
+  star_alignment_report:
+    type: File?
     inputBinding:
       position: 8
+      prefix: "--star"
+
+  bowtie_alignment_report:
+    type: File?
+    inputBinding:
+      position: 9
       prefix: "--bowtie"
 
   bam_statistics_report:
-    type: File
-    inputBinding:
-      position: 9
-      prefix: "--bamstats"
-
-  bam_statistics_after_filtering_report:
-    type: File
-    inputBinding:
-      position: 10
-      prefix: "--bamstatsfilter"
-
-  macs2_called_peaks:
-    type: File
-    inputBinding:
-      position: 11
-      prefix: "--macs2"
-
-  preseq_results:
     type: File?
     inputBinding:
-      position: 12
-      prefix: "--preseq"
+      position: 10
+      prefix: "--bamstats"
+
+  isoforms_file:
+    type: File?
+    inputBinding:
+      position: 11
+      prefix: "--isoforms"
 
   paired_end:
     type: boolean?
     inputBinding:
-      position: 13
+      position: 12
       prefix: "--paired"
 
   output_prefix:
     type: string?
     inputBinding:
-      position: 14
+      position: 13
       prefix: "--output"
       valueFrom: $(get_output_prefix())
     default: ""
@@ -565,13 +589,6 @@ outputs:
     outputBinding:
       glob: $(get_output_prefix()+".md")
 
-  mapped_reads:
-    type: int
-    outputBinding:
-      loadContents: true
-      glob: $(get_output_prefix()+".tsv")
-      outputEval: $(parseInt(self[0].contents.split('\n')[1].split('\t')[1]))
-
 
 baseCommand: [python, '-c']
 
@@ -582,8 +599,8 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "collect-statistics-chip-seq-trim"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/collect-statistics-chip-seq-trim.cwl
+s:name: "collect-statistics-rna-seq"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/collect-statistics-rna-seq.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
