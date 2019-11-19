@@ -6,6 +6,11 @@ requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
+    expressionLib:
+    - var get_root = function(basename) {
+          return basename.split('.').slice(0,1).join('.');
+      };
+
 
 'sd:metadata':
   - "../metadata/rnaseq-header.cwl"
@@ -224,17 +229,27 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "BioWardrobe compatible log"
-    format: "http://edamontology.org/format_2330"
-    doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
-    outputSource: get_stat/output_file
+    label: "YAML formatted combined log"
+    format: "http://edamontology.org/format_3750"
+    doc: "YAML formatted combined log"
+    outputSource: get_stat/collected_statistics_yaml
+
+  get_stat_markdown:
+    type: File?
+    label: "Markdown formatted combined log"
+    format: "http://edamontology.org/format_3835"
+    doc: "Markdown formatted combined log"
+    outputSource: get_stat/collected_statistics_md
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
   get_formatted_stats:
     type: File?
     label: "Bowtie, STAR and GEEP mapping stats"
     format: "http://edamontology.org/format_2330"
     doc: "Processed and combined Bowtie & STAR aligner and GEEP logs"
-    outputSource: get_stat/formatted_output_file
+    outputSource: get_stat/collected_statistics_tsv
     'sd:visualPlugins':
     - tableView:
         vertical: true
@@ -244,6 +259,13 @@ outputs:
       - pie:
           colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
           data: [$2, $3, $4, $5]
+
+  bam_statistics_report:
+    type: File
+    label: "BAM statistics report"
+    format: "http://edamontology.org/format_2330"
+    doc: "BAM statistics report (right after alignment and sorting)"
+    outputSource: get_bam_statistics/log_file
 
 steps:
 
@@ -373,13 +395,24 @@ steps:
       - genes_file
       - common_tss_file
 
+  get_bam_statistics:
+    run: ../tools/samtools-stats.cwl
+    in:
+      bambai_pair: samtools_sort_index/bam_bai_pair
+      output_filename:
+        source: samtools_sort_index/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
+    out: [log_file]
+
   get_stat:
-      run: ../tools/python-get-stat-rnaseq.cwl
+      run: ../tools/collect-statistics-rna-seq.cwl
       in:
-        star_log: star_aligner/log_final
-        bowtie_log: bowtie_aligner/log_file
-        rpkm_isoforms: rpkm_calculation/isoforms_file
-      out: [output_file, formatted_output_file]
+        star_alignment_report: star_aligner/log_final
+        bowtie_alignment_report: bowtie_aligner/log_file
+        bam_statistics_report: get_bam_statistics/log_file
+        isoforms_file: rpkm_calculation/isoforms_file
+      out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+
 
 $namespaces:
   s: http://schema.org/
