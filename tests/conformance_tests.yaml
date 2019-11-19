@@ -317,10 +317,13 @@
       location: upstream.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream_stats.tsv
+      location: upstream.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.stat
+      location: upstream.Log.final_collected_statistics_report.yaml
+      class: File
+    get_stat_markdown:
+      location: upstream.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
       location: upstream.common_tss.tsv
@@ -346,6 +349,9 @@
     star_stdout_log: null
     trim_report:
       location: upstream.fastq_trimming_report.txt
+      class: File
+    bam_statistics_report:
+      location: upstream_bam_statistics_report.txt
       class: File
 
 # ========================================================
@@ -431,10 +437,13 @@
       location: upstream.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream_stats.tsv
+      location: upstream.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.stat
+      location: upstream.Log.final_collected_statistics_report.yaml
+      class: File
+    get_stat_markdown:
+      location: upstream.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
       location: upstream.common_tss.tsv
@@ -463,6 +472,9 @@
       class: File
     trim_report_upstream:
       location: upstream.fastq_trimming_report.txt
+      class: File
+    bam_statistics_report:
+      location: upstream_bam_statistics_report.txt
       class: File
 
 # ========================================================
