@@ -1456,6 +1456,7 @@
       class: File
     get_stat_markdown:
       location: upstream.Log.final_collected_statistics_report.md
+      class: File
     rpkm_common_tss:
       location: upstream.common_tss.tsv
       class: File
