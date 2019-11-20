@@ -45,7 +45,7 @@ inputs:
             return float(s.strip().replace("%", "").split()[0])
 
 
-        TRIMGALORE = {
+        ADAPTER_TRIMMING = {
             "Trimming mode": {
                 "alias": "trimming mode",
                 "function": str,
@@ -95,11 +95,21 @@ inputs:
                 "alias": "reads/pairs removed because of length cutoff",
                 "function": cut_int,
                 "pair_end_specific": False
-            }
+            },
+            "order": ["fastq",
+                    "trimming mode",
+                    "adapter sequence",
+                    "number of reads/pairs analysed for length validation",
+                    "reads/pairs removed because of length cutoff",
+                    "minimum required read length",
+                    "quality phred score cutoff",
+                    "quality encoding type",
+                    "minimum required adapter overlap",
+                    "maximum trimming error rate"]
         }
 
 
-        STAR = {
+        ALIGNMENT = {
             "Number of input reads": {
                 "alias": "total reads/pairs processed",
                 "function": int,
@@ -144,31 +154,23 @@ inputs:
                 "alias": "reads/pairs unmapped due to other reasons, %",
                 "function": cut_percent,
                 "pair_end_specific": False
-            }
-        }
-
-
-        BOWTIE = {
-            "reads processed": {
-                "alias": "total reads/pairs processed",
-                "function": int,
-                "pair_end_specific": False
             },
             "reads with at least one reported alignment": {
-                "alias": "reads/pairs with at least one reported alignment",
+                "alias": "number of reads/pairs in ribosomal dna",
                 "function": cut_int,
                 "pair_end_specific": False
             },
-            "reads that failed to align": {
-                "alias": "reads/pairs unmapped",
-                "function": cut_int,
-                "pair_end_specific": False
-            },
-            "reads with alignments suppressed due to -m": {
-                "alias": "reads/pairs suppressed due to multimapping",
-                "function": cut_int,
-                "pair_end_specific": False
-            }
+            "order": ["total reads/pairs processed",
+                    "uniquely mapped reads/pairs number",
+                    "number of reads/pairs in transcriptome",
+                    "number of reads/pairs in ribosomal dna",
+                    "reads/pairs mapped to multiple loci",
+                    "reads/pairs suppressed due to mapping to too many loci",
+                    "reads/pairs unmapped due to too many mismatches, %",
+                    "reads/pairs unmapped due to too short, %",
+                    "reads/pairs unmapped due to other reasons, %",
+                    "mismatch rate per base, %",
+                    "deletion rate per base, %"]
         }
 
 
@@ -212,7 +214,15 @@ inputs:
                 "alias": "insert size standard deviation",
                 "function": float,
                 "pair_end_specific": False
-            }
+            },
+            "order": ["total reads/pairs",
+                    "reads/pairs mapped",
+                    "reads/pairs unmapped",
+                    "reads average length",
+                    "reads maximum length",
+                    "reads average quality",
+                    "insert size average",
+                    "insert size standard deviation"]
         }
 
 
@@ -279,6 +289,8 @@ inputs:
             if not pair_end:
                 collected_results[header]["number of reads/pairs analysed for length validation"] = fastq["total reads processed"]
             collected_results[header]["fastq"].append(fastq)
+            if key_dict.get("order", None):
+                collected_results[header] = {k: collected_results[header][k] for k in key_dict["order"] if k in collected_results[header]}
 
 
         def process_custom_report(filepath, collected_results, header, key_dict, pair_end, delimiter):
@@ -295,9 +307,11 @@ inputs:
                             collected_results[header][res_key] = res_function(value)
                 except Exception:
                     pass
+            if key_dict.get("order", None):
+                collected_results[header] = {k: collected_results[header][k] for k in key_dict["order"] if k in collected_results[header]}
+            
 
-
-        def process_isoforms_report(filepath, collected_results, header, pair_end):
+        def process_isoforms_report(filepath, collected_results, header, key_dict, pair_end):
             if not collected_results.get(header, None):
                 collected_results[header] = {}
             total_reads_index = None
@@ -309,9 +323,10 @@ inputs:
                 line_splitted = line.split(',')
                 used_reads += int(line_splitted[total_reads_index])
             if pair_end:
-                used_reads = used_reads/2
-                print("Paired reads for isoform", used_reads)
+                used_reads = int(used_reads/2)
             collected_results[header]["number of reads/pairs in transcriptome"] = used_reads
+            if key_dict.get("order", None):
+                collected_results[header] = {k: collected_results[header][k] for k in key_dict["order"] if k in collected_results[header]}
 
 
         def collect_stats(args):
@@ -321,7 +336,7 @@ inputs:
                 process_trimgalore_report(filepath=args.trim1,
                                         collected_results=collected_results,
                                         header="adapter trimming statistics",
-                                        key_dict=TRIMGALORE,
+                                        key_dict=ADAPTER_TRIMMING,
                                         pair_end=args.paired,
                                         delimiter=":")
 
@@ -329,7 +344,7 @@ inputs:
                 process_trimgalore_report(filepath=args.trim2,
                                         collected_results=collected_results,
                                         header="adapter trimming statistics",
-                                        key_dict=TRIMGALORE,
+                                        key_dict=ADAPTER_TRIMMING,
                                         pair_end=args.paired,
                                         delimiter=":")
 
@@ -337,23 +352,24 @@ inputs:
                 process_custom_report(filepath=args.star,
                                     collected_results=collected_results,
                                     header="alignment statistics",
-                                    key_dict=STAR,
+                                    key_dict=ALIGNMENT,
                                     pair_end=args.paired,
                                     delimiter="|")
-
-            if args.bowtie:
-                process_custom_report(filepath=args.bowtie,
-                                    collected_results=collected_results,
-                                    header="ribosomal alignment statistics",
-                                    key_dict=BOWTIE,
-                                    pair_end=args.paired,
-                                    delimiter=":")
 
             if args.isoforms:
                 process_isoforms_report(filepath=args.isoforms,
                                         collected_results=collected_results,
                                         header="alignment statistics",
+                                        key_dict=ALIGNMENT,
                                         pair_end=args.paired)
+
+            if args.bowtie:
+                process_custom_report(filepath=args.bowtie,
+                                    collected_results=collected_results,
+                                    header="alignment statistics",
+                                    key_dict=ALIGNMENT,
+                                    pair_end=args.paired,
+                                    delimiter=":")
 
             if args.bamstats:
                 process_custom_report(filepath=args.bamstats,
@@ -368,12 +384,12 @@ inputs:
 
         def export_results_yaml(collected_data, filepath):
             with open(filepath+".yaml", 'w') as output_stream:
-                output_stream.write(yaml.dump(collected_data, width=1000))
+                output_stream.write(yaml.dump(collected_data, width=1000, sort_keys=False))
 
 
         def export_results_markdown(collected_data, filepath):
             with open(filepath+".md", 'w') as output_stream:
-                for line in yaml.dump(collected_data, width=1000).split("\n"):
+                for line in yaml.dump(collected_data, width=1000, sort_keys=False).split("\n"):
                     if not line.strip():
                         continue
                     if line.startswith("  - "):
@@ -394,7 +410,7 @@ inputs:
                 multimapped_reads = collected_data["alignment statistics"]["reads/pairs suppressed due to mapping to too many loci"]
                 not_transcriptome_reads = uniquely_mapped_reads - transcriptome_reads
                 unmapped_reads = total_reads - uniquely_mapped_reads - multimapped_reads
-                ribosomal_reads = collected_data["ribosomal alignment statistics"]["reads/pairs with at least one reported alignment"]
+                ribosomal_reads = collected_data["alignment statistics"]["number of reads/pairs in ribosomal dna"]
 
 
                 header = [
@@ -416,12 +432,7 @@ inputs:
                             "reads/pairs unmapped due to too short, %",
                             "reads/pairs unmapped due to other reasons, %",
                             "number of reads/pairs in transcriptome",
-
-                            "ribosomal alignment statistics",
-                            "total reads/pairs processed",
-                            "reads/pairs with at least one reported alignment",
-                            "reads/pairs suppressed due to multimapping",
-                            "reads/pairs unmapped",
+                            "number of reads/pairs in ribosomal dna",
 
                             "BAM statistics",
                             "total reads/pairs",
@@ -469,12 +480,7 @@ inputs:
                         collected_data["alignment statistics"]["reads/pairs unmapped due to too short, %"],
                         collected_data["alignment statistics"]["reads/pairs unmapped due to other reasons, %"],
                         collected_data["alignment statistics"]["number of reads/pairs in transcriptome"],
-                        
-                        "",
-                        collected_data["ribosomal alignment statistics"]["total reads/pairs processed"],
-                        collected_data["ribosomal alignment statistics"]["reads/pairs with at least one reported alignment"],
-                        collected_data["ribosomal alignment statistics"].get("reads/pairs suppressed due to multimapping", 0),
-                        collected_data["ribosomal alignment statistics"]["reads/pairs unmapped"],
+                        collected_data["alignment statistics"]["number of reads/pairs in ribosomal dna"],
 
                         "",
                         collected_data["BAM statistics"]["total reads/pairs"],
