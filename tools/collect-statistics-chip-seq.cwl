@@ -91,7 +91,17 @@ inputs:
                 "alias": "reads/pairs removed because of length cutoff",
                 "function": cut_int,
                 "pair_end_specific": False
-            }
+            },
+            "order": ["fastq",
+                    "trimming mode",
+                    "adapter sequence",
+                    "number of reads/pairs analysed for length validation",
+                    "reads/pairs removed because of length cutoff",
+                    "minimum required read length",
+                    "quality phred score cutoff",
+                    "quality encoding type",
+                    "minimum required adapter overlap",
+                    "maximum trimming error rate"]
         }
 
 
@@ -115,7 +125,11 @@ inputs:
                 "alias": "reads/pairs suppressed due to multimapping",
                 "function": cut_int,
                 "pair_end_specific": False
-            }
+            },
+            "order": ["total reads/pairs processed",
+                    "reads/pairs with at least one reported alignment",
+                    "reads/pairs suppressed due to multimapping",
+                    "reads/pairs unmapped"]
         }
 
 
@@ -159,7 +173,15 @@ inputs:
                 "alias": "insert size standard deviation",
                 "function": float,
                 "pair_end_specific": False
-            }
+            },
+            "order": ["total reads/pairs",
+                    "reads/pairs mapped",
+                    "reads/pairs unmapped",
+                    "reads average length",
+                    "reads maximum length",
+                    "reads average quality",
+                    "insert size average",
+                    "insert size standard deviation"]
         }
 
 
@@ -188,7 +210,13 @@ inputs:
                 "alias": "redundant rate in treatment",
                 "function": float,
                 "pair_end_specific": False
-            }
+            },
+            "order": ["number of peaks called",
+                    "mean peak size",
+                    "total reads/pairs in treatment",
+                    "reads/pairs after filtering in treatment",
+                    "redundant rate in treatment",
+                    "fraction of reads in peaks"]
         }
 
 
@@ -256,6 +284,8 @@ inputs:
             if collected_results[header]["trimming mode"] == "single-end":
                 collected_results[header]["number of reads/pairs analysed for length validation"] = fastq["total reads processed"]
             collected_results[header]["fastq"].append(fastq)
+            if TRIMGALORE.get("order", None):
+                collected_results[header] = {k: collected_results[header][k] for k in TRIMGALORE["order"] if k in collected_results[header]}
 
 
         def process_custom_report(filepath, collected_results, header, key_dict, pair_end=False):
@@ -272,6 +302,8 @@ inputs:
                             collected_results[header][res_key] = res_function(value)
                 except Exception:
                     pass
+            if key_dict.get("order", None):
+                collected_results[header] = {k: collected_results[header][k] for k in key_dict["order"] if k in collected_results[header]}
 
 
         def process_macs2_xls(filepath, collected_results, header):
@@ -295,11 +327,11 @@ inputs:
             in_treatment = collected_results[header]["reads/pairs after filtering in treatment"]
             mapped = collected_results["BAM statistics after filtering"]["reads/pairs mapped"]
             collected_results[header]["fraction of reads in peaks"] = round(float(in_treatment)/float(mapped),2)
+            if MACS2.get("order", None):
+                collected_results[header] = {k: collected_results[header][k] for k in MACS2["order"] if k in collected_results[header]}
 
 
         def process_preseq_results(filepath, collected_results, header, threashold=0.001):
-            if not collected_results.get(header, None):
-                collected_results[header] = {}
             px, py = 0, 0
             for line in open_file(filepath):
                 if "TOTAL_READS" in line:
@@ -310,7 +342,7 @@ inputs:
                 if dx != 0:
                     angle = math.degrees(math.atan2(dy, dx))
                     if angle <= threashold:
-                        collected_results[header]["maximum library diversity"] = values[0]
+                        collected_results[header] = {"maximum library diversity": values[0]}
                         break
 
 
@@ -332,12 +364,12 @@ inputs:
 
         def export_results_yaml(collected_data, filepath):
             with open(filepath+".yaml", 'w') as output_stream:
-                output_stream.write(yaml.dump(collected_data, width=1000))
+                output_stream.write(yaml.dump(collected_data, width=1000, sort_keys=False))
 
 
         def export_results_markdown(collected_data, filepath):
             with open(filepath+".md", 'w') as output_stream:
-                for line in yaml.dump(collected_data, width=1000).split("\n"):
+                for line in yaml.dump(collected_data, width=1000, sort_keys=False).split("\n"):
                     if not line.strip():
                         continue
                     if line.startswith("  - "):
