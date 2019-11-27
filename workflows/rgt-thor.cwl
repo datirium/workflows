@@ -158,7 +158,8 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bigbed'
+        type: 'annotation'
+        format: 'bigbed'
         name: "Differential peaks"
         height: 120
 
