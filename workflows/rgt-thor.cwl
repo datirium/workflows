@@ -71,6 +71,7 @@ inputs:
 
   merge_peaks:
     type: boolean?
+    default: true
     label: "Merge peaks closer than fragment size"
     doc: "Merge peaks which have a distance less than the estimated mean fragment size (recommended for histone data)"
     'sd:layout':
