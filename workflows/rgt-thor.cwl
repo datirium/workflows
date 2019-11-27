@@ -103,8 +103,9 @@ inputs:
   extension_size:
     type:
       - "null"
+      - string
       - int[]
-    label: "Read's extension size"
+    label: "Comma-separated list of read extension sizes (provide value for every sample)"
     doc: |
       Read's extension size for BAM files (comma separated list for each BAM file in config file).
       If option is not chosen, estimate extension sizes

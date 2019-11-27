@@ -107,6 +107,7 @@ inputs:
   extension_size:
     type:
       - "null"
+      - string
       - int[]
     inputBinding:
       prefix: "--exts"
