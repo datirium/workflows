@@ -100,6 +100,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  no_correction:
+    type: boolean?
+    default: false
+    label: "Skip p-value correction"
+    doc: "Do not use multipe test correction for p-values (Benjamini/Hochberg)"
+    'sd:layout':
+      advanced: true
+
   extension_size:
     type:
       - "null"
@@ -189,6 +197,7 @@ steps:
       deadzones_bed_file: deadzones_bed_file
       pvalue_cutoff: pvalue_cutoff
       extension_size: extension_size
+      no_correction: no_correction
     out:
       - diffpeaks_bed_file
       - cond_1_bigwig_file
