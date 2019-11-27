@@ -126,10 +126,10 @@ outputs:
 
   diffpeaks_bed_file:
     type: File
-    format: "http://edamontology.org/format_3003"
+    format: "http://edamontology.org/format_3004"
     label: "Estimated differential peaks"
-    doc: "Estimated differential peaks"
-    outputSource: thor/diffpeaks_bed_file
+    doc: "Estimated differential peaks, bigBed"
+    outputSource: bed_to_bigbed/bigbed_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -237,6 +237,23 @@ steps:
           cat sorted_iaintersect_result.tsv | paste - thor_result.tsv | cut -f 1-9,15,19-21,24,26-28 >> `basename $0`
           rm sorted_iaintersect_result.tsv thor_result.tsv
     out: [output_file]
+
+  sort_bed:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: thor/diffpeaks_bed_file
+      key:
+        default: ["1,1","2,2n"]
+    out: [sorted_file]
+
+  bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
+    in:
+      input_bed: sort_bed/sorted_file
+      bed_type:
+        default: "bed4+7"
+      chrom_length_file: chrom_length_file
+    out: [bigbed_file]
 
 
 $namespaces:
