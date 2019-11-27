@@ -55,6 +55,22 @@ inputs:
     'sd:upstreamSource': "second_biological_condition/bambai_pair"
     'sd:localLabel': true
 
+  alias_cond_1:
+    type: string?
+    default: "condition_1"
+    label: "Name for condition 1"
+    doc: "Name to be displayed for condition 1"
+    'sd:layout':
+      advanced: true
+
+  alias_cond_2:
+    type: string?
+    default: "condition_2"
+    label: "Name for condition 2"
+    doc: "Name to be displayed for condition 2"
+    'sd:layout':
+      advanced: true
+
   chrom_length_file:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -74,6 +90,14 @@ inputs:
     default: true
     label: "Merge peaks closer than fragment size"
     doc: "Merge peaks which have a distance less than the estimated mean fragment size (recommended for histone data)"
+    'sd:layout':
+      advanced: true
+
+  remove_duplicates:
+    type: boolean?
+    default: true
+    label: "Remove the duplicate reads"
+    doc: "Remove the duplicate reads"
     'sd:layout':
       advanced: true
 
@@ -199,6 +223,7 @@ steps:
       pvalue_cutoff: pvalue_cutoff
       extension_size: extension_size
       no_correction: no_correction
+      remove_duplicates: remove_duplicates
     out:
       - diffpeaks_bed_file
       - cond_1_bigwig_file
@@ -229,11 +254,14 @@ steps:
     run: ../tools/custom-bash.cwl
     in:
       input_file: [assign_genes/result_file, thor/diffpeaks_bed_file]
+      param: [alias_cond_1, alias_cond_2]
       script:
         default: |
+          NAME_1=$2
+          NAME_2=$3
           cat $0 | grep -v "start" | sort -k 11n > sorted_iaintersect_result.tsv
           cat $1 | tr ";" "\t" > thor_result.tsv
-          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tname\tscore\tcondition\tcolor\tcounts-1\tcounts-2\t-log10(pvalue)" > `basename $0`;
+          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tname\tscore\tcondition\tcolor\t${NAME_1}_counts\t${NAME_2}_counts\t-log10(pvalue)" > `basename $0`;
           cat sorted_iaintersect_result.tsv | paste - thor_result.tsv | cut -f 1-9,15,19-21,24,26-28 >> `basename $0`
           rm sorted_iaintersect_result.tsv thor_result.tsv
     out: [output_file]
