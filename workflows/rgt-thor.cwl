@@ -95,7 +95,7 @@ inputs:
 
   remove_duplicates:
     type: boolean?
-    default: true
+    default: false
     label: "Remove the duplicate reads"
     doc: "Remove the duplicate reads"
     'sd:layout':
@@ -122,6 +122,14 @@ inputs:
     default: 0.1
     label: "P-value cutoff for peak detection"
     doc: "P-value cutoff for peak detection. Call only peaks with p-value lower than cutoff. [default: 0.1]"
+    'sd:layout':
+      advanced: true
+
+  bin_size:
+    type: int?
+    default: 100
+    label: "Size of underlying bins for creating the signal"
+    doc: "Size of underlying bins for creating the signal"
     'sd:layout':
       advanced: true
 
@@ -225,6 +233,7 @@ steps:
       extension_size: extension_size
       no_correction: no_correction
       remove_duplicates: remove_duplicates
+      bin_size: bin_size
     out:
       - diffpeaks_bed_file
       - cond_1_bigwig_file
