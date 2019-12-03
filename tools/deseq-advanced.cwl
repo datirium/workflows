@@ -39,7 +39,7 @@ inputs:
       position: 7
       prefix: "-un"
     doc: |
-      Suffix for untreated RPKM column name
+      Name for untreated condition, use only letters and numbers
 
   treated_name:
     type: string?
@@ -47,7 +47,7 @@ inputs:
       position: 8
       prefix: "-tn"
     doc: |
-      Suffix for treated RPKM column name
+      Name for treated condition, use only letters and numbers
 
   output_filename:
     type: string
