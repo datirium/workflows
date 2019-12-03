@@ -67,6 +67,22 @@ inputs:
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
 
+  alias_cond_1:
+    type: string?
+    default: "untreated"
+    label: "Alias for condition 1, aka 'untreated' (letters and numbers only)"
+    doc: "Name to be displayed for condition 1, aka 'untreated' (letters and numbers only)"
+    'sd:layout':
+      advanced: true
+
+  alias_cond_2:
+    type: string?
+    default: "treated"
+    label: "Alias for condition 2, aka 'treated' (letters and numbers only)"
+    doc: "Name to be displayed for condition 2, aka 'treated' (letters and numbers only)"
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
     label: "Number of threads"
@@ -166,6 +182,8 @@ steps:
           }
       output_filename:
         default: "deseq_results.tsv"
+      untreated_name: alias_cond_1
+      treated_name: alias_cond_2
       threads: threads
     out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap]
 

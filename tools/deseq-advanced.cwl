@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.8
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.9
 
 
 inputs:
@@ -33,7 +33,7 @@ inputs:
     doc: |
       Treated input CSV/TSV files
 
-  untreated_col_suffix:
+  untreated_name:
     type: string?
     inputBinding:
       position: 7
@@ -41,7 +41,7 @@ inputs:
     doc: |
       Suffix for untreated RPKM column name
 
-  treated_col_suffix:
+  treated_name:
     type: string?
     inputBinding:
       position: 8

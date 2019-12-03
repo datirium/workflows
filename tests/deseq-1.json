@@ -33,5 +33,7 @@
       "format": "http://edamontology.org/format_3752"
     }
   ],
+  "alias_cond_1": "alpha",
+  "alias_cond_2": "beta",
   "alias": "alias"
 }
