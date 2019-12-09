@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.1
+  dockerPull: biowardrobe2/diffbind:v0.0.2
 
 
 inputs:
@@ -13,25 +13,25 @@ inputs:
     type: File[]
     inputBinding:
       prefix: "-r1"
-    doc: "Read files for condition 1. Minimim 2 files in BAM format"
+    doc: "Read files for condition 1"
 
   read_files_cond_2:
     type: File[]
     inputBinding:
       prefix: "-r2"
-    doc: "Read files for condition 2. Minimim 2 files in BAM format"
+    doc: "Read files for condition 2"
 
   peak_files_cond_1:
     type: File[]
     inputBinding:
       prefix: "-p1"
-    doc: "Peak files for condition 1. Minimim 2 files in format set with -pf"
+    doc: "Peak files for condition 1. Format corresponds to -pf"
 
   peak_files_cond_2:
     type: File[]
     inputBinding:
       prefix: "-p2"
-    doc: "Peak files for condition 2. Minimim 2 files in format set with -pf"
+    doc: "Peak files for condition 2. Format corresponds to -pf"
 
   sample_names_cond_1:
     type:
@@ -71,6 +71,28 @@ inputs:
       prefix: "-c2"
     doc: "Condition 2 name, single word with letters and numbers only. Default: condition_2"
 
+  fragmentsize:
+    type: int?
+    inputBinding:
+      prefix: "-fs"
+    doc: "Extended each read from its endpoint along the appropriate strand. Default: 125bp"
+
+  remove_duplicates:
+    type: boolean?
+    inputBinding:
+      prefix: "-rd"
+    doc: "Remove reads that map to exactly the same genomic position. Default: false"
+
+  analysis_method:
+    type:
+      - "null"
+      - type: enum
+        name: "method"
+        symbols: ["deseq2", "edger"]
+    inputBinding:
+      prefix: "-me"
+    doc: "Method by which to analyze differential binding affinity. Default: deseq2"
+
   output_prefix:
     type: string?
     inputBinding:
@@ -85,6 +107,60 @@ outputs:
     outputBinding:
       glob: "*_diffpeaks.tsv"
     doc: "Differential binding analysis results exported as TSV"
+
+  peak_correlation_heatmap:
+    type: File
+    outputBinding:
+      glob: "*_peak_overlap_correlation_heatmap.png"
+    doc: "Peak overlap correlation heatmap"
+
+  counts_correlation_heatmap:
+    type: File
+    outputBinding:
+      glob: "*_counts_correlation_heatmap.png"
+    doc: "Counts correlation heatmap"
+
+  all_data_correlation_heatmap:
+    type: File
+    outputBinding:
+      glob: "*_correlation_heatmap_based_on_all_normalized_data.png"
+    doc: "Correlation heatmap based on all normalized data"
+
+  db_sites_correlation_heatmap:
+    type: File
+    outputBinding:
+      glob: "*_correlation_heatmap_based_on_db_sites_only.png"
+    doc: "Correlation heatmap based on DB sites only"
+
+  db_sites_binding_heatmap:
+    type: File
+    outputBinding:
+      glob: "*_binding_heatmap_based_on_db_sites.png"
+    doc: "Binding heatmap based on DB sites"
+
+  pca_plot:
+    type: File
+    outputBinding:
+      glob: "*_pca.png"
+    doc: "PCA plot using affinity data for only differentially bound sites"
+
+  ma_plot:
+    type: File
+    outputBinding:
+      glob: "*_ma.png"
+    doc: "MA plot for tested conditions"
+
+  volcano_plot:
+    type: File
+    outputBinding:
+      glob: "*_volcano.png"
+    doc: "Volcano plot for tested conditions"
+
+  boxplot_plot:
+    type: File
+    outputBinding:
+      glob: "*_boxplot.png"
+    doc: "Box plots of read distributions for significantly differentially bound (DB) sites"
 
   stdout_log:
     type: stdout
@@ -151,9 +227,11 @@ s:about: |
         -p2 PEAK2 [PEAK2 ...] [-n1 [NAME1 [NAME1 ...]]]
         [-n2 [NAME2 [NAME2 ...]]]
         [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
-        [-c1 CONDITION1] [-c2 CONDITION2] [-o OUTPUT]
+        [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
+        [-me {edger,deseq2}] [-o OUTPUT]
 
-  Differential binding analysis of ChIP-Seq peak data
+  Differential binding analysis of ChIP-Seq experiments using affinity (read
+  count) data
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -185,5 +263,12 @@ s:about: |
     -c2 CONDITION2, --condition2 CONDITION2
                           Condition 2 name, single word with letters and numbers
                           only. Default: condition_2
+    -fs FRAGMENTSIZE, --fragmentsize FRAGMENTSIZE
+                          Extended each read from its endpoint along the
+                          appropriate strand. Default: 125bp
+    -rd, --removedup      Remove reads that map to exactly the same genomic
+                          position. Default: false
+    -me {edger,deseq2}, --method {edger,deseq2}
+                          Method by which to analyze differential binding
+                          affinity. Default: deseq2
     -o OUTPUT, --output OUTPUT
-                          Output prefix. Default: diffbind

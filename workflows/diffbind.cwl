@@ -79,6 +79,50 @@ inputs:
     'sd:layout':
       advanced: true
 
+  sample_names_cond_1:
+    type:
+      - "null"
+      - string[]
+    label: "Biological condition 1 sample names"
+    doc: "Aliases for biological condition 1 samples to make the legend for generated plots. Order corresponds to the read_files_cond_1"
+    'sd:upstreamSource': "first_biological_condition/alias"
+
+  sample_names_cond_2:
+    type:
+      - "null"
+      - string[]
+    label: "Biological condition 2 sample names"
+    doc: "Aliases for biological condition 2 samples to make the legend for generated plots. Order corresponds to the read_files_cond_2"
+    'sd:upstreamSource': "second_biological_condition/alias"
+
+  fragmentsize:
+    type: int?
+    default: 125
+    label: "Reads extension size, bp"
+    doc: "Extended each read from its endpoint along the appropriate strand. Default: 125bp"
+    'sd:layout':
+      advanced: true
+
+  remove_duplicates:
+    type: boolean?
+    default: false
+    label: "Remove duplicated reads"
+    doc: "Remove reads that map to exactly the same genomic position. Default: false"
+    'sd:layout':
+      advanced: true
+
+  analysis_method:
+    type:
+      - "null"
+      - type: enum
+        name: "method"
+        symbols: ["deseq2", "edger"]
+    default: "deseq2"
+    label: "Analysis method"
+    doc: "Method by which to analyze differential binding affinity. Default: deseq2"
+    'sd:layout':
+      advanced: true
+
 
 outputs:
 
@@ -92,6 +136,69 @@ outputs:
       - syncfusiongrid:
           tab: 'Differential Peak Calling'
           Title: 'Differential Binding Analysis Results'
+
+  diffbind_peak_correlation_heatmap:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Peak overlap correlation heatmap"
+    doc: "Peak overlap correlation heatmap"
+    outputSource: diffbind/peak_correlation_heatmap
+    
+  diffbind_counts_correlation_heatmap:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Counts correlation heatmap"
+    doc: "Counts correlation heatmap"
+    outputSource: diffbind/counts_correlation_heatmap
+
+  diffbind_all_data_correlation_heatmap:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Correlation heatmap based on all normalized data"
+    doc: "Correlation heatmap based on all normalized data"
+    outputSource: diffbind/all_data_correlation_heatmap
+
+  diffbind_db_sites_correlation_heatmap:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Correlation heatmap based on DB sites only"
+    doc: "Correlation heatmap based on DB sites only"
+    outputSource: diffbind/db_sites_correlation_heatmap
+
+  diffbind_db_sites_binding_heatmap:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Binding heatmap based on DB sites"
+    doc: "Binding heatmap based on DB sites"
+    outputSource: diffbind/db_sites_binding_heatmap
+
+  diffbind_pca_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "PCA plot using affinity data for only differentially bound sites"
+    doc: "PCA plot using affinity data for only differentially bound sites"
+    outputSource: diffbind/pca_plot    
+
+  diffbind_ma_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "MA plot for tested conditions"
+    doc: "MA plot for tested conditions"
+    outputSource: diffbind/ma_plot    
+
+  diffbind_volcano_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Volcano plot for tested conditions"
+    doc: "Volcano plot for tested conditions"
+    outputSource: diffbind/volcano_plot    
+
+  diffbind_boxplot_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Box plots of read distributions for significantly differentially bound (DB) sites"
+    doc: "Box plots of read distributions for significantly differentially bound (DB) sites"
+    outputSource: diffbind/boxplot_plot   
 
   diffbind_stdout_log:
     type: File
@@ -119,14 +226,25 @@ steps:
       peak_files_cond_2: peak_files_cond_2
       name_cond_1: name_cond_1
       name_cond_2: name_cond_2
+      sample_names_cond_1: sample_names_cond_1
+      sample_names_cond_2: sample_names_cond_2
       peakformat:
         default: "macs"
     out:
       - diffbind_report_file
+      - peak_correlation_heatmap
+      - counts_correlation_heatmap
+      - all_data_correlation_heatmap
+      - db_sites_correlation_heatmap
+      - db_sites_binding_heatmap
+      - pca_plot
+      - ma_plot
+      - volcano_plot
+      - boxplot_plot
       - stdout_log
       - stderr_log
 
-
+      
 $namespaces:
   s: http://schema.org/
 
