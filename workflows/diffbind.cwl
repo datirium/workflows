@@ -143,13 +143,21 @@ outputs:
     label: "Peak overlap correlation heatmap"
     doc: "Peak overlap correlation heatmap"
     outputSource: diffbind/peak_correlation_heatmap
-    
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Peak overlap correlation heatmap'
+
   diffbind_counts_correlation_heatmap:
     type: File
     format: "http://edamontology.org/format_3603"
     label: "Counts correlation heatmap"
     doc: "Counts correlation heatmap"
     outputSource: diffbind/counts_correlation_heatmap
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Counts correlation heatmap'
 
   diffbind_all_data_correlation_heatmap:
     type: File
@@ -157,6 +165,10 @@ outputs:
     label: "Correlation heatmap based on all normalized data"
     doc: "Correlation heatmap based on all normalized data"
     outputSource: diffbind/all_data_correlation_heatmap
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Correlation heatmap based on all normalized data'
 
   diffbind_db_sites_correlation_heatmap:
     type: File
@@ -164,6 +176,10 @@ outputs:
     label: "Correlation heatmap based on DB sites only"
     doc: "Correlation heatmap based on DB sites only"
     outputSource: diffbind/db_sites_correlation_heatmap
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Correlation heatmap based on DB sites only'
 
   diffbind_db_sites_binding_heatmap:
     type: File
@@ -171,6 +187,10 @@ outputs:
     label: "Binding heatmap based on DB sites"
     doc: "Binding heatmap based on DB sites"
     outputSource: diffbind/db_sites_binding_heatmap
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Binding heatmap based on DB sites'
 
   diffbind_pca_plot:
     type: File
@@ -178,6 +198,10 @@ outputs:
     label: "PCA plot using affinity data for only differentially bound sites"
     doc: "PCA plot using affinity data for only differentially bound sites"
     outputSource: diffbind/pca_plot    
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'PCA plot using affinity data for only differentially bound sites'
 
   diffbind_ma_plot:
     type: File
@@ -185,6 +209,10 @@ outputs:
     label: "MA plot for tested conditions"
     doc: "MA plot for tested conditions"
     outputSource: diffbind/ma_plot    
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'MA plot for tested conditions'
 
   diffbind_volcano_plot:
     type: File
@@ -192,6 +220,10 @@ outputs:
     label: "Volcano plot for tested conditions"
     doc: "Volcano plot for tested conditions"
     outputSource: diffbind/volcano_plot    
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Volcano plot for tested conditions'
 
   diffbind_boxplot_plot:
     type: File
@@ -199,6 +231,10 @@ outputs:
     label: "Box plots of read distributions for significantly differentially bound (DB) sites"
     doc: "Box plots of read distributions for significantly differentially bound (DB) sites"
     outputSource: diffbind/boxplot_plot   
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Box plots of read distributions for significantly differentially bound (DB) sites'
 
   diffbind_stdout_log:
     type: File
