@@ -123,6 +123,13 @@ inputs:
     'sd:layout':
       advanced: true
 
+  threads:
+    type: int?
+    label: "Number of threads"
+    doc: "Number of threads for those steps that support multithreading"
+    'sd:layout':
+      advanced: true
+
 
 outputs:
 
@@ -264,6 +271,7 @@ steps:
       name_cond_2: name_cond_2
       sample_names_cond_1: sample_names_cond_1
       sample_names_cond_2: sample_names_cond_2
+      threads: threads
       peakformat:
         default: "macs"
     out:

@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.2
+  dockerPull: biowardrobe2/diffbind:v0.0.3
 
 
 inputs:
@@ -98,6 +98,12 @@ inputs:
     inputBinding:
       prefix: "--output"
     doc: "Output prefix. Default: diffbind"
+
+  threads:
+    type: int?
+    inputBinding:
+      prefix: "-th"
+    doc: "Threads number. Default: 1"
 
 
 outputs:
@@ -228,7 +234,7 @@ s:about: |
         [-n2 [NAME2 [NAME2 ...]]]
         [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
         [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
-        [-me {edger,deseq2}] [-o OUTPUT]
+        [-me {edger,deseq2}] [-th THREADS] [-o OUTPUT]
 
   Differential binding analysis of ChIP-Seq experiments using affinity (read
   count) data
@@ -271,4 +277,7 @@ s:about: |
     -me {edger,deseq2}, --method {edger,deseq2}
                           Method by which to analyze differential binding
                           affinity. Default: deseq2
+    -th THREADS, --threads THREADS
+                          Threads to use
     -o OUTPUT, --output OUTPUT
+                          Output prefix. Default: diffbind
