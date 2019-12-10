@@ -114,8 +114,8 @@ inputs:
   pvalue_cutoff:
     type: float?
     default: 0.05
-    label: "P-value cutoff for reported results. Default: 0.05"
-    doc: "P-value cutoff for reported results. Default: 0.05"
+    label: "P-value cutoff for reported results"
+    doc: "P-value cutoff for reported results"
     'sd:layout':
       advanced: true
 
