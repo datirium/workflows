@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.4
+  dockerPull: biowardrobe2/diffbind:v0.0.5
 
 
 inputs:
@@ -76,6 +76,12 @@ inputs:
     inputBinding:
       prefix: "-fs"
     doc: "Extended each read from its endpoint along the appropriate strand. Default: 125bp"
+
+  pvalue_cutoff:
+    type: float?
+    inputBinding:
+      prefix: "-cu"
+    doc: "P-value cutoff for reported results. Default: 0.05"
 
   remove_duplicates:
     type: boolean?
@@ -234,7 +240,8 @@ s:about: |
         [-n2 [NAME2 [NAME2 ...]]]
         [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
         [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
-        [-me {edger,deseq2}] [-th THREADS] [-o OUTPUT]
+        [-me {edger,deseq2}] [-cu CUTOFF] [-th THREADS] [-pa PADDING]
+        [-o OUTPUT]
 
   Differential binding analysis of ChIP-Seq experiments using affinity (read
   count) data
@@ -277,7 +284,11 @@ s:about: |
     -me {edger,deseq2}, --method {edger,deseq2}
                           Method by which to analyze differential binding
                           affinity. Default: deseq2
+    -cu CUTOFF, --cutoff CUTOFF
+                          P-value cutoff for reported results. Default: 0.05
     -th THREADS, --threads THREADS
                           Threads to use
+    -pa PADDING, --padding PADDING
+                          Padding for generated heatmaps. Default: 20
     -o OUTPUT, --output OUTPUT
                           Output prefix. Default: diffbind

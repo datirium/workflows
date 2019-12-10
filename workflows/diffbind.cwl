@@ -111,6 +111,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  pvalue_cutoff:
+    type: float?
+    default: 0.05
+    label: "P-value cutoff for reported results. Default: 0.05"
+    doc: "P-value cutoff for reported results. Default: 0.05"
+    'sd:layout':
+      advanced: true
+
   analysis_method:
     type:
       - "null"
@@ -272,6 +280,7 @@ steps:
       name_cond_2: name_cond_2
       sample_names_cond_1: sample_names_cond_1
       sample_names_cond_2: sample_names_cond_2
+      pvalue_cutoff: pvalue_cutoff
       threads: threads
       peakformat:
         default: "macs"
