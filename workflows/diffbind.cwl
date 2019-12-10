@@ -111,11 +111,23 @@ inputs:
     'sd:layout':
       advanced: true
 
-  pvalue_cutoff:
+  cutoff_value:
     type: float?
     default: 0.05
-    label: "P-value cutoff for reported results"
-    doc: "P-value cutoff for reported results"
+    label: "P-value or FDR cutoff for reported results"
+    doc: "P-value or FDR cutoff for reported results"
+    'sd:layout':
+      advanced: true
+
+  cutoff_param:
+    type:
+      - "null"
+      - type: enum
+        name: "cutoff"
+        symbols: ["pvalue", "fdr"]
+    default: "fdr"
+    label: "Parameter to which cutoff should be applied"
+    doc: "Parameter to which cutoff should be applied (fdr or pvalue). Default: fdr"
     'sd:layout':
       advanced: true
 
@@ -280,7 +292,8 @@ steps:
       name_cond_2: name_cond_2
       sample_names_cond_1: sample_names_cond_1
       sample_names_cond_2: sample_names_cond_2
-      pvalue_cutoff: pvalue_cutoff
+      cutoff_value: cutoff_value
+      cutoff_param: cutoff_param
       threads: threads
       peakformat:
         default: "macs"

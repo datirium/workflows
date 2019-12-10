@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.5
+  dockerPull: biowardrobe2/diffbind:v0.0.6
 
 
 inputs:
@@ -77,11 +77,21 @@ inputs:
       prefix: "-fs"
     doc: "Extended each read from its endpoint along the appropriate strand. Default: 125bp"
 
-  pvalue_cutoff:
+  cutoff_value:
     type: float?
     inputBinding:
       prefix: "-cu"
-    doc: "P-value cutoff for reported results. Default: 0.05"
+    doc: "P-value or FDR cutoff for reported results. Default: 0.05"
+
+  cutoff_param:
+    type:
+      - "null"
+      - type: enum
+        name: "cutoff"
+        symbols: ["pvalue", "fdr"]
+    inputBinding:
+      prefix: "-cp"
+    doc: "Parameter to which cutoff should be applied (fdr or pvalue). Default: fdr"
 
   remove_duplicates:
     type: boolean?
@@ -240,8 +250,8 @@ s:about: |
         [-n2 [NAME2 [NAME2 ...]]]
         [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
         [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
-        [-me {edger,deseq2}] [-cu CUTOFF] [-th THREADS] [-pa PADDING]
-        [-o OUTPUT]
+        [-me {edger,deseq2}] [-cu CUTOFF] [-cp {pvalue,fdr}] [-th THREADS]
+        [-pa PADDING] [-o OUTPUT]
 
   Differential binding analysis of ChIP-Seq experiments using affinity (read
   count) data
@@ -285,7 +295,11 @@ s:about: |
                           Method by which to analyze differential binding
                           affinity. Default: deseq2
     -cu CUTOFF, --cutoff CUTOFF
-                          P-value cutoff for reported results. Default: 0.05
+                          Cutoff for reported results. Applied to the parameter
+                          set with -cp. Default: 0.05
+    -cp {pvalue,fdr}, --cparam {pvalue,fdr}
+                          Parameter to which cutoff should be applied (fdr or
+                          pvalue). Default: fdr
     -th THREADS, --threads THREADS
                           Threads to use
     -pa PADDING, --padding PADDING
