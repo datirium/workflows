@@ -36,7 +36,7 @@ inputs:
   read_files_cond_1:
     type: File[]
     format: "http://edamontology.org/format_2572"
-    label: "Biological condition 1 samples"
+    label: "Biological condition 1 samples. Minimum 2 samples"
     doc: "Read files for condition 1. Minimim 2 files in BAM format"
     'sd:upstreamSource': "first_biological_condition/bambai_pair"
     'sd:localLabel': true
@@ -44,7 +44,7 @@ inputs:
   read_files_cond_2:
     type: File[]
     format: "http://edamontology.org/format_2572"
-    label: "Biological condition 2 samples"
+    label: "Biological condition 2 samples. Minimum 2 samples"
     doc: "Read files for condition 2. Minimim 2 files in BAM format"
     'sd:upstreamSource': "second_biological_condition/bambai_pair"
     'sd:localLabel': true
@@ -52,14 +52,14 @@ inputs:
   peak_files_cond_1:
     type: File[]
     format: "http://edamontology.org/format_3468"
-    label: "Biological condition 1 samples"
+    label: "Biological condition 1 samples. Minimum 2 samples"
     doc: "XLS peak files for condition 1 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_1"
     'sd:upstreamSource': "first_biological_condition/macs2_called_peaks"
 
   peak_files_cond_2:
     type: File[]
     format: "http://edamontology.org/format_3468"
-    label: "Biological condition 2 samples"
+    label: "Biological condition 2 samples. Minimum 2 samples"
     doc: "XLS peak files for condition 2 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_2"
     'sd:upstreamSource': "second_biological_condition/macs2_called_peaks"
 
