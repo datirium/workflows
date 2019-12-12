@@ -166,7 +166,7 @@ outputs:
           Title: 'Differential Binding Analysis Results'
 
   diffbind_peak_correlation_heatmap:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Peak overlap correlation heatmap"
     doc: "Peak overlap correlation heatmap"
@@ -177,7 +177,7 @@ outputs:
           Caption: 'Peak overlap correlation heatmap'
 
   diffbind_counts_correlation_heatmap:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Counts correlation heatmap"
     doc: "Counts correlation heatmap"
@@ -188,7 +188,7 @@ outputs:
           Caption: 'Counts correlation heatmap'
 
   diffbind_all_data_correlation_heatmap:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Correlation heatmap based on all normalized data"
     doc: "Correlation heatmap based on all normalized data"
@@ -199,7 +199,7 @@ outputs:
           Caption: 'Correlation heatmap based on all normalized data'
 
   diffbind_db_sites_correlation_heatmap:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Correlation heatmap based on DB sites only"
     doc: "Correlation heatmap based on DB sites only"
@@ -210,7 +210,7 @@ outputs:
           Caption: 'Correlation heatmap based on DB sites only'
 
   diffbind_db_sites_binding_heatmap:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Binding heatmap based on DB sites"
     doc: "Binding heatmap based on DB sites"
@@ -221,7 +221,7 @@ outputs:
           Caption: 'Binding heatmap based on DB sites'
 
   diffbind_pca_plot:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "PCA plot using affinity data for only differentially bound sites"
     doc: "PCA plot using affinity data for only differentially bound sites"
@@ -232,7 +232,7 @@ outputs:
           Caption: 'PCA plot using affinity data for only differentially bound sites'
 
   diffbind_ma_plot:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "MA plot for tested conditions"
     doc: "MA plot for tested conditions"
@@ -243,7 +243,7 @@ outputs:
           Caption: 'MA plot for tested conditions'
 
   diffbind_volcano_plot:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Volcano plot for tested conditions"
     doc: "Volcano plot for tested conditions"
@@ -254,7 +254,7 @@ outputs:
           Caption: 'Volcano plot for tested conditions'
 
   diffbind_boxplot_plot:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "Box plots of read distributions for significantly differentially bound (DB) sites"
     doc: "Box plots of read distributions for significantly differentially bound (DB) sites"

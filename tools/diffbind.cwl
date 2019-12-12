@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.6
+  dockerPull: biowardrobe2/diffbind:v0.0.7
 
 
 inputs:
@@ -131,55 +131,55 @@ outputs:
     doc: "Differential binding analysis results exported as TSV"
 
   peak_correlation_heatmap:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_peak_overlap_correlation_heatmap.png"
     doc: "Peak overlap correlation heatmap"
 
   counts_correlation_heatmap:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_counts_correlation_heatmap.png"
     doc: "Counts correlation heatmap"
 
   all_data_correlation_heatmap:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_correlation_heatmap_based_on_all_normalized_data.png"
     doc: "Correlation heatmap based on all normalized data"
 
   db_sites_correlation_heatmap:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_correlation_heatmap_based_on_db_sites_only.png"
     doc: "Correlation heatmap based on DB sites only"
 
   db_sites_binding_heatmap:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_binding_heatmap_based_on_db_sites.png"
     doc: "Binding heatmap based on DB sites"
 
   pca_plot:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_pca.png"
     doc: "PCA plot using affinity data for only differentially bound sites"
 
   ma_plot:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_ma.png"
     doc: "MA plot for tested conditions"
 
   volcano_plot:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_volcano.png"
     doc: "Volcano plot for tested conditions"
 
   boxplot_plot:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_boxplot.png"
     doc: "Box plots of read distributions for significantly differentially bound (DB) sites"
