@@ -627,7 +627,7 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
-
+    estimated_fragment_size: 150
 
 # ========================================================
 # trim-chipseq-pe
@@ -709,6 +709,7 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
+    estimated_fragment_size: 160
 
 # ========================================================
 # trim-atacseq-se
@@ -784,6 +785,7 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
+    estimated_fragment_size: 150
 
 # ========================================================
 # trim-atacseq-pe
@@ -865,6 +867,7 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
+    estimated_fragment_size: 160
 
 # ========================================================
 # trim-chipseq-pe-cut-n-run
@@ -1346,7 +1349,7 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
-
+    estimated_fragment_size: 150
 
 # ========================================================
 # chipseq-pe
@@ -1422,6 +1425,7 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
+    estimated_fragment_size: 156
 
 # ========================================================
 # rnaseq-se-dutp

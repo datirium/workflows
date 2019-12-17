@@ -405,6 +405,13 @@ outputs:
         height: 500
         data: [$1, $2]
 
+  estimated_fragment_size:
+    type: int
+    label: "Estimated fragment size"
+    doc: "Estimated fragment size for downstream analyses"
+    outputSource: macs2_callpeak/macs2_fragments_calculated
+
+    
 steps:
 
   extract_fastq_upstream:
