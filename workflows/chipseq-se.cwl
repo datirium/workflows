@@ -310,6 +310,13 @@ outputs:
     doc: "Estimated fragment size for downstream analyses"
     outputSource: macs2_callpeak/macs2_fragments_calculated
 
+  mapped_reads_number:
+    type: int
+    label: "Mapped reads number"
+    doc: "Mapped reads number for downstream analyses"
+    outputSource: get_statistics/mapped_reads
+
+
 steps:
 
   extract_fastq:
