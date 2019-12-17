@@ -1112,7 +1112,10 @@
   tool: ../workflows/heatmap.cwl
   output:
     heatmap_file:
-    - location: chr4_100_mapped_reads.Aligned.out.json
+      location: chr4_heatmap.tsv
+      class: File
+    histogram_file:
+      location: chr4_histogram.tsv
       class: File
 
 # ========================================================

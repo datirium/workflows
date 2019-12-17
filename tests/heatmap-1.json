@@ -1,5 +1,5 @@
 {
-  "bam_file": [
+  "alignment_file": [
     {
       "class": "File",
       "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
@@ -7,10 +7,10 @@
     }],
   "genelist_file": {
     "class": "File",
-    "location": "./data/dm3_chr4/generated_inputs/genelist/chr4.isoforms.genelist.tsv",
-    "format": "http://edamontology.org/format_3475"
+    "location": "./data/dm3_chr4/generated_inputs/genelist/chr4.isoforms.genelist.bed",
+    "format": "http://edamontology.org/format_3585"
   },
   "fragment_size": [150],
-  "total_reads": [94],
+  "mapped_reads_number": [94],
   "alias": "alias"
 }
