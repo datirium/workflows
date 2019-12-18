@@ -1117,7 +1117,7 @@
     heatmap_png:
       location: chr4_heatmap.png
       class: File
-      histogram_tsv:
+    histogram_tsv:
       location: chr4_histogram.tsv
       class: File
 
