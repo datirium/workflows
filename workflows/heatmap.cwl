@@ -38,6 +38,14 @@ inputs:
     'sd:upstreamSource': "chipseq_sample/bambai_pair"
     'sd:localLabel': true
 
+  alignment_name:
+    type:
+      - "null"
+      - string[]
+    label: "ChIP-Seq experiment(s)"
+    doc: "Names for input alignment files. Order corresponds to the alignment_file"
+    'sd:upstreamSource': "chipseq_sample/alias"
+
   genelist_file:
     type: File
     format: "http://edamontology.org/format_3585"
@@ -83,14 +91,23 @@ inputs:
 
 outputs:
 
-  heatmap_file:
+  heatmap_cdt:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "TSS centered heatmap"
     doc: "TSS centered heatmap"
     outputSource: make_tss_heatmap/histogram_file
+  
+  heatmap_png:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    outputSource: make_preview/heatmap_png
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'TSS centered heatmap'
 
-  histogram_file:
+  histogram_tsv:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "TSS centered histogram"
@@ -128,7 +145,7 @@ steps:
       threads: threads
       histogram_filename:
         source: genelist_file
-        valueFrom: $(get_root(self.basename)+"_heatmap.tsv")
+        valueFrom: $(get_root(self.basename)+"_heatmap.cdt")
     out: [histogram_file]
 
   make_tss_histogram:
@@ -146,6 +163,80 @@ steps:
         valueFrom: $(get_root(self.basename)+"_histogram.tsv")
     out: [histogram_file]
 
+  make_preview:
+    in:
+      heatmap_file: make_tss_heatmap/histogram_file
+      column_names: alignment_name
+      output_name:
+        source: genelist_file
+        valueFrom: $(get_root(self.basename)+"_heatmap.png")
+    out: [heatmap_png]
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/hopach:v0.0.6
+      - class: InitialWorkDirRequirement
+        listing:
+          - entryname: preview.R
+            entry: |
+              #!/usr/bin/env Rscript
+              options(warn=-1)
+              options("width"=300)
+              suppressMessages(library(argparse))
+              suppressMessages(library(RColorBrewer))
+              suppressMessages(library(pheatmap))
+              parser <- ArgumentParser(description='Heatmap')
+              parser$add_argument("--input",           help='Input CDT file', type="character", required="True")
+              parser$add_argument("--name",            help='Input aliases, the order and number corresponds to --input', type="character", required="True", nargs='+')
+              parser$add_argument("--palette",         help='Palette color names. Default: black, yellow, white',         type="character", nargs='+', default=c("black", "yellow", "white"))
+              parser$add_argument("--output",          help='Output prefix. Default: heatmap', type="character", default="./heatmap.png")
+              args <- parser$parse_args(commandArgs(trailingOnly = TRUE))
+              raw_data <- read.table(args$input, sep="\t", header=TRUE, stringsAsFactors=FALSE)
+              corrected_data <- raw_data[,-1]
+              rownames(corrected_data) <- raw_data[,1]
+              print("Centering by mean")
+              corrected_data = corrected_data - rowMeans(corrected_data)    
+              print("Normalizing")
+              std = sqrt(rowSums(corrected_data^2))
+              corrected_data = corrected_data/std
+              corrected_data = replace(corrected_data, is.na(corrected_data), 0)
+              pheatmap(data.matrix(corrected_data),
+                      cluster_row=FALSE,
+                      cluster_cols=FALSE,
+                      treeheight_col = 0,
+                      main = "Heatmap preview",
+                      color=colorRampPalette(args$palette)(n = 299),
+                      scale="none",
+                      border_color=FALSE,
+                      show_rownames=FALSE,
+                      labels_col=args$name,
+                      angle_col=0,
+                      filename=args$output)
+              print(paste("Export heatmap to ", args$output, sep=""))
+      inputs:
+        heatmap_file:
+          type: File
+          inputBinding:
+            prefix: "--input"
+            position: 1
+        column_names:
+          type: string[]
+          inputBinding:
+            prefix: "--name"
+            position: 2
+        output_name:
+          type: string
+          inputBinding:
+            prefix: "--output"
+            position: 3
+      outputs:
+        heatmap_png:
+          type: File
+          outputBinding:
+            glob: "*.png"
+      baseCommand: ["Rscript", "preview.R"]
 
 
 $namespaces:
