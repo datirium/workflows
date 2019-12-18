@@ -113,7 +113,15 @@ outputs:
     label: "TSS centered histogram"
     doc: "TSS centered histogram"
     outputSource: make_tss_histogram/histogram_file
-
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'Plots'
+        Title: 'Average Tag Density'
+        xAxisTitle: 'Distance From TSS (bases)'
+        yAxisTitle: 'Average Tag Density (per bp)'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        height: 500
+        data: [$1, $2, $5, $8, $11, $14]
 
 steps:
 
