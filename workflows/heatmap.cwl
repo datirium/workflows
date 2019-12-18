@@ -114,7 +114,7 @@ outputs:
     doc: "TSS centered histogram"
     outputSource: make_tss_histogram/histogram_file
     'sd:visualPlugins':
-    - scatter:
+    - line:
         tab: 'Plots'
         Title: 'Average Tag Density'
         xAxisTitle: 'Distance From TSS (bases)'
