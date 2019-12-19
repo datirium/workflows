@@ -1111,14 +1111,17 @@
 - job: ./heatmap-1.json
   tool: ../workflows/heatmap.cwl
   output:
-    heatmap_cdt:
+    heatmap_table:
       location: chr4_heatmap.cdt
       class: File
-    heatmap_png:
+    heatmap_plot:
       location: chr4_heatmap.png
       class: File
-    histogram_tsv:
+    histogram_table:
       location: chr4_histogram.tsv
+      class: File
+    histogram_plot:
+      location: chr4_histogram.png
       class: File
 
 # ========================================================

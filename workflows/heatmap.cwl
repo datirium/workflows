@@ -91,37 +91,42 @@ inputs:
 
 outputs:
 
-  heatmap_cdt:
+  heatmap_table:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "TSS centered heatmap"
-    doc: "TSS centered heatmap"
+    label: "TSS centered heatmap as TSV"
+    doc: "TSS centered heatmap as TSV"
     outputSource: make_tss_heatmap/histogram_file
   
-  heatmap_png:
+  heatmap_plot:
     type: File
     format: "http://edamontology.org/format_3603"
-    outputSource: make_preview/heatmap_png
+    label: "TSS centered heatmap as PNG"
+    doc: "TSS centered heatmap as PNG"
+    outputSource: preview_heatmap/heatmap_png
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
-        Caption: 'TSS centered heatmap'
+        Caption: 'TSS Centered Heatmap'
 
-  histogram_tsv:
+  histogram_table:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "TSS centered histogram"
-    doc: "TSS centered histogram"
-    outputSource: make_tss_histogram/histogram_file
-    # 'sd:visualPlugins':
-    # - scatter:
-    #     tab: 'Plots'
-    #     Title: 'Average Tag Density'
-    #     xAxisTitle: 'Distance From TSS (bases)'
-    #     yAxisTitle: 'Average Tag Density (per bp)'
-    #     colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-    #     height: 500
-    #     data: [$1, $2, $5, $8, $11, $14]
+    label: "TSS centered average tag density histogram as TSV"
+    doc: "TSS centered average tag density histogram as TSV"
+    outputSource: preview_histogram/histogram_tsv
+
+  histogram_plot:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "TSS centered average tag density histogram as PNG"
+    doc: "TSS centered average tag density histogram as PNG"
+    outputSource: preview_histogram/histogram_png
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Average Tag Density Plot'
+
 
 steps:
 
@@ -171,7 +176,7 @@ steps:
         valueFrom: $(get_root(self.basename)+"_histogram.tsv")
     out: [histogram_file]
 
-  make_preview:
+  preview_heatmap:
     in:
       heatmap_file: make_tss_heatmap/histogram_file
       column_names: alignment_name
@@ -184,7 +189,7 @@ steps:
       class: CommandLineTool
       requirements:
       - class: DockerRequirement
-        dockerPull: biowardrobe2/hopach:v0.0.6
+        dockerPull: biowardrobe2/hopach:v0.0.7
       - class: InitialWorkDirRequirement
         listing:
           - entryname: preview.R
@@ -246,6 +251,82 @@ steps:
             glob: "*.png"
       baseCommand: ["Rscript", "preview.R"]
 
+  preview_histogram:
+    in:
+      histogram_file: make_tss_histogram/histogram_file
+      column_names: alignment_name
+      output_name:
+        source: genelist_file
+        valueFrom: $(get_root(self.basename)+"_histogram")
+    out:
+      - histogram_png
+      - histogram_tsv
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/hopach:v0.0.7
+      - class: InitialWorkDirRequirement
+        listing:
+          - entryname: preview.R
+            entry: |
+              #!/usr/bin/env Rscript
+              options(warn=-1)
+              options("width"=300)
+              suppressMessages(library(argparse))
+              suppressMessages(library(ggplot2))
+              suppressMessages(library(reshape2))
+              parser <- ArgumentParser(description='Heatmap')
+              parser$add_argument("--input",           help='Input TSV file', type="character", required="True")
+              parser$add_argument("--name",            help='Column aliases, the order corresponds to the every thierd column in --input. First is excluded', type="character", required="True", nargs='+')
+              parser$add_argument("--output",          help='Output prefix. Default: histogram', type="character", default="./histogram")
+              args <- parser$parse_args(commandArgs(trailingOnly = TRUE))
+              raw_data <- read.table(args$input, sep="\t", header=TRUE, stringsAsFactors=FALSE)
+              selected_columns = append(seq(2, ncol(raw_data), 3), 1, after=0)
+              raw_data = raw_data[,selected_columns]
+              colnames(raw_data) = append(args$name, "distance", after=0)
+              melt_data <- melt(raw_data, id="distance")
+              p = ggplot(data=melt_data,
+                    aes(x=distance, y=value, colour=variable)) +
+                    ggtitle("Average Tag Density Plot") +
+                    xlab("Distance from TSS, bp") + 
+                    ylab("Density, tags") +
+                    labs(colour = "Sample") +
+                    geom_line()
+              ggsave(paste(args$output, "png", sep="."), plot = p)
+              write.table(raw_data,
+                          file=paste(args$output, "tsv", sep="."),
+                          sep="\t",
+                          row.names=FALSE,
+                          col.names=TRUE,
+                          quote=FALSE)
+      inputs:
+        histogram_file:
+          type: File
+          inputBinding:
+            prefix: "--input"
+            position: 1
+        column_names:
+          type: string[]
+          inputBinding:
+            prefix: "--name"
+            position: 2
+        output_name:
+          type: string
+          inputBinding:
+            prefix: "--output"
+            position: 3
+      outputs:
+        histogram_png:
+          type: File
+          outputBinding:
+            glob: "*.png"
+        histogram_tsv:
+          type: File
+          outputBinding:
+            glob: "*.tsv"
+      baseCommand: ["Rscript", "preview.R"]     
 
 $namespaces:
   s: http://schema.org/
