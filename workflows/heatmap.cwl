@@ -193,7 +193,7 @@ steps:
       - class: InitialWorkDirRequirement
         listing:
           - entryname: preview.R
-            entry: |
+            entry: | 
               #!/usr/bin/env Rscript
               options(warn=-1)
               options("width"=300)
