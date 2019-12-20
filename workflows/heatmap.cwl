@@ -46,11 +46,24 @@ inputs:
     doc: "Names for input alignment files. Order corresponds to the alignment_file"
     'sd:upstreamSource': "chipseq_sample/alias"
 
-  genelist_file:
+  regions_file:
     type: File
-    format: "http://edamontology.org/format_3585"
-    label: "Genelist file, BED6 with unique ID in the 4th column"
-    doc: "Genelist file in BED6 format, column 4 must be a unique peak ID, column 5 is not used"
+    format: "http://edamontology.org/format_3003"
+    label: |
+      "BED regions file with 'chrom  chromStart  chromEnd  name  score strand' for gene list and
+       'chrom  chromStart  chromEnd  name' for peak file, 'name' column should be unique, 'score' column is ignored"
+    doc: |
+      "BED regions file with 'chrom  chromStart  chromEnd  name  score strand' for gene list and
+       'chrom  chromStart  chromEnd  name' for peak file, 'name' column should be unique, 'score' column is ignored"
+
+  recentering:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["Gene TSS", "Peak Center"]
+    default: "Gene TSS"
+    label: "Re-center regions by"
+    doc: "Recentering regions by one of the following cretirea"
 
   fragment_size:
     type: int[]
@@ -99,7 +112,7 @@ outputs:
     outputSource: make_tss_heatmap/histogram_file
   
   heatmap_plot:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3603"
     label: "TSS centered heatmap as PNG"
     doc: "TSS centered heatmap as PNG"
@@ -127,6 +140,9 @@ outputs:
         tab: 'Plots'
         Caption: 'Average Tag Density Plot'
 
+  centered_peak_file:
+    type: File
+    outputSource: center_genelist_on_tss/output_file
 
 steps:
 
@@ -141,9 +157,22 @@ steps:
   center_genelist_on_tss:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: genelist_file
+      input_file: regions_file
+      param: recentering
       script:
-        default: cat "$0" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\t"$4"\t"$5"\t"$6}' > `basename $0`
+        default: |
+          if [ "$1" == "Gene TSS" ]
+          then
+            # BED for gene list
+            # chrom  chromStart  chromEnd  name  [score] strand
+            echo "Recenter by the gene TSS"
+            cat "$0" | grep -v "chromStart" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\t"$4"\t"$5"\t"$6}' > `basename $0`
+          else
+            # BED for peaks
+            # chrom  chromStart  chromEnd  name
+            echo "Recenter by the peak center"
+            cat "$0" | grep -v "chromStart" | awk '{center=$3-$2; print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
+          fi
     out: [output_file]
 
   make_tss_heatmap:
@@ -157,7 +186,7 @@ steps:
         default: True
       threads: threads
       histogram_filename:
-        source: genelist_file
+        source: regions_file
         valueFrom: $(get_root(self.basename)+"_heatmap.cdt")
     out: [histogram_file]
 
@@ -172,7 +201,7 @@ steps:
         default: False
       threads: threads
       histogram_filename:
-        source: genelist_file
+        source: regions_file
         valueFrom: $(get_root(self.basename)+"_histogram.tsv")
     out: [histogram_file]
 
@@ -181,7 +210,7 @@ steps:
       heatmap_file: make_tss_heatmap/histogram_file
       column_names: alignment_name
       output_name:
-        source: genelist_file
+        source: regions_file
         valueFrom: $(get_root(self.basename)+"_heatmap.png")
     out: [heatmap_png]
     run:
@@ -215,19 +244,26 @@ steps:
               std = sqrt(rowSums(corrected_data^2))
               corrected_data = corrected_data/std
               corrected_data = replace(corrected_data, is.na(corrected_data), 0)
-              pheatmap(data.matrix(corrected_data),
-                      cluster_row=FALSE,
-                      cluster_cols=FALSE,
-                      treeheight_col = 0,
-                      main = "Heatmap preview",
-                      color=colorRampPalette(args$palette)(n = 299),
-                      scale="none",
-                      border_color=FALSE,
-                      show_rownames=FALSE,
-                      labels_col=args$name,
-                      angle_col=0,
-                      filename=args$output)
-              print(paste("Export heatmap to ", args$output, sep=""))
+              tryCatch(
+                expr = {
+                  pheatmap(data.matrix(corrected_data),
+                  cluster_row=FALSE,
+                  cluster_cols=FALSE,
+                  treeheight_col = 0,
+                  main = "Heatmap preview",
+                  color=colorRampPalette(args$palette)(n = 299),
+                  scale="none",
+                  border_color=FALSE,
+                  show_rownames=FALSE,
+                  labels_col=args$name,
+                  angle_col=0,
+                  filename=args$output)
+                  print(paste("Export heatmap to ", args$output, sep=""))
+                },
+                error = function(e){ 
+                    print("Failed to export heatmap")
+                }
+              )
       inputs:
         heatmap_file:
           type: File
@@ -246,7 +282,7 @@ steps:
             position: 3
       outputs:
         heatmap_png:
-          type: File
+          type: File?
           outputBinding:
             glob: "*.png"
       baseCommand: ["Rscript", "preview.R"]
@@ -256,7 +292,7 @@ steps:
       histogram_file: make_tss_histogram/histogram_file
       column_names: alignment_name
       output_name:
-        source: genelist_file
+        source: regions_file
         valueFrom: $(get_root(self.basename)+"_histogram")
     out:
       - histogram_png
@@ -373,4 +409,11 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Generates tag density heatmap and histogram around centered by TSS features from input genelist file
+  Generates tag density heatmap and histogram for the list of features in a regions file.
+  
+  - If provided regions file is a gene list and it includes the following columns
+  'chrom  chromStart  chromEnd  name  score strand' set 'Gene TSS as a re-centering criteria.
+
+  - If provided file is a peak list with the following columns
+  'chrom  chromStart  chromEnd  name' set 'Peak Center' as a re-centering criteria
+  

@@ -14,5 +14,5 @@
   "mapped_reads_number": [94],
   "alignment_name": ["experiment 1"],
   "alias": "alias",
-  "recentering": "Gene TSS"
+  "recentering": "Peak Center"
 }

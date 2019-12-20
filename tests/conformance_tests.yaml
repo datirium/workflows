@@ -1124,6 +1124,20 @@
       location: chr4_histogram.png
       class: File
 
+- job: ./heatmap-2.json
+  tool: ../workflows/heatmap.cwl
+  output:
+    heatmap_table:
+      location: chr4_heatmap.cdt
+      class: File
+    heatmap_plot: null
+    histogram_table:
+      location: chr4_histogram.tsv
+      class: File
+    histogram_plot:
+      location: chr4_histogram.png
+      class: File
+
 # ========================================================
 # deseq
 # ========================================================
