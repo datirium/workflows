@@ -174,7 +174,7 @@ steps:
             # BED for peaks
             # chrom  chromStart  chromEnd  name
             echo "Recenter by the peak center"
-            cat "$0" | grep -v "chromStart" | awk '{center=$2+($3-$2)/2; print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
+            cat "$0" | grep -v "chromStart" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
           fi
     out: [output_file]
 
