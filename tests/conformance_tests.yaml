@@ -1123,6 +1123,9 @@
     histogram_plot:
       location: chr4_histogram.png
       class: File
+    recentered_regions_file:
+      location: chr4.isoforms.genelist.bed
+      class: File
 
 - job: ./heatmap-2.json
   tool: ../workflows/heatmap.cwl
@@ -1130,12 +1133,17 @@
     heatmap_table:
       location: chr4_heatmap.cdt
       class: File
-    heatmap_plot: null
+    heatmap_plot:
+      location: chr4_heatmap.png
+      class: File
     histogram_table:
       location: chr4_histogram.tsv
       class: File
     histogram_plot:
       location: chr4_histogram.png
+      class: File
+    recentered_regions_file:
+      location: chr4.isoforms.genelist.bed
       class: File
 
 # ========================================================

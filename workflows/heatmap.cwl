@@ -50,11 +50,11 @@ inputs:
     type: File
     format: "http://edamontology.org/format_3003"
     label: |
-      "BED regions file with 'chrom  chromStart  chromEnd  name  score strand' for gene list and
-       'chrom  chromStart  chromEnd  name' for peak file, 'name' column should be unique, 'score' column is ignored"
+      "Regions of interest. Formatted as headerless BED file with [chrom chromStart chromEnd name score strand] for gene list and
+       [chrom chromStart chromEnd name] for peak file. [name] should be unique, [score] is ignored"
     doc: |
-      "BED regions file with 'chrom  chromStart  chromEnd  name  score strand' for gene list and
-       'chrom  chromStart  chromEnd  name' for peak file, 'name' column should be unique, 'score' column is ignored"
+      "Regions of interest. Formatted as headerless BED file with [chrom chromStart chromEnd name score strand] for gene list and
+       [chrom chromStart chromEnd name] for peak file. [name] should be unique, [score] is ignored"
 
   recentering:
     type:
@@ -62,8 +62,8 @@ inputs:
       - type: enum
         symbols: ["Gene TSS", "Peak Center"]
     default: "Gene TSS"
-    label: "Re-center regions by"
-    doc: "Recentering regions by one of the following cretirea"
+    label: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
+    doc: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
 
   fragment_size:
     type: int[]
@@ -109,7 +109,7 @@ outputs:
     format: "http://edamontology.org/format_3475"
     label: "TSS centered heatmap as TSV"
     doc: "TSS centered heatmap as TSV"
-    outputSource: make_tss_heatmap/histogram_file
+    outputSource: make_heatmap/histogram_file
   
   heatmap_plot:
     type: File?
@@ -140,9 +140,12 @@ outputs:
         tab: 'Plots'
         Caption: 'Average Tag Density Plot'
 
-  centered_peak_file:
+  recentered_regions_file:
     type: File
-    outputSource: center_genelist_on_tss/output_file
+    format: "http://edamontology.org/format_3003"
+    label: "Re-centered by [Gene TSS] or [Peak Center] regions of interest file"
+    doc: "Re-centered by [Gene TSS] or [Peak Center] regions of interest file"
+    outputSource: recenter_regions/output_file
 
 steps:
 
@@ -154,7 +157,7 @@ steps:
       total_reads: mapped_reads_number
     out: [tag_folder]
 
-  center_genelist_on_tss:
+  recenter_regions:
     run: ../tools/custom-bash.cwl
     in:
       input_file: regions_file
@@ -171,14 +174,14 @@ steps:
             # BED for peaks
             # chrom  chromStart  chromEnd  name
             echo "Recenter by the peak center"
-            cat "$0" | grep -v "chromStart" | awk '{center=$3-$2; print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
+            cat "$0" | grep -v "chromStart" | awk '{center=$2+($3-$2)/2; print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
           fi
     out: [output_file]
 
-  make_tss_heatmap:
+  make_heatmap:
     run: ../tools/homer-annotate-peaks-hist.cwl
     in:
-      peak_file: center_genelist_on_tss/output_file
+      peak_file: recenter_regions/output_file
       tag_folders: make_tag_folders/tag_folder
       hist_width: hist_width
       hist_bin_size: hist_bin_size
@@ -190,10 +193,10 @@ steps:
         valueFrom: $(get_root(self.basename)+"_heatmap.cdt")
     out: [histogram_file]
 
-  make_tss_histogram:
+  make_histogram:
     run: ../tools/homer-annotate-peaks-hist.cwl
     in:
-      peak_file: center_genelist_on_tss/output_file
+      peak_file: recenter_regions/output_file
       tag_folders: make_tag_folders/tag_folder
       hist_width: hist_width
       hist_bin_size: hist_bin_size
@@ -207,7 +210,7 @@ steps:
 
   preview_heatmap:
     in:
-      heatmap_file: make_tss_heatmap/histogram_file
+      heatmap_file: make_heatmap/histogram_file
       column_names: alignment_name
       output_name:
         source: regions_file
@@ -289,7 +292,7 @@ steps:
 
   preview_histogram:
     in:
-      histogram_file: make_tss_histogram/histogram_file
+      histogram_file: make_histogram/histogram_file
       column_names: alignment_name
       output_name:
         source: regions_file
