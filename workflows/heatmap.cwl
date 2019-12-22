@@ -329,7 +329,7 @@ steps:
               p = ggplot(data=melt_data,
                     aes(x=distance, y=value, colour=variable)) +
                     ggtitle("Average Tag Density Plot") +
-                    xlab("Distance from TSS, bp") + 
+                    xlab("Distance from gene TSS or peak center, bp") + 
                     ylab("Density, tags") +
                     labs(colour = "Sample") +
                     geom_line()
