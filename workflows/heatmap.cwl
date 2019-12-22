@@ -50,11 +50,11 @@ inputs:
     type: File
     format: "http://edamontology.org/format_3003"
     label: |
-      "Regions of interest. Formatted as headerless BED file with [chrom chromStart chromEnd name score strand] for gene list and
-       [chrom chromStart chromEnd name] for peak file. [name] should be unique, [score] is ignored"
+      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
+       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
     doc: |
-      "Regions of interest. Formatted as headerless BED file with [chrom chromStart chromEnd name score strand] for gene list and
-       [chrom chromStart chromEnd name] for peak file. [name] should be unique, [score] is ignored"
+      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
+       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
 
   recentering:
     type:
@@ -167,14 +167,14 @@ steps:
           if [ "$1" == "Gene TSS" ]
           then
             # BED for gene list
-            # chrom  chromStart  chromEnd  name  [score] strand
+            # chrom  start  end  name  [score] strand
             echo "Recenter by the gene TSS"
-            cat "$0" | grep -v "chromStart" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\t"$4"\t"$5"\t"$6}' > `basename $0`
+            cat "$0" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\t"$4"\t"$5"\t"$6}' > `basename $0`
           else
             # BED for peaks
-            # chrom  chromStart  chromEnd  name
+            # chrom  start  end  name
             echo "Recenter by the peak center"
-            cat "$0" | grep -v "chromStart" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
+            cat "$0" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
           fi
     out: [output_file]
 
