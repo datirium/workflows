@@ -373,9 +373,9 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-s:name: "Tag density profile around TSS centered gene list"
-label: "Tag density profile around TSS centered gene list"
-s:alternateName: "Generate tag density heatmap and histogram around centered on TSS genes from genelist TSV file"
+s:name: "Tag density profile around regions of interest"
+label: "Tag density profile around regions of interest"
+s:alternateName: "Generate tag density heatmap and histogram around gene TSS or peak centers"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -412,11 +412,10 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Generates tag density heatmap and histogram for the list of features in a regions file.
+  Generates tag density heatmap and histogram for the centered list of features in a headerless regions file.
   
-  - If provided regions file is a gene list and it includes the following columns
-  'chrom  chromStart  chromEnd  name  score strand' set 'Gene TSS as a re-centering criteria.
-
-  - If provided file is a peak list with the following columns
-  'chrom  chromStart  chromEnd  name' set 'Peak Center' as a re-centering criteria
+  - If provided regions file is a gene list with the following columns `chrom start end name score strand` set `Gene TSS` as a re-centering criteria.
+  - If provided regions file is a peak list with the following columns `chrom start end name` set 'Peak Center' as a re-centering criteria.
+  
+  `score` column is always ignored.
   
