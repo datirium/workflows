@@ -1592,7 +1592,7 @@
 # ========================================================
 
 - job: ./deseq-lrt-1.json
-  tool: ../tools/deseq-lrt.cwl
+  tool: ../tools/deseq-lrt-1.cwl
   output:
     diff_expr_file:
       class: File
