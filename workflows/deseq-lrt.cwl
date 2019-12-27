@@ -62,12 +62,12 @@ inputs:
 
   design_formula:
     type: string
-    label: "Design formula. See DeSeq2 manual for details"
+    label: "Design formula. See workflow description for details"
     doc: "Design formula. Should start with ~. See DeSeq2 manual for details"
 
   reduced_formula:
     type: string
-    label: "Reduced formula to compare against with the term(s) of interest removed. See DeSeq2 manual for details"
+    label: "Reduced formula to compare against with the term(s) of interest removed. See workflow description for details"
     doc: "Reduced formula to compare against with the term(s) of interest removed. Should start with ~. See DeSeq2 manual for details"
 
   contrast:
@@ -213,64 +213,24 @@ doc: |
   Runs DESeq2 using LRT (Likelihood Ratio Test)
   =============================================
 
-  The LRT examines two models for the counts, a full model with a certain number of terms and a reduced model,
-  in which some of the terms of the full model are removed. The test determines if the increased likelihood of
-  the data using the extra terms in the full model is more than expected if those extra terms are truly zero.
+  The LRT examines two models for the counts, a full model with a certain number of terms and a reduced model, in which some of the terms of the full model are removed. The test determines if the increased likelihood of the data using the extra terms in the full model is more than expected if those extra terms are truly zero.
 
-  The LRT is therefore useful for testing multiple terms at once, for example testing 3 or more levels of a factor
-  at once, or all interactions between two variables. The LRT for count data is conceptually similar to an analysis
-  of variance (ANOVA) calculation in linear regression, except that in the case of the Negative Binomial GLM, we use
-  an analysis of deviance (ANODEV), where the deviance captures the difference in likelihood between a full and a
-  reduced model.
+  The LRT is therefore useful for testing multiple terms at once, for example testing 3 or more levels of a factor at once, or all interactions between two variables. The LRT for count data is conceptually similar to an analysis of variance (ANOVA) calculation in linear regression, except that in the case of the Negative Binomial GLM, we use an analysis of deviance (ANODEV), where the deviance captures the difference in likelihood between a full and a reduced model.
 
-  When one performs a likelihood ratio test, the p values and the test statistic (the stat column) are values for
-  the test that removes all of the variables which are present in the full design and not in the reduced design.
-  This tests the null hypothesis that all the coefficients from these variables and levels of these factors are
-  equal to zero.
+  When one performs a likelihood ratio test, the p values and the test statistic (the stat column) are values for the test that removes all of the variables which are present in the full design and not in the reduced design. This tests the null hypothesis that all the coefficients from these variables and levels of these factors are equal to zero.
 
-  The likelihood ratio test p values therefore represent a test of all the variables and all the levels of factors
-  which are among these variables. However, the results table only has space for one column of log fold change, so
-  a single variable and a single comparison is shown (among the potentially multiple log fold changes which were
-  tested in the likelihood ratio test). This indicates that the p value is for the likelihood ratio test of all the
-  variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
+  The likelihood ratio test p values therefore represent a test of all the variables and all the levels of factors which are among these variables. However, the results table only has space for one column of log fold change, so a single variable and a single comparison is shown (among the potentially multiple log fold changes which were tested in the likelihood ratio test). This indicates that the p value is for the likelihood ratio test of all the variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
 
-  Note: at least two biological replicates are required for every compared category.
+  **Technical notes**
 
-  All input CSV/TSV files should have the following header (case-sensitive)
-  <RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm>         - CSV
-  <RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm>  - TSV
-
-  Format of the input files is identified based on file's extension
-  *.csv - CSV
-  *.tsv - TSV
-  Otherwise used CSV by default
-
-  The output file's rows order corresponds to the rows order of the first CSV/TSV file.
-  Output file is always saved in TSV format
-
-  Output file includes only intersected rows from all input files. Intersected by
-  RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
-
-  Additionally we calculate -LOG10(pval) and -LOG10(padj)
-
-  Example of CSV metadata file set with
-
-  ,time,condition
-  DH1,day5,WT
-  DH2,day5,KO
-  DH3,day7,WT
-  DH4,day7,KO
-  DH5,day7,KO
-
-  where time, condition, day5, day7, WT, KO should be a single words (without spaces)
-  and DH1, DH2, DH3, DH4, DH5 correspond to the --names (expression_file_names) (spaces are allowed)
-
-  --contrast (contrast) should be set based on your metadata file in a form of Factor Numerator Denominator
-  where Factor      - columns name from metadata file
-        Numerator   - category from metadata file to be used as numerator in fold change calculation
-        Denominator - category from metadata file to be used as denominator in fold change calculation
-  for example condition WT KO
-  if --contrast (contrast) is set as a single string "condition WT KO" then is will be splitted by space
-
-
-
+  1. At least two biological replicates are required for every compared category
+  2. Metadata file describes relations between compared experiments, for example
+      ,time,condition
+      DH1,day5,WT
+      DH2,day5,KO
+      DH3,day7,WT
+      DH4,day7,KO
+      DH5,day7,KO
+  where `time, condition, day5, day7, WT, KO` should be a single words (without spaces) and `DH1, DH2, DH3, DH4, DH5` correspond to the experiment aliases set in **RNA-Seq experiments** input.
+  3. Design and reduced formulas should start with **~** and include categories or, optionally, their interactions from the metadata file header. See details in DESeq2 manual [here](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#interactions) and [here](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#likelihood-ratio-test)
+  4. Contrast should be set based on your metadata file header and available categories in a form of `Factor Numerator Denominator`, where `Factor` - column name from metadata file, `Numerator`  - category from metadata file to be used as numerator in fold change calculation, `Denominator` - category from metadata file to be used as denominator in fold change calculation. For example `condition WT KO`.
