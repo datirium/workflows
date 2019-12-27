@@ -105,13 +105,13 @@ outputs:
     outputSource: make_volcano_plot/output_file
     'sd:visualPlugins':
     - scatter:
-      tab: 'Volcano Plot'
-      Title: 'Volcano'
-      xAxisTitle: 'log fold change'
-      yAxisTitle: '-log10(pAdj)'
-      colors: ["#b3de69"]
-      height: 600
-      data: [$1, $2]
+        tab: 'Volcano Plot'
+        Title: 'Volcano'
+        xAxisTitle: 'log fold change'
+        yAxisTitle: '-log10(pAdj)'
+        colors: ["#b3de69"]
+        height: 600
+        data: [$1, $2]
 
   ma_plot:
     type: File
