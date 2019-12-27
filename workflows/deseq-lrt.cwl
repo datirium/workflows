@@ -96,14 +96,22 @@ outputs:
     - syncfusiongrid:
         tab: 'Differential Expression Analysis'
         Title: 'Combined DESeq2 results'
+
+  volcano_plot:
+    type: File
+    label: "Volcano plot"
+    format: "http://edamontology.org/format_3475"
+    doc: "TSV file with input data to build volcano plot - log2FoldChange vs -LOG10(padj)"
+    outputSource: make_volcano_plot/output_file
+    'sd:visualPlugins':
     - scatter:
-        tab: 'Volcano Plot'
-        Title: 'Volcano'
-        xAxisTitle: 'log fold change'
-        yAxisTitle: '-log10(pAdj)'
-        colors: ["#b3de69"]
-        height: 600
-        data: [$9, $13]
+      tab: 'Volcano Plot'
+      Title: 'Volcano'
+      xAxisTitle: 'log fold change'
+      yAxisTitle: '-log10(pAdj)'
+      colors: ["#b3de69"]
+      height: 600
+      data: [$1, $2]
 
   ma_plot:
     type: File
@@ -163,6 +171,15 @@ steps:
       contrast: contrast
       threads: threads
     out: [diff_expr_file, ma_plot, stdout_log, stderr_log]
+
+  make_volcano_plot:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: deseq/diff_expr_file
+      script:
+        default: |
+          cat "$0" | awk -F "\t" 'BEGIN {xl="log2FoldChange"; yl="-LOG10(padj)"} NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} print xl"\t"yl } NR>1 {print $ix[xl]"\t"$ix[yl]}' > volcano_plot_data.tsv
+    out: [output_file]
 
 
 $namespaces:

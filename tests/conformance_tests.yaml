@@ -1600,6 +1600,9 @@
     ma_plot:
       class: File
       location: deseq_ma_plot.png
+    volcano_plot:
+      class: File
+      location: volcano_plot_data.tsv
     deseq_stdout_log:
       class: File
       location: deseq_stdout.log
