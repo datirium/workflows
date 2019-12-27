@@ -1586,3 +1586,23 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
+
+# ========================================================
+# deseq-lrt
+# ========================================================
+
+- job: ./deseq-lrt-1.json
+  tool: ../tools/deseq-lrt.cwl
+  output:
+    diff_expr_file:
+      class: File
+      location: deseq_table.tsv
+    ma_plot:
+      class: File
+      location: deseq_ma_plot.png
+    deseq_stdout_log:
+      class: File
+      location: deseq_stdout.log
+    deseq_stderr_log:
+      class: File
+      location: deseq_stderr.log
