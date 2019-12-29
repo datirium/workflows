@@ -99,7 +99,7 @@ inputs:
 
   row_logtransform:
     type: boolean?
-    default: true
+    default: false
     label: "Log2 row transform"
     doc: "Log2 transform input data to prior running hopach row clustering"
     'sd:layout':
@@ -137,7 +137,7 @@ inputs:
 
   col_logtransform:
     type: boolean?
-    default: true
+    default: false
     label: "Log2 column transform"
     doc: "Log2 transform input data to prior running hopach column clustering"
     'sd:layout':
