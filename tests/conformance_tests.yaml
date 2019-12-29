@@ -1085,6 +1085,13 @@
     clustering_results:
       location: hopach_clustering.tsv
       class: File
+    clustering_matrix:
+      location: hopach_tree.cdt
+      class: File
+    clustering_row_dendogram:
+      location: hopach_tree.gtr
+      class: File
+    clustering_column_dendogram: null
     col_distance_matrix_png:
       location: hopach_column_dist_matrix.png
       class: File

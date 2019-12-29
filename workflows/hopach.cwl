@@ -186,6 +186,27 @@ outputs:
         tab: 'Hopach Clustering Results'
         Title: 'Combined clustered expression file'
 
+  clustering_matrix:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Hopach clustering results as cdt file"
+    doc: "Hopach clustering results as cdt file"
+    outputSource: hopach/clustering_matrix
+
+  clustering_row_dendogram:
+    type: File?
+    format: "http://edamontology.org/format_3475"
+    label: "Hopach row clustering dendogram as gtr file"
+    doc: "Hopach row clustering dendogram as gtr file"
+    outputSource: hopach/clustering_row_dendogram
+
+  clustering_column_dendogram:
+    type: File?
+    format: "http://edamontology.org/format_3475"
+    label: "Hopach column clustering dendogram as atr file"
+    doc: "Hopach column clustering dendogram as atr file"
+    outputSource: hopach/clustering_column_dendogram
+
   column_clustering_labels:
     type: File?
     format: "http://edamontology.org/format_3475"
@@ -286,6 +307,9 @@ steps:
       palette: palette
     out:
       - clustering_results
+      - clustering_matrix
+      - clustering_row_dendogram
+      - clustering_column_dendogram
       - column_clustering_labels
       - heatmap_png
       - row_distance_matrix_png

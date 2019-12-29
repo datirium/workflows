@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/hopach:v0.0.6
+  dockerPull: biowardrobe2/hopach:v0.0.8
 
 
 inputs:
@@ -140,6 +140,24 @@ outputs:
     outputBinding:
       glob: "*_clustering.tsv"
     doc: "Hopach clustering results"
+
+  clustering_matrix:
+    type: File
+    outputBinding:
+      glob: "*_tree.cdt"
+    doc: "Hopach clustering results as cdt file"
+
+  clustering_row_dendogram:
+    type: File?
+    outputBinding:
+      glob: "*_tree.gtr"
+    doc: "Hopach row clustering dendogram as gtr file"
+
+  clustering_column_dendogram:
+    type: File?
+    outputBinding:
+      glob: "*_tree.atr"
+    doc: "Hopach column clustering dendogram as atr file"
 
   heatmap_png:
     type: File
