@@ -6,7 +6,7 @@ requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
-  - class: MultipleInputFeatureRequirement
+  - class: MultipleInputFeatureRequirement 
 
 
 'sd:upstream':
