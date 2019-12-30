@@ -16,6 +16,11 @@
       "format": "http://edamontology.org/format_3752"
     }
   ],
+  "genelist_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/main_inputs/geep/genelist.tsv",
+    "format": "http://edamontology.org/format_2330"
+  },
   "group_by": "isoforms",
   "alias": "alias"
 }

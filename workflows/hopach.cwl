@@ -47,6 +47,12 @@ inputs:
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/alias"
 
+  genelist_file:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "Gene list to filter clustered genes. Headerless TSV/CSV file with 1 gene per line"
+    doc: "Gene list to filter clustered genes. Headerless TSV/CSV file with 1 gene per line"
+
   group_by:
     type:
       - "null"
@@ -292,6 +298,7 @@ steps:
               }
           }
       expression_aliases: expression_aliases
+      genelist_file: genelist_file
       target_column: target_column
       cluster_method: cluster_method
       row_dist_metric: row_dist_metric

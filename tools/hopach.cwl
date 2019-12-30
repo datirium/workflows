@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/hopach:v0.0.8
+  dockerPull: biowardrobe2/hopach:v0.0.9
 
 
 inputs:
@@ -22,6 +22,12 @@ inputs:
     inputBinding:
       prefix: "--name"
     doc: "Input aliases, the order corresponds to --input order. Default: basename of --input files"
+
+  genelist_file:
+    type: File?
+    inputBinding:
+      prefix: "--genelist"
+    doc: "Filter genes by the list from the file. Headerless, 1 gene per line"
 
   target_column:
     type: string?
@@ -249,37 +255,56 @@ doc: |
   Works with minimum two genelist files.
 
 s:about: |
-  usage: hopach_order.R [-h] --input INPUT [INPUT ...] [--name NAME [NAME ...]]
-                        [--target TARGET] [--combine COMBINE [COMBINE ...]]
-                        [--dist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-                        [--logtransform] [--keep] [--heatmap] [--distmatrix]
-                        [--variability] [--min MIN]
-                        [--palette PALETTE [PALETTE ...]] [--output OUTPUT]
+  usage: hopach_order.R
+        [-h] --input INPUT [INPUT ...] [--name NAME [NAME ...]]
+        [--target TARGET] [--combine COMBINE [COMBINE ...]]
+        [--method {row,column,both}] [--palette PALETTE [PALETTE ...]]
+        [--genelist GENELIST] [--output OUTPUT] [--rowmin ROWMIN] [--rowkeep]
+        [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+        [--coldist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+        [--rowlogtransform] [--collogtransform] [--rowcenter {mean,median}]
+        [--colcenter {mean,median}] [--rownorm] [--colnorm]
 
-  Hopach Ordering
+  Hopach Clustering
 
   optional arguments:
     -h, --help            show this help message and exit
     --input INPUT [INPUT ...]
-                          Input CSV/TSV genelist files
+                          Input CSV/TSV files
     --name NAME [NAME ...]
-                          Names, the order corresponds to input. Default:
-                          basename of --input files
-    --target TARGET       Target column name to be used by Hopach. Default: Rpkm
+                          Input aliases, the order corresponds to --input order.
+                          Default: basename of --input files
+    --target TARGET       Target column to be used by hopach clustering.
+                          Default: Rpkm
     --combine COMBINE [COMBINE ...]
                           Combine inputs by columns names. Default: RefseqId,
                           GeneId, Chrom, TxStart, TxEnd, Strand
-    --dist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
-                          Distance metric. Default: cosangle
-    --logtransform        Log2 transform input data prior running hopach.
-                          Default: false
-    --keep                Keep discarded values at the end of the file. Default:
-                          false
-    --heatmap             Export heatmap to png. Default: false
-    --distmatrix          Export distance matrix to png. Default: false
-    --variability         Export clsuter variability plot to png. Default: false
-    --min MIN             Min value for target column value. Default: 0
+    --method {row,column,both}
+                          Cluster method. Default: both
     --palette PALETTE [PALETTE ...]
-                          Palette color names. Default: black, red, yellow
-    --output OUTPUT       Output prefix. Default: ordered_genelist
-
+                          Palette color names. Default: red, black, green
+    --genelist GENELIST   Filter genes by the list from the file. Headerless, 1
+                          gene per line
+    --output OUTPUT       Output prefix. Default: hopach
+    --rowmin ROWMIN       Exclude rows from clustering by the min value of a
+                          target column. Default: 0
+    --rowkeep             Append excluded rows to the output table after
+                          clustering is finished. Default: false
+    --rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+                          Distance metric for row clustering. Default: cosangle
+    --coldist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+                          Distance metric for column clustering. Default: euclid
+    --rowlogtransform     Log2 transform input data prior to running row
+                          clustering. Default: false
+    --collogtransform     Log2 transform input data prior to running column
+                          clustering. Default: false
+    --rowcenter {mean,median}
+                          Center rows prior to running row clustering. Default:
+                          not centered
+    --colcenter {mean,median}
+                          Center columns prior to running column clustering.
+                          Default: not centered
+    --rownorm             Normalize rows prior to running row clustering.
+                          Default: not normalized
+    --colnorm             Normalize columns prior to running column clustering.
+                          Default: not normalized
