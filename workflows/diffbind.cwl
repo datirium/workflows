@@ -23,7 +23,8 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
-
+  genome_indices:
+    - "genome-indices.cwl"
 
 inputs:
 
@@ -95,6 +96,13 @@ inputs:
     doc: "Aliases for biological condition 2 samples to make the legend for generated plots. Order corresponds to the read_files_cond_2"
     'sd:upstreamSource': "second_biological_condition/alias"
 
+  annotation_file:
+    type: File
+    label: "Genome annotation"
+    format: "http://edamontology.org/format_3475"
+    doc: "Genome annotation file in TSV format"
+    'sd:upstreamSource': "genome_indices/annotation"
+
   fragmentsize:
     type: int?
     default: 125
@@ -159,7 +167,7 @@ outputs:
     format: "http://edamontology.org/format_3475"
     label: "Differential binding analysis results"
     doc: "Differential binding analysis results exported as TSV"
-    outputSource: diffbind/diffbind_report_file
+    outputSource: restore_columns/output_file
     'sd:visualPlugins':
       - syncfusiongrid:
           tab: 'Differential Peak Calling'
@@ -310,6 +318,40 @@ steps:
       - boxplot_plot
       - stdout_log
       - stderr_log
+
+  filter_columns:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: diffbind/diffbind_report_file
+      script:
+        default: >
+          cat $0 | grep -v "Start" | awk
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t"NR"\t0\t0\t0\t0"}' > `basename $0`
+    out: [output_file]
+
+  assign_genes:
+      run: ../tools/iaintersect.cwl
+      in:
+        input_filename: filter_columns/output_file
+        annotation_filename: annotation_file
+        promoter_bp:
+          default: 1000
+      out: [result_file]
+
+  restore_columns:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: [assign_genes/result_file, diffbind/diffbind_report_file]
+      script:
+        default: |
+          cat $0 | grep -v "start" | sort -k 11n | cut -f 1-5,15 > iaintersect_result.tsv
+          cat $1 | grep -v "Start" > diffbind_result.tsv
+          HEADER=`head -n 1 $1`;
+          echo -e "Refseq_id\tGene_id\ttxStart\ttxEnd\tStrand\tRegion\t${HEADER}" > `basename $0`;
+          cat iaintersect_result.tsv | paste - diffbind_result.tsv >> `basename $0`
+          rm iaintersect_result.tsv diffbind_result.tsv
+    out: [output_file]
 
       
 $namespaces:
