@@ -103,6 +103,13 @@ inputs:
     doc: "Genome annotation file in TSV format"
     'sd:upstreamSource': "genome_indices/annotation"
 
+  chrom_length_file:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "Chromosome length file"
+    doc: "Chromosome length file"
+    'sd:upstreamSource': "genome_indices/chrom_length"   
+
   fragmentsize:
     type: int?
     default: 125
@@ -172,6 +179,21 @@ outputs:
       - syncfusiongrid:
           tab: 'Differential Peak Calling'
           Title: 'Differential Binding Analysis Results'
+
+  diffbind_bed_file:
+    type: File
+    format: "http://edamontology.org/format_3004"
+    label: "Estimated differential peaks"
+    doc: "Estimated differential peaks, bigBed"
+    outputSource: bed_to_bigbed/bigbed_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        format: 'bigbed'
+        name: "Differential peaks"
+        height: 120
 
   diffbind_peak_correlation_heatmap:
     type: File?
@@ -352,6 +374,35 @@ steps:
           cat iaintersect_result.tsv | paste - diffbind_result.tsv >> `basename $0`
           rm iaintersect_result.tsv diffbind_result.tsv
     out: [output_file]
+
+  convert_to_bed:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: restore_columns/output_file
+      script:
+        default: |
+          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["Fold"]<0) color="0,255,0"; print $ix["Chr"]"\t"$ix["Start"]"\t"$ix["End"]"\tPv="$ix["p-value"]";FDR="$ix["FDR"]"\t"1000"\t"$ix["Strand"]"\t"$ix["Start"]"\t"$ix["End"]"\t"color}' > `basename $0`
+    out: [output_file]
+
+  sort_bed:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: convert_to_bed/output_file
+      key:
+        default: ["1,1","2,2n"]
+    out: [sorted_file]
+
+  bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
+    in:
+      input_bed: sort_bed/sorted_file
+      bed_type:
+        default: "bed4+5"
+      chrom_length_file: chrom_length_file
+      output_filename:
+        source: sort_bed/sorted_file
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
+    out: [bigbed_file]
 
       
 $namespaces:
