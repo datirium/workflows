@@ -39,6 +39,12 @@ inputs:
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/alias"
+  
+  genelist_file:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "Gene list to filter clustered genes. Headerless TSV/CSV file with 1 gene per line"
+    doc: "Gene list to filter clustered genes. Headerless TSV/CSV file with 1 gene per line"
 
 
 outputs:
@@ -126,6 +132,7 @@ steps:
     in:
       expression_files: expression_files
       expression_aliases: expression_aliases
+      genelist_file: genelist_file
     out:
     - pca1_vs_pca2_plot
     - pca2_vs_pca3_plot

@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/pca:v0.0.5
+  dockerPull: biowardrobe2/pca:v0.0.6
 
 
 inputs:
@@ -22,6 +22,12 @@ inputs:
     inputBinding:
       prefix: "--name"
     doc: "Input aliases, the order corresponds to --input order. Default: basename of --input files"
+
+  genelist_file:
+    type: File?
+    inputBinding:
+      prefix: "--genelist"
+    doc: "Filter genes by the list from the file. Headerless, 1 gene per line"
 
   target_column:
     type: string?
