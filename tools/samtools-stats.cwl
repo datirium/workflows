@@ -26,6 +26,8 @@ inputs:
       #!/bin/bash
       samtools stats $0 > all_statistics.log
       cat all_statistics.log | grep SN | cut -f 2- > sn_section.log
+      echo -e "insert size\tpairs total\tinward oriented pairs\toutward oriented pairs\tother pairs" > is_section.tsv
+      cat all_statistics.log | grep ^IS | cut -f 2- >> is_section.tsv
       cat all_statistics.log
     inputBinding:
       position: 4
@@ -52,6 +54,12 @@ outputs:
     outputBinding:
       glob: $(default_output_filename())
     doc: "BAM file statistics"
+
+  ext_is_section:
+    type: File
+    outputBinding:
+      glob: "is_section.tsv"
+    doc: "BAM file statistics (IS section)"
 
   raw_total_sequences:
     type: int
@@ -139,7 +147,7 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Generates statistics for the input BAM file. Output if filtered with grep SN | cut -f 2-
+  Generates statistics for the input BAM file.
 
 s:about: |
   Generates statistics for the input BAM file.

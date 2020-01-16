@@ -483,6 +483,9 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
+    insert_size_report:
+      location: is_section.tsv
+      class: File
 
 # ========================================================
 # trim-rnaseq-pe-dutp
@@ -551,6 +554,9 @@
       class: File
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
+      class: File
+    insert_size_report:
+      location: is_section.tsv
       class: File
 
 # ========================================================
@@ -712,6 +718,9 @@
       class: File
     estimated_fragment_size: 160
     mapped_reads_number: 23
+    insert_size_report_after_filtering:
+      location: is_section.tsv
+      class: File
 
 # ========================================================
 # trim-atacseq-se
@@ -872,6 +881,9 @@
       class: File
     estimated_fragment_size: 160
     mapped_reads_number: 23
+    insert_size_report_after_filtering:
+      location: is_section.tsv
+      class: File
 
 # ========================================================
 # trim-chipseq-pe-cut-n-run
@@ -1044,6 +1056,9 @@
     star_stdout_log: null
     bam_statistics_report:
       location: upstream_sorted_bam_statistics_report.txt
+      class: File
+    insert_size_report:
+      location: is_section.tsv
       class: File
 
 # ========================================================
@@ -1339,6 +1354,9 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
+    insert_size_report:
+      location: is_section.tsv
+      class: File
 
 # ========================================================
 # chipseq-se
@@ -1470,6 +1488,9 @@
       class: File
     estimated_fragment_size: 156
     mapped_reads_number: 31
+    insert_size_report_after_filtering:
+      location: is_section.tsv
+      class: File
 
 # ========================================================
 # rnaseq-se-dutp
@@ -1592,6 +1613,9 @@
     star_stdout_log: null
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
+      class: File
+    insert_size_report:
+      location: is_section.tsv
       class: File
 
 # ========================================================

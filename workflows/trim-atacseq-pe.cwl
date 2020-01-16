@@ -378,6 +378,22 @@ outputs:
     doc: "BAM statistics report (after all filters applied)"
     outputSource: get_bam_statistics_after_filtering/log_file
 
+  insert_size_report_after_filtering:
+    type: File
+    label: "Insert size distribution report (after filtering)"
+    format: "http://edamontology.org/format_3475"
+    doc: "Insert size distribution report (after all filters applied)"
+    outputSource: get_bam_statistics_after_filtering/ext_is_section
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'QC Plots'
+        Title: 'Insert Size Distribution (after filtering)'
+        xAxisTitle: 'Insert size'
+        yAxisTitle: 'Pairs total'
+        colors: ["#4b78a3"]
+        height: 500
+        data: [$1, $2]
+
   macs2_fragment_stat:
     type: File?
     label: "FRAGMENT, FRAGMENTE, ISLANDS"
@@ -621,7 +637,7 @@ steps:
       output_filename:
         source: samtools_sort_index_after_rmdup/bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
-    out: [log_file]
+    out: [log_file, ext_is_section]
 
   get_stat:
       run: ../tools/collect-statistics-chip-seq.cwl

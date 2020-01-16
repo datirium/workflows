@@ -282,6 +282,22 @@ outputs:
     doc: "BAM statistics report (right after alignment and sorting)"
     outputSource: get_bam_statistics/log_file
 
+  insert_size_report:
+    type: File
+    label: "Insert size distribution report"
+    format: "http://edamontology.org/format_3475"
+    doc: "Insert size distribution report (right after alignment and sorting)"
+    outputSource: get_bam_statistics/ext_is_section
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'QC Plots'
+        Title: 'Insert Size Distribution'
+        xAxisTitle: 'Insert size'
+        yAxisTitle: 'Pairs total'
+        colors: ["#4b78a3"]
+        height: 500
+        data: [$1, $2]
+
   trim_report_upstream:
     type: File
     label: "TrimGalore report FASTQ 1"
@@ -447,7 +463,7 @@ steps:
       output_filename:
         source: samtools_sort_index/bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
-    out: [log_file]
+    out: [log_file, ext_is_section]
 
   get_stat:
       run: ../tools/collect-statistics-rna-seq.cwl
