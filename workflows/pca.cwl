@@ -43,8 +43,8 @@ inputs:
   genelist_file:
     type: File?
     format: "http://edamontology.org/format_2330"
-    label: "Gene list to filter clustered genes. Headerless TSV/CSV file with 1 gene per line"
-    doc: "Gene list to filter clustered genes. Headerless TSV/CSV file with 1 gene per line"
+    label: "Gene list to filter input genes. Headerless TSV/CSV file with 1 gene per line"
+    doc: "Gene list to filter input genes. Headerless TSV/CSV file with 1 gene per line"
 
 
 outputs:
