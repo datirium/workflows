@@ -27,7 +27,7 @@ inputs:
       samtools stats $0 > all_statistics.log
       cat all_statistics.log | grep SN | cut -f 2- > sn_section.log
       echo -e "insert size\tpairs total\tinward oriented pairs\toutward oriented pairs\tother pairs" > is_section.tsv
-      cat all_statistics.log | grep ^IS | cut -f 2- >> is_section.tsv
+      cat all_statistics.log | grep ^IS | cut -f 2- | head -n 1501 >> is_section.tsv
       cat all_statistics.log
     inputBinding:
       position: 4
