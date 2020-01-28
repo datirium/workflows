@@ -1176,13 +1176,22 @@
   tool: ../workflows/deseq.cwl
   output:
     diff_expr_file:
-      location: deseq_results.tsv
+      location: deseq_report.tsv
+      class: File
+    read_counts_file:
+      location: deseq_counts.gct
       class: File
     gene_expr_heatmap:
-      location: deseq_results_002.png
+      location: deseq_plot_002.png
       class: File
     plot_lfc_vs_mean:
-      location: deseq_results_001.png
+      location: deseq_plot_001.png
+      class: File
+    deseq_stdout_log:
+      location: deseq_stdout.log
+      class: File
+    deseq_stderr_log:
+      location: deseq_stderr.log
       class: File
 
 # ========================================================

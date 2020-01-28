@@ -35,5 +35,7 @@
   ],
   "alias_cond_1": "alpha",
   "alias_cond_2": "beta",
+  "sample_names_cond_1": ["a", "b", "c"],
+  "sample_names_cond_2": ["d", "e", "f"],
   "alias": "alias"
 }

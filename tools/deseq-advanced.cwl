@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.10
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.11
 
 
 inputs:
@@ -49,13 +49,33 @@ inputs:
     doc: |
       Name for treated condition, use only letters and numbers
 
-  output_filename:
-    type: string
+  untreated_sample_names:
+    type:
+      - "null"
+      - string
+      - string[]
+    inputBinding:
+      prefix: "-ua"
+    doc: |
+      Unique aliases for untreated expression files. Default: basenames of -u without extensions
+
+  treated_sample_names:
+    type:
+      - "null"
+      - string
+      - string[]
+    inputBinding:
+      prefix: "-ta"
+    doc: |
+      Unique aliases for treated expression files. Default: basenames of -t without extensions
+
+  output_prefix:
+    type: string?
     inputBinding:
       position: 9
       prefix: "-o"
     doc: |
-      Output TSV filename
+      Output prefix. Default: deseq
 
   threads:
     type: int?
@@ -71,7 +91,12 @@ outputs:
   diff_expr_file:
     type: File
     outputBinding:
-      glob: $(inputs.output_filename)
+      glob: "*report.tsv"
+
+  read_counts_file:
+    type: File
+    outputBinding:
+      glob: "*counts.gct"
 
   plot_lfc_vs_mean:
     type: File
@@ -83,8 +108,16 @@ outputs:
     outputBinding:
       glob: "*002.png"
 
-baseCommand: [run_deseq.R]
+  stdout_log:
+    type: stdout
 
+  stderr_log:
+    type: stderr
+
+
+baseCommand: [run_deseq.R]
+stdout: deseq_stdout.log
+stderr: deseq_stderr.log
 
 $namespaces:
   s: http://schema.org/
@@ -147,27 +180,37 @@ doc: |
   Output file includes only intersected rows from all input files. Intersected by
   RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
 
-  DESeq/DESeq2 always compares untreated_vs_treated groups
+  DESeq/DESeq2 always compares untreated_vs_treated groups.
+  Normalized read counts are exported to GCT file for GSEA downstream analysis
 
 
 s:about: |
-  Usage:
-    run_deseq.R
-         [-h] -u UNTREATED [UNTREATED ...] -t TREATED [TREATED ...] [-un UNAME]
-         [-tn TNAME] [-o OUTPUT] [-p THREADS]
+  usage: run_deseq.R
+        [-h] -u UNTREATED [UNTREATED ...] -t TREATED [TREATED ...]
+        [-ua [UALIAS [UALIAS ...]]] [-ta [TALIAS [TALIAS ...]]] [-un UNAME]
+        [-tn TNAME] [-o OUTPUT] [-p THREADS]
 
   Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups
 
-  -h, --help            show this help message and exit
-  -u UNTREATED [UNTREATED ...], --untreated UNTREATED [UNTREATED ...]
-                        Untreated CSV/TSV isoforms expression files
-  -t TREATED [TREATED ...], --treated TREATED [TREATED ...]
-                        Treated CSV/TSV isoforms expression files
-  -un UNAME, --uname UNAME
-                        Suffix for untreated RPKM column name
-  -tn TNAME, --tname TNAME
-                        Suffix for treated RPKM column name
-  -o OUTPUT, --output OUTPUT
-                        Output TSV filename
-  -p THREADS, --threads THREADS
-                        Threads
+  optional arguments:
+    -h, --help            show this help message and exit
+    -u UNTREATED [UNTREATED ...], --untreated UNTREATED [UNTREATED ...]
+                          Untreated CSV/TSV isoforms expression files
+    -t TREATED [TREATED ...], --treated TREATED [TREATED ...]
+                          Treated CSV/TSV isoforms expression files
+    -ua [UALIAS [UALIAS ...]], --ualias [UALIAS [UALIAS ...]]
+                          Unique aliases for untreated expression files.
+                          Default: basenames of -u without extensions
+    -ta [TALIAS [TALIAS ...]], --talias [TALIAS [TALIAS ...]]
+                          Unique aliases for treated expression files. Default:
+                          basenames of -t without extensions
+    -un UNAME, --uname UNAME
+                          Name for untreated condition, use only letters and
+                          numbers
+    -tn TNAME, --tname TNAME
+                          Name for treated condition, use only letters and
+                          numbers
+    -o OUTPUT, --output OUTPUT
+                          Output prefix. Default: deseq
+    -p THREADS, --threads THREADS
+                          Threads

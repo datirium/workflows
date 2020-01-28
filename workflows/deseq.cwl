@@ -83,6 +83,22 @@ inputs:
     'sd:layout':
       advanced: true
 
+  sample_names_cond_1:
+    type:
+      - "null"
+      - string[]
+    label: "Sample names for RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "Aliases for RNA-Seq experiments (condition 1, aka 'untreated') to make the legend for generated plots. Order corresponds to the rpkm_isoforms_cond_1"
+    'sd:upstreamSource': "rnaseq_cond_1/alias"
+
+  sample_names_cond_2:
+    type:
+      - "null"
+      - string[]
+    label: "Sample names for RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "Aliases for RNA-Seq experiments (condition 2, aka 'treated') to make the legend for generated plots. Order corresponds to the rpkm_isoforms_cond_2"
+    'sd:upstreamSource': "rnaseq_cond_2/alias"
+
   threads:
     type: int?
     label: "Number of threads"
@@ -113,6 +129,13 @@ outputs:
         height: 600
         data: [$9, $13]
 
+  read_counts_file:
+    type: File
+    label: "Normalized read counts in GCT format. Compatible with GSEA"
+    format: "http://edamontology.org/format_3709"
+    doc: "DESeq generated file of with normalized read counts in GCT format. Compatible with GSEA"
+    outputSource: deseq/read_counts_file
+
   plot_lfc_vs_mean:
     type: File
     label: "Plot of normalised mean versus log2 fold change"
@@ -134,6 +157,21 @@ outputs:
     - image:
         tab: 'Other Plots'
         Caption: 'The 30 most highly expressed features'
+
+  deseq_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "DESeq stdout log"
+    doc: "DESeq stdout log"
+    outputSource: deseq/stdout_log
+
+  deseq_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "DESeq stderr log"
+    doc: "DESeq stderr log"
+    outputSource: deseq/stderr_log
+
 
 steps:
 
@@ -180,12 +218,12 @@ steps:
                 return self[3];
               }
           }
-      output_filename:
-        default: "deseq_results.tsv"
       untreated_name: alias_cond_1
       treated_name: alias_cond_2
+      untreated_sample_names: sample_names_cond_1
+      treated_sample_names: sample_names_cond_2
       threads: threads
-    out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap]
+    out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap, read_counts_file, stdout_log, stderr_log]
 
 
 $namespaces:
