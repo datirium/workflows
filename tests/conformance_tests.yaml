@@ -1181,6 +1181,9 @@
     read_counts_file:
       location: deseq_counts.gct
       class: File
+    phenotypes_file:
+      location: deseq_phenotypes.cls
+      class: File
     gene_expr_heatmap:
       location: deseq_plot_002.png
       class: File
