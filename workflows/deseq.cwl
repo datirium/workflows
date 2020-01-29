@@ -136,6 +136,13 @@ outputs:
     doc: "DESeq generated file of with normalized read counts in GCT format. Compatible with GSEA"
     outputSource: deseq/read_counts_file
 
+  phenotypes_file:
+    type: File
+    label: "Phenotype data file in CLS format. Compatible with GSEA"
+    format: "http://edamontology.org/format_2330"
+    doc: "DESeq generated file with phenotypes in CLS format. Compatible with GSEA"
+    outputSource: deseq/phenotypes_file
+
   plot_lfc_vs_mean:
     type: File
     label: "Plot of normalised mean versus log2 fold change"
@@ -223,7 +230,7 @@ steps:
       untreated_sample_names: sample_names_cond_1
       treated_sample_names: sample_names_cond_2
       threads: threads
-    out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap, read_counts_file, stdout_log, stderr_log]
+    out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap, read_counts_file, phenotypes_file, stdout_log, stderr_log]
 
 
 $namespaces:

@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.11
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.12
 
 
 inputs:
@@ -98,6 +98,11 @@ outputs:
     outputBinding:
       glob: "*counts.gct"
 
+  phenotypes_file:
+    type: File
+    outputBinding:
+      glob: "*phenotypes.cls"
+
   plot_lfc_vs_mean:
     type: File
     outputBinding:
@@ -181,7 +186,7 @@ doc: |
   RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
 
   DESeq/DESeq2 always compares untreated_vs_treated groups.
-  Normalized read counts are exported to GCT file for GSEA downstream analysis
+  Normalized read counts and phenotype table are exported as GCT and CLS files for GSEA downstream analysis.
 
 
 s:about: |
