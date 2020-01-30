@@ -35,12 +35,28 @@ inputs:
     'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
+  broad_peak_file_first:
+    type: File?
+    format: "http://edamontology.org/format_3614"
+    label: "ChIP-Seq SE sample 1"
+    doc: "Broad peak file from sample 1"
+    'sd:upstreamSource': "first_chipseq_sample/macs2_broad_peaks"
+    'sd:localLabel': true
+
   peak_file_second:
     type: File
     format: "http://edamontology.org/format_3468"
     label: "ChIP-Seq SE sample 2"
     doc: "XLS peak file from sample 2, formatted as MACS2 output"
     'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
+    'sd:localLabel': true
+
+  broad_peak_file_second:
+    type: File?
+    format: "http://edamontology.org/format_3614"
+    label: "ChIP-Seq SE sample 2"
+    doc: "Broad peak file from sample 2"
+    'sd:upstreamSource': "second_chipseq_sample/macs2_broad_peaks"
     'sd:localLabel': true
 
   bam_file_first:
@@ -272,10 +288,36 @@ steps:
   manorm:
     run: ../tools/manorm.cwl
     in:
-      peak_file_first: peak_file_first
-      peak_file_second: peak_file_second
+      peak_file_first:
+        source: [broad_peak_file_first, peak_file_first]
+        valueFrom: |
+          ${
+              if (self[0] != null) {
+                return self[0];
+              } else {
+                return self[1];
+              }
+          }
+      peak_file_second:
+        source: [broad_peak_file_second, peak_file_second]
+        valueFrom: |
+          ${
+              if (self[0] != null) {
+                return self[0];
+              } else {
+                return self[1];
+              }
+          }
       peak_format:
-        default: "macs2"
+        source: [broad_peak_file_first, broad_peak_file_second]
+        valueFrom: |
+          ${
+              if (self[0] != null || self[1] != null) {
+                return "broadpeak";
+              } else {
+                return "macs2";
+              }
+          }
       read_file_first: bam_file_first
       read_file_second: bam_file_second
       read_format:
