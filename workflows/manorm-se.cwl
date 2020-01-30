@@ -320,7 +320,7 @@ steps:
         source: broad_peak
         valueFrom: |
           ${
-              if (self[0]) {
+              if (self) {
                 return "broadpeak";
               } else {
                 return "macs2";
