@@ -59,6 +59,14 @@ inputs:
     'sd:upstreamSource': "second_chipseq_sample/macs2_broad_peaks"
     'sd:localLabel': true
 
+  broad_peak:
+    type: boolean?
+    default: false
+    label: "Broad peaks were called"
+    doc: "Make MACS2 called broad peaks so MAnorm should use broad peaks"
+    'sd:upstreamSource': "first_chipseq_sample/broad_peak"
+    'sd:localLabel': true
+
   bam_file_first:
     type: File
     format: "http://edamontology.org/format_2572"
@@ -289,30 +297,30 @@ steps:
     run: ../tools/manorm.cwl
     in:
       peak_file_first:
-        source: [broad_peak_file_first, peak_file_first]
+        source: [broad_peak, broad_peak_file_first, peak_file_first]
         valueFrom: |
           ${
-              if (self[0] != null) {
-                return self[0];
-              } else {
+              if (self[0]) {
                 return self[1];
+              } else {
+                return self[2];
               }
           }
       peak_file_second:
-        source: [broad_peak_file_second, peak_file_second]
+        source: [broad_peak, broad_peak_file_second, peak_file_second]
         valueFrom: |
           ${
-              if (self[0] != null) {
-                return self[0];
-              } else {
+              if (self[0]) {
                 return self[1];
+              } else {
+                return self[2];
               }
           }
       peak_format:
-        source: [broad_peak_file_first, broad_peak_file_second]
+        source: broad_peak
         valueFrom: |
           ${
-              if (self[0] != null || self[1] != null) {
+              if (self[0]) {
                 return "broadpeak";
               } else {
                 return "macs2";
