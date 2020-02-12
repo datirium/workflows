@@ -324,6 +324,7 @@ steps:
       sample_names_cond_2: sample_names_cond_2
       cutoff_value: cutoff_value
       cutoff_param: cutoff_param
+      analysis_method: analysis_method
       threads: threads
       peakformat:
         default: "macs"
