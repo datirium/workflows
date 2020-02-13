@@ -23,6 +23,13 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+  blocked_condition:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-se.cwl"
+    - "trim-atacseq-pe.cwl"
   genome_indices:
     - "genome-indices.cwl"
 
@@ -96,6 +103,18 @@ inputs:
     doc: "Aliases for biological condition 2 samples to make the legend for generated plots. Order corresponds to the read_files_cond_2"
     'sd:upstreamSource': "second_biological_condition/alias"
 
+  blocked_attributes:
+    type:
+      - "null"
+      - string[]
+    label: "Blocking attributes for multi-factor analysis. Minimum 2"
+    doc: |
+      Blocking attributes for multi-factor analysis. Minimum 2.
+      Either names from --name1 or/and --name2 or array of strings that can be parsed by R to bool.
+      In the later case the order and size should correspond to [--read1]+[--read2].
+      Default: not applied
+    'sd:upstreamSource': "blocked_condition/alias"
+
   annotation_file:
     type: File
     label: "Genome annotation"
@@ -115,6 +134,14 @@ inputs:
     default: 125
     label: "Reads extension size, bp"
     doc: "Extended each read from its endpoint along the appropriate strand. Default: 125bp"
+    'sd:layout':
+      advanced: true
+
+  min_overlap:
+    type: int?
+    default: 2
+    label: "Minimum peakset overlap"
+    doc: "Min peakset overlap. Only include peaks in at least this many peaksets when generating consensus peakset. Default: 2"
     'sd:layout':
       advanced: true
 
@@ -200,7 +227,7 @@ outputs:
     format: "http://edamontology.org/format_3603"
     label: "Peak overlap correlation heatmap"
     doc: "Peak overlap correlation heatmap"
-    outputSource: diffbind/peak_correlation_heatmap
+    outputSource: diffbind/peak_overlap_corr_heatmap
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
@@ -209,90 +236,112 @@ outputs:
   diffbind_counts_correlation_heatmap:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Counts correlation heatmap"
-    doc: "Counts correlation heatmap"
-    outputSource: diffbind/counts_correlation_heatmap
+    label: "Raw counts correlation heatmap"
+    doc: "Raw counts correlation heatmap"
+    outputSource: diffbind/raw_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'Counts correlation heatmap'
+          Caption: 'Raw counts correlation heatmap'
+
+  diffbind_consensus_peak_venn_diagram:
+    type: File?
+    format: "http://edamontology.org/format_3603"
+    label: "Consensus peak Venn Diagram"
+    doc: "Consensus peak Venn Diagram"
+    outputSource: diffbind/consensus_peak_venn_diagram
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Consensus peak Venn Diagram'
+
+  diffbind_all_peak_overlap_rate_plot:
+    type: File?
+    format: "http://edamontology.org/format_3603"
+    label: "All peak overlap rate plot"
+    doc: "All peak overlap rate plot"
+    outputSource: diffbind/all_peak_overlap_rate_plot
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'All peak overlap rate plot'  
 
   diffbind_all_data_correlation_heatmap:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Correlation heatmap based on all normalized data"
-    doc: "Correlation heatmap based on all normalized data"
-    outputSource: diffbind/all_data_correlation_heatmap
+    label: "Not filtered normalized counts correlation heatmap"
+    doc: "Not filtered normalized counts correlation heatmap"
+    outputSource: select_files/selected_all_norm_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'Correlation heatmap based on all normalized data'
+          Caption: 'Not filtered normalized counts correlation heatmap'
 
   diffbind_db_sites_correlation_heatmap:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Correlation heatmap based on DB sites only"
-    doc: "Correlation heatmap based on DB sites only"
-    outputSource: diffbind/db_sites_correlation_heatmap
+    label: "Normalized counts correlation heatmap for significantly differentially bound sites"
+    doc: "Normalized counts correlation heatmap for significantly differentially bound sites"
+    outputSource: select_files/selected_diff_filtered_norm_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'Correlation heatmap based on DB sites only'
+          Caption: 'Normalized counts correlation heatmap for significantly differentially bound sites'
 
   diffbind_db_sites_binding_heatmap:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Binding heatmap based on DB sites"
-    doc: "Binding heatmap based on DB sites"
-    outputSource: diffbind/db_sites_binding_heatmap
+    label: "Binding heatmap for significantly differentially bound sites"
+    doc: "Binding heatmap for significantly differentially bound sites"
+    outputSource: select_files/selected_binding_heatmap
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'Binding heatmap based on DB sites'
+          Caption: 'Binding heatmap for significantly differentially bound sites'
 
   diffbind_pca_plot:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "PCA plot using affinity data for only differentially bound sites"
-    doc: "PCA plot using affinity data for only differentially bound sites"
-    outputSource: diffbind/pca_plot    
+    label: "PCA plot for significantly differentially bound sites"
+    doc: "PCA plot for significantly differentially bound sites"
+    outputSource: select_files/selected_pca_plot    
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'PCA plot using affinity data for only differentially bound sites'
+          Caption: 'PCA plot for significantly differentially bound sites'
 
   diffbind_ma_plot:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "MA plot for tested conditions"
-    doc: "MA plot for tested conditions"
-    outputSource: diffbind/ma_plot    
+    label: "MA plot for significantly differentially bound sites"
+    doc: "MA plot for significantly differentially bound sites"
+    outputSource: select_files/selected_ma_plot    
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'MA plot for tested conditions'
+          Caption: 'MA plot for significantly differentially bound sites'
 
   diffbind_volcano_plot:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Volcano plot for tested conditions"
-    doc: "Volcano plot for tested conditions"
-    outputSource: diffbind/volcano_plot    
+    label: "Volcano plot for for significantly differentially bound sites"
+    doc: "Volcano plot for for significantly differentially bound sites"
+    outputSource: select_files/selected_volcano_plot    
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'Volcano plot for tested conditions'
+          Caption: 'Volcano plot for for significantly differentially bound sites'
 
   diffbind_boxplot_plot:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Box plots of read distributions for significantly differentially bound (DB) sites"
-    doc: "Box plots of read distributions for significantly differentially bound (DB) sites"
-    outputSource: diffbind/boxplot_plot   
+    label: "Box plots of read distributions for significantly differentially bound sites"
+    doc: "Box plots of read distributions for significantly differentially bound sites"
+    outputSource: select_files/selected_boxplot   
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
-          Caption: 'Box plots of read distributions for significantly differentially bound (DB) sites'
+          Caption: 'Box plots of read distributions for significantly differentially bound sites'
 
   diffbind_stdout_log:
     type: File
@@ -327,27 +376,72 @@ steps:
       fragmentsize: fragmentsize
       remove_duplicates: remove_duplicates
       analysis_method: analysis_method
+      blocked_attributes: blocked_attributes
+      min_overlap: min_overlap
       threads: threads
       peakformat:
         default: "macs"
     out:
-      - diffbind_report_file
-      - peak_correlation_heatmap
-      - counts_correlation_heatmap
-      - all_data_correlation_heatmap
-      - db_sites_correlation_heatmap
-      - db_sites_binding_heatmap
-      - pca_plot
-      - ma_plot
-      - volcano_plot
-      - boxplot_plot
+      - report_deseq
+      - report_deseq_blocked
+      - report_edger
+      - report_edger_blocked
+      - boxplot_deseq
+      - boxplot_deseq_blocked
+      - boxplot_edger
+      - boxplot_edger_blocked
+      - volcano_plot_deseq
+      - volcano_plot_deseq_blocked
+      - volcano_plot_edger
+      - volcano_plot_edger_blocked
+      - ma_plot_deseq
+      - ma_plot_deseq_blocked
+      - ma_plot_edger
+      - ma_plot_edger_blocked
+      - pca_plot_deseq
+      - pca_plot_deseq_blocked
+      - pca_plot_edger
+      - pca_plot_edger_blocked
+      - binding_heatmap_deseq
+      - binding_heatmap_deseq_blocked
+      - binding_heatmap_edger
+      - binding_heatmap_edger_blocked
+      - diff_filtered_norm_counts_corr_heatmap_deseq
+      - diff_filtered_norm_counts_corr_heatmap_deseq_blocked
+      - diff_filtered_norm_counts_corr_heatmap_edger
+      - diff_filtered_norm_counts_corr_heatmap_edger_blocked
+      - all_norm_counts_corr_heatmap_deseq
+      - all_norm_counts_corr_heatmap_deseq_blocked
+      - all_norm_counts_corr_heatmap_edger
+      - all_norm_counts_corr_heatmap_edger_blocked
+      - consensus_peak_venn_diagram
+      - raw_counts_corr_heatmap
+      - peak_overlap_corr_heatmap
+      - all_peak_overlap_rate_plot
       - stdout_log
       - stderr_log
 
   filter_columns:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: diffbind/diffbind_report_file
+      input_file: 
+        source: [analysis_method, blocked_attributes, diffbind/report_deseq, diffbind/report_deseq_blocked, diffbind/report_edger, diffbind/report_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
       script:
         default: >
           cat $0 | grep -v "Start" | awk
@@ -367,7 +461,24 @@ steps:
   restore_columns:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: [assign_genes/result_file, diffbind/diffbind_report_file]
+      input_file:
+        source: [analysis_method, blocked_attributes, diffbind/report_deseq, diffbind/report_deseq_blocked, diffbind/report_edger, diffbind/report_edger_blocked, assign_genes/result_file]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return [self[6], self[2]];
+                } else {
+                  return [self[6], self[3]];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return [self[6], self[4]];
+                } else {
+                  return [self[6], self[5]];
+                }
+              }
+          }
       script:
         default: |
           cat $0 | grep -v "start" | sort -k 11n | cut -f 1-5,15 > iaintersect_result.tsv
@@ -406,6 +517,190 @@ steps:
         source: sort_bed/sorted_file
         valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
     out: [bigbed_file]
+
+  select_files:
+    in:
+      input_boxplot:
+        source: [analysis_method, blocked_attributes, diffbind/boxplot_deseq, diffbind/boxplot_deseq_blocked, diffbind/boxplot_edger, diffbind/boxplot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_volcano_plot:
+        source: [analysis_method, blocked_attributes, diffbind/volcano_plot_deseq, diffbind/volcano_plot_deseq_blocked, diffbind/volcano_plot_edger, diffbind/volcano_plot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_ma_plot:
+        source: [analysis_method, blocked_attributes, diffbind/ma_plot_deseq, diffbind/ma_plot_deseq_blocked, diffbind/ma_plot_edger, diffbind/ma_plot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_pca_plot:
+        source: [analysis_method, blocked_attributes, diffbind/pca_plot_deseq, diffbind/pca_plot_deseq_blocked, diffbind/pca_plot_edger, diffbind/pca_plot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_binding_heatmap:
+        source: [analysis_method, blocked_attributes, diffbind/binding_heatmap_deseq, diffbind/binding_heatmap_deseq_blocked, diffbind/binding_heatmap_edger, diffbind/binding_heatmap_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_diff_filtered_norm_counts_corr_heatmap:
+        source: [analysis_method, blocked_attributes, diffbind/diff_filtered_norm_counts_corr_heatmap_deseq, diffbind/diff_filtered_norm_counts_corr_heatmap_deseq_blocked, diffbind/diff_filtered_norm_counts_corr_heatmap_edger, diffbind/diff_filtered_norm_counts_corr_heatmap_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_all_norm_counts_corr_heatmap:
+        source: [analysis_method, blocked_attributes, diffbind/all_norm_counts_corr_heatmap_deseq, diffbind/all_norm_counts_corr_heatmap_deseq_blocked, diffbind/all_norm_counts_corr_heatmap_edger, diffbind/all_norm_counts_corr_heatmap_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+    out:
+      - selected_boxplot
+      - selected_volcano_plot
+      - selected_ma_plot
+      - selected_pca_plot
+      - selected_binding_heatmap
+      - selected_diff_filtered_norm_counts_corr_heatmap
+      - selected_all_norm_counts_corr_heatmap
+    run:
+      cwlVersion: v1.0
+      class: ExpressionTool
+      requirements:
+        - class: InlineJavascriptRequirement
+      inputs:
+        input_boxplot:
+          type: File?
+        input_volcano_plot:
+          type: File?
+        input_ma_plot:
+          type: File?
+        input_pca_plot:
+          type: File?
+        input_binding_heatmap:
+          type: File?
+        input_diff_filtered_norm_counts_corr_heatmap:
+          type: File?
+        input_all_norm_counts_corr_heatmap:
+          type: File?
+      outputs:
+        selected_boxplot:
+          type: File?
+        selected_volcano_plot:
+          type: File?
+        selected_ma_plot:
+          type: File?
+        selected_pca_plot:
+          type: File?
+        selected_binding_heatmap:
+          type: File?
+        selected_diff_filtered_norm_counts_corr_heatmap:
+          type: File?
+        selected_all_norm_counts_corr_heatmap:
+          type: File?
+      expression: |
+        ${
+          return {
+            "selected_boxplot": inputs.input_boxplot,
+            "selected_volcano_plot": inputs.input_volcano_plot,
+            "selected_ma_plot": inputs.input_ma_plot,
+            "selected_pca_plot": inputs.input_pca_plot,
+            "selected_binding_heatmap": inputs.input_binding_heatmap,
+            "selected_diff_filtered_norm_counts_corr_heatmap": inputs.input_diff_filtered_norm_counts_corr_heatmap,
+            "selected_all_norm_counts_corr_heatmap": inputs.input_all_norm_counts_corr_heatmap
+          };
+        }
 
       
 $namespaces:
