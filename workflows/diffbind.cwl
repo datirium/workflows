@@ -114,7 +114,8 @@ inputs:
       In the later case the order and size should correspond to [--read1]+[--read2].
       Default: not applied
     'sd:upstreamSource': "blocked_condition/alias"
-
+    'sd:localLabel': true
+    
   annotation_file:
     type: File
     label: "Genome annotation"
