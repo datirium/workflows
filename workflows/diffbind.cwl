@@ -324,6 +324,8 @@ steps:
       sample_names_cond_2: sample_names_cond_2
       cutoff_value: cutoff_value
       cutoff_param: cutoff_param
+      fragmentsize: fragmentsize
+      remove_duplicates: remove_duplicates
       analysis_method: analysis_method
       threads: threads
       peakformat:
