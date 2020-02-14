@@ -107,6 +107,7 @@ inputs:
     type:
       - "null"
       - string[]
+    default: null
     label: "Blocking attributes for multi-factor analysis. Minimum 2"
     doc: |
       Blocking attributes for multi-factor analysis. Minimum 2.
@@ -115,7 +116,7 @@ inputs:
       Default: not applied
     'sd:upstreamSource': "blocked_condition/alias"
     'sd:localLabel': true
-    
+
   annotation_file:
     type: File
     label: "Genome annotation"
