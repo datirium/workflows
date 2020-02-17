@@ -400,10 +400,10 @@ steps:
       peakformat:
         default: "macs"
     out:
-      - report_deseq
-      - report_deseq_blocked
-      - report_edger
-      - report_edger_blocked
+      - diff_filtered_report_deseq
+      - diff_filtered_report_deseq_blocked
+      - diff_filtered_report_edger
+      - diff_filtered_report_edger_blocked
       - boxplot_deseq
       - boxplot_deseq_blocked
       - boxplot_edger
@@ -443,7 +443,7 @@ steps:
     run: ../tools/custom-bash.cwl
     in:
       input_file: 
-        source: [analysis_method, blocked_attributes, diffbind/report_deseq, diffbind/report_deseq_blocked, diffbind/report_edger, diffbind/report_edger_blocked]
+        source: [analysis_method, blocked_attributes, diffbind/diff_filtered_report_deseq, diffbind/diff_filtered_report_deseq_blocked, diffbind/diff_filtered_report_edger, diffbind/diff_filtered_report_edger_blocked]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {
@@ -480,7 +480,7 @@ steps:
     run: ../tools/custom-bash.cwl
     in:
       input_file:
-        source: [analysis_method, blocked_attributes, diffbind/report_deseq, diffbind/report_deseq_blocked, diffbind/report_edger, diffbind/report_edger_blocked, assign_genes/result_file]
+        source: [analysis_method, blocked_attributes, diffbind/diff_filtered_report_deseq, diffbind/diff_filtered_report_deseq_blocked, diffbind/diff_filtered_report_edger, diffbind/diff_filtered_report_edger_blocked, assign_genes/result_file]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {

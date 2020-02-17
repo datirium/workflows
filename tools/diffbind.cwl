@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.8
+  dockerPull: biowardrobe2/diffbind:v0.0.9
 
 
 inputs:
@@ -142,29 +142,53 @@ inputs:
 
 outputs:
 
-  report_deseq:
+  diff_filtered_report_deseq:
     type: File?
     outputBinding:
-      glob: "*_report_deseq.tsv"
-    doc: "Differential binding analysis report exported as TSV, DESeq2"
+      glob: "*_filtered_report_deseq.tsv"
+    doc: "Differential binding analysis report for significantly differentially bound sites exported as TSV, DESeq2"
 
-  report_deseq_blocked:
+  diff_filtered_report_deseq_blocked:
     type: File?
     outputBinding:
-      glob: "*_report_deseq_block.tsv"
-    doc: "Differential binding analysis report exported as TSV, DESeq2 Blocked"
+      glob: "*_filtered_report_deseq_block.tsv"
+    doc: "Differential binding analysis report for significantly differentially bound sites exported as TSV, DESeq2 Blocked"
 
-  report_edger:
+  diff_filtered_report_edger:
     type: File?
     outputBinding:
-      glob: "*_report_edger.tsv"
-    doc: "Differential binding analysis report exported as TSV, EdgeR"
+      glob: "*_filtered_report_edger.tsv"
+    doc: "Differential binding analysis report for significantly differentially bound sites exported as TSV, EdgeR"
 
-  report_edger_blocked:
+  diff_filtered_report_edger_blocked:
     type: File?
     outputBinding:
-      glob: "*_report_edger_block.tsv"
-    doc: "Differential binding analysis report exported as TSV, EdgeR Blocked"
+      glob: "*_filtered_report_edger_block.tsv"
+    doc: "Differential binding analysis report for significantly differentially bound sites exported as TSV, EdgeR Blocked"
+
+  all_report_deseq:
+    type: File?
+    outputBinding:
+      glob: "*_all_report_deseq.tsv"
+    doc: "Not filtered differential binding analysis report exported as TSV, DESeq2"
+
+  all_report_deseq_blocked:
+    type: File?
+    outputBinding:
+      glob: "*_all_report_deseq_block.tsv"
+    doc: "Not filtered differential binding analysis report exported as TSV, DESeq2 Blocked"
+
+  all_report_edger:
+    type: File?
+    outputBinding:
+      glob: "*_all_report_edger.tsv"
+    doc: "Not filtered differential binding analysis report exported as TSV, EdgeR"
+
+  all_report_edger_blocked:
+    type: File?
+    outputBinding:
+      glob: "*_all_report_edger_block.tsv"
+    doc: "Not filtered differential binding analysis report exported as TSV, EdgeR Blocked"
 
   boxplot_deseq:
     type: File?
