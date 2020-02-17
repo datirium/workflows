@@ -139,6 +139,22 @@ inputs:
     'sd:layout':
       advanced: true
 
+  promoter_dist:
+    type: int?
+    default: 1000
+    label: "Promoter distance, bp"
+    doc: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region. Default: 1000 bp"
+    'sd:layout':
+      advanced: true
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    label: "Upstream distance, bp"
+    doc: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region. Default: 20,000 bp"
+    'sd:layout':
+      advanced: true
+
   min_overlap:
     type: int?
     default: 2
@@ -456,8 +472,8 @@ steps:
       in:
         input_filename: filter_columns/output_file
         annotation_filename: annotation_file
-        promoter_bp:
-          default: 1000
+        promoter_bp: promoter_dist
+        upstream_bp: upstream_dist
       out: [result_file]
 
   restore_columns:
