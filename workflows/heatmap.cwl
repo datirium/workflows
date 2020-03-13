@@ -169,12 +169,12 @@ steps:
             # BED for gene list
             # chrom  start  end  name  [score] strand
             echo "Recenter by the gene TSS"
-            cat "$0" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\t"$4"\t"$5"\t"$6}' > `basename $0`
+            cat "$0" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\ts"$4"\t"$5"\t"$6}' > `basename $0`
           else
             # BED for peaks
             # chrom  start  end  name
             echo "Recenter by the peak center"
-            cat "$0" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\t"$4"\t"0"\t+"}' > `basename $0`
+            cat "$0" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\ts"$4"\t"0"\t+"}' > `basename $0`
           fi
     out: [output_file]
 
