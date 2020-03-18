@@ -259,7 +259,7 @@ steps:
                   border_color=FALSE,
                   show_rownames=FALSE,
                   labels_col=args$name,
-                  angle_col=45,
+                  angle_col=90,
                   filename=args$output)
                   print(paste("Export heatmap to ", args$output, sep=""))
                 },
