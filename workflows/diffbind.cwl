@@ -284,6 +284,28 @@ outputs:
           tab: 'Plots'
           Caption: 'All peak overlap rate plot'  
 
+  diffbind_peak_overlap_rate_plot_cond_1:
+    type: File?
+    format: "http://edamontology.org/format_3603"
+    label: "Condition 1 peak overlap rate plot"
+    doc: "Condition 1 peak overlap rate plot"
+    outputSource: diffbind/peak_overlap_rate_plot_cond_1
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Condition 1 peak overlap rate plot'
+
+  diffbind_peak_overlap_rate_plot_cond_2:
+    type: File?
+    format: "http://edamontology.org/format_3603"
+    label: "Condition 2 peak overlap rate plot"
+    doc: "Condition 2 peak overlap rate plot"
+    outputSource: diffbind/peak_overlap_rate_plot_cond_2
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'Condition 2 peak overlap rate plot'
+
   diffbind_all_data_correlation_heatmap:
     type: File?
     format: "http://edamontology.org/format_3603"
@@ -436,6 +458,8 @@ steps:
       - raw_counts_corr_heatmap
       - peak_overlap_corr_heatmap
       - all_peak_overlap_rate_plot
+      - peak_overlap_rate_plot_cond_1
+      - peak_overlap_rate_plot_cond_2
       - stdout_log
       - stderr_log
 
