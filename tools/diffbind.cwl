@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.10
+  dockerPull: biowardrobe2/diffbind:v0.0.11
 
 
 inputs:
@@ -126,6 +126,12 @@ inputs:
     inputBinding:
       prefix: "-mo"
     doc: "Min peakset overlap. Only include peaks in at least this many peaksets when generating consensus peakset. Default: 2"
+
+  use_common:
+    type: boolean?
+    inputBinding:
+      prefix: "-uc"
+    doc: "Derive consensus peaks only from the common peaks within each condition. Min peakset overlap is ignored. Default: false"
 
   output_prefix:
     type: string?
@@ -262,29 +268,53 @@ outputs:
       glob: "*_filtered_ma_plot_edger_block.png"
     doc: "MA plot for significantly differentially bound sites, EdgeR Blocked"
 
-  pca_plot_deseq:
+  diff_filtered_pca_plot_deseq:
     type: File?
     outputBinding:
       glob: "*_filtered_pca_plot_deseq.png"
     doc: "PCA plot for significantly differentially bound sites, DESeq2"
 
-  pca_plot_deseq_blocked:
+  diff_filtered_pca_plot_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_pca_plot_deseq_block.png"
     doc: "PCA plot for significantly differentially bound sites, DESeq2 Blocked"
 
-  pca_plot_edger:
+  diff_filtered_pca_plot_edger:
     type: File?
     outputBinding:
       glob: "*_filtered_pca_plot_edger.png"
     doc: "PCA plot for significantly differentially bound sites, EdgeR"
 
-  pca_plot_edger_blocked:
+  diff_filtered_pca_plot_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_pca_plot_edger_block.png"
     doc: "PCA plot for significantly differentially bound sites, EdgeR Blocked"
+
+  all_pca_plot_deseq:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_deseq.png"
+    doc: "PCA plot for not filtered bound sites, DESeq2"
+
+  all_pca_plot_deseq_blocked:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_deseq_block.png"
+    doc: "PCA plot for not filtered bound sites, DESeq2 Blocked"
+
+  all_pca_plot_edger:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_edger.png"
+    doc: "PCA plot for not filtered bound sites, EdgeR"
+
+  all_pca_plot_edger_blocked:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_edger_block.png"
+    doc: "PCA plot for not filtered bound sites, EdgeR Blocked"
 
   binding_heatmap_deseq:
     type: File?
@@ -451,76 +481,80 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Runs R script to compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) data.
+  Runs R script to compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) and occupancy data.
 
 s:about: |
-  usage: run_diffbind.R
-        [-h] -r1 READ1 [READ1 ...] -r2 READ2 [READ2 ...] -p1 PEAK1 [PEAK1 ...]
-        -p2 PEAK2 [PEAK2 ...] [-n1 [NAME1 [NAME1 ...]]]
-  [-n2 [NAME2 [NAME2 ...]]] [-bl [BLOCK [BLOCK ...]]]
-  [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
-  [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
-  [-me {edger,deseq2,all}] [-mo MINOVERLAP] [-cu CUTOFF]
-  [-cp {pvalue,fdr}] [-th THREADS] [-pa PADDING] [-o OUTPUT]
+  usage: run_diffbind.R [-h] -r1 READ1 [READ1 ...] -r2 READ2 [READ2 ...] -p1
+                        PEAK1 [PEAK1 ...] -p2 PEAK2 [PEAK2 ...]
+                        [-n1 [NAME1 [NAME1 ...]]] [-n2 [NAME2 [NAME2 ...]]]
+                        [-bl [BLOCK [BLOCK ...]]]
+                        [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
+                        [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE]
+                        [-rd] [-me {edger,deseq2,all}] [-mo MINOVERLAP] [-uc]
+                        [-cu CUTOFF] [-cp {pvalue,fdr}] [-th THREADS]
+                        [-pa PADDING] [-o OUTPUT]
 
   Differential binding analysis of ChIP-Seq experiments using affinity (read
   count) data
 
   optional arguments:
-  -h, --help            show this help message and exit
-  -r1 READ1 [READ1 ...], --read1 READ1 [READ1 ...]
-                  Read files for condition 1. Minimim 2 files in BAM
-                  format
-  -r2 READ2 [READ2 ...], --read2 READ2 [READ2 ...]
-                  Read files for condition 2. Minimim 2 files in BAM
-                  format
-  -p1 PEAK1 [PEAK1 ...], --peak1 PEAK1 [PEAK1 ...]
-                  Peak files for condition 1. Minimim 2 files in format
-                  set with -pf
-  -p2 PEAK2 [PEAK2 ...], --peak2 PEAK2 [PEAK2 ...]
-                  Peak files for condition 2. Minimim 2 files in format
-                  set with -pf
-  -n1 [NAME1 [NAME1 ...]], --name1 [NAME1 [NAME1 ...]]
-                  Sample names for condition 1. Default: basenames of
-                  -r1 without extensions
-  -n2 [NAME2 [NAME2 ...]], --name2 [NAME2 [NAME2 ...]]
-                  Sample names for condition 2. Default: basenames of
-                  -r2 without extensions
-  -bl [BLOCK [BLOCK ...]], --block [BLOCK [BLOCK ...]]
-                  Blocking attribute for multi-factor analysis. Minimum
-                  2. Either names from --name1 or/and --name2 or array
-                  of bool based on [read1]+[read2]. Default: not applied
-  -pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}, --peakformat {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}
-                  Peak files format. One of [raw, bed, narrow, macs,
-                  bayes, tpic, sicer, fp4, swembl, csv, report].
-                  Default: macs
-  -c1 CONDITION1, --condition1 CONDITION1
-                  Condition 1 name, single word with letters and numbers
-                  only. Default: condition_1
-  -c2 CONDITION2, --condition2 CONDITION2
-                  Condition 2 name, single word with letters and numbers
-                  only. Default: condition_2
-  -fs FRAGMENTSIZE, --fragmentsize FRAGMENTSIZE
-                  Extended each read from its endpoint along the
-                  appropriate strand. Default: 125bp
-  -rd, --removedup      Remove reads that map to exactly the same genomic
-                  position. Default: false
-  -me {edger,deseq2,all}, --method {edger,deseq2,all}
-                  Method by which to analyze differential binding
-                  affinity. Default: all
-  -mo MINOVERLAP, --minoverlap MINOVERLAP
-                  Min peakset overlap. Only include peaks in at least
-                  this many peaksets when generating consensus peakset.
-                  Default: 2
-  -cu CUTOFF, --cutoff CUTOFF
-                  Cutoff for reported results. Applied to the parameter
-                  set with -cp. Default: 0.05
-  -cp {pvalue,fdr}, --cparam {pvalue,fdr}
-                  Parameter to which cutoff should be applied (fdr or
-                  pvalue). Default: fdr
-  -th THREADS, --threads THREADS
-                  Threads to use
-  -pa PADDING, --padding PADDING
-                  Padding for generated heatmaps. Default: 20
-  -o OUTPUT, --output OUTPUT
-                  Output prefix. Default: diffbind
+    -h, --help            show this help message and exit
+    -r1 READ1 [READ1 ...], --read1 READ1 [READ1 ...]
+                          Read files for condition 1. Minimim 2 files in BAM
+                          format
+    -r2 READ2 [READ2 ...], --read2 READ2 [READ2 ...]
+                          Read files for condition 2. Minimim 2 files in BAM
+                          format
+    -p1 PEAK1 [PEAK1 ...], --peak1 PEAK1 [PEAK1 ...]
+                          Peak files for condition 1. Minimim 2 files in format
+                          set with -pf
+    -p2 PEAK2 [PEAK2 ...], --peak2 PEAK2 [PEAK2 ...]
+                          Peak files for condition 2. Minimim 2 files in format
+                          set with -pf
+    -n1 [NAME1 [NAME1 ...]], --name1 [NAME1 [NAME1 ...]]
+                          Sample names for condition 1. Default: basenames of
+                          -r1 without extensions
+    -n2 [NAME2 [NAME2 ...]], --name2 [NAME2 [NAME2 ...]]
+                          Sample names for condition 2. Default: basenames of
+                          -r2 without extensions
+    -bl [BLOCK [BLOCK ...]], --block [BLOCK [BLOCK ...]]
+                          Blocking attribute for multi-factor analysis. Minimum
+                          2. Either names from --name1 or/and --name2 or array
+                          of bool based on [read1]+[read2]. Default: not applied
+    -pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}, --peakformat {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}
+                          Peak files format. One of [raw, bed, narrow, macs,
+                          bayes, tpic, sicer, fp4, swembl, csv, report].
+                          Default: macs
+    -c1 CONDITION1, --condition1 CONDITION1
+                          Condition 1 name, single word with letters and numbers
+                          only. Default: condition_1
+    -c2 CONDITION2, --condition2 CONDITION2
+                          Condition 2 name, single word with letters and numbers
+                          only. Default: condition_2
+    -fs FRAGMENTSIZE, --fragmentsize FRAGMENTSIZE
+                          Extend each read from its endpoint along the
+                          appropriate strand. Default: 125bp
+    -rd, --removedup      Remove reads that map to exactly the same genomic
+                          position. Default: false
+    -me {edger,deseq2,all}, --method {edger,deseq2,all}
+                          Method by which to analyze differential binding
+                          affinity. Default: all
+    -mo MINOVERLAP, --minoverlap MINOVERLAP
+                          Min peakset overlap. Only include peaks in at least
+                          this many peaksets when generating consensus peakset.
+                          Default: 2
+    -uc, --usecommon      Derive consensus peaks only from the common peaks
+                          within each condition. Min peakset overlap is ignored.
+                          Default: false
+    -cu CUTOFF, --cutoff CUTOFF
+                          Cutoff for reported results. Applied to the parameter
+                          set with -cp. Default: 0.05
+    -cp {pvalue,fdr}, --cparam {pvalue,fdr}
+                          Parameter to which cutoff should be applied (fdr or
+                          pvalue). Default: fdr
+    -th THREADS, --threads THREADS
+                          Threads to use
+    -pa PADDING, --padding PADDING
+                          Padding for generated heatmaps. Default: 20
+    -o OUTPUT, --output OUTPUT
+                          Output prefix. Default: diffbind

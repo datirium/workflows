@@ -163,6 +163,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  use_common:
+    type: boolean?
+    default: false
+    label: "Use common peaks within each condition. Ignore Minimum peakset overlap"
+    doc: "Derive consensus peaks only from the common peaks within each condition. Min peakset overlap is ignored. Default: false"
+    'sd:layout':
+      advanced: true
+
   remove_duplicates:
     type: boolean?
     default: false
@@ -344,11 +352,22 @@ outputs:
     format: "http://edamontology.org/format_3603"
     label: "PCA plot for significantly differentially bound sites"
     doc: "PCA plot for significantly differentially bound sites"
-    outputSource: select_files/selected_pca_plot    
+    outputSource: select_files/selected_diff_filtered_pca_plot    
     'sd:visualPlugins':
       - image:
           tab: 'Plots'
           Caption: 'PCA plot for significantly differentially bound sites'
+
+  diffbind_all_pca_plot:
+    type: File?
+    format: "http://edamontology.org/format_3603"
+    label: "PCA plot for all bound sites"
+    doc: "PCA plot for all bound sites"
+    outputSource: select_files/selected_all_pca_plot    
+    'sd:visualPlugins':
+      - image:
+          tab: 'Plots'
+          Caption: 'PCA plot for all bound sites'
 
   diffbind_ma_plot:
     type: File?
@@ -418,6 +437,7 @@ steps:
       analysis_method: analysis_method
       blocked_attributes: blocked_attributes
       min_overlap: min_overlap
+      use_common: use_common
       threads: threads
       peakformat:
         default: "macs"
@@ -438,10 +458,14 @@ steps:
       - ma_plot_deseq_blocked
       - ma_plot_edger
       - ma_plot_edger_blocked
-      - pca_plot_deseq
-      - pca_plot_deseq_blocked
-      - pca_plot_edger
-      - pca_plot_edger_blocked
+      - diff_filtered_pca_plot_deseq
+      - diff_filtered_pca_plot_deseq_blocked
+      - diff_filtered_pca_plot_edger
+      - diff_filtered_pca_plot_edger_blocked
+      - all_pca_plot_deseq
+      - all_pca_plot_deseq_blocked
+      - all_pca_plot_edger
+      - all_pca_plot_edger_blocked
       - binding_heatmap_deseq
       - binding_heatmap_deseq_blocked
       - binding_heatmap_edger
@@ -616,8 +640,26 @@ steps:
                 }
               }
           }
-      input_pca_plot:
-        source: [analysis_method, blocked_attributes, diffbind/pca_plot_deseq, diffbind/pca_plot_deseq_blocked, diffbind/pca_plot_edger, diffbind/pca_plot_edger_blocked]
+      input_diff_filtered_pca_plot:
+        source: [analysis_method, blocked_attributes, diffbind/diff_filtered_pca_plot_deseq, diffbind/diff_filtered_pca_plot_deseq_blocked, diffbind/diff_filtered_pca_plot_edger, diffbind/diff_filtered_pca_plot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_all_pca_plot:
+        source: [analysis_method, blocked_attributes, diffbind/all_pca_plot_deseq, diffbind/all_pca_plot_deseq_blocked, diffbind/all_pca_plot_edger, diffbind/all_pca_plot_edger_blocked]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {
@@ -692,7 +734,8 @@ steps:
       - selected_boxplot
       - selected_volcano_plot
       - selected_ma_plot
-      - selected_pca_plot
+      - selected_diff_filtered_pca_plot
+      - selected_all_pca_plot
       - selected_binding_heatmap
       - selected_diff_filtered_norm_counts_corr_heatmap
       - selected_all_norm_counts_corr_heatmap
@@ -708,7 +751,9 @@ steps:
           type: File?
         input_ma_plot:
           type: File?
-        input_pca_plot:
+        input_diff_filtered_pca_plot:
+          type: File?
+        input_all_pca_plot:
           type: File?
         input_binding_heatmap:
           type: File?
@@ -723,7 +768,9 @@ steps:
           type: File?
         selected_ma_plot:
           type: File?
-        selected_pca_plot:
+        selected_diff_filtered_pca_plot:
+          type: File?
+        selected_all_pca_plot:
           type: File?
         selected_binding_heatmap:
           type: File?
@@ -737,7 +784,8 @@ steps:
             "selected_boxplot": inputs.input_boxplot,
             "selected_volcano_plot": inputs.input_volcano_plot,
             "selected_ma_plot": inputs.input_ma_plot,
-            "selected_pca_plot": inputs.input_pca_plot,
+            "selected_diff_filtered_pca_plot": inputs.input_diff_filtered_pca_plot,
+            "selected_all_pca_plot": inputs.input_all_pca_plot,
             "selected_binding_heatmap": inputs.input_binding_heatmap,
             "selected_diff_filtered_norm_counts_corr_heatmap": inputs.input_diff_filtered_norm_counts_corr_heatmap,
             "selected_all_norm_counts_corr_heatmap": inputs.input_all_norm_counts_corr_heatmap
@@ -753,7 +801,7 @@ $schemas:
 
 label: "DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data"
 s:name: "DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data"
-s:alternateName: "Compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) data."
+s:alternateName: "Compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) and occupancy data."
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/diffbind.cwl
 s:codeRepository: https://github.com/datirium/workflows
