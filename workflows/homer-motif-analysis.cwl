@@ -27,6 +27,15 @@ inputs:
     label: "Regions file. Headerless BED file with minimum [chrom start end] columns"
     doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns"
 
+  motifs_db:
+    type:
+      - "null"
+      - type: enum
+        symbols: ["vertebrates", "insects", "worms", "plants", "yeast", "all"]
+    default: "vertebrates"
+    label: "Set motifs DB to check against"
+    doc: "Set motifs DB to check against"
+
   chrom_length_file:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -41,6 +50,30 @@ inputs:
     doc: "Reference genome FASTA file. Includes all chromosomes in a single file"
     'sd:upstreamSource': "genome_indices/fasta"
 
+  skip_denovo:
+    type: boolean?
+    default: True
+    label: "Skip de novo motif enrichment"
+    doc: "Skip de novo motif enrichment"
+    'sd:layout':
+      advanced: true
+
+  skip_known:
+    type: boolean?
+    default: False
+    label: "Skip known motif enrichment"
+    doc: "Skip known motif enrichment"
+    'sd:layout':
+      advanced: true
+
+  use_binomial:
+    type: boolean?
+    default: False
+    label: "Use binomial distribution instead of hypergeometric to calculate p-values"
+    doc: "Use binomial distribution instead of hypergeometric to calculate p-values"
+    'sd:layout':
+      advanced: true
+  
   threads:
     type: int?
     default: 4
@@ -54,7 +87,7 @@ outputs:
 
   homer_found_motifs:
     type: File
-    outputSource: compress_results/compressed_folder
+    outputSource: find_motifs/compressed_results_folder
     label: "Compressed file with Homer motifs"
     doc: "Homer motifs"
 
@@ -155,18 +188,15 @@ steps:
     in:
       target_fasta_file: bedtools_get_fasta_target/sequences_file
       background_fasta_file: bedtools_get_fasta_background/sequences_file
+      skip_denovo: skip_denovo
+      skip_known: skip_known
+      use_binomial: use_binomial
+      motifs_db: motifs_db
       threads: threads
     out:
-      - results_folder
+      - compressed_results_folder
       - stdout_log
       - stderr_log
-
-  compress_results:
-    run: ../tools/tar-compress.cwl
-    in:
-      folder_to_compress: find_motifs/results_folder
-    out:
-      - compressed_folder
 
 
 $namespaces:

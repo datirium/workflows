@@ -5,12 +5,13 @@ class: CommandLineTool
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var get_output_folder = function() {
-          if (inputs.output_folder == ""){
+  - var get_output_filename = function() {
+          if (inputs.output_filename == ""){
+            var ext = ".tar.gz";
             var root = inputs.target_fasta_file.basename.split('.').slice(0,-1).join('.');
-            return (root == "")?inputs.target_fasta_file.basename:root;
+            return (root == "")?inputs.target_fasta_file.basename+ext:root+ext;
           } else {
-            return inputs.output_folder;
+            return inputs.output_filename;
           }
         };
 
@@ -22,24 +23,39 @@ hints:
 
 inputs:
 
+  script:
+    type: string?
+    default: |
+      #!/bin/bash
+      echo findMotifs.pl $0 dummy homer_results ${@:2}
+      findMotifs.pl $0 dummy homer_results ${@:2}
+      echo tar -czf $1 homer_results
+      tar -czf $1 homer_results
+    inputBinding:
+      position: 5
+    doc: |
+      Bash script to run findMotifs.pl and to compress results to tar.gz
+
   target_fasta_file:
     type: File
+    inputBinding:
+      position: 6
     doc: |
       Target FASTA file to scan for motifs
 
-  output_folder:
+  output_filename:
     type: string?
     inputBinding:
-      position: 5
-      valueFrom: $(get_output_folder())
+      position: 7
+      valueFrom: $(get_output_filename())
     default: ""
     doc: |
-      Name of the output folder to keep all the results
+      Name for compressed output folder to keep all the results
 
   background_fasta_file:
     type: File
     inputBinding:
-      position: 6
+      position: 8
       prefix: "-fasta"
     doc: |
       Background FASTA file suitable for use as a null distribution
@@ -47,23 +63,44 @@ inputs:
   skip_denovo:
     type: boolean?
     inputBinding:
-      position: 7
+      position: 9
       prefix: "-nomotif"
     doc: |
       Don't search for de novo motif enrichment
       
+  skip_known:
+    type: boolean?
+    inputBinding:
+      position: 10
+      prefix: "-noknown"
+    doc: |
+      Don't search for known motif enrichment
+
   use_binomial:
     type: boolean?
     inputBinding:
-      position: 8
+      position: 11
       prefix: "-b"
     doc: |
       Use binomial distribution to calculate p-values (default is hypergeometric)
 
+  motifs_db:
+    type:
+      - "null"
+      - type: enum
+        name: "motifs"
+        symbols: ["vertebrates", "insects", "worms", "plants", "yeast", "all"]
+    default: "vertebrates"
+    inputBinding:
+      position: 12
+      prefix: "-mset"
+    doc: |
+      Set motifs DB to check against. Default: vertebrates
+
   threads:
     type: int?
     inputBinding:
-      position: 9
+      position: 13
       prefix: "-p"
     doc: |
       Number of threads to use
@@ -71,12 +108,12 @@ inputs:
 
 outputs:
 
-  results_folder:
-    type: Directory
+  compressed_results_folder:
+    type: File
     outputBinding:
-      glob: $(get_output_folder())
+      glob: $(get_output_filename())
     doc: |
-      Folder with all the generated results
+      Compressed folder with all generated results
 
   stdout_log:
     type: stdout
@@ -85,10 +122,7 @@ outputs:
     type: stderr
 
 
-baseCommand: ["findMotifs.pl"]
-arguments:
-  - valueFrom: $(inputs.target_fasta_file)
-  - "dummy"
+baseCommand: ["bash", "-c"]
 
 
 stdout: homer_find_motifs_stdout.log
