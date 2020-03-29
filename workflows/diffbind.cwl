@@ -163,6 +163,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  min_read_counts:
+    type: int?
+    default: 0
+    label: "Minimum read counts. Exclude intervals where MAX read counts for all samples < specified value"
+    doc: "Min read counts. Exclude all merged intervals where the MAX raw read counts among all of the samples is smaller than the specified value. Default: 0"
+    'sd:layout':
+      advanced: true
+
   use_common:
     type: boolean?
     default: false
@@ -437,6 +445,7 @@ steps:
       analysis_method: analysis_method
       blocked_attributes: blocked_attributes
       min_overlap: min_overlap
+      min_read_counts: min_read_counts
       use_common: use_common
       threads: threads
       peakformat:
@@ -450,40 +459,78 @@ steps:
       - boxplot_deseq_blocked
       - boxplot_edger
       - boxplot_edger_blocked
+      - boxplot_deseq_pdf
+      - boxplot_deseq_blocked_pdf
+      - boxplot_edger_pdf
+      - boxplot_edger_blocked_pdf
       - volcano_plot_deseq
       - volcano_plot_deseq_blocked
       - volcano_plot_edger
       - volcano_plot_edger_blocked
+      - volcano_plot_deseq_pdf
+      - volcano_plot_deseq_blocked_pdf
+      - volcano_plot_edger_pdf
+      - volcano_plot_edger_blocked_pdf
       - ma_plot_deseq
       - ma_plot_deseq_blocked
       - ma_plot_edger
       - ma_plot_edger_blocked
+      - ma_plot_deseq_pdf
+      - ma_plot_deseq_blocked_pdf
+      - ma_plot_edger_pdf
+      - ma_plot_edger_blocked_pdf
       - diff_filtered_pca_plot_deseq
       - diff_filtered_pca_plot_deseq_blocked
       - diff_filtered_pca_plot_edger
       - diff_filtered_pca_plot_edger_blocked
+      - diff_filtered_pca_plot_deseq_pdf
+      - diff_filtered_pca_plot_deseq_blocked_pdf
+      - diff_filtered_pca_plot_edger_pdf
+      - diff_filtered_pca_plot_edger_blocked_pdf
       - all_pca_plot_deseq
       - all_pca_plot_deseq_blocked
       - all_pca_plot_edger
       - all_pca_plot_edger_blocked
+      - all_pca_plot_deseq_pdf
+      - all_pca_plot_deseq_blocked_pdf
+      - all_pca_plot_edger_pdf
+      - all_pca_plot_edger_blocked_pdf
       - binding_heatmap_deseq
       - binding_heatmap_deseq_blocked
       - binding_heatmap_edger
       - binding_heatmap_edger_blocked
+      - binding_heatmap_deseq_pdf
+      - binding_heatmap_deseq_blocked_pdf
+      - binding_heatmap_edger_pdf
+      - binding_heatmap_edger_blocked_pdf
       - diff_filtered_norm_counts_corr_heatmap_deseq
       - diff_filtered_norm_counts_corr_heatmap_deseq_blocked
       - diff_filtered_norm_counts_corr_heatmap_edger
       - diff_filtered_norm_counts_corr_heatmap_edger_blocked
+      - diff_filtered_norm_counts_corr_heatmap_deseq_pdf
+      - diff_filtered_norm_counts_corr_heatmap_deseq_blocked_pdf
+      - diff_filtered_norm_counts_corr_heatmap_edger_pdf
+      - diff_filtered_norm_counts_corr_heatmap_edger_blocked_pdf
       - all_norm_counts_corr_heatmap_deseq
       - all_norm_counts_corr_heatmap_deseq_blocked
       - all_norm_counts_corr_heatmap_edger
       - all_norm_counts_corr_heatmap_edger_blocked
+      - all_norm_counts_corr_heatmap_deseq_pdf
+      - all_norm_counts_corr_heatmap_deseq_blocked_pdf
+      - all_norm_counts_corr_heatmap_edger_pdf
+      - all_norm_counts_corr_heatmap_edger_blocked_pdf
       - consensus_peak_venn_diagram
       - raw_counts_corr_heatmap
       - peak_overlap_corr_heatmap
       - all_peak_overlap_rate_plot
       - peak_overlap_rate_plot_cond_1
       - peak_overlap_rate_plot_cond_2
+      - consensus_peak_venn_diagram_pdf
+      - raw_counts_corr_heatmap_pdf
+      - peak_overlap_corr_heatmap_pdf
+      - all_peak_overlap_rate_plot_pdf
+      - peak_overlap_rate_plot_cond_1_pdf
+      - peak_overlap_rate_plot_cond_2_pdf
       - stdout_log
       - stderr_log
 
@@ -604,8 +651,44 @@ steps:
                 }
               }
           }
+      input_boxplot_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/boxplot_deseq_pdf, diffbind/boxplot_deseq_blocked_pdf, diffbind/boxplot_edger_pdf, diffbind/boxplot_edger_blocked_pdf]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
       input_volcano_plot:
         source: [analysis_method, blocked_attributes, diffbind/volcano_plot_deseq, diffbind/volcano_plot_deseq_blocked, diffbind/volcano_plot_edger, diffbind/volcano_plot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_volcano_plot_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/volcano_plot_deseq_pdf, diffbind/volcano_plot_deseq_blocked_pdf, diffbind/volcano_plot_edger_pdf, diffbind/volcano_plot_edger_blocked_pdf]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {
@@ -640,8 +723,44 @@ steps:
                 }
               }
           }
+      input_ma_plot_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/ma_plot_deseq_pdf, diffbind/ma_plot_deseq_blocked_pdf, diffbind/ma_plot_edger_pdf, diffbind/ma_plot_edger_blocked_pdf]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
       input_diff_filtered_pca_plot:
         source: [analysis_method, blocked_attributes, diffbind/diff_filtered_pca_plot_deseq, diffbind/diff_filtered_pca_plot_deseq_blocked, diffbind/diff_filtered_pca_plot_edger, diffbind/diff_filtered_pca_plot_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_diff_filtered_pca_plot_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/diff_filtered_pca_plot_deseq_pdf, diffbind/diff_filtered_pca_plot_deseq_blocked_pdf, diffbind/diff_filtered_pca_plot_edger_pdf, diffbind/diff_filtered_pca_plot_edger_blocked_pdf]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {
@@ -676,8 +795,44 @@ steps:
                 }
               }
           }
+      input_all_pca_plot_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/all_pca_plot_deseq_pdf, diffbind/all_pca_plot_deseq_blocked_pdf, diffbind/all_pca_plot_edger_pdf, diffbind/all_pca_plot_edger_blocked_pdf]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
       input_binding_heatmap:
         source: [analysis_method, blocked_attributes, diffbind/binding_heatmap_deseq, diffbind/binding_heatmap_deseq_blocked, diffbind/binding_heatmap_edger, diffbind/binding_heatmap_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_binding_heatmap_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/binding_heatmap_deseq_pdf, diffbind/binding_heatmap_deseq_blocked_pdf, diffbind/binding_heatmap_edger_pdf, diffbind/binding_heatmap_edger_blocked_pdf]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {
@@ -712,8 +867,44 @@ steps:
                 }
               }
           }
+      input_diff_filtered_norm_counts_corr_heatmap_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/diff_filtered_norm_counts_corr_heatmap_deseq_pdf, diffbind/diff_filtered_norm_counts_corr_heatmap_deseq_blocked_pdf, diffbind/diff_filtered_norm_counts_corr_heatmap_edger_pdf, diffbind/diff_filtered_norm_counts_corr_heatmap_edger_blocked_pdf]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
       input_all_norm_counts_corr_heatmap:
         source: [analysis_method, blocked_attributes, diffbind/all_norm_counts_corr_heatmap_deseq, diffbind/all_norm_counts_corr_heatmap_deseq_blocked, diffbind/all_norm_counts_corr_heatmap_edger, diffbind/all_norm_counts_corr_heatmap_edger_blocked]
+        valueFrom: |
+          ${
+              if (self[0] == "deseq2") {
+                if (self[1] == null || self[1].length == 0){
+                  return self[2];
+                } else {
+                  return self[3];
+                }
+              } else {
+                if (self[1] == null || self[1].length == 0){
+                  return self[4];
+                } else {
+                  return self[5];
+                }
+              }
+          }
+      input_all_norm_counts_corr_heatmap_pdf:
+        source: [analysis_method, blocked_attributes, diffbind/all_norm_counts_corr_heatmap_deseq_pdf, diffbind/all_norm_counts_corr_heatmap_deseq_blocked_pdf, diffbind/all_norm_counts_corr_heatmap_edger_pdf, diffbind/all_norm_counts_corr_heatmap_edger_blocked_pdf]
         valueFrom: |
           ${
               if (self[0] == "deseq2") {
@@ -739,6 +930,14 @@ steps:
       - selected_binding_heatmap
       - selected_diff_filtered_norm_counts_corr_heatmap
       - selected_all_norm_counts_corr_heatmap
+      - selected_boxplot_pdf
+      - selected_volcano_plot_pdf
+      - selected_ma_plot_pdf
+      - selected_diff_filtered_pca_plot_pdf
+      - selected_all_pca_plot_pdf
+      - selected_binding_heatmap_pdf
+      - selected_diff_filtered_norm_counts_corr_heatmap_pdf
+      - selected_all_norm_counts_corr_heatmap_pdf
     run:
       cwlVersion: v1.0
       class: ExpressionTool
@@ -747,19 +946,35 @@ steps:
       inputs:
         input_boxplot:
           type: File?
+        input_boxplot_pdf:
+          type: File?
         input_volcano_plot:
+          type: File?
+        input_volcano_plot_pdf:
           type: File?
         input_ma_plot:
           type: File?
+        input_ma_plot_pdf:
+          type: File?
         input_diff_filtered_pca_plot:
           type: File?
+        input_diff_filtered_pca_plot_pdf:
+          type: File?        
         input_all_pca_plot:
           type: File?
+        input_all_pca_plot_pdf:
+          type: File?        
         input_binding_heatmap:
           type: File?
+        input_binding_heatmap_pdf:
+          type: File?          
         input_diff_filtered_norm_counts_corr_heatmap:
           type: File?
+        input_diff_filtered_norm_counts_corr_heatmap_pdf:
+          type: File?
         input_all_norm_counts_corr_heatmap:
+          type: File?
+        input_all_norm_counts_corr_heatmap_pdf:
           type: File?
       outputs:
         selected_boxplot:
@@ -778,6 +993,22 @@ steps:
           type: File?
         selected_all_norm_counts_corr_heatmap:
           type: File?
+        selected_boxplot_pdf:
+          type: File?
+        selected_volcano_plot_pdf:
+          type: File?
+        selected_ma_plot_pdf:
+          type: File?
+        selected_diff_filtered_pca_plot_pdf:
+          type: File?
+        selected_all_pca_plot_pdf:
+          type: File?
+        selected_binding_heatmap_pdf:
+          type: File?
+        selected_diff_filtered_norm_counts_corr_heatmap_pdf:
+          type: File?
+        selected_all_norm_counts_corr_heatmap_pdf:
+          type: File?
       expression: |
         ${
           return {
@@ -788,7 +1019,15 @@ steps:
             "selected_all_pca_plot": inputs.input_all_pca_plot,
             "selected_binding_heatmap": inputs.input_binding_heatmap,
             "selected_diff_filtered_norm_counts_corr_heatmap": inputs.input_diff_filtered_norm_counts_corr_heatmap,
-            "selected_all_norm_counts_corr_heatmap": inputs.input_all_norm_counts_corr_heatmap
+            "selected_all_norm_counts_corr_heatmap": inputs.input_all_norm_counts_corr_heatmap,
+            "selected_boxplot_pdf": inputs.input_boxplot_pdf,
+            "selected_volcano_plot_pdf": inputs.input_volcano_plot_pdf,
+            "selected_ma_plot_pdf": inputs.input_ma_plot_pdf,
+            "selected_diff_filtered_pca_plot_pdf": inputs.input_diff_filtered_pca_plot_pdf,
+            "selected_all_pca_plot_pdf": inputs.input_all_pca_plot_pdf,
+            "selected_binding_heatmap_pdf": inputs.input_binding_heatmap_pdf,
+            "selected_diff_filtered_norm_counts_corr_heatmap_pdf": inputs.input_diff_filtered_norm_counts_corr_heatmap_pdf,
+            "selected_all_norm_counts_corr_heatmap_pdf": inputs.input_all_norm_counts_corr_heatmap_pdf
           };
         }
 

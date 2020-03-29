@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.11
+  dockerPull: biowardrobe2/diffbind:v0.0.12
 
 
 inputs:
@@ -127,6 +127,12 @@ inputs:
       prefix: "-mo"
     doc: "Min peakset overlap. Only include peaks in at least this many peaksets when generating consensus peakset. Default: 2"
 
+  min_read_counts:
+    type: int?
+    inputBinding:
+      prefix: "-mc"
+    doc: "Min read counts. Exclude all merged intervals where the MAX raw read counts among all of the samples is smaller than the specified value. Default: 0"
+
   use_common:
     type: boolean?
     inputBinding:
@@ -202,10 +208,22 @@ outputs:
       glob: "*_filtered_box_plot_deseq.png"
     doc: "Box plots of read distributions for significantly differentially bound sites, DESeq2"
 
+  boxplot_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_box_plot_deseq.pdf"
+    doc: "Box plots of read distributions for significantly differentially bound sites, DESeq2"
+
   boxplot_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_box_plot_deseq_block.png"
+    doc: "Box plots of read distributions for significantly differentially bound sites, DESeq2 Blocked"
+
+  boxplot_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_box_plot_deseq_block.pdf"
     doc: "Box plots of read distributions for significantly differentially bound sites, DESeq2 Blocked"
 
   boxplot_edger:
@@ -214,10 +232,22 @@ outputs:
       glob: "*_filtered_box_plot_edger.png"
     doc: "Box plots of read distributions for significantly differentially bound sites, EdgeR"
   
+  boxplot_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_box_plot_edger.pdf"
+    doc: "Box plots of read distributions for significantly differentially bound sites, EdgeR"
+
   boxplot_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_box_plot_edger_block.png"
+    doc: "Box plots of read distributions for significantly differentially bound sites, EdgeR Blocked"
+
+  boxplot_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_box_plot_edger_block.pdf"
     doc: "Box plots of read distributions for significantly differentially bound sites, EdgeR Blocked"
 
   volcano_plot_deseq:
@@ -226,10 +256,22 @@ outputs:
       glob: "*_filtered_volcano_plot_deseq.png"
     doc: "Volcano plot for significantly differentially bound sites, DESeq2"
 
+  volcano_plot_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_volcano_plot_deseq.pdf"
+    doc: "Volcano plot for significantly differentially bound sites, DESeq2"
+
   volcano_plot_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_volcano_plot_deseq_block.png"
+    doc: "Volcano plot for for significantly differentially bound sites, DESeq2 Blocked"
+
+  volcano_plot_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_volcano_plot_deseq_block.pdf"
     doc: "Volcano plot for for significantly differentially bound sites, DESeq2 Blocked"
 
   volcano_plot_edger:
@@ -238,10 +280,22 @@ outputs:
       glob: "*_filtered_volcano_plot_edger.png"
     doc: "Volcano plot for for significantly differentially bound sites, EdgeR"
 
+  volcano_plot_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_volcano_plot_edger.pdf"
+    doc: "Volcano plot for for significantly differentially bound sites, EdgeR"
+
   volcano_plot_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_volcano_plot_edger_block.png"
+    doc: "Volcano plot for for significantly differentially bound sites, EdgeR Blocked"
+
+  volcano_plot_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_volcano_plot_edger_block.pdf"
     doc: "Volcano plot for for significantly differentially bound sites, EdgeR Blocked"
 
   ma_plot_deseq:
@@ -250,10 +304,22 @@ outputs:
       glob: "*_filtered_ma_plot_deseq.png"
     doc: "MA plot for significantly differentially bound sites, DESeq2"
 
+  ma_plot_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_ma_plot_deseq.pdf"
+    doc: "MA plot for significantly differentially bound sites, DESeq2"
+
   ma_plot_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_ma_plot_deseq_block.png"
+    doc: "MA plot for significantly differentially bound sites, DESeq2 Blocked"
+
+  ma_plot_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_ma_plot_deseq_block.pdf"
     doc: "MA plot for significantly differentially bound sites, DESeq2 Blocked"
 
   ma_plot_edger:
@@ -262,10 +328,22 @@ outputs:
       glob: "*_filtered_ma_plot_edger.png"
     doc: "MA plot for significantly differentially bound sites, EdgeR"
 
+  ma_plot_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_ma_plot_edger.pdf"
+    doc: "MA plot for significantly differentially bound sites, EdgeR"
+    
   ma_plot_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_ma_plot_edger_block.png"
+    doc: "MA plot for significantly differentially bound sites, EdgeR Blocked"
+
+  ma_plot_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_ma_plot_edger_block.pdf"
     doc: "MA plot for significantly differentially bound sites, EdgeR Blocked"
 
   diff_filtered_pca_plot_deseq:
@@ -274,10 +352,22 @@ outputs:
       glob: "*_filtered_pca_plot_deseq.png"
     doc: "PCA plot for significantly differentially bound sites, DESeq2"
 
+  diff_filtered_pca_plot_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_pca_plot_deseq.pdf"
+    doc: "PCA plot for significantly differentially bound sites, DESeq2"
+
   diff_filtered_pca_plot_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_pca_plot_deseq_block.png"
+    doc: "PCA plot for significantly differentially bound sites, DESeq2 Blocked"
+  
+  diff_filtered_pca_plot_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_pca_plot_deseq_block.pdf"
     doc: "PCA plot for significantly differentially bound sites, DESeq2 Blocked"
 
   diff_filtered_pca_plot_edger:
@@ -286,10 +376,22 @@ outputs:
       glob: "*_filtered_pca_plot_edger.png"
     doc: "PCA plot for significantly differentially bound sites, EdgeR"
 
+  diff_filtered_pca_plot_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_pca_plot_edger.pdf"
+    doc: "PCA plot for significantly differentially bound sites, EdgeR"
+
   diff_filtered_pca_plot_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_pca_plot_edger_block.png"
+    doc: "PCA plot for significantly differentially bound sites, EdgeR Blocked"
+
+  diff_filtered_pca_plot_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_pca_plot_edger_block.pdf"
     doc: "PCA plot for significantly differentially bound sites, EdgeR Blocked"
 
   all_pca_plot_deseq:
@@ -298,10 +400,22 @@ outputs:
       glob: "*_all_pca_plot_deseq.png"
     doc: "PCA plot for not filtered bound sites, DESeq2"
 
+  all_pca_plot_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_deseq.pdf"
+    doc: "PCA plot for not filtered bound sites, DESeq2"
+
   all_pca_plot_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_all_pca_plot_deseq_block.png"
+    doc: "PCA plot for not filtered bound sites, DESeq2 Blocked"
+
+  all_pca_plot_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_deseq_block.pdf"
     doc: "PCA plot for not filtered bound sites, DESeq2 Blocked"
 
   all_pca_plot_edger:
@@ -310,10 +424,22 @@ outputs:
       glob: "*_all_pca_plot_edger.png"
     doc: "PCA plot for not filtered bound sites, EdgeR"
 
+  all_pca_plot_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_edger.pdf"
+    doc: "PCA plot for not filtered bound sites, EdgeR"
+
   all_pca_plot_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_all_pca_plot_edger_block.png"
+    doc: "PCA plot for not filtered bound sites, EdgeR Blocked"
+
+  all_pca_plot_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_pca_plot_edger_block.pdf"
     doc: "PCA plot for not filtered bound sites, EdgeR Blocked"
 
   binding_heatmap_deseq:
@@ -322,10 +448,22 @@ outputs:
       glob: "*_filtered_binding_heatmap_deseq.png"
     doc: "Binding heatmap for significantly differentially bound sites, DESeq2"
 
+  binding_heatmap_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_binding_heatmap_deseq.pdf"
+    doc: "Binding heatmap for significantly differentially bound sites, DESeq2"
+
   binding_heatmap_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_binding_heatmap_deseq_block.png"
+    doc: "Binding heatmap for significantly differentially bound sites, DESeq2 Blocked"
+
+  binding_heatmap_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_binding_heatmap_deseq_block.pdf"
     doc: "Binding heatmap for significantly differentially bound sites, DESeq2 Blocked"
 
   binding_heatmap_edger:
@@ -334,10 +472,22 @@ outputs:
       glob: "*_filtered_binding_heatmap_edger.png"
     doc: "Binding heatmap for significantly differentially bound sites, EdgeR"
 
+  binding_heatmap_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_binding_heatmap_edger.pdf"
+    doc: "Binding heatmap for significantly differentially bound sites, EdgeR"
+
   binding_heatmap_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_binding_heatmap_edger_block.png"
+    doc: "Binding heatmap for significantly differentially bound sites, EdgeR Blocked"
+
+  binding_heatmap_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_binding_heatmap_edger_block.pdf"
     doc: "Binding heatmap for significantly differentially bound sites, EdgeR Blocked"
 
   diff_filtered_norm_counts_corr_heatmap_deseq:
@@ -346,10 +496,22 @@ outputs:
       glob: "*_filtered_normalized_counts_correlation_heatmap_deseq.png"
     doc: "Normalized counts correlation heatmap for significantly differentially bound sites, DESeq2"
 
+  diff_filtered_norm_counts_corr_heatmap_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_normalized_counts_correlation_heatmap_deseq.pdf"
+    doc: "Normalized counts correlation heatmap for significantly differentially bound sites, DESeq2"
+
   diff_filtered_norm_counts_corr_heatmap_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_normalized_counts_correlation_heatmap_deseq_block.png"
+    doc: "Normalized counts correlation heatmap for significantly differentially bound sites, DESeq2 Blocked"
+
+  diff_filtered_norm_counts_corr_heatmap_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_normalized_counts_correlation_heatmap_deseq_block.pdf"
     doc: "Normalized counts correlation heatmap for significantly differentially bound sites, DESeq2 Blocked"
 
   diff_filtered_norm_counts_corr_heatmap_edger:
@@ -358,10 +520,22 @@ outputs:
       glob: "*_filtered_normalized_counts_correlation_heatmap_edger.png"
     doc: "Normalized counts correlation heatmap for significantly differentially bound sites, EdgeR"
 
+  diff_filtered_norm_counts_corr_heatmap_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_normalized_counts_correlation_heatmap_edger.pdf"
+    doc: "Normalized counts correlation heatmap for significantly differentially bound sites, EdgeR"
+
   diff_filtered_norm_counts_corr_heatmap_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_filtered_normalized_counts_correlation_heatmap_edger_block.png"
+    doc: "Normalized counts correlation heatmap for significantly differentially bound sites, EdgeR Blocked"
+
+  diff_filtered_norm_counts_corr_heatmap_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_filtered_normalized_counts_correlation_heatmap_edger_block.pdf"
     doc: "Normalized counts correlation heatmap for significantly differentially bound sites, EdgeR Blocked"
 
   all_norm_counts_corr_heatmap_deseq:
@@ -370,10 +544,22 @@ outputs:
       glob: "*_all_normalized_counts_correlation_heatmap_deseq.png"
     doc: "Not filtered normalized counts correlation heatmap, DESeq2"
 
+  all_norm_counts_corr_heatmap_deseq_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_normalized_counts_correlation_heatmap_deseq.pdf"
+    doc: "Not filtered normalized counts correlation heatmap, DESeq2"
+
   all_norm_counts_corr_heatmap_deseq_blocked:
     type: File?
     outputBinding:
       glob: "*_all_normalized_counts_correlation_heatmap_deseq_block.png"
+    doc: "Not filtered normalized counts correlation heatmap, DESeq2 Blocked"
+
+  all_norm_counts_corr_heatmap_deseq_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_normalized_counts_correlation_heatmap_deseq_block.pdf"
     doc: "Not filtered normalized counts correlation heatmap, DESeq2 Blocked"
 
   all_norm_counts_corr_heatmap_edger:
@@ -382,10 +568,22 @@ outputs:
       glob: "*_all_normalized_counts_correlation_heatmap_edger.png"
     doc: "Not filtered normalized counts correlation heatmap, EdgeR"
 
+  all_norm_counts_corr_heatmap_edger_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_normalized_counts_correlation_heatmap_edger.pdf"
+    doc: "Not filtered normalized counts correlation heatmap, EdgeR"
+
   all_norm_counts_corr_heatmap_edger_blocked:
     type: File?
     outputBinding:
       glob: "*_all_normalized_counts_correlation_heatmap_edger_block.png"
+    doc: "Not filtered normalized counts correlation heatmap, EdgeR Blocked"
+
+  all_norm_counts_corr_heatmap_edger_blocked_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_normalized_counts_correlation_heatmap_edger_block.pdf"
     doc: "Not filtered normalized counts correlation heatmap, EdgeR Blocked"
 
   consensus_peak_venn_diagram:
@@ -394,10 +592,22 @@ outputs:
       glob: "*_consensus_peak_venn_diagram.png"
     doc: "Consensus peak Venn Diagram" 
 
+  consensus_peak_venn_diagram_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_consensus_peak_venn_diagram.pdf"
+    doc: "Consensus peak Venn Diagram" 
+
   raw_counts_corr_heatmap:
     type: File?
     outputBinding:
       glob: "*_raw_counts_correlation_heatmap.png"
+    doc: "Raw counts correlation heatmap"
+
+  raw_counts_corr_heatmap_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_counts_correlation_heatmap.pdf"
     doc: "Raw counts correlation heatmap"
 
   peak_overlap_corr_heatmap:
@@ -406,10 +616,22 @@ outputs:
       glob: "*_peak_overlap_correlation_heatmap.png"
     doc: "Peak overlap correlation heatmap"
 
+  peak_overlap_corr_heatmap_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_peak_overlap_correlation_heatmap.pdf"
+    doc: "Peak overlap correlation heatmap"
+
   peak_overlap_rate_plot_cond_1:
     type: File?
     outputBinding:
       glob: "*_condition_1_peak_overlap_rate.png"
+    doc: "Peak overlap rate plot, condition 1"
+
+  peak_overlap_rate_plot_cond_1_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_condition_1_peak_overlap_rate.pdf"
     doc: "Peak overlap rate plot, condition 1"
 
   peak_overlap_rate_plot_cond_2:
@@ -418,10 +640,22 @@ outputs:
       glob: "*_condition_2_peak_overlap_rate.png"
     doc: "Peak overlap rate plot, condition 2"
 
+  peak_overlap_rate_plot_cond_2_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_condition_2_peak_overlap_rate.pdf"
+    doc: "Peak overlap rate plot, condition 2"
+
   all_peak_overlap_rate_plot:
     type: File?
     outputBinding:
       glob: "*_all_peak_overlap_rate.png"
+    doc: "All peak overlap rate plot"
+
+  all_peak_overlap_rate_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_all_peak_overlap_rate.pdf"
     doc: "All peak overlap rate plot"
 
   stdout_log:
@@ -484,15 +718,14 @@ doc: |
   Runs R script to compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) and occupancy data.
 
 s:about: |
-  usage: run_diffbind.R [-h] -r1 READ1 [READ1 ...] -r2 READ2 [READ2 ...] -p1
-                        PEAK1 [PEAK1 ...] -p2 PEAK2 [PEAK2 ...]
-                        [-n1 [NAME1 [NAME1 ...]]] [-n2 [NAME2 [NAME2 ...]]]
-                        [-bl [BLOCK [BLOCK ...]]]
-                        [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
-                        [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE]
-                        [-rd] [-me {edger,deseq2,all}] [-mo MINOVERLAP] [-uc]
-                        [-cu CUTOFF] [-cp {pvalue,fdr}] [-th THREADS]
-                        [-pa PADDING] [-o OUTPUT]
+  usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/run_diffbind.R
+        [-h] -r1 READ1 [READ1 ...] -r2 READ2 [READ2 ...] -p1 PEAK1 [PEAK1 ...]
+        -p2 PEAK2 [PEAK2 ...] [-n1 [NAME1 [NAME1 ...]]]
+        [-n2 [NAME2 [NAME2 ...]]] [-bl [BLOCK [BLOCK ...]]]
+        [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
+        [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
+        [-me {edger,deseq2,all}] [-mo MINOVERLAP] [-uc] [-mc MINCOUNTS]
+        [-cu CUTOFF] [-cp {pvalue,fdr}] [-th THREADS] [-pa PADDING] [-o OUTPUT]
 
   Differential binding analysis of ChIP-Seq experiments using affinity (read
   count) data
@@ -544,8 +777,12 @@ s:about: |
                           this many peaksets when generating consensus peakset.
                           Default: 2
     -uc, --usecommon      Derive consensus peaks only from the common peaks
-                          within each condition. Min peakset overlap is ignored.
-                          Default: false
+                          within each condition. Min peakset overlap and min
+                          read counts are ignored. Default: false
+    -mc MINCOUNTS, --mincounts MINCOUNTS
+                          Min read counts. Exclude all merged intervals where
+                          the MAX raw read counts among all of the samples is
+                          smaller than the specified value. Default: 0
     -cu CUTOFF, --cutoff CUTOFF
                           Cutoff for reported results. Applied to the parameter
                           set with -cp. Default: 0.05
