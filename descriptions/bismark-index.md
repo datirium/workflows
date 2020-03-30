@@ -1,0 +1,2 @@
+Copy fasta_file file to the folder and run run bismark_genome_preparation script to prepare indices for Bismark Methylation Analysis.
+Bowtie2 aligner is used by default. The name of the output indices folder is equal to the genome input.

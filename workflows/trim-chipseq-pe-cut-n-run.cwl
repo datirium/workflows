@@ -340,11 +340,6 @@ s:creator:
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
-doc: |
-  Experimental pipeline for Cut-n-Run analysis. Uses mapping results from the following experiment types:
 
-  - `chipseq-pe.cwl`
-  - `trim-chipseq-pe.cwl`
-  - `trim-atacseq-pe.cwl`
-
-  Note, the upstream analyses should not have duplicates removed
+doc:
+  $include: ../descriptions/trim-chipseq-pe-cut-n-run.md
