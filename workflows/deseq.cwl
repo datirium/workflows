@@ -88,7 +88,9 @@ inputs:
       - "null"
       - string[]
     label: "Sample names for RNA-Seq experiments (condition 1, aka 'untreated')"
-    doc: "Aliases for RNA-Seq experiments (condition 1, aka 'untreated') to make the legend for generated plots. Order corresponds to the rpkm_isoforms_cond_1"
+    doc: |
+      Aliases for RNA-Seq experiments (condition 1, aka 'untreated') to make the
+      legend for generated plots. Order corresponds to the rpkm_isoforms_cond_1
     'sd:upstreamSource': "rnaseq_cond_1/alias"
 
   sample_names_cond_2:
@@ -96,7 +98,9 @@ inputs:
       - "null"
       - string[]
     label: "Sample names for RNA-Seq experiments (condition 2, aka 'treated')"
-    doc: "Aliases for RNA-Seq experiments (condition 2, aka 'treated') to make the legend for generated plots. Order corresponds to the rpkm_isoforms_cond_2"
+    doc: |
+      Aliases for RNA-Seq experiments (condition 2, aka 'treated') to make the
+      legend for generated plots. Order corresponds to the rpkm_isoforms_cond_2
     'sd:upstreamSource': "rnaseq_cond_2/alias"
 
   threads:
