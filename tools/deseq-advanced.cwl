@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.13
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.14
 
 
 inputs:
@@ -104,14 +104,34 @@ outputs:
       glob: "*phenotypes.cls"
 
   plot_lfc_vs_mean:
-    type: File
+    type: File?
     outputBinding:
-      glob: "*001.png"
+      glob: "*_ma_plot.png"
 
   gene_expr_heatmap:
-    type: File
+    type: File?
     outputBinding:
-      glob: "*002.png"
+      glob: "*_expression_heatmap.png"
+
+  plot_pca:
+    type: File?
+    outputBinding:
+      glob: "*_pca_plot.png"
+
+  plot_lfc_vs_mean_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ma_plot.pdf"
+
+  gene_expr_heatmap_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_expression_heatmap.pdf"
+
+  plot_pca_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_pca_plot.pdf"
 
   stdout_log:
     type: stdout

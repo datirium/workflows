@@ -144,10 +144,12 @@ outputs:
     outputSource: deseq/phenotypes_file
 
   plot_lfc_vs_mean:
-    type: File
+    type: File?
     label: "Plot of normalised mean versus log2 fold change"
     format: "http://edamontology.org/format_3603"
-    doc: "Plot of the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples"
+    doc: |
+      Plot of the log2 fold changes attributable to a given variable
+      over the mean of normalized counts for all the samples
     outputSource: deseq/plot_lfc_vs_mean
     'sd:visualPlugins':
     - image:
@@ -155,15 +157,57 @@ outputs:
         Caption: 'LFC vs mean'
 
   gene_expr_heatmap:
-    type: File
+    type: File?
     label: "Heatmap of the 30 most highly expressed features"
     format: "http://edamontology.org/format_3603"
-    doc: "Heatmap showing the expression data of the 30 most highly expressed features grouped by isoforms, genes or common TSS, based on the variance stabilisation transformed data"
+    doc: |
+      Heatmap showing the expression data of the 30 most highly expressed features grouped by
+      isoforms, genes or common TSS, based on the variance stabilisation transformed data
     outputSource: deseq/gene_expr_heatmap
     'sd:visualPlugins':
     - image:
         tab: 'Other Plots'
         Caption: 'The 30 most highly expressed features'
+
+  plot_pca:
+    type: File?
+    label: "PCA plot for variance stabilized count data"
+    format: "http://edamontology.org/format_3603"
+    doc: |
+      PCA plot for variance stabilized count data. Values are now approximately
+      homoskedastic (have constant variance along the range of mean values)
+    outputSource: deseq/plot_pca
+    'sd:visualPlugins':
+    - image:
+        tab: 'Other Plots'
+        Caption: 'PCA plot for variance stabilized count data'
+
+  plot_lfc_vs_mean_pdf:
+    type: File?
+    label: "Plot of normalised mean versus log2 fold change"
+    format: "http://edamontology.org/format_3508"
+    doc: |
+      Plot of the log2 fold changes attributable to a given variable
+      over the mean of normalized counts for all the samples
+    outputSource: deseq/plot_lfc_vs_mean_pdf
+
+  gene_expr_heatmap_pdf:
+    type: File?
+    label: "Heatmap of the 30 most highly expressed features"
+    format: "http://edamontology.org/format_3508"
+    doc: |
+      Heatmap showing the expression data of the 30 most highly expressed features grouped by
+      isoforms, genes or common TSS, based on the variance stabilisation transformed data
+    outputSource: deseq/gene_expr_heatmap_pdf
+
+  plot_pca_pdf:
+    type: File?
+    label: "PCA plot for variance stabilized count data"
+    format: "http://edamontology.org/format_3508"
+    doc: |
+      PCA plot for variance stabilized count data. Values are now approximately
+      homoskedastic (have constant variance along the range of mean values)
+    outputSource: deseq/plot_pca_pdf
 
   deseq_stdout_log:
     type: File
@@ -230,7 +274,18 @@ steps:
       untreated_sample_names: sample_names_cond_1
       treated_sample_names: sample_names_cond_2
       threads: threads
-    out: [diff_expr_file, plot_lfc_vs_mean, gene_expr_heatmap, read_counts_file, phenotypes_file, stdout_log, stderr_log]
+    out:
+      - diff_expr_file
+      - plot_lfc_vs_mean
+      - gene_expr_heatmap
+      - plot_pca
+      - plot_lfc_vs_mean_pdf
+      - gene_expr_heatmap_pdf
+      - plot_pca_pdf
+      - read_counts_file
+      - phenotypes_file
+      - stdout_log
+      - stderr_log
 
 
 $namespaces:
