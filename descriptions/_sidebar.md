@@ -36,3 +36,4 @@
   - [PCA](pca.md)
   - [THOR](rgt-thor.md)
   - [Super Enhancer](super-enhancer.md)
+  - [FastQC](fastqc.md)

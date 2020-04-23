@@ -1664,3 +1664,14 @@
     deseq_stderr_log:
       class: File
       location: deseq_stderr.log
+
+# ========================================================
+# fastqc
+# ========================================================
+
+- job: ./fastqc-1.json
+  tool: ../workflows/fastqc.cwl
+  output:
+    fastqc_report:
+      class: File
+      location: upstream_fastqc_report.html
