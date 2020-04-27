@@ -67,6 +67,12 @@ inputs:
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
 
+  rpkm_cutoff:
+    type: float?
+    default: 5
+    label: "Minimum rpkm cutoff"
+    doc: "Minimum threshold for rpkm filtering. Default: 5"
+
   alias_cond_1:
     type: string?
     default: "untreated"
@@ -277,6 +283,7 @@ steps:
       treated_name: alias_cond_2
       untreated_sample_names: sample_names_cond_1
       treated_sample_names: sample_names_cond_2
+      rpkm_cutoff: rpkm_cutoff
       threads: threads
     out:
       - diff_expr_file

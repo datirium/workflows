@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.15
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.16
 
 
 inputs:
@@ -68,6 +68,13 @@ inputs:
       prefix: "-ta"
     doc: |
       Unique aliases for treated expression files. Default: basenames of -t without extensions
+
+  rpkm_cutoff:
+    type: float?
+    inputBinding:
+      prefix: "-cu"
+    doc: |
+      Minimum threshold for rpkm filtering. Default: 5
 
   output_prefix:
     type: string?
