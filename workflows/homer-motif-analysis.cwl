@@ -98,6 +98,20 @@ outputs:
     label: "Homer stdout log"
     doc: "Homer stdout log"
 
+  homer_known_motifs:
+    type: File?
+    format: "http://edamontology.org/format_2331"
+    outputSource: find_motifs/known_motifs
+    label: "Known motifs html file"
+    doc: "Known motifs html file"
+
+  homer_denovo_motifs:
+    type: File?
+    format: "http://edamontology.org/format_2331"
+    outputSource: find_motifs/denovo_motifs
+    label: "de novo motifs html file"
+    doc: "de novo motifs html file"
+
   homer_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -195,6 +209,8 @@ steps:
       threads: threads
     out:
       - compressed_results_folder
+      - known_motifs
+      - denovo_motifs
       - stdout_log
       - stderr_log
 

@@ -115,6 +115,20 @@ outputs:
     doc: |
       Compressed folder with all generated results
 
+  known_motifs:
+    type: File?
+    outputBinding:
+      glob: "homer_results/knownResults.html"
+    doc: |
+      Known motifs html file
+
+  denovo_motifs:
+    type: File?
+    outputBinding:
+      glob: "homer_results/HomerResults.html"
+    doc: |
+      de novo motifs html file
+
   stdout_log:
     type: stdout
 
