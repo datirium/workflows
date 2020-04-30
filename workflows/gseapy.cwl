@@ -295,7 +295,7 @@ inputs:
 outputs:
 
   gseapy_enrichment_report:
-    type: File?
+    type: File
     format: "http://edamontology.org/format_3475"
     label: "Enrichment report"
     doc: "Enrichment report"
@@ -306,26 +306,16 @@ outputs:
         Title: "Gene Set Enrichment"
 
   gseapy_enrichment_plots:
-    type: File[]
-    format: "http://edamontology.org/format_3508"
-    label: "Enrichment plots"
-    doc: "Enrichment plots"
-    outputSource: run_gseapy/enrichment_plots
-    "sd:visualPlugins":
-    - image:
-        tab: "Plots"
-        Caption: "Enrichment plot"
+    type: File
+    label: "Compressed TAR with enrichment plots"
+    doc: "Compressed TAR with enrichment plots"
+    outputSource: rename_enrichment_plots/target_file
 
   gseapy_enrichment_heatmaps:
-    type: File[]
-    format: "http://edamontology.org/format_3508"
-    label: "Enrichment heatmaps"
-    doc: "Enrichment heatmaps"
-    outputSource: run_gseapy/enrichment_heatmaps
-    "sd:visualPlugins":
-    - image:
-        tab: "Plots"
-        Caption: "Enrichment heatmap"
+    type: File
+    label: "Compressed TAR with enrichment heatmaps"
+    doc: "Compressed TAR with enrichment heatmaps"
+    outputSource: rename_enrichment_heatmaps/target_file
 
   gseapy_stdout_log:
     type: File
@@ -374,6 +364,46 @@ steps:
         default: |
           cat "$0" | tr "," "\t" > `basename $0 csv`tsv
     out: [output_file]
+
+  enrichment_plots_to_folder:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files: run_gseapy/enrichment_plots
+    out: [folder]
+
+  compress_enrichment_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: enrichment_plots_to_folder/folder
+    out: [compressed_folder]
+
+  rename_enrichment_plots:
+    run: ../tools/rename.cwl
+    in:
+      source_file: compress_enrichment_plots/compressed_folder
+      target_filename:
+        default: "enrichment_plots.tar.gz"
+    out: [target_file]
+
+  enrichment_heatmaps_to_folder:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files: run_gseapy/enrichment_heatmaps
+    out: [folder]
+
+  compress_enrichment_heatmaps:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: enrichment_heatmaps_to_folder/folder
+    out: [compressed_folder]
+
+  rename_enrichment_heatmaps:
+    run: ../tools/rename.cwl
+    in:
+      source_file: compress_enrichment_heatmaps/compressed_folder
+      target_filename:
+        default: "enrichment_heatmaps.tar.gz"
+    out: [target_file]
 
 
 $namespaces:

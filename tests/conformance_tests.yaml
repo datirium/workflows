@@ -1684,15 +1684,11 @@
   tool: ../workflows/gseapy.cwl
   output:
     gseapy_enrichment_heatmaps:
-    - class: File
-      location: RAW%2520264%25207.heatmap.pdf
-    - class: File
-      location: follicular%2520B-cells.heatmap.pdf
+      class: File
+      location: enrichment_heatmaps.tar.gz
     gseapy_enrichment_plots:
-    - class: File
-      location: RAW%2520264%25207.gsea.pdf
-    - class: File
-      location: follicular%2520B-cells.gsea.pdf
+      class: File
+      location: enrichment_plots.tar.gz
     gseapy_enrichment_report:
       class: File
       location: gseapy.gsea.gene_set.report.tsv
