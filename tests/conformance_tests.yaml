@@ -1698,7 +1698,7 @@
       location: gseapy.gsea.gene_set.report.tsv
     gseapy_stdout_log:
       class: File
-      location: gseapy_index_stdout.log
+      location: gseapy_stdout.log
     gseapy_stderr_log:
       class: File
-      location: gseapy_index_stderr.log
+      location: gseapy_stderr.log
