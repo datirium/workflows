@@ -1675,3 +1675,30 @@
     fastqc_report:
       class: File
       location: upstream_fastqc_report.html
+
+# ========================================================
+# gseapy
+# ========================================================
+
+- job: ./gseapy-1.json
+  tool: ../workflows/gseapy.cwl
+  output:
+    gseapy_enrichment_heatmaps:
+    - class: File
+      location: RAW%20264%207.heatmap.pdf
+    - class: File
+      location: follicular%20B-cells.heatmap.pdf
+    gseapy_enrichment_plots:
+    - class: File
+      location: RAW%20264%207.gsea.pdf
+    - class: File
+      location: follicular%20B-cells.gsea.pdf
+    gseapy_enrichment_report:
+      class: File
+      location: gseapy.gsea.gene_set.report.tsv
+    gseapy_stdout_log:
+      class: File
+      location: gseapy_index_stdout.log
+    gseapy_stderr_log:
+      class: File
+      location: gseapy_index_stderr.log
