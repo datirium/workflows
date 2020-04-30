@@ -1685,14 +1685,14 @@
   output:
     gseapy_enrichment_heatmaps:
     - class: File
-      location: RAW%20264%207.heatmap.pdf
+      location: RAW%2520264%25207.heatmap.pdf
     - class: File
-      location: follicular%20B-cells.heatmap.pdf
+      location: follicular%2520B-cells.heatmap.pdf
     gseapy_enrichment_plots:
     - class: File
-      location: RAW%20264%207.gsea.pdf
+      location: RAW%2520264%25207.gsea.pdf
     - class: File
-      location: follicular%20B-cells.gsea.pdf
+      location: follicular%2520B-cells.gsea.pdf
     gseapy_enrichment_report:
       class: File
       location: gseapy.gsea.gene_set.report.tsv
