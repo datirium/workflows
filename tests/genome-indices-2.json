@@ -7,11 +7,6 @@
     "location": "./data/dm3_chr4/generated_inputs/twobit/chr4.2bit",
     "format": "http://edamontology.org/format_3009"
   },
-  "fasta_ribosomal":{
-    "class": "File",
-    "location": "./data/dm3_chr4/main_inputs/fasta/chr4.fa",
-    "format": "http://edamontology.org/format_1929"
-  },
   "annotation_tab":{
     "class": "File",
     "location":"./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv.gz",
