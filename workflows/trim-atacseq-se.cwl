@@ -115,6 +115,22 @@ inputs:
     label: "Exclude chromosomes"
     doc: "Space separated list of chromosomes to be excluded"
 
+  promoter_dist:
+    type: int?
+    default: 1000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
+    doc: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
+    doc: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
+
   threads:
     type: int?
     default: 2
@@ -575,8 +591,8 @@ steps:
       in:
         input_filename: macs2_callpeak/peak_xls_file
         annotation_filename: annotation_file
-        promoter_bp:
-          default: 1000
+        promoter_bp: promoter_dist
+        upstream_bp: upstream_dist
       out: [result_file, log_file]
 
   average_tag_density:
