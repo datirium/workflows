@@ -48,7 +48,7 @@ inputs:
     format: "http://edamontology.org/format_1929"
     label: "Reference genome FASTA file"
     doc: "Reference genome FASTA file. Includes all chromosomes in a single file"
-    'sd:upstreamSource': "genome_indices/fasta"
+    'sd:upstreamSource': "genome_indices/fasta_output"
 
   skip_denovo:
     type: boolean?
