@@ -24,8 +24,8 @@ inputs:
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "Regions file. Headerless BED file with minimum [chrom start end] columns"
-    doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns"
+    label: "Regions file. Headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
+    doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
 
   motifs_db:
     type:
@@ -128,7 +128,7 @@ steps:
       input_file: regions_file
       script:
         default: |
-          cut -f 1-3 "$0" | sort -k1,1 -k2,2n | sort -u > `basename $0`
+          cat "$0" | tr "," "\t" | cut -f 1-3 | sort -k1,1 -k2,2n | sort -u > `basename $0`
     out:
       - output_file
 
