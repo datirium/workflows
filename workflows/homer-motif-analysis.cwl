@@ -128,7 +128,7 @@ steps:
       input_file: regions_file
       script:
         default: |
-          cat "$0" | tr "," "\t" | cut -f 1-3 | sort -k1,1 -k2,2n | sort -u > `basename $0`
+          cat "$0" | tr -d '\r' | tr "," "\t" | cut -f 1-3 | sort -k1,1 -k2,2n | sort -u > `basename $0`
     out:
       - output_file
 
