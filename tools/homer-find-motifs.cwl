@@ -125,7 +125,7 @@ outputs:
   denovo_motifs:
     type: File?
     outputBinding:
-      glob: "homer_results/HomerResults.html"
+      glob: "homer_results/homerResults.html"
     doc: |
       de novo motifs html file
 
