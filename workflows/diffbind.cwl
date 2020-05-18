@@ -71,41 +71,37 @@ inputs:
     doc: "XLS peak files for condition 2 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_2"
     'sd:upstreamSource': "second_biological_condition/macs2_called_peaks"
 
-  # genome_coverage_files_cond_1:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3006"
-  #   label: "Genome coverage bigWig file for condition 1"
-  #   doc: "Genome coverage bigWig file for condition 1"
-  #   'sd:upstreamSource': "first_biological_condition/bigwig"
+  genome_coverage_files_cond_1:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 1"
+    doc: "Genome coverage bigWig file(s) for biological condition 1"
+    'sd:upstreamSource': "first_biological_condition/bigwig"
 
-  # genome_coverage_files_cond_2:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3006"
-  #   label: "Genome coverage bigWig file for condition 2"
-  #   doc: "Genome coverage bigWig file for condition 2"
-  #   'sd:upstreamSource': "second_biological_condition/bigwig"
+  genome_coverage_files_cond_2:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 2"
+    doc: "Genome coverage bigWig file(s) for biological condition 2"
+    'sd:upstreamSource': "second_biological_condition/bigwig"
 
-  # narrow_peaks_file_cond_1:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3613"
-  #   label: "Narrow peaks file for condition 1"
-  #   doc: "Narrow peaks file for condition 1"
-  #   'sd:upstreamSource': "first_biological_condition/macs2_narrow_peaks"
+  narrow_peaks_files_cond_1:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3613"
+    label: "Called peaks for biological condition 1"
+    doc: "Narrow peaks file(s) for biological condition 1"
+    'sd:upstreamSource': "first_biological_condition/macs2_narrow_peaks"
 
-  # narrow_peaks_file_cond_2:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3613"
-  #   label: "Narrow peaks file for condition 2"
-  #   doc: "Narrow peaks file for condition 2"
-  #   'sd:upstreamSource': "second_biological_condition/macs2_narrow_peaks"
+  narrow_peaks_files_cond_2:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3613"
+    label: "Called peaks for biological condition 2"
+    doc: "Narrow peaks file(s) for biological condition 2"
+    'sd:upstreamSource': "second_biological_condition/macs2_narrow_peaks"
 
   name_cond_1:
     type: string?
@@ -266,71 +262,67 @@ inputs:
 
 outputs:
 
-  # genome_coverage_cond_1:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3006"
-  #   label: "Genome coverage bigWig file for condition 1"
-  #   doc: "Genome coverage bigWig file for condition 1"
-  #   outputSource: genome_coverage_files_cond_1
-  #   'sd:visualPlugins':
-  #   - igvbrowser:
-  #       tab: 'IGV Genome Browser'
-  #       id: 'igvbrowser'
-  #       type: 'wig'
-  #       name: "Biological condition 1"
-  #       height: 120
+  genome_coverage_cond_1:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 1"
+    doc: "Genome coverage bigWig file(s) for biological condition 1"
+    outputSource: pipe/coverage_files_cond_1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome coverage for biological condition 1"
+        height: 120
 
-  # genome_coverage_cond_2:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3006"
-  #   label: "Genome coverage bigWig file for condition 2"
-  #   doc: "Genome coverage bigWig file for condition 2"
-  #   outputSource: genome_coverage_files_cond_2
-  #   'sd:visualPlugins':
-  #   - igvbrowser:
-  #       tab: 'IGV Genome Browser'
-  #       id: 'igvbrowser'
-  #       type: 'wig'
-  #       name: "Biological condition 2"
-  #       height: 120
+  genome_coverage_cond_2:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 2"
+    doc: "Genome coverage bigWig file(s) for biological condition 2"
+    outputSource: pipe/coverage_files_cond_2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome coverage for biological condition 2"
+        height: 120
 
-  # narrow_peaks_cond_1:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3613"
-  #   label: "Narrow peaks file for condition 1"
-  #   doc: "Narrow peaks file for condition 1"
-  #   outputSource: narrow_peaks_file_cond_1
-  #   'sd:visualPlugins':
-  #   - igvbrowser:
-  #       tab: 'IGV Genome Browser'
-  #       id: 'igvbrowser'
-  #       type: 'bed'
-  #       name: "Biological condition 1"
-  #       displayMode: "COLLAPSE"
-  #       height: 120
+  narrow_peaks_cond_1:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3613"
+    label: "Called peaks for biological condition 1"
+    doc: "Narrow peaks file(s) for biological condition 1"
+    outputSource: pipe/peaks_files_cond_1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Called peaks for biological condition 1"
+        displayMode: "COLLAPSE"
+        height: 120
 
-  # narrow_peaks_cond_2:
-  #   type:
-  #     - "null"
-  #     - File[]
-  #   format: "http://edamontology.org/format_3613"
-  #   label: "Narrow peaks file for condition 2"
-  #   doc: "Narrow peaks file for condition 2"
-  #   outputSource: narrow_peaks_file_cond_2
-  #   'sd:visualPlugins':
-  #   - igvbrowser:
-  #       tab: 'IGV Genome Browser'
-  #       id: 'igvbrowser'
-  #       type: 'bed'
-  #       name: "Biological condition 2"
-  #       displayMode: "COLLAPSE"
-  #       height: 120
+  narrow_peaks_cond_2:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3613"
+    label: "Called peaks for biological condition 2"
+    doc: "Narrow peaks file(s) for biological condition 2"
+    outputSource: pipe/peaks_files_cond_2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Called peaks for biological condition 2"
+        displayMode: "COLLAPSE"
+        height: 120
 
   diffbind_report_file:
     type: File
@@ -626,6 +618,56 @@ outputs:
 
 
 steps:
+
+  pipe:
+    run:
+      cwlVersion: v1.0
+      class: ExpressionTool
+      inputs:
+        genome_coverage_files_cond_1:
+          type: File[]
+        genome_coverage_files_cond_2:
+          type: File[]
+        narrow_peaks_files_cond_1:
+          type:
+            - "null"
+            - File[]
+        narrow_peaks_files_cond_2:
+          type:
+            - "null"
+            - File[]
+      outputs:
+        coverage_files_cond_1:
+          type: File[]
+        coverage_files_cond_2:
+          type: File[]
+        peaks_files_cond_1:
+          type:
+            - "null"
+            - File[]
+        peaks_files_cond_2:
+          type:
+            - "null"
+            - File[]
+      expression: |
+        ${
+          return {
+            "coverage_files_cond_1": inputs.genome_coverage_files_cond_1,
+            "coverage_files_cond_2": inputs.genome_coverage_files_cond_2,
+            "peaks_files_cond_1": inputs.narrow_peaks_files_cond_1,
+            "peaks_files_cond_2": inputs.narrow_peaks_files_cond_2
+          };
+        }
+    in:
+      genome_coverage_files_cond_1: genome_coverage_files_cond_1
+      genome_coverage_files_cond_2: genome_coverage_files_cond_2
+      narrow_peaks_files_cond_1: narrow_peaks_files_cond_1
+      narrow_peaks_files_cond_2: narrow_peaks_files_cond_2
+    out:
+      - coverage_files_cond_1
+      - coverage_files_cond_2
+      - peaks_files_cond_1
+      - peaks_files_cond_2
 
   diffbind:
     run: ../tools/diffbind.cwl
