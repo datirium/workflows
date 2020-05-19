@@ -305,7 +305,7 @@ outputs:
         type: 'bed'
         name: "Called peaks for biological condition 1"
         displayMode: "COLLAPSE"
-        height: 120
+        height: 40
 
   narrow_peaks_cond_2:
     type:
@@ -322,7 +322,7 @@ outputs:
         type: 'bed'
         name: "Called peaks for biological condition 2"
         displayMode: "COLLAPSE"
-        height: 120
+        height: 40
 
   diffbind_report_file:
     type: File
@@ -348,7 +348,7 @@ outputs:
         type: 'annotation'
         format: 'bigbed'
         name: "Differential peaks"
-        height: 120
+        height: 40
 
   diffbind_peak_correlation_heatmap:
     type: File?
