@@ -21,11 +21,24 @@ inputs:
     sd:preview:
       position: 1
 
-  regions_file:
+  target_regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "Regions file. Headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
-    doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
+    label: "Target regions. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
+    doc: "Target regions. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+
+  background_regions_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Background regions. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
+    doc: "Background regions. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+
+  genome_fasta_file:
+    type: File
+    format: "http://edamontology.org/format_1929"
+    label: "Reference genome FASTA file"
+    doc: "Reference genome FASTA file. Includes all chromosomes in a single file"
+    'sd:upstreamSource': "genome_indices/fasta_output"
 
   motifs_db:
     type:
@@ -36,19 +49,21 @@ inputs:
     label: "Set motifs DB to check against"
     doc: "Set motifs DB to check against"
 
-  chrom_length_file:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "Chromosome length file"
-    doc: "Chromosome length file"
-    'sd:upstreamSource': "genome_indices/chrom_length"
+  chopify_background_regions:
+    type: boolean?
+    default: false
+    label: "Chop up large background regions to the avg size of target regions"
+    doc: "Chop up large background regions to the avg size of target regions"
+    'sd:layout':
+      advanced: true
 
-  genome_fasta_file:
-    type: File
-    format: "http://edamontology.org/format_1929"
-    label: "Reference genome FASTA file"
-    doc: "Reference genome FASTA file. Includes all chromosomes in a single file"
-    'sd:upstreamSource': "genome_indices/fasta_output"
+  apply_mask_on_genome:
+    type: boolean?
+    default: true
+    label: "Mask all repeats with N"
+    doc: "Use the repeat-masked sequence (all repeats will be masked by N)"
+    'sd:layout':
+      advanced: true
 
   skip_denovo:
     type: boolean?
@@ -66,14 +81,35 @@ inputs:
     'sd:layout':
       advanced: true
 
-  use_binomial:
+  use_hypergeometric:
     type: boolean?
     default: False
-    label: "Use binomial distribution instead of hypergeometric to calculate p-values"
-    doc: "Use binomial distribution instead of hypergeometric to calculate p-values"
+    label: "Use hypergeometric for p-values, instead of default binomial. Usefull if the number of background sequences is smaller than target sequences"
+    doc: "Use hypergeometric for p-values, instead of default binomial. Usefull if the number of background sequences is smaller than target sequences"
     'sd:layout':
       advanced: true
   
+  search_size:
+    type: string?
+    default: "200"
+    label: "Fragment size to use for motif finding"
+    doc: |
+      Fragment size to use for motif finding.
+      <#> - i.e. -size 300 will get sequences from -150 to +150 relative from center
+      <#,#> - i.e. -size -100,50 will get sequences from -100 to +50 relative from center
+      given - will use the exact regions you give it.
+      Default=200
+    'sd:layout':
+      advanced: true
+
+  motif_length:
+    type: string?
+    default: "8,10,12"
+    label: "Motif length(s)"
+    doc: "<#>[,<#>,<#>...] - motif length. Default=8,10,12"
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
     default: 4
@@ -122,89 +158,39 @@ outputs:
 
 steps:
 
-  make_unique:
+  make_target_regions_unique:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: regions_file
+      input_file: target_regions_file
       script:
         default: |
-          cat "$0" | tr -d '\r' | tr "," "\t" | cut -f 1-3 | awk NF | sort -u -k1,1 -k2,2n -k3,3n > `basename $0`
+          cat "$0" | tr -d '\r' | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{print $1"\t"$2"\t"$3"\tp"NR"\t"$5"\t"$6}' > `basename $0`
     out:
       - output_file
 
-  bedtools_slop:
-    run: ../tools/bedtools-slop.cwl
+  make_background_regions_unique:
+    run: ../tools/custom-bash.cwl
     in:
-      bed_file: make_unique/output_file
-      chrom_length_file: chrom_length_file
-      bi_direction:
-        default: 20000
+      input_file: background_regions_file
+      script:
+        default: |
+          cat "$0" | tr -d '\r' | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{print $1"\t"$2"\t"$3"\tp"NR"\t"$5"\t"$6}' > `basename $0`
     out:
-      - extended_bed_file
-
-  bedtools_sort:
-    run: ../tools/linux-sort.cwl
-    in:
-      unsorted_file: bedtools_slop/extended_bed_file
-      key:
-        default: ["1,1","2,2n"]
-    out:
-      - sorted_file
-
-  bedtools_merge:
-    run: ../tools/bedtools-merge.cwl
-    in:
-      bed_file: bedtools_sort/sorted_file
-    out:
-      - merged_bed_file
-
-  bedtools_subtract:
-    run: ../tools/bedtools-subtract.cwl
-    in:
-      reduced_bed_file: bedtools_merge/merged_bed_file
-      subtracted_bed_file: make_unique/output_file
-    out:
-      - difference_bed_file
-
-  bedtools_shuffle:
-    run: ../tools/bedtools-shuffle.cwl
-    in:
-      bed_file: make_unique/output_file
-      chrom_length_file: chrom_length_file
-      incl_bed_file: bedtools_subtract/difference_bed_file
-      no_overlapping:
-        default: True
-      max_tries:
-        default: 10000
-      seed:
-        default: 123456789
-    out:
-      - shuffled_bed_file
-
-  bedtools_get_fasta_target:
-    run: ../tools/bedtools-getfasta.cwl
-    in:
-      intervals_file: make_unique/output_file
-      genome_fasta_file: genome_fasta_file
-    out:
-      - sequences_file
-
-  bedtools_get_fasta_background:
-    run: ../tools/bedtools-getfasta.cwl
-    in:
-      intervals_file: bedtools_shuffle/shuffled_bed_file
-      genome_fasta_file: genome_fasta_file
-    out:
-      - sequences_file
+      - output_file
 
   find_motifs:
-    run: ../tools/homer-find-motifs.cwl
+    run: ../tools/homer-find-motifs-genome.cwl
     in:
-      target_fasta_file: bedtools_get_fasta_target/sequences_file
-      background_fasta_file: bedtools_get_fasta_background/sequences_file
+      target_regions_file: make_target_regions_unique/output_file
+      background_regions_file: make_background_regions_unique/output_file
+      genome_fasta_file: genome_fasta_file
+      chopify_background_regions: chopify_background_regions
+      search_size: search_size
+      motif_length: motif_length
+      apply_mask_on_genome: apply_mask_on_genome
+      use_hypergeometric: use_hypergeometric
       skip_denovo: skip_denovo
       skip_known: skip_known
-      use_binomial: use_binomial
       motifs_db: motifs_db
       threads: threads
     out:
@@ -221,11 +207,11 @@ $namespaces:
 $schemas:
 - http://schema.org/docs/schema_org_rdfa.html
 
-label: "Motif Finding with HOMER from FASTA files"
-s:name: "Motif Finding with HOMER from FASTA files"
-s:alternateName: "Motif Finding with HOMER from FASTA files"
+label: "Motif Finding with HOMER with custom background regions"
+s:name: "Motif Finding with HOMER with custom background regions"
+s:alternateName: "Motif Finding with HOMER with custom background regions"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/homer-motif-analysis.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/homer-motif-analysis-bg.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -265,7 +251,7 @@ s:creator:
 
 
 doc: |
-  Motif Finding with HOMER from FASTA files
+  Motif Finding with HOMER with custom background regions
   ---------------------------------------------------
   
   HOMER contains a novel motif discovery algorithm that was designed for regulatory element analysis
