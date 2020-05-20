@@ -32,6 +32,7 @@
   - [MAnorm PE](manorm-pe.md)
   - [Heatmap](heatmap.md)
   - [Motif Analyses](homer-motif-analysis.md)
+  - [Motif Analyses with custom background regions](homer-motif-analysis-bg.md)
   - [Hopach](hopach.md)
   - [PCA](pca.md)
   - [THOR](rgt-thor.md)

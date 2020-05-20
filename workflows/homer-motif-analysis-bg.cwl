@@ -247,7 +247,7 @@ s:creator:
 
 
 # doc:
-#   $include: ../descriptions/homer-motif-analysis.md
+#   $include: ../descriptions/homer-motif-analysis-bg.md
 
 
 doc: |
