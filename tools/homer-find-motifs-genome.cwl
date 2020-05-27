@@ -153,10 +153,34 @@ inputs:
     doc: |
       Set motifs DB to check against. Default: vertebrates
 
+  gc_normalization:
+    type: boolean?
+    inputBinding:
+      position: 18
+      prefix: "-gc"
+    doc: |
+      Use GC% for sequence content normalization, now the default
+
+  cpg_normalization:
+    type: boolean?
+    inputBinding:
+      position: 19
+      prefix: "-cpg"
+    doc: |
+      Use CpG% instead of GC% for sequence content normalization
+
+  skip_normalization:
+    type: boolean?
+    inputBinding:
+      position: 20
+      prefix: "-noweight"
+    doc: |
+      Skip CG correction
+
   threads:
     type: int?
     inputBinding:
-      position: 18
+      position: 21
       prefix: "-p"
     doc: |
       Number of threads to use
