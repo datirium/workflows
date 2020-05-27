@@ -92,7 +92,7 @@ inputs:
   search_size:
     type: string?
     default: "200"
-    label: "Fragment size to use for motif finding"
+    label: "Fragment size to use for motif finding. Can be set as <#> or <#,#>"
     doc: |
       Fragment size to use for motif finding.
       <#> - i.e. -size 300 will get sequences from -150 to +150 relative from center
@@ -105,7 +105,7 @@ inputs:
   motif_length:
     type: string?
     default: "8,10,12"
-    label: "Motif length(s)"
+    label: "Motif length(s) for de novo motif discovery"
     doc: "<#>[,<#>,<#>...] - motif length. Default=8,10,12"
     'sd:layout':
       advanced: true
