@@ -264,9 +264,9 @@ outputs:
 
   genome_coverage_cond_1:
     type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Genome coverage(s) for biological condition 1"
-    doc: "Genome coverage bigWig file(s) for biological condition 1"
+    # format: "http://edamontology.org/format_3006"
+    # label: "Genome coverage(s) for biological condition 1"
+    # doc: "Genome coverage bigWig file(s) for biological condition 1"
     outputSource: pipe/coverage_files_cond_1
     'sd:visualPlugins':
     - igvbrowser:
@@ -278,9 +278,9 @@ outputs:
 
   genome_coverage_cond_2:
     type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Genome coverage(s) for biological condition 2"
-    doc: "Genome coverage bigWig file(s) for biological condition 2"
+    # format: "http://edamontology.org/format_3006"
+    # label: "Genome coverage(s) for biological condition 2"
+    # doc: "Genome coverage bigWig file(s) for biological condition 2"
     outputSource: pipe/coverage_files_cond_2
     'sd:visualPlugins':
     - igvbrowser:
@@ -294,9 +294,9 @@ outputs:
     type:
       - "null"
       - File[]
-    format: "http://edamontology.org/format_3613"
-    label: "Called peaks for biological condition 1"
-    doc: "Narrow peaks file(s) for biological condition 1"
+    # format: "http://edamontology.org/format_3613"
+    # label: "Called peaks for biological condition 1"
+    # doc: "Narrow peaks file(s) for biological condition 1"
     outputSource: pipe/peaks_files_cond_1
     'sd:visualPlugins':
     - igvbrowser:
@@ -311,9 +311,9 @@ outputs:
     type:
       - "null"
       - File[]
-    format: "http://edamontology.org/format_3613"
-    label: "Called peaks for biological condition 2"
-    doc: "Narrow peaks file(s) for biological condition 2"
+    # format: "http://edamontology.org/format_3613"
+    # label: "Called peaks for biological condition 2"
+    # doc: "Narrow peaks file(s) for biological condition 2"
     outputSource: pipe/peaks_files_cond_2
     'sd:visualPlugins':
     - igvbrowser:
@@ -326,9 +326,9 @@ outputs:
 
   diffbind_report_file:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Differential binding analysis results"
-    doc: "Differential binding analysis results exported as TSV"
+    # format: "http://edamontology.org/format_3475"
+    # label: "Differential binding analysis results"
+    # doc: "Differential binding analysis results exported as TSV"
     outputSource: restore_columns/output_file
     'sd:visualPlugins':
       - syncfusiongrid:
@@ -337,9 +337,9 @@ outputs:
 
   diffbind_bed_file:
     type: File
-    format: "http://edamontology.org/format_3004"
-    label: "Estimated differential peaks"
-    doc: "Estimated differential peaks, bigBed"
+    # format: "http://edamontology.org/format_3004"
+    # label: "Estimated differential peaks"
+    # doc: "Estimated differential peaks, bigBed"
     outputSource: bed_to_bigbed/bigbed_file
     'sd:visualPlugins':
     - igvbrowser:
@@ -352,9 +352,9 @@ outputs:
 
   diffbind_peak_correlation_heatmap:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Peak overlap correlation heatmap"
-    doc: "Peak overlap correlation heatmap"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Peak overlap correlation heatmap"
+    # doc: "Peak overlap correlation heatmap"
     outputSource: diffbind/peak_overlap_corr_heatmap
     'sd:visualPlugins':
       - image:
@@ -370,9 +370,9 @@ outputs:
 
   diffbind_counts_correlation_heatmap:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Raw counts correlation heatmap"
-    doc: "Raw counts correlation heatmap"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Raw counts correlation heatmap"
+    # doc: "Raw counts correlation heatmap"
     outputSource: diffbind/raw_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
@@ -388,9 +388,9 @@ outputs:
 
   diffbind_consensus_peak_venn_diagram:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Consensus peak Venn Diagram"
-    doc: "Consensus peak Venn Diagram"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Consensus peak Venn Diagram"
+    # doc: "Consensus peak Venn Diagram"
     outputSource: diffbind/consensus_peak_venn_diagram
     'sd:visualPlugins':
       - image:
@@ -406,9 +406,9 @@ outputs:
 
   diffbind_all_peak_overlap_rate_plot:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "All peak overlap rate plot"
-    doc: "All peak overlap rate plot"
+    # format: "http://edamontology.org/format_3603"
+    # label: "All peak overlap rate plot"
+    # doc: "All peak overlap rate plot"
     outputSource: diffbind/all_peak_overlap_rate_plot
     'sd:visualPlugins':
       - image:
@@ -424,9 +424,9 @@ outputs:
 
   diffbind_peak_overlap_rate_plot_cond_1:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Condition 1 peak overlap rate plot"
-    doc: "Condition 1 peak overlap rate plot"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Condition 1 peak overlap rate plot"
+    # doc: "Condition 1 peak overlap rate plot"
     outputSource: diffbind/peak_overlap_rate_plot_cond_1
     'sd:visualPlugins':
       - image:
@@ -442,9 +442,9 @@ outputs:
 
   diffbind_peak_overlap_rate_plot_cond_2:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Condition 2 peak overlap rate plot"
-    doc: "Condition 2 peak overlap rate plot"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Condition 2 peak overlap rate plot"
+    # doc: "Condition 2 peak overlap rate plot"
     outputSource: diffbind/peak_overlap_rate_plot_cond_2
     'sd:visualPlugins':
       - image:
@@ -460,9 +460,9 @@ outputs:
 
   diffbind_all_data_correlation_heatmap:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Not filtered normalized counts correlation heatmap"
-    doc: "Not filtered normalized counts correlation heatmap"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Not filtered normalized counts correlation heatmap"
+    # doc: "Not filtered normalized counts correlation heatmap"
     outputSource: select_files/selected_all_norm_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
@@ -478,9 +478,9 @@ outputs:
 
   diffbind_db_sites_correlation_heatmap:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Normalized counts correlation heatmap for significantly differentially bound sites"
-    doc: "Normalized counts correlation heatmap for significantly differentially bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Normalized counts correlation heatmap for significantly differentially bound sites"
+    # doc: "Normalized counts correlation heatmap for significantly differentially bound sites"
     outputSource: select_files/selected_diff_filtered_norm_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
@@ -496,9 +496,9 @@ outputs:
 
   diffbind_db_sites_binding_heatmap:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Binding heatmap for significantly differentially bound sites"
-    doc: "Binding heatmap for significantly differentially bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Binding heatmap for significantly differentially bound sites"
+    # doc: "Binding heatmap for significantly differentially bound sites"
     outputSource: select_files/selected_binding_heatmap
     'sd:visualPlugins':
       - image:
@@ -514,9 +514,9 @@ outputs:
 
   diffbind_pca_plot:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "PCA plot for significantly differentially bound sites"
-    doc: "PCA plot for significantly differentially bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "PCA plot for significantly differentially bound sites"
+    # doc: "PCA plot for significantly differentially bound sites"
     outputSource: select_files/selected_diff_filtered_pca_plot
     'sd:visualPlugins':
       - image:
@@ -532,9 +532,9 @@ outputs:
 
   diffbind_all_pca_plot:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "PCA plot for all bound sites"
-    doc: "PCA plot for all bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "PCA plot for all bound sites"
+    # doc: "PCA plot for all bound sites"
     outputSource: select_files/selected_all_pca_plot
     'sd:visualPlugins':
       - image:
@@ -550,9 +550,9 @@ outputs:
 
   diffbind_ma_plot:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "MA plot for significantly differentially bound sites"
-    doc: "MA plot for significantly differentially bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "MA plot for significantly differentially bound sites"
+    # doc: "MA plot for significantly differentially bound sites"
     outputSource: select_files/selected_ma_plot   
     'sd:visualPlugins':
       - image:
@@ -568,9 +568,9 @@ outputs:
 
   diffbind_volcano_plot:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Volcano plot for for significantly differentially bound sites"
-    doc: "Volcano plot for for significantly differentially bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Volcano plot for for significantly differentially bound sites"
+    # doc: "Volcano plot for for significantly differentially bound sites"
     outputSource: select_files/selected_volcano_plot
     'sd:visualPlugins':
       - image:
@@ -586,9 +586,9 @@ outputs:
 
   diffbind_boxplot_plot:
     type: File?
-    format: "http://edamontology.org/format_3603"
-    label: "Box plots of read distributions for significantly differentially bound sites"
-    doc: "Box plots of read distributions for significantly differentially bound sites"
+    # format: "http://edamontology.org/format_3603"
+    # label: "Box plots of read distributions for significantly differentially bound sites"
+    # doc: "Box plots of read distributions for significantly differentially bound sites"
     outputSource: select_files/selected_boxplot  
     'sd:visualPlugins':
       - image:
@@ -604,16 +604,16 @@ outputs:
 
   diffbind_stdout_log:
     type: File
-    format: "http://edamontology.org/format_2330"
-    label: "diffbind stdout log"
-    doc: "diffbind stdout log"
+    # format: "http://edamontology.org/format_2330"
+    # label: "diffbind stdout log"
+    # doc: "diffbind stdout log"
     outputSource: diffbind/stdout_log
 
   diffbind_stderr_log:
     type: File
-    format: "http://edamontology.org/format_2330"
-    label: "diffbind stderr log"
-    doc: "diffbind stderr log"
+    # format: "http://edamontology.org/format_2330"
+    # label: "diffbind stderr log"
+    # doc: "diffbind stderr log"
     outputSource: diffbind/stderr_log
 
 
