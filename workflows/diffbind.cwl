@@ -156,7 +156,9 @@ inputs:
     doc: |
       Blocking attribute metadata file for multi-factor analysis. Headerless TSV/CSV file.
       First column - names from --name1 and --name2, second column - group name. --block is ignored
-
+    'sd:layout':
+      advanced: true
+      
   annotation_file:
     type: File
     label: "Genome annotation"
