@@ -149,6 +149,13 @@ inputs:
     'sd:upstreamSource': "blocked_condition/alias"
     'sd:localLabel': true
 
+  blocked_file:
+    type: File?
+    label: "Blocking attribute headerless TSV/CSV file for multi-factor analysis with columns to set name and group. If set block above is ignored"
+    doc: |
+      Blocking attribute metadata file for multi-factor analysis. Headerless TSV/CSV file.
+      First column - names from --name1 and --name2, second column - group name. --block is ignored
+
   annotation_file:
     type: File
     label: "Genome annotation"
@@ -686,6 +693,7 @@ steps:
       remove_duplicates: remove_duplicates
       analysis_method: analysis_method
       blocked_attributes: blocked_attributes
+      blocked_file: blocked_file
       min_overlap: min_overlap
       min_read_counts: min_read_counts
       use_common: use_common

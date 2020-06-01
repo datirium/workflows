@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.12
+  dockerPull: biowardrobe2/diffbind:v0.0.13
 
 
 inputs:
@@ -60,6 +60,14 @@ inputs:
       Either names from --name1 or/and --name2 or array of strings that can be parsed by R to bool.
       In the later case the order and size should correspond to [--read1]+[--read2].
       Default: not applied
+
+  blocked_file:
+    type: File?
+    inputBinding:
+      prefix: "-bf"
+    doc: |
+      Blocking attribute metadata file for multi-factor analysis. Headerless TSV/CSV file.
+      First column - names from --name1 and --name2, second column - group name. --block is ignored
 
   peakformat:
     type:
