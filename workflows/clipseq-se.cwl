@@ -47,7 +47,7 @@ inputs:
     doc: "Chromosomes length file"
 
   species:
-    type: string
+    type: string?
     default: "mm10"
     label: "Species string for clipper (hg38, mm10)"
     doc: "species: one of ce10 ce11 dm3 hg19 GRCh38 mm9 mm10"
@@ -72,14 +72,14 @@ inputs:
       'string' or 'regex'
 
   bc_pattern:
-    type: string
+    type: string?
     default: "(?P<umi_1>.{4})(?P<discard_1>G).*"
     'sd:layout':
       advanced: true
     label: "Barcode pattern"
 
   adapter:
-    type: string
+    type: string?
     default: "GTGTCAGTCACTTCCAGCGGG"
     'sd:layout':
       advanced: true
