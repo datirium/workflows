@@ -60,7 +60,8 @@ inputs:
 
   extract_method:
     type:
-      type: enum
+    - "null"
+    - type: enum
       symbols: ["string", "regex"]
     default: "regex"
     'sd:layout':
