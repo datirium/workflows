@@ -109,32 +109,6 @@ doc: |
   Deduplicate BAM files based on the first mapping co-ordinate and the UMI attached to the read
   Only -I, --paired and -S parameters are implemented.
 
-s:about: |
-  dedup.py - Deduplicate reads that are coded with a UMI
-  =========================================================
-
-  :Author: Ian Sudbery, Tom Smith
-  :Release: $Id$
-  :Date: |today|
-  :Tags: Python UMI
-
-  Purpose
-  -------
-
-  The purpose of this command is to deduplicate BAM files based
-  on the first mapping co-ordinate and the UMI attached to the read.
-
-  Selecting the representative read
-  ---------------------------------
-
-  The following criteria are applied to select the read that will be retained
-  from a group of duplicated reads:
-
-  1. The read with the lowest number of mapping coordinates (see
-  --multimapping-detection-method option)
-  2. The read with the highest mapping quality
-
-  Otherwise a read is chosen at random.
 
 s:about: |
 
