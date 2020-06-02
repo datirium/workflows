@@ -432,9 +432,9 @@ outputs:
 
   diffbind_peak_overlap_rate_plot_cond_1:
     type: File?
-    # format: "http://edamontology.org/format_3603"
-    # label: "Condition 1 peak overlap rate plot"
-    # doc: "Condition 1 peak overlap rate plot"
+    format: "http://edamontology.org/format_3603"
+    label: "Condition 1 peak overlap rate plot"
+    doc: "Condition 1 peak overlap rate plot"
     outputSource: diffbind/peak_overlap_rate_plot_cond_1
     'sd:visualPlugins':
       - image:
@@ -450,9 +450,9 @@ outputs:
 
   diffbind_peak_overlap_rate_plot_cond_2:
     type: File?
-    # format: "http://edamontology.org/format_3603"
-    # label: "Condition 2 peak overlap rate plot"
-    # doc: "Condition 2 peak overlap rate plot"
+    format: "http://edamontology.org/format_3603"
+    label: "Condition 2 peak overlap rate plot"
+    doc: "Condition 2 peak overlap rate plot"
     outputSource: diffbind/peak_overlap_rate_plot_cond_2
     'sd:visualPlugins':
       - image:
@@ -468,9 +468,9 @@ outputs:
 
   diffbind_all_data_correlation_heatmap:
     type: File?
-    # format: "http://edamontology.org/format_3603"
-    # label: "Not filtered normalized counts correlation heatmap"
-    # doc: "Not filtered normalized counts correlation heatmap"
+    format: "http://edamontology.org/format_3603"
+    label: "Not filtered normalized counts correlation heatmap"
+    doc: "Not filtered normalized counts correlation heatmap"
     outputSource: select_files/selected_all_norm_counts_corr_heatmap
     'sd:visualPlugins':
       - image:
@@ -540,9 +540,9 @@ outputs:
 
   diffbind_all_pca_plot:
     type: File?
-    # format: "http://edamontology.org/format_3603"
-    # label: "PCA plot for all bound sites"
-    # doc: "PCA plot for all bound sites"
+    format: "http://edamontology.org/format_3603"
+    label: "PCA plot for all bound sites"
+    doc: "PCA plot for all bound sites"
     outputSource: select_files/selected_all_pca_plot
     'sd:visualPlugins':
       - image:
@@ -558,9 +558,9 @@ outputs:
 
   diffbind_ma_plot:
     type: File?
-    # format: "http://edamontology.org/format_3603"
-    # label: "MA plot for significantly differentially bound sites"
-    # doc: "MA plot for significantly differentially bound sites"
+    format: "http://edamontology.org/format_3603"
+    label: "MA plot for significantly differentially bound sites"
+    doc: "MA plot for significantly differentially bound sites"
     outputSource: select_files/selected_ma_plot   
     'sd:visualPlugins':
       - image:
@@ -617,12 +617,12 @@ outputs:
     doc: "diffbind stdout log"
     outputSource: diffbind/stdout_log
 
-  # diffbind_stderr_log:
-  #   type: File
-  #   # format: "http://edamontology.org/format_2330"
-  #   # label: "diffbind stderr log"
-  #   # doc: "diffbind stderr log"
-  #   outputSource: diffbind/stderr_log
+  diffbind_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "diffbind stderr log"
+    doc: "diffbind stderr log"
+    outputSource: diffbind/stderr_log
 
 
 steps:
