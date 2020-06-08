@@ -151,7 +151,7 @@ inputs:
 
   blocked_file:
     type: File?
-    label: "Blocking attribute headerless TSV/CSV file for multi-factor analysis with columns to set name and group. If set block above is ignored"
+    label: "Blocking attribute headerless TSV/CSV file for multi-factor analysis with columns to set name and group. If this inputs is set, blocking attributes above are ignored"
     format: "http://edamontology.org/format_2330"
     doc: |
       Blocking attribute metadata file for multi-factor analysis. Headerless TSV/CSV file.
