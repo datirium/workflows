@@ -1,6 +1,8 @@
 Differential gene expression analysis
 =====================================
 
+This is our main pipeline for comparing gene expression between two conditions. If replicates are provided, the pipeline will use DEseq2, for monoplicates the pipeline will use DEseq1. Of course, for monoplicates the p-value will be technical and will not reflect biological variability. The pipeline also produces PCA plots based DEseq normalized read count data.
+
 Differential gene expression analysis based on the negative binomial distribution
 
 Estimate variance-mean dependence in count data from high-throughput sequencing assays and test for differential expression based on a model using the negative binomial distribution.
