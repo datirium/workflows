@@ -73,6 +73,15 @@ inputs:
     label: "Minimum rpkm cutoff"
     doc: "Minimum threshold for rpkm filtering. Default: 5"
 
+  batch_file:
+    type: File?
+    label: "Headerless TSV/CSV file for multi-factor analysis. First column - experiments' names from condition 1 and 2, second column - batch name"
+    format: "http://edamontology.org/format_2330"
+    doc: |
+      Metadata file for multi-factor analysis. Headerless TSV/CSV file.
+      First column - names from --ua and --ta, second column - batch name.
+      Default: None
+
   alias_cond_1:
     type: string?
     default: "untreated"
@@ -284,6 +293,7 @@ steps:
       untreated_sample_names: sample_names_cond_1
       treated_sample_names: sample_names_cond_2
       rpkm_cutoff: rpkm_cutoff
+      batch_file: batch_file
       threads: threads
     out:
       - diff_expr_file

@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.19
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.20
 
 
 inputs:
@@ -18,7 +18,6 @@ inputs:
       - File
       - File[]
     inputBinding:
-      position: 5
       prefix: "-u"
     doc: |
       Untreated input CSV/TSV files
@@ -28,7 +27,6 @@ inputs:
       - File
       - File[]
     inputBinding:
-      position: 6
       prefix: "-t"
     doc: |
       Treated input CSV/TSV files
@@ -36,7 +34,6 @@ inputs:
   untreated_name:
     type: string?
     inputBinding:
-      position: 7
       prefix: "-un"
     doc: |
       Name for untreated condition, use only letters and numbers
@@ -44,7 +41,6 @@ inputs:
   treated_name:
     type: string?
     inputBinding:
-      position: 8
       prefix: "-tn"
     doc: |
       Name for treated condition, use only letters and numbers
@@ -76,10 +72,18 @@ inputs:
     doc: |
       Minimum threshold for rpkm filtering. Default: 5
 
+  batch_file:
+    type: File?
+    inputBinding:
+      prefix: "-bf"
+    doc: |
+      Metadata file for multi-factor analysis. Headerless TSV/CSV file.
+      First column - names from --ua and --ta, second column - batch name.
+      Default: None
+
   output_prefix:
     type: string?
     inputBinding:
-      position: 9
       prefix: "-o"
     doc: |
       Output prefix. Default: deseq
@@ -87,7 +91,6 @@ inputs:
   threads:
     type: int?
     inputBinding:
-      position: 10
       prefix: '-p'
     doc: |
       Run script using multiple threads
@@ -220,7 +223,8 @@ s:about: |
   usage: run_deseq.R
         [-h] -u UNTREATED [UNTREATED ...] -t TREATED [TREATED ...]
         [-ua [UALIAS [UALIAS ...]]] [-ta [TALIAS [TALIAS ...]]] [-un UNAME]
-        [-tn TNAME] [-o OUTPUT] [-p THREADS]
+        [-tn TNAME] [-bf BATCHFILE] [-cu CUTOFF] [-o OUTPUT] [-d DIGITS]
+        [-p THREADS]
 
   Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups
 
@@ -242,7 +246,16 @@ s:about: |
     -tn TNAME, --tname TNAME
                           Name for treated condition, use only letters and
                           numbers
+    -bf BATCHFILE, --batchfile BATCHFILE
+                          Metadata file for multi-factor analysis. Headerless
+                          TSV/CSV file. First column - names from --ualias and
+                          --talias, second column - batch group name. Default:
+                          None
+    -cu CUTOFF, --cutoff CUTOFF
+                          Minimum threshold for rpkm filtering. Default: 5
     -o OUTPUT, --output OUTPUT
                           Output prefix. Default: deseq
+    -d DIGITS, --digits DIGITS
+                          Precision, number of digits to print. Default: 3
     -p THREADS, --threads THREADS
                           Threads
