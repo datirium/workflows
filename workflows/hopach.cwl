@@ -329,7 +329,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "HOPACH - Hierarchical Ordered Partitioning and Collapsing Hybrid"
 label: "HOPACH - Hierarchical Ordered Partitioning and Collapsing Hybrid"

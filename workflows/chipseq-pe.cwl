@@ -635,7 +635,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 label: "ChIP-Seq pipeline paired-end"
 s:name: "ChIP-Seq pipeline paired-end"

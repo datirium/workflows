@@ -1105,7 +1105,7 @@ arguments:
 $namespaces:
   s: http://schema.org/
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "rsem-calculate-expression"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/rsem-calculate-expression.cwl

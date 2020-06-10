@@ -186,7 +186,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
 label:  "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"

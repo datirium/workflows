@@ -55,7 +55,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "heatmap-prepare"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/heatmap-prepare.cwl

@@ -1468,7 +1468,7 @@ arguments: ["--runMode", "alignReads"]
 $namespaces:
   s: http://schema.org/
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "star-alignreads"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/star-alignreads.cwl
