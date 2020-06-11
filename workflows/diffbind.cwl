@@ -241,7 +241,7 @@ inputs:
       - type: enum
         name: "cutoff"
         symbols: ["pvalue", "fdr"]
-    default: "fdr"
+    default: "pvalue"
     label: "Parameter to which cutoff should be applied"
     doc: "Parameter to which cutoff should be applied (fdr or pvalue). Default: fdr"
     'sd:layout':
@@ -253,7 +253,7 @@ inputs:
       - type: enum
         name: "method"
         symbols: ["deseq2", "edger"]
-    default: "deseq2"
+    default: "edger"
     label: "Analysis method"
     doc: "Method by which to analyze differential binding affinity. Default: deseq2"
     'sd:layout':
