@@ -650,19 +650,19 @@ s:creator:
 
 doc: |
   .
-This ChIP-Seq pipeline is based on the  original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-**ChIP-Seq** basic analysis workflow for a **single-read** experiment with Trim Galore.
+  This ChIP-Seq pipeline is based on the  original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  **ChIP-Seq** basic analysis workflow for a **single-read** experiment with Trim Galore.
 
-### Data Analysis
-SciDAP starts from the .fastq files which most DNA cores and commercial NGS companies return. Starting from raw data allows us to ensure that all experiments have been processed in the same way and simplifies the deposition of data to GEO upon publication. The data can be uploaded from users computer, downloaded directly from an ftp server of the core facility by providing a URL or from GEO by providing SRA accession number.
-Our current pipelines include the following steps:
-1. Trimming the adapters with TrimGalore. This step is particularly important when the reads are long and the fragments are short-resulting in sequencing adapters at the end of read. If adapter is not removed the read will not map. TrimGalore can recognize standard adapters, such as Illumina or Nexterra/Tn5 adapters.
-2. QC
-3. (Optional) trimming adapters on 5' or 3' end by the specified number of bases.
-4. Mapping reads with BowTie. Only uniquely mapped reads with less than 3 mismatches are used in the downstream analysis. Results are saved as a .bam file.
-5.  (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly same location). This step is used to remove reads overamplified in PCR. Unfortunately, it may also remove "good" reads. We usually do not remove duplicates unless the library is heavily duplicated. Please note that MACS2 will remove 'excessive' duplicates during peak calling ina smart way (those not supported by other nearby reads).
-6.  Peakcalling by MACS2. (Optionally), it is possible to specify read extension length for MACS2 to use if the length determined automatically is wrong. 
-7.  Generation of BigWig coverage files for display on the browser. The coverage shows the number of fragments at each base in the genome normalized to the number of millions of mapped reads. In the case of PE sequencing the fragments are real, but in the case of single reads the fragments are estimated by extending reads to the average fragment length found by MACS2 or specified by the user in 6.
+  ### Data Analysis
+  SciDAP starts from the .fastq files which most DNA cores and commercial NGS companies return. Starting from raw data allows us to ensure that all experiments have been processed in the same way and simplifies the deposition of data to GEO upon publication. The data can be uploaded from users computer, downloaded directly from an ftp server of the core facility by providing a URL or from GEO by providing SRA accession number.
+  Our current pipelines include the following steps:
+  1. Trimming the adapters with TrimGalore. This step is particularly important when the reads are long and the fragments are short-resulting in sequencing adapters at the end of read. If adapter is not removed the read will not map. TrimGalore can recognize standard adapters, such as Illumina or Nexterra/Tn5 adapters.
+  2. QC
+  3. (Optional) trimming adapters on 5' or 3' end by the specified number of bases.
+  4. Mapping reads with BowTie. Only uniquely mapped reads with less than 3 mismatches are used in the downstream analysis. Results are saved as a .bam file.
+  5.  (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly same location). This step is used to remove reads overamplified in PCR. Unfortunately, it may also remove "good" reads. We usually do not remove duplicates unless the library is heavily duplicated. Please note that MACS2 will remove 'excessive' duplicates during peak calling ina smart way (those not supported by other nearby reads).
+  6.  Peakcalling by MACS2. (Optionally), it is possible to specify read extension length for MACS2 to use if the length determined automatically is wrong. 
+  7.  Generation of BigWig coverage files for display on the browser. The coverage shows the number of fragments at each base in the genome normalized to the number of millions of mapped reads. In the case of PE sequencing the fragments are real, but in the case of single reads the fragments are estimated by extending reads to the average fragment length found by MACS2 or specified by the user in 6.
 
 ### Details
   _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
