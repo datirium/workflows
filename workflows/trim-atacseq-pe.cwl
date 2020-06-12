@@ -748,7 +748,7 @@ s:creator:
 
 
 doc: |
-    This ATAC pipeline is based on original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  This ATAC pipeline is based on original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **ChIP-Seq** basic analysis workflow for a **paired-end** experiment with Trim Galore. The pipeline was adapted for
   ATAC-Seq single-read data analysis by updating genome coverage step.
   ### Data Analysis Steps

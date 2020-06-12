@@ -664,7 +664,7 @@ doc: |
   6.  Peakcalling by MACS2. (Optionally), it is possible to specify read extension length for MACS2 to use if the length determined automatically is wrong. 
   7.  Generation of BigWig coverage files for display on the browser. The coverage shows the number of fragments at each base in the genome normalized to the number of millions of mapped reads. In the case of PE sequencing the fragments are real, but in the case of single reads the fragments are estimated by extending reads to the average fragment length found by MACS2 or specified by the user in 6.
 
-### Details
+  ### Details
   _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
   and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
   apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data.

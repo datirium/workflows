@@ -733,7 +733,7 @@ s:creator:
 
 
 doc: |
-    This ChIP-Seq pipeline is based on the  original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  This ChIP-Seq pipeline is based on the  original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **ChIP-Seq** basic analysis workflow for a **paired-end** experiment with Trim Galore.
   ### Data Analysis
   SciDAP starts from the .fastq files which most DNA cores and commercial NGS companies return. Starting from raw data allows us to ensure that all experiments have been processed in the same way and simplifies the deposition of data to GEO upon publication. The data can be uploaded from users computer, downloaded directly from an ftp server of the core facility by providing a URL or from GEO by providing SRA accession number.
