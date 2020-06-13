@@ -233,7 +233,7 @@ stderr: star_build_stderr.log
 $namespaces:
   s: http://schema.org/
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "star-genomegenerate"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/star-genomegenerate.cwl

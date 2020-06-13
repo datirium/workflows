@@ -320,7 +320,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "Super-enhancer post ChIP-Seq analysis"
 label: "Super-enhancer post ChIP-Seq analysis"

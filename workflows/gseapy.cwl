@@ -410,7 +410,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "GSEApy - Gene Set Enrichment Analysis in Python"
 label: "GSEApy - Gene Set Enrichment Analysis in Python"

@@ -46,7 +46,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "custom-bash"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/custom-bash.cwl

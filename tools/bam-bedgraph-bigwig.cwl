@@ -119,7 +119,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://schema.org/version/latest/schema.rdf
 
 s:name: "bam-bedgraph-bigwig"
 s:license: http://www.apache.org/licenses/LICENSE-2.0
