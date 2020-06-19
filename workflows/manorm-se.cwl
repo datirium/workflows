@@ -31,7 +31,8 @@ inputs:
     type: File
     format: "http://edamontology.org/format_3468"
     label: "ChIP-Seq SE sample 1"
-    doc: "XLS peak file from sample 1, formatted as MACS2 output"
+    doc: |
+      XLS peak file from sample 1, formatted as MACS2 output
     'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
@@ -39,7 +40,8 @@ inputs:
     type: File
     format: "http://edamontology.org/format_3468"
     label: "ChIP-Seq SE sample 2"
-    doc: "XLS peak file from sample 2, formatted as MACS2 output"
+    doc: |
+      XLS peak file from sample 2, formatted as MACS2 output
     'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
@@ -47,67 +49,100 @@ inputs:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "BAM file from sample 1"
-    doc: "BAM alignment file from sample 1"
+    doc: |
+      BAM alignment file from sample 1
     'sd:upstreamSource': "first_chipseq_sample/bambai_pair"
 
   bam_file_second:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "BAM file from sample 2"
-    doc: "BAM alignment file from sample 2"
+    doc: |
+      BAM alignment file from sample 2
     'sd:upstreamSource': "second_chipseq_sample/bambai_pair"
 
   annotation_file:
     type: File
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
+    doc: |
+      Tab-separated annotation file
     'sd:upstreamSource': "first_chipseq_sample/genome_indices/annotation"
 
   shift_size_first:
     type: int?
+    default: 100
     label: "Reads shift size for sample 1"
     doc: |
-      "Reads shift size of sample 1. This value is used to shift reads towards 3' direction
-       to determine the precise binding site. Set as half of the fragment length.
-       Default 100"
+      Reads shift size of sample 1. This value is used to shift reads towards 3' direction
+      to determine the precise binding site. Set as half of the fragment length.
+      Default 100
     'sd:layout':
       advanced: true
 
   shift_size_second:
     type: int?
+    default: 100
     label: "Reads shift size for sample 2"
     doc: |
-      "Reads shift size of sample 2. This value is used to shift reads towards 5' direction
-       to determine the precise binding site. Set as half of the fragment length.
-       Default 100"
+      Reads shift size of sample 2. This value is used to shift reads towards 5' direction
+      to determine the precise binding site. Set as half of the fragment length.
+      Default 100
     'sd:layout':
       advanced: true
 
   m_value_cutoff:
     type: float?
+    default: 1
     label: "M-value (log2-ratio) cutoff"
-    doc: "Absolute M-value (log2-ratio) cutoff to define biased (differential binding) peaks. Default: 1.0"
+    doc: |
+      Absolute M-value (log2-ratio) cutoff to define biased (differential binding) peaks.
+      Default: 1.0
     'sd:layout':
       advanced: true
 
   p_value_cutoff:
     type: float?
+    default: 0.01
     label: "P-value cutoff"
-    doc: "P-value cutoff to define biased peaks. Default: 0.01"
+    doc: |
+      P-value cutoff to define biased peaks.
+      Default: 0.01
     'sd:layout':
       advanced: true
 
   window_size:
     type: int?
-    label: "Window size"
+    default: 2000
+    label: "Window size (2000 is recommended for sharp histone marks like H3K4me3 and H3K27ac)"
     doc: |
-      "Window size to count reads and calculate read densities. 2000 is recommended for
+      Window size to count reads and calculate read densities. 2000 is recommended for
       sharp histone marks like H3K4me3 and H3K27ac, and 1000 for TFs or DNase-seq.
-      Default: 2000"
+      Default: 2000
     'sd:layout':
       advanced: true
 
+  promoter_dist:
+    type: int?
+    default: 1000
+    label: "Promoter distance, bp"
+    doc: |
+      Max distance from gene TSS (in both direction) overlapping
+      which the peak will be assigned to the promoter region.
+      Default: 1000 bp
+    'sd:layout':
+      advanced: true
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    label: "Upstream distance, bp"
+    doc: | 
+      Max distance from the promoter (only in upstream direction) overlapping
+      which the peak will be assigned to the upstream region.
+      Default: 20,000 bp
+    'sd:layout':
+      advanced: true
 
 outputs:
 
@@ -320,8 +355,8 @@ steps:
       in:
         input_filename: filter_columns/output_file
         annotation_filename: annotation_file
-        promoter_bp:
-          default: 1000
+        promoter_bp: promoter_dist
+        upstream_bp: upstream_dist
       out: [result_file]
 
   restore_columns:
