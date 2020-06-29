@@ -49,6 +49,13 @@ inputs:
       prefix: "-v"
     doc: "Only report those entries in A that have _no overlaps_ with B" 
 
+  report_from_a_once:
+    type: boolean?
+    inputBinding:
+      position: 9
+      prefix: "-u"
+    doc: "Write the original A entry _once_ if _any_ overlaps found in B" 
+
   output_filename:
     type: string?
     default: ""
