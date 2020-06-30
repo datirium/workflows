@@ -80,7 +80,7 @@ inputs:
 
   min_signal_regions_a:
     type: string?
-    default: 0
+    default: "0"
     label: "Min signalValue for peaks selected as target regions"
     doc: "Discard all peaks from narrowPeak file of target regions with signalValue smaller than this threshold"
     'sd:layout':
@@ -88,7 +88,7 @@ inputs:
 
   min_signal_regions_b:
     type: string?
-    default: 0
+    default: "0"
     label: "Min signalValue for peaks selected as background regions"
     doc: "Discard all peaks from narrowPeak file of background regions with signalValue smaller than this threshold"
     'sd:layout':
