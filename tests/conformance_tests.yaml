@@ -925,14 +925,17 @@
 - job: ./super-enhancer-1.json
   tool: ../workflows/super-enhancer.cwl
   output:
-    bigbed_file:
+    super_enhancers_bigbed_file:
       location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.bb
       class: File
-    gene_names_file:
+    super_enhancers_report_file:
       location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.tsv
       class: File
-    png_file:
+    ranked_super_enhancers_plot_png:
       location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.png
+      class: File
+    super_enhancers_raw_txt:
+      location: chr4_100_mapped_reads_SuperEnhancers.table.txt
       class: File
 
 # ========================================================
