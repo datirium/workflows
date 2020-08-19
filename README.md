@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/datirium/workflows.svg?branch=master)](https://travis-ci.org/datirium/workflows)
 
 
-## Bioinformatics Workflows by Datirium LLC
+## Bioinformatics Workflows by Datirium LLC 
 
 
 ChIP-Seq, ATAC-Seq, CLIP-Seq, RNA-Seq CWL workflows for use in [Scientific Data Analysis Platform (SciDAP)](https://scidap.com)
