@@ -568,33 +568,36 @@ inputs:
     doc: |
       refer to ref. seqs by 0-based index rather than name
 
-  al:
+  aligned_prefix:
     type:
       - "null"
       - string
     inputBinding:
       position: 1
       prefix: '--al'
+      valueFrom: $(self + ".fastq")
     doc: |
       <fname>       write aligned reads/pairs to file(s) <fname>
 
-  un:
+  unaligned_prefix:
     type:
       - "null"
       - string
     inputBinding:
       position: 1
       prefix: '--un'
+      valueFrom: $(self + ".fastq")
     doc: |
       <fname>       write unaligned reads/pairs to file(s) <fname>
 
-  max:
+  multimapped_prefix:
     type:
       - "null"
       - string
     inputBinding:
       position: 1
       prefix: '--max'
+      valueFrom: $(self + ".fastq")
     doc: |
       <fname>      write reads/pairs over -m limit to file(s) <fname>
 
@@ -791,20 +794,26 @@ outputs:
     outputBinding:
       glob: "*ref*.map*"
 
-  unaligned_file:
-    type: File?
+  unaligned_fastq:
+    type:
+      - "null"
+      - File[]
     outputBinding:
-      glob: $(inputs.un)
+      glob: $(inputs.unaligned_prefix + "*")
 
-  aligned_file:
-    type: File?
+  aligned_fastq:
+    type:
+      - "null"
+      - File[]
     outputBinding:
-      glob: $(inputs.al)
+      glob: $(inputs.aligned_prefix + "*")
 
-  multimapped_file:
-    type: File?
+  multimapped_fastq:
+    type:
+      - "null"
+      - File[]
     outputBinding:
-      glob: $(inputs.max)
+      glob: $(inputs.multimapped_prefix + "*")
 
   log_file:
     type: File

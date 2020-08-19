@@ -134,6 +134,24 @@ inputs:
 
 outputs:
 
+  unaligned_fastq:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_1930"
+    label: "Unaligned FASTQ file(s)"
+    doc: "Unaligned FASTQ file(s)"
+    outputSource: bowtie_aligner/unaligned_fastq
+
+  multimapped_fastq:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_1930"
+    label: "Multimapped FASTQ file(s)"
+    doc: "Multimapped FASTQ file(s)"
+    outputSource: bowtie_aligner/multimapped_fastq
+
   bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
@@ -452,12 +470,16 @@ steps:
         default: true
       sam:
         default: true
+      unaligned_prefix:
+        default: "unaligned_reads"
+      multimapped_prefix:
+        default: "multimapped_reads"
       threads: threads
       q:
         default: true
       X:
         default: 500
-    out: [sam_file, log_file]
+    out: [sam_file, log_file, unaligned_fastq, multimapped_fastq]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl

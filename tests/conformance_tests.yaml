@@ -566,6 +566,10 @@
 - job: ./trim-chipseq-se-1.json
   tool: ../workflows/trim-chipseq-se.cwl
   output:
+    multimapped_fastq: null
+    unaligned_fastq:
+    - class: File
+      location: unaligned_reads.fastq
     atdp_log:
       location: upstream_atdp.log
       class: File
@@ -643,6 +647,12 @@
 - job: ./trim-chipseq-pe-1.json
   tool: ../workflows/trim-chipseq-pe.cwl
   output:
+    multimapped_fastq: null
+    unaligned_fastq:
+    - class: File
+      location: unaligned_reads_1.fastq
+    - class: File
+      location: unaligned_reads_2.fastq
     atdp_log:
       location: upstream_atdp.log
       class: File
@@ -729,6 +739,10 @@
 - job: ./trim-atacseq-se-1.json
   tool: ../workflows/trim-atacseq-se.cwl
   output:
+    multimapped_fastq: null
+    unaligned_fastq:
+    - class: File
+      location: unaligned_reads.fastq
     atdp_log:
       location: upstream_atdp.log
       class: File
@@ -806,6 +820,12 @@
 - job: ./trim-atacseq-pe-1.json
   tool: ../workflows/trim-atacseq-pe.cwl
   output:
+    multimapped_fastq: null
+    unaligned_fastq:
+    - class: File
+      location: unaligned_reads_1.fastq
+    - class: File
+      location: unaligned_reads_2.fastq
     atdp_log:
       location: upstream_atdp.log
       class: File
@@ -1429,6 +1449,10 @@
 - job: ./chipseq-se-1.json
   tool: ../workflows/chipseq-se.cwl
   output:
+    multimapped_fastq: null
+    unaligned_fastq:
+    - class: File
+      location: unaligned_reads.fastq
     atdp_result:
       location: upstream_atdp.tsv
       class: File
@@ -1483,6 +1507,12 @@
 - job: ./chipseq-pe-1.json
   tool: ../workflows/chipseq-pe.cwl
   output:
+    multimapped_fastq: null
+    unaligned_fastq:
+    - class: File
+      location: unaligned_reads_1.fastq
+    - class: File
+      location: unaligned_reads_2.fastq
     atdp_log:
       location: upstream_atdp.log
       class: File
