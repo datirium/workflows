@@ -13,6 +13,7 @@ class: Workflow
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
 
 
@@ -39,7 +40,7 @@ inputs:
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/alias"
-  
+
   genelist_file:
     type: File?
     format: "http://edamontology.org/format_2330"
@@ -115,7 +116,7 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "PCA stdout log"
     doc: "PCA stdout log"
-    outputSource: pca/stdout_log        
+    outputSource: pca/stdout_log
 
   pca_stderr_log:
     type: File
@@ -124,7 +125,7 @@ outputs:
     doc: "PCA stderr log"
     outputSource: pca/stderr_log
 
-    
+
 steps:
 
   pca:
@@ -141,7 +142,7 @@ steps:
     - pca_file
     - stdout_log
     - stderr_log
-    
+
 
 $namespaces:
   s: http://schema.org/

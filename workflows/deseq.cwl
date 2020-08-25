@@ -20,6 +20,7 @@ requirements:
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
   rnaseq_cond_2:
     - "rnaseq-se.cwl"
@@ -31,6 +32,7 @@ requirements:
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
 
 

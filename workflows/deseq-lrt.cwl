@@ -20,6 +20,7 @@ requirements:
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
 
 
@@ -247,7 +248,7 @@ doc: |
 
   1. At least two biological replicates are required for every compared category
   2. Metadata file describes relations between compared experiments, for example
-     
+
      ```
       ,time,condition
       DH1,day5,WT
