@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/gseapy:v0.0.1
+  dockerPull: biowardrobe2/gseapy:v0.0.2
 
 
 inputs:
@@ -30,6 +30,14 @@ inputs:
     - type: enum
       name: "genesetdatabase"
       symbols:
+      - H_hallmark_gene_sets
+      - C1_positional_gene_sets
+      - C2_curated_gene_sets
+      - C3_regulatory_target_gene_sets
+      - C4_computational_gene_sets
+      - C5_GO_gene_sets
+      - C6_oncogenic_signatures
+      - C7_immunologic_signatures
       - ARCHS4_Cell-lines
       - ARCHS4_IDG_Coexp
       - ARCHS4_Kinases_Coexp

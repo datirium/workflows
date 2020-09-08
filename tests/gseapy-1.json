@@ -9,7 +9,7 @@
         "location": "./data/dm3_chr4/main_inputs/gsea/phenotypes.cls",
         "format": "http://edamontology.org/format_2330"
     },
-    "gene_set_database": "Mouse_Gene_Atlas",
+    "gene_set_database": "H_hallmark_gene_sets",
     "permutation_count": 3,
     "graphs_count": 2,
     "seed": 10,
