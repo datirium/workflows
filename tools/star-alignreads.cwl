@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/star:v2.5.3a
+  dockerPull: scidap/star:v2.7.5c
 
 
 inputs:

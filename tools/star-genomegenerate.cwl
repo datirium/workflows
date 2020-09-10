@@ -19,7 +19,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/star:v2.5.3a
+  dockerPull: scidap/star:v2.7.5c
 
 
 inputs:
@@ -212,7 +212,7 @@ outputs:
     type: Directory
     outputBinding:
       glob: $(inputs.genome_dir)
-  
+
   chrom_length:
     type: File
     outputBinding:
