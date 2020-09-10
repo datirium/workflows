@@ -351,14 +351,34 @@ steps:
     in:
       readFilesIn: rename/target_file
       genomeDir: star_indices_folder
-      outFilterMultimapNmax:
-        default: 1
-      outFilterMismatchNmax:
-        default: 5
-      alignSJDBoverhangMin:
-        default: 1
+      # outFilterMultimapNmax:
+      #   default: 1
       seedSearchStartLmax:
         default: 15
+
+      outFilterType:
+        default: "BySJout"
+      outFilterMultimapNmax:
+        default: 200
+      alignSJoverhangMin
+        default: 8
+      alignSJDBoverhangMin:
+        default: 1
+      outFilterMismatchNmax:
+        default: 999
+      outFilterMismatchNoverLmax:
+        default: 0.6
+      alignIntronMin:
+        default: 20
+      alignIntronMax:
+        default: 1000000
+      alignMatesGapMax:
+        default: 1000000
+      limitOutSJcollapsed:
+        default: 5000000
+      outSAMattributes:
+        default: "NH HI NM MD"
+
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
       threads: threads
