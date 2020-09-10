@@ -339,7 +339,7 @@ steps:
   rename:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq/trimmed_file
+      source_file: umisep_cutadapt/trimmed_file
       target_filename:
         source: extract_fastq/fastq_file
         valueFrom: $(self.basename)
