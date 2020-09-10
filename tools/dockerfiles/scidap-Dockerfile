@@ -2,18 +2,18 @@
 # Dockerfile
 #
 # Software:         SciDAP base Image
-# Software Version: v0.0.3
+# Software Version: v0.0.4
 # Description:      Basic image for SciDAP
 # Website:          http://scidap.com/
 # Provides:         autotools-dev, automake, cmake, curl, fuse, git, wget, zip, openjdk-9-jre-headless, build-essential, pkg-config, python, python-dev, python-pip, zlib1g-dev
-# Base Image:       ubuntu:16.04
-# Build Cmd:        docker build --rm -t biowardrobe2/scidap:v0.0.3 -f scidap-Dockerfile .
-# Pull Cmd:         docker pull biowardrobe2/scidap:v0.0.3
-# Run Cmd:          docker run --rm -ti biowardrobe2/scidap:v0.0.3 bash
+# Base Image:       ubuntu:20.04
+# Build Cmd:        docker build --rm -t biowardrobe2/scidap:v0.0.4 -f scidap-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap:v0.0.4
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap:v0.0.4 bash
 #################################################################
 
 ### Base Image
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 MAINTAINER Andrey V Kartashov "porter@porter.st"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -22,10 +22,10 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # add apt mirrors
 RUN mv /etc/apt/sources.list /etc/apt/sources.list.bkp && \
-    bash -c 'echo -e "deb mirror://mirrors.ubuntu.com/mirrors.txt xenial main restricted universe multiverse\n\
-                      deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-updates main restricted universe multiverse\n\
-                      deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-backports main restricted universe multiverse\n\
-                      deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-security main restricted universe multiverse\n\n" > /etc/apt/sources.list' && \
+    bash -c 'echo -e "deb mirror://mirrors.ubuntu.com/mirrors.txt focal main restricted universe multiverse\n\
+                      deb mirror://mirrors.ubuntu.com/mirrors.txt focal-updates main restricted universe multiverse\n\
+                      deb mirror://mirrors.ubuntu.com/mirrors.txt focal-backports main restricted universe multiverse\n\
+                      deb mirror://mirrors.ubuntu.com/mirrors.txt focal-security main restricted universe multiverse\n\n" > /etc/apt/sources.list' && \
     cat /etc/apt/sources.list.bkp >> /etc/apt/sources.list && \
     cat /etc/apt/sources.list
 
@@ -46,14 +46,15 @@ RUN apt-get clean all &&\
         openjdk-8-jdk   \
         build-essential \
         pkg-config      \
-        python          \
-        python-dev      \
-        python-pip      \
+        python2-minimal            \
+        python3          \
+        python3-dev      \
+        python3-pip      \
         zlib1g-dev      \
         p7zip-full      \
         file            \
         libmagic-dev  &&\
     apt-get clean && \
     apt-get purge && \
-    pip install python-magic &&\
+    pip3 install python-magic &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*

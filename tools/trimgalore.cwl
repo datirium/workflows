@@ -24,7 +24,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/trimgalore:v0.4.4
+  dockerPull: scidap/trimgalore:v0.6.6
 
 inputs:
 
@@ -466,7 +466,7 @@ outputs:
               return "*_trimmed.fq*";
             }
         }
-      
+
   trimmed_file_pair:
     type: File?
     outputBinding:
