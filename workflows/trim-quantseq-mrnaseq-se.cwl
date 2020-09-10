@@ -492,18 +492,17 @@ s:creator:
 
 
 doc: |
-  ## Pipeline for Lexogen's QuantSeq 3' mRNA-Seq Library Prep Kit FWD for Illumina
+  ### Pipeline for Lexogen's QuantSeq 3' mRNA-Seq Library Prep Kit FWD for Illumina
 
   * Cost-saving and streamlined globin mRNA depletion during QuantSeq library preparation
   * Genome-wide analysis of gene expression
   * Cost-efficient alternative to microarrays and standard RNA-Seq
   * Down to 100 pg total RNA input
   * Applicable for low quality and FFPE samples
-  * Free data analysis pipeline on the BlueBee® genomics analysis platform
   * Single-read sequencing of up to 9,216 samples/lane
   * Dual indexing and Unique Molecular Identifiers (UMIs) are available
 
-  ## Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
+  ### Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
 
   1. Get UMIes and trim adapters from input FASTQ file
   2. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
