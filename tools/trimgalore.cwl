@@ -24,7 +24,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/trimgalore:v0.6.6
+  dockerPull: scidap/trimgalore:v0.6.6
 
 inputs:
 
