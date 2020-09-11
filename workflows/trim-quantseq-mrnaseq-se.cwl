@@ -388,7 +388,7 @@ steps:
         default: "BySJout"
       outFilterMultimapNmax:
         default: 200
-      alignSJoverhangMin
+      alignSJoverhangMin:
         default: 8
       alignSJDBoverhangMin:
         default: 1
