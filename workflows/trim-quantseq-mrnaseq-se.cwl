@@ -561,6 +561,8 @@ s:creator:
 doc: |
   ### Pipeline for Lexogen's QuantSeq 3' mRNA-Seq Library Prep Kit FWD for Illumina
 
+  [Lexogen original documentation](https://www.lexogen.com/quantseq-3mrna-sequencing/)
+
   * Cost-saving and streamlined globin mRNA depletion during QuantSeq library preparation
   * Genome-wide analysis of gene expression
   * Cost-efficient alternative to microarrays and standard RNA-Seq
@@ -569,12 +571,42 @@ doc: |
   * Single-read sequencing of up to 9,216 samples/lane
   * Dual indexing and Unique Molecular Identifiers (UMIs) are available
 
+  ### QuantSeq 3’ mRNA-Seq Library Prep Kit FWD for Illumina
+
+  The QuantSeq FWD Kit is a library preparation protocol designed to generate Illumina compatible libraries of sequences close to the 3’ end of polyadenylated RNA.
+
+  QuantSeq FWD contains the Illumina Read 1 linker sequence in the second strand synthesis primer,
+  hence NGS reads are generated towards the poly(A) tail, directly reflecting the mRNA sequence (see workflow).
+  This version is the recommended standard for gene expression analysis.
+  Lexogen furthermore provides a high-throughput version with optional dual indexing (i5 and i7 indices) allowing up to 9,216 samples to be multiplexed in one lane.
+
+  #### Analysis of Low Input and Low Quality Samples
+
+  The required input amount of total RNA is as low as 100 pg.
+  QuantSeq is suitable to reproducibly generate libraries from low quality RNA, including FFPE samples.
+  See Fig.1 and 2 for a comparison of two different RNA qualities (FFPE and fresh frozen cryo-block) of the same sample.
+
+  ![Fig 1](https://www.lexogen.com/wp-content/uploads/2017/02/Correlation_Samples.jpg)
+  Figure 1 | Correlation of gene counts of FFPE and cryo samples.
+
+  ![Fig 2](https://www.lexogen.com/wp-content/uploads/2017/02/Venn_diagrams.jpg)
+  Figure 2 | Venn diagrams of genes detected by QuantSeq at a uniform read depth of 2.5 M reads in FFPE and cryo samples with 1, 5, and 10 reads/gene thresholds.
+
+  #### Mapping of Transcript End Sites
+
+  By using longer reads QuantSeq FWD allows to exactly pinpoint the 3’ end of poly(A) RNA (see Fig. 3) and therefore obtain accurate information about the 3’ UTR.
+
+  ![Figure 3](https://www.lexogen.com/wp-content/uploads/2017/02/Read_Coverage.jpg)
+  Figure 3 | QuantSeq read coverage versus normalized transcript length of NGS libraries derived from FFPE-RNA (blue) and cryo-preserved RNA (red).
+
+
   ### Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
 
-  1. Get UMIes and trim adapters from input FASTQ file
-  2. Use STAR to align reads from input FASTQ file according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
-  3. Use fastx_quality_stats to analyze input FASTQ file and generate quality statistics file
-  4. Use samtools sort to generate coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 1 (after running STAR)
-  5. Generate BigWig file on the base of sorted BAM file
-  6. Map input FASTQ file to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
-  7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
+  1. Separates UMIes and trims adapters from input FASTQ file
+  2. Uses ```STAR``` to align reads from input FASTQ file according to the predefined reference indices; generates unsorted BAM file and alignment statistics file
+  3. Uses ```fastx_quality_stats``` to analyze input FASTQ file and generates quality statistics file
+  4. Uses ```samtools sort``` and generates coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 2 (after running STAR)
+  5. Uses ```umi_tools dedup``` and generates final filtered sorted BAM(+BAI) file pair
+  6. Generates BigWig file on the base of sorted BAM file
+  7. Maps input FASTQ file to predefined rRNA reference indices using ```bowtie``` to define the level of rRNA contamination; exports resulted statistics to file
+  8. Calculates isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; exports results to file
