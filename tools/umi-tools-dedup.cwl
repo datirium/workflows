@@ -74,7 +74,7 @@ outputs:
     outputBinding:
       glob: $(default_output_filename())
 
-      output_stats:
+  output_stats:
     type: File
     outputBinding:
       glob: $(inputs.output_stats + "*")
