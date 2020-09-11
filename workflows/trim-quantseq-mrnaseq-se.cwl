@@ -171,7 +171,7 @@ outputs:
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: samtools_sort_index/bam_bai_pair
+    outputSource: samtools_sort_index_2/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
