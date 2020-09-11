@@ -405,8 +405,8 @@ steps:
         default: 1000000
       limitOutSJcollapsed:
         default: 5000000
-      outSAMattributes:
-        default: "NH HI NM MD"
+      # outSAMattributes:
+      #   default: "NH HI NM MD"
 
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
