@@ -50,7 +50,7 @@ inputs:
       prefix: --output-stats=
       separate: false
       position: 10
-      valueFrom: $(self + "_stats.log")
+      valueFrom: $(self + "_umi_tools_stats.log")
     default: ""
     doc: "Specify location to output stats"
 
@@ -75,8 +75,10 @@ outputs:
       glob: $(default_output_filename())
 
   output_stats:
-    type: File
-    outputBinding:
+    type:
+      - "null"
+      - File[]
+  outputBinding:
       glob: $(inputs.output_stats + "*")
 
   stdout_log:
