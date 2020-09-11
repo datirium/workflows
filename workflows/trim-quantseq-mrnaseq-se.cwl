@@ -254,6 +254,31 @@ outputs:
     doc: "BAM statistics report (right after alignment and sorting)"
     outputSource: get_bam_statistics/log_file
 
+
+  trim_report:
+    type: File
+    label: "cutadapt report"
+    doc: "cutadapt generated log"
+    outputSource: umisep_cutadapt/report_file
+
+  umi_tools_dedup_stdout:
+    type: File
+    label: "umi_tools dedup stdout log"
+    doc: "umi_tools dedup stdout log"
+    outputSource: umi_tools_dedup/stdout_log
+
+  umi_tools_dedup_stderr:
+    type: File
+    label: "umi_tools dedup stderr log"
+    doc: "umi_tools dedup stderr log"
+    outputSource: umi_tools_dedup/stderr_log
+
+  umi_tools_dedup_stats:
+    type: File
+    label: "umi_tools dedup stats"
+    doc: "umi_tools dedup stats"
+    outputSource: umi_tools_dedup/output_stats
+
   # trim_report:
   #   type: File
   #   label: "TrimGalore report"
@@ -332,8 +357,11 @@ steps:
           outputBinding:
             glob: "trimmed_*"
 
+        report_file:
+          type: stderr
 
       baseCommand: [bash, '-c']
+      stderr: umisep_cutadapt.log
 
 
   rename:
@@ -397,7 +425,7 @@ steps:
       input_file: rename/target_file
     out: [statistics_file]
 
-  samtools_sort_index:
+  samtools_sort_index_1:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_aligner/aligned_file
@@ -407,10 +435,28 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  umi_tools_dedup:
+    run: ../tools/umi-tools-dedup.cwl
+    in:
+      bam_file: samtools_sort_index_1/bam_bai_pair
+      multimapping_detection_method:
+        default: "NH"
+    out: [dedup_bam_file, stdout_log, stderr_log, output_stats]
+
+  samtools_sort_index_2:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: umi_tools_dedup/dedup_bam_file
+      sort_output_filename:
+        source: rename/target_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
+      threads: threads
+    out: [bam_bai_pair]
+
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_sort_index_2/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
 #     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
@@ -439,7 +485,7 @@ steps:
   rpkm_calculation:
     run: ../tools/geep.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_sort_index_2/bam_bai_pair
       annotation_file: annotation_file
       rpkm_threshold:
         default: 0.001
@@ -458,9 +504,9 @@ steps:
   get_bam_statistics:
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index/bam_bai_pair
+      bambai_pair: samtools_sort_index_2/bam_bai_pair
       output_filename:
-        source: samtools_sort_index/bam_bai_pair
+        source: samtools_sort_index_2/bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 
