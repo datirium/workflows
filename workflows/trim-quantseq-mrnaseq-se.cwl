@@ -311,6 +311,7 @@ steps:
       input_file: extract_fastq/fastq_file
     out:
       - trimmed_file
+      - report_file
     run:
       cwlVersion: v1.0
       class: CommandLineTool
