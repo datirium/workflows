@@ -78,7 +78,7 @@ outputs:
     type:
       - "null"
       - File[]
-  outputBinding:
+    outputBinding:
       glob: $(inputs.output_stats + "*")
 
   stdout_log:
