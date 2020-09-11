@@ -448,7 +448,7 @@ inputs:
       intronMotif ... strand derived from the intron motif. Reads with inconsistent and/or non-canonical introns are filtered out.
 
   alignMatesGapMax:
-    type: boolean?
+    type: int?
     inputBinding:
       position: 1
       prefix: --alignMatesGapMax
@@ -1108,7 +1108,7 @@ inputs:
       BySJout ... keep only those reads that contain junctions that passed filtering into SJ.out.tab
 
   alignIntronMin:
-    type: boolean?
+    type: int?
     inputBinding:
       position: 1
       prefix: --alignIntronMin
@@ -1128,7 +1128,7 @@ inputs:
       ideally = (mate_length - 1)
 
   alignIntronMax:
-    type: boolean?
+    type: int?
     inputBinding:
       position: 1
       prefix: --alignIntronMax

@@ -587,9 +587,11 @@ doc: |
   See Fig.1 and 2 for a comparison of two different RNA qualities (FFPE and fresh frozen cryo-block) of the same sample.
 
   ![Fig 1](https://www.lexogen.com/wp-content/uploads/2017/02/Correlation_Samples.jpg)
+
   Figure 1 | Correlation of gene counts of FFPE and cryo samples.
 
   ![Fig 2](https://www.lexogen.com/wp-content/uploads/2017/02/Venn_diagrams.jpg)
+
   Figure 2 | Venn diagrams of genes detected by QuantSeq at a uniform read depth of 2.5 M reads in FFPE and cryo samples with 1, 5, and 10 reads/gene thresholds.
 
   #### Mapping of Transcript End Sites
@@ -597,6 +599,7 @@ doc: |
   By using longer reads QuantSeq FWD allows to exactly pinpoint the 3’ end of poly(A) RNA (see Fig. 3) and therefore obtain accurate information about the 3’ UTR.
 
   ![Figure 3](https://www.lexogen.com/wp-content/uploads/2017/02/Read_Coverage.jpg)
+
   Figure 3 | QuantSeq read coverage versus normalized transcript length of NGS libraries derived from FFPE-RNA (blue) and cryo-preserved RNA (red).
 
 
