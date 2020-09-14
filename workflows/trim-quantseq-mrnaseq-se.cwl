@@ -274,7 +274,9 @@ outputs:
     outputSource: umi_tools_dedup/stderr_log
 
   umi_tools_dedup_stats:
-    type: File
+    type:
+      - "null"
+      - File[]
     label: "umi_tools dedup stats"
     doc: "umi_tools dedup stats"
     outputSource: umi_tools_dedup/output_stats
