@@ -25,7 +25,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/geep:v0.0.4
+  dockerPull: biowardrobe2/geep:v0.0.5
 
 
 inputs:
@@ -130,10 +130,18 @@ inputs:
     doc: |
       Set this dutp flag if strand specific analysys should be made. Default: False
 
-  threads:
+  max_cycles:
     type: int?
     inputBinding:
       position: 21
+      prefix: --cycles
+    doc: |
+      Set the maximum number of cycles used for read balancing. Default: 2000
+
+  threads:
+    type: int?
+    inputBinding:
+      position: 22
       prefix: --threads
     doc: |
       Set the number of threads. Default: 1
@@ -237,3 +245,4 @@ s:about: |
       -p,--threads     Set the number of threads. Default: 1
       -u,--keepUnique  Set this flag if you want prevent distributing the isoform unique reads among other isoforms. Default: False
       -d,--dutp        Set this dutp flag if strand specific analysys should be made. Default: False
+      -c,--cycles      Set the maximum number of cycles used for read balancing. Default: 2000
