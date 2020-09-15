@@ -1768,3 +1768,20 @@
     gseapy_stderr_log:
       class: File
       location: gseapy_stderr.log
+
+# ========================================================
+# gat-run
+# ========================================================
+
+- job: ./gat-run-1.json
+  tool: ../workflows/gat-run.cwl
+  output:
+    gat_report:
+      class: File
+      location: segments.tsv
+    gat_stdout_log:
+      class: File
+      location: gat_stdout.log
+    gat_stderr_log:
+      class: File
+      location: gat_stderr.log

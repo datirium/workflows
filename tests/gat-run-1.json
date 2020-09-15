@@ -1,0 +1,19 @@
+{
+    "segment_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/gat/segments.bed",
+        "format": "http://edamontology.org/format_3003"
+    },
+    "annotation_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/gat/annotations.bed",
+        "format": "http://edamontology.org/format_3003"
+    },
+    "workspace_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/gat/workspace.bed",
+        "format": "http://edamontology.org/format_3003"
+    },
+    "permutations_count": 100,
+    "alias": "Interval overlap statistics"
+}
