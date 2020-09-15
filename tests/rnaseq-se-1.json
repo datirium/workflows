@@ -1,7 +1,7 @@
 {
   "star_indices_folder": {
     "class": "Directory",
-    "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4"
+    "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4_v2.7.5c/dm3"
   },
   "bowtie_indices_folder": {
     "class": "Directory",
@@ -9,7 +9,7 @@
   },
   "chrom_length_file": {
     "class": "File",
-    "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4/chrNameLength.txt",
+    "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4_v2.7.5c/dm3/chrNameLength.txt",
     "format": "http://edamontology.org/format_2330"
   },
   "annotation_file": {
