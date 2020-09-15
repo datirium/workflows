@@ -73,7 +73,7 @@ outputs:
     format: "http://edamontology.org/format_3475"
     label: "Interval overlap statistics report"
     doc: "Interval overlap statistics report"
-    outputSource: run_gat/report_file
+    outputSource: prepare_report_file/output_file
     "sd:visualPlugins":
     - syncfusiongrid:
         tab: "Interval overlap statistics"
@@ -140,6 +140,15 @@ steps:
     - stdout_log
     - stderr_log
 
+  prepare_report_file:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: run_gat/report_file
+      script:
+        default: |
+          cat "$0" | cut -f 3-11  > `basename $0`
+    out:
+    - output_file
 
 
 $namespaces:
