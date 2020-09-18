@@ -35,7 +35,7 @@ inputs:
     doc: "FASTQ file 2"
 
   fastq_file_3:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_1930"
     label: "FASTQ file 3"
     doc: "FASTQ file 3"
