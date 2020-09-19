@@ -189,29 +189,29 @@ outputs:
     doc: "Bowtie alignment log file"
     outputSource: bowtie_aligner/log_file
 
-  rpkm_isoforms:
-    type: File
-    format: "http://edamontology.org/format_3752"
-    label: "RPKM, grouped by isoforms"
-    doc: "Calculated rpkm values, grouped by isoforms"
-    outputSource: rpkm_calculation/isoforms_file
+  # rpkm_isoforms:
+  #   type: File
+  #   format: "http://edamontology.org/format_3752"
+  #   label: "RPKM, grouped by isoforms"
+  #   doc: "Calculated rpkm values, grouped by isoforms"
+  #   outputSource: rpkm_calculation/isoforms_file
 
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by gene name"
-    doc: "Calculated rpkm values, grouped by gene name"
+    label: "raw reads grouped by gene name"
+    doc: "raw reads grouped by gene name"
     outputSource: group_isoforms/genes_file
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Gene Expression'
-        Title: 'RPKM, grouped by gene name'
+        Title: 'raw reads grouped by gene name'
 
   rpkm_common_tss:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by common TSS"
-    doc: "Calculated rpkm values, grouped by common TSS"
+    label: "raw reads grouped by common TSS"
+    doc: "raw reads grouped by common TSS"
     outputSource: group_isoforms/common_tss_file
 
   get_stat_log:
@@ -491,7 +491,9 @@ steps:
       bam_file: samtools_sort_index_2/bam_bai_pair
       annotation_file: annotation_file
       rpkm_threshold:
-        default: 0.001
+        default: 0
+      max_cycles:
+        default: 0
       exclude_chr: exclude_chr
       threads: threads
     out: [isoforms_file]
