@@ -102,10 +102,30 @@ inputs:
     doc: |
       Intron transcripts-to-capture mapping TSV file
 
+  loom:
+    type: boolean?
+    inputBinding:
+      position: 11
+      prefix: "--loom"
+    doc: |
+      Generate loom file from count matrix
+      Mutually exclusive with h5ad
+      Default: False
+
+  h5ad:
+    type: boolean?
+    inputBinding:
+      position: 12
+      prefix: "--h5ad"
+    doc: |
+      Generate h5ad file from count matrix
+      Mutually exclusive with loom
+      Default: False
+
   threads:
     type: int?
     inputBinding:
-      position: 11
+      position: 13
       prefix: "-t"
     doc: |
       Number of threads to use
@@ -114,7 +134,7 @@ inputs:
   memory_limit:
     type: string?
     inputBinding:
-      position: 12
+      position: 14
       prefix: "-m"
     doc: |
       Maximum memory used
@@ -189,8 +209,18 @@ outputs:
       using whitelist_file and bustools sort with
       corrected BUS file
 
+  stdout_log:
+    type: stdout
+
+  stderr_log:
+    type: stderr
+
 
 baseCommand: ["kb", "count", "--verbose"]
+
+
+stdout: kb_count_stdout.log
+stderr: kb_count_stderr.log
 
 
 $namespaces:
@@ -255,8 +285,6 @@ doc: |
   --tcc
   --dry-run
   --filter
-  --loom
-  --h5ad
 
 s:about: |
   usage: kb count [-h] [--workflow {standard,lamanno,nucleus,kite}] [--keep-tmp] [--verbose] -i INDEX -g T2G -x TECHNOLOGY [-o OUT] [-w WHITELIST] [-t THREADS] [-m MEMORY] [--tcc]
