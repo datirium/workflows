@@ -294,7 +294,7 @@ steps:
       class: CommandLineTool
       hints:
       - class: DockerRequirement
-        dockerPull: scidap/scidap:v0.0.4
+        dockerPull: rackspacedot/python37
       inputs:
         script:
           type: string?
