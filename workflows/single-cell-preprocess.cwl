@@ -81,14 +81,14 @@ inputs:
     type: File
     format: "http://edamontology.org/format_1929"
     label: "Reference genome FASTA file"
-    doc: "Reference genome FASTA file. Includes all chromosomes in a single file"
+    doc: "Reference genome FASTA file that includes all chromosomes"
     'sd:upstreamSource': "genome_indices/fasta_output"
 
   annotation_gtf_file:
     type: File
     format: "http://edamontology.org/format_2306"
     label: "GTF annotation file"
-    doc: "GTF annotation file. Includes reference genome and mitochondrial DNA annotations"
+    doc: "GTF annotation file that includes refGene and mitochondrial DNA annotations"
     'sd:upstreamSource': "genome_indices/annotation_gtf"
 
   threads:
