@@ -122,7 +122,7 @@ outputs:
     type: stderr
 
 
-baseCommand: ["kb", "ref"]
+baseCommand: ["kb", "ref", "--verbose"]
 
 
 arguments:
@@ -205,6 +205,7 @@ doc: |
   Otherwise the correspondent outputs will be null.
 
   Notes:
+  --verbose was hardcoded
   --keep-tmp, -d, --overwrite doesn't make sense when running from container
   -f2, -c1 and -c2 are always appended to the basecommand regardless of workflow_type (makes cwl less complicate)
 

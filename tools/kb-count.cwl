@@ -216,7 +216,7 @@ outputs:
     type: stderr
 
 
-baseCommand: ["kb", "count"]
+baseCommand: ["kb", "count", "--verbose"]
 
 
 stdout: kb_count_stdout.log
@@ -276,6 +276,7 @@ doc: |
   6. Generates count matrix from sorted barcode corrected BUS file
 
   Notes:
+  --verbose was hardcoded
   --keep-tmp, --overwrite doesn't make sense when running from container
   -o is used by default, so all outputs go to the current folder
 
