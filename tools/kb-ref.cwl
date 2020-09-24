@@ -17,7 +17,7 @@ requirements:
 
 hints:
   - class: DockerRequirement
-    dockerPull: biowardrobe2/kb-python:v0.0.3
+    dockerPull: biowardrobe2/kb-python:v0.0.2
 
 
 inputs:
