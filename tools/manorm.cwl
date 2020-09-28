@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/manorm:v0.0.3
+  dockerPull: biowardrobe2/manorm:v0.0.4
 
 
 inputs:
