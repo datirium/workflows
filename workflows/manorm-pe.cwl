@@ -354,11 +354,13 @@ steps:
           }
       peak_format:
         source:
-        - broad_peak_file_first
-        - broad_peak_file_second
+        - peak_file_first          # [0]
+        - peak_file_second         # [1]
+        - broad_peak_file_first    # [2]
+        - broad_peak_file_second   # [3]
         valueFrom: |
           ${
-            if (self[0] && self[1]){
+            if (self[2] && self[3]){
               return "broadpeak";
             }
             else {
