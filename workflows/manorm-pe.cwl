@@ -324,13 +324,14 @@ steps:
     in:
       peak_file_first: 
         source:
-        - peak_file_first
-        - broad_peak_file_first
-        - broad_peak_file_second
+        - peak_file_first          # [0]
+        - peak_file_second         # [1]
+        - broad_peak_file_first    # [2]
+        - broad_peak_file_second   # [3]
         valueFrom: |
           ${
-            if (self[1] && self[2]){
-              return self[1];
+            if (self[2] && self[3]){
+              return self[2];
             }
             else {
               return self[0];
@@ -338,16 +339,17 @@ steps:
           }
       peak_file_second:
         source:
-        - peak_file_second
-        - broad_peak_file_first
-        - broad_peak_file_second
+        - peak_file_first          # [0]
+        - peak_file_second         # [1]
+        - broad_peak_file_first    # [2]
+        - broad_peak_file_second   # [3]
         valueFrom: |
           ${
-            if (self[1] && self[2]){
-              return self[2];
+            if (self[2] && self[3]){
+              return self[3];
             }
             else {
-              return self[0];
+              return self[1];
             }
           }
       peak_format:
