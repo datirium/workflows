@@ -261,7 +261,7 @@ outputs:
 
   ma_before_normalization_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
+    format: "http://edamontology.org/format_3508"
     label: "MA-values before normalization plot"
     doc: "MA-values before normalization plot"
     outputSource: manorm/ma_before_normalization_plot
@@ -272,7 +272,7 @@ outputs:
 
   ma_after_normalization_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
+    format: "http://edamontology.org/format_3508"
     label: "MA-values after normalization plot"
     doc: "MA-values after normalization plot"
     outputSource: manorm/ma_after_normalization_plot
@@ -283,7 +283,7 @@ outputs:
 
   ma_with_P_value_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
+    format: "http://edamontology.org/format_3508"
     label: "MA-values with P-values plot"
     doc: "MA-values with P-values plot"
     outputSource: manorm/ma_with_P_value_plot
@@ -294,7 +294,7 @@ outputs:
 
   read_density_on_common_peaks_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
+    format: "http://edamontology.org/format_3508"
     label: "Read density on common peaks plot"
     doc: "Read density on common peaks plot"
     outputSource: manorm/read_density_on_common_peaks_plot

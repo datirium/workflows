@@ -193,25 +193,25 @@ outputs:
   ma_before_normalization_plot:
     type: File
     outputBinding:
-      glob: "output_figures/*_MA_plot_before_normalization.png"
+      glob: "output_figures/*_MA_plot_before_normalization.*"
     doc: "MA-values before normalization plot"
 
   ma_after_normalization_plot:
     type: File
     outputBinding:
-      glob: "output_figures/*_MA_plot_after_normalization.png"
+      glob: "output_figures/*_MA_plot_after_normalization.*"
     doc: "MA-values after normalization plot"
 
   ma_with_P_value_plot:
     type: File
     outputBinding:
-      glob: "output_figures/*_MA_plot_with_P_value.png"
+      glob: "output_figures/*_MA_plot_with_P_value.*"
     doc: "MA-values with P-values plot"
 
   read_density_on_common_peaks_plot:
     type: File
     outputBinding:
-      glob: "output_figures/*_read_density_on_common_peaks.png"
+      glob: "output_figures/*_read_density_on_common_peaks.*"
     doc: "Read density on common peaks plot"
 
   stdout_log:
