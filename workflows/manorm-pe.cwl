@@ -45,6 +45,24 @@ inputs:
     'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
+  broad_peak_file_first:
+    type: File?
+    format: "http://edamontology.org/format_3614"
+    label: "ChIP-Seq PE sample 1"
+    doc: |
+      Broad peak file from sample 1
+    'sd:upstreamSource': "first_chipseq_sample/macs2_broad_peaks"
+    'sd:localLabel': true
+
+  broad_peak_file_second:
+    type: File?
+    format: "http://edamontology.org/format_3614"
+    label: "ChIP-Seq PE sample 2"
+    doc: |
+      Broad peak file from sample 2
+    'sd:upstreamSource': "second_chipseq_sample/macs2_broad_peaks"
+    'sd:localLabel': true
+
   bam_file_first:
     type: File
     format: "http://edamontology.org/format_2572"
@@ -304,10 +322,47 @@ steps:
   manorm:
     run: ../tools/manorm.cwl
     in:
-      peak_file_first: peak_file_first
-      peak_file_second: peak_file_second
+      peak_file_first: 
+        source:
+        - peak_file_first
+        - broad_peak_file_first
+        - broad_peak_file_second
+        valueFrom: |
+          ${
+            if (self[1] && self[2]){
+              return self[1];
+            }
+            else {
+              return self[0];
+            }
+          }
+      peak_file_second:
+        source:
+        - peak_file_second
+        - broad_peak_file_first
+        - broad_peak_file_second
+        valueFrom: |
+          ${
+            if (self[1] && self[2]){
+              return self[2];
+            }
+            else {
+              return self[0];
+            }
+          }
       peak_format:
-        default: "macs2"
+        source:
+        - broad_peak_file_first
+        - broad_peak_file_second
+        valueFrom: |
+          ${
+            if (self[0] && self[1]){
+              return "broadpeak";
+            }
+            else {
+              return "macs2";
+            }
+          }
       read_file_first: bam_file_first
       read_file_second: bam_file_second
       read_format:
