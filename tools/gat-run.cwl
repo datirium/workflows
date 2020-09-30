@@ -64,10 +64,29 @@ inputs:
     doc: |
       Number of iterations
 
+  counter:
+    type:
+    - "null"
+    - type: enum
+      name: "counter"
+      symbols:
+      - "nucleotide-overlap"
+      - "nucleotide-density"
+      - "segment-overlap"
+      - "annotation-overlap"
+      - "segment-midoverlap"
+      - "annotation-midoverlap"
+    inputBinding:
+      position: 10
+      prefix: "-c"
+    doc: |
+      Set the measure of association that is tested.
+      Default: nucleotide-overlap
+
   threads:
     type: int?
     inputBinding:
-      position: 10
+      position: 11
       prefix: "-t"
     doc: |
       Threads number
@@ -75,7 +94,7 @@ inputs:
   seed:
     type: int?
     inputBinding:
-      position: 11
+      position: 12
       prefix: "--random-seed="
       separate: false
     doc: |

@@ -49,6 +49,25 @@ inputs:
     'sd:layout':
       advanced: true
 
+  counter:
+    type:
+    - "null"
+    - type: enum
+      name: "counter"
+      symbols:
+      - "nucleotide-overlap"
+      - "nucleotide-density"
+      - "segment-overlap"
+      - "annotation-overlap"
+      - "segment-midoverlap"
+      - "annotation-midoverlap"
+    default: "nucleotide-overlap"
+    label: "Set the measure of association to be tested"
+    doc: |
+      Set the measure of association to be tested
+    'sd:layout':
+      advanced: true
+
   seed:
     type: int?
     default: 12345
@@ -133,6 +152,7 @@ steps:
       annotation_file: prepare_annotation_file/output_file
       workspace_file: prepare_workspace_file/output_file
       iterations: permutations_count
+      counter: counter
       seed: seed
       threads: threads
     out:
