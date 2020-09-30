@@ -146,7 +146,7 @@ steps:
       input_file: run_gat/report_file
       script:
         default: |
-          cat "$0" | cut -f 3-11  > `basename $0`
+          cat "$0" | cut -f 3-  > `basename $0`
     out:
     - output_file
 
