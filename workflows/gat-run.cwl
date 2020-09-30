@@ -128,7 +128,7 @@ steps:
   prepare_annotation_file:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: segment_file
+      input_file: annotation_file
       script:
         default: |
           cat "$0" | tr -d '\r' | tr "," "\t" | cut -f 1-3 | awk NF | sort -u -k1,1 -k2,2n -k3,3n > `basename $0`
@@ -138,7 +138,7 @@ steps:
   prepare_workspace_file:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: segment_file
+      input_file: workspace_file
       script:
         default: |
           cat "$0" | tr -d '\r' | tr "," "\t" | cut -f 1-3 | awk NF | sort -u -k1,1 -k2,2n -k3,3n > `basename $0`
