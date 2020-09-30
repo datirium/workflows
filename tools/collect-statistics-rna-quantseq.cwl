@@ -414,16 +414,6 @@ inputs:
                 ribosomal_reads = collected_data["alignment statistics"]["number of reads/pairs in ribosomal dna"]
                 reads_dedup = uniquely_mapped_reads - uniquely_mapped_reads_dedup
 
-                collected_data["BAM statistics"]["total reads/pairs"],
-                collected_data["BAM statistics"]["reads/pairs mapped"],
-                collected_data["BAM statistics"]["reads/pairs unmapped"],
-                collected_data["BAM statistics"]["insert size average"],
-                collected_data["BAM statistics"]["insert size standard deviation"],
-                collected_data["BAM statistics"]["reads average length"],
-                collected_data["BAM statistics"]["reads average quality"],
-                collected_data["BAM statistics"]["reads maximum length"]]
-
-
                 header = [
                             "Tags total",
                             "Transcriptome",
