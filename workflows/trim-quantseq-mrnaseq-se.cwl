@@ -244,8 +244,8 @@ outputs:
     'sd:preview':
       'sd:visualPlugins':
       - pie:
-          colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
-          data: [$2, $3, $4, $5]
+          colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072', '#778899']
+          data: [$2, $3, $4, $5, $6]
 
   bam_statistics_report:
     type: File
@@ -320,9 +320,7 @@ steps:
       hints:
       - class: DockerRequirement
         dockerPull: scidap/trimgalore:v0.6.6
-
       inputs:
-
         bash_script:
           type: string?
           default: |
@@ -344,7 +342,6 @@ steps:
             position: 1
           doc: |
             Bash function to run awk & cutadapt from Lexogen with all input parameters or skip it if trigger is false
-
         input_file:
           type:
             - File
@@ -352,20 +349,15 @@ steps:
             position: 2
           doc: |
             Input FASTQ file
-
       outputs:
-
         trimmed_file:
           type: File
           outputBinding:
             glob: "trimmed_*"
-
         report_file:
           type: stderr
-
       baseCommand: [bash, '-c']
       stderr: umisep_cutadapt.log
-
 
   rename:
     run: ../tools/rename.cwl
@@ -382,34 +374,14 @@ steps:
     in:
       readFilesIn: rename/target_file
       genomeDir: star_indices_folder
-      # outFilterMultimapNmax:
-      #   default: 1
-      seedSearchStartLmax:
-        default: 15
-
-      outFilterType:
-        default: "BySJout"
       outFilterMultimapNmax:
-        default: 200
-      alignSJoverhangMin:
-        default: 8
-      alignSJDBoverhangMin:
         default: 1
       outFilterMismatchNmax:
-        default: 999
-      outFilterMismatchNoverLmax:
-        default: 0.6
-      alignIntronMin:
-        default: 20
-      alignIntronMax:
-        default: 1000000
-      alignMatesGapMax:
-        default: 1000000
-      limitOutSJcollapsed:
-        default: 5000000
-      # outSAMattributes:
-      #   default: "NH HI NM MD"
-
+        default: 5
+      alignSJDBoverhangMin:
+        default: 1
+      seedSearchStartLmax:
+        default: 15
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
       threads: threads
@@ -499,12 +471,55 @@ steps:
     out: [isoforms_file]
 
   group_isoforms:
-    run: ../tools/group-isoforms.cwl
     in:
       isoforms_file: rpkm_calculation/isoforms_file
     out:
       - genes_file
       - common_tss_file
+      - error_file
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+        - class: DockerRequirement
+          dockerPull: biowardrobe2/scidap-deseq:v0.0.20
+      inputs:
+        bash_script:
+          type: string?
+          default: |
+            #!/bin/bash
+
+            FILE=$0
+            BASENAME=$(basename "$FILE")
+
+            get_gene_n_tss.R --isoforms "${FILE}"
+
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.genes.tsv"
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.common_tss.tsv"
+            rm -f ./*bak
+          inputBinding:
+            position: 1
+          doc: |
+            Bash function to run awk & cutadapt from Lexogen with all input parameters or skip it if trigger is false
+        isoforms_file:
+          type: File
+          inputBinding:
+            position: 5
+      outputs:
+        genes_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.genes_filename?inputs.genes_filename:"*genes.tsv")
+          doc: "Output TSV gene expression file"
+        common_tss_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
+          doc: "Output TSV common tss expression file"
+        error_file:
+          type: stderr
+      baseCommand: [bash, '-c']
+      stderr: group_isoforms_error.log
 
   get_bam_statistics:
     run: ../tools/samtools-stats.cwl
@@ -516,7 +531,7 @@ steps:
     out: [log_file]
 
   get_stat:
-      run: ../tools/collect-statistics-rna-seq.cwl
+      run: ../tools/collect-statistics-rna-quantseq.cwl
       in:
         # trimgalore_report_fastq_1: trim_fastq/report_file
         star_alignment_report: star_aligner/log_final
