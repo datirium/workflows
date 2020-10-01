@@ -10,11 +10,15 @@ inputs:
     type: File
     inputBinding:
       loadContents: true
+  criteria:
+    type: string?
+    default: ".*Per base sequence quality.*|.*Per sequence quality scores.*|.*Overrepresented sequences.*|.*Adapter Content.*"
 outputs:
   trigger: boolean
 expression: |
   ${
-    var criteria_array = inputs.summary_file.contents.match(/.*Per base sequence quality.*|.*Per sequence quality scores.*|.*Overrepresented sequences.*|.*Adapter Content.*/g);
+    var re = new RegExp(inputs.criteria, "g");
+    var criteria_array = inputs.summary_file.contents.match(re);
     if (criteria_array.length > 0){
       if (criteria_array.toString().match(/FAIL/g) != null){
         return { "trigger": true };
