@@ -94,6 +94,13 @@ outputs:
         tab: 'Plots'
         Caption: 'First three principal components'
 
+  pca_3d_html:
+    type: File
+    format: "http://edamontology.org/format_2331"
+    label: "Interactive 3D PCA plot"
+    doc: "Plotly generated interactive 3D PCA plot (first three components)"
+    outputSource: pca/pca_3d_html
+
   pca_file:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -139,6 +146,7 @@ steps:
     - pca2_vs_pca3_plot
     - variance_plot
     - pca_3d_plot
+    - pca_3d_html
     - pca_file
     - stdout_log
     - stderr_log

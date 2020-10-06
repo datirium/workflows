@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/pca:v0.0.6
+  dockerPull: biowardrobe2/pca:v0.0.7
 
 
 inputs:
@@ -75,6 +75,12 @@ outputs:
     outputBinding:
       glob: "*004.png"
     doc: "First three principal components plot"
+
+  pca_3d_html:
+    type: File?
+    outputBinding:
+      glob: "*.html"
+    doc: "Plotly generated interactive 3D PCA plot (first three components)"
 
   pca_file:
     type: File

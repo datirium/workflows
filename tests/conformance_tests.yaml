@@ -1100,6 +1100,9 @@
     pca_3d_plot:
       location: pca_004.png
       class: File
+    pca_3d_html:
+      location: pca_pca3d.html
+      class: File
     pca_file:
       location: pca_pca.tsv
       class: File
