@@ -364,7 +364,7 @@ doc: |
   estimation of data variability throughout the dynamic range and a suitable error model are required.
   Simon Anders and Wolfgang Huber propose a method based on the negative binomial distribution, with variance and mean
   linked by local regression and present an implementation, [DESeq](http://bioconductor.org/packages/release/bioc/html/DESeq.html),
-  as an R/Bioconductor package
+  as an R/Bioconductor package 
 
   DESeq2
   ------
