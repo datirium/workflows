@@ -71,7 +71,7 @@ inputs:
 
   rpkm_cutoff:
     type: float?
-    default: 5
+    default: 0
     label: "Minimum rpkm cutoff"
     doc: "Minimum threshold for rpkm filtering. Default: 5"
 
