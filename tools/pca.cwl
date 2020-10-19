@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/pca:v0.0.7
+  dockerPull: biowardrobe2/pca:v0.0.8
 
 
 inputs:
