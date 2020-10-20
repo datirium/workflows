@@ -116,7 +116,7 @@ outputs:
         zAxisTitle: 'PCA3'
         colors: ["#b3de69", "#888888", "#fb8072"]
         height: 600
-        data: [$1, $2, $3]
+        data: [$1, $2, $3, $4]
 
   pca_stdout_log:
     type: File
