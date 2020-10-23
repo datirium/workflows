@@ -166,6 +166,15 @@ outputs:
     doc: |
       Loupe Browser visualization and analysis file
 
+  collected_statistics:
+    type: File
+    outputSource: collect_statistics/collected_statistics
+    label: "Collected statistics in Markdown format"
+    doc: "Collected statistics in Markdown format"
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
   prepare_indices_stdout_log:
     type: File
     outputSource: prepare_indices/stdout_log
@@ -280,6 +289,47 @@ steps:
       folder_to_compress: generate_counts_matrix/secondary_analysis_report_folder
     out:
     - compressed_folder
+
+  collect_statistics:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: rackspacedot/python37
+      inputs:
+        script:
+          type: string?
+          default: |
+            #!/usr/bin/env python3
+            import sys, csv
+            with open(sys.argv[1], "r") as input_stream:
+              with open("collected_statistics.md", "w") as output_stream:
+                output_stream.write("### Cell Ranger Statistics\n")
+                keys, values = None, None
+                for i, row in enumerate(csv.reader(input_stream)):
+                  if i==0:
+                    keys = row
+                  else:
+                    values = row
+                for k,v in zip(keys, values):
+                  output_stream.write("- "+k+": "+v+"\n")
+          inputBinding:
+            position: 5
+        metrics_summary_report:
+          type: File
+          inputBinding:
+            position: 6
+      outputs:
+        collected_statistics:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: ["python3", "-c"]
+    in:
+      metrics_summary_report: generate_counts_matrix/metrics_summary_report
+    out:
+    - collected_statistics
 
 
 $namespaces:
