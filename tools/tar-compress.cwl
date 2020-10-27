@@ -31,7 +31,7 @@ baseCommand: ["tar"]
 arguments:
   - valueFrom: $(inputs.folder_to_compress.path.split("/").slice(0,-1).join("/"))
     prefix: "-C"
-  - "-cvf"
+  - "-czvf"
   - valueFrom: $(inputs.folder_to_compress.basename + ".tar.gz")
   - "."
 
