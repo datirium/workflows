@@ -1,0 +1,49 @@
+#################################################################
+# Dockerfile
+#
+# Software:         SoupX
+# Software Version: 1.4.8
+# Description:      An R package for the estimation and removal
+#                   of cell free mRNA contamination in droplet
+#                   based single cell RNA-seq data
+# Website:          https://github.com/constantAmateur/SoupX
+# Provides:         R script wrapper around SoupX
+# Base Image:       r-base:4.0.2
+# Build Cmd:        docker build --rm -t scidap/soupx:v0.0.1 -f soupx-Dockerfile .
+# Pull Cmd:         docker pull scidap/soupx:v0.0.1
+# Run Cmd:          docker run --rm -ti scidap/soupx:v0.0.1
+#################################################################
+
+
+### Base Image
+FROM r-base:4.0.2
+LABEL maintainer="heylel.b.sh@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+ENV VERSION_BIOCMANAGER 1.30.10
+ENV URL_BIOCMANAGER "https://cran.r-project.org/src/contrib/BiocManager_${VERSION_BIOCMANAGER}.tar.gz"
+
+COPY ./scripts/install_from_source.R /tmp/install_from_source.R
+COPY ./scripts/run_soupx.R /usr/local/bin/run_soupx.R
+
+### Installing dependencies
+RUN apt-get update && \
+    apt-get install libgcc-8-dev python3-dev python3-pip libxml2-dev libcurl4-openssl-dev libssl-dev pandoc -y && \
+### Installing dependencies
+    Rscript /tmp/install_from_source.R "${URL_BIOCMANAGER}" && \
+    R -e 'BiocManager::install(c("DropletUtils"))' && \
+    R -e 'install.packages("argparse", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("SoupX", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("viridis", repo = "https://cloud.r-project.org/")' && \
+### Installing run_soupx.R
+    chmod +x /usr/local/bin/run_soupx.R && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
