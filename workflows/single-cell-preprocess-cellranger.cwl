@@ -143,14 +143,14 @@ outputs:
     doc: |
       Unfiltered feature-barcode matrices containing all barcodes in HDF5 format
 
-  adjusted_feature_bc_matrix_folder:
+  adjusted_feature_bc_matrices_folder:
     type: File
-    outputSource: compress_adjusted_feature_bc_matrices_folder/compressed_folder
+    outputSource: estimate_contamination/adjusted_feature_bc_matrices_folder
     label: "Compressed folder with SoupX adjusted feature-barcode matrices"
     doc: |
       Compressed folder with SoupX adjusted feature-barcode matrices in MEX format
 
-  adjusted_feature_bc_matrix_h5:
+  adjusted_feature_bc_matrices_h5:
     type: File
     outputSource: estimate_contamination/adjusted_feature_bc_matrices_h5
     label: "SoupX adjusted feature-barcode matrices in HDF5 format"
@@ -311,58 +311,16 @@ steps:
     out:
     - compressed_folder
 
-  extract_count_matrices_to_folder:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: scidap/scidap:v0.0.4
-      inputs:
-        script:
-          type: string?
-          default: |
-            set -- "$0" "$@"
-            mkdir counts && cd counts
-            for i in "$@";
-                do tar xvf $i;
-            done;
-          inputBinding:
-            position: 1
-        compressed_files:
-          type: File[]
-          inputBinding:
-            position: 2
-      outputs:
-        output_folder:
-          type: Directory
-          outputBinding:
-            glob: "counts"
-      baseCommand: [bash, '-c']
-    in:
-      compressed_files:
-        source:
-        - compress_filtered_feature_bc_matrix_folder/compressed_folder
-        - compress_raw_feature_bc_matrices_folder/compressed_folder
-        - compress_secondary_analysis_report_folder/compressed_folder
-    out:
-    - output_folder
-
   estimate_contamination:
-    run: ../tools/soupx.cwl
+    run: ../tools/soupx-subworkflow.cwl
     in:
-      feature_bc_matrices_folder: extract_count_matrices_to_folder/output_folder
+      raw_feature_bc_matrices_folder: compress_raw_feature_bc_matrices_folder/compressed_folder
+      filtered_feature_bc_matrix_folder: compress_filtered_feature_bc_matrix_folder/compressed_folder
+      secondary_analysis_report_folder: compress_secondary_analysis_report_folder/compressed_folder
     out:
     - adjusted_feature_bc_matrices_folder
     - adjusted_feature_bc_matrices_h5
     - contamination_estimation_plot
-
-  compress_adjusted_feature_bc_matrices_folder:
-    run: ../tools/tar-compress.cwl
-    in:
-      folder_to_compress: estimate_contamination/adjusted_feature_bc_matrices_folder
-    out:
-    - compressed_folder
 
   collect_statistics:
     run:
