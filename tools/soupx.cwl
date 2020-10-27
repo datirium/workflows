@@ -84,6 +84,13 @@ outputs:
     doc: |
       Adjusted feature-barcode matrices in HDF5 format
 
+  contamination_estimation_plot:
+    type: File
+    outputBinding:
+      glob: "*contamination_estimation_plot.pdf"
+    doc: |
+      Contamination estimation plot
+
   raw_gene_expression_plots:
     type: File?
     outputBinding:
