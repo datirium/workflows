@@ -59,6 +59,7 @@ inputs:
   gene_set_database_file:
     type: File?
     format: "http://edamontology.org/format_2330"
+    default: null
     label: "Gene set database file in GMT format"
     doc: "Gene set database file in GMT (Gene Matrix Transposed) format"
 
@@ -127,6 +128,7 @@ inputs:
 
   seed:
     type: int?
+    default: 123
     label: "Number of random seed. Default: None"
     doc: "Number of random seed. Default: None"
     'sd:layout':
