@@ -1772,6 +1772,44 @@
       class: File
       location: gseapy_stderr.log
 
+- job: ./gseapy-2.json
+  tool: ../workflows/gseapy.cwl
+  output:
+    gseapy_enrichment_heatmaps:
+      class: File
+      location: enrichment_heatmaps.tar.gz
+    gseapy_enrichment_plots:
+      class: File
+      location: enrichment_plots.tar.gz
+    gseapy_enrichment_report:
+      class: File
+      location: gseapy.gsea.gene_set.report.tsv
+    gseapy_stdout_log:
+      class: File
+      location: gseapy_stdout.log
+    gseapy_stderr_log:
+      class: File
+      location: gseapy_stderr.log
+
+- job: ./gseapy-3.json
+  tool: ../workflows/gseapy.cwl
+  output:
+    gseapy_enrichment_heatmaps:
+      class: File
+      location: enrichment_heatmaps.tar.gz
+    gseapy_enrichment_plots:
+      class: File
+      location: enrichment_plots.tar.gz
+    gseapy_enrichment_report:
+      class: File
+      location: gseapy.gsea.gene_set.report.tsv
+    gseapy_stdout_log:
+      class: File
+      location: gseapy_stdout.log
+    gseapy_stderr_log:
+      class: File
+      location: gseapy_stderr.log
+
 # ========================================================
 # gat-run
 # ========================================================

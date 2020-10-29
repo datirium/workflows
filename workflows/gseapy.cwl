@@ -40,6 +40,7 @@ inputs:
 
   gene_set_database:
     type:
+    - "null"
     - type: enum
       name: "genesetdatabase"
       symbols:
@@ -51,9 +52,15 @@ inputs:
       - C5_GO_gene_sets
       - C6_oncogenic_signatures
       - C7_immunologic_signatures
-    default: "GeneSigDB"
-    label: "Gene set database"
+    default: "H_hallmark_gene_sets"
+    label: "Gene set database. Ignored if GMT file is privided"
     doc: "Gene set database"
+
+  gene_set_database_file:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "Gene set database file in GMT format"
+    doc: "Gene set database file in GMT (Gene Matrix Transposed) format"
 
   permutation_type:
     type:
@@ -181,7 +188,9 @@ steps:
     in:
       read_counts_file: read_counts_file
       phenotypes_file: phenotypes_file
-      gene_set_database: gene_set_database
+      gene_set_database:
+        source: [gene_set_database, gene_set_database_file]
+        valueFrom: $(self[1]?self[1]:self[0])
       permutation_type: permutation_type
       permutation_count: permutation_count
       min_gene_set_size: min_gene_set_size
