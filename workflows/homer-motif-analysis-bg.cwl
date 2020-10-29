@@ -205,7 +205,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://schema.org/version/latest/schema.rdf
+- http://schema.org/version/9.0/schemaorg-current-http.rdf
 
 label: "Motif Finding with HOMER with custom background regions"
 s:name: "Motif Finding with HOMER with custom background regions"

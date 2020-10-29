@@ -205,7 +205,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://schema.org/version/latest/schema.rdf
+- http://schema.org/version/9.0/schemaorg-current-http.rdf
 
 s:mainEntity:
   $import: ./metadata/hopach-metadata.yaml

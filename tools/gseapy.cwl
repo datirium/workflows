@@ -27,6 +27,7 @@ inputs:
 
   gene_set_database:
     type:
+    - File
     - type: enum
       name: "genesetdatabase"
       symbols:
@@ -146,8 +147,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://schema.org/version/latest/schema.rdf
-
+- http://schema.org/version/9.0/schemaorg-current-http.rdf
 
 s:name: "gseapy"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/gseapy.cwl

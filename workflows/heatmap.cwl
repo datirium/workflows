@@ -371,7 +371,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://schema.org/version/latest/schema.rdf
+- http://schema.org/version/9.0/schemaorg-current-http.rdf
 
 s:name: "Tag density profile around regions of interest"
 label: "Tag density profile around regions of interest"

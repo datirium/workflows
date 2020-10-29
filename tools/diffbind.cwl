@@ -682,7 +682,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://schema.org/version/latest/schema.rdf
+- http://schema.org/version/9.0/schemaorg-current-http.rdf
 
 label: "DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data"
 s:name: "DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data"
