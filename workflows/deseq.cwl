@@ -74,8 +74,10 @@ inputs:
   rpkm_cutoff:
     type: float?
     default: 0
-    label: "Minimum rpkm cutoff"
+    label: "Minimum rpkm cutoff. Applied before running DEseq"
     doc: "Minimum threshold for rpkm filtering. Default: 5"
+    'sd:layout':
+      advanced: true
 
   batch_file:
     type: File?
