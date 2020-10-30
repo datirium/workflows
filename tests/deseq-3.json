@@ -1,0 +1,41 @@
+{
+  "rpkm_genes_cond_1": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u1_1000.genes.tsv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u2_1000.genes.tsv",
+       "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u3_1000.genes.tsv",
+      "format": "http://edamontology.org/format_3752"
+    }
+  ],
+  "rpkm_genes_cond_2": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t1_1000.genes.tsv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t2_1000.genes.tsv",
+       "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t3_1000.genes.tsv",
+      "format": "http://edamontology.org/format_3752"
+    }
+  ],
+  "alias_cond_1": "alpha",
+  "alias_cond_2": "beta",
+  "sample_names_cond_1": ["a", "b", "c"],
+  "sample_names_cond_2": ["d", "e", "f"],
+  "alias": "alias"
+}

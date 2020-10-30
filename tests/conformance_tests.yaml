@@ -1272,6 +1272,80 @@
       location: deseq_stderr.log
       class: File      
 
+- job: ./deseq-3.json
+  tool: ../workflows/deseq.cwl
+  output:
+    diff_expr_file:
+      location: deseq_report.tsv
+      class: File
+    read_counts_file:
+      location: deseq_counts.gct
+      class: File
+    phenotypes_file:
+      location: deseq_phenotypes.cls
+      class: File
+    gene_expr_heatmap:
+      location: deseq_expression_heatmap.png
+      class: File
+    plot_lfc_vs_mean:
+      location: deseq_ma_plot.png
+      class: File
+    plot_pca:
+      location: deseq_pca_plot.png
+      class: File
+    gene_expr_heatmap_pdf:
+      location: deseq_expression_heatmap.pdf
+      class: File
+    plot_lfc_vs_mean_pdf:
+      location: deseq_ma_plot.pdf
+      class: File
+    plot_pca_pdf:
+      location: deseq_pca_plot.pdf
+      class: File
+    deseq_stdout_log:
+      location: deseq_stdout.log
+      class: File
+    deseq_stderr_log:
+      location: deseq_stderr.log
+      class: File      
+
+- job: ./deseq-4.json
+  tool: ../workflows/deseq.cwl
+  output:
+    diff_expr_file:
+      location: deseq_report.tsv
+      class: File
+    read_counts_file:
+      location: deseq_counts.gct
+      class: File
+    phenotypes_file:
+      location: deseq_phenotypes.cls
+      class: File
+    gene_expr_heatmap:
+      location: deseq_expression_heatmap.png
+      class: File
+    plot_lfc_vs_mean:
+      location: deseq_ma_plot.png
+      class: File
+    plot_pca:
+      location: deseq_pca_plot.png
+      class: File
+    gene_expr_heatmap_pdf:
+      location: deseq_expression_heatmap.pdf
+      class: File
+    plot_lfc_vs_mean_pdf:
+      location: deseq_ma_plot.pdf
+      class: File
+    plot_pca_pdf:
+      location: deseq_pca_plot.pdf
+      class: File
+    deseq_stdout_log:
+      location: deseq_stdout.log
+      class: File
+    deseq_stderr_log:
+      location: deseq_stderr.log
+      class: File            
+
 # ========================================================
 # bismark-methylation-se
 # ========================================================

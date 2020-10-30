@@ -50,6 +50,7 @@ inputs:
     type:
     - "null"
     - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by isoforms (condition 1, aka 'untreated')"
@@ -60,6 +61,7 @@ inputs:
     type:
     - "null"
     - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by genes (condition 1, aka 'untreated')"
@@ -69,6 +71,7 @@ inputs:
     type:
     - "null"
     - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by common TSS (condition 1, aka 'untreated')"
@@ -78,6 +81,7 @@ inputs:
     type:
     - "null"
     - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by isoforms (condition 2, aka 'treated')"
@@ -88,6 +92,7 @@ inputs:
     type:
     - "null"
     - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by genes (condition 2, aka 'treated')"
@@ -97,6 +102,7 @@ inputs:
     type:
     - "null"
     - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by common TSS (condition 2, aka 'treated')"
@@ -121,6 +127,7 @@ inputs:
 
   batch_file:
     type: File?
+    default: null
     label: "Headerless TSV/CSV file for multi-factor analysis. First column - experiments' names from condition 1 and 2, second column - batch name"
     format: "http://edamontology.org/format_2330"
     doc: |
@@ -148,6 +155,7 @@ inputs:
     type:
       - "null"
       - string[]
+    default: null
     label: "Sample names for RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: |
       Aliases for RNA-Seq experiments (condition 1, aka 'untreated') to make the
@@ -158,6 +166,7 @@ inputs:
     type:
       - "null"
       - string[]
+    default: null 
     label: "Sample names for RNA-Seq experiments (condition 2, aka 'treated')"
     doc: |
       Aliases for RNA-Seq experiments (condition 2, aka 'treated') to make the
@@ -166,9 +175,9 @@ inputs:
 
   threads:
     type: int?
+    default: 1
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
-    default: 1
     'sd:layout':
       advanced: true
 
