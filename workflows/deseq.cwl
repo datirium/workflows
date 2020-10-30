@@ -47,20 +47,60 @@ inputs:
       position: 1
 
   rpkm_isoforms_cond_1:
-    type: File[]
+    type:
+    - "null"
+    - File[]
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by isoforms (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
     'sd:localLabel': true
 
+  rpkm_genes_cond_1:
+    type:
+    - "null"
+    - File[]
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "CSV/TSV input files grouped by genes (condition 1, aka 'untreated')"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes"
+
+  rpkm_common_tss_cond_1:
+    type:
+    - "null"
+    - File[]
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "CSV/TSV input files grouped by common TSS (condition 1, aka 'untreated')"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss"
+
   rpkm_isoforms_cond_2:
-    type: File[]
+    type:
+    - "null"
+    - File[]
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by isoforms (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms"
     'sd:localLabel': true
+
+  rpkm_genes_cond_2:
+    type:
+    - "null"
+    - File[]
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "CSV/TSV input files grouped by genes (condition 2, aka 'treated')"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes"
+
+  rpkm_common_tss_cond_2:
+    type:
+    - "null"
+    - File[]
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "CSV/TSV input files grouped by common TSS (condition 2, aka 'treated')"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss"
 
   group_by:
     type:
@@ -251,27 +291,11 @@ outputs:
 
 steps:
 
-  group_isoforms_cond_1:
-    run: ../tools/group-isoforms-batch.cwl
-    in:
-      isoforms_file: rpkm_isoforms_cond_1
-    out:
-      - genes_file
-      - common_tss_file
-
-  group_isoforms_cond_2:
-    run: ../tools/group-isoforms-batch.cwl
-    in:
-      isoforms_file: rpkm_isoforms_cond_2
-    out:
-      - genes_file
-      - common_tss_file
-
   deseq:
     run: ../tools/deseq-advanced.cwl
     in:
       untreated_files:
-        source: [group_by, rpkm_isoforms_cond_1, group_isoforms_cond_1/genes_file, group_isoforms_cond_1/common_tss_file]
+        source: [group_by, rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1]
         valueFrom: |
           ${
               if (self[0] == "isoforms") {
@@ -283,7 +307,7 @@ steps:
               }
           }
       treated_files:
-        source: [group_by, rpkm_isoforms_cond_2, group_isoforms_cond_2/genes_file, group_isoforms_cond_2/common_tss_file]
+        source: [group_by, rpkm_isoforms_cond_2, rpkm_genes_cond_2, rpkm_common_tss_cond_2]
         valueFrom: |
           ${
               if (self[0] == "isoforms") {
