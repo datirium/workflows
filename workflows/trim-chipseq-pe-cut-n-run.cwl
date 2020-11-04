@@ -78,7 +78,8 @@ inputs:
     doc: "Indexed BAM file from the ChIP-Seq paired-end experiment to be used as a control for MACS2 peak calling"
 
   broad_peak:
-    type: boolean
+    type: boolean?
+    default: False
     label: "Call broad peaks"
     doc: "Make MACS2 call broad peaks by linking nearby highly enriched regions"
 

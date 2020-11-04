@@ -57,7 +57,8 @@ inputs:
     doc: "Use experiment as a control for MACS2 peak calling"
 
   broad_peak:
-    type: boolean
+    type: boolean?
+    default: False
     label: "Callpeak broad"
     doc: "Set to call broad peak for MACS2"
 
