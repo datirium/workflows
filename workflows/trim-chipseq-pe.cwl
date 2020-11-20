@@ -501,10 +501,27 @@ steps:
       - report_file
       - report_file_pair
 
+  bypass_trim:
+    run: ../tools/bypass-trimgalore-pe.cwl
+    in:
+      original_fastq_file_1: extract_fastq_upstream/fastq_file
+      trimmed_fastq_file_1: trim_fastq/trimmed_file
+      trimming_report_file_1: trim_fastq/report_file
+      original_fastq_file_2: extract_fastq_downstream/fastq_file
+      trimmed_fastq_file_2: trim_fastq/trimmed_file_pair
+      trimming_report_file_2: trim_fastq/report_file_pair
+      min_reads_count:
+        default: 100  # any small number should be good, as we are catching the case when trimgalore discarded all reads
+    out:
+      - selected_fastq_file_1
+      - selected_report_file_1
+      - selected_fastq_file_2
+      - selected_report_file_2
+
   rename_upstream:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq/trimmed_file
+      source_file: bypass_trim/selected_fastq_file_1
       target_filename:
         source: extract_fastq_upstream/fastq_file
         valueFrom: $(self.basename)
@@ -514,7 +531,7 @@ steps:
   rename_downstream:
     run: ../tools/rename.cwl
     in:
-      source_file: trim_fastq/trimmed_file_pair
+      source_file: bypass_trim/selected_fastq_file_2
       target_filename:
         source: extract_fastq_downstream/fastq_file
         valueFrom: $(self.basename)
@@ -666,8 +683,8 @@ steps:
   get_stat:
       run: ../tools/collect-statistics-chip-seq.cwl
       in:
-        trimgalore_report_fastq_1: trim_fastq/report_file
-        trimgalore_report_fastq_2: trim_fastq/report_file_pair
+        trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
+        trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
         bowtie_alignment_report: bowtie_aligner/log_file
         bam_statistics_report: get_bam_statistics/log_file
         bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
