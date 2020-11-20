@@ -726,8 +726,8 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
-    estimated_fragment_size: 160
-    mapped_reads_number: 23
+    estimated_fragment_size: 156
+    mapped_reads_number: 31
     insert_size_report_after_filtering:
       location: is_section.tsv
       class: File
@@ -899,8 +899,8 @@
     bam_statistics_report_after_filtering:
       location: upstream_bam_statistics_report_after_filtering.txt
       class: File
-    estimated_fragment_size: 160
-    mapped_reads_number: 23
+    estimated_fragment_size: 156
+    mapped_reads_number: 31
     insert_size_report_after_filtering:
       location: is_section.tsv
       class: File
