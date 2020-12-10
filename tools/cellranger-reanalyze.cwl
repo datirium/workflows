@@ -470,6 +470,11 @@ doc: |
   - Filtered feature-barcode matrices HDF5
   - Copy of the input aggregation CSV
 
+  Notes:
+  - Passing `aggregation_metadata` might not work as it will require additional inputs for
+    all files from that CSV file. Otherwise cellranger will fail to parse it. Address this
+    question when needed.
+
 s:about: |
   Re-run secondary analysis (dimensionality reduction, clustering, etc)
 

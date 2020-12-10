@@ -30,13 +30,6 @@ inputs:
     'sd:upstreamSource': "sc_rnaseq_sample/filtered_feature_bc_matrix_h5"
     'sd:localLabel': true
 
-  aggregation_metadata:
-    type: File?
-    label: "Aggregation metadata in CSV format"
-    doc: "Aggregation CSV metadata file obtained from cellranger aggr"
-    'sd:upstreamSource': "sc_rnaseq_sample/aggregation_metadata"
-    'sd:localLabel': true
-
   selected_barcodes:
     type: File?
     label: "A CSV file containing a list of cell barcodes to use for reanalysis"
@@ -465,7 +458,6 @@ steps:
     run: ../tools/cellranger-reanalyze.cwl
     in:
       feature_bc_matrix_h5: filtered_feature_bc_matrix_h5
-      aggregation_metadata: aggregation_metadata
       selected_barcodes: selected_barcodes
       selected_genes: selected_genes
       excluded_genes: excluded_genes
@@ -569,3 +561,6 @@ doc: |
 
   As an input we use filtered feature-barcode matrices in HDF5 format from cellranger
   count or aggr experiments.
+
+  Note, we don't pass aggregation_metadata from the upstream cellranger aggr step. Need
+  to address this issue when needed.
