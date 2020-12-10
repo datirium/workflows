@@ -24,14 +24,14 @@ inputs:
 
   molecule_info_h5:
     type: File[]
-    label: "Single-Cell Preprocessing Cell Ranger Experiments"
+    label: "scRNA-Seq Cell Ranger Experiment"
     doc: "Molecule-level information from individual runs of cellranger count"
     'sd:upstreamSource': "sc_rnaseq_sample/molecule_info_h5"
     'sd:localLabel': true
 
   gem_well_labels:
     type: string[]
-    label: "Single-Cell Preprocessing Cell Ranger Experiments"
+    label: "scRNA-Seq Cell Ranger Experiment"
     doc: "Array of GEM well identifiers to be used for labeling purposes only"
     'sd:upstreamSource': "sc_rnaseq_sample/alias"
     'sd:localLabel': true
