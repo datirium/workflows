@@ -61,8 +61,8 @@ outputs:
     outputSource: feature_merge/merged_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Gene Expression'
-        Title: 'Merged Gene Expression Results'
+        tab: 'RPKM Gene Expression'
+        Title: 'Merged RPKM Gene Expression Results'
 
   feature_merge_stdout_log:
     type: File
