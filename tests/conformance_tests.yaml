@@ -1900,3 +1900,20 @@
     gat_stderr_log:
       class: File
       location: gat_stderr.log
+
+# ========================================================
+# feature-merge
+# ========================================================
+
+- job: ./feature-merge-1.json
+  tool: ../workflows/feature-merge.cwl
+  output:
+    merged_file:
+      class: File
+      location: merged_report.tsv
+    feature_merge_stdout_log:
+      class: File
+      location: merge_stdout.log
+    feature_merge_stderr_log:
+      class: File
+      location: merge_stderr.log

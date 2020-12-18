@@ -1,0 +1,21 @@
+{
+  "alias": "feature-merge",
+  "rpkm_genes": [
+    {
+      "class": "File",
+      "format": "http://edamontology.org/format_3475",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u1_1000.genes.tsv"
+    },
+    {
+      "class": "File",
+      "format": "http://edamontology.org/format_3475",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u2_1000.genes.tsv"
+    },
+    {
+      "class": "File",
+      "format": "http://edamontology.org/format_3475",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u3_1000.genes.tsv"
+    }
+  ],
+  "sample_names": ["u1", "u2", "u3"]
+}
