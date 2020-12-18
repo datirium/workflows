@@ -37,6 +37,7 @@ inputs:
     doc: |
       CSV/TSV file with RPKM grouped by gene name
     'sd:upstreamSource': "rnaseq_sample/rpkm_genes"
+    'sd:localLabel': true
 
   sample_names:
     type: string[]
@@ -45,6 +46,7 @@ inputs:
       Aliases for RNA-Seq experiments to be used as the names for the reported
       columns in the merged file. Order corresponds to the rpkm_genes input
     'sd:upstreamSource': "rnaseq_sample/alias"
+    'sd:localLabel': true
 
 
 outputs:
