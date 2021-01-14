@@ -1917,3 +1917,73 @@
     feature_merge_stderr_log:
       class: File
       location: merge_stderr.log
+
+# ========================================================
+# cellranger-mkref
+# ========================================================
+
+- job: ./cellranger-mkref-1.json
+  tool: ../workflows/cellranger-mkref.cwl
+  output:
+    indices_folder:
+      class: Directory
+      location: chr4
+      listing:
+      - class: Directory
+        location: fasta
+        listing:
+        - class: File
+          location: genome.fa
+        - class: File
+          location: genome.fa.fai
+      - class: File
+        location: reference.json
+      - class: Directory
+        location: star
+        listing:
+        - class: File
+          location: chrStart.txt
+        - class: File
+          location: chrNameLength.txt
+        - class: File
+          location: chrLength.txt
+        - class: File
+          location: sjdbList.fromGTF.out.tab
+        - class: File
+          location: exonInfo.tab
+        - class: File
+          location: sjdbList.out.tab
+        - class: File
+          location: SAindex
+        - class: File
+          location: chrName.txt
+        - class: File
+          location: geneInfo.tab
+        - class: File
+          location: SA
+        - class: File
+          location: sjdbInfo.txt
+        - class: File
+          location: exonGeTrInfo.tab
+        - class: File
+          location: transcriptInfo.tab
+        - class: File
+          location: Genome
+        - class: File
+          location: genomeParameters.txt
+      - class: Directory
+        location: pickle
+        listing:
+        - class: File
+          location: genes.pickle
+      - class: Directory
+        location: genes
+        listing:
+        - class: File
+          location: genes.gtf
+    stdout_log:
+      class: File
+      location: cellranger_mkref_stdout.log
+    stderr_log:
+      class: File
+      location: cellranger_mkref_stderr.log
