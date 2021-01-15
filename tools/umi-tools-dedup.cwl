@@ -10,36 +10,72 @@ requirements:
         var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
         return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
     };
-
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.bam_file,
+                  "entryname": inputs.bam_file.basename,
+                  "writable": true
+                }
+              ]
+    }
 
 hints:
 - class: DockerRequirement
   dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
 
+
 inputs:
+
+  bash_script:
+    type: string?
+    default: |
+      #!/bin/bash
+      if [ "$0" = "true" ]; then
+        umi_tools dedup "${@:1}"
+      else
+        echo "Skip umi_tools dedup " ${@:1}
+      fi
+    inputBinding:
+      position: 5
+    doc: |
+      Bash function to run umi_tools dedup with all input parameters or skip it if trigger is false
+
+  trigger:
+    type: boolean?
+    default: true
+    inputBinding:
+      position: 6
+      valueFrom: $(self?"true":"false")
+    doc: |
+      If true - run umi_tools dedup, if false - return bam_file input, previously staged into the output directory
 
   bam_file:
     type: File
     secondaryFiles:
     - .bai
     inputBinding:
+      position: 7
       prefix: "-I"
     doc: "Input BAM file"
 
   paired_end:
     type: boolean?
     inputBinding:
+      position: 8
       prefix: "--paired"
     doc: |
-         Inputs BAM file is paired end - output both read pairs.
-         This will also force the use of the template length to
-         determine reads with the same mapping coordinates.
+      Inputs BAM file is paired end - output both read pairs.
+      This will also force the use of the template length to
+      determine reads with the same mapping coordinates.
 
   output_filename:
     type: string?
     inputBinding:
-      prefix: -S
-      position: 8
+      position: 9
+      prefix: "-S"
       valueFrom: $(default_output_filename())
     default: ""
     doc: "Output filename"
@@ -47,32 +83,40 @@ inputs:
   output_stats:
     type: string?
     inputBinding:
-      prefix: --output-stats=
-      separate: false
       position: 10
-      valueFrom: $(self + "_umi_tools_stats.log")
-    default: ""
+      prefix: "--output-stats="
+      separate: false
+    default: "umi_tools_stats"
     doc: "Specify location to output stats"
 
   multimapping_detection_method:
     type: string?
     inputBinding:
-      prefix: --multimapping-detection-method=
-      separate: false
       position: 11
-    default: ""
+      prefix: "--multimapping-detection-method="
+      separate: false
     doc: |
       Some aligners identify multimapping using bam tags.
       Setting this option to NH, X0 or XT will use these
       tags when selecting the best read amongst reads with
       the same position and umi [default=none]
 
+
 outputs:
 
   dedup_bam_file:
     type: File
     outputBinding:
-      glob: $(default_output_filename())
+      glob: |
+        ${ return inputs.trigger?default_output_filename():inputs.bam_file.basename }
+    secondaryFiles: |
+      ${
+          if (inputs.bam_file.secondaryFiles && inputs.trigger == false){
+            return inputs.bam_file.secondaryFiles;
+          } else {
+            return "null";
+          }
+        }
 
   output_stats:
     type:
@@ -88,7 +132,7 @@ outputs:
     type: stderr
 
 
-baseCommand: [umi_tools, dedup]
+baseCommand: [bash, '-c']
 stdout: umi_tools_dedup_stdout.log
 stderr: umi_tools_dedup_stderr.log
 

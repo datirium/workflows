@@ -1,10 +1,11 @@
-cwlVersion: v1.0
+cwlVersion: v1.2.0-dev4
 class: Workflow
 
 
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
+  - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
     expressionLib:
     - var get_root = function(basename) {
@@ -264,19 +265,19 @@ outputs:
 
 
   trim_report:
-    type: File
+    type: File?
     label: "cutadapt report"
     doc: "cutadapt generated log"
     outputSource: umisep_cutadapt/report_file
 
   umi_tools_dedup_stdout:
-    type: File
+    type: File?
     label: "umi_tools dedup stdout log"
     doc: "umi_tools dedup stdout log"
     outputSource: umi_tools_dedup/stdout_log
 
   umi_tools_dedup_stderr:
-    type: File
+    type: File?
     label: "umi_tools dedup stderr log"
     doc: "umi_tools dedup stderr log"
     outputSource: umi_tools_dedup/stderr_log
@@ -319,10 +320,11 @@ steps:
   umisep_cutadapt:
     in:
       input_file: extract_fastq/fastq_file
-      trigger: use_umi
+      use_umi: use_umi
     out:
       - trimmed_file
       - report_file
+    when: $(inputs.use_umi)
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -334,35 +336,28 @@ steps:
           type: string?
           default: |
             #!/bin/bash
-            FILE=$1
+
+            FILE=$0
             BASENAME=$(basename "$FILE")
-            if [ "$0" = "true" ]; then
-              cat ${FILE} | awk '
-              NR%4==1{ rd_name=$1; rd_info=$2 }
-              NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
-              NR%4==0{ print rd_name"_"umi" "rd_info; print rd_seq; print "+"; print substr($1,11) }' |
-              cutadapt -m 20 -O 20 -a "polyA=A{20}" -a "QUALITY=G{20}" -n 2 - |
-              cutadapt  -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
-              cutadapt -m 20 -O 3 -a "r1polyA=A{18}" - |
-              cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o trimmed_${BASENAME} -
-            else
-              cp ${FILE} trimmed_${BASENAME}
-            fi
+
+            cat ${FILE} | awk '
+            NR%4==1{ rd_name=$1; rd_info=$2 }
+            NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
+            NR%4==0{ print rd_name"_"umi" "rd_info; print rd_seq; print "+"; print substr($1,11) }' |
+            cutadapt -m 20 -O 20 -a "polyA=A{20}" -a "QUALITY=G{20}" -n 2 - |
+            cutadapt  -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
+            cutadapt -m 20 -O 3 -a "r1polyA=A{18}" - |
+            cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o trimmed_${BASENAME} -
+
           inputBinding:
             position: 1
           doc: |
             Bash function to run awk & cutadapt from Lexogen with all input parameters or skip it if trigger is false
-        trigger:
-          type: boolean?
-          default: true
-          inputBinding:
-            position: 2
-            valueFrom: $(self?"true":"false")
         input_file:
           type:
             - File
           inputBinding:
-            position: 3
+            position: 2
           doc: |
             Input FASTQ file
       outputs:
@@ -378,7 +373,11 @@ steps:
   rename:
     run: ../tools/rename.cwl
     in:
-      source_file: umisep_cutadapt/trimmed_file
+      source_file:
+        source:
+        - umisep_cutadapt/trimmed_file
+        - extract_fastq/fastq_file
+        pickValue: first_non_null
       target_filename:
         source: extract_fastq/fastq_file
         valueFrom: $(self.basename)
@@ -428,17 +427,22 @@ steps:
 
   umi_tools_dedup:
     run: ../tools/umi-tools-dedup.cwl
+    when: $(inputs.use_umi)
     in:
       bam_file: samtools_sort_index_1/bam_bai_pair
+      use_umi: use_umi
       multimapping_detection_method:
         default: "NH"
-      trigger: use_umi
     out: [dedup_bam_file, stdout_log, stderr_log, output_stats]
 
   samtools_sort_index_2:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: umi_tools_dedup/dedup_bam_file
+      sort_input:
+        source:
+        - umi_tools_dedup/dedup_bam_file
+        - samtools_sort_index_1/bam_bai_pair
+        pickValue: first_non_null
       sort_output_filename:
         source: rename/target_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
@@ -582,7 +586,7 @@ s:creator:
     s:legalName: "Datirium, LLC"
     s:member:
       - class: s:Person
-        s:name: Artem BArski
+        s:name: Artem Barski
         s:email: mailto:Artem.Barski@datirum.com
       - class: s:Person
         s:name: Andrey Kartashov
