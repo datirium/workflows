@@ -51,6 +51,13 @@ inputs:
     'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
 
+  annotation_gtf_file:
+    type: File
+    label: "GTF annotation file"
+    format: "http://edamontology.org/format_2306"
+    'sd:upstreamSource': "genome_indices/annotation_gtf"
+    doc: "GTF annotation file"
+
   fastq_file:
     type: File
     label: "FASTQ input file"
@@ -214,6 +221,13 @@ outputs:
     - syncfusiongrid:
         tab: 'Gene Expression'
         Title: 'raw reads grouped by gene name'
+
+  reads_per_gene_htseq_count:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Gene expression from htseq-count (reads per gene)"
+    doc: "Gene expression from htseq-count (reads per gene)"
+    outputSource: htseq_count_gene_expression/gene_expression_report
 
   rpkm_common_tss:
     type: File
@@ -548,14 +562,23 @@ steps:
     out: [log_file]
 
   get_stat:
-      run: ../tools/collect-statistics-rna-quantseq.cwl
-      in:
-        # trimgalore_report_fastq_1: trim_fastq/report_file
-        star_alignment_report: star_aligner/log_final
-        bowtie_alignment_report: bowtie_aligner/log_file
-        bam_statistics_report: get_bam_statistics/log_file
-        isoforms_file: rpkm_calculation/isoforms_file
-      out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+    run: ../tools/collect-statistics-rna-quantseq.cwl
+    in:
+      # trimgalore_report_fastq_1: trim_fastq/report_file
+      star_alignment_report: star_aligner/log_final
+      bowtie_alignment_report: bowtie_aligner/log_file
+      bam_statistics_report: get_bam_statistics/log_file
+      isoforms_file: rpkm_calculation/isoforms_file
+    out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+
+  htseq_count_gene_expression:
+    run: ../tools/htseq-count.cwl
+    in:
+      alignment_bam_file: samtools_sort_index_2/bam_bai_pair
+      annotation_gtf_file: annotation_gtf_file
+    out:
+    - gene_expression_report
+
 
 
 $namespaces:
