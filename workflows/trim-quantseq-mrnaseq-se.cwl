@@ -509,10 +509,10 @@ steps:
             FILE=$0
             BASENAME=$(basename "$FILE")
 
-            get_gene_n_tss.R --isoforms "${FILE}"
+            get_gene_n_tss.R --isoforms "${FILE}" --gene grouped.genes.tsv --tss grouped.common_tss.tsv
 
-            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.genes.tsv"
-            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.common_tss.tsv"
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.genes.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.common_tss.tsv
             rm -f ./*bak
           inputBinding:
             position: 1
