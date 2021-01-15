@@ -1,11 +1,10 @@
-cwlVersion: v1.2.0-dev4
+cwlVersion: v1.0
 class: Workflow
 
 
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
-  - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
     expressionLib:
     - var get_root = function(basename) {
@@ -59,14 +58,6 @@ inputs:
     doc: "Reads data in a FASTQ format"
 
 # Advanced inputs
-
-  use_umi:
-    type: boolean?
-    default: true
-    'sd:layout':
-      advanced: true
-    label: "Enable for FWD-UMI libraries and disable for FWD libraries"
-    doc: "Use UMIs (for FWD-UMI libraries)"
 
   exclude_chr:
     type: string?
@@ -265,19 +256,19 @@ outputs:
 
 
   trim_report:
-    type: File?
+    type: File
     label: "cutadapt report"
     doc: "cutadapt generated log"
     outputSource: umisep_cutadapt/report_file
 
   umi_tools_dedup_stdout:
-    type: File?
+    type: File
     label: "umi_tools dedup stdout log"
     doc: "umi_tools dedup stdout log"
     outputSource: umi_tools_dedup/stdout_log
 
   umi_tools_dedup_stderr:
-    type: File?
+    type: File
     label: "umi_tools dedup stderr log"
     doc: "umi_tools dedup stderr log"
     outputSource: umi_tools_dedup/stderr_log
@@ -320,11 +311,9 @@ steps:
   umisep_cutadapt:
     in:
       input_file: extract_fastq/fastq_file
-      use_umi: use_umi
     out:
       - trimmed_file
       - report_file
-    when: $(inputs.use_umi)
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -373,11 +362,7 @@ steps:
   rename:
     run: ../tools/rename.cwl
     in:
-      source_file: 
-        source: 
-        - umisep_cutadapt/trimmed_file
-        - extract_fastq/fastq_file
-        pickValue: first_non_null
+      source_file: umisep_cutadapt/trimmed_file
       target_filename:
         source: extract_fastq/fastq_file
         valueFrom: $(self.basename)
@@ -427,10 +412,8 @@ steps:
 
   umi_tools_dedup:
     run: ../tools/umi-tools-dedup.cwl
-    when: $(inputs.use_umi)
     in:
       bam_file: samtools_sort_index_1/bam_bai_pair
-      use_umi: use_umi
       multimapping_detection_method:
         default: "NH"
     out: [dedup_bam_file, stdout_log, stderr_log, output_stats]
@@ -438,11 +421,7 @@ steps:
   samtools_sort_index_2:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: 
-        source: 
-        - umi_tools_dedup/dedup_bam_file
-        - samtools_sort_index_1/bam_bai_pair
-        pickValue: first_non_null
+      sort_input: umi_tools_dedup/dedup_bam_file
       sort_output_filename:
         source: rename/target_file
         valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
@@ -586,7 +565,7 @@ s:creator:
     s:legalName: "Datirium, LLC"
     s:member:
       - class: s:Person
-        s:name: Artem Barski
+        s:name: Artem BArski
         s:email: mailto:Artem.Barski@datirum.com
       - class: s:Person
         s:name: Andrey Kartashov
