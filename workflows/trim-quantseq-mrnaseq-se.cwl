@@ -605,7 +605,7 @@ s:creator:
     s:legalName: "Datirium, LLC"
     s:member:
       - class: s:Person
-        s:name: Artem BArski
+        s:name: Artem Barski
         s:email: mailto:Artem.Barski@datirum.com
       - class: s:Person
         s:name: Andrey Kartashov

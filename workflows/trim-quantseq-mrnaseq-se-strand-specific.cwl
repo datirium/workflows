@@ -22,8 +22,6 @@ requirements:
 
 inputs:
 
-# General inputs
-
   star_indices_folder:
     type: Directory
     label: "STAR indices folder"
@@ -52,13 +50,18 @@ inputs:
     'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
 
+  annotation_gtf_file:
+    type: File
+    label: "GTF annotation file"
+    format: "http://edamontology.org/format_2306"
+    'sd:upstreamSource': "genome_indices/annotation_gtf"
+    doc: "GTF annotation file"
+
   fastq_file:
     type: File
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format"
-
-# Advanced inputs
 
   use_umi:
     type: boolean?
@@ -68,30 +71,41 @@ inputs:
     label: "Use UMIs"
     doc: "Use UMIs (for FWD-UMI libraries)"
 
-  exclude_chr:
-    type: string?
+  min_length:
+    type: int?
+    default: 30
     'sd:layout':
       advanced: true
-    label: "Chromosome to be excluded in rpkm calculation"
-    doc: "Chromosome to be excluded in rpkm calculation"
+    label: "Set minimum length for trimmed reads when running FWD/REV pipeline. Shorter reads get discarded. Set 0 to disable"
+    doc: |
+      Set minimum length for trimmed reads when running FWD/REV (not UMI) pipeline.
+      Shorter reads get discarded. Applied only when running trim_fastq step.
+      For FWD-UMI pipeline we use cutadapt instead of TrimGalore, so this input is
+      not used
+
+  exclude_chr:
+    type: string?
+    default: ""
+    'sd:layout':
+      advanced: true
+    label: "Coma-separated list of chromosomes to be excluded from gene expression calculation"
+    doc: "Coma-separated list of chromosomes to be excluded from gene expression calculation"
 
   clip_3p_end:
     type: int?
     default: 0
     'sd:layout':
       advanced: true
-    label: "Clip from 3p end"
-    doc: "Number of bases to clip from the 3p end"
+    label: "Clip N bp from 3p end"
+    doc: "Number of bp to clip from the 3p end"
 
   clip_5p_end:
     type: int?
     default: 0
     'sd:layout':
       advanced: true
-    label: "Clip from 5p end"
-    doc: "Number of bases to clip from the 5p end"
-
-# System dependent
+    label: "Clip N bp from 5p end"
+    doc: "Number of bp to clip from the 5p end"
 
   threads:
     type: int?
@@ -198,13 +212,6 @@ outputs:
     doc: "Bowtie alignment log file"
     outputSource: bowtie_aligner/log_file
 
-  # rpkm_isoforms:
-  #   type: File
-  #   format: "http://edamontology.org/format_3752"
-  #   label: "RPKM, grouped by isoforms"
-  #   doc: "Calculated rpkm values, grouped by isoforms"
-  #   outputSource: rpkm_calculation/isoforms_file
-
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -216,6 +223,13 @@ outputs:
         tab: 'Gene Expression'
         Title: 'raw reads grouped by gene name'
 
+  reads_per_gene_htseq_count:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Gene expression from htseq-count (reads per gene)"
+    doc: "Gene expression from htseq-count (reads per gene)"
+    outputSource: htseq_calculate_expression/gene_expression_report
+
   rpkm_common_tss:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -225,8 +239,8 @@ outputs:
 
   get_stat_log:
     type: File?
-    label: "YAML formatted combined log"
     format: "http://edamontology.org/format_3750"
+    label: "YAML formatted combined log"
     doc: "YAML formatted combined log"
     outputSource: get_stat/collected_statistics_yaml
 
@@ -263,21 +277,30 @@ outputs:
     doc: "BAM statistics report (right after alignment and sorting)"
     outputSource: get_bam_statistics/log_file
 
-
-  trim_report:
+  trimgalore_report:
     type: File?
-    label: "cutadapt report"
-    doc: "cutadapt generated log"
+    format: "http://edamontology.org/format_2330"
+    label: "Adapter trimming report from TrimGalore. Even if it was eventually bypassed"
+    doc: "Adapter trimming report from TrimGalore. Even if it was eventually bypassed"
+    outputSource: trim_fastq/report_file
+
+  cutadapt_report:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "Adapter trimming report from Cutadapt"
+    doc: "Adapter trimming report from Cutadapt"
     outputSource: umisep_cutadapt/report_file
 
   umi_tools_dedup_stdout:
     type: File?
+    format: "http://edamontology.org/format_2330"
     label: "umi_tools dedup stdout log"
     doc: "umi_tools dedup stdout log"
     outputSource: umi_tools_dedup/stdout_log
 
   umi_tools_dedup_stderr:
     type: File?
+    format: "http://edamontology.org/format_2330"
     label: "umi_tools dedup stderr log"
     doc: "umi_tools dedup stderr log"
     outputSource: umi_tools_dedup/stderr_log
@@ -290,12 +313,6 @@ outputs:
     doc: "umi_tools dedup stats"
     outputSource: umi_tools_dedup/output_stats
 
-  # trim_report:
-  #   type: File
-  #   label: "TrimGalore report"
-  #   doc: "TrimGalore generated log"
-  #   outputSource: trim_fastq/report_file
-
 
 steps:
 
@@ -303,28 +320,41 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
-    out: [fastq_file]
+    out:
+    - fastq_file
 
-  # trim_fastq:
-  #   run: ../tools/trimgalore.cwl
-  #   in:
-  #     input_file: extract_fastq/fastq_file
-  #     dont_gzip:
-  #       default: true
-  #     length:
-  #       default: 30
-  #   out:
-  #     - trimmed_file
-  #     - report_file
+  trim_fastq:
+    when: $(!inputs.use_umi)                  # not sure if ! is valid syntax in this case
+    run: ../tools/trimgalore.cwl
+    in:
+      use_umi: use_umi                        # need it for "when"
+      input_file: extract_fastq/fastq_file
+      dont_gzip:
+        default: true                         # saves time
+      length: min_length
+    out:
+    - trimmed_file
+    - report_file
+
+  bypass_trim:
+    run: ../tools/bypass-trimgalore-se.cwl
+    in:
+      original_fastq_file: extract_fastq/fastq_file
+      trimmed_fastq_file: trim_fastq/trimmed_file
+      trimming_report_file: trim_fastq/report_file
+      min_reads_count:
+        default: 100                          # any small number should be good, as we are catching the case when TrimGalore discarded all reads
+    out:
+    - selected_fastq_file
 
   umisep_cutadapt:
-    in:
-      input_file: extract_fastq/fastq_file
-      use_umi: use_umi
-    out:
-      - trimmed_file
-      - report_file
     when: $(inputs.use_umi)
+    in:
+      use_umi: use_umi                        # need it for "when"
+      input_file: extract_fastq/fastq_file
+    out:
+    - trimmed_file
+    - report_file
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -336,10 +366,8 @@ steps:
           type: string?
           default: |
             #!/bin/bash
-
             FILE=$0
             BASENAME=$(basename "$FILE")
-
             cat ${FILE} | awk '
             NR%4==1{ rd_name=$1; rd_info=$2 }
             NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
@@ -348,18 +376,14 @@ steps:
             cutadapt  -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
             cutadapt -m 20 -O 3 -a "r1polyA=A{18}" - |
             cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o trimmed_${BASENAME} -
-
           inputBinding:
             position: 1
-          doc: |
-            Bash function to run awk & cutadapt from Lexogen with all input parameters or skip it if trigger is false
+          doc: "Bash function to run awk & cutadapt from Lexogen"
         input_file:
-          type:
-            - File
+          type: File
           inputBinding:
             position: 2
-          doc: |
-            Input FASTQ file
+          doc: "Input FASTQ file"
       outputs:
         trimmed_file:
           type: File
@@ -368,7 +392,7 @@ steps:
         report_file:
           type: stderr
       baseCommand: [bash, '-c']
-      stderr: umisep_cutadapt.log
+      stderr: umisep_cutadapt_report.txt
 
   rename:
     run: ../tools/rename.cwl
@@ -376,8 +400,8 @@ steps:
       source_file:
         source:
         - umisep_cutadapt/trimmed_file
-        - extract_fastq/fastq_file
-        pickValue: first_non_null
+        - bypass_trim/selected_fastq_file
+        pickValue: the_only_non_null          # should be always only one non-null value
       target_filename:
         source: extract_fastq/fastq_file
         valueFrom: $(self.basename)
@@ -401,13 +425,13 @@ steps:
       clip5pNbases: clip_5p_end
       threads: threads
     out:
-      - aligned_file
-      - log_final
-      - uniquely_mapped_reads_number
-      - log_out
-      - log_progress
-      - log_std
-      - log_sj
+    - aligned_file
+    - log_final
+    - uniquely_mapped_reads_number
+    - log_out
+    - log_progress
+    - log_std
+    - log_sj
 
   fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
@@ -426,21 +450,25 @@ steps:
     out: [bam_bai_pair]
 
   umi_tools_dedup:
-    run: ../tools/umi-tools-dedup.cwl
     when: $(inputs.use_umi)
+    run: ../tools/umi-tools-dedup.cwl
     in:
+      use_umi: use_umi                               # need it for "when"
       bam_file: samtools_sort_index_1/bam_bai_pair
-      use_umi: use_umi
       multimapping_detection_method:
         default: "NH"
-    out: [dedup_bam_file, stdout_log, stderr_log, output_stats]
-
-  samtools_sort_index_2:
+    out:
+    - dedup_bam_file
+    - output_stats
+    - stdout_log
+    - stderr_log
+    
+  samtools_sort_index_2:                              # easier to run it twice even if umi_tools_dedup was skipped
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input:
         source:
-        - umi_tools_dedup/dedup_bam_file
+        - umi_tools_dedup/dedup_bam_file              # will be selected first (if not null)
         - samtools_sort_index_1/bam_bai_pair
         pickValue: first_non_null
       sort_output_filename:
@@ -455,7 +483,6 @@ steps:
       bam_file: samtools_sort_index_2/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
     out: [bigwig_file]
 
   bowtie_aligner:
@@ -478,7 +505,7 @@ steps:
       threads: threads
     out: [log_file]
 
-  rpkm_calculation:
+  calculate_expression:
     run: ../tools/geep.cwl
     in:
       bam_file: samtools_sort_index_2/bam_bai_pair
@@ -493,35 +520,30 @@ steps:
 
   group_isoforms:
     in:
-      isoforms_file: rpkm_calculation/isoforms_file
+      isoforms_file: calculate_expression/isoforms_file
     out:
-      - genes_file
-      - common_tss_file
-      - error_file
+    - genes_file
+    - common_tss_file
     run:
       cwlVersion: v1.0
       class: CommandLineTool
       hints:
-        - class: DockerRequirement
-          dockerPull: biowardrobe2/scidap-deseq:v0.0.20
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap-deseq:v0.0.20
       inputs:
         bash_script:
           type: string?
           default: |
             #!/bin/bash
-
             FILE=$0
             BASENAME=$(basename "$FILE")
-
-            get_gene_n_tss.R --isoforms "${FILE}"
-
-            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.genes.tsv"
-            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.common_tss.tsv"
+            get_gene_n_tss.R --isoforms "${FILE}" --gene grouped.genes.tsv --tss grouped.common_tss.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.genes.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.common_tss.tsv
             rm -f ./*bak
           inputBinding:
             position: 1
-          doc: |
-            Bash function to run awk & cutadapt from Lexogen with all input parameters or skip it if trigger is false
+          doc: "Bash function to run R script to group expression by genes and common TSS"
         isoforms_file:
           type: File
           inputBinding:
@@ -537,10 +559,7 @@ steps:
           outputBinding:
             glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
           doc: "Output TSV common tss expression file"
-        error_file:
-          type: stderr
       baseCommand: [bash, '-c']
-      stderr: group_isoforms_error.log
 
   get_bam_statistics:
     run: ../tools/samtools-stats.cwl
@@ -554,12 +573,23 @@ steps:
   get_stat:
       run: ../tools/collect-statistics-rna-quantseq.cwl
       in:
-        # trimgalore_report_fastq_1: trim_fastq/report_file
         star_alignment_report: star_aligner/log_final
         bowtie_alignment_report: bowtie_aligner/log_file
         bam_statistics_report: get_bam_statistics/log_file
-        isoforms_file: rpkm_calculation/isoforms_file
-      out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+        isoforms_file: calculate_expression/isoforms_file
+      out:
+      - collected_statistics_yaml
+      - collected_statistics_tsv
+      - collected_statistics_md
+
+  htseq_calculate_expression:
+    run: ../tools/htseq-count.cwl
+    in:
+      alignment_bam_file: samtools_sort_index_2/bam_bai_pair
+      annotation_gtf_file: annotation_gtf_file
+    out:
+    - gene_expression_report
+
 
 
 $namespaces:
@@ -568,9 +598,9 @@ $namespaces:
 $schemas:
 - http://schema.org/version/9.0/schemaorg-current-http.rdf
 
-s:name: "QuantSeq 3' mRNA-Seq single-read"
-label: "QuantSeq 3' mRNA-Seq single-read"
-s:alternateName: "Run QuantSeq 3' mRNA-Seq basic analysis with single-end data file"
+s:name: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
+label: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
+s:alternateName: "Runs QuantSeq 3' FWD, FWD-UMI or REV analysis for single-read mRNA-Seq data"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-quantseq-mrnaseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -592,64 +622,17 @@ s:creator:
         s:name: Andrey Kartashov
         s:email: mailto:Andrey.Kartashov@datirium.com
         s:sameAs:
-          - id: http://orcid.org/0000-0001-9102-5681
+        - id: http://orcid.org/0000-0001-9102-5681
+      - class: s:Person
+        s:name: Michael Kotliar
+        s:email: mailto:misha.kotliar@gmail.com
+        s:sameAs:
+        - id: http://orcid.org/0000-0002-6486-3898
+
 
 # doc:
 #   $include: ../descriptions/trim-quantseq-mrnaseq-se.md
 
 
 doc: |
-  ### Pipeline for Lexogen's QuantSeq 3' mRNA-Seq Library Prep Kit FWD for Illumina
-
-  [Lexogen original documentation](https://www.lexogen.com/quantseq-3mrna-sequencing/)
-
-  * Cost-saving and streamlined globin mRNA depletion during QuantSeq library preparation
-  * Genome-wide analysis of gene expression
-  * Cost-efficient alternative to microarrays and standard RNA-Seq
-  * Down to 100 pg total RNA input
-  * Applicable for low quality and FFPE samples
-  * Single-read sequencing of up to 9,216 samples/lane
-  * Dual indexing and Unique Molecular Identifiers (UMIs) are available
-
-  ### QuantSeq 3’ mRNA-Seq Library Prep Kit FWD for Illumina
-
-  The QuantSeq FWD Kit is a library preparation protocol designed to generate Illumina compatible libraries of sequences close to the 3’ end of polyadenylated RNA.
-
-  QuantSeq FWD contains the Illumina Read 1 linker sequence in the second strand synthesis primer,
-  hence NGS reads are generated towards the poly(A) tail, directly reflecting the mRNA sequence (see workflow).
-  This version is the recommended standard for gene expression analysis.
-  Lexogen furthermore provides a high-throughput version with optional dual indexing (i5 and i7 indices) allowing up to 9,216 samples to be multiplexed in one lane.
-
-  #### Analysis of Low Input and Low Quality Samples
-
-  The required input amount of total RNA is as low as 100 pg.
-  QuantSeq is suitable to reproducibly generate libraries from low quality RNA, including FFPE samples.
-  See Fig.1 and 2 for a comparison of two different RNA qualities (FFPE and fresh frozen cryo-block) of the same sample.
-
-  ![Fig 1](https://www.lexogen.com/wp-content/uploads/2017/02/Correlation_Samples.jpg)
-
-  Figure 1 | Correlation of gene counts of FFPE and cryo samples.
-
-  ![Fig 2](https://www.lexogen.com/wp-content/uploads/2017/02/Venn_diagrams.jpg)
-
-  Figure 2 | Venn diagrams of genes detected by QuantSeq at a uniform read depth of 2.5 M reads in FFPE and cryo samples with 1, 5, and 10 reads/gene thresholds.
-
-  #### Mapping of Transcript End Sites
-
-  By using longer reads QuantSeq FWD allows to exactly pinpoint the 3’ end of poly(A) RNA (see Fig. 3) and therefore obtain accurate information about the 3’ UTR.
-
-  ![Figure 3](https://www.lexogen.com/wp-content/uploads/2017/02/Read_Coverage.jpg)
-
-  Figure 3 | QuantSeq read coverage versus normalized transcript length of NGS libraries derived from FFPE-RNA (blue) and cryo-preserved RNA (red).
-
-
-  ### Current workflow should be used only with the single-end RNA-Seq data. It performs the following steps:
-
-  1. Separates UMIes and trims adapters from input FASTQ file
-  2. Uses ```STAR``` to align reads from input FASTQ file according to the predefined reference indices; generates unsorted BAM file and alignment statistics file
-  3. Uses ```fastx_quality_stats``` to analyze input FASTQ file and generates quality statistics file
-  4. Uses ```samtools sort``` and generates coordinate sorted BAM(+BAI) file pair from the unsorted BAM file obtained on the step 2 (after running STAR)
-  5. Uses ```umi_tools dedup``` and generates final filtered sorted BAM(+BAI) file pair
-  6. Generates BigWig file on the base of sorted BAM file
-  7. Maps input FASTQ file to predefined rRNA reference indices using ```bowtie``` to define the level of rRNA contamination; exports resulted statistics to file
-  8. Calculates isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; exports results to file
+  ### Devel version of QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data
