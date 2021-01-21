@@ -1,4 +1,4 @@
-cwlVersion: v1.2.0
+cwlVersion: v1.2.0-dev4
 class: Workflow
 
 
