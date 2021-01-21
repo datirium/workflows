@@ -635,4 +635,4 @@ s:creator:
 
 
 doc: |
-  ### Devel version of QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data
+  ### Devel version of QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data 
