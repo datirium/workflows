@@ -51,6 +51,13 @@ inputs:
     'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
 
+  annotation_gtf_file:
+    type: File
+    label: "GTF annotation file"
+    format: "http://edamontology.org/format_2306"
+    'sd:upstreamSource': "genome_indices/annotation_gtf"
+    doc: "GTF annotation file"
+
   fastq_file:
     type: File
     label: "FASTQ input file"
@@ -58,6 +65,14 @@ inputs:
     doc: "Reads data in a FASTQ format"
 
 # Advanced inputs
+
+  use_umi:
+    type: boolean?
+    default: true
+    'sd:layout':
+      advanced: true
+    label: "Use UMIs"
+    doc: "Use UMIs (for FWD-UMI libraries)"
 
   exclude_chr:
     type: string?
@@ -207,6 +222,13 @@ outputs:
         tab: 'Gene Expression'
         Title: 'raw reads grouped by gene name'
 
+  reads_per_gene_htseq_count:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Gene expression from htseq-count (reads per gene)"
+    doc: "Gene expression from htseq-count (reads per gene)"
+    outputSource: htseq_count_gene_expression/gene_expression_report
+
   rpkm_common_tss:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -311,6 +333,7 @@ steps:
   umisep_cutadapt:
     in:
       input_file: extract_fastq/fastq_file
+      trigger: use_umi
     out:
       - trimmed_file
       - report_file
@@ -325,28 +348,35 @@ steps:
           type: string?
           default: |
             #!/bin/bash
-
-            FILE=$0
+            FILE=$1
             BASENAME=$(basename "$FILE")
-
-            cat ${FILE} | awk '
-            NR%4==1{ rd_name=$1; rd_info=$2 }
-            NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
-            NR%4==0{ print rd_name"_"umi" "rd_info; print rd_seq; print "+"; print substr($1,11) }' |
-            cutadapt -m 20 -O 20 -a "polyA=A{20}" -a "QUALITY=G{20}" -n 2 - |
-            cutadapt  -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
-            cutadapt -m 20 -O 3 -a "r1polyA=A{18}" - |
-            cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o trimmed_${BASENAME} -
-
+            if [ "$0" = "true" ]; then
+              cat ${FILE} | awk '
+              NR%4==1{ rd_name=$1; rd_info=$2 }
+              NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
+              NR%4==0{ print rd_name"_"umi" "rd_info; print rd_seq; print "+"; print substr($1,11) }' |
+              cutadapt -m 20 -O 20 -a "polyA=A{20}" -a "QUALITY=G{20}" -n 2 - |
+              cutadapt  -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
+              cutadapt -m 20 -O 3 -a "r1polyA=A{18}" - |
+              cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o trimmed_${BASENAME} -
+            else
+              cp ${FILE} trimmed_${BASENAME}
+            fi
           inputBinding:
             position: 1
           doc: |
             Bash function to run awk & cutadapt from Lexogen with all input parameters or skip it if trigger is false
+        trigger:
+          type: boolean?
+          default: true
+          inputBinding:
+            position: 2
+            valueFrom: $(self?"true":"false")
         input_file:
           type:
             - File
           inputBinding:
-            position: 2
+            position: 3
           doc: |
             Input FASTQ file
       outputs:
@@ -416,6 +446,7 @@ steps:
       bam_file: samtools_sort_index_1/bam_bai_pair
       multimapping_detection_method:
         default: "NH"
+      trigger: use_umi
     out: [dedup_bam_file, stdout_log, stderr_log, output_stats]
 
   samtools_sort_index_2:
@@ -492,10 +523,10 @@ steps:
             FILE=$0
             BASENAME=$(basename "$FILE")
 
-            get_gene_n_tss.R --isoforms "${FILE}"
+            get_gene_n_tss.R --isoforms "${FILE}" --gene grouped.genes.tsv --tss grouped.common_tss.tsv
 
-            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.genes.tsv"
-            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' "${BASENAME}.common_tss.tsv"
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.genes.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.common_tss.tsv
             rm -f ./*bak
           inputBinding:
             position: 1
@@ -531,14 +562,23 @@ steps:
     out: [log_file]
 
   get_stat:
-      run: ../tools/collect-statistics-rna-quantseq.cwl
-      in:
-        # trimgalore_report_fastq_1: trim_fastq/report_file
-        star_alignment_report: star_aligner/log_final
-        bowtie_alignment_report: bowtie_aligner/log_file
-        bam_statistics_report: get_bam_statistics/log_file
-        isoforms_file: rpkm_calculation/isoforms_file
-      out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+    run: ../tools/collect-statistics-rna-quantseq.cwl
+    in:
+      # trimgalore_report_fastq_1: trim_fastq/report_file
+      star_alignment_report: star_aligner/log_final
+      bowtie_alignment_report: bowtie_aligner/log_file
+      bam_statistics_report: get_bam_statistics/log_file
+      isoforms_file: rpkm_calculation/isoforms_file
+    out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+
+  htseq_count_gene_expression:
+    run: ../tools/htseq-count.cwl
+    in:
+      alignment_bam_file: samtools_sort_index_2/bam_bai_pair
+      annotation_gtf_file: annotation_gtf_file
+    out:
+    - gene_expression_report
+
 
 
 $namespaces:
@@ -565,7 +605,7 @@ s:creator:
     s:legalName: "Datirium, LLC"
     s:member:
       - class: s:Person
-        s:name: Artem BArski
+        s:name: Artem Barski
         s:email: mailto:Artem.Barski@datirum.com
       - class: s:Person
         s:name: Andrey Kartashov
