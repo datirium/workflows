@@ -222,12 +222,26 @@ outputs:
         tab: 'Gene Expression'
         Title: 'raw reads grouped by gene name'
 
-  reads_per_gene_htseq_count:
+  htseq_count_report_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Gene expression from htseq-count (reads per gene)"
-    doc: "Gene expression from htseq-count (reads per gene)"
-    outputSource: htseq_count_gene_expression/gene_expression_report
+    label: "HTSeq: read counts grouped by gene_id"
+    doc: "Feature counts from htseq-count grouped by gene_id"
+    outputSource: htseq_count_gene_expression/feature_counts_report_file
+
+  htseq_count_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HTSeq: stdout log"
+    doc: "HTSeq: stdout log"
+    outputSource: htseq_count_gene_expression/stdout_log
+
+  htseq_count_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HTSeq: stderr log"
+    doc: "HTSeq: stderr log"
+    outputSource: htseq_count_gene_expression/stderr_log
 
   rpkm_common_tss:
     type: File
@@ -576,9 +590,18 @@ steps:
     in:
       alignment_bam_file: samtools_sort_index_2/bam_bai_pair
       annotation_gtf_file: annotation_gtf_file
+      strand_specific:
+        default: "yes"
+      feature_type:
+        default: "exon"
+      feature_id:
+        default: "gene_id"
+      additional_id:
+        default: "transcript_id"
     out:
-    - gene_expression_report
-
+    - feature_counts_report_file
+    - stdout_log
+    - stderr_log
 
 
 $namespaces:
