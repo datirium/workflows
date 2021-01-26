@@ -34,7 +34,7 @@ inputs:
     default: |
       #!/bin/bash
       if [ "$0" = "true" ]; then
-        umi_tools dedup "${@:1}"
+        umi_tools dedup --random-seed=12345 "${@:1}"
       else
         echo "Skip umi_tools dedup " ${@:1}
       fi
