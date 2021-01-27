@@ -1,10 +1,11 @@
-cwlVersion: v1.0
+cwlVersion: v1.2.0-dev4
 class: Workflow
 
 
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
+  - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
     expressionLib:
     - var get_root = function(basename) {
@@ -70,41 +71,41 @@ inputs:
     label: "Use UMIs"
     doc: "Use UMIs (for FWD-UMI libraries)"
 
-  strand_specificity:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "yes"
-      - "no"
-      - "reverse"
-    default: "yes"
+  min_length:
+    type: int?
+    default: 30
     'sd:layout':
       advanced: true
-    label: "Strand specificity. 'Yes' for FWD or FWD-UMI analyses, 'Reverse' for REV, 'No' to disable"
+    label: "Set minimum length for trimmed reads when running FWD/REV pipeline. Shorter reads get discarded. Set 0 to disable"
     doc: |
-      Whether the data is from a strand-specific assay. For stranded=no, a read is
-      considered overlapping with a feature regardless of whether it is mapped to
-      the same or the opposite strand as the feature. For stranded=yes and single-end
-      reads, the read has to be mapped to the same strand as the feature. For paired-end
-      reads, the first read has to be on the same strand and the second read on the
-      opposite strand. For stranded=reverse, these rules are reversed.
+      Set minimum length for trimmed reads when running FWD/REV (not UMI) pipeline.
+      Shorter reads get discarded. Applied only when running trim_fastq step.
+      For FWD-UMI pipeline we use cutadapt instead of TrimGalore, so this input is
+      not used
+
+  exclude_chr:
+    type: string?
+    default: ""
+    'sd:layout':
+      advanced: true
+    label: "Coma-separated list of chromosomes to be excluded from gene expression calculation"
+    doc: "Coma-separated list of chromosomes to be excluded from gene expression calculation"
 
   clip_3p_end:
     type: int?
     default: 0
     'sd:layout':
       advanced: true
-    label: "Clip from 3p end"
-    doc: "Number of bases to clip from the 3p end"
+    label: "Clip N bp from 3p end"
+    doc: "Number of bp to clip from the 3p end"
 
   clip_5p_end:
     type: int?
     default: 0
     'sd:layout':
       advanced: true
-    label: "Clip from 5p end"
-    doc: "Number of bases to clip from the 5p end"
+    label: "Clip N bp from 5p end"
+    doc: "Number of bp to clip from the 5p end"
 
   threads:
     type: int?
@@ -193,7 +194,7 @@ outputs:
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: samtools_sort_index_after_dedup/bam_bai_pair
+    outputSource: samtools_sort_index_2/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -211,42 +212,35 @@ outputs:
     doc: "Bowtie alignment log file"
     outputSource: bowtie_aligner/log_file
 
-  gene_expression_file:
+  rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Gene expression"
-    doc: "Gene expression"
-    outputSource: group_transcript_expression/gene_expression_file
+    label: "raw reads grouped by gene name"
+    doc: "raw reads grouped by gene name"
+    outputSource: group_isoforms/genes_file
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Gene Expression'
-        Title: 'Read counts grouped by gene'
+        Title: 'raw reads grouped by gene name'
 
-  common_tss_expression_file:
+  reads_per_gene_htseq_count:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Common TSS expression"
-    doc: "Common TSS expression"
-    outputSource: group_transcript_expression/common_tss_expression_file
+    label: "Gene expression from htseq-count (reads per gene)"
+    doc: "Gene expression from htseq-count (reads per gene)"
+    outputSource: htseq_calculate_expression/gene_expression_report
 
-  htseq_count_stdout_log:
+  rpkm_common_tss:
     type: File
-    format: "http://edamontology.org/format_2330"
-    label: "HTSeq: stdout log"
-    doc: "HTSeq: stdout log"
-    outputSource: htseq_count_transcript_expression/stdout_log
-
-  htseq_count_stderr_log:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "HTSeq: stderr log"
-    doc: "HTSeq: stderr log"
-    outputSource: htseq_count_transcript_expression/stderr_log
+    format: "http://edamontology.org/format_3475"
+    label: "raw reads grouped by common TSS"
+    doc: "raw reads grouped by common TSS"
+    outputSource: group_isoforms/common_tss_file
 
   get_stat_log:
     type: File?
-    label: "YAML formatted combined log"
     format: "http://edamontology.org/format_3750"
+    label: "YAML formatted combined log"
     doc: "YAML formatted combined log"
     outputSource: get_stat/collected_statistics_yaml
 
@@ -280,39 +274,43 @@ outputs:
     type: File
     label: "BAM statistics report"
     format: "http://edamontology.org/format_2330"
-    doc: "BAM statistics report (after deduplication step)"
+    doc: "BAM statistics report (right after alignment and sorting)"
     outputSource: get_bam_statistics/log_file
 
-  trim_adapters_stdout_log:
-    type: File
-    label: "cutadapt: stdout log"
-    doc: "cutadapt: stdout log"
-    outputSource: trim_adapters/stdout_log
+  trimgalore_report:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "Adapter trimming report from TrimGalore. Even if it was eventually bypassed"
+    doc: "Adapter trimming report from TrimGalore. Even if it was eventually bypassed"
+    outputSource: trim_fastq/report_file
 
-  trim_adapters_stderr_log:
-    type: File
-    label: "cutadapt: stderr log"
-    doc: "cutadapt: stderr log"
-    outputSource: trim_adapters/stderr_log
+  cutadapt_report:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "Adapter trimming report from Cutadapt"
+    doc: "Adapter trimming report from Cutadapt"
+    outputSource: umisep_cutadapt/report_file
 
-  umi_tools_dedup_stdout_log:
-    type: File
-    label: "umi_tools dedup: stdout log"
-    doc: "umi_tools dedup: stdout log"
+  umi_tools_dedup_stdout:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "umi_tools dedup stdout log"
+    doc: "umi_tools dedup stdout log"
     outputSource: umi_tools_dedup/stdout_log
 
-  umi_tools_dedup_stderr_log:
-    type: File
-    label: "umi_tools dedup: stderr log"
-    doc: "umi_tools dedup: stderr log"
+  umi_tools_dedup_stderr:
+    type: File?
+    format: "http://edamontology.org/format_2330"
+    label: "umi_tools dedup stderr log"
+    doc: "umi_tools dedup stderr log"
     outputSource: umi_tools_dedup/stderr_log
 
   umi_tools_dedup_stats:
     type:
-    - "null"
-    - File[]
-    label: "umi_tools dedup statistics"
-    doc: "umi_tools dedup statistics"
+      - "null"
+      - File[]
+    label: "umi_tools dedup stats"
+    doc: "umi_tools dedup stats"
     outputSource: umi_tools_dedup/output_stats
 
 
@@ -325,34 +323,38 @@ steps:
     out:
     - fastq_file
 
-  move_umi_to_read_name:
-    run: ../tools/custom-bash.cwl
+  trim_fastq:
+    when: $(!inputs.use_umi)                  # not sure if ! is valid syntax in this case
+    run: ../tools/trimgalore.cwl
     in:
+      use_umi: use_umi                        # need it for "when"
       input_file: extract_fastq/fastq_file
-      param: use_umi
-      script:
-        default: |
-          #!/bin/bash
-          FILE=$0
-          BASENAME=$(basename "$FILE")
-          if [ "$1" = "true" ]; then
-            cat ${FILE} | awk '
-            NR%4==1{ rd_name=$1; rd_info=$2 }
-            NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
-            NR%4==0{ print rd_name"_"umi" "rd_info; print rd_seq; print "+"; print substr($1,11) }' > ${BASENAME}
-          else
-            cp ${FILE} ${BASENAME}
-          fi
-    out:
-    - output_file
-
-  trim_adapters:
-    in:
-      input_file: move_umi_to_read_name/output_file
+      dont_gzip:
+        default: true                         # saves time
+      length: min_length
     out:
     - trimmed_file
-    - stdout_log
-    - stderr_log
+    - report_file
+
+  bypass_trim:
+    run: ../tools/bypass-trimgalore-se.cwl
+    in:
+      original_fastq_file: extract_fastq/fastq_file
+      trimmed_fastq_file: trim_fastq/trimmed_file
+      trimming_report_file: trim_fastq/report_file
+      min_reads_count:
+        default: 100                          # any small number should be good, as we are catching the case when TrimGalore discarded all reads
+    out:
+    - selected_fastq_file
+
+  umisep_cutadapt:
+    when: $(inputs.use_umi)
+    in:
+      use_umi: use_umi                        # need it for "when"
+      input_file: extract_fastq/fastq_file
+    out:
+    - trimmed_file
+    - report_file
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -366,34 +368,50 @@ steps:
             #!/bin/bash
             FILE=$0
             BASENAME=$(basename "$FILE")
-            cat ${FILE} |
+            cat ${FILE} | awk '
+            NR%4==1{ rd_name=$1; rd_info=$2 }
+            NR%4==2{ umi=substr($1,1,10); rd_seq=substr($1,11) }
+            NR%4==0{ print rd_name"_"umi" "rd_info; print rd_seq; print "+"; print substr($1,11) }' |
             cutadapt -m 20 -O 20 -a "polyA=A{20}" -a "QUALITY=G{20}" -n 2 - |
-            cutadapt -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
+            cutadapt  -m 20 -O 3 --nextseq-trim=10  -a "r1adapter=A{18}AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=3;max_error_rate=0.100000" - |
             cutadapt -m 20 -O 3 -a "r1polyA=A{18}" - |
-            cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o ${BASENAME} -
+            cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o trimmed_${BASENAME} -
           inputBinding:
             position: 1
+          doc: "Bash function to run awk & cutadapt from Lexogen"
         input_file:
           type: File
           inputBinding:
-            position: 3
+            position: 2
+          doc: "Input FASTQ file"
       outputs:
         trimmed_file:
           type: File
           outputBinding:
-            glob: "*"
-        stdout_log:
-          type: stdout
-        stderr_log:
+            glob: "trimmed_*"
+        report_file:
           type: stderr
-      baseCommand: ["bash", "-c"]
-      stdout: cutadapt_stdout.log
-      stderr: cutadapt_stderr.log
+      baseCommand: [bash, '-c']
+      stderr: umisep_cutadapt_report.txt
+
+  rename:
+    run: ../tools/rename.cwl
+    in:
+      source_file:
+        source:
+        - umisep_cutadapt/trimmed_file
+        - bypass_trim/selected_fastq_file
+        pickValue: the_only_non_null          # should be always only one non-null value
+      target_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.basename)
+    out:
+      - target_file
 
   star_aligner:
     run: ../tools/star-alignreads.cwl
     in:
-      readFilesIn: trim_adapters/trimmed_file
+      readFilesIn: rename/target_file
       genomeDir: star_indices_folder
       outFilterMultimapNmax:
         default: 1
@@ -418,179 +436,59 @@ steps:
   fastx_quality_stats:
     run: ../tools/fastx-quality-stats.cwl
     in:
-      input_file: trim_adapters/trimmed_file
-    out:
-    - statistics_file
+      input_file: rename/target_file
+    out: [statistics_file]
 
-  samtools_sort_index_before_dedup:
+  samtools_sort_index_1:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: star_aligner/aligned_file
       sort_output_filename:
-        source: trim_adapters/trimmed_file
-        valueFrom: $(get_root(self.basename)+".bam")
+        source: rename/target_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
-    out:
-    - bam_bai_pair
+    out: [bam_bai_pair]
 
   umi_tools_dedup:
+    when: $(inputs.use_umi)
     run: ../tools/umi-tools-dedup.cwl
     in:
-      bam_file: samtools_sort_index_before_dedup/bam_bai_pair
+      use_umi: use_umi                               # need it for "when"
+      bam_file: samtools_sort_index_1/bam_bai_pair
       multimapping_detection_method:
         default: "NH"
-      trigger: use_umi
     out:
     - dedup_bam_file
     - output_stats
     - stdout_log
     - stderr_log
-
-  samtools_sort_index_after_dedup:
+    
+  samtools_sort_index_2:                              # easier to run it twice even if umi_tools_dedup was skipped
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: umi_tools_dedup/dedup_bam_file
+      sort_input:
+        source:
+        - umi_tools_dedup/dedup_bam_file              # will be selected first (if not null)
+        - samtools_sort_index_1/bam_bai_pair
+        pickValue: first_non_null
       sort_output_filename:
-        source: trim_adapters/trimmed_file
-        valueFrom: $(get_root(self.basename)+".bam")
+        source: rename/target_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
       threads: threads
-      trigger: use_umi
-    out:
-    - bam_bai_pair
-
-  htseq_count_transcript_expression:
-    run: ../tools/htseq-count.cwl
-    in:
-      alignment_bam_file: samtools_sort_index_after_dedup/bam_bai_pair
-      annotation_gtf_file: annotation_gtf_file
-      strand_specific: strand_specificity
-      feature_type:
-        default: "exon"
-      feature_id:
-        default: "transcript_id"
-      additional_id:
-        default: "gene_id"
-    out:
-    - feature_counts_report_file
-    - stdout_log
-    - stderr_log
-
-  group_transcript_expression:
-    in:
-      transcript_expression_file: htseq_count_transcript_expression/feature_counts_report_file
-      annotation_file: annotation_file
-    out:
-    - transcript_expression_file
-    - gene_expression_file
-    - common_tss_expression_file
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap-deseq:v0.0.21
-      requirements:          
-      - class: InitialWorkDirRequirement
-        listing:
-        - entryname: process.R
-          entry: |
-            #!/usr/bin/env Rscript
-            options(warn=-1)
-            options("width"=300)
-
-            args <- commandArgs(trailingOnly = TRUE)
-
-            transcript_counts <- read.table(args[0], sep="\t", header=FALSE, stringsAsFactors=FALSE)
-            colnames(transcript_counts) <- c("RefseqId", "GeneId", "TotalReads")
-
-            annotation <- read.table(args[1], sep="\t", header=TRUE, stringsAsFactors=FALSE)
-            colnames(annotation) <- c("bin", "RefseqId", "Chrom",	"Strand",	"TxStart", "TxEnd", "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds", "score", "GeneId",	"cdsStartStat",	"cdsEndStat",	"exonFrames")
-
-            transcript_counts <- merge(transcript_counts, annotation, by=c("RefseqId", "GeneId"), sort = FALSE)
-            transcript_counts <- transcript_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
-
-            transcript_counts_table <- setDT(transcript_counts)
-
-            gene_counts <- as.data.frame(
-              transcript_counts_table[
-                ,
-                .(
-                  RefseqId = paste(sort(unique(RefseqId)), collapse = ","),
-                  Chrom = Chrom[1],
-                  TxStart = TxStart[1],
-                  TxEnd = TxEnd[1],
-                  Strand = Strand[1],
-                  TotalReads = sum(TotalReads)
-                ),
-                by = GeneId
-              ]
-            )
-
-            common_tss_counts_positive_strand_table <- transcript_counts_table[
-              Strand=="+",
-              .(
-                RefseqId = paste(sort(unique(RefseqId)), collapse = ","),
-                GeneId = paste(sort(unique(GeneId)), collapse = ","),
-                TxEnd = max(TxEnd),
-                TotalReads = sum(TotalReads)),
-                by = .(Chrom, TxStart, Strand)
-            ]
-            
-            common_tss_counts_negative_strand_table <- transcript_counts_table[
-              Strand=="-",
-              .(
-                RefseqId = paste(sort(unique(RefseqId)), collapse = ","),
-                GeneId = paste(sort(unique(GeneId)), collapse = ","),
-                TxStart = min(TxStart),
-                TotalReads = sum(TotalReads)),
-                by = .(Chrom, TxEnd, Strand)
-            ]
-            
-            common_tss_counts <- as.data.frame(
-              rbind(common_tss_counts_positive_strand_table, common_tss_counts_negative_strand_table)
-            )
-
-            write.table(transcript_counts, file="transcript_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
-            write.table(gene_counts, file="gene_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
-            write.table(common_tss_counts, file="common_tss_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
-
-      inputs:
-        transcript_expression_file:
-          type: File
-          inputBinding:
-            position: 1
-        annotation_file:
-          type: File
-          inputBinding:
-            position: 2         
-      outputs:
-        transcript_expression_file:
-          type: File
-          outputBinding:
-            glob: "transcript_expression.tsv"          
-        gene_expression_file:
-          type: File
-          outputBinding:
-            glob: "gene_expression.tsv"
-        common_tss_expression_file:
-          type: File
-          outputBinding:
-            glob: "common_tss_expression.tsv"
-      baseCommand: ["Rscript", "process.R"]
+    out: [bam_bai_pair]
 
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index_after_dedup/bam_bai_pair
+      bam_file: samtools_sort_index_2/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-    out:
-    - bigwig_file
+    out: [bigwig_file]
 
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
-      upstream_filelist: trim_adapters/trimmed_file
+      upstream_filelist: rename/target_file
       indices_folder: bowtie_indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
@@ -605,30 +503,93 @@ steps:
       sam:
         default: true
       threads: threads
+    out: [log_file]
+
+  calculate_expression:
+    run: ../tools/geep.cwl
+    in:
+      bam_file: samtools_sort_index_2/bam_bai_pair
+      annotation_file: annotation_file
+      rpkm_threshold:
+        default: 0
+      max_cycles:
+        default: 0
+      exclude_chr: exclude_chr
+      threads: threads
+    out: [isoforms_file]
+
+  group_isoforms:
+    in:
+      isoforms_file: calculate_expression/isoforms_file
     out:
-    - log_file
+    - genes_file
+    - common_tss_file
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap-deseq:v0.0.20
+      inputs:
+        bash_script:
+          type: string?
+          default: |
+            #!/bin/bash
+            FILE=$0
+            BASENAME=$(basename "$FILE")
+            get_gene_n_tss.R --isoforms "${FILE}" --gene grouped.genes.tsv --tss grouped.common_tss.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.genes.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.common_tss.tsv
+            rm -f ./*bak
+          inputBinding:
+            position: 1
+          doc: "Bash function to run R script to group expression by genes and common TSS"
+        isoforms_file:
+          type: File
+          inputBinding:
+            position: 5
+      outputs:
+        genes_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.genes_filename?inputs.genes_filename:"*genes.tsv")
+          doc: "Output TSV gene expression file"
+        common_tss_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
+          doc: "Output TSV common tss expression file"
+      baseCommand: [bash, '-c']
 
   get_bam_statistics:
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index_after_dedup/bam_bai_pair
+      bambai_pair: samtools_sort_index_2/bam_bai_pair
       output_filename:
-        source: samtools_sort_index_after_dedup/bam_bai_pair
+        source: samtools_sort_index_2/bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
-    out:
-    - log_file
+    out: [log_file]
 
   get_stat:
-    run: ../tools/collect-statistics-rna-quantseq.cwl
+      run: ../tools/collect-statistics-rna-quantseq.cwl
+      in:
+        star_alignment_report: star_aligner/log_final
+        bowtie_alignment_report: bowtie_aligner/log_file
+        bam_statistics_report: get_bam_statistics/log_file
+        isoforms_file: calculate_expression/isoforms_file
+      out:
+      - collected_statistics_yaml
+      - collected_statistics_tsv
+      - collected_statistics_md
+
+  htseq_calculate_expression:
+    run: ../tools/htseq-count.cwl
     in:
-      star_alignment_report: star_aligner/log_final
-      bowtie_alignment_report: bowtie_aligner/log_file
-      bam_statistics_report: get_bam_statistics/log_file
-      isoforms_file: group_transcript_expression/transcript_expression_file
+      alignment_bam_file: samtools_sort_index_2/bam_bai_pair
+      annotation_gtf_file: annotation_gtf_file
     out:
-    - collected_statistics_yaml
-    - collected_statistics_tsv
-    - collected_statistics_md
+    - gene_expression_report
+
 
 
 $namespaces:
@@ -641,7 +602,7 @@ s:name: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
 label: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
 s:alternateName: "Runs QuantSeq 3' FWD, FWD-UMI or REV analysis for single-read mRNA-Seq data"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-quantseq-mrnaseq-se-strand-specific.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-quantseq-mrnaseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -661,12 +622,16 @@ s:creator:
         s:name: Andrey Kartashov
         s:email: mailto:Andrey.Kartashov@datirium.com
         s:sameAs:
-          - id: http://orcid.org/0000-0001-9102-5681
+        - id: http://orcid.org/0000-0001-9102-5681
       - class: s:Person
         s:name: Michael Kotliar
         s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
+
+
+# doc:
+#   $include: ../descriptions/trim-quantseq-mrnaseq-se.md
 
 
 doc: |
