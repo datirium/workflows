@@ -350,7 +350,7 @@ steps:
 
   trim_adapters:
     in:
-      input_file: move_umi_to_read_name/output_file
+      fastq_file: move_umi_to_read_name/output_file
     out:
     - trimmed_file
     - stdout_log
@@ -375,7 +375,7 @@ steps:
             cutadapt -m 20 -O 20 -g "r1adapter=AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC;min_overlap=20" --discard-trimmed -o ${BASENAME} -
           inputBinding:
             position: 1
-        input_file:
+        fastq_file:
           type: File
           inputBinding:
             position: 3
@@ -383,7 +383,7 @@ steps:
         trimmed_file:
           type: File
           outputBinding:
-            glob: "*"
+            glob: $(inputs.fastq_file.basename)
         stdout_log:
           type: stdout
         stderr_log:
