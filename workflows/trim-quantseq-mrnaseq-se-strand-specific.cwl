@@ -329,7 +329,9 @@ steps:
     run: ../tools/custom-bash.cwl
     in:
       input_file: extract_fastq/fastq_file
-      param: use_umi
+      param:
+        source: use_umi
+        valueFrom: $(self?"true":"false")
       script:
         default: |
           #!/bin/bash
