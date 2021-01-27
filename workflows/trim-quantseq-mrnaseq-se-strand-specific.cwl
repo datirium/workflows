@@ -499,13 +499,14 @@ steps:
             #!/usr/bin/env Rscript
             options(warn=-1)
             options("width"=300)
+            suppressMessages(library(data.table))
 
             args <- commandArgs(trailingOnly = TRUE)
 
-            transcript_counts <- read.table(args[0], sep="\t", header=FALSE, stringsAsFactors=FALSE)
+            transcript_counts <- read.table(args[1], sep="\t", header=FALSE, stringsAsFactors=FALSE)
             colnames(transcript_counts) <- c("RefseqId", "GeneId", "TotalReads")
 
-            annotation <- read.table(args[1], sep="\t", header=TRUE, stringsAsFactors=FALSE)
+            annotation <- read.table(args[2], sep="\t", header=TRUE, stringsAsFactors=FALSE)
             colnames(annotation) <- c("bin", "RefseqId", "Chrom",	"Strand",	"TxStart", "TxEnd", "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds", "score", "GeneId",	"cdsStartStat",	"cdsEndStat",	"exonFrames")
 
             transcript_counts <- merge(transcript_counts, annotation, by=c("RefseqId", "GeneId"), sort = FALSE)
@@ -552,9 +553,13 @@ steps:
               rbind(common_tss_counts_positive_strand_table, common_tss_counts_negative_strand_table)
             )
 
-            write.table(transcript_counts, file="transcript_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
-            write.table(gene_counts, file="gene_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
-            write.table(common_tss_counts, file="common_tss_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+            reordered_transcript_counts <- transcript_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
+            reordered_gene_counts <- gene_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
+            reordered_common_tss_counts <- common_tss_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
+
+            write.table(reordered_transcript_counts, file="transcript_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+            write.table(reordered_gene_counts, file="gene_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+            write.table(reordered_common_tss_counts, file="common_tss_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
       inputs:
         transcript_expression_file:
@@ -564,7 +569,7 @@ steps:
         annotation_file:
           type: File
           inputBinding:
-            position: 2         
+            position: 2
       outputs:
         transcript_expression_file:
           type: File
