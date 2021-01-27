@@ -574,7 +574,7 @@ steps:
         transcript_expression_file:
           type: File
           outputBinding:
-            glob: "transcript_expression.tsv"          
+            glob: "transcript_expression.csv"          
         gene_expression_file:
           type: File
           outputBinding:
