@@ -557,7 +557,7 @@ steps:
             reordered_gene_counts <- gene_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
             reordered_common_tss_counts <- common_tss_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
 
-            write.table(reordered_transcript_counts, file="transcript_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+            write.table(reordered_transcript_counts, file="transcript_expression.csv", sep=",", row.names=FALSE, col.names=TRUE, quote=FALSE)
             write.table(reordered_gene_counts, file="gene_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
             write.table(reordered_common_tss_counts, file="common_tss_expression.tsv", sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
