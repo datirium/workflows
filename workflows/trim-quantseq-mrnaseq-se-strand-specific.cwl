@@ -229,6 +229,20 @@ outputs:
     doc: "Common TSS expression"
     outputSource: group_transcript_expression/common_tss_expression_file
 
+  geep_gene_expression_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "GEEP: expression grouped by gene name"
+    doc: "GEEP: expression grouped by gene name"
+    outputSource: group_geep_transcript_expression/genes_file
+
+  geep_common_tss_expression_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "GEEP: expression grouped by common TSS"
+    doc: "GEEP: expression grouped by common TSS"
+    outputSource: group_geep_transcript_expression/common_tss_file
+
   htseq_count_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -636,6 +650,59 @@ steps:
     - collected_statistics_yaml
     - collected_statistics_tsv
     - collected_statistics_md
+
+  geep_count_transcript_expression:
+    run: ../tools/geep.cwl
+    in:
+      bam_file: samtools_sort_index_after_dedup/bam_bai_pair
+      annotation_file: annotation_file
+      rpkm_threshold:
+        default: 0
+      max_cycles:
+        default: 0
+      threads: threads
+    out:
+    - isoforms_file
+
+  group_geep_transcript_expression:
+    in:
+      isoforms_file: geep_count_transcript_expression/isoforms_file
+    out:
+    - genes_file
+    - common_tss_file
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap-deseq:v0.0.20
+      inputs:
+        bash_script:
+          type: string?
+          default: |
+            #!/bin/bash
+            FILE=$0
+            BASENAME=$(basename "$FILE")
+            get_gene_n_tss.R --isoforms "${FILE}" --gene grouped.genes.tsv --tss grouped.common_tss.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.genes.tsv
+            sed -ibak 's/[[:space:]]\{1,\}[^[:space:]]\{1,\}$//' grouped.common_tss.tsv
+            rm -f ./*bak
+          inputBinding:
+            position: 1
+        isoforms_file:
+          type: File
+          inputBinding:
+            position: 5
+      outputs:
+        genes_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.genes_filename?inputs.genes_filename:"*genes.tsv")
+        common_tss_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
+      baseCommand: ["bash", "-c"]
 
 
 $namespaces:
