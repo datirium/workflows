@@ -117,18 +117,32 @@ inputs:
 
 outputs:
 
-  bigwig:
+  bigwig_upstream:
     type: File
     format: "http://edamontology.org/format_3006"
-    label: "BigWig file"
-    doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/bigwig_file
+    label: "Upstream bigWig file"
+    doc: "bigWig file from the 5' - 3' strand"
+    outputSource: bam_to_bigwig_upstream/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "BigWig Track"
+        name: "5' - 3' genome coverage"
+        height: 100
+
+  bigwig_downstream:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "Downstream bigWig file"
+    doc: "bigWig file from the 3' - 5' strand"
+    outputSource: bam_to_bigwig_downstream/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "3' - 5' genome coverage"
         height: 120
 
   star_final_log:
@@ -222,12 +236,12 @@ outputs:
         tab: 'Gene Expression'
         Title: 'Read counts grouped by gene'
 
-  common_tss_expression_file:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Common TSS expression"
-    doc: "Common TSS expression"
-    outputSource: group_transcript_expression/common_tss_expression_file
+  # common_tss_expression_file:
+  #   type: File
+  #   format: "http://edamontology.org/format_3475"
+  #   label: "Common TSS expression"
+  #   doc: "Common TSS expression"
+  #   outputSource: group_transcript_expression/common_tss_expression_file
 
   geep_gene_expression_file:
     type: File
@@ -236,12 +250,12 @@ outputs:
     doc: "GEEP: expression grouped by gene name"
     outputSource: group_geep_transcript_expression/genes_file
 
-  geep_common_tss_expression_file:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "GEEP: expression grouped by common TSS"
-    doc: "GEEP: expression grouped by common TSS"
-    outputSource: group_geep_transcript_expression/common_tss_file
+  # geep_common_tss_expression_file:
+  #   type: File
+  #   format: "http://edamontology.org/format_3475"
+  #   label: "GEEP: expression grouped by common TSS"
+  #   doc: "GEEP: expression grouped by common TSS"
+  #   outputSource: group_geep_transcript_expression/common_tss_file
 
   htseq_count_stdout_log:
     type: File
@@ -599,12 +613,42 @@ steps:
             glob: "common_tss_expression.tsv"
       baseCommand: ["Rscript", "process.R"]
 
-  bam_to_bigwig:
+  # bam_to_bigwig:
+  #   run: ../tools/bam-bedgraph-bigwig.cwl
+  #   in:
+  #     bam_file: samtools_sort_index_after_dedup/bam_bai_pair
+  #     chrom_length_file: chrom_length_file
+  #     mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+  #   out:
+  #   - bigwig_file
+
+  bam_to_bigwig_upstream:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
       bam_file: samtools_sort_index_after_dedup/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+      bigwig_filename:
+        source: samtools_sort_index_after_dedup/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_upstream.bigWig")
+      strand:
+        default: '+'
+    out:
+    - bigwig_file
+
+  bam_to_bigwig_downstream:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index_after_dedup/bam_bai_pair
+      chrom_length_file: chrom_length_file
+      mapped_reads_number:
+        source: star_aligner/uniquely_mapped_reads_number
+        valueFrom: $(-self)
+      bigwig_filename:
+        source: samtools_sort_index_after_dedup/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_downstream.bigWig")
+      strand:
+        default: '-'
     out:
     - bigwig_file
 
