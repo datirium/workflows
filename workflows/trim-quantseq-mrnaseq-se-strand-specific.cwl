@@ -250,6 +250,33 @@ outputs:
     doc: "GEEP: expression grouped by gene name"
     outputSource: group_geep_transcript_expression/genes_file
 
+  combined_gene_expression_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "HTSeq vs GEEP gene expression comparison"
+    doc: |
+      Merged by GeneId, Chrom, TxStart, TxEnd and Strand gene expression files
+      with reported and renamed TotalReads columns.
+    outputSource: feature_expression_merge/merged_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene Expression Comparison'
+        Title: 'HTSeq vs GEEP gene expression comparison (read counts)'
+
+  feature_expression_merge_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HTSeq vs GEEP gene expression comparison stdout log"
+    doc: "HTSeq vs GEEP gene expression comparison stdout log"
+    outputSource: feature_expression_merge/stdout_log
+
+  feature_expression_merge_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HTSeq vs GEEP gene expression comparison stderr log"
+    doc: "HTSeq vs GEEP gene expression comparison stderr log"
+    outputSource: feature_expression_merge/stderr_log
+
   # geep_common_tss_expression_file:
   #   type: File
   #   format: "http://edamontology.org/format_3475"
@@ -613,15 +640,6 @@ steps:
             glob: "common_tss_expression.tsv"
       baseCommand: ["Rscript", "process.R"]
 
-  # bam_to_bigwig:
-  #   run: ../tools/bam-bedgraph-bigwig.cwl
-  #   in:
-  #     bam_file: samtools_sort_index_after_dedup/bam_bai_pair
-  #     chrom_length_file: chrom_length_file
-  #     mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-  #   out:
-  #   - bigwig_file
-
   bam_to_bigwig_upstream:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
@@ -747,6 +765,26 @@ steps:
           outputBinding:
             glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
       baseCommand: ["bash", "-c"]
+
+  feature_expression_merge:
+    run: ../tools/feature-merge.cwl
+    in:
+      feature_files:
+        source:
+        - group_transcript_expression/gene_expression_file
+        - group_geep_transcript_expression/genes_file
+      feature_aliases:
+        default:
+        - "HTSeq"
+        - "GEEP"
+      mergeby:
+        default: ["GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
+      report:
+        default: "TotalReads"
+    out:
+    - merged_file
+    - stdout_log
+    - stderr_log
 
 
 $namespaces:
