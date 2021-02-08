@@ -3,13 +3,14 @@ class: Workflow
 
 
 requirements:
-  - class: SubworkflowFeatureRequirement
-  - class: StepInputExpressionRequirement
-  - class: InlineJavascriptRequirement
-    expressionLib:
-    - var get_root = function(basename) {
-          return basename.split('.').slice(0,1).join('.');
-      };
+- class: SubworkflowFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: MultipleInputFeatureRequirement
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var get_root = function(basename) {
+        return basename.split('.').slice(0,1).join('.');
+    };
 
 
 'sd:metadata':
