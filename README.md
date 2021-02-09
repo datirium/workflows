@@ -17,7 +17,7 @@ All the original BioWardrobe's [pipelines](https://genomebiology.biomedcentral.c
 To extend user interface (dynamic form) with extra input fields not required by a workflow ```'sd:metadata'``` field were introduced.
 It defines a list of workflow templates where ```inputs``` object is used for constructing and storing extra fields with an original workflow.
 
-### Example of 'metadata' template for user interface:
+### Example of 'metadata' template for user interface: 
 
 ```yaml
 cwlVersion: v1.0
