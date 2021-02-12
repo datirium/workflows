@@ -253,6 +253,27 @@ outputs:
     doc: "Calculated rpkm values, grouped by common TSS"
     outputSource: group_isoforms/common_tss_file
 
+  htseq_count_gene_expression_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "HTSeq: read counts grouped by gene_id"
+    doc: "HTSeq: read counts grouped by gene_id"
+    outputSource: htseq_count_gene_expression/feature_counts_report_file
+
+  htseq_count_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HTSeq: stdout log"
+    doc: "HTSeq: stdout log"
+    outputSource: htseq_count_gene_expression/stdout_log
+
+  htseq_count_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "HTSeq: stderr log"
+    doc: "HTSeq: stderr log"
+    outputSource: htseq_count_gene_expression/stderr_log
+
   get_stat_log:
     type: File?
     label: "YAML formatted combined log"
@@ -452,6 +473,29 @@ steps:
     out:
       - genes_file
       - common_tss_file
+
+  get_annotation_gtf:
+    run: ../tools/ucsc-genepredtogtf.cwl
+    in:
+      annotation_tsv_file: annotation_file
+    out:
+    - annotation_gtf_file
+
+  htseq_count_gene_expression:
+    run: ../tools/htseq-count.cwl
+    in:
+      alignment_bam_file: samtools_sort_index/bam_bai_pair
+      annotation_gtf_file: get_annotation_gtf/annotation_gtf_file
+      strand_specific:
+        default: "reverse"
+      feature_type:
+        default: "exon"
+      feature_id:
+        default: "gene_id"
+    out:
+    - feature_counts_report_file
+    - stdout_log
+    - stderr_log
 
   get_bam_statistics:
     run: ../tools/samtools-stats.cwl

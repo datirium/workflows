@@ -353,6 +353,15 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
+      class: File
 
 # ========================================================
 # trim-rnaseq-se-dutp
@@ -416,7 +425,15 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
-
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
+      class: File
 
 # ========================================================
 # trim-rnaseq-pe
@@ -485,6 +502,15 @@
       class: File
     insert_size_report:
       location: is_section.tsv
+      class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
       class: File
 
 # ========================================================
@@ -557,6 +583,15 @@
       class: File
     insert_size_report:
       location: is_section.tsv
+      class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
       class: File
 
 # ========================================================
@@ -1017,6 +1052,15 @@
     bam_statistics_report:
       location: upstream_sorted_bam_statistics_report.txt
       class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
+      class: File
 
 # ========================================================
 # rnaseq-pe-dutp-mitochondrial
@@ -1082,6 +1126,15 @@
       class: File
     insert_size_report:
       location: is_section.tsv
+      class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
       class: File
 
 # ========================================================
@@ -1455,6 +1508,15 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
+      class: File
 
 # ========================================================
 # rnaseq-pe
@@ -1517,6 +1579,15 @@
       class: File
     insert_size_report:
       location: is_section.tsv
+      class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
       class: File
 
 # ========================================================
@@ -1722,6 +1793,15 @@
     bam_statistics_report:
       location: upstream_bam_statistics_report.txt
       class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
+      class: File
 
 # ========================================================
 # rnaseq-pe-dutp
@@ -1787,6 +1867,15 @@
       class: File
     insert_size_report:
       location: is_section.tsv
+      class: File
+    htseq_count_gene_expression_file:
+      location: feature_counts_report.tsv
+      class: File
+    htseq_count_stdout_log:
+      location: feature_counts_stdout.log
+      class: File
+    htseq_count_stderr_log:
+      location: feature_counts_stderr.log
       class: File
 
 # ========================================================
