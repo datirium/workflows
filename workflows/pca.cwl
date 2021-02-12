@@ -156,7 +156,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/version/9.0/schemaorg-current-http.rdf
+- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 s:name: "PCA - Principal Component Analysis"
 label: "PCA - Principal Component Analysis"

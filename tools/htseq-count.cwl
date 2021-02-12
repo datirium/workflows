@@ -224,7 +224,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 label: "HTSeq: Analysing high-throughput sequencing data"
 s:name: "HTSeq: Analysing high-throughput sequencing data"

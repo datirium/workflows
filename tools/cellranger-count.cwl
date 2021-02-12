@@ -188,7 +188,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- http://schema.org/docs/schema_org_rdfa.html
+- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 label: "Cellranger count - generates single cell feature counts for a single library"
 s:name: "Cellranger count - generates single cell feature counts for a single library"
