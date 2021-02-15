@@ -94,6 +94,13 @@ outputs:
     doc: |
       Compressed folder with AltAnalyze ICGS results
 
+  expression_matrix_file:
+    type: File
+    outputSource: altanalyze_icgs/expression_matrix_file
+    label: "Expression matrix file from AltAnalyze ICGS"
+    doc: |
+      Expression matrix file from AltAnalyze ICGS
+
   altanalyze_icgs_stdout_log:
     type: File
     outputSource: altanalyze_icgs/stdout_log
@@ -123,6 +130,7 @@ steps:
       marker_pearson_cutoff: marker_pearson_cutoff
     out:
     - icgs_data
+    - expression_matrix_file
     - stdout_log
     - stderr_log
 

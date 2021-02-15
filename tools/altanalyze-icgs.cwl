@@ -111,6 +111,11 @@ outputs:
     outputBinding: 
       glob: "altanalyze/userdata/ICGS-NMF"
 
+  expression_matrix_file:
+    type: File
+    outputBinding:
+      glob: "altanalyze/userdata/ExpressionInput/exp.icgs.txt"
+
   stdout_log:
     type: stdout
 
