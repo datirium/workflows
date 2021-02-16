@@ -201,7 +201,7 @@ outputs:
         yAxisTitle: '-log10(pAdj)'
         colors: ["#b3de69"]
         height: 600
-        data: [$9, $13]
+        data: [$2, $9, $13]
 
   read_counts_file:
     type: File
