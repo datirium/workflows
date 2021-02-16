@@ -94,12 +94,12 @@ outputs:
     doc: |
       Compressed folder with AltAnalyze ICGS results
 
-  expression_matrix_file:
+  compressed_html_data_folder:
     type: File
-    outputSource: altanalyze_icgs/expression_matrix_file
-    label: "Expression matrix file from AltAnalyze ICGS"
+    outputSource: compress_html_data_folder/compressed_folder
+    label: "Compressed folder with CellBrowser formatted resutls"
     doc: |
-      Expression matrix file from AltAnalyze ICGS
+      Compressed folder with CellBrowser formatted resutls
 
   altanalyze_icgs_stdout_log:
     type: File
@@ -131,6 +131,8 @@ steps:
     out:
     - icgs_data
     - expression_matrix_file
+    - annotation_metadata_file
+    - cell_coordinates_file
     - stdout_log
     - stderr_log
 
@@ -138,6 +140,24 @@ steps:
     run: ../tools/tar-compress.cwl
     in:
       folder_to_compress: altanalyze_icgs/icgs_data
+    out:
+    - compressed_folder
+
+  cellbrowser_build:
+    run: ../tools/cellbrowser-build.cwl
+    in:
+      expression_matrix_file: altanalyze_icgs/expression_matrix_file
+      annotation_metadata_file: altanalyze_icgs/annotation_metadata_file
+      cell_coordinates_file: altanalyze_icgs/cell_coordinates_file
+    out:
+    - html_data
+    - stdout_log
+    - stderr_log
+
+  compress_html_data_folder:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: cellbrowser_build/html_data
     out:
     - compressed_folder
 

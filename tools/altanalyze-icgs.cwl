@@ -114,7 +114,17 @@ outputs:
   expression_matrix_file:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ExpressionInput/exp.icgs.txt"
+      glob: "altanalyze/userdata/ICGS-NMF/exp.icgs.txt"
+
+  annotation_metadata_file:
+    type: File
+    outputBinding:
+      glob: "altanalyze/userdata/ICGS-NMF/FinalGroups-CellTypesFull.txt"
+
+  cell_coordinates_file:
+    type: File
+    outputBinding:
+      glob: "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap-UMAP_coordinates.txt"
 
   stdout_log:
     type: stdout
