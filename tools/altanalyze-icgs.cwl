@@ -114,7 +114,7 @@ outputs:
   expression_matrix_file:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ICGS-NMF/exp.icgs.txt"
+      glob: "altanalyze/userdata/ExpressionInput/exp.icgs.txt"
 
   annotation_metadata_file:
     type: File
