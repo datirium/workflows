@@ -14,13 +14,11 @@ requirements:
   - entryname: cellbrowser.conf
     entry: |
       name = "cellbrowser"
-      priority = 10
-      tags = ["smartseq2"]
       shortLabel="CellBrowser"
-      exprMatrix="expr_matrix.tsv"
+      priority = 1
       geneIdType="auto"
+      exprMatrix="expr_matrix.tsv"
       meta="metadata.tsv"
-      enumFields = ["c1_cell_id"]
       coords=[
         {
           "file":"coordinates.tsv", 
@@ -28,6 +26,7 @@ requirements:
           "shortLabel":"Clustering"
         }
       ]
+      enumFields = ["barcode"]
       clusterField="cluster"
       labelField="label"
   - entryname: desc.conf
@@ -36,7 +35,7 @@ requirements:
       abstract = ""
       methods = ""
       biorxiv_url = ""
-      custom = {"sample barcode": ""}
+      custom = {}
 
 
 inputs:
@@ -159,7 +158,12 @@ s:creator:
         s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
-
+    - class: s:Organization
+      s:legalName: "Salomonis Research Lab"
+      s:member:
+      - class: s:Person
+        s:name: Stuart Hay
+        s:email: mailto:haysb91@gmail.com
 
 doc: |
   Converts AltAnalyze outputs into the data structure supported by UCSC CellBrowser
