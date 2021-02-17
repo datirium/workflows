@@ -104,6 +104,11 @@ outputs:
     outputBinding: 
       glob: "html_data"
 
+  index_html_file:
+    type: File
+    outputBinding:
+      glob: "html_data/index.html"
+
   stdout_log:
     type: stdout
 

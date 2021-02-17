@@ -97,9 +97,23 @@ outputs:
   compressed_html_data_folder:
     type: File
     outputSource: compress_html_data_folder/compressed_folder
-    label: "Compressed folder with CellBrowser formatted resutls"
+    label: "Compressed folder with CellBrowser formatted results"
     doc: |
-      Compressed folder with CellBrowser formatted resutls
+      Compressed folder with CellBrowser formatted results
+
+  html_data_folder:
+    type: Directory
+    outputSource: cellbrowser_build/html_data
+    label: "Folder with not compressed CellBrowser formatted results"
+    doc: |
+      Folder with not compressed CellBrowser formatted results
+
+  cellbrowser_report:
+    type: File
+    outputSource: cellbrowser_build/index_html_file
+    label: "CellBrowser formatted AltAnalyze ICGS report"
+    doc: |
+      CellBrowser formatted AltAnalyze ICGS report
 
   altanalyze_icgs_stdout_log:
     type: File
@@ -151,6 +165,7 @@ steps:
       cell_coordinates_file: altanalyze_icgs/cell_coordinates_file
     out:
     - html_data
+    - index_html_file
     - stdout_log
     - stderr_log
 
