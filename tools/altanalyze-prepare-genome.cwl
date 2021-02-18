@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/altanalyze:v0.0.4
+  dockerPull: biowardrobe2/altanalyze:v0.0.5
 
 
 inputs: 

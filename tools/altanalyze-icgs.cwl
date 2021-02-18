@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/altanalyze:v0.0.4
+  dockerPull: biowardrobe2/altanalyze:v0.0.5
 
 
 inputs:
@@ -37,7 +37,7 @@ inputs:
       mkdir ./altanalyze/userdata/
       cp ${FBC_MATRIX} ./altanalyze/userdata/raw_feature_bc_matrices_h5.h5
       python ./altanalyze/AltAnalyze.py --species ${SPECIES} \
-      --platform RNASeq --runICGS yes \
+      --platform RNASeq --runICGS yes --cellBrowser yes \
       --ChromiumSparseMatrix ./altanalyze/userdata/ --output ./altanalyze/userdata/ \
       --expname icgs ${@:2}
     inputBinding:
@@ -114,17 +114,22 @@ outputs:
   expression_matrix_file:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ExpressionInput/exp.icgs.txt"
+      glob: "altanalyze/userdata/ICGS-NMF/cellbrowser/exp.cellbrowser.txt"
 
   annotation_metadata_file:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ICGS-NMF/FinalGroups-CellTypesFull.txt"
+      glob: "altanalyze/userdata/ICGS-NMF/cellbrowser/FinalGroups-CellTypesFull.txt"
 
   cell_coordinates_file:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap-UMAP_coordinates.txt"
+      glob: "altanalyze/userdata/ICGS-NMF/cellbrowser/FinalMarkerHeatmap-UMAP_coordinates.txt"
+
+  cluster_marker_genes_file:
+    type: File
+    outputBinding:
+      glob: "altanalyze/userdata/ICGS-NMF/cellbrowser/markers.tsv"
 
   stdout_log:
     type: stdout

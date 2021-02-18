@@ -147,6 +147,7 @@ steps:
     - expression_matrix_file
     - annotation_metadata_file
     - cell_coordinates_file
+    - cluster_marker_genes_file
     - stdout_log
     - stderr_log
 
@@ -163,6 +164,7 @@ steps:
       expression_matrix_file: altanalyze_icgs/expression_matrix_file
       annotation_metadata_file: altanalyze_icgs/annotation_metadata_file
       cell_coordinates_file: altanalyze_icgs/cell_coordinates_file
+      cluster_marker_genes_file: altanalyze_icgs/cluster_marker_genes_file
     out:
     - html_data
     - index_html_file

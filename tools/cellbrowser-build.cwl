@@ -14,7 +14,7 @@ requirements:
   - entryname: cellbrowser.conf
     entry: |
       name = "cellbrowser"
-      shortLabel="CellBrowser"
+      shortLabel="cellbrowser"
       priority = 1
       geneIdType="auto"
       exprMatrix="expr_matrix.tsv"
@@ -26,9 +26,15 @@ requirements:
           "shortLabel":"Clustering"
         }
       ]
-      enumFields = ["barcode"]
-      clusterField="cluster"
-      labelField="label"
+      markers=[
+        {
+          "file":"markers.tsv",
+          "shortLabel":"Cluster-specific genes"
+        }
+      ]
+      enumFields = ["cell_ID"]
+      clusterField="Cluster"
+      labelField="Cell-Type-Prediction"
   - entryname: desc.conf
     entry: |
       title = "CellBrowser"
@@ -45,9 +51,9 @@ inputs:
     default: |
       #!/bin/bash
       cp $0 expr_matrix.tsv
-      echo -e "barcode\tcluster\tlabel" > metadata.tsv
-      cat $1 >> metadata.tsv
+      cp $1 metadata.tsv
       cp $2 coordinates.tsv
+      cp $3 markers.tsv
       cbBuild -o html_data
     inputBinding:
       position: 5
@@ -95,6 +101,22 @@ inputs:
       dimensionality reduction algorithm, but include multiple subsets and view of the cells,
       e.g. one coordinates file per tissue. Note, if R has changed your cell identifiers (e.g.
       by adding dots), you may be able to fix them by running cbTool metaCat.
+
+  cluster_marker_genes_file:
+    type: File
+    inputBinding:
+      position: 9
+    doc: |
+      The first column is the cluster name (from the cell annotation metadata file), the second
+      column contains the gene symbol (or Ensembl gene ID, which will automatically be mapped to
+      the gene symbol), and the third column is some numeric score (e.g. p-Value or FDR). You can
+      add as many other columns as you like with additional information about this gene. You can
+      also run cbMarkerAnnotate on this file to add information from various gene-centric databases
+      and link-outs to other resources to your existing table. See Annotate genes on how to add link
+      to external gene-databases (like Allan Brain Atlas or OMIM) to your marker genes. If you used
+      Seurat for your clustering, you can just provide the raw Seurat marker gene output. You can
+      also specify multiple files of cluster-specific marker genes, e.g. in case that you are also
+      doing differential gene expression analysis or have results from multiple algorithms.
 
 
 outputs:
