@@ -310,7 +310,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Called peaks 1"
         displayMode: "COLLAPSE"
         height: 40
@@ -327,7 +327,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Called peaks 2"
         displayMode: "COLLAPSE"
         height: 40

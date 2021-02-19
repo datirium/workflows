@@ -185,7 +185,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Above M-value cutoff peaks"
         height: 120
 
@@ -199,7 +199,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Below M-value cutoff peaks"
         height: 120
 
@@ -213,7 +213,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Unbiased peaks"
         height: 120
 

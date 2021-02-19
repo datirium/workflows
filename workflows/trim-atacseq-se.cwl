@@ -284,7 +284,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Narrow peaks"
         displayMode: "COLLAPSE"
         height: 120
@@ -299,7 +299,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Broad peaks"
         height: 120
 
@@ -327,7 +327,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Gapped peaks"
         height: 120
 

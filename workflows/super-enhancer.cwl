@@ -146,7 +146,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
+        type: 'annotation'
         name: "Super-enchancers"
         displayMode: "COLLAPSE"
         height: 40

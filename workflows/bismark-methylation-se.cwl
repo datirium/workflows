@@ -116,7 +116,7 @@ outputs:
     # - igvbrowser:
     #     tab: 'IGV Genome Browser'
     #     id: 'igvbrowser'
-    #     type: 'bed'
+    #     type: 'annotation'
     #     name: "Methylation statuses"
     #     height: 120
 
