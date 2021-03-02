@@ -53,6 +53,10 @@ outputs:
     label: "Filtered TSV file"
     doc: "Filtered by provided SQL query TSV file"
     outputSource: feature_select/filtered_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Filtering results'
+        Title: 'Filtered table'
 
   filtering_stdout_log:
     type: File
