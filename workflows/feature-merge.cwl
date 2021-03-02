@@ -106,7 +106,7 @@ s:name: "Gene expression merge - combines RPKM gene expression from several expe
 label: "Gene expression merge - combines RPKM gene expression from several experiments"
 s:alternateName: "Gene expression merge - combines RPKM gene expression from several experiments"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/fastqc.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/feature-merge.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

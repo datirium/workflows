@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-merge:v0.0.1
+  dockerPull: biowardrobe2/scidap-merge:v0.0.2
 
 
 inputs:

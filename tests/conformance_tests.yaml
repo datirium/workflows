@@ -2076,3 +2076,20 @@
     stderr_log:
       class: File
       location: cellranger_mkref_stderr.log
+
+# ========================================================
+# feature-select-sql
+# ========================================================
+
+- job: ./feature-select-sql-1.json
+  tool: ../workflows/feature-select-sql.cwl
+  output:
+    filtered_file:
+      class: File
+      location: custom_report_filtered.tsv
+    filtering_stdout_log:
+      class: File
+      location: sql_select_stdout.log
+    filtering_stderr_log:
+      class: File
+      location: sql_select_stderr.log

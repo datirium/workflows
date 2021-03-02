@@ -1,0 +1,11 @@
+{
+  "alias": "feature-select",
+  "feature_file": {
+    "class": "File",
+    "format": "http://edamontology.org/format_3475",
+    "location": "./data/dm3_chr4/generated_inputs/deseq/custom_report.tsv"
+  },
+  "sql_query": "'-LOG10(pval)' >= 1 AND Chrom LIKE ('%chr1%')",
+  "columns": "Chrom, TxStart, TxEnd, GeneId, log2FoldChange, Strand",
+  "header": true
+}
