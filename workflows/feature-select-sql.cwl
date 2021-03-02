@@ -9,6 +9,7 @@ requirements:
 'sd:upstream':
   sample_to_filter:
     - "deseq.cwl"
+    - "deseq-lrt.cwl"
 
 
 inputs:
