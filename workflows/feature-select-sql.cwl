@@ -3,13 +3,22 @@ class: Workflow
 
 
 requirements:
-- class: InlineJavascriptRequirement
+  - class: SubworkflowFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
 
 
 'sd:upstream':
   sample_to_filter:
     - "deseq.cwl"
     - "deseq-lrt.cwl"
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-se.cwl"
+    - "trim-atacseq-pe.cwl"
 
 
 inputs:
@@ -20,13 +29,24 @@ inputs:
     sd:preview:
       position: 1
 
-  feature_file:
-    type: File
+  diff_expr_file:
+    type: File?
+    default: null
     format: "http://edamontology.org/format_3475"
     label: "Input file to filter"
-    doc: "TSV/CSV file to filter. Should have header"
+    doc: |
+      Output from deseq.cwl or deseq-lrt.cwl pipelines.
     'sd:upstreamSource': "sample_to_filter/diff_expr_file"
     'sd:localLabel': true
+
+  macs2_called_peaks:
+    type: File?
+    default: null
+    format: "http://edamontology.org/format_3475"
+    label: "Input file to filter"
+    doc: |
+      Output from any of the ChiP-Seq like pipelines
+    'sd:upstreamSource': "sample_to_filter/macs2_called_peaks"
 
   sql_query:
     type: string
@@ -79,7 +99,9 @@ steps:
   feature_select:
     run: ../tools/feature-select-sql.cwl
     in:
-      feature_file: feature_file
+      feature_file:
+        source: [diff_expr_file, macs2_called_peaks]
+        valueFrom: $(self[0]?self[0]:self[1])
       sql_query: sql_query
       columns: columns
       header: header
