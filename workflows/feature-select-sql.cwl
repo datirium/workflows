@@ -50,6 +50,9 @@ inputs:
     type: string
     label: "Filtering parameters"
     doc: "Filtering parameters to be appended after 'SELECT * FROM _ WHERE' statement"
+    'sd:filtering':
+    - diff_expr_file
+    - iaintersect_result
 
   header:
     type: boolean?
