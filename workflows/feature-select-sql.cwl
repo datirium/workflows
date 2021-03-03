@@ -56,12 +56,16 @@ inputs:
     default: false
     label: "Print header line in the output file"
     doc: "Print header line in the output file"
+    'sd:layout':
+      advanced: true
 
   columns:
     type: string?
     default: "*"
     label: "Comma-separated list of column names to print"
     doc: "Comma-separated list of column names to print. Default: all"
+    'sd:layout':
+      advanced: true
 
 
 outputs:
