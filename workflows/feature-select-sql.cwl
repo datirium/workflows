@@ -34,19 +34,17 @@ inputs:
     default: null
     format: "http://edamontology.org/format_3475"
     label: "Input file to filter"
-    doc: |
-      Output from deseq.cwl or deseq-lrt.cwl pipelines.
+    doc: "Output from any DESeq like pipeline"
     'sd:upstreamSource': "sample_to_filter/diff_expr_file"
     'sd:localLabel': true
 
-  macs2_called_peaks:
+  iaintersect_result:
     type: File?
     default: null
     format: "http://edamontology.org/format_3475"
     label: "Input file to filter"
-    doc: |
-      Output from any of the ChiP-Seq like pipelines
-    'sd:upstreamSource': "sample_to_filter/macs2_called_peaks"
+    doc: "Output from any ChiP-Seq like pipeline"
+    'sd:upstreamSource': "sample_to_filter/iaintersect_result"
 
   sql_query:
     type: string
@@ -100,8 +98,8 @@ steps:
     run: ../tools/feature-select-sql.cwl
     in:
       feature_file:
-        source: [diff_expr_file, macs2_called_peaks]
-        valueFrom: $(self[0]?self[0]:self[1])
+        source: [diff_expr_file, iaintersect_result]
+        valueFrom: $(self[0] || self[1])
       sql_query: sql_query
       columns: columns
       header: header
