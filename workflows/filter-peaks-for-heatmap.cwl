@@ -161,4 +161,4 @@ doc: |
   ========================================================================================
 
   Tool filters output from any ChIP/ATAC pipeline to create a file with regions of interest
-  for Tag Density Profile Analyses.
+  for Tag Density Profile Analyses. Peaks with duplicated coordinates are discarded.
