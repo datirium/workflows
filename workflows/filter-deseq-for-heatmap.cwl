@@ -105,9 +105,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Filter differentially epxressed genes from DESeq for Tag Density Profile Analyses"
-label: "Filter differentially epxressed genes from DESeq for Tag Density Profile Analyses"
-s:alternateName: "Filter differentially epxressed genes from DESeq for Tag Density Profile Analyses"
+s:name: "Filter differentially expressed genes from DESeq for Tag Density Profile Analyses"
+label: "Filter differentially expressed genes from DESeq for Tag Density Profile Analyses"
+s:alternateName: "Filter differentially expressed genes from DESeq for Tag Density Profile Analyses"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-deseq-for-heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -145,7 +145,7 @@ s:creator:
 
 
 doc: |
-  Filters differentially epxressed genes from DESeq for Tag Density Profile Analyses
+  Filters differentially expressed genes from DESeq for Tag Density Profile Analyses
   ==================================================================================
 
   Tool filters output from DESeq pipeline run for genes to create a file with regions
