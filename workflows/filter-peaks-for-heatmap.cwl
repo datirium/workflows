@@ -117,9 +117,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Filter ChIP/ATAC peaks for Tag Density Profile Analyses"
-label: "Filter ChIP/ATAC peaks for Tag Density Profile Analyses"
-s:alternateName: "Filter ChIP/ATAC peaks for Tag Density Profile Analyses"
+s:name: "Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment analyses"
+label: "Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment analyses"
+s:alternateName: "Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment analyses"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-deseq-for-heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -157,8 +157,8 @@ s:creator:
 
 
 doc: |
-  Filters ChIP/ATAC peaks with the neatest genes assigned for Tag Density Profile Analyses
-  ========================================================================================
+  Filters ChIP/ATAC peaks with the neatest genes assigned for Tag Density Profile or Motif Enrichment analyses
+  ============================================================================================================
 
-  Tool filters output from any ChIP/ATAC pipeline to create a file with regions of interest
-  for Tag Density Profile Analyses. Peaks with duplicated coordinates are discarded.
+  Tool filters output from any ChIP/ATAC pipeline to create a file with regions of interest for Tag Density
+  Profile or Motif Enrichment analyses. Peaks with duplicated coordinates are discarded.
