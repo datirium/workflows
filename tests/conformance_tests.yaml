@@ -2093,3 +2093,20 @@
     filtering_stderr_log:
       class: File
       location: sql_select_stderr.log
+
+# ========================================================
+# filter-peak-for-heatmap
+# ========================================================
+
+- job: ./filter-peak-for-heatmap-1.json
+  tool: ../workflows/filter-peak-for-heatmap.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads_filtered.tsv
+    filtering_stdout_log:
+      class: File
+      location: sql_select_stdout.log
+    filtering_stderr_log:
+      class: File
+      location: sql_select_stderr.log

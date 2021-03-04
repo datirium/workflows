@@ -11,7 +11,12 @@ requirements:
 
 'sd:upstream':
   sample_to_filter:
-    - "deseq.cwl"
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
+    - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "trim-atacseq-se.cwl"
+    - "trim-atacseq-pe.cwl"
 
 
 inputs:
@@ -25,9 +30,9 @@ inputs:
   feature_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "DESeq experiment run for genes"
-    doc: "TSV file with differentially expressed genes from DESeq pipeline"
-    'sd:upstreamSource': "sample_to_filter/diff_expr_file"
+    label: "ChIP/ATAC experiment"
+    doc: "Called peaks file in TSV format with the nearest genes assigned"
+    'sd:upstreamSource': "sample_to_filter/iaintersect_result"
     'sd:localLabel': true
 
   sql_query:
@@ -36,8 +41,8 @@ inputs:
     doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
-        columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "log2FoldChange", "pvalue", "padj"]
-        types:   ["string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number"]
+        columns: ["refseq_id", "gene_id", "txStart", "txEnd", "strand", "chrom", "start", "end", "length", "abssummit", "pileup", "log10p", "foldenrich", "log10q", "region"]
+        types:   ["string", "string", "number", "number","string", "string","number", "number", "number", "number", "number", "number", "number", "number", "string"]
 
   header:
     type: boolean?
@@ -51,13 +56,12 @@ inputs:
     type:
     - "null"
     - string[]
-    default: ["Chrom AS chrom", "TxStart AS start", "TxEnd AS end", "GeneId AS name", "log2FoldChange AS score", "Strand AS strand"]
+    default: ["chrom", "start", "end", "chrom || '-' || start || '-' || end AS name"]
     label: "Columns to print"
     doc: |
       List of columns to print (SELECT parameters for SQL query).
-      Need to have format [chrom start end name score strand]. No header.
-      4th columns should be unique, so we use GeneId for that.
-      5th columns will be ignored by Tag Density pipeline, so we use log2FoldChange.
+      Need to have format [chrom start end name]. No header.
+      4th columns should be unique, so we use a combination of chrom-start-end.
     'sd:layout':
       advanced: true
 
@@ -67,8 +71,8 @@ outputs:
   filtered_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "Filtered differentially expressed genes"
-    doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
+    label: "Filtered called peaks with the nearest genes assigned"
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end name]"
     outputSource: feature_select/filtered_file
     'sd:visualPlugins':
     - syncfusiongrid:
@@ -99,7 +103,7 @@ steps:
       sql_query: sql_query
       columns:
         source: columns
-        valueFrom: $(self.join(", "))
+        valueFrom: $("DISTINCT " + self.join(", "))   # multiple peaks can have the same coordinates but different abssummit, so we need to use DISTINCT
       header: header
     out:
     - filtered_file
@@ -113,9 +117,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Filter differentially expressed genes from DESeq for Tag Density Profile Analyses"
-label: "Filter differentially expressed genes from DESeq for Tag Density Profile Analyses"
-s:alternateName: "Filter differentially expressed genes from DESeq for Tag Density Profile Analyses"
+s:name: "Filter ChIP/ATAC peaks for Tag Density Profile Analyses"
+label: "Filter ChIP/ATAC peaks for Tag Density Profile Analyses"
+s:alternateName: "Filter ChIP/ATAC peaks for Tag Density Profile Analyses"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-deseq-for-heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -153,8 +157,8 @@ s:creator:
 
 
 doc: |
-  Filters differentially expressed genes from DESeq for Tag Density Profile Analyses
-  ==================================================================================
+  Filters ChIP/ATAC peaks with the neatest genes assigned for Tag Density Profile Analyses
+  ========================================================================================
 
-  Tool filters output from DESeq pipeline run for genes to create a file with regions
-  of interest for Tag Density Profile Analyses.
+  Tool filters output from any ChIP/ATAC pipeline to create a file with regions of interest
+  for Tag Density Profile Analyses.
