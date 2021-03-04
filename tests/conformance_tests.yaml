@@ -2078,11 +2078,11 @@
       location: cellranger_mkref_stderr.log
 
 # ========================================================
-# feature-select-sql
+# filter-deseq-for-heatmap
 # ========================================================
 
-- job: ./feature-select-sql-1.json
-  tool: ../workflows/feature-select-sql.cwl
+- job: ./filter-deseq-for-heatmap-1.json
+  tool: ../workflows/filter-deseq-for-heatmap.cwl
   output:
     filtered_file:
       class: File

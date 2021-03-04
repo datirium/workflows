@@ -1,0 +1,9 @@
+{
+  "alias": "filter",
+  "feature_file": {
+    "class": "File",
+    "format": "http://edamontology.org/format_3475",
+    "location": "./data/dm3_chr4/generated_inputs/deseq/custom_report.tsv"
+  },
+  "sql_query": "pvalue < 0.05"
+}

@@ -12,13 +12,6 @@ requirements:
 'sd:upstream':
   sample_to_filter:
     - "deseq.cwl"
-    - "deseq-lrt.cwl"
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-se.cwl"
-    - "trim-chipseq-pe.cwl"
-    - "trim-atacseq-se.cwl"
-    - "trim-atacseq-pe.cwl"
 
 
 inputs:
@@ -29,44 +22,36 @@ inputs:
     sd:preview:
       position: 1
 
-  diff_expr_file:
-    type: File?
-    default: null
+  feature_file:
+    type: File
     format: "http://edamontology.org/format_3475"
-    label: "Input file to filter"
-    doc: "Output from any DESeq like pipeline"
+    label: "DESeq experiment run for genes"
+    doc: "TSV file with differentially expressed genes from DESeq pipeline"
     'sd:upstreamSource': "sample_to_filter/diff_expr_file"
     'sd:localLabel': true
 
-  iaintersect_result:
-    type: File?
-    default: null
-    format: "http://edamontology.org/format_3475"
-    label: "Input file to filter"
-    doc: "Output from any ChiP-Seq like pipeline"
-    'sd:upstreamSource': "sample_to_filter/iaintersect_result"
-
   sql_query:
     type: string
-    label: "Filtering parameters (or WHERE parameters for SQL query)"
-    doc: "Filtering parameters to be appended after 'SELECT * FROM _ WHERE' statement"
+    label: "Filtering parameters"
+    doc: "Filtering parameters (or WHERE parameters for SQL query)"
     'sd:filtering':
-    - diff_expr_file
-    - iaintersect_result
+      params:
+        columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "log2FoldChange", "pvalue", "padj"]
+        types:   ["string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number"]
 
   header:
     type: boolean?
     default: false
-    label: "Print header line in the output file"
+    label: "Include header line"
     doc: "Print header line in the output file"
     'sd:layout':
       advanced: true
 
   columns:
     type: string?
-    default: "*"
-    label: "Comma-separated list of column names to print (or SELECT parameters for SQL query)"
-    doc: "Comma-separated list of column names to print. Default: all"
+    default: "Chrom, TxStart, TxEnd, GeneId, log2FoldChange, Strand"
+    label: "Columns to print"
+    doc: "List of columns to print (or SELECT parameters for SQL query). Default: *"
     'sd:layout':
       advanced: true
 
@@ -75,9 +60,9 @@ outputs:
 
   filtered_file:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Filtered TSV file"
-    doc: "Filtered by provided SQL query TSV file"
+    format: "http://edamontology.org/format_3003"
+    label: "Filtered differentially expressed genes"
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
     outputSource: feature_select/filtered_file
     'sd:visualPlugins':
     - syncfusiongrid:
@@ -104,9 +89,7 @@ steps:
   feature_select:
     run: ../tools/feature-select-sql.cwl
     in:
-      feature_file:
-        source: [diff_expr_file, iaintersect_result]
-        valueFrom: $(self[0] || self[1])
+      feature_file: feature_file
       sql_query: sql_query
       columns: columns
       header: header
@@ -122,11 +105,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Feature select - filters TSV/CSV files based on the provided SQL query parameters"
-label: "Feature select - filters TSV/CSV files based on the provided SQL query parameters"
-s:alternateName: "Feature select - filters TSV/CSV files based on the provided SQL query parameters"
+s:name: "Filter differentially epxressed genes from DESeq for Tag Density Profile Analyses"
+label: "Filter differentially epxressed genes from DESeq for Tag Density Profile Analyses"
+s:alternateName: "Filter differentially epxressed genes from DESeq for Tag Density Profile Analyses"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/feature-select-sql.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-deseq-for-heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -162,14 +145,8 @@ s:creator:
 
 
 doc: |
-  Feature select - filters TSV/CSV files based on the provided SQL query parameters
-  =================================================================================
+  Filters differentially epxressed genes from DESeq for Tag Density Profile Analyses
+  ==================================================================================
 
-  Tool filters input TSV/CSV file based on the provided SQL query.
-  Value set in sql_query parameter will be appended to the
-  "SELECT * FROM raw_data WHERE". Column names in sql_query are case
-  insensitive. Format of the input files is identified based on file
-  extension
-  *.csv - CSV
-  *.tsv - TSV
-  Otherwise used CSV by default. Output is always saved in TSV format.
+  Tool filters output from DESeq pipeline run for genes to create a file with regions
+  of interest for Tag Density Profile Analyses.
