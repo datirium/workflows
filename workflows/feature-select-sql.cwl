@@ -48,7 +48,7 @@ inputs:
 
   sql_query:
     type: string
-    label: "Filtering parameters"
+    label: "Filtering parameters (or WHERE parameters for SQL query)"
     doc: "Filtering parameters to be appended after 'SELECT * FROM _ WHERE' statement"
     'sd:filtering':
     - diff_expr_file
