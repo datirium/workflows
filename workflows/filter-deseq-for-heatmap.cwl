@@ -33,7 +33,7 @@ inputs:
   sql_query:
     type: string
     label: "Filtering parameters"
-    doc: "Filtering parameters (or WHERE parameters for SQL query)"
+    doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
         columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "log2FoldChange", "pvalue", "padj"]
@@ -48,10 +48,12 @@ inputs:
       advanced: true
 
   columns:
-    type: string?
-    default: "Chrom, TxStart, TxEnd, GeneId, log2FoldChange, Strand"
+    type:
+    - "null"
+    - string[]
+    default: ["Chrom", "TxStart", "TxEnd", "GeneId", "log2FoldChange", "Strand"]
     label: "Columns to print"
-    doc: "List of columns to print (or SELECT parameters for SQL query). Default: *"
+    doc: "List of columns to print (SELECT parameters for SQL query)"
     'sd:layout':
       advanced: true
 
@@ -91,7 +93,9 @@ steps:
     in:
       feature_file: feature_file
       sql_query: sql_query
-      columns: columns
+      columns:
+        source: columns
+        valueFrom: $(self.join(", "))
       header: header
     out:
     - filtered_file
