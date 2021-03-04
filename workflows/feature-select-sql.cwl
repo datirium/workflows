@@ -65,7 +65,7 @@ inputs:
   columns:
     type: string?
     default: "*"
-    label: "Comma-separated list of column names to print"
+    label: "Comma-separated list of column names to print (or WHERE parameters for SQL query)"
     doc: "Comma-separated list of column names to print. Default: all"
     'sd:layout':
       advanced: true
