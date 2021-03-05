@@ -2095,11 +2095,11 @@
       location: sql_select_stderr.log
 
 # ========================================================
-# filter-peak-for-heatmap
+# filter-peaks-for-heatmap
 # ========================================================
 
-- job: ./filter-peak-for-heatmap-1.json
-  tool: ../workflows/filter-peak-for-heatmap.cwl
+- job: ./filter-peaks-for-heatmap-1.json
+  tool: ../workflows/filter-peaks-for-heatmap.cwl
   output:
     filtered_file:
       class: File

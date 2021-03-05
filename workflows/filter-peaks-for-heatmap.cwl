@@ -121,7 +121,7 @@ s:name: "Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment anal
 label: "Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment analyses"
 s:alternateName: "Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment analyses"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-deseq-for-heatmap.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-peaks-for-heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
