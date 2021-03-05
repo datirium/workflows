@@ -45,7 +45,26 @@ inputs:
       Aliases for RNA-Seq experiments to be used as the names for the reported
       columns in the merged file. Order corresponds to the rpkm_genes input
     'sd:upstreamSource': "rnaseq_sample/alias"
-    'sd:localLabel': true
+
+  merge_by_columns:
+    type:
+    - "null"
+    - string[]
+    default: ["GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
+    label: "Columns to merge experiments by"
+    doc: |
+      Column names to merge feature files by.
+    'sd:layout':
+      advanced: true
+
+  report_columns:
+    type: string?
+    default: "Rpkm"
+    label: "Column to report as unique"
+    doc: |
+      Column name to be reported in the merged file as unique.
+    'sd:layout':
+      advanced: true
 
 
 outputs:
@@ -55,26 +74,26 @@ outputs:
     label: "Merged gene expression file"
     format: "http://edamontology.org/format_3475"
     doc: |
-      Merged by GeneId, Chrom, TxStart, TxEnd and Strand gene expression files
-      with reported and renamed Rpkm columns.
+      Merged by merge_by_columns gene expression file
+      with reported and renamed report_columns.
     outputSource: feature_merge/merged_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'RPKM Gene Expression'
-        Title: 'Merged RPKM Gene Expression Results'
+        tab: 'Merged Gene Expression'
+        Title: 'Merged Gene Expression'
 
   feature_merge_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "Gene expression merge stdout log"
-    doc: "Gene expression merge stdout log"
+    label: "Merging stdout log"
+    doc: "Merging stdout log"
     outputSource: feature_merge/stdout_log
 
   feature_merge_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "Gene expression merge stderr log"
-    doc: "Gene expression merge stderr log"
+    label: "Merging stderr log"
+    doc: "Merging stderr log"
     outputSource: feature_merge/stderr_log
 
 
@@ -85,10 +104,8 @@ steps:
     in:
       feature_files: rpkm_genes
       feature_aliases: sample_names
-      mergeby:
-        default: ["GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
-      report:
-        default: "Rpkm"
+      mergeby: merge_by_columns
+      report: report_columns
     out:
     - merged_file
     - stdout_log
@@ -101,9 +118,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Gene expression merge - combines RPKM gene expression from several experiments"
-label: "Gene expression merge - combines RPKM gene expression from several experiments"
-s:alternateName: "Gene expression merge - combines RPKM gene expression from several experiments"
+s:name: "Gene expression merge - combines gene expression from several experiments"
+label: "Gene expression merge - combines gene expression from several experiments"
+s:alternateName: "Gene expression merge - combines gene expression from several experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/feature-merge.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -141,9 +158,10 @@ s:creator:
 
 
 doc: |
-  Gene expression merge - combines RPKM gene expression from several experiments
-  ===================================================================================
+  Gene expression merge - combines gene expression from several experiments
+  =========================================================================
 
-  Workflows merges RPKM gene expression from several experiments based on the values
-  from GeneId, Chrom, TxStart, TxEnd and Strand columns. Reported RPKM columns are
-  renamed based on the experiments names.
+  Workflows merges RPKM (by default) gene expression from several
+  experiments based on the values from GeneId, Chrom, TxStart, TxEnd and
+  Strand columns (by default). Reported unique columns are renamed based on
+  the experiments names.
