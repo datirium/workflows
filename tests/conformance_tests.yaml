@@ -2104,12 +2104,6 @@
     filtered_file:
       class: File
       location: chr4_100_mapped_reads_filtered.tsv
-    bambai_pair:
-      location: chr4_100_mapped_reads.Aligned.out.bam
-      class: File
-      secondaryFiles:
-      - location: chr4_100_mapped_reads.Aligned.out.bam.bai
-        class: File    
     filtering_stdout_log:
       class: File
       location: sql_select_stdout.log

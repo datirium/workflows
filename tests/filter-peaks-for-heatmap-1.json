@@ -5,10 +5,5 @@
     "format": "http://edamontology.org/format_3475",
     "location": "./data/dm3_chr4/generated_inputs/iaintersect/chr4_100_mapped_reads.Aligned.out_macs_peaks_iaintersect.tsv"
   },
-  "alignment_file": {
-    "class": "File",
-    "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
-    "format": "http://edamontology.org/format_2572"
-  },
   "sql_query": "length > 50000"
 }
