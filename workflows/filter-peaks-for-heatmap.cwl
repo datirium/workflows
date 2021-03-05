@@ -35,14 +35,14 @@ inputs:
     'sd:upstreamSource': "sample_to_filter/iaintersect_result"
     'sd:localLabel': true
 
-  alignment_file:
-    type: File
-    secondaryFiles:
-    - .bai
-    format: "http://edamontology.org/format_2572"
-    label: "ChIP/ATAC experiment"
-    doc: "Coordinate sorted BAM and BAI index files"
-    'sd:upstreamSource': "sample_to_filter/bambai_pair"
+  # alignment_file:
+  #   type: File
+  #   secondaryFiles:
+  #   - .bai
+  #   format: "http://edamontology.org/format_2572"
+  #   label: "ChIP/ATAC experiment"
+  #   doc: "Coordinate sorted BAM and BAI index files"
+  #   'sd:upstreamSource': "sample_to_filter/bambai_pair"
 
   sql_query:
     type: string
@@ -88,12 +88,12 @@ outputs:
         tab: 'Filtering results'
         Title: 'Filtered table'
 
-  bambai_pair:
-    type: File
-    format: "http://edamontology.org/format_2572"
-    label: "Not changed coordinate sorted BAM and BAI index files"
-    doc: "Not changed coordinate sorted BAM and BAI index files"
-    outputSource: alignment_file
+  # bambai_pair:
+  #   type: File
+  #   format: "http://edamontology.org/format_2572"
+  #   label: "Not changed coordinate sorted BAM and BAI index files"
+  #   doc: "Not changed coordinate sorted BAM and BAI index files"
+  #   outputSource: alignment_file
 
   filtering_stdout_log:
     type: File
