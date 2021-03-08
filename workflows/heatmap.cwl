@@ -51,9 +51,7 @@ inputs:
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: |
-      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
-       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    label: "Regions of interest experiment or file"
     doc: |
       "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
        [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
