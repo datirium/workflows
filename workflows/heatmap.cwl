@@ -20,6 +20,8 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+  regions_sample:
+    - "filter-peaks-for-heatmap.cwl"
 
 
 inputs:
@@ -55,6 +57,7 @@ inputs:
     doc: |
       "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
        [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    'sd:upstreamSource': "regions_sample/filtered_file"
 
   recentering:
     type:
