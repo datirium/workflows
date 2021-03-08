@@ -58,6 +58,7 @@ inputs:
       "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
        [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
     'sd:upstreamSource': "regions_sample/filtered_file"
+    'sd:localLabel': true
 
   recentering:
     type:
