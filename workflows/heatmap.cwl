@@ -22,6 +22,7 @@ requirements:
     - "trim-atacseq-pe.cwl"
   regions_sample:
     - "filter-peaks-for-heatmap.cwl"
+    - "filter-deseq-for-heatmap.cwl"
 
 
 inputs:
