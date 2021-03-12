@@ -1,0 +1,24 @@
+{
+    "alias": "alias",
+    "alignment_files": [
+        {
+            "class": "File",
+            "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
+            "format": "http://edamontology.org/format_2572"
+        },
+        {
+            "class": "File",
+            "location": "./data/dm3_chr4/generated_inputs/bam_bai/chr4_100_mapped_reads.Aligned.out.bam",
+            "format": "http://edamontology.org/format_2572"
+        }
+    ],
+    "alignment_names": [
+        "sample 1 alias",
+        "sample 2 alias"
+    ],
+    "intervals_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/bed/chr4_100_mapped_reads.Aligned.out.bed",
+        "format": "http://edamontology.org/format_3003"
+    }
+}

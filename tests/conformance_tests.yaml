@@ -2110,3 +2110,27 @@
     filtering_stderr_log:
       class: File
       location: sql_select_stderr.log
+
+# ========================================================
+# bedtools-multicov
+# ========================================================
+
+- job: ./bedtools-multicov-1.json
+  tool: ../workflows/bedtools-multicov.cwl
+  output:
+    overlap_report_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.tsv
+    overlap_stderr_log:
+      class: File
+      location: bedtools_multicov_stderr.log
+
+- job: ./bedtools-multicov-2.json
+  tool: ../workflows/bedtools-multicov.cwl
+  output:
+    overlap_report_file:
+      class: File
+      location: chr4_100_mapped_reads.Aligned.out.tsv
+    overlap_stderr_log:
+      class: File
+      location: bedtools_multicov_stderr.log
