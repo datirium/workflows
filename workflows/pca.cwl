@@ -81,17 +81,6 @@ inputs:
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
 
-  target_column:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "Rpkm"
-      - "TotalReads"
-    default: "Rpkm"
-    label: "Target column to be used by PCA"
-    doc: "Target column name to be used by PCA"
-
   genelist_file:
     type: File?
     format: "http://edamontology.org/format_2330"
@@ -226,7 +215,8 @@ steps:
           }
       expression_aliases: expression_aliases
       genelist_file: genelist_file
-      target_column: target_column
+      target_column:
+        default: "Rpkm"
     out:
     - pca1_vs_pca2_plot
     - pca1_vs_pca2_plot_pdf

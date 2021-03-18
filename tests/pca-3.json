@@ -96,6 +96,5 @@
       }      
     ],
     "group_by": "common tss",
-    "target_column": "TotalReads",
     "alias": "alias"
   }

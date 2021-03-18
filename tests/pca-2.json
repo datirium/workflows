@@ -32,6 +32,5 @@
       }
     ],
     "group_by": "genes",
-    "target_column": "TotalReads",
     "alias": "alias"
   }
