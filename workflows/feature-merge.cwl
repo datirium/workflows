@@ -3,7 +3,10 @@ class: Workflow
 
 
 requirements:
-- class: InlineJavascriptRequirement
+  - class: SubworkflowFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
 
 
 'sd:upstream':
@@ -29,14 +32,36 @@ inputs:
     sd:preview:
       position: 1
 
+  rpkm_isoforms:
+    type:
+    - "null"
+    - File[]
+    default: null
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments"
+    doc: "CSV/TSV file with RPKM grouped by isoform"
+    'sd:upstreamSource': "rnaseq_sample/rpkm_isoforms"
+    'sd:localLabel': true
+
   rpkm_genes:
-    type: File[]
+    type:
+    - "null"
+    - File[]
+    default: null
     format: "http://edamontology.org/format_3475"
     label: "RNA-Seq experiments"
-    doc: |
-      CSV/TSV file with RPKM grouped by gene name
+    doc: "CSV/TSV file with RPKM grouped by gene"
     'sd:upstreamSource': "rnaseq_sample/rpkm_genes"
-    'sd:localLabel': true
+
+  rpkm_common_tss:
+    type:
+    - "null"
+    - File[]
+    default: null
+    format: "http://edamontology.org/format_3475"
+    label: "RNA-Seq experiments"
+    doc: "CSV/TSV file with RPKM grouped by common TSS"
+    'sd:upstreamSource': "rnaseq_sample/rpkm_common_tss"
 
   sample_names:
     type: string[]
@@ -46,23 +71,22 @@ inputs:
       columns in the merged file. Order corresponds to the rpkm_genes input
     'sd:upstreamSource': "rnaseq_sample/alias"
 
+  group_by:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["isoforms", "genes", "common tss"]
+    default: "genes"
+    label: "Group by"
+    doc: "Grouping method for features: isoforms, genes or common tss"
+
   merge_by_columns:
     type:
     - "null"
     - string[]
-    default: ["GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
+    default: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
     label: "Columns to merge experiments by"
-    doc: |
-      Column names to merge feature files by.
-    'sd:layout':
-      advanced: true
-
-  report_columns:
-    type: string?
-    default: "Rpkm"
-    label: "Column to report as unique"
-    doc: |
-      Column name to be reported in the merged file as unique.
+    doc: "Column names to merge feature files by"
     'sd:layout':
       advanced: true
 
@@ -71,16 +95,15 @@ outputs:
 
   merged_file:
     type: File
-    label: "Merged gene expression file"
+    label: "Merged feature expression file"
     format: "http://edamontology.org/format_3475"
     doc: |
-      Merged by merge_by_columns gene expression file
-      with reported and renamed report_columns.
+      Merged by merge_by_columns feature expression file
     outputSource: feature_merge/merged_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Merged Gene Expression'
-        Title: 'Merged Gene Expression'
+        tab: 'Merged Feature Expression'
+        Title: 'Merged Feature Expression'
 
   feature_merge_stdout_log:
     type: File
@@ -102,10 +125,20 @@ steps:
   feature_merge:
     run: ../tools/feature-merge.cwl
     in:
-      feature_files: rpkm_genes
+      feature_files:
+        source: [group_by, rpkm_isoforms, rpkm_genes, rpkm_common_tss]
+        valueFrom: |
+          ${
+              if (self[0] == "isoforms") {
+                return self[1];
+              } else if (self[0] == "genes") {
+                return self[2];
+              } else {
+                return self[3];
+              }
+          }
       feature_aliases: sample_names
       mergeby: merge_by_columns
-      report: report_columns
     out:
     - merged_file
     - stdout_log

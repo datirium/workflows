@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-merge:v0.0.2
+  dockerPull: biowardrobe2/scidap-merge:v0.0.3
 
 
 inputs:
@@ -43,15 +43,7 @@ inputs:
       prefix: "--mergeby"
     doc: |
       Column names to merge feature files by.
-      Default: GeneId, Chrom, TxStart, TxEnd, Strand
-
-  report:
-    type: string?
-    inputBinding:
-      prefix: "--report"
-    doc: |
-      Column name to be reported in the merged file.
-      Default: Rpkm
+      Default: RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
 
   output_prefix:
     type: string?
@@ -146,7 +138,7 @@ doc: |
 s:about: |
   usage: run_merge.R
         [-h] -f FEATURES [FEATURES ...] [-a [ALIASES [ALIASES ...]]]
-        [-m [MERGEBY [MERGEBY ...]]] [-r REPORT] [-o OUTPUT]
+        [-m [MERGEBY [MERGEBY ...]]] [-o OUTPUT]
 
   Merge feature files based on the specified columns
 
@@ -155,15 +147,12 @@ s:about: |
     -f FEATURES [FEATURES ...], --features FEATURES [FEATURES ...]
                           CSV/TSV feature files to be merged
     -a [ALIASES [ALIASES ...]], --aliases [ALIASES [ALIASES ...]]
-                          Unique aliases for feature files to be used as names
-                          for the --report columns in the merged file. Default:
-                          basenames of files provided in --features without
-                          extensions
+                          Unique aliases for feature files to be used as
+                          prefixes for not --mergeby columns in the merged file.
+                          Default: basenames of files provided in --features
+                          without extensions
     -m [MERGEBY [MERGEBY ...]], --mergeby [MERGEBY [MERGEBY ...]]
                           Column names to merge feature files by. Default:
-                          GeneId, Chrom, TxStart, TxEnd, Strand
-    -r REPORT, --report REPORT
-                          Column name to be reported in the merged file.
-                          Default: Rpkm
+                          RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
     -o OUTPUT, --output OUTPUT
                           Output file prefix. Default: merged_

@@ -780,8 +780,6 @@ steps:
         - "GEEP"
       mergeby:
         default: ["GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
-      report:
-        default: "TotalReads"
     out:
     - merged_file
     - stdout_log

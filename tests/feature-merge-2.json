@@ -1,0 +1,101 @@
+{
+  "alias": "feature-merge",
+  "rpkm_isoforms": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u1_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u2_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u3_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t1_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t2_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t3_1000.isoforms.csv",
+      "format": "http://edamontology.org/format_3752"
+    }
+  ],
+  "rpkm_genes": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u1_1000.genes.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u2_1000.genes.tsv",
+       "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u3_1000.genes.tsv",
+       "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t1_1000.genes.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t2_1000.genes.tsv",
+       "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t3_1000.genes.tsv",
+       "format": "http://edamontology.org/format_3475"
+    }
+  ],
+  "rpkm_common_tss": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u1_1000.common_tss.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u2_1000.common_tss.tsv",
+       "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u3_1000.common_tss.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t1_1000.common_tss.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t2_1000.common_tss.tsv",
+       "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t3_1000.common_tss.tsv",
+      "format": "http://edamontology.org/format_3475"
+    }      
+  ],
+  "sample_names": ["u1", "u2", "u3", "t1", "t2", "t3"],
+  "group_by": "isoforms"
+}

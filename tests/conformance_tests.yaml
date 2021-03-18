@@ -2090,6 +2090,19 @@
       class: File
       location: merge_stderr.log
 
+- job: ./feature-merge-2.json
+  tool: ../workflows/feature-merge.cwl
+  output:
+    merged_file:
+      class: File
+      location: merged_report.tsv
+    feature_merge_stdout_log:
+      class: File
+      location: merge_stdout.log
+    feature_merge_stderr_log:
+      class: File
+      location: merge_stderr.log
+
 # ========================================================
 # cellranger-mkref
 # ========================================================
