@@ -189,8 +189,8 @@ outputs:
     outputSource: pca/pca_loadings_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'PCA analysis loadings'
-        Title: 'PCA analysis loadings'
+        tab: 'PCA loadings'
+        Title: 'PCA loadings'
 
   pca_stdout_log:
     type: File
