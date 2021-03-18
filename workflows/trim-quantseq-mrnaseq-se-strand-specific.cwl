@@ -779,7 +779,7 @@ steps:
         - "HTSeq"
         - "GEEP"
       mergeby:
-        default: ["GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
+        default: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand"]
     out:
     - merged_file
     - stdout_log

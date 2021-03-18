@@ -151,9 +151,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Gene expression merge - combines gene expression from several experiments"
-label: "Gene expression merge - combines gene expression from several experiments"
-s:alternateName: "Gene expression merge - combines gene expression from several experiments"
+s:name: "Feature expression merge - combines feature expression from several experiments"
+label: "Feature expression merge - combines feature expression from several experiments"
+s:alternateName: "Feature expression merge - combines gene expression from several experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/feature-merge.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -191,7 +191,7 @@ s:creator:
 
 
 doc: |
-  Gene expression merge - combines gene expression from several experiments
+  Feature expression merge - combines feature expression from several experiments
   =========================================================================
 
   Workflows merges RPKM (by default) gene expression from several
