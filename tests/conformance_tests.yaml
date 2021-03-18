@@ -1145,29 +1145,112 @@
   tool: ../workflows/pca.cwl
   output:
     pca1_vs_pca2_plot:
-      location: pca_001.png
       class: File
+      location: report_pc1_pc2_plot.png
+    pca1_vs_pca2_plot_pdf:
+      class: File
+      location: report_pc1_pc2_plot.pdf
     pca2_vs_pca3_plot:
-      location: pca_002.png
       class: File
-    pca_3d_plot:
-      location: pca_004.png
+      location: report_pc2_pc3_plot.png
+    pca2_vs_pca3_plot_pdf:
       class: File
-    pca_3d_html:
-      location: pca_pca3d.html
-      class: File
-    pca_file:
-      location: pca_pca.tsv
-      class: File
-    pca_stderr_log:
-      location: pca_stderr.log
-      class: File
-    pca_stdout_log:
-      location: pca_stdout.log
-      class: File
+      location: report_pc2_pc3_plot.pdf
     variance_plot:
-      location: pca_003.png
       class: File
+      location: report_variance_plot.png
+    variance_plot_pdf:
+      class: File
+      location: report_variance_plot.pdf
+    pca_3d_html:
+      class: File
+      location: report_pca_3d_plot.html
+    pca_file:
+      class: File
+      location: report_scores.tsv
+    pca_loadings_file:
+      class: File
+      location: report_loadings.tsv
+    pca_stdout_log:
+      class: File
+      location: pca_stdout.log
+    pca_stderr_log:
+      class: File
+      location: pca_stderr.log
+
+- job: ./pca-2.json
+  tool: ../workflows/pca.cwl
+  output:
+    pca1_vs_pca2_plot:
+      class: File
+      location: report_pc1_pc2_plot.png
+    pca1_vs_pca2_plot_pdf:
+      class: File
+      location: report_pc1_pc2_plot.pdf
+    pca2_vs_pca3_plot:
+      class: File
+      location: report_pc2_pc3_plot.png
+    pca2_vs_pca3_plot_pdf:
+      class: File
+      location: report_pc2_pc3_plot.pdf
+    variance_plot:
+      class: File
+      location: report_variance_plot.png
+    variance_plot_pdf:
+      class: File
+      location: report_variance_plot.pdf
+    pca_3d_html:
+      class: File
+      location: report_pca_3d_plot.html
+    pca_file:
+      class: File
+      location: report_scores.tsv
+    pca_loadings_file:
+      class: File
+      location: report_loadings.tsv
+    pca_stdout_log:
+      class: File
+      location: pca_stdout.log
+    pca_stderr_log:
+      class: File
+      location: pca_stderr.log
+
+- job: ./pca-3.json
+  tool: ../workflows/pca.cwl
+  output:
+    pca1_vs_pca2_plot:
+      class: File
+      location: report_pc1_pc2_plot.png
+    pca1_vs_pca2_plot_pdf:
+      class: File
+      location: report_pc1_pc2_plot.pdf
+    pca2_vs_pca3_plot:
+      class: File
+      location: report_pc2_pc3_plot.png
+    pca2_vs_pca3_plot_pdf:
+      class: File
+      location: report_pc2_pc3_plot.pdf
+    variance_plot:
+      class: File
+      location: report_variance_plot.png
+    variance_plot_pdf:
+      class: File
+      location: report_variance_plot.pdf
+    pca_3d_html:
+      class: File
+      location: report_pca_3d_plot.html
+    pca_file:
+      class: File
+      location: report_scores.tsv
+    pca_loadings_file:
+      class: File
+      location: report_loadings.tsv
+    pca_stdout_log:
+      class: File
+      location: pca_stdout.log
+    pca_stderr_log:
+      class: File
+      location: pca_stderr.log
 
 # ========================================================
 # hopach

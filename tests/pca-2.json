@@ -1,0 +1,37 @@
+{
+    "expression_files_genes": [
+      {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u1_1000.genes.tsv",
+        "format": "http://edamontology.org/format_3752"
+      },
+      {
+        "class": "File",
+         "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u2_1000.genes.tsv",
+         "format": "http://edamontology.org/format_3752"
+      },
+      {
+        "class": "File",
+         "location": "./data/dm3_chr4/generated_inputs/group_isoforms/u3_1000.genes.tsv",
+         "format": "http://edamontology.org/format_3752"
+      },
+      {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t1_1000.genes.tsv",
+        "format": "http://edamontology.org/format_3752"
+      },
+      {
+        "class": "File",
+         "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t2_1000.genes.tsv",
+         "format": "http://edamontology.org/format_3752"
+      },
+      {
+        "class": "File",
+         "location": "./data/dm3_chr4/generated_inputs/group_isoforms/t3_1000.genes.tsv",
+         "format": "http://edamontology.org/format_3752"
+      }
+    ],
+    "group_by": "genes",
+    "target_column": "TotalReads",
+    "alias": "alias"
+  }

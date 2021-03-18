@@ -2,6 +2,13 @@ cwlVersion: v1.0
 class: Workflow
 
 
+requirements:
+  - class: SubworkflowFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
+
+
 'sd:upstream':
   rnaseq_sample:
     - "rnaseq-se.cwl"
@@ -15,6 +22,7 @@ class: Workflow
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
+    - "trim-quantseq-mrnaseq-se.cwl"
 
 
 inputs:
@@ -26,26 +34,71 @@ inputs:
       position: 1
 
   expression_files:
-    type: File[]
+    type:
+    - "null"
+    - File[]
+    default: null
     format: "http://edamontology.org/format_3752"
-    label: "Isoform expression files"
-    doc: "Isoform expression files"
+    label: "RNA-Seq experiments"
+    doc: "Isoform expression files from RNA-Seq experiments"
     'sd:upstreamSource': "rnaseq_sample/rpkm_isoforms"
     'sd:localLabel': true
 
+  expression_files_genes:
+    type:
+    - "null"
+    - File[]
+    default: null
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments"
+    doc: "Gene expression files from RNA-Seq experiments"
+    'sd:upstreamSource': "rnaseq_sample/rpkm_genes"
+
+  expression_files_tss:
+    type:
+    - "null"
+    - File[]
+    default: null
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments"
+    doc: "Common TSS expression files from RNA-Seq experiments"
+    'sd:upstreamSource': "rnaseq_sample/rpkm_common_tss"
+
   expression_aliases:
     type:
-      - "null"
-      - string[]
+    - "null"
+    - string[]
     label: "Isoform expression file aliases"
     doc: "Aliases to make the legend for generated plots. Order corresponds to the isoform expression files"
     'sd:upstreamSource': "rnaseq_sample/alias"
+
+  group_by:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["isoforms", "genes", "common tss"]
+    default: "isoforms"
+    label: "Group by"
+    doc: "Grouping method for features: isoforms, genes or common tss"
+
+  target_column:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "Rpkm"
+      - "TotalReads"
+    default: "Rpkm"
+    label: "Target column to be used by PCA"
+    doc: "Target column name to be used by PCA"
 
   genelist_file:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "Gene list to filter input genes. Headerless TSV/CSV file with 1 gene per line"
     doc: "Gene list to filter input genes. Headerless TSV/CSV file with 1 gene per line"
+    'sd:layout':
+      advanced: true
 
 
 outputs:
@@ -61,6 +114,13 @@ outputs:
         tab: 'Plots'
         Caption: 'PCA1 vs PCA2'
 
+  pca1_vs_pca2_plot_pdf:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "PCA1 vs PCA2 plot"
+    doc: "PCA1 vs PCA2 plot"
+    outputSource: pca/pca1_vs_pca2_plot_pdf
+
   pca2_vs_pca3_plot:
     type: File
     format: "http://edamontology.org/format_3603"
@@ -71,6 +131,13 @@ outputs:
     - image:
         tab: 'Plots'
         Caption: 'PCA2 vs PCA3'
+
+  pca2_vs_pca3_plot_pdf:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "PCA2 vs PCA3 plot"
+    doc: "PCA2 vs PCA3 plot"
+    outputSource: pca/pca2_vs_pca3_plot_pdf
 
   variance_plot:
     type: File
@@ -83,16 +150,12 @@ outputs:
         tab: 'Plots'
         Caption: 'Variances'
 
-  pca_3d_plot:
+  variance_plot_pdf:
     type: File
-    format: "http://edamontology.org/format_3603"
-    label: "PCA1,2,3 plot"
-    doc: "First three principal components plot"
-    outputSource: pca/pca_3d_plot
-    'sd:visualPlugins':
-    - image:
-        tab: 'Plots'
-        Caption: 'First three principal components'
+    format: "http://edamontology.org/format_3508"
+    label: "Variance plot"
+    doc: "Variance plot"
+    outputSource: pca/variance_plot_pdf
 
   pca_3d_html:
     type: File
@@ -104,9 +167,9 @@ outputs:
   pca_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "PCA analysis results"
-    doc: "PCA analysis results exported as TSV"
-    outputSource: pca/pca_file
+    label: "PCA analysis scores results"
+    doc: "PCA analysis scores results exported as TSV"
+    outputSource: pca/pca_scores_file
     'sd:visualPlugins':
     - scatter3d:
         tab: '3D Plots'
@@ -117,6 +180,17 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072"]
         height: 600
         data: [$1, $2, $3, $4]
+
+  pca_loadings_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "PCA analysis loadings results"
+    doc: "PCA analysis loadings results exported as TSV"
+    outputSource: pca/pca_loadings_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'PCA analysis loadings'
+        Title: 'PCA analysis loadings'
 
   pca_stdout_log:
     type: File
@@ -138,16 +212,31 @@ steps:
   pca:
     run: ../tools/pca.cwl
     in:
-      expression_files: expression_files
+      expression_files:
+        source: [group_by, expression_files, expression_files_genes, expression_files_tss]
+        valueFrom: |
+          ${
+              if (self[0] == "isoforms") {
+                return self[1];
+              } else if (self[0] == "genes") {
+                return self[2];
+              } else {
+                return self[3];
+              }
+          }
       expression_aliases: expression_aliases
       genelist_file: genelist_file
+      target_column: target_column
     out:
     - pca1_vs_pca2_plot
+    - pca1_vs_pca2_plot_pdf
     - pca2_vs_pca3_plot
+    - pca2_vs_pca3_plot_pdf
     - variance_plot
-    - pca_3d_plot
+    - variance_plot_pdf
     - pca_3d_html
-    - pca_file
+    - pca_scores_file
+    - pca_loadings_file
     - stdout_log
     - stderr_log
 
