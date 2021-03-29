@@ -2207,6 +2207,20 @@
       class: File
       location: sql_select_stderr.log
 
+- job: ./filter-peaks-for-heatmap-2.json
+  tool: ../workflows/filter-peaks-for-heatmap.cwl
+  output:
+    filtered_file:
+      class: File
+      location: chr4_100_mapped_reads_filtered.tsv
+    filtered_file_alias: "some name"
+    filtering_stdout_log:
+      class: File
+      location: sql_select_stdout.log
+    filtering_stderr_log:
+      class: File
+      location: sql_select_stderr.log
+
 # ========================================================
 # bedtools-multicov
 # ========================================================
@@ -2230,3 +2244,47 @@
     overlap_stderr_log:
       class: File
       location: bedtools_multicov_stderr.log
+
+# ========================================================
+# intervene
+# ========================================================
+
+- job: ./intervene-1.json
+  tool: ../workflows/intervene.cwl
+  output:
+    overlapped_intervals_files:
+    - class: File
+      location: 011_annotations_workspace_iaintersect.tsv
+    - class: File
+      location: 101_segments_workspace_iaintersect.tsv
+    - class: File
+      location: 111_segments_annotations_workspace_iaintersect.tsv
+    overlap_diagram_pdf:
+      class: File
+      location: intervene_venn.pdf
+    intervene_stdout_log:
+      class: File
+      location: intervene_stdout.log
+    intervene_stderr_log:
+      class: File
+      location: intervene_stderr.log
+
+- job: ./intervene-2.json
+  tool: ../workflows/intervene.cwl
+  output:
+    overlapped_intervals_files:
+    - class: File
+      location: 011_annotations_workspace_iaintersect.tsv
+    - class: File
+      location: 101_segments_workspace_iaintersect.tsv
+    - class: File
+      location: 111_segments_annotations_workspace_iaintersect.tsv
+    overlap_diagram_pdf:
+      class: File
+      location: intervene_upset.pdf
+    intervene_stdout_log:
+      class: File
+      location: intervene_stdout.log
+    intervene_stderr_log:
+      class: File
+      location: intervene_stderr.log
