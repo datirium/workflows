@@ -34,7 +34,7 @@ inputs:
           if (self !== null) {
             let cleaned = [];
             self.forEach(function (s, i) {
-              cleaned.push(s.replace(/\t|\s/g, "_"));
+              cleaned.push(s.replace(/\t|\s|\[|\]/g, "_"));
             });
             return cleaned;
           };
