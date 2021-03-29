@@ -48,6 +48,7 @@ inputs:
     label: "Genome to use for the nearest gene assignment"
     doc: "Tab-separated annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
+    'sd:localLabel': true
 
   diagram_type:
     type:
