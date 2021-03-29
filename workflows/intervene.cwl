@@ -125,10 +125,28 @@ outputs:
 steps:
 
   merge_intervals:
-    run: ../tools/bedtools-merge.cwl
+    run:
+      cwlVersion: v1.0
+      class: Workflow
+      requirements:
+      - class: ScatterFeatureRequirement
+      inputs:
+        bed_file:
+          type: File[]
+      outputs:
+        merged_bed_file:
+          type: File[]
+          outputSource: batch/merged_bed_file
+      steps:
+        batch:
+          run: ../tools/bedtools-merge.cwl
+          in:
+            bed_file: bed_file
+          scatter: bed_file
+          out:
+          - merged_bed_file    
     in:
       bed_file: intervals_files
-    scatter: bed_file
     out:
     - merged_bed_file
 
@@ -146,26 +164,71 @@ steps:
     - stderr_log
 
   refactore_overlapped_intervals:
-    run: ../tools/custom-bash.cwl
+    run:
+      cwlVersion: v1.0
+      class: Workflow
+      requirements:
+      - class: ScatterFeatureRequirement
+      inputs:
+        input_file:
+          type: File[]
+      outputs:
+        output_file:
+          type: File[]
+          outputSource: batch/output_file
+      steps:
+        batch:
+          run: ../tools/custom-bash.cwl
+          in:
+            input_file: input_file
+            script:
+              default: >
+                cat $0 | awk
+                'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+                {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t0\t0\t0\t0\t0"}' > `basename $0`
+          scatter: input_file
+          out:
+          - output_file
     in:
       input_file: overlap_intervals/overlapped_intervals_files
-      script:
-        default: >
-          cat $0 | awk
-          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
-          {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t0\t0\t0\t0\t0"}' > `basename $0`
-    scatter: input_file
     out:
     - output_file
 
   annotate_overlapped_intervals:
-    run: ../tools/iaintersect.cwl
+    run:
+      cwlVersion: v1.0
+      class: Workflow
+      requirements:
+      - class: ScatterFeatureRequirement
+      inputs:
+        input_filename:
+          type: File[]
+        annotation_filename:
+          type: File
+        promoter_bp:
+          type: int?
+        upstream_bp:
+          type: int?
+      outputs:
+        result_file:
+          type: File[]
+          outputSource: batch/result_file
+      steps:
+        batch:
+          run: ../tools/iaintersect.cwl
+          in:
+            input_filename: input_filename
+            annotation_filename: annotation_filename
+            promoter_bp: promoter_bp
+            upstream_bp: upstream_bp
+          scatter: input_filename
+          out:
+          - result_file
     in:
       input_filename: refactore_overlapped_intervals/output_file
       annotation_filename: annotation_file
       promoter_bp: promoter_dist
       upstream_bp: upstream_dist
-    scatter: input_filename
     out:
     - result_file
 
