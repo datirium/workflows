@@ -49,25 +49,6 @@ inputs:
     'sd:upstreamSource': "genome_indices/annotation"
     'sd:localLabel': true
 
-  diagram_type:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "venn"
-      - "upset"
-    default: "venn"
-    label: "Diagram type to report"
-    doc: "Diagram type to report"
-
-  overlap_threshold:
-    type: int?
-    default: 1
-    label: "Minimum number of overlapped regions to be reported as a TSV file"
-    doc: "Minimum number of overlapped regions to be reported as a TSV file"
-    'sd:layout':
-      advanced: true
-
   promoter_dist:
     type: int?
     default: 1000
@@ -99,12 +80,16 @@ outputs:
     label: "Overlapped intervals files with the nearest genes assigned"
     doc: "Overlapped intervals files with the nearest genes assigned"
 
-  overlap_diagram_pdf:
+  overlapped_plot:
     type: File
-    format: "http://edamontology.org/format_3508"
-    outputSource: overlap_intervals/diagram_pdf
+    format: "http://edamontology.org/format_3603"
+    outputSource: overlap_intervals/overlapped_plot
     label: "Intervals overlap diagram"
     doc: "Intervals overlap diagram"
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Intervals overlap diagram'
 
   intervene_stdout_log:
     type: File
@@ -183,11 +168,11 @@ steps:
     in:
       intervals_files: merge_intervals/merged_bed_file
       intervals_aliases: intervals_aliases
-      overlap_threshold: overlap_threshold
-      diagram_type: diagram_type
+      figure_format:
+        default: "png"
     out:
     - overlapped_intervals_files
-    - diagram_pdf
+    - overlapped_plot
     - stdout_log
     - stderr_log
 

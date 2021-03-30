@@ -13,6 +13,30 @@ hints:
 
 inputs:
 
+  figure_format:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "pdf"
+      - "svg"
+      - "ps"
+      - "tiff"
+      - "png"
+    inputBinding:
+      position: 5
+      prefix: "--figtype"
+    doc: |
+      Format to export diagram figure
+
+  intervals_colors:
+    type:
+    - "null"
+    - string[]
+    doc: |
+      Comma-separated list of matplotlib-valid colors for fill.
+      E.g., –colors=r,b,k
+
   intervals_files:
     type: File[]
     inputBinding:
@@ -84,11 +108,29 @@ outputs:
       glob: "./results/sets/*"
     doc: "Overlapped intervals files"
 
-  diagram_pdf:
+  overlapped_combinations:
+    type: File?
+    outputBinding:
+      glob: "./results/*combinations.txt"
+    doc: "Overlapped combinations file"
+
+  overlapped_fraction_matrix:
+    type: File?
+    outputBinding:
+      glob: "./results/*frac_matrix.txt"
+    doc: "Overlapped fraction matrix file"
+
+  overlapped_plot:
     type: File
     outputBinding:
-      glob: "./results/intervene*.pdf"
-    doc: "Intervals overlap diagram"
+      glob: |
+        ${
+          if (inputs.figure_format !== null) {
+            return "./results/intervene*." + inputs.figure_format;
+          };
+          return "./results/intervene*.pdf";
+        }
+    doc: "Diagram of the overlapped intervals"
 
   stdout_log:
     type: stdout
@@ -105,6 +147,15 @@ arguments:
   - valueFrom: $(inputs.diagram_type == "pairwise"?null:"--save-overlaps")
   - valueFrom: $(inputs.diagram_type == "pairwise"?"--diagonal":null)
   - valueFrom: $(inputs.diagram_type == "pairwise"?["--htype", "color"]:null)
+  - valueFrom: |
+      ${
+        if (inputs.diagram_type == "venn" && inputs.intervals_colors !== null) {
+          return inputs.intervals_colors;
+        }
+        return null;
+      }
+    prefix: "--colors"
+    itemSeparator: ","
   - "--project"
   - "intervene"
   - "-o"
@@ -175,6 +226,9 @@ doc: |
   When run in "pairwise" mode:
   --save-overlaps and --overlap-thresh set to null
   --htype and --diagonal added
+
+  When run in "venn" mode:
+  --colors aren't ignored
 
 
 s:about: |

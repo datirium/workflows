@@ -2259,29 +2259,9 @@
       location: 101_segments_workspace_iaintersect.tsv
     - class: File
       location: 111_segments_annotations_workspace_iaintersect.tsv
-    overlap_diagram_pdf:
+    overlapped_plot:
       class: File
-      location: intervene_venn.pdf
-    intervene_stdout_log:
-      class: File
-      location: intervene_stdout.log
-    intervene_stderr_log:
-      class: File
-      location: intervene_stderr.log
-
-- job: ./intervene-2.json
-  tool: ../workflows/intervene.cwl
-  output:
-    overlapped_intervals_files:
-    - class: File
-      location: 011_annotations_workspace_iaintersect.tsv
-    - class: File
-      location: 101_segments_workspace_iaintersect.tsv
-    - class: File
-      location: 111_segments_annotations_workspace_iaintersect.tsv
-    overlap_diagram_pdf:
-      class: File
-      location: intervene_upset.pdf
+      location: intervene_venn.png
     intervene_stdout_log:
       class: File
       location: intervene_stdout.log
