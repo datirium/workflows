@@ -138,7 +138,7 @@ steps:
           outputSource: batch/output_file
       steps:
         batch:
-          run: ../../tools/custom-bash.cwl
+          run: ../tools/custom-bash.cwl
           in:
             input_file: not_sorted_intervals_files
             script:
