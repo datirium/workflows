@@ -31,8 +31,7 @@ inputs:
     label: "Filtered ChIP/ATAC experiment"
     doc: |
       Filtered peaks file from ChIP/ATAC experiment formatted
-      as headerless BED [chrom start end name] file with unique
-      intervals
+      as headerless BED [chrom start end name] file
     'sd:upstreamSource': "filtered_experiment/filtered_file"
     'sd:localLabel': true
 
@@ -124,6 +123,35 @@ outputs:
 
 steps:
 
+  sort_intervals:
+    run:
+      cwlVersion: v1.0
+      class: Workflow
+      requirements:
+      - class: ScatterFeatureRequirement
+      inputs:
+        not_sorted_intervals_files:
+          type: File[]
+      outputs:
+        sorted_intervals_files:
+          type: File[]
+          outputSource: batch/output_file
+      steps:
+        batch:
+          run: ../../tools/custom-bash.cwl
+          in:
+            input_file: not_sorted_intervals_files
+            script:
+              default: |
+                cat "$0" | tr -d '\r' | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n > `basename $0`
+          scatter: input_file                
+          out:
+          - output_file
+    in:
+      not_sorted_intervals_files: intervals_files
+    out:
+    - sorted_intervals_files
+
   merge_intervals:
     run:
       cwlVersion: v1.0
@@ -146,7 +174,7 @@ steps:
           out:
           - merged_bed_file    
     in:
-      bed_file: intervals_files
+      bed_file: sort_intervals/sorted_intervals_files
     out:
     - merged_bed_file
 
