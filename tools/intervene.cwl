@@ -58,7 +58,7 @@ inputs:
           return self;
         }
     doc: |
-      Minimum threshold to save the overlapping regions/names as bed/txt
+      Minimum number of overlapped regions to save them into bed/txt file
       Default: 1
 
   diagram_type:

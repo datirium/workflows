@@ -64,8 +64,8 @@ inputs:
   overlap_threshold:
     type: int?
     default: 1
-    label: "Minimum intersected base pairs number to assume intervals overlapped"
-    doc: "Minimum intersected base pairs number to assume intervals overlapped"
+    label: "Minimum number of overlapped regions to be reported as a TSV file"
+    doc: "Minimum number of overlapped regions to be reported as a TSV file"
     'sd:layout':
       advanced: true
 
