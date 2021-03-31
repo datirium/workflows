@@ -92,7 +92,7 @@ outputs:
         Caption: 'Intervals overlap diagram'
 
   overlapped_combinations:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_2330"
     outputSource: overlap_intervals/overlapped_combinations
     label: "Overlapped combinations file"
