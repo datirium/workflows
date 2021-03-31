@@ -39,7 +39,7 @@ inputs:
     type: string[]
     label: "Filtered ChIP/ATAC experiment"
     doc: "Filtered ChIP/ATAC experiment alias"
-    'sd:upstreamSource': "filtered_experiment/filtered_file_alias"
+    'sd:upstreamSource': "filtered_experiment/alias"
 
   annotation_file:
     type: File

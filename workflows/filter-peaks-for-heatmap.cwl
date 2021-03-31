@@ -35,12 +35,6 @@ inputs:
     'sd:upstreamSource': "sample_to_filter/iaintersect_result"
     'sd:localLabel': true
 
-  feature_file_alias:
-    type: string?
-    label: "ChIP/ATAC experiment alias"
-    doc: "ChIP/ATAC experiment alias to be returned as filtered_file_alias"
-    'sd:upstreamSource': "sample_to_filter/alias"
-
   # alignment_file:
   #   type: File
   #   secondaryFiles:
@@ -93,12 +87,6 @@ outputs:
     - syncfusiongrid:
         tab: 'Filtering results'
         Title: 'Filtered table'
-
-  filtered_file_alias:
-    type: string?
-    label: "ChIP/ATAC experiment alias"
-    doc: "ChIP/ATAC experiment alias"
-    outputSource: feature_file_alias
 
   # bambai_pair:
   #   type: File

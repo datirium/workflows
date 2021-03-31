@@ -2207,20 +2207,6 @@
       class: File
       location: sql_select_stderr.log
 
-- job: ./filter-peaks-for-heatmap-2.json
-  tool: ../workflows/filter-peaks-for-heatmap.cwl
-  output:
-    filtered_file:
-      class: File
-      location: chr4_100_mapped_reads_filtered.tsv
-    filtered_file_alias: "some name"
-    filtering_stdout_log:
-      class: File
-      location: sql_select_stdout.log
-    filtering_stderr_log:
-      class: File
-      location: sql_select_stderr.log
-
 # ========================================================
 # bedtools-multicov
 # ========================================================
