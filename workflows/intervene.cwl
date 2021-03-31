@@ -91,6 +91,13 @@ outputs:
         tab: 'Plots'
         Caption: 'Intervals overlap diagram'
 
+  overlapped_combinations:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    outputSource: overlap_intervals/overlapped_combinations
+    label: "Overlapped combinations file"
+    doc: "Overlapped combinations file"
+
   intervene_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -170,9 +177,19 @@ steps:
       intervals_aliases: intervals_aliases
       figure_format:
         default: "png"
+      diagram_type:
+        source: merge_intervals/merged_bed_file
+        valueFrom: |
+          ${
+            if (self.length > 6){
+              return "upset";
+            }
+            return "venn";
+          }
     out:
     - overlapped_intervals_files
     - overlapped_plot
+    - overlapped_combinations
     - stdout_log
     - stderr_log
 
