@@ -33,6 +33,10 @@ outputs:
     outputSource: rename_fastqc_report/target_file
     label: "FastqQC HTML report"
     doc: "FastqQC HTML report"
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
 
 steps:
