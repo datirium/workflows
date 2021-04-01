@@ -1,0 +1,20 @@
+{
+    "alias": "alias",
+    "intervals_file_a":         {
+        "class": "File",
+        "format": "http://edamontology.org/format_3003",
+        "location": "./data/dm3_chr4/generated_inputs/gat/segments.bed"
+    },
+    "intervals_file_b":         {
+        "class": "File",
+        "format": "http://edamontology.org/format_3003",
+        "location": "./data/dm3_chr4/generated_inputs/gat/annotations.bed"
+    },
+    "intervals_file_a_alias": "A",
+    "intervals_file_b_alias": "B",
+    "annotation_file": {
+        "class": "File",
+        "format": "http://edamontology.org/format_3475",
+        "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv"
+    }
+}

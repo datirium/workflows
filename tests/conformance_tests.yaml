@@ -2254,3 +2254,29 @@
     intervene_stderr_log:
       class: File
       location: intervene_stderr.log
+
+# ========================================================
+# peak-intersect
+# ========================================================
+
+- job: ./peak-intersect-1.json
+  tool: ../workflows/peak-intersect.cwl
+  output:
+    annotated_unique_from_a:
+      class: File
+      location: annotated_unique_from_a.tsv
+    annotated_unique_from_b:
+      class: File
+      location: annotated_unique_from_b.tsv
+    annotated_overlapped_from_a:
+      class: File
+      location: annotated_overlapped_from_a.tsv
+    annotated_overlapped_from_b:
+      class: File
+      location: annotated_overlapped_from_b.tsv
+    annotated_merged_overlapped_from_a_and_b:
+      class: File
+      location: annotated_merged_overlapped_from_a_and_b.tsv
+    collected_statistics:
+      class: File
+      location: statistics.md
