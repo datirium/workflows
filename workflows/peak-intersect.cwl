@@ -35,12 +35,6 @@ inputs:
     'sd:upstreamSource': "filtered_experiment_a/filtered_file"
     'sd:localLabel': true
 
-  intervals_file_a_alias:
-    type: string
-    label: "Filtered ChIP/ATAC experiment A"
-    doc: "Alias for filtered ChIP/ATAC experiment A"
-    'sd:upstreamSource': "filtered_experiment_a/alias"
-
   intervals_file_b:
     type: File
     format: "http://edamontology.org/format_3003"
@@ -50,12 +44,6 @@ inputs:
       as headerless BED [chrom start end name] file
     'sd:upstreamSource': "filtered_experiment_b/filtered_file"
     'sd:localLabel': true
-
-  intervals_file_b_alias:
-    type: string
-    label: "Filtered ChIP/ATAC experiment B"
-    doc: "Alias for filtered ChIP/ATAC experiment B"
-    'sd:upstreamSource': "filtered_experiment_b/alias"
 
   annotation_file:
     type: File
