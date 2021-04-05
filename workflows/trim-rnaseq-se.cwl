@@ -296,14 +296,14 @@ outputs:
     doc: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1 in TSV format"
     outputSource: get_gene_body/gene_body_report_file
     'sd:visualPlugins':
-    - scatter:
+    - line:
         tab: 'QC Plots'
         Title: 'Gene body average tag density plot for isoform longer than 1000 bp with RPKM > 1)'
         xAxisTitle: "Gene body percentile (5' -> 3')"
         yAxisTitle: "Average Tag Density (per percentile)"
         colors: ["#232C15"]
         height: 500
-        data: [$1, $2]
+        data: [$2]
 
   gene_body_plot_pdf:
     type: File
