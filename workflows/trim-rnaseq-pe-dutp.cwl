@@ -366,7 +366,7 @@ outputs:
         Title: 'Gene body average tag density plot for isoform longer than 1000 bp with RPKM > 1)'
         xAxisTitle: "Gene body percentile (5' -> 3')"
         yAxisTitle: "Average Tag Density (per percentile)"
-        colors: ["#b3de69"]
+        colors: ["#232C15"]
         height: 500
         data: [$1, $2]
 
