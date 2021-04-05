@@ -362,6 +362,15 @@
     htseq_count_stderr_log:
       location: feature_counts_stderr.log
       class: File
+    gene_body_report:
+      location: coverage_gene_body_report.tsv
+      class: File
+    gene_body_plot_pdf:
+      location: coverage_gene_body_plot.pdf
+      class: File
+    rpkm_distribution_plot_pdf:
+      location: coverage_rpkm_distribution_plot.pdf
+      class: File
 
 # ========================================================
 # trim-rnaseq-se-dutp
@@ -434,6 +443,16 @@
     htseq_count_stderr_log:
       location: feature_counts_stderr.log
       class: File
+    gene_body_report:
+      location: coverage_gene_body_report.tsv
+      class: File
+    gene_body_plot_pdf:
+      location: coverage_gene_body_plot.pdf
+      class: File
+    rpkm_distribution_plot_pdf:
+      location: coverage_rpkm_distribution_plot.pdf
+      class: File
+
 
 # ========================================================
 # trim-rnaseq-pe
@@ -511,6 +530,15 @@
       class: File
     htseq_count_stderr_log:
       location: feature_counts_stderr.log
+      class: File
+    gene_body_report:
+      location: coverage_gene_body_report.tsv
+      class: File
+    gene_body_plot_pdf:
+      location: coverage_gene_body_plot.pdf
+      class: File
+    rpkm_distribution_plot_pdf:
+      location: coverage_rpkm_distribution_plot.pdf
       class: File
 
 # ========================================================
@@ -592,6 +620,15 @@
       class: File
     htseq_count_stderr_log:
       location: feature_counts_stderr.log
+      class: File
+    gene_body_report:
+      location: coverage_gene_body_report.tsv
+      class: File
+    gene_body_plot_pdf:
+      location: coverage_gene_body_plot.pdf
+      class: File
+    rpkm_distribution_plot_pdf:
+      location: coverage_rpkm_distribution_plot.pdf
       class: File
 
 # ========================================================

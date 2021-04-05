@@ -346,6 +346,36 @@ outputs:
     doc: "TrimGalore generated log for FASTQ 2"
     outputSource: trim_fastq/report_file_pair
 
+  gene_body_report:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1"
+    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1 in TSV format"
+    outputSource: get_gene_body/gene_body_report_file
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'QC Plots'
+        Title: 'Gene body average tag density plot for isoform longer than 1000 bp with RPKM > 1)'
+        xAxisTitle: "Gene body percentile (5' -> 3')"
+        yAxisTitle: "Average Tag Density (per percentile)"
+        colors: ["#b3de69"]
+        height: 500
+        data: [$1, $2]
+
+  gene_body_plot_pdf:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1"
+    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1 in PDF format"
+    outputSource: get_gene_body/gene_body_plot_pdf
+
+  rpkm_distribution_plot_pdf:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "RPKM distribution plot for isoforms"
+    doc: "RPKM distribution plot for isoforms in PDF format"
+    outputSource: get_gene_body/rpkm_distribution_plot_pdf
+
 
 steps:
 
@@ -590,6 +620,25 @@ steps:
         paired_end:
           default: true
       out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+
+  get_gene_body:
+    run: ../tools/plugin-plot-rna.cwl
+    in:
+      annotation_file: annotation_file
+      bambai_pair: samtools_sort_index/bam_bai_pair
+      isoforms_file: rpkm_calculation/isoforms_file
+      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+      minimum_rpkm:
+        default: 1
+      pair:
+        default: true
+      dutp:
+        default: true        
+      threads: threads
+    out:
+    - gene_body_report_file
+    - gene_body_plot_pdf
+    - rpkm_distribution_plot_pdf
 
 
 $namespaces:
