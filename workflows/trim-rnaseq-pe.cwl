@@ -89,6 +89,14 @@ inputs:
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
+  minimum_rpkm:
+    type: float?
+    default: 10
+    label: "Minimum RPKM for Gene Body Average Tag Density Plot"
+    doc: "Minimum RPKM for Gene Body Average Tag Density Plot"
+    'sd:layout':
+      advanced: true
+
 # System dependent
 
   threads:
@@ -577,8 +585,7 @@ steps:
       bambai_pair: samtools_sort_index/bam_bai_pair
       isoforms_file: rpkm_calculation/isoforms_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-      minimum_rpkm:
-        default: 1
+      minimum_rpkm: minimum_rpkm
       pair:
         default: true
       threads: threads
