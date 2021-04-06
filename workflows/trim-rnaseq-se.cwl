@@ -298,11 +298,10 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'Gene body average tag density plot for isoform longer than 1000 bp with RPKM > 1)'
+        Title: 'Gene body average tag density plot'
         xAxisTitle: "Gene body percentile (5' -> 3')"
         yAxisTitle: "Average Tag Density (per percentile)"
         colors: ["#232C15"]
-        height: 500
         data: [$2]
 
   gene_body_plot_pdf:
