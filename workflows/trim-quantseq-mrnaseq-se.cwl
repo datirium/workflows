@@ -97,6 +97,14 @@ inputs:
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
+  minimum_rpkm:
+    type: float?
+    default: 0
+    label: "Minimum RPKM for Gene Body Average Tag Density Plot"
+    doc: "Minimum RPKM for Gene Body Average Tag Density Plot"
+    'sd:layout':
+      advanced: true
+
 # System dependent
 
   threads:
@@ -322,6 +330,35 @@ outputs:
   #   label: "TrimGalore report"
   #   doc: "TrimGalore generated log"
   #   outputSource: trim_fastq/report_file
+
+  gene_body_report:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Gene body average tag density plot for all isoforms longer than 1000 bp"
+    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp in TSV format"
+    outputSource: get_gene_body/gene_body_report_file
+    'sd:visualPlugins':
+    - line:
+        tab: 'QC Plots'
+        Title: 'Gene body average tag density plot'
+        xAxisTitle: "Gene body percentile (5' -> 3')"
+        yAxisTitle: "Average Tag Density (per percentile)"
+        colors: ["#232C15"]
+        data: [$2]
+
+  gene_body_plot_pdf:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "Gene body average tag density plot for all isoforms longer than 1000 bp"
+    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp in PDF format"
+    outputSource: get_gene_body/gene_body_plot_pdf
+
+  rpkm_distribution_plot_pdf:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "RPKM distribution plot for isoforms"
+    doc: "RPKM distribution plot for isoforms in PDF format"
+    outputSource: get_gene_body/rpkm_distribution_plot_pdf
 
 
 steps:
@@ -602,6 +639,22 @@ steps:
     - feature_counts_report_file
     - stdout_log
     - stderr_log
+
+  get_gene_body:
+    run: ../tools/plugin-plot-rna.cwl
+    in:
+      annotation_file: annotation_file
+      bambai_pair: samtools_sort_index_2/bam_bai_pair
+      isoforms_file: rpkm_calculation/isoforms_file
+      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+      minimum_rpkm: minimum_rpkm
+      strand_specificity:
+        default: "no"
+      threads: threads
+    out:
+    - gene_body_report_file
+    - gene_body_plot_pdf
+    - rpkm_distribution_plot_pdf
 
 
 $namespaces:

@@ -304,8 +304,8 @@ outputs:
   gene_body_report:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1"
-    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1 in TSV format"
+    label: "Gene body average tag density plot for all isoforms longer than 1000 bp"
+    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp in TSV format"
     outputSource: get_gene_body/gene_body_report_file
     'sd:visualPlugins':
     - line:
@@ -319,8 +319,8 @@ outputs:
   gene_body_plot_pdf:
     type: File
     format: "http://edamontology.org/format_3508"
-    label: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1"
-    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp with RPKM > 1 in PDF format"
+    label: "Gene body average tag density plot for all isoforms longer than 1000 bp"
+    doc: "Gene body average tag density plot for all isoforms longer than 1000 bp in PDF format"
     outputSource: get_gene_body/gene_body_plot_pdf
 
   rpkm_distribution_plot_pdf:
@@ -543,8 +543,8 @@ steps:
       isoforms_file: rpkm_calculation/isoforms_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
       minimum_rpkm: minimum_rpkm
-      dutp:
-        default: true
+      strand_specificity:
+        default: "reverse"
       threads: threads
     out:
     - gene_body_report_file

@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/plugin-plot-rna:v0.0.3
+  dockerPull: biowardrobe2/plugin-plot-rna:v0.0.4
 
 
 inputs:
@@ -63,13 +63,23 @@ inputs:
     doc: |
       Run as paired end. Default: false
 
-  dutp:
-    type: boolean?
+  strand_specificity:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "yes"
+      - "no"
+      - "reverse"
     inputBinding:
       position: 11
-      prefix: "--dutp"
+      prefix: "--stranded"      
     doc: |
-      Run as dUTP. Default: false
+      Whether the data is from a strand-specific assay.
+      --stranded no      - a read is considered overlapping with a feature regardless of whether
+                           it is mapped to the same or the opposite strand as the feature.
+      --stranded yes     - the read has to be mapped to the same strand as the feature.
+      --stranded reverse - the read has to be mapped to the opposite strand than the feature.
 
   minimum_rpkm:
     type: float?
@@ -191,7 +201,7 @@ s:about: |
   usage: plugin_plot_rna.R
         [-h] --annotation ANNOTATION --bam BAM --isoforms ISOFORMS
         [--minrpkm MINRPKM] [--minlength MINLENGTH] --mapped MAPPED [--pair]
-        [--dutp] [--output OUTPUT] [--threads THREADS]
+        [--stranded {yes,no,reverse}] [--output OUTPUT] [--threads THREADS]
 
   Gene body average tag density plot and RPKM distribution histogram for
   isoforms
@@ -199,16 +209,19 @@ s:about: |
   optional arguments:
     -h, --help            show this help message and exit
     --annotation ANNOTATION
-                          Path to the annotation TSV/CSV file
+                          Path to the annotation TSV/CSV file with gene names
+                          set in name2 field
     --bam BAM             Path to the indexed BAM file
-    --isoforms ISOFORMS   Path to the isoforms TSV/CSV file
+    --isoforms ISOFORMS   Path to the RPKM isoforms expression TSV/CSV file
     --minrpkm MINRPKM     Ignore isoforms with RPKM smaller than --minrpkm.
                           Default: 10
     --minlength MINLENGTH
                           Ignore isoforms shorter than --minlength. Default:
                           1000
-    --mapped MAPPED       Mapped reads number
+    --mapped MAPPED       Mapped reads/pairs number
     --pair                Run as paired end. Default: false
-    --dutp                Run as dUTP. Default: false
+    --stranded {yes,no,reverse}
+                          Strand specificity. One of "yes", "no" or "reverse".
+                          Default: "no"
     --output OUTPUT       Output prefix. Default: ./coverage
     --threads THREADS     Threads. Default: 1
