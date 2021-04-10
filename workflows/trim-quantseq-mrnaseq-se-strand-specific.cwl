@@ -574,6 +574,7 @@ steps:
     in:
       transcript_expression_file: htseq_count_transcript_expression/feature_counts_report_file
       annotation_file: annotation_file
+      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
     out:
     - transcript_expression_file
     - gene_expression_file
@@ -601,6 +602,8 @@ steps:
 
             annotation <- read.table(args[2], sep="\t", header=TRUE, stringsAsFactors=FALSE)
             colnames(annotation) <- c("bin", "RefseqId", "Chrom",	"Strand",	"TxStart", "TxEnd", "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds", "score", "GeneId",	"cdsStartStat",	"cdsEndStat",	"exonFrames")
+
+            mapped_reads_number <- as.numeric(args[3])
 
             transcript_counts <- merge(transcript_counts, annotation, by=c("RefseqId", "GeneId"), sort = FALSE)
             transcript_counts <- transcript_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
@@ -647,6 +650,7 @@ steps:
             )
 
             reordered_transcript_counts <- transcript_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
+            reordered_transcript_counts$Rpkm <- reordered_transcript_counts$TotalReads / ( (reordered_transcript_counts$TxEnd - reordered_transcript_counts$TxStart) / 1000 * mapped_reads_number / 1000000 )
             reordered_gene_counts <- gene_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
             reordered_common_tss_counts <- common_tss_counts[, c("RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads")]
 
@@ -663,6 +667,10 @@ steps:
           type: File
           inputBinding:
             position: 2
+        mapped_reads_number:
+          type: int
+          inputBinding:
+            position: 3
       outputs:
         transcript_expression_file:
           type: File
