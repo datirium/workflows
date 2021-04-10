@@ -91,7 +91,7 @@ inputs:
 
   minimum_rpkm:
     type: float?
-    default: 0
+    default: 1
     label: "Minimum RPKM for Gene Body Average Tag Density Plot"
     doc: "Minimum RPKM for Gene Body Average Tag Density Plot"
     'sd:layout':
