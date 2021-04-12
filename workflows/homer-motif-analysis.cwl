@@ -45,6 +45,8 @@ inputs:
 
   genome_fasta_file:
     type: File
+    secondaryFiles:
+    - .fai
     format: "http://edamontology.org/format_1929"
     label: "Reference genome FASTA file"
     doc: "Reference genome FASTA file. Includes all chromosomes in a single file"
