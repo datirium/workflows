@@ -14,7 +14,22 @@ requirements:
             return inputs.output_filename;
           }
         };
-
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      return  [
+                {
+                  "entry": inputs.target_fasta_file,
+                  "entryname": inputs.target_fasta_file.basename,
+                  "writable": true
+                },
+                {
+                  "entry": inputs.background_fasta_file,
+                  "entryname": inputs.background_fasta_file.basename,
+                  "writable": true
+                }
+              ]
+    }
 
 hints:
 - class: DockerRequirement
@@ -28,6 +43,10 @@ inputs:
     default: |
       #!/bin/bash
       echo findMotifs.pl $0 dummy homer_results ${@:2}
+      echo samtools faidx $0
+      echo samtools faidx $3
+      samtools faidx $0
+      samtools faidx $3
       findMotifs.pl $0 dummy homer_results ${@:2}
       echo tar -czf $1 homer_results
       tar -czf $1 homer_results
