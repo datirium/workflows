@@ -119,6 +119,24 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  icgs_marker_heatmap_file:
+    type: File
+    outputSource: altanalyze_icgs/marker_heatmap_file
+    label: "AltAnalyze ICGS Marker Gene Heatmap"
+    doc: |
+      AltAnalyze ICGS Marker Gene Heatmap in txt format
+
+  icgs_marker_heatmap_png:
+    type: File
+    outputSource: altanalyze_icgs/marker_heatmap_png
+    label: "AltAnalyze ICGS Marker Gene Heatmap"
+    doc: |
+      AltAnalyze ICGS Marker Gene Heatmap in png format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Marker Gene Heatmap'
+
   altanalyze_icgs_stdout_log:
     type: File
     outputSource: altanalyze_icgs/stdout_log
@@ -152,6 +170,8 @@ steps:
     - annotation_metadata_file
     - cell_coordinates_file
     - cluster_marker_genes_file
+    - marker_heatmap_file
+    - marker_heatmap_png
     - stdout_log
     - stderr_log
 

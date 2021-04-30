@@ -131,6 +131,16 @@ outputs:
     outputBinding:
       glob: "altanalyze/userdata/ICGS-NMF/cellbrowser/markers.tsv"
 
+  marker_heatmap_file:
+    type: File
+    outputBinding:
+      glob: "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap.txt"
+
+  marker_heatmap_png:
+    type: File
+    outputBinding:
+      glob: "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap.png"
+
   stdout_log:
     type: stdout
 
