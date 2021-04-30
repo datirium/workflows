@@ -183,15 +183,23 @@ outputs:
     type: File?
     format: "http://edamontology.org/format_2331"
     outputSource: find_motifs/known_motifs
-    label: "Known motifs html file"
+    label: "Known motifs"
     doc: "Known motifs html file"
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   homer_denovo_motifs:
     type: File?
     format: "http://edamontology.org/format_2331"
     outputSource: find_motifs/denovo_motifs
-    label: "de novo motifs html file"
+    label: "de novo motifs"
     doc: "de novo motifs html file"
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   homer_stderr_log:
     type: File

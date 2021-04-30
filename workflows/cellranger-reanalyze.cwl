@@ -422,6 +422,10 @@ outputs:
     label: "Reanalyzed run summary metrics and charts in HTML format"
     doc: |
       Reanalyzed run summary metrics and charts in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   reanalyze_params:
     type: File

@@ -114,6 +114,10 @@ outputs:
     label: "CellBrowser formatted AltAnalyze ICGS report"
     doc: |
       CellBrowser formatted AltAnalyze ICGS report
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   altanalyze_icgs_stdout_log:
     type: File

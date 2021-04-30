@@ -72,6 +72,10 @@ outputs:
     label: "Aggregated run summary metrics and charts in HTML format"
     doc: |
       Aggregated run summary metrics and charts in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   metrics_summary_report_json:
     type: File
