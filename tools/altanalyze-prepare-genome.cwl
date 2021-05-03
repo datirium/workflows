@@ -48,9 +48,12 @@ inputs:
           ;;
       esac
       echo "Selected ${SPECIES} and ${ENSEMBL_VERSION}"
-      python ./altanalyze/AltAnalyze.py --species ${SPECIES} --update Official --version ${ENSEMBL_VERSION}
+      python ./altanalyze/AltAnalyze.py --species ${SPECIES} --update Official --version ${ENSEMBL_VERSION} --additional all
       mkdir genome_data
       mv ./altanalyze/AltDatabase/EnsMart* ./genome_data/${ENSEMBL_VERSION}__${SPECIES}
+      echo "Remove files with ' in the name as we can't mount them to container anyway"
+      cd ./genome_data/${ENSEMBL_VERSION}__${SPECIES}
+      du -a | grep "'" | cut -f 2 | awk '{print "\""$1"\""}' | xargs rm -f
     inputBinding:
       position: 5
     doc: |
