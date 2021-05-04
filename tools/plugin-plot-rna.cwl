@@ -111,27 +111,27 @@ inputs:
 outputs:
 
   gene_body_report_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "*gene_body_report.tsv"
 
   gene_body_plot_png:
-    type: File
+    type: File?
     outputBinding:
       glob: "*gene_body_plot.png"
 
   gene_body_plot_pdf:
-    type: File
+    type: File?
     outputBinding:
       glob: "*gene_body_plot.pdf"
 
   rpkm_distribution_plot_png:
-    type: File
+    type: File?
     outputBinding:
       glob: "*rpkm_distribution_plot.png"
 
   rpkm_distribution_plot_pdf:
-    type: File
+    type: File?
     outputBinding:
       glob: "*rpkm_distribution_plot.pdf"
 
@@ -143,6 +143,9 @@ outputs:
 
 
 baseCommand: ["plot_rna.R"]
+
+
+successCodes: [1]
 
 
 stderr: gene_body_stderr.log
@@ -196,6 +199,7 @@ s:creator:
 
 doc: |
   Runs R script to produce gene body average tag density plot and RPKM distribution histogram
+  Doesn't fail even when we couldn't produce any plots
 
 s:about: |
   usage: plugin_plot_rna.R

@@ -340,7 +340,7 @@ outputs:
     outputSource: trim_fastq/report_file_pair
 
   gene_body_report:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3475"
     label: "Gene body average tag density plot for all isoforms longer than 1000 bp"
     doc: "Gene body average tag density plot for all isoforms longer than 1000 bp in TSV format"
@@ -355,14 +355,14 @@ outputs:
         data: [$2]
 
   gene_body_plot_pdf:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3508"
     label: "Gene body average tag density plot for all isoforms longer than 1000 bp"
     doc: "Gene body average tag density plot for all isoforms longer than 1000 bp in PDF format"
     outputSource: get_gene_body/gene_body_plot_pdf
 
   rpkm_distribution_plot_pdf:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3508"
     label: "RPKM distribution plot for isoforms"
     doc: "RPKM distribution plot for isoforms in PDF format"
