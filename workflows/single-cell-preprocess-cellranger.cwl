@@ -69,6 +69,10 @@ outputs:
     label: "FastqQC report for FASTQ file R1"
     doc: |
       FastqQC report for FASTQ file R1
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   fastqc_report_fastq_r2:
     type: File
@@ -76,6 +80,10 @@ outputs:
     label: "FastqQC report for FASTQ file R2"
     doc: |
       FastqQC report for FASTQ file R2
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   web_summary_report:
     type: File
@@ -83,6 +91,10 @@ outputs:
     label: "Run summary metrics and charts in HTML format"
     doc: |
       Run summary metrics and charts in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   metrics_summary_report:
     type: File
