@@ -199,7 +199,7 @@ steps:
     - compressed_folder
 
   cellbrowser_build:
-    run: ../tools/cellbrowser-build.cwl
+    run: ../tools/cellbrowser-build-altanalyze.cwl
     in:
       expression_matrix_file: altanalyze_icgs/expression_matrix_file
       annotation_metadata_file: altanalyze_icgs/annotation_metadata_file
@@ -208,8 +208,6 @@ steps:
     out:
     - html_data
     - index_html_file
-    - stdout_log
-    - stderr_log
 
   compress_html_data_folder:
     run: ../tools/tar-compress.cwl
