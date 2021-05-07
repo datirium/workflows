@@ -9,6 +9,42 @@ hints:
 
 requirements:
 - class: InlineJavascriptRequirement
+- class: InitialWorkDirRequirement
+  listing:
+  - entryname: cellbrowser.conf
+    entry: |
+      name = "cellbrowser"
+      shortLabel="cellbrowser"
+      priority = 1
+      geneIdType="auto"
+      exprMatrix="exprMatrix.tsv.gz"
+      meta="meta.csv"
+      coords=[
+          {
+              "file": "tsne.coords.csv",
+              "shortLabel": "CellRanger t-SNE"
+          },
+          {
+              "file": "umap.coords.csv",
+              "shortLabel": "CellRanger UMAP"
+          }
+      ]
+      markers=[
+        {
+          "file":"markers.tsv",
+          "shortLabel":"Cluster-specific genes"
+        }
+      ]
+      enumFields = ["Barcode"]
+      clusterField="Cluster"
+      labelField="Cluster"
+  - entryname: desc.conf
+    entry: |
+      title = "CellBrowser"
+      abstract = ""
+      methods = ""
+      biorxiv_url = ""
+      custom = {}
 
 
 inputs:
@@ -17,15 +53,20 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      mkdir cellbrowser_input
-      cp -r $0 cellbrowser_input
-      cp -r $1 cellbrowser_input
+      echo "Prepare input data"
+      mkdir -p ./cellbrowser_input/analysis ./cellbrowser_input/filtered_feature_bc_matrix
+      cp -r $0/* ./cellbrowser_input/analysis/
+      cp -r $1/* ./cellbrowser_input/filtered_feature_bc_matrix/
+      echo "Run cbImportCellranger"
       cbImportCellranger -i cellbrowser_input -o cellbrowser_output --name cellbrowser
-      cd cellbrowser_output
-      sed -i'.backup' -e "s/^meta='meta.tsv'/meta='meta.csv'/g" cellbrowser.conf
-      sed -i'.backup' -e "s/^defColorField='Louvain Cluster'/defColorField='Cluster'/g" cellbrowser.conf
-      sed -i'.backup' -e "s/^labelField='Louvain Cluster'/labelField='Cluster'/g" cellbrowser.conf
-      sed -i'.backup' -e "s/^enumFields=\['Louvain Cluster'\]/enumFields=\['Barcode'\]/g" cellbrowser.conf
+      cd ./cellbrowser_output
+      echo "Copy UMAP coordinates files"
+      cp ../cellbrowser_input/analysis/umap/2_components/projection.csv umap.coords.csv
+      echo "Replace configuration files"
+      rm -f cellbrowser.conf desc.conf
+      cp ../cellbrowser.conf .
+      cp ../desc.conf .
+      echo "Run cbBuild"
       cbBuild -o html_data
     inputBinding:
       position: 5
@@ -54,7 +95,7 @@ outputs:
 
   html_data:
     type: Directory
-    outputBinding: 
+    outputBinding:
       glob: "cellbrowser_output/html_data"
 
   index_html_file:
