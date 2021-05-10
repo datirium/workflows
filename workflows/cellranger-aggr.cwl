@@ -224,6 +224,7 @@ steps:
     in:
       secondary_analysis_report_folder: aggregate_counts/secondary_analysis_report_folder
       filtered_feature_bc_matrix_folder: aggregate_counts/filtered_feature_bc_matrix_folder
+      aggregation_metadata: aggregate_counts/aggregation_metadata
     out:
     - html_data
     - index_html_file

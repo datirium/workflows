@@ -66,6 +66,14 @@ inputs:
       rm -f cellbrowser.conf desc.conf
       cp ../cellbrowser.conf .
       cp ../desc.conf .
+      if [[ -n $2 ]]; then
+        echo "Aggregation metadata file was provided. Adding initial cell identity classes"
+        cat $2 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
+        cat meta.csv | grep -v "Barcode" > meta_headerless.csv
+        echo "Barcode,Cluster,Identity" > meta.csv
+        awk -F, 'NR==FNR {identity[$1]=$2; next} {split($1,barcode,"-"); print $0","identity[barcode[2]]}' aggregation_metadata.csv meta_headerless.csv >> meta.csv
+        rm -f aggregation_metadata.csv meta_headerless.csv
+      fi
       echo "Run cbBuild"
       cbBuild -o html_data
     inputBinding:
@@ -89,6 +97,14 @@ inputs:
     doc: |
       Folder with filtered feature-barcode matrices containing only cellular
       barcodes in MEX format produced by Cellranger Count or Cellranger Aggr
+
+  aggregation_metadata:
+    type: File?
+    inputBinding:
+      position: 8
+    doc: |
+      Cellranger aggregation CSV file. If provided, the Identity metadata
+      column will be added to the meta.csv
 
 
 outputs:
