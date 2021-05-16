@@ -264,6 +264,7 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_fastq_r1/fastq_file
+      threads: threads
     out:
     - html_file
 
@@ -271,6 +272,7 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_fastq_r2/fastq_file
+      threads: threads
     out:
     - html_file
 
