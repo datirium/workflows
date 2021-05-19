@@ -200,8 +200,8 @@ outputs:
       Raw number of cells per dataset plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw number of cells per dataset plot'
+        tab: 'Raw QC'
+        Caption: 'Raw number of cells per dataset'
 
   raw_cell_count_plot_pdf:
     type: File?
@@ -218,8 +218,8 @@ outputs:
       Raw UMI per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw UMI per cell log10 density plot'
+        tab: 'Raw QC'
+        Caption: 'Raw UMI per cell log10 density'
 
   raw_umi_log10_density_plot_pdf:
     type: File?
@@ -236,8 +236,8 @@ outputs:
       Raw gene per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw gene per cell log10 density plot'
+        tab: 'Raw QC'
+        Caption: 'Raw gene per cell log10 density'
 
   raw_gene_log10_density_plot_pdf:
     type: File?
@@ -254,8 +254,8 @@ outputs:
       Raw log10 gene vs log10 UMI correlation plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw log10 gene vs log10 UMI correlation plot'
+        tab: 'Raw QC'
+        Caption: 'Raw log10 gene vs log10 UMI correlation'
 
   raw_gene_umi_log10_correlation_plot_pdf:
     type: File?
@@ -272,8 +272,8 @@ outputs:
       Raw mitochondrial gene percentage per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw mitochondrial gene percentage per cell log10 density plot'
+        tab: 'Raw QC'
+        Caption: 'Raw mitochondrial gene percentage per cell log10 density'
 
   raw_mito_perc_log10_density_plot_pdf:
     type: File?
@@ -290,8 +290,8 @@ outputs:
       Raw novelty score (log10Gene/log10UMI) per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw novelty score (log10Gene/log10UMI) per cell log10 density plot'
+        tab: 'Raw QC'
+        Caption: 'Raw novelty score (log10Gene/log10UMI) per cell log10 density'
 
   raw_novelty_score_log10_density_plot_pdf:
     type: File?
@@ -308,8 +308,8 @@ outputs:
       Raw QC metrics violin plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
-        Caption: 'Raw QC metrics violin plot'
+        tab: 'Raw QC'
+        Caption: 'Raw QC metrics violin'
 
   raw_qc_metrics_vln_plot_pdf:
     type: File?
@@ -326,7 +326,7 @@ outputs:
       Raw QC metrics violin plot grouped by condition in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Raw QC Plots'
+        tab: 'Raw QC'
         Caption: 'Raw QC metrics violin plot grouped by condition'
 
   raw_qc_metrics_vln_plot_gr_by_cond_pdf:
@@ -344,8 +344,8 @@ outputs:
       Filtered number of cells per dataset plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered number of cells per dataset plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered number of cells per dataset'
 
   filt_cell_count_plot_pdf:
     type: File?
@@ -362,8 +362,8 @@ outputs:
       Filtered UMI per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered UMI per cell log10 density plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered UMI per cell log10 density'
 
   filt_umi_log10_density_plot_pdf:
     type: File?
@@ -380,8 +380,8 @@ outputs:
       Filtered gene per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered gene per cell log10 density plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered gene per cell log10 density'
 
   filt_gene_log10_density_plot_pdf:
     type: File?
@@ -398,8 +398,8 @@ outputs:
       Filtered log10 gene vs log10 UMI correlation plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered log10 gene vs log10 UMI correlation plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered log10 gene vs log10 UMI correlation'
 
   filt_gene_umi_log10_correlation_plot_pdf:
     type: File?
@@ -416,8 +416,8 @@ outputs:
       Filtered mitochondrial gene percentage per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered mitochondrial gene percentage per cell log10 density plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered mitochondrial gene percentage per cell log10 density'
 
   filt_mito_perc_log10_density_plot_pdf:
     type: File?
@@ -434,8 +434,8 @@ outputs:
       Filtered novelty score (log10Gene/log10UMI) per cell log10 density plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered novelty score (log10Gene/log10UMI) per cell log10 density plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered novelty score (log10Gene/log10UMI) per cell log10 density'
 
   filt_novelty_score_log10_density_plot_pdf:
     type: File?
@@ -452,8 +452,8 @@ outputs:
       Filtered QC metrics violin plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
-        Caption: 'Filtered QC metrics violin plot'
+        tab: 'Filtered QC'
+        Caption: 'Filtered QC metrics violin'
 
   filt_qc_metrics_vln_plot_pdf:
     type: File?
@@ -470,7 +470,7 @@ outputs:
       Filtered QC metrics violin plot grouped by condition in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Filtered QC Plots'
+        tab: 'Filtered QC'
         Caption: 'Filtered QC metrics violin plot grouped by condition'
 
   filt_qc_metrics_vln_plot_gr_by_cond_pdf:
@@ -489,7 +489,7 @@ outputs:
       unwanted variation in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Unwanted Variation Plots'
+        tab: 'Unwanted Variation'
         Caption: 'Filtered unintegrated PCA plot to evaluate cell cycle as a source of unwanted variation'
 
   filt_unint_cell_cycle_eff_pca_plot_pdf:
@@ -509,7 +509,7 @@ outputs:
       percentage as a source of unwanted variation in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Unwanted Variation Plots'
+        tab: 'Unwanted Variation'
         Caption: 'Filtered unintegrated PCA plot to evaluate mitochondrial contamination percentage as a source of unwanted variation'
 
   filt_unint_mito_perc_eff_pca_plot_pdf:
@@ -528,7 +528,7 @@ outputs:
       Filtered unintegrated UMAP plot split by cell identity in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Unwanted Variation Plots'
+        tab: 'Unwanted Variation'
         Caption: 'Filtered unintegrated UMAP plot split by cell identity'
 
   filt_unint_umap_plot_spl_by_ident_pdf:
@@ -547,7 +547,7 @@ outputs:
       in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality Evaluation Plots'
+        tab: 'Dimensionality Evaluation'
         Caption: 'Filtered integrated Elbow plot to evaluate data dimensionality'
 
   filt_int_elbow_plot_pdf:
@@ -566,8 +566,8 @@ outputs:
       Filtered integrated PCA plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality Evaluation Plots'
-        Caption: 'Filtered integrated PCA plot'
+        tab: 'Dimensionality Evaluation'
+        Caption: 'Filtered integrated PCA'
 
   filt_int_pca_plot_pdf:
     type: File?
@@ -585,7 +585,7 @@ outputs:
       in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality Evaluation Plots'
+        tab: 'Dimensionality Evaluation'
         Caption: 'Filtered integrated PCA heatmap to evaluate data dimensionality'
 
   filt_int_pca_heatmap_pdf:
@@ -605,7 +605,7 @@ outputs:
       in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality Evaluation Plots'
+        tab: 'Dimensionality Evaluation'
         Caption: 'Filtered integrated PCA loadings plot to evaluate data dimensionality'
 
   filt_int_pca_loadings_plot_pdf:
@@ -624,8 +624,8 @@ outputs:
       Filtered integrated UMAP plot in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Integrated Plots'
-        Caption: 'Filtered integrated UMAP plot'
+        tab: 'Integration'
+        Caption: 'Filtered integrated UMAP'
 
   filt_int_umap_plot_spl_by_ident_pdf:
     type: File?
@@ -646,7 +646,7 @@ outputs:
       in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering Plots'
+        tab: 'Clustering'
         Caption: 'Filtered integrated clustered UMAP plots with variable resolution'
 
   filt_int_cl_umap_plot_spl_by_cond_res_pdf:
@@ -672,7 +672,7 @@ outputs:
       with variable resolution in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Post Integration QC Metrics Plots'
+        tab: 'Post Integration QC'
         Caption: 'Filtered integrated clustered UMAP plots split by cell cycle phase with variable resolution'
 
   filt_int_cl_umap_plot_spl_by_ph_res_pdf:
@@ -698,7 +698,7 @@ outputs:
       resolution in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Post Integration QC Metrics Plots'
+        tab: 'Post Integration QC'
         Caption: 'Filtered integrated clustered UMAP QC metrics plots with variable resolution'
 
   filt_int_cl_umap_qc_metrics_plot_res_pdf:
