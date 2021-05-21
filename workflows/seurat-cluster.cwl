@@ -150,14 +150,11 @@ inputs:
       advanced: true
 
   resolution:
-    type:
-    - "null"
-    - float
-    - float[]
-    default: [0.4, 0.6, 0.8, 1.0, 1.4]
-    label: "Clustering resolution. Can be set as array"
+    type: float?
+    default: 0.4
+    label: "Clustering resolution"
     doc: |
-      Clustering resolution. Can be set as array.
+      Clustering resolution
     'sd:layout':
       advanced: true
 
