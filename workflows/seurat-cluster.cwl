@@ -723,6 +723,10 @@ outputs:
     doc: |
       Conserved gene markers file for all clusters and all resolutions
       irrespective of condition in TSV format
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene Markers'
+        Title: 'Conserved gene markers irrespective of condition'
 
   compressed_cellbrowser_config_data:
     type: File
