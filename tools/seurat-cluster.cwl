@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.1
+  dockerPull: biowardrobe2/seurat:v0.0.2
 
 
 inputs:
@@ -47,6 +47,25 @@ inputs:
       from the --identity file, second column 'condition'.
       Default: each dataset is assigned to its own biological
       condition
+
+  classifier_rds:
+    type: File
+    inputBinding:
+      prefix: "--classifier"
+    doc: |
+      Path to the Garnett classifier rds file for cell type prediction
+
+  species:
+    type:
+      type: enum
+      symbols:
+      - "hs"
+      - "mm"
+    inputBinding:
+      prefix: "--species"
+    doc: |
+      Select species for gene name conversion when running cell
+      type prediction. Either "hs" or "mm"
 
   minimum_cells:
     type: int?
@@ -151,6 +170,15 @@ inputs:
     doc: |
       Log fold change threshold for conserved gene markers identification.
       Default: 0.25
+
+  minimum_pct:
+    type: float?
+    inputBinding:
+      prefix: "--minpct"
+    doc: |
+      Minimum fraction of cells where genes used for conserved gene markers
+      identification should be detected in either of two tested clusters.
+      Default: 0.1
 
   only_positive_markers:
     type: boolean?
@@ -567,6 +595,28 @@ outputs:
     doc: |
       Filtered integrated clustered UMAP plots with variable resolution
       in PDF format
+
+  filt_int_cl_umap_ctype_pred_plot_res_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_filt_int_cl_umap_ctype_pred_plot_res_*.png"
+    doc: |
+      Filtered integrated clustered cell type prediction UMAP plots with
+      variable resolution in PNG format
+
+  filt_int_cl_umap_ctype_pred_plot_res_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_filt_int_cl_umap_ctype_pred_plot_res_*.pdf"
+    doc: |
+      Filtered integrated clustered cell type prediction UMAP plots with
+      variable resolution in PDF format
 
   filt_int_cl_umap_plot_spl_by_ph_res_png:
     type:

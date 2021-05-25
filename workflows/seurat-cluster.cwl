@@ -54,6 +54,23 @@ inputs:
       Default: each dataset is assigned to its own biological
       condition
 
+  classifier_rds:
+    type: File
+    label: "Garnett classifier rds file for cell type prediction"
+    doc: |
+      Path to the Garnett classifier rds file for cell type prediction
+
+  species:
+    type:
+      type: enum
+      symbols:
+      - "hs"
+      - "mm"
+    label: "Species for gene name conversion"
+    doc: |
+      Select species for gene name conversion when running cell
+      type prediction. Either "hs" or "mm"
+
   minimum_cells:
     type: int?
     default: 10
@@ -151,7 +168,7 @@ inputs:
 
   resolution:
     type: float?
-    default: 0.4
+    default: 0.1
     label: "Clustering resolution"
     doc: |
       Clustering resolution
@@ -164,6 +181,16 @@ inputs:
     label: "Log fold change threshold for conserved gene markers identification"
     doc: |
       Log fold change threshold for conserved gene markers identification.
+    'sd:layout':
+      advanced: true
+
+  minimum_pct:
+    type: float?
+    default: 0.1
+    label: "Minimum fraction of cells where genes used for gene markers identification should be detected"
+    doc: |
+      Minimum fraction of cells where genes used for conserved gene markers
+      identification should be detected in either of two tested clusters.
     'sd:layout':
       advanced: true
 
@@ -306,7 +333,7 @@ outputs:
     'sd:visualPlugins':
     - image:
         tab: 'Raw QC'
-        Caption: 'Raw QC metrics violin'
+        Caption: 'Raw QC metrics violin plot'
 
   raw_qc_metrics_vln_plot_pdf:
     type: File?
@@ -657,6 +684,32 @@ outputs:
       Filtered integrated clustered UMAP plots with variable resolution
       in PDF format
 
+  filt_int_cl_umap_ctype_pred_plot_res_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/filt_int_cl_umap_ctype_pred_plot_res_png
+    label: "Filtered integrated clustered cell type prediction UMAP plots with variable resolution"
+    doc: |
+      Filtered integrated clustered cell type prediction UMAP plots with
+      variable resolution in PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Clustering'
+        Caption: 'Filtered integrated clustered cell type prediction UMAP plots with variable resolution'
+
+  filt_int_cl_umap_ctype_pred_plot_res_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/filt_int_cl_umap_ctype_pred_plot_res_pdf
+    label: "Filtered integrated clustered cell type prediction UMAP plots with variable resolution"
+    doc: |
+      Filtered integrated clustered cell type prediction UMAP plots with
+      variable resolution in PDF format
+
   filt_int_cl_umap_plot_spl_by_ph_res_png:
     type:
     - "null"
@@ -801,6 +854,8 @@ steps:
       aggregation_metadata: aggregation_metadata
       cell_cycle_data: cell_cycle_data
       conditions_data: conditions_data
+      classifier_rds: classifier_rds
+      species: species
       minimum_cells: minimum_cells
       minimum_features: minimum_features
       minimum_umis: minimum_umis
@@ -813,6 +868,7 @@ steps:
       dimensionality: dimensionality
       resolution: resolution
       minimum_logfc: minimum_logfc
+      minimum_pct: minimum_pct
       only_positive_markers: only_positive_markers
       export_pdf_plots:
         default: true
@@ -870,6 +926,8 @@ steps:
     - filt_int_umap_plot_spl_by_ident_pdf
     - filt_int_cl_umap_plot_spl_by_cond_res_png
     - filt_int_cl_umap_plot_spl_by_cond_res_pdf
+    - filt_int_cl_umap_ctype_pred_plot_res_png
+    - filt_int_cl_umap_ctype_pred_plot_res_pdf
     - filt_int_cl_umap_plot_spl_by_ph_res_png
     - filt_int_cl_umap_plot_spl_by_ph_res_pdf
     - filt_int_cl_umap_qc_metrics_plot_res_png
