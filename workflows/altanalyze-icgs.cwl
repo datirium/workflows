@@ -32,11 +32,11 @@ inputs:
     'sd:upstreamSource': "altanalyze_prepare_genome_sample/genome_data"
     'sd:localLabel': true
 
-  raw_feature_bc_matrices_h5:
+  filtered_feature_bc_matrix_h5:
     type: File
     label: "scRNA-Seq Cell Ranger Experiment"
-    doc: "Unfiltered feature-barcode matrices in HDF5 format from cellranger count or aggr results"
-    'sd:upstreamSource': "sc_rnaseq_sample/raw_feature_bc_matrices_h5"
+    doc: "Filtered feature-barcode matrices in HDF5 format from cellranger count or aggr results"
+    'sd:upstreamSource': "sc_rnaseq_sample/filtered_feature_bc_matrix_h5"
     'sd:localLabel': true
 
   exclude_cell_cycle:
@@ -174,7 +174,7 @@ steps:
     run: ../tools/altanalyze-icgs.cwl
     in:
       genome_data: genome_data
-      feature_bc_matrices_h5: raw_feature_bc_matrices_h5
+      feature_bc_matrices_h5: filtered_feature_bc_matrix_h5
       exclude_cell_cycle: exclude_cell_cycle
       remove_outliers: remove_outliers
       restrict_by: restrict_by
