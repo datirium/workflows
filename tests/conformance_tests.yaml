@@ -2285,6 +2285,12 @@
     overlapped_plot:
       class: File
       location: intervene_venn.png
+    overlapped_between_all_bed:
+      class: File
+      location: 111_segments_annotations_workspace.bed
+    annotated_overlapped_between_all_file:
+      class: File
+      location: overlapped_between_all_iaintersect.tsv
     intervene_stdout_log:
       class: File
       location: intervene_stdout.log
