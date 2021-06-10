@@ -80,7 +80,7 @@ outputs:
   annotated_unique_from_a:
     type: File
     format: "http://edamontology.org/format_3475"
-    outputSource: annotate_unique_from_a/result_file
+    outputSource: groom_unique_from_a/output_file
     label: "Annotated intervals unique for experiment A"
     doc: "Annotated intervals unique for experiment A"
     "sd:visualPlugins":
@@ -91,7 +91,7 @@ outputs:
   annotated_unique_from_b:
     type: File
     format: "http://edamontology.org/format_3475"
-    outputSource: annotate_unique_from_b/result_file
+    outputSource: groom_unique_from_b/output_file
     label: "Annotated intervals unique for experiment B"
     doc: "Annotated intervals unique for experiment B"
     "sd:visualPlugins":
@@ -102,7 +102,7 @@ outputs:
   annotated_overlapped_from_a:
     type: File
     format: "http://edamontology.org/format_3475"
-    outputSource: annotate_overlapped_from_a/result_file
+    outputSource: groom_overlapped_from_a/output_file
     label: "Annotated intervals from experiment A overlapped with experiment B"
     doc: "Annotated intervals from experiment A overlapped with experiment B"
     "sd:visualPlugins":
@@ -113,7 +113,7 @@ outputs:
   annotated_overlapped_from_b:
     type: File
     format: "http://edamontology.org/format_3475"
-    outputSource: annotate_overlapped_from_b/result_file
+    outputSource: groom_overlapped_from_b/output_file
     label: "Annotated intervals from experiment B overlapped with experiment A"
     doc: "Annotated intervals from experiment B overlapped with experiment A"
     "sd:visualPlugins":
@@ -124,7 +124,7 @@ outputs:
   annotated_merged_overlapped_from_a_and_b:
     type: File
     format: "http://edamontology.org/format_3475"
-    outputSource: annotate_merged_overlapped_from_a_and_b/result_file
+    outputSource: groom_merged_overlapped_from_a_and_b/output_file
     label: "Annotated merged overlapped intervals for experiments A and B"
     doc: "Annotated merged overlapped intervals for experiments A and B"
     "sd:visualPlugins":
@@ -208,6 +208,16 @@ steps:
     out:
     - result_file
 
+  groom_unique_from_a:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: annotate_unique_from_a/result_file
+      script:
+        default: >
+          cat $0 | cut -f 1-9,15 > `basename $0`
+    out:
+    - output_file
+
   get_unique_from_b:
     run: ../tools/bedtools-intersect.cwl
     in:
@@ -250,6 +260,16 @@ steps:
         default: "annotated_unique_from_b.tsv"
     out:
     - result_file
+
+  groom_unique_from_b:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: annotate_unique_from_b/result_file
+      script:
+        default: >
+          cat $0 | cut -f 1-9,15 > `basename $0`
+    out:
+    - output_file
 
   get_overlapped_from_a:
     run: ../tools/bedtools-intersect.cwl
@@ -294,6 +314,16 @@ steps:
     out:
     - result_file
 
+  groom_overlapped_from_a:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: annotate_overlapped_from_a/result_file
+      script:
+        default: >
+          cat $0 | cut -f 1-9,15 > `basename $0`
+    out:
+    - output_file
+
   get_overlapped_from_b:
     run: ../tools/bedtools-intersect.cwl
     in:
@@ -336,6 +366,16 @@ steps:
         default: "annotated_overlapped_from_b.tsv"
     out:
     - result_file
+
+  groom_overlapped_from_b:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: annotate_overlapped_from_b/result_file
+      script:
+        default: >
+          cat $0 | cut -f 1-9,15 > `basename $0`
+    out:
+    - output_file
 
   combine_overlapped_from_a_and_b:
     run: ../tools/custom-bash.cwl
@@ -390,15 +430,25 @@ steps:
     out:
     - result_file
 
+  groom_merged_overlapped_from_a_and_b:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: annotate_merged_overlapped_from_a_and_b/result_file
+      script:
+        default: >
+          cat $0 | cut -f 1-9,15 > `basename $0`
+    out:
+    - output_file
+
   collect_statistics:
     run: ../tools/custom-bash.cwl
     in:
       input_file:
-      - annotate_unique_from_a/result_file
-      - annotate_unique_from_b/result_file
-      - annotate_overlapped_from_a/result_file
-      - annotate_overlapped_from_b/result_file
-      - annotate_merged_overlapped_from_a_and_b/result_file
+      - groom_unique_from_a/output_file
+      - groom_unique_from_b/output_file
+      - groom_overlapped_from_a/output_file
+      - groom_overlapped_from_b/output_file
+      - groom_merged_overlapped_from_a_and_b/output_file
       script:
         default: |
           UNIQUE_A=$(($(cat $0 | wc -l)-1))
