@@ -112,6 +112,32 @@ outputs:
     doc: "intervene stderr log"
     outputSource: overlap_intervals/stderr_log
 
+  overlapped_between_all_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "BED file with common for all inputs intervals"
+    doc: "BED file with common for all inputs intervals"
+    outputSource: get_overlapped_between_all/selected_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Common intervals"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  annotated_overlapped_between_all_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Annotated intervals common for all intersected files"
+    doc: "Annotated intervals common for all intersected files"
+    outputSource: annotate_overlapped_between_all/result_file
+    "sd:visualPlugins":
+    - syncfusiongrid:
+        tab: "Common intervals"
+        Title: "Annotated intervals common for all intersected files"
+
 
 steps:
 
@@ -256,6 +282,37 @@ steps:
           - result_file
     in:
       input_filename: refactore_overlapped_intervals/output_file
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
+    out:
+    - result_file
+
+  get_overlapped_between_all:
+    run: ../tools/get-file-by-name.cwl
+    in:
+      input_files: overlap_intervals/overlapped_intervals_files
+      basename_regex:
+        default: "^(1)\\1+_*"                                       # starts with repeated 1 and then _ 
+    out:
+    - selected_file                                                 # 111(1)_ file
+
+  refactore_overlapped_between_all:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: get_overlapped_between_all/selected_file
+      script:
+        default: >
+          cat $0 | awk
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t0\t0\t0\t0\t0"}' > overlapped_between_all.tsv
+    out:
+    - output_file
+
+  annotate_overlapped_between_all:
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: refactore_overlapped_between_all/output_file
       annotation_filename: annotation_file
       promoter_bp: promoter_dist
       upstream_bp: upstream_dist
