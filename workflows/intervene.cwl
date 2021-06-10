@@ -132,7 +132,7 @@ outputs:
     format: "http://edamontology.org/format_3475"
     label: "Annotated intervals common for all intersected files"
     doc: "Annotated intervals common for all intersected files"
-    outputSource: annotate_overlapped_between_all/result_file
+    outputSource: remove_empty_columns/output_file
     "sd:visualPlugins":
     - syncfusiongrid:
         tab: "Common intervals"
@@ -318,6 +318,16 @@ steps:
       upstream_bp: upstream_dist
     out:
     - result_file
+
+  remove_empty_columns:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: annotate_overlapped_between_all/result_file
+      script:
+        default: >
+          cat $0 | cut -f 1-9,15 > `basename $0`
+    out:
+    - output_file
 
 
 $namespaces:
