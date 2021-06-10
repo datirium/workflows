@@ -88,6 +88,21 @@ outputs:
         tab: "Unique from A"
         Title: "Unique intervals from experiment A"
 
+  unique_from_a_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    outputSource: sort_unique_from_a/sorted_file
+    label: "BED file with unique for experiment A intervals"
+    doc: "BED file with unique for experiment A intervals"
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Unique from A"
+        displayMode: "COLLAPSE"
+        height: 40
+
   annotated_unique_from_b:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -98,6 +113,21 @@ outputs:
     - syncfusiongrid:
         tab: "Unique from B"
         Title: "Unique intervals from experiment B"
+
+  unique_from_b_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    outputSource: sort_unique_from_b/sorted_file
+    label: "BED file with unique for experiment B intervals"
+    doc: "BED file with unique for experiment B intervals"
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Unique from B"
+        displayMode: "COLLAPSE"
+        height: 40
 
   annotated_overlapped_from_a:
     type: File
@@ -110,6 +140,21 @@ outputs:
         tab: "Overlapped from A"
         Title: "Overlapped intervals from experiment A"
 
+  overlapped_from_a_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    outputSource: sort_overlapped_from_a/sorted_file
+    label: "BED file with intervals from experiment A overlapped with experiment B"
+    doc: "BED file with intervals from experiment A overlapped with experiment B"
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Overlapped from A"
+        displayMode: "COLLAPSE"
+        height: 40
+
   annotated_overlapped_from_b:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -121,6 +166,21 @@ outputs:
         tab: "Overlapped from B"
         Title: "Overlapped intervals from experiment B"
 
+  overlapped_from_b_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    outputSource: sort_overlapped_from_b/sorted_file
+    label: "BED file with intervals from experiment B overlapped with experiment A"
+    doc: "BED file with intervals from experiment B overlapped with experiment A"
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Overlapped from B"
+        displayMode: "COLLAPSE"
+        height: 40
+
   annotated_merged_overlapped_from_a_and_b:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -131,6 +191,21 @@ outputs:
     - syncfusiongrid:
         tab: "Merged overlapped from A and B"
         Title: "Merged overlapped intervals from experiments A and B"
+
+  merged_overlapped_from_a_and_b_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    outputSource: sort_merged_overlapped_from_a_and_b/sorted_file
+    label: "BED file with merged overlapped intervals for experiments A and B"
+    doc: "BED file with merged overlapped intervals for experiments A and B"
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Merged overlapped from A and B"
+        displayMode: "COLLAPSE"
+        height: 40
 
   collected_statistics:
     type: File
@@ -287,6 +362,8 @@ steps:
       unsorted_file: get_overlapped_from_a/intersected_file
       key:
         default: ["1,1","2,2n","3,3n"]
+      output_filename:
+        default: "overlapped_from_a.bed"
     out:
     - sorted_file
 
@@ -340,6 +417,8 @@ steps:
       unsorted_file: get_overlapped_from_b/intersected_file
       key:
         default: ["1,1","2,2n","3,3n"]
+      output_filename:
+        default: "overlapped_from_b.bed"
     out:
     - sorted_file
 

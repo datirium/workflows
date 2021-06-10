@@ -2320,6 +2320,21 @@
     annotated_merged_overlapped_from_a_and_b:
       class: File
       location: annotated_merged_overlapped_from_a_and_b.tsv
+    unique_from_a_bed:
+      class: File
+      location: unique_from_a.bed
+    unique_from_b_bed:
+      class: File
+      location: unique_from_b.bed
+    overlapped_from_a_bed:
+      class: File
+      location: overlapped_from_a.bed
+    overlapped_from_b_bed:
+      class: File
+      location: overlapped_from_b.bed
+    merged_overlapped_from_a_and_b_bed:
+      class: File
+      location: merged_overlapped_from_a_and_b.bed
     collected_statistics:
       class: File
       location: statistics.md
