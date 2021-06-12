@@ -293,7 +293,7 @@ steps:
     in:
       input_files: overlap_intervals/overlapped_intervals_files
       basename_regex:
-        default: "^(1)\\1+_*"                                       # starts with repeated 1 and then _ 
+        default: "^(1)\\1+(_)"                                       # starts with repeated 1 and then _ 
     out:
     - selected_file                                                 # 111(1)_ file
 
