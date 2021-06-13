@@ -73,7 +73,7 @@ inputs:
 
   barcodes_data:
     type: File?
-    label: "Headerless TSV/CSV file with cell barcodes (one barcode per line)"
+    label: "Headerless TSV/CSV file with cell barcodes (one barcode per line) to prefilter input data"
     doc: |
       Path to the headerless TSV/CSV file with selected barcodes
       (one per line) to prefilter input feature-barcode matrices.
