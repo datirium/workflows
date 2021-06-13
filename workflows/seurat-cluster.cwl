@@ -71,6 +71,16 @@ inputs:
       Select species for gene name conversion when running cell
       type prediction. Either "hs" or "mm"
 
+  barcodes_data:
+    type: File?
+    label: "Headerless TSV/CSV file with cell barcodes (one barcode per line)"
+    doc: |
+      Path to the headerless TSV/CSV file with selected barcodes
+      (one per line) to prefilter input feature-barcode matrices.
+      If not provided, use all cells
+    'sd:layout':
+      advanced: true
+
   minimum_cells:
     type: int?
     default: 10
@@ -201,6 +211,27 @@ inputs:
     doc: |
       Return only positive markers when running conserved gene markers
       identification.
+    'sd:layout':
+      advanced: true
+
+  test_use:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "wilcox"
+      - "bimod"
+      - "roc"
+      - "t"
+      - "negbinom"
+      - "poisson"
+      - "LR"
+      - "MAST"
+      - "DESeq2"
+    default: "wilcox"
+    label: "Test type to use for putative and conserved gene marker identification"
+    doc: |
+      Set test type to use for putative and conserved gene marker identification.
     'sd:layout':
       advanced: true
 
@@ -769,6 +800,18 @@ outputs:
     doc: |
       Filtered integrated clustered Seurat data in RDS format
 
+  putative_gene_markers:
+    type: File
+    outputSource: seurat_cluster/putative_gene_markers
+    label: "Putative gene markers file for all clusters and all resolutions in TSV format"
+    doc: |
+      Putative gene markers file for all clusters and all resolutions
+      in TSV format
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Putative Gene Markers'
+        Title: 'Putative gene markers'
+
   conserved_gene_markers:
     type: File
     outputSource: seurat_cluster/conserved_gene_markers
@@ -778,7 +821,7 @@ outputs:
       irrespective of condition in TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Gene Markers'
+        tab: 'Conserved Gene Markers'
         Title: 'Conserved gene markers irrespective of condition'
 
   compressed_cellbrowser_config_data:
@@ -856,6 +899,7 @@ steps:
       conditions_data: conditions_data
       classifier_rds: classifier_rds
       species: species
+      barcodes_data: barcodes_data
       minimum_cells: minimum_cells
       minimum_features: minimum_features
       minimum_umis: minimum_umis
@@ -870,6 +914,7 @@ steps:
       minimum_logfc: minimum_logfc
       minimum_pct: minimum_pct
       only_positive_markers: only_positive_markers
+      test_use: test_use
       export_pdf_plots:
         default: true
       export_rds_data:
@@ -933,6 +978,7 @@ steps:
     - filt_int_cl_umap_qc_metrics_plot_res_png
     - filt_int_cl_umap_qc_metrics_plot_res_pdf
     - seurat_data_rds
+    - putative_gene_markers
     - conserved_gene_markers
     - cellbrowser_config_data
     - cellbrowser_html_data
