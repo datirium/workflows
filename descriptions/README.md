@@ -1,145 +1,112 @@
-[![Build Status](https://travis-ci.org/datirium/workflows.svg?branch=master)](https://travis-ci.org/datirium/workflows)
+# Available workflows
+## RNA-Seq
 
+- [RNA-Seq single-read](trim-rnaseq-se.md)
+- [RNA-Seq paired-end](trim-rnaseq-pe.md)
+- [RNA-Seq single-read strand specific](trim-rnaseq-se-dutp.md)
+- [RNA-Seq paired-end strand specific](trim-rnaseq-pe-dutp.md)
+- [RNA-Seq single-read (mitochondrial)](rnaseq-se-dutp-mitochondrial.md)
+- [RNA-Seq paired-end (mitochondrial)](rnaseq-pe-dutp-mitochondrial.md)
+- [RNA-Seq single-read strand specific (smarter)](trim-rnaseq-pe-smarter-dutp.md)
 
-## Bioinformatics Workflows by Datirium LLC
+## ChIP-Seq
 
+- [ChIP-Seq single-read](trim-chipseq-se.md)
+- [ChIP-Seq paired-end](trim-chipseq-pe.md)
 
-ChIP-Seq, ATAC-Seq, CLIP-Seq, RNA-Seq CWL workflows for use in [Scientific Data Analysis Platform (SciDAP)](https://scidap.com)
-or in [BioWardrobe](https://biowardrobe.com/) project or standalone with [cwltool](https://github.com/common-workflow-language/cwltool).
+## ATAC-Seq
 
-All the original BioWardrobe's [pipelines](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0720-3)
-    has been rewritten in CWL and new workflows has been added.  The repository pulls automatically into SciDAP platform.
+- [ATAC-Seq single-read](trim-atacseq-se.md)
+- [ATAC-Seq paired-end](trim-atacseq-pe.md)
 
-## Augmented CWL standard with
+## Quant-Seq
 
-### Metadata
+- [QuantSeq 3' mRNA-Seq single-read](trim-quantseq-mrnaseq-se.md)
+- [QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data](trim-quantseq-mrnaseq-se-strand-specific.md)
 
-To extend user interface (dynamic form) with extra input fields not required by a workflow ```'sd:metadata'``` field were introduced.
-It defines a list of workflow templates where ```inputs``` object is used for constructing and storing extra fields with an original workflow.
+## Single Cell
 
-### Example of 'metadata' template for user interface:
+- [Single-Cell Preprocessing Cell Ranger](single-cell-preprocess-cellranger.md)
+- [Single-Cell Preprocessing](single-cell-preprocess.md)
+- [Cellranger aggr - aggregates data from multiple Cellranger runs](cellranger-aggr.md)
+- [Cell Ranger Build Reference Indices](cellranger-mkref.md)
+- [Cellranger reanalyze - reruns secondary analysis performed on the feature-barcode matrix](cellranger-reanalyze.md)
+- [Seurat for comparative scRNA-seq analysis of across experimental conditions](seurat-cluster.md)
+- [AltAnalyze cell-level matching and comparison of single-cell transcriptomes](altanalyze-cellharmony.md)
+- [AltAnalyze Iterative Clustering and Guide-gene Selection](altanalyze-icgs.md)
+- [AltAnalyze Prepare Genome](altanalyze-prepare-genome.md)
+- [SoupX - an R package for the estimation and removal of cell free mRNA contamination](soupx.md)
 
-```yaml
-cwlVersion: v1.0
-class: Workflow
+## Clip-Seq
 
-inputs:
-  cells:
-    type: string
-    label: "Cells"
-    sd:preview:
-        position: 1
-  conditions:
-    type: string
-    label: "Conditions"
-    sd:preview:
-        position: 3
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-        position: 2
-  catalog:
-    type: string?
-    label: "Catalog #"
+- [CLIP-Seq single-read NNNNG](clipseq-se.md)
 
-outputs: []
-steps: []
+## Methylation
 
-```
-and include file as ```sd:metadata```
-```yaml
-'sd:metadata':
-    - "../metadata/chipseq-header.cwl"
-```
+- [Bismark Methylation single-read](bismark-methylation-se.md)
 
-### Upstreams
+## Cut-n-Run
 
-To allow selection of already analysed data as input for a workflow we organize a graph of separate workflows. To link workflows we use ```’sd:upstream’``` which defines a list of upstream workflows.
+- [Cut-n-Run paired-end](trim-chipseq-pe-cut-n-run.md)
 
-```yaml
-...
-'sd:upstream':
-  rnaseq_sample_untreated:
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
-    - "trim-rnaseq-pe.cwl"
-    - "trim-rnaseq-se.cwl"
-    - "trim-rnaseq-pe-dutp.cwl"
-    - "trim-rnaseq-se-dutp.cwl"
-  rnaseq_sample_treated:
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
-    - "trim-rnaseq-pe.cwl"
-    - "trim-rnaseq-se.cwl"
-    - "trim-rnaseq-pe-dutp.cwl"
-    - "trim-rnaseq-se-dutp.cwl"
+## Differential expression
 
-inputs:
+- [DESeq - differential gene expression analysis](deseq.md)
+- [DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test](deseq-lrt.md)
 
-  untreated_files:
-    type: File[]
-    format:
-     - "http://edamontology.org/format_3752"
-     - "http://edamontology.org/format_3475"
-    label: "Untreated input CSV/TSV files"
-    doc: "Untreated input CSV/TSV files"
-    'sd:upstreamSource': "rnaseq_sample_untreated/rpkm_common_tss"
-    'sd:localLabel': true
-...
-```
+## Differential binding analyses
 
-### VisualPlugins for an output type file
+- [DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data](diffbind.md)
+- [THOR - differential peak calling of ChIP-seq signals with replicates](rgt-thor.md)
+- [MAnorm SE - quantitative comparison of ChIP-Seq single-read data](manorm-se.md)
+- [MAnorm PE - quantitative comparison of ChIP-Seq paired-end data](manorm-pe.md)
 
-Usually workflows output results (especially files) are provided as download links in web interfaces. With SciDAP visualization plugins data can be presented as a plot, as a genome browser or as a table. Keyword `'sd:visualPlugins'` enables SciDAP visualization plugins. `line`, `pie`, `chart`, `igvbrowser` and `syncfusiongrid` types are already available in the platform.
+## Motif analyses
 
+- [Motif Finding with HOMER with custom background regions](homer-motif-analysis-bg.md)
+- [Motif Finding with HOMER with target and background regions from peaks](homer-motif-analysis-peak.md)
+- [Motif Finding with HOMER with random background regions](homer-motif-analysis.md)
 
-```yaml
-outputs:
-    ...
-    fastx_statistics:
-        type: File
-        label: "FASTQ statistics"
-        format: "http://edamontology.org/format_2330"
-        doc: "fastx_quality_stats generated FASTQ file quality statistics file"
-        outputSource: fastx_quality_stats/statistics_file
-        'sd:visualPlugins':
-        - line:
-            Title: 'Base frequency plot'
-            xAxisTitle: 'Nucleotide position'
-            yAxisTitle: 'Frequency'
-            colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381", "#888888"]
-            data: [$12, $13, $14, $15, $16]
-    ...
-    diff_expr_file:
-        type: File
-        label: "DESeq results, TSV"
-        format: "http://edamontology.org/format_3475"
-        doc: "DESeq generated list of differentially expressed items grouped by isoforms, genes or common TSS"
-        outputSource: deseq/diff_expr_file
-        'sd:visualPlugins':
-        - syncfusiongrid:
-            Title: 'Combined DESeq results'
-    ...
-    bigwig:
-        type: File
-        format: "http://edamontology.org/format_3006"
-        label: "BigWig file"
-        doc: "Generated BigWig file"
-        outputSource: bam_to_bigwig/bigwig_file
-        'sd:visualPlugins':
-        - igvbrowser:
-            id: 'igvbrowser'
-            type: 'wig'
-            name: "BigWig Track"
-            height: 120
-    ...
-```
+## Quality control
+
+- [FastQC - a quality control tool for high throughput sequence data](fastqc.md)
+
+## Gene set enrichment
+
+- [GSEApy - Gene Set Enrichment Analysis in Python](gseapy.md)
+
+## Enchancers analyses
+
+- [ROSE: rank ordering of super-enhancers](super-enhancer.md)
+
+## Dimensionality reduction, clustering, heatmaps
+
+- [PCA - Principal Component Analysis](pca.md)
+- [HOPACH - Hierarchical Ordered Partitioning and Collapsing Hybrid](hopach.md)
+- [Tag density profile around regions of interest](heatmap.md)
+
+## Genomic regions and lists manipulation
+
+- [Genomic regions intersection and visualization](intervene.md)
+- [Pairwise genomic regions intersection](peak-intersect.md)
+- [Feature expression merge - combines feature expression from several experiments](feature-merge.md)
+- [GAT - Genomic Association Tester](gat-run.md)
+- [Interval overlapping alignments counts](bedtools-multicov.md)
+- [Filter differentially expressed genes from DESeq for Tag Density Profile Analyses](filter-deseq-for-heatmap.md)
+- [Filter ChIP/ATAC peaks for Tag Density Profile or Motif Enrichment analyses](filter-peaks-for-heatmap.md)
+
+## Genome indices
+
+- [Generate genome indices for STAR & bowtie](genome-indices.md)
+- [Build STAR indices](star-index.md)
+- [Build Bowtie indices](bowtie-index.md)
+- [Build Bismark indices](bismark-index.md)
+
+# Deprecated workflows
+
+- rnaseq-se.cwl
+- rnaseq-pe.cwl
+- rnaseq-se-dutp.cwl
+- rnaseq-pe-dutp.cwl
+- chipseq-se.cwl
+- chipseq-pe.cwl
