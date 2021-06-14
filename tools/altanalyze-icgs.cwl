@@ -26,7 +26,12 @@ inputs:
       cp -r /opt/altanalyze .
 
       GENOME_DATA=$0
-      FBC_MATRIX=$1
+      FBC_COUNTER=0
+      for param in "${@:1}"; do
+          [[ $param == --* ]] && break;                # get the index of the first argument that starts with --
+          FBC_COUNTER=$(($FBC_COUNTER+1));
+      done;
+      FBC_MATRICES="${@:1:$FBC_COUNTER}"               # all fbc matrices
       GENOME_DATA_BASENAME=`basename ${GENOME_DATA}`
       ARR=(${GENOME_DATA_BASENAME//__/ })
       ENSEMBL_VERSION=${ARR[0]}
@@ -35,11 +40,15 @@ inputs:
       echo "Load ${SPECIES} from ${ENSEMBL_VERSION}"
       ln -s ${GENOME_DATA} ./altanalyze/AltDatabase/${ENSEMBL_VERSION}
       mkdir ./altanalyze/userdata/
-      cp ${FBC_MATRIX} ./altanalyze/userdata/raw_feature_bc_matrices_h5.h5
+      FBC_COUNTER=1                                     # to add suffix when copying, because files can have the same basenames
+      for FBC_MATRIX in $FBC_MATRICES; do
+        cp $FBC_MATRIX ./altanalyze/userdata/feature_bc_matrix_$FBC_COUNTER.h5
+        FBC_COUNTER=$(($FBC_COUNTER+1));
+      done
       python ./altanalyze/AltAnalyze.py --species ${SPECIES} \
       --platform RNASeq --runICGS yes --cellBrowser yes \
       --ChromiumSparseMatrix ./altanalyze/userdata/ --output ./altanalyze/userdata/ \
-      --expname icgs ${@:2}
+      --expname icgs ${@:$FBC_COUNTER}
     inputBinding:
       position: 5
     doc: |
@@ -55,11 +64,14 @@ inputs:
       this folder basename
 
   feature_bc_matrices_h5:
-    type: File
+    type:
+    - File
+    - File[]
     inputBinding:
       position: 7
     doc: |
-      Feature-barcode matrices in HDF5 format. Output from Cell Ranger
+      Feature-barcode matrices in HDF5 format.
+      Output from Cell Ranger Count or Aggregate
 
   exclude_cell_cycle:
     type: boolean?
@@ -102,6 +114,13 @@ inputs:
     inputBinding:
       prefix: "--markerPearsonCutoff"
       position: 12
+
+  max_cluster_count:
+    type: int?
+    default: 20
+    inputBinding:
+      prefix: "--k"
+      position: 13
 
 
 outputs:

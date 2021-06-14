@@ -33,8 +33,8 @@ inputs:
     'sd:localLabel': true
 
   filtered_feature_bc_matrix_h5:
-    type: File
-    label: "scRNA-Seq Cell Ranger Experiment"
+    type: File[]
+    label: "scRNA-Seq Cell Ranger Count or Aggregate Experiments"
     doc: "Filtered feature-barcode matrices in HDF5 format from cellranger count or aggr results"
     'sd:upstreamSource': "sc_rnaseq_sample/filtered_feature_bc_matrix_h5"
     'sd:localLabel': true
@@ -84,6 +84,13 @@ inputs:
     'sd:layout':
       advanced: true
 
+  max_cluster_count:
+    type: int?
+    default: 20
+    label: "Maximum number of clusters to be detected"
+    doc: "Maximum number of clusters to be detected"
+    'sd:layout':
+      advanced: true
 
 outputs:
 
@@ -180,6 +187,7 @@ steps:
       restrict_by: restrict_by
       downsample: downsample
       marker_pearson_cutoff: marker_pearson_cutoff
+      max_cluster_count: max_cluster_count
     out:
     - icgs_data
     - expression_matrix_file
