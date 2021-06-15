@@ -100,9 +100,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Cell Ranger Build Reference Indices"
-label: "Cell Ranger Build Reference Indices"
-s:alternateName: "Cell Ranger Build Reference Indices"
+s:name: "Single Cell Reference Genome"
+label: "Single Cell Reference Genome"
+s:alternateName: "Single Cell Reference Genome"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-mkref.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -140,5 +140,5 @@ s:creator:
 
 
 doc: |
-  Devel version of Cell Ranger Build Reference Indices pipeline
-  =============================================================
+  Single Cell Reference Genome
+  ============================
