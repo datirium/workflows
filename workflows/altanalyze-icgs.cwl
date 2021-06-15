@@ -92,6 +92,15 @@ inputs:
     'sd:layout':
       advanced: true
 
+  resolution:
+    type: float?
+    default: 0.4
+    label: "Clustering resolution"
+    doc: "Clustering resolution"
+    'sd:layout':
+      advanced: true
+
+
 outputs:
 
   compressed_icgs_data_folder:
@@ -188,6 +197,7 @@ steps:
       downsample: downsample
       marker_pearson_cutoff: marker_pearson_cutoff
       max_cluster_count: max_cluster_count
+      resolution: resolution
     out:
     - icgs_data
     - expression_matrix_file
