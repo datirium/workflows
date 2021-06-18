@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.3
+  dockerPull: biowardrobe2/seurat:v0.0.4
 
 
 inputs:
@@ -256,464 +256,525 @@ outputs:
   raw_cell_count_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_cell_count_plot.png"
+      glob: "*_raw_cell_count.png"
     doc: |
-      Raw number of cells per dataset plot in PNG format
+      Number of cells per dataset (not filtered).
+      PNG format
 
   raw_cell_count_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_cell_count_plot.pdf"
+      glob: "*_raw_cell_count.pdf"
     doc: |
-      Raw number of cells per dataset plot in PDF format
+      Number of cells per dataset (not filtered).
+      PDF format
 
-  raw_umi_log10_density_plot_png:
+  raw_umi_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_umi_log10_density_plot.png"
+      glob: "*_raw_umi_dnst_spl_by_cond.png"
     doc: |
-      Raw UMI per cell log10 density plot in PNG format
+      Split by condition UMI density per cell (not filtered).
+      PNG format
 
-  raw_umi_log10_density_plot_pdf:
+  raw_umi_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_umi_log10_density_plot.pdf"
+      glob: "*_raw_umi_dnst_spl_by_cond.pdf"
     doc: |
-      Raw UMI per cell log10 density plot in PDF format
+      Split by condition UMI density per cell (not filtered).
+      PDF format
 
-  raw_gene_log10_density_plot_png:
+  raw_gene_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_log10_density_plot.png"
+      glob: "*_raw_gene_dnst_spl_by_cond.png"
     doc: |
-      Raw gene per cell log10 density plot in PNG format
+      Split by condition gene density per cell (not filtered).
+      PNG format
 
-  raw_gene_log10_density_plot_pdf:
+  raw_gene_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_log10_density_plot.pdf"
+      glob: "*_raw_gene_dnst_spl_by_cond.pdf"
     doc: |
-      Raw gene per cell log10 density plot in PDF format
+      Split by condition gene density per cell (not filtered).
+      PDF format
 
-  raw_gene_umi_log10_correlation_plot_png:
+  raw_gene_umi_corr_spl_by_ident_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi_log10_correlation_plot.png"
+      glob: "*_raw_gene_umi_corr_spl_by_ident.png"
     doc: |
-      Raw log10 gene vs log10 UMI correlation plot in PNG format
+      Split by identity genes vs UMIs per cell correlation (not filtered).
+      PNG format
 
-  raw_gene_umi_log10_correlation_plot_pdf:
+  raw_gene_umi_corr_spl_by_ident_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi_log10_correlation_plot.pdf"
+      glob: "*_raw_gene_umi_corr_spl_by_ident.pdf"
     doc: |
-      Raw log10 gene vs log10 UMI correlation plot in PDF format
+      Split by identity genes vs UMIs per cell correlation (not filtered).
+      PDF format
 
-  raw_mito_perc_log10_density_plot_png:
+  raw_mito_perc_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_mito_perc_log10_density_plot.png"
+      glob: "*_raw_mito_perc_dnst_spl_by_cond.png"
     doc: |
-      Raw mitochondrial gene percentage per cell log10 density plot in PNG format
+      Split by condition mitochondrial gene percentage density per cell (not filtered).
+      PNG format
 
-  raw_mito_perc_log10_density_plot_pdf:
+  raw_mito_perc_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_mito_perc_log10_density_plot.pdf"
+      glob: "*_raw_mito_perc_dnst_spl_by_cond.pdf"
     doc: |
-      Raw mitochondrial gene percentage per cell log10 density plot in PDF format
+      Split by condition mitochondrial gene percentage density per cell (not filtered).
+      PDF format
 
-  raw_novelty_score_log10_density_plot_png:
+  raw_nvlt_score_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_novelty_score_log10_density_plot.png"
+      glob: "*_raw_nvlt_score_dnst_spl_by_cond.png"
     doc: |
-      Raw novelty score (log10Gene/log10UMI) per cell log10 density plot in PNG format
+      Split by condition novelty score density per cell (not filtered).
+      PNG format
 
-  raw_novelty_score_log10_density_plot_pdf:
+  raw_nvlt_score_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_novelty_score_log10_density_plot.pdf"
+      glob: "*_raw_nvlt_score_dnst_spl_by_cond.pdf"
     doc: |
-      Raw novelty score (log10Gene/log10UMI) per cell log10 density plot in PDF format
+      Split by condition novelty score density per cell (not filtered).
+      PDF format
 
-  raw_qc_metrics_vln_plot_png:
+  raw_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_qc_metrics_vln_plot.png"
+      glob: "*_raw_qc_mtrcs.png"
     doc: |
-      Raw QC metrics violin plot in PNG format
+      QC metrics densities per cell (not filtered).
+      PNG format
 
-  raw_qc_metrics_vln_plot_pdf:
+  raw_qc_mtrcs_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_qc_metrics_vln_plot.pdf"
+      glob: "*_raw_qc_mtrcs.pdf"
     doc: |
-      Raw QC metrics violin plot in PDF format
+      QC metrics densities per cell (not filtered).
+      PDF format
 
-  raw_qc_metrics_vln_plot_gr_by_cond_png:
+  raw_qc_mtrcs_gr_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_qc_metrics_vln_plot_gr_by_cond.png"
+      glob: "*_raw_qc_mtrcs_gr_by_cond.png"
     doc: |
-      Raw QC metrics violin plot grouped by condition in PNG format
+      Grouped by condition QC metrics densities per cell (not filtered).
+      PNG format
 
-  raw_qc_metrics_vln_plot_gr_by_cond_pdf:
+  raw_qc_mtrcs_gr_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_qc_metrics_vln_plot_gr_by_cond.pdf"
+      glob: "*_raw_qc_mtrcs_gr_by_cond.pdf"
     doc: |
-      Raw QC metrics violin plot grouped by condition in PDF format
+      Grouped by condition QC metrics densities per cell (not filtered).
+      PDF format
 
 
-  filt_cell_count_plot_png:
+  fltr_cell_count_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_cell_count_plot.png"
+      glob: "*_fltr_cell_count.png"
     doc: |
-      Filtered number of cells per dataset plot in PNG format
+      Number of cells per dataset (filtered).
+      PNG format
 
-  filt_cell_count_plot_pdf:
+  fltr_cell_count_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_cell_count_plot.pdf"
+      glob: "*_fltr_cell_count.pdf"
     doc: |
-      Filtered number of cells per dataset plot in PDF format
+      Number of cells per dataset (filtered).
+      PDF format
 
-  filt_umi_log10_density_plot_png:
+  fltr_umi_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_umi_log10_density_plot.png"
+      glob: "*_fltr_umi_dnst_spl_by_cond.png"
     doc: |
-      Filtered UMI per cell log10 density plot in PNG format
+      Split by condition UMI density per cell (filtered).
+      PNG format
 
-  filt_umi_log10_density_plot_pdf:
+  fltr_umi_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_umi_log10_density_plot.pdf"
+      glob: "*_fltr_umi_dnst_spl_by_cond.pdf"
     doc: |
-      Filtered UMI per cell log10 density plot in PDF format
+      Split by condition UMI density per cell (filtered).
+      PDF format
 
-  filt_gene_log10_density_plot_png:
+  fltr_gene_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_gene_log10_density_plot.png"
+      glob: "*_fltr_gene_dnst_spl_by_cond.png"
     doc: |
-      Filtered gene per cell log10 density plot in PNG format
+      Split by condition gene density per cell (filtered).
+      PNG format
 
-  filt_gene_log10_density_plot_pdf:
+  fltr_gene_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_gene_log10_density_plot.pdf"
+      glob: "*_fltr_gene_dnst_spl_by_cond.pdf"
     doc: |
-      Filtered gene per cell log10 density plot in PDF format
+      Split by condition gene density per cell (filtered).
+      PDF format
 
-  filt_gene_umi_log10_correlation_plot_png:
+  fltr_gene_umi_corr_spl_by_ident_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_gene_umi_log10_correlation_plot.png"
+      glob: "*_fltr_gene_umi_corr_spl_by_ident.png"
     doc: |
-      Filtered log10 gene vs log10 UMI correlation plot in PNG format
+      Split by identity genes vs UMIs per cell correlation (filtered).
+      PNG format
 
-  filt_gene_umi_log10_correlation_plot_pdf:
+  fltr_gene_umi_corr_spl_by_ident_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_gene_umi_log10_correlation_plot.pdf"
+      glob: "*_fltr_gene_umi_corr_spl_by_ident.pdf"
     doc: |
-      Filtered log10 gene vs log10 UMI correlation plot in PDF format
+      Split by identity genes vs UMIs per cell correlation (filtered).
+      PDF format
 
-  filt_mito_perc_log10_density_plot_png:
+  fltr_mito_perc_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_mito_perc_log10_density_plot.png"
+      glob: "*_fltr_mito_perc_dnst_spl_by_cond.png"
     doc: |
-      Filtered mitochondrial gene percentage per cell log10 density plot in PNG format
+      Split by condition mitochondrial gene percentage density per cell (filtered).
+      PNG format
 
-  filt_mito_perc_log10_density_plot_pdf:
+  fltr_mito_perc_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_mito_perc_log10_density_plot.pdf"
+      glob: "*_fltr_mito_perc_dnst_spl_by_cond.pdf"
     doc: |
-      Filtered mitochondrial gene percentage per cell log10 density plot in PDF format
+      Split by condition mitochondrial gene percentage density per cell (filtered).
+      PDF format
 
-  filt_novelty_score_log10_density_plot_png:
+  fltr_nvlt_score_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_novelty_score_log10_density_plot.png"
+      glob: "*_fltr_nvlt_score_dnst_spl_by_cond.png"
     doc: |
-      Filtered novelty score (log10Gene/log10UMI) per cell log10 density plot in PNG format
+      Split by condition novelty score density per cell (filtered).
+      PNG format
 
-  filt_novelty_score_log10_density_plot_pdf:
+  fltr_nvlt_score_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_novelty_score_log10_density_plot.pdf"
+      glob: "*_fltr_nvlt_score_dnst_spl_by_cond.pdf"
     doc: |
-      Filtered novelty score (log10Gene/log10UMI) per cell log10 density plot in PDF format
+      Split by condition novelty score density per cell (filtered).
+      PDF format
 
-  filt_qc_metrics_vln_plot_png:
+  fltr_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_qc_metrics_vln_plot.png"
+      glob: "*_fltr_qc_mtrcs.png"
     doc: |
-      Filtered QC metrics violin plot in PNG format
+      QC metrics densities per cell (filtered).
+      PNG format
 
-  filt_qc_metrics_vln_plot_pdf:
+  fltr_qc_mtrcs_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_qc_metrics_vln_plot.pdf"
+      glob: "*_fltr_qc_mtrcs.pdf"
     doc: |
-      Filtered QC metrics violin plot in PDF format
+      QC metrics densities per cell (filtered).
+      PDF format
 
-  filt_qc_metrics_vln_plot_gr_by_cond_png:
+  fltr_qc_mtrcs_gr_by_cond_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_qc_metrics_vln_plot_gr_by_cond.png"
+      glob: "*_fltr_qc_mtrcs_gr_by_cond.png"
     doc: |
-      Filtered QC metrics violin plot grouped by condition in PNG format
+      Grouped by condition QC metrics densities per cell (filtered).
+      PNG format
 
-  filt_qc_metrics_vln_plot_gr_by_cond_pdf:
+  fltr_qc_mtrcs_gr_by_cond_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_qc_metrics_vln_plot_gr_by_cond.pdf"
+      glob: "*_fltr_qc_mtrcs_gr_by_cond.pdf"
     doc: |
-      Filtered QC metrics violin plot grouped by condition in PDF format
+      Grouped by condition QC metrics densities per cell (filtered).
+      PDF format
 
 
-  filt_unint_cell_cycle_eff_pca_plot_png:
+  fltr_pca_spl_by_ph_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_unint_cell_cycle_eff_pca_plot.png"
+      glob: "*_fltr_pca_spl_by_ph.png"
     doc: |
-      Filtered unintegrated PCA plot to evaluate cell cycle as a source of
-      unwanted variation in PNG format
+      Split by cell cycle phase PCA of filtered unintegrated datasets.
+      PNG format
 
-  filt_unint_cell_cycle_eff_pca_plot_pdf:
+  fltr_pca_spl_by_ph_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_unint_cell_cycle_eff_pca_plot.pdf"
+      glob: "*_fltr_pca_spl_by_ph.pdf"
     doc: |
-      Filtered unintegrated PCA plot to evaluate cell cycle as a source of
-      unwanted variation in PDF format
+      Split by cell cycle phase PCA of filtered unintegrated datasets.
+      PDF format
 
-  filt_unint_mito_perc_eff_pca_plot_png:
+  fltr_pca_spl_by_mito_perc_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_unint_mito_perc_eff_pca_plot.png"
+      glob: "*_fltr_pca_spl_by_mito_perc.png"
     doc: |
-      Filtered unintegrated PCA plot to evaluate mitochondrial contamination
-      percentage as a source of unwanted variation in PNG format
+      Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets.
+      PNG format
 
-  filt_unint_mito_perc_eff_pca_plot_pdf:
+  fltr_pca_spl_by_mito_perc_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_unint_mito_perc_eff_pca_plot.pdf"
+      glob: "*_fltr_pca_spl_by_mito_perc.pdf"
     doc: |
-      Filtered unintegrated PCA plot to evaluate mitochondrial contamination
-      percentage as a source of unwanted variation in PDF format
+      Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets.
+      PDF format
 
-  filt_unint_umap_plot_spl_by_ident_png:
+  fltr_umap_spl_by_idnt_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_unint_umap_plot_spl_by_ident.png"
+      glob: "*_fltr_umap_spl_by_idnt.png"
     doc: |
-      Filtered unintegrated UMAP plot split by cell identity in PNG format
+      Split by identity UMAP projected PCA of filtered unintegrated datasets.
+      PNG format
 
-  filt_unint_umap_plot_spl_by_ident_pdf:
+  fltr_umap_spl_by_idnt_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_unint_umap_plot_spl_by_ident.pdf"
+      glob: "*_fltr_umap_spl_by_idnt.pdf"
     doc: |
-      Filtered unintegrated UMAP plot split by cell identity in PDF format
+      Split by identity UMAP projected PCA of filtered unintegrated datasets.
+      PDF format
 
 
-  filt_int_elbow_plot_png:
+  ntgr_elbow_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_int_elbow_plot.png"
+      glob: "*_ntgr_elbow.png"
     doc: |
-      Filtered integrated Elbow plot to evaluate data dimensionality
-      in PNG format
+      Elbow plot from PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_elbow_plot_pdf:
+  ntgr_elbow_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_int_elbow_plot.pdf"
+      glob: "*_ntgr_elbow.pdf"
     doc: |
-      Filtered integrated Elbow plot to evaluate data dimensionality
-      in PDF format
+      Elbow plot from PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_pca_plot_png:
+  ntgr_pca_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_int_pca_plot.png"    
+      glob: "*_ntgr_pca.png"    
     doc: |
-      Filtered integrated PCA plot in PNG format
+      PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_pca_plot_pdf:
+  ntgr_pca_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_int_pca_plot.pdf"    
+      glob: "*_ntgr_pca.pdf"    
     doc: |
-      Filtered integrated PCA plot in PDF format
+      PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_pca_heatmap_png:
+  ntgr_pca_heatmap_png:
     type: File?
     outputBinding:
-      glob: "*_filt_int_pca_heatmap.png"        
+      glob: "*_ntgr_pca_heatmap.png"        
     doc: |
-      Filtered integrated PCA heatmap to evaluate data dimensionality
-      in PNG format
+      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_pca_heatmap_pdf:
+  ntgr_pca_heatmap_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_int_pca_heatmap.pdf"        
+      glob: "*_ntgr_pca_heatmap.pdf"        
     doc: |
-      Filtered integrated PCA heatmap to evaluate data dimensionality
-      in PDF format
+      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_pca_loadings_plot_png:
+  ntgr_pca_loadings_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_int_pca_loadings_plot.png"   
+      glob: "*_ntgr_pca_loadings.png"   
     doc: |
-      Filtered integrated PCA loadings plot to evaluate data dimensionality
-      in PNG format
+      PC scores of the most variant genes from PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_pca_loadings_plot_pdf:
+  ntgr_pca_loadings_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_int_pca_loadings_plot.pdf"
+      glob: "*_ntgr_pca_loadings.pdf"
     doc: |
-      Filtered integrated PCA loadings plot to evaluate data dimensionality
-      in PDF format
+      PC scores of the most variant genes from PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_umap_plot_spl_by_ident_png:
+  ntgr_umap_spl_by_idnt_plot_png:
     type: File?
     outputBinding:
-      glob: "*_filt_int_umap_plot_spl_by_ident.png"
+      glob: "*_ntgr_umap_spl_by_idnt.png"
     doc: |
-      Filtered integrated UMAP plot in PNG format
+      Split by identity UMAP projected PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_umap_plot_spl_by_ident_pdf:
+  ntgr_umap_spl_by_idnt_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_filt_int_umap_plot_spl_by_ident.pdf"
+      glob: "*_ntgr_umap_spl_by_idnt.pdf"
     doc: |
-      Filtered integrated UMAP plot in PDF format
+      Split by identity UMAP projected PCA of filtered integrated datasets.
+      PDF format
 
 
-  filt_int_cl_umap_plot_spl_by_cond_res_png:
+  clst_umap_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_plot_spl_by_cond_res_*.png"
+      glob: "*_clst_umap_res_*.png"
     doc: |
-      Filtered integrated clustered UMAP plots with variable resolution
-      in PNG format
+      Clustered UMAP projected PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_cl_umap_plot_spl_by_cond_res_pdf:
+  clst_umap_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_plot_spl_by_cond_res_*.pdf"
+      glob: "*_clst_umap_res_*.pdf"
     doc: |
-      Filtered integrated clustered UMAP plots with variable resolution
-      in PDF format
+      Clustered UMAP projected PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_cl_umap_ctype_pred_plot_res_png:
+  clst_umap_spl_by_cond_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_ctype_pred_plot_res_*.png"
+      glob: "*_clst_umap_spl_by_cond_res_*.png"
     doc: |
-      Filtered integrated clustered cell type prediction UMAP plots with
-      variable resolution in PNG format
+      Split by condition clustered UMAP projected PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_cl_umap_ctype_pred_plot_res_pdf:
+  clst_umap_spl_by_cond_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_ctype_pred_plot_res_*.pdf"
+      glob: "*_clst_umap_spl_by_cond_res_*.pdf"
     doc: |
-      Filtered integrated clustered cell type prediction UMAP plots with
-      variable resolution in PDF format
+      Split by condition clustered UMAP projected PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_cl_umap_plot_spl_by_ph_res_png:
+  clst_umap_ctype_pred_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_plot_spl_by_ph_res_*.png"
+      glob: "*_clst_umap_ctype_pred_res_*.png"
     doc: |
-      Filtered integrated clustered UMAP plots split by cell cycle phase
-      with variable resolution in PNG format
+      Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_cl_umap_plot_spl_by_ph_res_pdf:
+  clst_umap_ctype_pred_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_plot_spl_by_ph_res_*.pdf"
+      glob: "*_clst_umap_ctype_pred_res_*.pdf"
     doc: |
-      Filtered integrated clustered UMAP plots split by cell cycle phase
-      with variable resolution in PDF format
+      Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
+      PDF format
 
-  filt_int_cl_umap_qc_metrics_plot_res_png:
+  clst_umap_spl_by_ph_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_qc_metrics_plot_res_*.png"
+      glob: "*_clst_umap_spl_by_ph_res_*.png"
     doc: |
-      Filtered integrated clustered UMAP QC metrics plots with variable
-      resolution in PNG format
+      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets.
+      PNG format
 
-  filt_int_cl_umap_qc_metrics_plot_res_pdf:
+  clst_umap_spl_by_ph_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_filt_int_cl_umap_qc_metrics_plot_res_*.pdf"
+      glob: "*_clst_umap_spl_by_ph_res_*.pdf"
     doc: |
-      Filtered integrated clustered UMAP QC metrics plots with variable
-      resolution in PDF format
+      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets.
+      PDF format
 
+  clst_qc_mtrcs_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_qc_mtrcs_res_*.png"
+    doc: |
+      QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      PNG format
+
+  clst_qc_mtrcs_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_qc_mtrcs_res_*.pdf"
+    doc: |
+      QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      PDF format
+
+
+  clst_pttv_gene_markers:
+    type: File
+    outputBinding:
+      glob: "*_clst_pttv_gene_markers.tsv"
+    doc: |
+      Putative gene markers file for all clusters and all resolutions.
+      TSV format      
   
-  seurat_data_rds:
+  clst_csrvd_gene_markers:
+    type: File
+    outputBinding:
+      glob: "*_clst_csrvd_gene_markers.tsv"
+    doc: |
+      Conserved gene markers file for all clusters and all resolutions.
+      TSV format
+      
+  seurat_clst_data_rds:
     type: File?
     outputBinding:
-      glob: "*_data.rds"
+      glob: "*_clst_data.rds"
     doc: |
-      Filtered integrated clustered Seurat data in RDS format
-
-  conserved_gene_markers:
-    type: File
-    outputBinding:
-      glob: "*_conserved_gene_markers.tsv"
-    doc: |
-      Conserved gene markers file for all clusters and all resolutions
-      irrespective of condition in TSV format
-
-  putative_gene_markers:
-    type: File
-    outputBinding:
-      glob: "*_putative_gene_markers.tsv"
-    doc: |
-      Putative gene markers file for all clusters and all resolutions
-      in TSV format
+      Clustered filtered integrated Seurat data.
+      RDS format
 
   cellbrowser_config_data:
     type: Directory
@@ -734,8 +795,7 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser
-      formatted html data
+      HTML index file from the directory with UCSC Cellbrowser formatted html data
 
 
   stdout_log:
@@ -798,5 +858,87 @@ s:creator:
 doc: |
   Runs Seurat for comparative scRNA-seq analysis of across experimental conditions
 
+ 
 s:about: |
-  Runs Seurat for comparative scRNA-seq analysis of across experimental conditions
+  usage: run_seurat.R
+        [-h] --mex MEX --identity IDENTITY --cellcycle CELLCYCLE
+        [--condition CONDITION] --classifier CLASSIFIER [--barcodes BARCODES]
+        [--mincells MINCELLS] [--minfeatures MINFEATURES] [--minumi MINUMI]
+        [--minnovelty MINNOVELTY] [--maxmt MAXMT] [--mitopattern MITOPATTERN]
+        [--regresscellcycle] [--regressmt] [--highvarcount HIGHVARCOUNT]
+        [--ndim NDIM] [--resolution [RESOLUTION [RESOLUTION ...]]]
+        [--logfc LOGFC] [--minpct MINPCT] [--onlypos]
+        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        --species {hs,mm} [--pdf] [--rds] [--output OUTPUT] [--threads THREADS]
+
+  Runs Seurat for comparative scRNA-seq analysis of across experimental
+  conditions
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --mex MEX             Path to the folder with not normalized aggregated
+                          feature-barcode matrices in MEX format
+    --identity IDENTITY   Path to the aggregation CSV file to set the initial
+                          cell identity classes
+    --cellcycle CELLCYCLE
+                          Path to the TSV/CSV file with cell cycle data. First
+                          column - 'phase', second column 'gene_id'
+    --condition CONDITION
+                          Path to the TSV/CSV file to define datasets conditions
+                          for grouping. First column - 'library_id' with values
+                          from the --identity file, second column 'condition'.
+                          Default: each dataset is assigned to its own
+                          biological condition
+    --classifier CLASSIFIER
+                          Path to the Garnett classifier rds file for cell type
+                          prediction
+    --barcodes BARCODES   Path to the headerless TSV/CSV file with selected
+                          barcodes (one per line) to prefilter input feature-
+                          barcode matrices. Default: use all cells
+    --mincells MINCELLS   Include features detected in at least this many cells
+                          (applied to thoughout all datasets together). Default:
+                          10
+    --minfeatures MINFEATURES
+                          Include cells where at least this many features are
+                          detected. Default: 250
+    --minumi MINUMI       Include cells where at least this many UMI are
+                          detected. Default: 500
+    --minnovelty MINNOVELTY
+                          Include cells with the novelty score not lower that
+                          this value (calculated as log10(genes)/log10(UMIs)).
+                          Default: 0.8
+    --maxmt MAXMT         Include cells with the mitochondrial contamination
+                          percentage not bigger that this value. Default: 5
+    --mitopattern MITOPATTERN
+                          Regex pattern to identify mitochondrial reads.
+                          Default: ^Mt-
+    --regresscellcycle    Regress cell cycle as a confounding source of
+                          variation. Default: false
+    --regressmt           Regress mitochondrial gene expression as a confounding
+                          source of variation. Default: false
+    --highvarcount HIGHVARCOUNT
+                          Number of higly variable features to detect. Default:
+                          3000
+    --ndim NDIM           Number of principal components to use in clustering
+                          (1:50). Use Elbow plot to adjust this parameter.
+                          Default: 10
+    --resolution [RESOLUTION [RESOLUTION ...]]
+                          Clustering resolution. Can be set as array. Default:
+                          0.4 0.6 0.8 1.0 1.4
+    --logfc LOGFC         Log fold change threshold for conserved gene markers
+                          identification. Default: 0.25
+    --minpct MINPCT       Minimum fraction of cells where genes used for
+                          conserved gene markers identification should be
+                          detected in either of two tested clusters. Default:
+                          0.1
+    --onlypos             Return only positive markers when running conserved
+                          gene markers identification. Default: false
+    --testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
+                          Set test type to use for putative and conserved gene
+                          marker identification. Default: wilcox
+    --species {hs,mm}     Select species for gene name conversion when running
+                          cell type prediction
+    --pdf                 Export plots in PDF. Default: false
+    --rds                 Save Seurat data to RDS file. Default: false
+    --output OUTPUT       Output prefix. Default: ./seurat
+    --threads THREADS     Threads. Default: 1
