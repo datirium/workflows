@@ -243,9 +243,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger aggr - aggregates data from multiple Cellranger runs"
-s:name: "Cellranger aggr - aggregates data from multiple Cellranger runs"
-s:alternateName: "Cellranger aggr takes a list of cellranger count output files and produces a single feature-barcode matrix containing all the data"
+label: "Single Cell Aggregate"
+s:name: "Single Cell Aggregate"
+s:alternateName: "Single Cell Aggregate"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-aggr.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -283,8 +283,8 @@ s:creator:
 
 
 doc: |
-  Devel version of Single-Cell Cell Ranger Aggregate
-  ==================================================
+  Single Cell Aggregate
+  =====================
 
   Workflow calls "cellranger aggr" command to combine output files from "cellranger count"
   (the molecule_info.h5 file from each run) into a single feature-barcode matrix containing

@@ -516,9 +516,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger reanalyze - reruns secondary analysis performed on the feature-barcode matrix"
-s:name: "Cellranger reanalyze - reruns secondary analysis performed on the feature-barcode matrix"
-s:alternateName: "Reruns secondary analysis performed on the feature-barcode matrix (dimensionality reduction, clustering and visualization) using different parameter settings"
+label: "Single Cell Reanalyze"
+s:name: "Single Cell Reanalyze"
+s:alternateName: "Single Cell Reanalyze"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-reanalyze.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -556,8 +556,8 @@ s:creator:
 
 
 doc: |
-  Devel version of Single-Cell Cell Ranger Reanalyze
-  ==================================================
+  Single Cell Reanalyze
+  =====================
 
   Workflow calls "cellranger aggr" command to rerun secondary analysis performed on
   the feature-barcode matrix (dimensionality reduction, clustering and visualization)
