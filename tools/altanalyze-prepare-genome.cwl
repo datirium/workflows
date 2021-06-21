@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/altanalyze:v0.0.5
+  dockerPull: biowardrobe2/altanalyze:v0.0.6
 
 
 inputs: 
@@ -48,7 +48,7 @@ inputs:
           ;;
       esac
       echo "Selected ${SPECIES} and ${ENSEMBL_VERSION}"
-      python ./altanalyze/AltAnalyze.py --species ${SPECIES} --update Official --version ${ENSEMBL_VERSION} --additional all
+      python ./altanalyze/AltAnalyze.py --species ${SPECIES} --update Official --version ${ENSEMBL_VERSION}
       mkdir genome_data
       mv ./altanalyze/AltDatabase/EnsMart* ./genome_data/${ENSEMBL_VERSION}__${SPECIES}
       echo "Remove files with ' in the name as we can't mount them to container anyway"
