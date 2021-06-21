@@ -40,8 +40,14 @@ inputs:
     'sd:localLabel': true
 
   exclude_cell_cycle:
-    type: boolean?
-    default: false
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "no"
+      - "yes"
+      - "strict"
+    default: "no"
     label: "Exclude cell cycle"
     doc: "Exclude cell cycle"
     'sd:layout':

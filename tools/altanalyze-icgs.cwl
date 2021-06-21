@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/altanalyze:v0.0.5
+  dockerPull: biowardrobe2/altanalyze:v0.0.6
 
 
 inputs:
@@ -74,12 +74,17 @@ inputs:
       Output from Cell Ranger Count or Aggregate
 
   exclude_cell_cycle:
-    type: boolean?
-    default: false
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "no"
+      - "yes"
+      - "strict"
+    default: "no"
     inputBinding:
       prefix: "--excludeCellCycle"
       position: 8
-      valueFrom: $(self?"yes":"no")
 
   remove_outliers:
     type: boolean?
@@ -160,12 +165,16 @@ outputs:
   marker_heatmap_file:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap.txt"
+      glob:
+      - "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap.txt"
+      - "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap_all.txt"
 
   marker_heatmap_png:
     type: File
     outputBinding:
-      glob: "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap.png"
+      glob:
+      - "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap.png"
+      - "altanalyze/userdata/ICGS-NMF/FinalMarkerHeatmap_all.png"
 
   stdout_log:
     type: stdout
