@@ -91,6 +91,15 @@ inputs:
     'sd:layout':
       advanced: true
 
+  maximum_features:
+    type: int?
+    default: 5000
+    label: "Include cells with the number of features not bigger than this value"
+    doc: |
+      Include cells with the number of features not bigger than this value.
+    'sd:layout':
+      advanced: true
+
   minimum_features:
     type: int?
     default: 250
@@ -112,9 +121,9 @@ inputs:
   minimum_novelty_score:
     type: float?
     default: 0.8
-    label: "Include cells with the novelty score not lower that this value"
+    label: "Include cells with the novelty score not lower than this value"
     doc: |
-      Include cells with the novelty score not lower that this
+      Include cells with the novelty score not lower than this
       value (calculated as log10(genes)/log10(UMIs)).
     'sd:layout':
       advanced: true
@@ -122,10 +131,10 @@ inputs:
   maximum_mito_perc:
     type: float?
     default: 5
-    label: "Include cells with the mitochondrial contamination percentage not bigger that this value"
+    label: "Include cells with the mitochondrial contamination percentage not bigger than this value"
     doc: |
       Include cells with the mitochondrial contamination percentage
-      not bigger that this value.
+      not bigger than this value.
     'sd:layout':
       advanced: true
 
@@ -999,6 +1008,7 @@ steps:
       barcodes_data: barcodes_data
       minimum_cells: minimum_cells
       minimum_features: minimum_features
+      maximum_features: maximum_features
       minimum_umis: minimum_umis
       minimum_novelty_score: minimum_novelty_score
       maximum_mito_perc: maximum_mito_perc

@@ -93,6 +93,14 @@ inputs:
       Include cells where at least this many features are detected.
       Default: 250
 
+  maximum_features:
+    type: int?
+    inputBinding:
+      prefix: "--maxfeatures"
+    doc: |
+      Include cells with the number of features not bigger than this value.
+      Default: 5000
+
   minimum_umis:
     type: int?
     inputBinding:
@@ -106,7 +114,7 @@ inputs:
     inputBinding:
       prefix: "--minnovelty"
     doc: |
-      Include cells with the novelty score not lower that this
+      Include cells with the novelty score not lower than this
       value (calculated as log10(genes)/log10(UMIs)).
       Default: 0.8
 
@@ -116,7 +124,7 @@ inputs:
       prefix: "--maxmt"
     doc: |
       Include cells with the mitochondrial contamination percentage
-      not bigger that this value.
+      not bigger than this value.
       Default: 5
 
   mito_pattern:
@@ -863,11 +871,12 @@ s:about: |
   usage: run_seurat.R
         [-h] --mex MEX --identity IDENTITY --cellcycle CELLCYCLE
         [--condition CONDITION] --classifier CLASSIFIER [--barcodes BARCODES]
-        [--mincells MINCELLS] [--minfeatures MINFEATURES] [--minumi MINUMI]
-        [--minnovelty MINNOVELTY] [--maxmt MAXMT] [--mitopattern MITOPATTERN]
-        [--regresscellcycle] [--regressmt] [--highvarcount HIGHVARCOUNT]
-        [--ndim NDIM] [--resolution [RESOLUTION [RESOLUTION ...]]]
-        [--logfc LOGFC] [--minpct MINPCT] [--onlypos]
+        [--mincells MINCELLS] [--minfeatures MINFEATURES]
+        [--maxfeatures MAXFEATURES] [--minumi MINUMI] [--minnovelty MINNOVELTY]
+        [--maxmt MAXMT] [--mitopattern MITOPATTERN] [--regresscellcycle]
+        [--regressmt] [--highvarcount HIGHVARCOUNT] [--ndim NDIM]
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--logfc LOGFC]
+        [--minpct MINPCT] [--onlypos]
         [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
         --species {hs,mm} [--pdf] [--rds] [--output OUTPUT] [--threads THREADS]
 
@@ -901,14 +910,17 @@ s:about: |
     --minfeatures MINFEATURES
                           Include cells where at least this many features are
                           detected. Default: 250
+    --maxfeatures MAXFEATURES
+                          Include cells with the number of features not bigger
+                          than this value. Default: 5000
     --minumi MINUMI       Include cells where at least this many UMI are
                           detected. Default: 500
     --minnovelty MINNOVELTY
-                          Include cells with the novelty score not lower that
+                          Include cells with the novelty score not lower than
                           this value (calculated as log10(genes)/log10(UMIs)).
                           Default: 0.8
     --maxmt MAXMT         Include cells with the mitochondrial contamination
-                          percentage not bigger that this value. Default: 5
+                          percentage not bigger than this value. Default: 5
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial reads.
                           Default: ^Mt-
