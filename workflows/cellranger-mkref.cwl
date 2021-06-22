@@ -102,7 +102,7 @@ $schemas:
 
 s:name: "Cell Ranger Build Reference Indices"
 label: "Cell Ranger Build Reference Indices"
-s:alternateName: "Builds indices for a reference genome"
+s:alternateName: "Builds reference genome indices for Cell Ranger Count Gene Expression experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-mkref.cwl
 s:codeRepository: https://github.com/datirium/workflows

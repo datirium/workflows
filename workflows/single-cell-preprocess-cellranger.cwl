@@ -397,7 +397,7 @@ $schemas:
 
 s:name: "Cell Ranger Count Gene Expression"
 label: "Cell Ranger Count Gene Expression"
-s:alternateName: "Generates feature-barcode matrix for a single library"
+s:alternateName: "Counts gene expression for a single library"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/single-cell-preprocess-cellranger.cwl
 s:codeRepository: https://github.com/datirium/workflows

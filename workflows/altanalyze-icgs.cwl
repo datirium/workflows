@@ -247,9 +247,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "AltAnalyze Iterative Clustering and Guide-gene Selection"
-label: "AltAnalyze Iterative Clustering and Guide-gene Selection"
-s:alternateName: "AltAnalyze Iterative Clustering and Guide-gene Selection"
+s:name: "AltAnalyze ICGS"
+label: "AltAnalyze ICGS"
+s:alternateName: "Runs iterative clustering and guide-gene selection for Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/altanalyze-icgs.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -287,5 +287,5 @@ s:creator:
 
 
 doc: |
-  Devel version of AltAnalyze Iterative Clustering and Guide-gene Selection
-  =========================================================================
+  AltAnalyze ICGS
+  ===============

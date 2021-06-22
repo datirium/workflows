@@ -173,9 +173,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "SoupX - an R package for the estimation and removal of cell free mRNA contamination"
-label: "SoupX - an R package for the estimation and removal of cell free mRNA contamination"
-s:alternateName: "SoupX - an R package for the estimation and removal of cell free mRNA contamination"
+s:name: "SoupX Estimate"
+label: "SoupX Estimate"
+s:alternateName: "Estimates and removes cell free mRNA contamination for Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/soupx.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -213,6 +213,6 @@ s:creator:
 
 
 doc: |
-  Devel version of Single-Cell Advanced Cell Ranger Pipeline (SoupX)
-  =================================================================
+  SoupX Estimate
+  ==============
 

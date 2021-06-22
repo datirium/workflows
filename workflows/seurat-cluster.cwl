@@ -1111,7 +1111,7 @@ $schemas:
 
 s:name: "Seurat Cluster"
 label: "Seurat Cluster"
-s:alternateName: "Runs filtering, integration, dimensional reduction, and clustering algorithms using Seurat R package"
+s:alternateName: "Runs filtering, integration, and clustering analyses for Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/seurat-cluster.cwl
 s:codeRepository: https://github.com/datirium/workflows

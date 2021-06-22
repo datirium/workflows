@@ -181,9 +181,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "AltAnalyze cell-level matching and comparison of single-cell transcriptomes"
-label: "AltAnalyze cell-level matching and comparison of single-cell transcriptomes"
-s:alternateName: "AltAnalyze cell-level matching and comparison of single-cell transcriptomes"
+s:name: "AltAnalyze CellHarmony"
+label: "AltAnalyze CellHarmony"
+s:alternateName: "Runs cell-level matching and comparison of single-cell transcriptomes for AltAnalyze ICGS, Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/altanalyze-cellharmony.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -221,9 +221,5 @@ s:creator:
 
 
 doc: |
-  Devel version of AltAnalyze CellHarmony
-  =======================================
-
-  cellHarmony is a cell-matching algorithm designed to identify a cell's most similar analogue in
-  a distinct single-cell RNA-Seq (scRNA-Seq) dataset and find differentially expressed genes in
-  each cell population.
+  AltAnalyze CellHarmony
+  ======================
