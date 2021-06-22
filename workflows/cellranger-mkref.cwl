@@ -102,7 +102,7 @@ $schemas:
 
 s:name: "Cell Ranger Build Reference Indices"
 label: "Cell Ranger Build Reference Indices"
-s:alternateName: "Cell Ranger Build Reference Indices"
+s:alternateName: "Builds indices for a reference genome"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-mkref.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -140,5 +140,5 @@ s:creator:
 
 
 doc: |
-  Devel version of Cell Ranger Build Reference Indices pipeline
-  =============================================================
+  Cell Ranger Build Reference Indices
+  ===================================

@@ -395,9 +395,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Single-Cell Preprocessing Cell Ranger Pipeline"
-label: "Single-Cell Preprocessing Cell Ranger Pipeline"
-s:alternateName: "Single-Cell Preprocessing Cell Ranger Pipeline"
+s:name: "Cell Ranger Count Gene Expression"
+label: "Cell Ranger Count Gene Expression"
+s:alternateName: "Generates feature-barcode matrix for a single library"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/single-cell-preprocess-cellranger.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -435,5 +435,5 @@ s:creator:
 
 
 doc: |
-  Devel version of Single-Cell Preprocessing Cell Ranger Pipeline
-  ===============================================================
+  Cell Ranger Count Gene Expression
+  =================================

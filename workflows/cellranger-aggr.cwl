@@ -243,9 +243,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger aggr - aggregates data from multiple Cellranger runs"
-s:name: "Cellranger aggr - aggregates data from multiple Cellranger runs"
-s:alternateName: "Cellranger aggr takes a list of cellranger count output files and produces a single feature-barcode matrix containing all the data"
+label: "Cell Ranger Aggregate"
+s:name: "Cell Ranger Aggregate"
+s:alternateName: "Aggregates data from multiple Cell Ranger Count Gene Expression experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-aggr.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -283,26 +283,5 @@ s:creator:
 
 
 doc: |
-  Devel version of Single-Cell Cell Ranger Aggregate
-  ==================================================
-
-  Workflow calls "cellranger aggr" command to combine output files from "cellranger count"
-  (the molecule_info.h5 file from each run) into a single feature-barcode matrix containing
-  all the data. When combining multiple GEM wells, the barcode sequences for each channel
-  are distinguished by a GEM well suffix appended to the barcode sequence. Each GEM well is
-  a physically distinct set of GEM partitions, but draws barcode sequences randomly from the
-  pool of valid barcodes, known as the barcode whitelist. To keep the barcodes unique when
-  aggregating multiple libraries, we append a small integer identifying the GEM well to the
-  barcode nucleotide sequence, and use that nucleotide sequence plus ID as the unique identifier
-  in the feature-barcode matrix. For example, AGACCATTGAGACTTA-1 and AGACCATTGAGACTTA-2 are
-  distinct cell barcodes from different GEM wells, despite having the same barcode nucleotide
-  sequence. This number, which tells us which GEM well this barcode sequence came from, is
-  called the GEM well suffix. The numbering of the GEM wells will reflect the order that the
-  GEM wells were provided in the "molecule_info_h5" and "gem_well_labels" inputs.
-
-  When combining data from multiple GEM wells, the "cellranger aggr" pipeline automatically
-  equalizes the average read depth per cell between groups before merging. This approach avoids
-  artifacts that may be introduced due to differences in sequencing depth. It is possible to turn
-  off normalization or change the way normalization is done through the "normalization_mode"
-  input. The "none" value may be appropriate if you want to maximize sensitivity and plan to deal
-  with depth normalization in a downstream step.
+  Cell Ranger Aggregate
+  =====================

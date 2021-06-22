@@ -1109,9 +1109,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Seurat for comparative scRNA-seq analysis of across experimental conditions"
-label: "Seurat for comparative scRNA-seq analysis of across experimental conditions"
-s:alternateName: "Seurat for comparative scRNA-seq analysis of across experimental conditions"
+s:name: "Seurat Cluster"
+label: "Seurat Cluster"
+s:alternateName: "Runs filtering, integration, dimensional reduction, and clustering algorithms using Seurat R package"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/seurat-cluster.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -1149,5 +1149,5 @@ s:creator:
 
 
 doc: |
-  Runs Seurat for comparative scRNA-seq analysis of across experimental conditions
-  ================================================================================
+  Seurat Cluster
+  ==============
