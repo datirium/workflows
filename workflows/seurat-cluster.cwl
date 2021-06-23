@@ -47,8 +47,6 @@ inputs:
       from the --identity file, second column 'condition'.
       If not provided, each dataset is assigned to its own
       biological condition
-    'sd:layout':
-      advanced: true
 
   classifier_rds:
     type: File?
