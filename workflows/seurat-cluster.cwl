@@ -38,61 +38,6 @@ inputs:
     'sd:upstreamSource': "sc_rnaseq_aggr_sample/aggregation_metadata"
     'sd:localLabel': true
 
-  conditions_data:
-    type: File?
-    label: "TSV/CSV file to define datasets conditions with 'library_id' and 'condition' columns"
-    doc: |
-      Path to the TSV/CSV file to define datasets conditions
-      for grouping. First column - 'library_id' with values
-      from the --identity file, second column 'condition'.
-      If not provided, each dataset is assigned to its own
-      biological condition
-
-  classifier_rds:
-    type: File?
-    label: "Garnett classifier rds file for cell type prediction"
-    doc: |
-      Path to the Garnett classifier rds file for cell type prediction.
-      If not provided, skip cell type prediction
-    'sd:layout':
-      advanced: true
-
-  species:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "hs"
-      - "mm"
-      - "none"
-    default: "none"
-    label: "Species for gene name conversion when running cell type prediction"
-    doc: |
-      Select species for gene name conversion when running cell type prediction
-      with Garnett classifier.
-      If "none" - do not convert gene names
-    'sd:layout':
-      advanced: true
-
-  cell_cycle_data:
-    type: File?
-    label: "TSV/CSV file with cell cycle data with 'phase' and 'gene_id' columns"
-    doc: |
-      TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'.
-      If not provided, skip cell cycle score assignment
-    'sd:layout':
-      advanced: true
-
-  barcodes_data:
-    type: File?
-    label: "Headerless TSV/CSV file with cell barcodes (one barcode per line) to prefilter input data"
-    doc: |
-      Path to the headerless TSV/CSV file with selected barcodes
-      (one per line) to prefilter input feature-barcode matrices.
-      If not provided, use all cells
-    'sd:layout':
-      advanced: true
-
   minimum_cells:
     type: int?
     default: 10
@@ -159,25 +104,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  regress_cellcycle:
-    type: boolean?
-    default: false
-    label: "Regress cell cycle as a confounding source of variation"
-    doc: |
-      Regress cell cycle as a confounding source of variation.
-    'sd:layout':
-      advanced: true
-      
-  regress_mito_perc:
-    type: boolean?
-    default: false
-    label: "Regress mitochondrial gene expression as a confounding source of variation"
-    doc: |
-      Regress mitochondrial gene expression as a confounding source
-      of variation.
-    'sd:layout':
-      advanced: true
-
   high_var_features_count:
     type: int?
     default: 3000
@@ -225,16 +151,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  only_positive_markers:
-    type: boolean?
-    default: false
-    label: "Return only positive markers when running conserved gene markers identification"
-    doc: |
-      Return only positive markers when running conserved gene markers
-      identification.
-    'sd:layout':
-      advanced: true
-
   test_use:
     type:
     - "null"
@@ -262,6 +178,90 @@ inputs:
     label: "Threads number to use"
     doc: |
       Threads number
+    'sd:layout':
+      advanced: true
+
+  species:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "hs"
+      - "mm"
+      - "none"
+    default: "none"
+    label: "Species for gene name conversion when running cell type prediction"
+    doc: |
+      Select species for gene name conversion when running cell type prediction
+      with Garnett classifier.
+      If "none" - do not convert gene names
+    'sd:layout':
+      advanced: true
+
+  regress_cellcycle:
+    type: boolean?
+    default: false
+    label: "Regress cell cycle as a confounding source of variation"
+    doc: |
+      Regress cell cycle as a confounding source of variation.
+    'sd:layout':
+      advanced: true
+      
+  regress_mito_perc:
+    type: boolean?
+    default: false
+    label: "Regress mitochondrial gene expression as a confounding source of variation"
+    doc: |
+      Regress mitochondrial gene expression as a confounding source
+      of variation.
+    'sd:layout':
+      advanced: true
+
+  only_positive_markers:
+    type: boolean?
+    default: false
+    label: "Return only positive markers when running conserved gene markers identification"
+    doc: |
+      Return only positive markers when running conserved gene markers
+      identification.
+    'sd:layout':
+      advanced: true
+
+  conditions_data:
+    type: File?
+    label: "TSV/CSV file to define datasets conditions with 'library_id' and 'condition' columns"
+    doc: |
+      Path to the TSV/CSV file to define datasets conditions
+      for grouping. First column - 'library_id' with values
+      from the --identity file, second column 'condition'.
+      If not provided, each dataset is assigned to its own
+      biological condition
+
+  barcodes_data:
+    type: File?
+    label: "Headerless TSV/CSV file with cell barcodes (one barcode per line) to prefilter input data"
+    doc: |
+      Path to the headerless TSV/CSV file with selected barcodes
+      (one per line) to prefilter input feature-barcode matrices.
+      If not provided, use all cells
+    'sd:layout':
+      advanced: true
+
+  cell_cycle_data:
+    type: File?
+    label: "TSV/CSV file with cell cycle data with 'phase' and 'gene_id' columns"
+    doc: |
+      TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'.
+      If not provided, skip cell cycle score assignment
+    'sd:layout':
+      advanced: true
+
+  classifier_rds:
+    type: File?
+    label: "Garnett classifier rds file for cell type prediction"
+    doc: |
+      Path to the Garnett classifier rds file for cell type prediction.
+      If not provided, skip cell type prediction
     'sd:layout':
       advanced: true
 
