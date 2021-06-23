@@ -39,38 +39,49 @@ inputs:
     'sd:localLabel': true
 
   conditions_data:
-    type: File
+    type: File?
     label: "TSV/CSV file to define datasets conditions with 'library_id' and 'condition' columns"
     doc: |
       Path to the TSV/CSV file to define datasets conditions
       for grouping. First column - 'library_id' with values
       from the --identity file, second column 'condition'.
-      Default: each dataset is assigned to its own biological
-      condition
+      If not provided, each dataset is assigned to its own
+      biological condition
+    'sd:layout':
+      advanced: true
 
   classifier_rds:
-    type: File
+    type: File?
     label: "Garnett classifier rds file for cell type prediction"
     doc: |
-      Path to the Garnett classifier rds file for cell type prediction
+      Path to the Garnett classifier rds file for cell type prediction.
+      If not provided, skip cell type prediction
+    'sd:layout':
+      advanced: true
 
   species:
     type:
-      type: enum
+    - "null"
+    - type: enum
       symbols:
       - "hs"
       - "mm"
-    label: "Species for gene name conversion"
+      - "none"
+    default: "none"
+    label: "Species for gene name conversion when running cell type prediction"
     doc: |
-      Select species for gene name conversion when running cell
-      type prediction. Either "hs" or "mm"
+      Select species for gene name conversion when running cell type prediction
+      with Garnett classifier.
+      If "none" - do not convert gene names
+    'sd:layout':
+      advanced: true
 
   cell_cycle_data:
     type: File?
     label: "TSV/CSV file with cell cycle data with 'phase' and 'gene_id' columns"
     doc: |
       TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'.
-      If not provided, cell cycle phase is not used
+      If not provided, skip cell cycle score assignment
     'sd:layout':
       advanced: true
 
