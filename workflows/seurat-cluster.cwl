@@ -38,12 +38,6 @@ inputs:
     'sd:upstreamSource': "sc_rnaseq_aggr_sample/aggregation_metadata"
     'sd:localLabel': true
 
-  cell_cycle_data:
-    type: File
-    label: "TSV/CSV file with cell cycle data with 'phase' and 'gene_id' columns"
-    doc: |
-      TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'
-
   conditions_data:
     type: File
     label: "TSV/CSV file to define datasets conditions with 'library_id' and 'condition' columns"
@@ -70,6 +64,15 @@ inputs:
     doc: |
       Select species for gene name conversion when running cell
       type prediction. Either "hs" or "mm"
+
+  cell_cycle_data:
+    type: File?
+    label: "TSV/CSV file with cell cycle data with 'phase' and 'gene_id' columns"
+    doc: |
+      TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'.
+      If not provided, cell cycle phase is not used
+    'sd:layout':
+      advanced: true
 
   barcodes_data:
     type: File?

@@ -29,14 +29,6 @@ inputs:
       Path to the aggregation CSV file to set the initial
       cell identity classes
 
-  cell_cycle_data:
-    type: File
-    inputBinding:
-      prefix: "--cellcycle"    
-    doc: |
-      Path to the TSV/CSV file with cell cycle data.
-      First column - 'phase', second column 'gene_id'
-
   conditions_data:
     type: File
     inputBinding:
@@ -66,6 +58,15 @@ inputs:
     doc: |
       Select species for gene name conversion when running cell
       type prediction. Either "hs" or "mm"
+
+  cell_cycle_data:
+    type: File?
+    inputBinding:
+      prefix: "--cellcycle"
+    doc: |
+      Path to the TSV/CSV file with cell cycle data.
+      First column - 'phase', second column 'gene_id'.
+      Default: cell cycle phase is not used
 
   barcodes_data:
     type: File?
