@@ -172,6 +172,17 @@ inputs:
     'sd:layout':
       advanced: true
 
+    # “wilcox” :   Wilcoxon rank sum test (default)
+    # “bimod” :    Likelihood-ratio test for single cell feature expression, (McDavid et al., Bioinformatics, 2013)
+    # “roc” :      Standard AUC classifier
+    # “t” :        Student’s t-test
+    # “poisson” :  Likelihood ratio test assuming an underlying negative binomial distribution. Use only for UMI-based datasets
+    # “negbinom” : Likelihood ratio test assuming an underlying negative binomial distribution. Use only for UMI-based datasets
+    # “LR” :       Uses a logistic regression framework to determine differentially expressed genes. Constructs a logistic regression
+    #              model predicting group membership based on each feature individually and compares this to a null model with a likelihood ratio test.
+    # “MAST” :     GLM-framework that treates cellular detection rate as a covariate (Finak et al, Genome Biology, 2015) (Installation instructions)
+    # “DESeq2” :   DE based on a model using the negative binomial distribution (Love et al, Genome Biology, 2014) (Installation instructions)
+
   threads:
     type: int?
     default: 6
