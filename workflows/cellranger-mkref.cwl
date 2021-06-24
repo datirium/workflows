@@ -48,7 +48,7 @@ inputs:
 
   memory_limit:
     type: int?
-    default: 30
+    default: 20
     label: "Maximum memory used (GB)"
     doc: "Maximum memory used (GB). The same will be applied to virtual memory"
     'sd:layout':
