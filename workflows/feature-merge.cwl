@@ -22,6 +22,7 @@ requirements:
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
+    - "trim-quantseq-mrnaseq-se.cwl"
 
 
 inputs:
