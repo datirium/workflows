@@ -41,6 +41,37 @@ inputs:
     label: "FASTQ file R2 (optionally compressed)"
     doc: "FASTQ file R2 (optionally compressed)"
 
+  expect_cells:
+    type: int?
+    default: 3000
+    label: "Expected number of recovered cells"
+    doc: "Expected number of recovered cells"
+    'sd:layout':
+      advanced: true
+
+  force_expect_cells:
+    type: boolean?
+    default: false
+    label: "Force pipeline to use the expected number of recovered cells"
+    doc: |
+      Force pipeline to use the expected number of recovered cell.
+      The value provided in expect_cells will be sent to Cell Ranger Count as --force-cells.
+      The latter will bypass the cell detection algorithm. Use this if the number of cells
+      estimated by Cell Ranger is not consistent with the barcode rank plot.
+    'sd:layout':
+      advanced: true
+
+  include_introns:
+    type: boolean?
+    default: false
+    label: "Count reads mapping to intronic regions. For samples with a significant amount of pre-mRNA molecules, such as nuclei"
+    doc: |
+      Add this flag to count reads mapping to intronic regions.
+      This may improve sensitivity for samples with a significant
+      amount of pre-mRNA molecules, such as nuclei.
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
     default: 4
@@ -282,6 +313,13 @@ steps:
       fastq_file_r1: extract_fastq_r1/fastq_file
       fastq_file_r2: extract_fastq_r2/fastq_file
       indices_folder: indices_folder
+      expect_cells:
+        source: [expect_cells, force_expect_cells]
+        valueFrom: $(self[1]?null:self[0])
+      force_cells:
+        source: [expect_cells, force_expect_cells]
+        valueFrom: $(self[1]?self[0]:null)
+      include_introns: include_introns
       threads: threads
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
