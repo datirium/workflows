@@ -5,9 +5,16 @@ class: Workflow
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
-  - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
-
+  - class: InlineJavascriptRequirement
+    expressionLib:
+    - var split_features = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 'sd:upstream':
   sc_rnaseq_aggr_sample:
@@ -48,21 +55,21 @@ inputs:
     'sd:layout':
       advanced: true
 
-  maximum_features:
-    type: int?
-    default: 5000
-    label: "Include cells with the number of features not bigger than this value"
-    doc: |
-      Include cells with the number of features not bigger than this value.
-    'sd:layout':
-      advanced: true
-
   minimum_features:
     type: int?
     default: 250
     label: "Include cells where at least this many features are detected"
     doc: |
       Include cells where at least this many features are detected.
+    'sd:layout':
+      advanced: true
+
+  maximum_features:
+    type: int?
+    default: 5000
+    label: "Include cells with the number of features not bigger than this value"
+    doc: |
+      Include cells with the number of features not bigger than this value.
     'sd:layout':
       advanced: true
 
@@ -224,6 +231,16 @@ inputs:
     doc: |
       Return only positive markers when running conserved gene markers
       identification.
+    'sd:layout':
+      advanced: true
+
+  selected_features:
+    type: string?
+    default: null
+    label: "Comma or space separated list of genes to highlight"
+    doc: |
+      Features to explore in the clustered filtered integrated datasets.
+      Default: do not highlight any features
     'sd:layout':
       advanced: true
 
@@ -826,12 +843,12 @@ outputs:
       PDF format
 
 
-  clst_umap_ctype_pred_res_plot_png:
+  clst_umap_ctype_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: seurat_cluster/clst_umap_ctype_pred_res_plot_png
+    outputSource: seurat_cluster/clst_umap_ctype_res_plot_png
     label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets"
     doc: |
       Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
@@ -841,12 +858,12 @@ outputs:
         tab: 'Clustering'
         Caption: 'Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets'
 
-  clst_umap_ctype_pred_res_plot_pdf:
+  clst_umap_ctype_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: seurat_cluster/clst_umap_ctype_pred_res_plot_pdf
+    outputSource: seurat_cluster/clst_umap_ctype_res_plot_pdf
     label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets"
     doc: |
       Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
@@ -904,6 +921,222 @@ outputs:
     label: "QC metrics for clustered UMAP projected PCA of filtered integrated datasets"
     doc: |
       QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      PDF format
+
+
+  expr_avg_per_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_avg_per_clst_res_plot_png
+    label: "Scaled average gene expression per cluster of filtered integrated datasets"
+    doc: |
+      Scaled average gene expression per cluster of filtered integrated datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Scaled average gene expression per cluster of filtered integrated datasets'
+
+  expr_avg_per_clst_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_avg_per_clst_res_plot_pdf
+    label: "Scaled average gene expression per cluster of filtered integrated datasets"
+    doc: |
+      Scaled average gene expression per cluster of filtered integrated datasets.
+      PDF format
+
+
+  expr_per_clst_cell_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_per_clst_cell_res_plot_png
+    label: "Log normalized gene expression per cell of clustered filtered integrated datasets"
+    doc: |
+      Log normalized gene expression per cell of clustered filtered integrated datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression per cell of clustered filtered integrated datasets'
+
+  expr_per_clst_cell_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_per_clst_cell_res_plot_pdf
+    label: "Log normalized gene expression per cell of clustered filtered integrated datasets"
+    doc: |
+      Log normalized gene expression per cell of clustered filtered integrated datasets.
+      PDF format
+
+
+  expr_clst_heatmap_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_clst_heatmap_res_plot_png
+    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets"
+    doc: |
+      Log normalized gene expression heatmap of clustered filtered integrated datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression heatmap of clustered filtered integrated datasets'
+
+  expr_clst_heatmap_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_clst_heatmap_res_plot_pdf
+    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets"
+    doc: |
+      Log normalized gene expression heatmap of clustered filtered integrated datasets.
+      PDF format
+
+
+  expr_dnst_per_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_dnst_per_clst_res_plot_png
+    label: "Log normalized gene expression densities per cluster of filtered integrated datasets"
+    doc: |
+      Log normalized gene expression densities per cluster of filtered integrated datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression densities per cluster of filtered integrated datasets'
+
+  expr_dnst_per_clst_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_dnst_per_clst_res_plot_pdf
+    label: "Log normalized gene expression densities per cluster of filtered integrated datasets"
+    doc: |
+      Log normalized gene expression densities per cluster of filtered integrated datasets.
+      PDF format
+
+
+  expr_avg_per_ctype_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_avg_per_ctype_res_plot_png
+    label: "Scaled average gene expression per predicted cell type of filtered integrated datasets"
+    doc: |
+      Scaled average gene expression per predicted cell type of filtered integrated datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Scaled average gene expression per predicted cell type of filtered integrated datasets'
+
+  expr_avg_per_ctype_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_avg_per_ctype_res_plot_pdf
+    label: "Scaled average gene expression per predicted cell type of filtered integrated datasets"
+    doc: |
+      Scaled average gene expression per predicted cell type of filtered integrated datasets.
+      PDF format
+
+
+  expr_per_ctype_cell_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_per_ctype_cell_res_plot_png
+    label: "Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types"
+    doc: |
+      Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types'
+
+  expr_per_ctype_cell_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_per_ctype_cell_res_plot_pdf
+    label: "Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types"
+    doc: |
+      Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types.
+      PDF format
+
+
+  expr_ctype_heatmap_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_ctype_heatmap_res_plot_png
+    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types"
+    doc: |
+      Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types'
+
+  expr_ctype_heatmap_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_ctype_heatmap_res_plot_pdf
+    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types"
+    doc: |
+      Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types.
+      PDF format
+
+
+  expr_dnst_per_ctype_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_dnst_per_ctype_res_plot_png
+    label: "Log normalized gene expression densities per predicted cell type of filtered integrated datasets"
+    doc: |
+      Log normalized gene expression densities per predicted cell type of filtered integrated datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated datasets'
+
+  expr_dnst_per_ctype_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_cluster/expr_dnst_per_ctype_res_plot_pdf
+    label: "Log normalized gene expression densities per predicted cell type of filtered integrated datasets"
+    doc: |
+      Log normalized gene expression densities per predicted cell type of filtered integrated datasets.
       PDF format
 
 
@@ -1021,6 +1254,9 @@ steps:
       minimum_cells: minimum_cells
       minimum_features: minimum_features
       maximum_features: maximum_features
+      selected_features:
+        source: selected_features
+        valueFrom: $(split_features(self))
       minimum_umis: minimum_umis
       minimum_novelty_score: minimum_novelty_score
       maximum_mito_perc: maximum_mito_perc
@@ -1092,14 +1328,30 @@ steps:
     - clst_umap_res_plot_pdf
     - clst_umap_spl_by_cond_res_plot_png
     - clst_umap_spl_by_cond_res_plot_pdf
-    - clst_umap_ctype_pred_res_plot_png
-    - clst_umap_ctype_pred_res_plot_pdf
+    - clst_umap_ctype_res_plot_png
+    - clst_umap_ctype_res_plot_pdf
     - clst_umap_spl_by_ph_res_plot_png
     - clst_umap_spl_by_ph_res_plot_pdf
     - clst_qc_mtrcs_res_plot_png
     - clst_qc_mtrcs_res_plot_pdf
     - clst_pttv_gene_markers   
     - clst_csrvd_gene_markers
+    - expr_avg_per_clst_res_plot_png
+    - expr_avg_per_clst_res_plot_pdf
+    - expr_per_clst_cell_res_plot_png
+    - expr_per_clst_cell_res_plot_pdf
+    - expr_clst_heatmap_res_plot_png
+    - expr_clst_heatmap_res_plot_pdf
+    - expr_dnst_per_clst_res_plot_png
+    - expr_dnst_per_clst_res_plot_pdf
+    - expr_avg_per_ctype_res_plot_png
+    - expr_avg_per_ctype_res_plot_pdf
+    - expr_per_ctype_cell_res_plot_png
+    - expr_per_ctype_cell_res_plot_pdf
+    - expr_ctype_heatmap_res_plot_png
+    - expr_ctype_heatmap_res_plot_pdf
+    - expr_dnst_per_ctype_res_plot_png
+    - expr_dnst_per_ctype_res_plot_pdf
     - seurat_clst_data_rds
     - cellbrowser_config_data
     - cellbrowser_html_data
