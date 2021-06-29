@@ -182,27 +182,6 @@ outputs:
     doc: |
       Unfiltered feature-barcode matrices containing all barcodes in HDF5 format
 
-  adjusted_feature_bc_matrices_folder:
-    type: File
-    outputSource: estimate_contamination/adjusted_feature_bc_matrices_folder
-    label: "Compressed folder with SoupX adjusted feature-barcode matrices"
-    doc: |
-      Compressed folder with SoupX adjusted feature-barcode matrices in MEX format
-
-  adjusted_feature_bc_matrices_h5:
-    type: File
-    outputSource: estimate_contamination/adjusted_feature_bc_matrices_h5
-    label: "SoupX adjusted feature-barcode matrices in HDF5 format"
-    doc: |
-      SoupX adjusted feature-barcode matrices in HDF5 format
-
-  contamination_estimation_plot:
-    type: File
-    outputSource: estimate_contamination/contamination_estimation_plot
-    label: "SoupX contamination estimation plot"
-    doc: |
-      SoupX contamination estimation plot
-
   secondary_analysis_report_folder:
     type: File
     outputSource: compress_secondary_analysis_report_folder/compressed_folder
@@ -357,17 +336,6 @@ steps:
       folder_to_compress: generate_counts_matrix/secondary_analysis_report_folder
     out:
     - compressed_folder
-
-  estimate_contamination:
-    run: ../tools/soupx-subworkflow.cwl
-    in:
-      raw_feature_bc_matrices_folder: compress_raw_feature_bc_matrices_folder/compressed_folder
-      filtered_feature_bc_matrix_folder: compress_filtered_feature_bc_matrix_folder/compressed_folder
-      secondary_analysis_report_folder: compress_secondary_analysis_report_folder/compressed_folder
-    out:
-    - adjusted_feature_bc_matrices_folder
-    - adjusted_feature_bc_matrices_h5
-    - contamination_estimation_plot
 
   collect_statistics:
     run:
