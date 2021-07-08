@@ -460,30 +460,54 @@ outputs:
 steps:
 
   extract_fastq_upstream:
+    label: "Loading unmapped sequence data for read 1"
+    doc: |
+      Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
+      The data can be uploaded from users computer, downloaded directly from an ftp server of
+      the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_upstream
     out: [fastq_file]
 
   extract_fastq_downstream:
+    label: "Loading unmapped sequence data for read 2"
+    doc: |
+      Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
+      The data can be uploaded from users computer, downloaded directly from an ftp server of
+      the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_downstream
     out: [fastq_file]
 
   fastx_quality_stats_upstream:
+    label: "Quality control of unmapped sequence data for read 1"
+    doc: |
+      Evaluates the quality of your sequence data. Provides per base quality scores as well as
+      base frequencies along the reads. These metrics can be used to identify whether your data
+      has any problems that should be taken into account in the subsequent analysis steps.
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: extract_fastq_upstream/fastq_file
     out: [statistics_file]
 
   fastx_quality_stats_downstream:
+    label: "Quality control of unmapped sequence data for read 2"
+    doc: |
+      Evaluates the quality of your sequence data. Provides per base quality scores as well as
+      base frequencies along the reads. These metrics can be used to identify whether your data
+      has any problems that should be taken into account in the subsequent analysis steps.
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: extract_fastq_downstream/fastq_file
     out: [statistics_file]
 
   bowtie_aligner:
+    label: "Alignment to reference genome"
+    doc: |
+      Aligns reads to the reference genome keeping only uniquely mapped reads with
+      less than 3 mismatches.
     run: ../tools/bowtie-alignreads.cwl
     in:
       upstream_filelist: extract_fastq_upstream/fastq_file
@@ -520,6 +544,10 @@ steps:
     out: [bam_bai_pair]
 
   preseq:
+    label: "Sequencing depth estimation"
+    doc: |
+      Estimates the complexity of the sequencing library, evaluates how many reads can
+      be expected from the additional sequencing of the same experiment.
     run: ../tools/preseq-lc-extrap.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
@@ -530,6 +558,11 @@ steps:
     out: [estimates_file]
 
   samtools_rmdup:
+    label: "PCR duplicates removal"
+    doc: |
+      Removes potential PCR duplicates. This step is used to remove reads overamplified
+      in PCR. Unfortunately, it may also remove "good" reads. We do not recommend to
+      remove duplicates unless the library is heavily duplicated.
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
@@ -545,6 +578,10 @@ steps:
     out: [bam_bai_pair]
 
   macs2_callpeak:
+    label: "Peak detection"
+    doc: |
+      Identifies enriched with aligned reads genome areas. Those areas correspond to the
+      transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
       treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
@@ -596,6 +633,10 @@ steps:
     out: [bigwig_file]
 
   get_bam_statistics:
+    label: "Quality control of aligned sequence data"
+    doc: |
+      Calculates alignment statistics, such as reads mapped/unmapped, average
+      read length and quality score, etc.
     run: ../tools/samtools-stats.cwl
     in:
       bambai_pair: samtools_sort_index/bam_bai_pair
@@ -626,6 +667,10 @@ steps:
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
   island_intersect:
+    label: "Peak annotation"
+    doc: |
+      Assigns nearest genes to peaks to explore the biological implication of the open
+      chromatin binding sites.
     run: ../tools/iaintersect.cwl
     in:
       input_filename: macs2_callpeak/peak_xls_file
@@ -635,6 +680,10 @@ steps:
     out: [result_file, log_file]
 
   average_tag_density:
+    label: "Read enrichment around genes TSS"
+    doc: |
+      Generates average tag density plot around genes TSS as a lot of cis-regulatory
+      elements are close to the TSS of their targets.
     run: ../tools/atdp.cwl
     in:
       input_file: samtools_sort_index_after_rmdup/bam_bai_pair

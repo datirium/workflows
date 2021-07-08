@@ -246,6 +246,10 @@ steps:
     out: [bam_bai_pair]
 
   macs2_callpeak:
+    label: "Peak detection"
+    doc: |
+      Identifies enriched with aligned reads genome areas. Those areas correspond to the
+      transcription factor binding sites.
     run: ../tools/macs2-callpeak.cwl
     in:
       treatment_file: samtools_sort_index/bam_bai_pair
@@ -286,31 +290,39 @@ steps:
     out: [bigwig_file]
 
   island_intersect:
-      run: ../tools/iaintersect.cwl
-      in:
-        input_filename: macs2_callpeak/peak_xls_file
-        annotation_filename: annotation_file
-        promoter_bp: promoter_dist
-        upstream_bp: upstream_dist
-      out: [result_file, log_file]
+    label: "Peak annotation"
+    doc: |
+      Assigns nearest genes to peaks to explore the biological implication of the open
+      chromatin binding sites.
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: macs2_callpeak/peak_xls_file
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
+    out: [result_file, log_file]
 
   average_tag_density:
-      run: ../tools/atdp.cwl
-      in:
-        input_file: samtools_sort_index/bam_bai_pair
-        annotation_filename: annotation_file
-        avd_window_bp:
-          default: 5000
-        avd_smooth_bp:
-          default: 50
-        ignore_chr:
-          default: chrM
-        double_chr:
-          default: "chrX chrY"
-        avd_heat_window_bp:
-          default: 200
-        mapped_reads: get_statistics/mapped_reads
-      out: [result_file, log_file]
+    label: "Read enrichment around genes TSS"
+    doc: |
+      Generates average tag density plot around genes TSS as a lot of cis-regulatory
+      elements are close to the TSS of their targets.
+    run: ../tools/atdp.cwl
+    in:
+      input_file: samtools_sort_index/bam_bai_pair
+      annotation_filename: annotation_file
+      avd_window_bp:
+        default: 5000
+      avd_smooth_bp:
+        default: 50
+      ignore_chr:
+        default: chrM
+      double_chr:
+        default: "chrX chrY"
+      avd_heat_window_bp:
+        default: 200
+      mapped_reads: get_statistics/mapped_reads
+    out: [result_file, log_file]
 
 
 $namespaces:

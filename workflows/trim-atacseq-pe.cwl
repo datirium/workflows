@@ -479,18 +479,35 @@ outputs:
 steps:
 
   extract_fastq_upstream:
+    label: "Loading unmapped sequence data for read 1"
+    doc: |
+      Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
+      The data can be uploaded from users computer, downloaded directly from an ftp server of
+      the core facility by providing a URL or from GEO by providing SRA accession number.  
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_upstream
     out: [fastq_file]
 
   extract_fastq_downstream:
+    label: "Loading unmapped sequence data for read 2"
+    doc: |
+      Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
+      The data can be uploaded from users computer, downloaded directly from an ftp server of
+      the core facility by providing a URL or from GEO by providing SRA accession number.  
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_downstream
     out: [fastq_file]
 
   trim_fastq:
+    label: "Adapter trimming"
+    doc: |
+      For libraries sequenced on the Illumina platform it’s recommended to remove adapter sequences
+      from the reads. If adapters are not trimmed there is a high risk of reads being unmapped to a
+      reference genome. This becomes particularly important when the reads are long and the fragments
+      are short - resulting in sequencing adapters at the end of read. If adapter trimming will cause
+      all the reads become too short (<30bp), this step will be skipped.  
     run: ../tools/trimgalore.cwl
     in:
       input_file: extract_fastq_upstream/fastq_file
@@ -547,18 +564,32 @@ steps:
       - target_file
 
   fastx_quality_stats_upstream:
+    label: "Quality control of unmapped sequence data for read 1"
+    doc: |
+      Evaluates the quality of your sequence data. Provides per base quality scores as well as
+      base frequencies along the reads. These metrics can be used to identify whether your data
+      has any problems that should be taken into account in the subsequent analysis steps.
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: rename_upstream/target_file
     out: [statistics_file]
 
   fastx_quality_stats_downstream:
+    label: "Quality control of unmapped sequence data for read 2"
+    doc: |
+      Evaluates the quality of your sequence data. Provides per base quality scores as well as
+      base frequencies along the reads. These metrics can be used to identify whether your data
+      has any problems that should be taken into account in the subsequent analysis steps.
     run: ../tools/fastx-quality-stats.cwl
     in:
       input_file: rename_downstream/target_file
     out: [statistics_file]
 
   bowtie_aligner:
+    label: "Alignment to reference genome"
+    doc: |
+      Aligns reads to the reference genome keeping only uniquely mapped reads with
+      less than 3 mismatches.
     run: ../tools/bowtie-alignreads.cwl
     in:
       upstream_filelist: rename_upstream/target_file
@@ -602,6 +633,10 @@ steps:
     out: [filtered_bam_bai_pair]
 
   preseq:
+    label: "Sequencing depth estimation"
+    doc: |
+      Estimates the complexity of the sequencing library, evaluates how many reads can
+      be expected from the additional sequencing of the same experiment.
     run: ../tools/preseq-lc-extrap.cwl
     in:
       bam_file: filter_bam/filtered_bam_bai_pair
@@ -612,6 +647,11 @@ steps:
     out: [estimates_file]
 
   samtools_rmdup:
+    label: "PCR duplicates removal"
+    doc: |
+      Removes potential PCR duplicates. This step is used to remove reads overamplified
+      in PCR. Unfortunately, it may also remove "good" reads. We do not recommend to
+      remove duplicates unless the library is heavily duplicated.
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
@@ -627,6 +667,10 @@ steps:
     out: [bam_bai_pair]
 
   macs2_callpeak:
+    label: "Peak detection"
+    doc: |
+      Identifies enriched with aligned reads genome areas. Those areas correspond to the
+      transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
       treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
@@ -678,6 +722,10 @@ steps:
     out: [bigwig_file]
 
   get_bam_statistics:
+    label: "Quality control of aligned sequence data"
+    doc: |
+      Calculates alignment statistics, such as reads mapped/unmapped, average
+      read length and quality score, etc.
     run: ../tools/samtools-stats.cwl
     in:
       bambai_pair: samtools_sort_index/bam_bai_pair
@@ -696,46 +744,54 @@ steps:
     out: [log_file, ext_is_section]
 
   get_stat:
-      run: ../tools/collect-statistics-chip-seq.cwl
-      in:
-        trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
-        trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
-        bowtie_alignment_report: bowtie_aligner/log_file
-        bam_statistics_report: get_bam_statistics/log_file
-        bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-        macs2_called_peaks: macs2_callpeak/peak_xls_file
-        preseq_results: preseq/estimates_file
-        paired_end:
-          default: True
-      out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
+    run: ../tools/collect-statistics-chip-seq.cwl
+    in:
+      trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
+      trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
+      bowtie_alignment_report: bowtie_aligner/log_file
+      bam_statistics_report: get_bam_statistics/log_file
+      bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
+      macs2_called_peaks: macs2_callpeak/peak_xls_file
+      preseq_results: preseq/estimates_file
+      paired_end:
+        default: True
+    out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
   island_intersect:
-      run: ../tools/iaintersect.cwl
-      in:
-        input_filename: macs2_callpeak/peak_xls_file
-        annotation_filename: annotation_file
-        promoter_bp: promoter_dist
-        upstream_bp: upstream_dist
-      out: [result_file, log_file]
+    label: "Peak annotation"
+    doc: |
+      Assigns nearest genes to peaks to explore the biological implication of the open
+      chromatin binding sites.
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: macs2_callpeak/peak_xls_file
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
+    out: [result_file, log_file]
 
   average_tag_density:
-      run: ../tools/atdp.cwl
-      in:
-        input_file: samtools_sort_index_after_rmdup/bam_bai_pair
-        annotation_filename: annotation_file
-        fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
-        avd_window_bp:
-          default: 5000
-        avd_smooth_bp:
-          default: 50
-        ignore_chr:
-          default: chrM
-        double_chr:
-          default: "chrX chrY"
-        avd_heat_window_bp:
-          default: 200
-        mapped_reads: get_stat/mapped_reads
-      out: [result_file, log_file]
+    label: "Read enrichment around genes TSS"
+    doc: |
+      Generates average tag density plot around genes TSS as a lot of cis-regulatory
+      elements are close to the TSS of their targets.
+    run: ../tools/atdp.cwl
+    in:
+      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      annotation_filename: annotation_file
+      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      avd_window_bp:
+        default: 5000
+      avd_smooth_bp:
+        default: 50
+      ignore_chr:
+        default: chrM
+      double_chr:
+        default: "chrX chrY"
+      avd_heat_window_bp:
+        default: 200
+      mapped_reads: get_stat/mapped_reads
+    out: [result_file, log_file]
 
 
 $namespaces:
