@@ -11,6 +11,8 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "genome-indices.cwl"
+  regions_sample:
+    - "filter-peaks-for-heatmap.cwl"
 
 
 inputs:
@@ -24,8 +26,10 @@ inputs:
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "Regions file. Headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
-    doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
+    label: "Target regions experiment or file"
+    doc: "Headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
+    'sd:upstreamSource': "regions_sample/filtered_file"
+    'sd:localLabel': true
 
   motifs_db:
     type:

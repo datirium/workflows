@@ -20,6 +20,9 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+  regions_sample:
+    - "filter-peaks-for-heatmap.cwl"
+    - "filter-deseq-for-heatmap.cwl"
 
 
 inputs:
@@ -49,12 +52,12 @@ inputs:
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: |
-      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
-       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    label: "Regions of interest experiment or file"
     doc: |
       "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
        [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    'sd:upstreamSource': "regions_sample/filtered_file"
+    'sd:localLabel': true
 
   recentering:
     type:
