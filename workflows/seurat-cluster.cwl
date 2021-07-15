@@ -48,9 +48,9 @@ inputs:
   minimum_cells:
     type: int?
     default: 10
-    label: "Include features detected in at least this many cells"
+    label: "Include genes detected in at least this many cells"
     doc: |
-      Include features detected in at least this many cells
+      Include genes detected in at least this many cells
       (applied to thoughout all datasets together).
     'sd:layout':
       advanced: true
@@ -58,74 +58,73 @@ inputs:
   minimum_features:
     type: int?
     default: 250
-    label: "Include cells where at least this many features are detected"
+    label: "Include cells where at least this many genes are detected"
     doc: |
-      Include cells where at least this many features are detected.
+      Include cells where at least this many genes are detected.
     'sd:layout':
       advanced: true
 
   maximum_features:
     type: int?
     default: 5000
-    label: "Include cells with the number of features not bigger than this value"
+    label: "Include cells with the number of genes not bigger than this value"
     doc: |
-      Include cells with the number of features not bigger than this value.
+      Include cells with the number of genes not bigger than this value.
     'sd:layout':
       advanced: true
 
   minimum_umis:
     type: int?
     default: 500
-    label: "Include cells where at least this many UMI are detected"
+    label: "Include cells where at least this many UMIs are detected"
     doc: |
-      Include cells where at least this many UMI are detected.
+      Include cells where at least this many UMIs are detected.
     'sd:layout':
       advanced: true
 
   minimum_novelty_score:
     type: float?
     default: 0.8
-    label: "Include cells with the novelty score not lower than this value"
+    label: "Include cells with the novelty score (the ratio of genes per cell over UMIs per cell) not lower than this value"
     doc: |
-      Include cells with the novelty score not lower than this
-      value (calculated as log10(genes)/log10(UMIs)).
+      Include cells with the novelty score (the ratio of genes per cell over UMIs per cell)
+      not lower than this value (calculated as log10(genes)/log10(UMIs)).
     'sd:layout':
       advanced: true
 
   maximum_mito_perc:
     type: float?
     default: 5
-    label: "Include cells with the mitochondrial contamination percentage not bigger than this value"
+    label: "Include cells with the percentage of transcripts mapped to mitochondrial genes not bigger than this value"
     doc: |
-      Include cells with the mitochondrial contamination percentage
-      not bigger than this value.
+      Include cells with the percentage of transcripts mapped to mitochondrial genes not bigger than this value.
     'sd:layout':
       advanced: true
 
   mito_pattern:
     type: string?
     default: "^Mt-"
-    label: "Pattern to identify mitochondrial reads"
+    label: "Pattern to identify mitochondrial genes"
     doc: |
-      Regex pattern to identify mitochondrial reads.
+      Pattern to identify mitochondrial genes.
     'sd:layout':
       advanced: true
 
   high_var_features_count:
     type: int?
     default: 3000
-    label: "Number of higly variable features to detect"
+    label: "Number of highly variable genes to detect (used for dataset integration and dimensional reduction)"
     doc: |
-      Number of higly variable features to detect.
+      Number of highly variable genes to detect (used for dataset integration and dimensional reduction).
     'sd:layout':
       advanced: true
 
   dimensionality:
     type: int?
     default: 10
-    label: "Number of principal components to use in clustering (1:50)"
+    label: "Number of principal components to use in UMAP projection and clustering (from 1 to 50)"
     doc: |
-      Number of principal components to use in clustering (1:50).
+      Number of principal components to use in UMAP projection and clustering (from 1 to 50).
       Use Elbow plot to adjust this parameter.
     'sd:layout':
       advanced: true
@@ -142,19 +141,20 @@ inputs:
   minimum_logfc:
     type: float?
     default: 0.25
-    label: "Log fold change threshold for conserved gene markers identification"
+    label: "Include only those genes that on average have log fold change difference in expression between every tested pair of clusters not lower than this value"
     doc: |
-      Log fold change threshold for conserved gene markers identification.
+      Include only those genes that on average have log fold change difference in
+      expression between every tested pair of clusters not lower than this value.
     'sd:layout':
       advanced: true
 
   minimum_pct:
     type: float?
     default: 0.1
-    label: "Minimum fraction of cells where genes used for gene markers identification should be detected"
+    label: "Include only those genes that are detected in not lower than this fraction of cells in either of the two tested clusters"
     doc: |
-      Minimum fraction of cells where genes used for conserved gene markers
-      identification should be detected in either of two tested clusters.
+      Include only those genes that are detected in not lower than
+      this fraction of cells in either of the two tested clusters.
     'sd:layout':
       advanced: true
 
@@ -173,9 +173,9 @@ inputs:
       - "MAST"
       - "DESeq2"
     default: "wilcox"
-    label: "Test type to use for putative and conserved gene marker identification"
+    label: "Statistical test to use for gene markers identification"
     doc: |
-      Set test type to use for putative and conserved gene marker identification.
+      Statistical test to use for gene markers identification.
     'sd:layout':
       advanced: true
 
@@ -227,19 +227,18 @@ inputs:
   only_positive_markers:
     type: boolean?
     default: false
-    label: "Return only positive markers when running conserved gene markers identification"
+    label: "Report only positive gene markers"
     doc: |
-      Return only positive markers when running conserved gene markers
-      identification.
+      Report only positive gene markers.
     'sd:layout':
       advanced: true
 
   selected_features:
     type: string?
     default: null
-    label: "Comma or space separated list of genes to highlight"
+    label: "Comma or space separated list of genes of interest"
     doc: |
-      Features to explore in the clustered filtered integrated datasets.
+      Comma or space separated list of genes of interest.
       Default: do not highlight any features
     'sd:layout':
       advanced: true
