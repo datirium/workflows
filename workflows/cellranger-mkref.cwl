@@ -109,6 +109,8 @@ steps:
       annotation_gtf_file: annotation_gtf_file
       threads: threads
       memory_limit: memory_limit
+      output_folder_name:
+        default: "cellranger_ref"
     out:
     - indices_folder
     - stdout_log
@@ -168,6 +170,8 @@ steps:
       annotation_gtf_file: sort_annotation_gtf/sorted_annotation_gtf_file
       exclude_chr:
         default: ["chrM"]                        # as recommended in Cell Ranger ARC manual
+      output_folder_name:
+        default: "cellranger_arc_ref"
       threads: threads
       memory_limit: memory_limit
     out:
