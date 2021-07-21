@@ -10,12 +10,12 @@ requirements:
       var listing = [
         {
           "entry": inputs.fastq_file_r1,
-          "entryname": "sample_S1_L001_R1_001.fastq.gz",
+          "entryname": "sample_S1_L001_R1_001.fastq",
           "writable": true
         },
         {
           "entry": inputs.fastq_file_r2,
-          "entryname": "sample_S1_L001_R2_001.fastq.gz",
+          "entryname": "sample_S1_L001_R2_001.fastq",
           "writable": true
         }
       ];
@@ -23,7 +23,7 @@ requirements:
         listing.push(
           {
             "entry": inputs.fastq_file_i1,
-            "entryname": "sample_S1_L001_I1_001.fastq.gz",
+            "entryname": "sample_S1_L001_I1_001.fastq",
             "writable": true
           }
         );
@@ -42,17 +42,17 @@ inputs:
   fastq_file_r1:
     type: File
     doc: |
-      Fastq file 1 (will be staged into workdir as sample_S1_L001_R1_001.fastq.gz)
+      FASTQ read 1 file (will be staged into workdir as sample_S1_L001_R1_001.fastq)
 
   fastq_file_r2:
     type: File
     doc: |
-      Fastq file 2 (will be staged into workdir as sample_S1_L001_R2_001.fastq.gz)
+      FASTQ read 2 file (will be staged into workdir as sample_S1_L001_R2_001.fastq)
 
   fastq_file_i1:
     type: File?
     doc: |
-      Fastq file 3 (if provided, will be staged into workdir as sample_S1_L001_I1_001.fastq.gz)
+      FASTQ index file (if provided, will be staged into workdir as sample_S1_L001_I1_001.fastq)
 
   indices_folder:
     type: Directory

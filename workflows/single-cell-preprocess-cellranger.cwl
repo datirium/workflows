@@ -119,9 +119,9 @@ outputs:
   web_summary_report:
     type: File
     outputSource: generate_counts_matrix/web_summary_report
-    label: "Run summary metrics and charts in HTML format"
+    label: "Cell Ranger summary"
     doc: |
-      Run summary metrics and charts in HTML format
+      Cell Ranger summary
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -141,15 +141,6 @@ outputs:
     doc: |
       Indexed reads aligned to the genome and transcriptome annotated
       with barcode information
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        optional: true
-        type: 'alignment'
-        format: 'bam'
-        name: "BAM Track"
-        displayMode: "SQUISHED"
 
   filtered_feature_bc_matrix_folder:
     type: File
