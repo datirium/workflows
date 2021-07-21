@@ -307,7 +307,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Narrow peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_broad_peaks:
     type: File?
@@ -321,7 +322,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Broad peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_peak_summits:
     type: File?
@@ -349,7 +351,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Gapped peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_log:
     type: File?
