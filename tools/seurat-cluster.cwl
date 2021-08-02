@@ -8,127 +8,138 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.5
+  dockerPull: biowardrobe2/seurat:v0.0.6
 
 
 inputs:
 
   feature_bc_matrices_folder:
-    type: Directory
+    type:
+    - Directory
+    - type: array
+      items: Directory
     inputBinding:
       prefix: "--mex"
     doc: |
-      Path to the folder with not normalized aggregated
-      feature-barcode matrices in MEX format
+      Path to the folder with not normalized aggregated feature-barcode matrix
+      from Cell Ranger Aggregate in MEX format. If multiple locations provided
+      data is assumed to be not aggregated (outputs from multiple Cell Ranger
+      Count runs) and will be merged.
 
   aggregation_metadata:
     type: File
     inputBinding:
       prefix: "--identity"
     doc: |
-      Path to the aggregation CSV file to set the initial
-      cell identity classes
+      Path to the metadata TSV/CSV file to set the datasets identities.
+      If --mex points to the Cell Ranger Aggregate outputs, the aggregation.csv
+      file can be used as well. If multiple locations were provided through --mex,
+      the file should include at least one column - 'library_id', and be sorted
+      based on the the order of locations provided in --mex.
 
   conditions_data:
     type: File?
     inputBinding:
       prefix: "--condition"
     doc: |
-      Path to the TSV/CSV file to define datasets conditions
-      for grouping. First column - 'library_id' with values
-      from the --identity file, second column 'condition'.
-      Default: each dataset is assigned to its own biological
-      condition
+      Path to the TSV/CSV file to define datasets grouping. First column -
+      'library_id' with the values provided in the correspondent column of the
+      --identity file, second column 'condition'. Default: each dataset is
+      assigned to a separate group.
 
   classifier_rds:
     type: File?
     inputBinding:
       prefix: "--classifier"
     doc: |
-      Path to the Garnett classifier rds file for cell type prediction.
-      Default: skip cell type prediction
-
-  species:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "hs"
-      - "mm"
-      - "none"
-    inputBinding:
-      prefix: "--species"
-    doc: |
-      Select species for gene name conversion when running cell type prediction
-      with Garnett classifier.
-      Default: the same as "none" - do not convert gene names
+      Path to the Garnett classifier RDS file for cell type prediction.
+      Default: skip cell type prediction.
 
   cell_cycle_data:
     type: File?
     inputBinding:
       prefix: "--cellcycle"
     doc: |
-      Path to the TSV/CSV file with cell cycle data.
-      First column - 'phase', second column 'gene_id'.
-      Default: skip cell cycle score assignment
+      Path to the TSV/CSV file with cell cycle data. First column - 'phase',
+      second column 'gene_id'. Default: skip cell cycle score assignment.
 
   barcodes_data:
     type: File?
     inputBinding:
       prefix: "--barcodes"
     doc: |
-      Path to the headerless TSV/CSV file with selected barcodes
-      (one per line) to prefilter input feature-barcode matrices.
-      Default: use all cells
+      Path to the headerless TSV/CSV file with the list of barcodes to select
+      cells of interest (one barcode per line). Prefilters input feature-barcode
+      matrix to include only selected cells. Default: use all cells.
 
   minimum_cells:
     type: int?
     inputBinding:
       prefix: "--mincells"
     doc: |
-      Include features detected in at least this many cells
-      (applied to thoughout all datasets together).
-      Default: 10
+      Include only features detected in at least this many cells. Applied to
+      aggregated feature-barcode matrix from Cell Ranger Aggregate. Ignored
+      when --mex points to the locations of multiple Cell Ranger Count runs.
+      Default: 5
 
   minimum_features:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--minfeatures"
     doc: |
-      Include cells where at least this many features are detected.
-      Default: 250
+      Include cells where at least this many features are detected. If multiple
+      values provided each of them will be applied to the correspondent dataset
+      from the --mex input.
+      Default: 250 (applied to all datasets)
 
   maximum_features:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--maxfeatures"
     doc: |
-      Include cells with the number of features not bigger than this value.
-      Default: 5000
+      Include cells with the number of features not bigger than this value. If
+      multiple values provided each of them will be applied to the correspondent
+      dataset from the --mex input.
+      Default: 5000 (applied to all datasets)
 
   minimum_umis:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--minumi"
     doc: |
-      Include cells where at least this many UMI are detected.
-      Default: 500
+      Include cells where at least this many UMIs (transcripts) are detected. If
+      multiple values provided each of them will be applied to the correspondent
+      dataset from the --mex input.
+      Default: 500 (applied to all datasets)
 
   minimum_novelty_score:
-    type: float?
+    type:
+    - "null"
+    - float
+    - float[]
     inputBinding:
       prefix: "--minnovelty"
     doc: |
-      Include cells with the novelty score not lower than this
-      value (calculated as log10(genes)/log10(UMIs)).
-      Default: 0.8
+      Include cells with the novelty score not lower than this value, calculated as
+      log10(genes)/log10(UMIs). If multiple values provided each of them will be
+      applied to the correspondent dataset from the --mex input.
+      Default: 0.8 (applied to all datasets)
 
   maximum_mito_perc:
     type: float?
     inputBinding:
       prefix: "--maxmt"
     doc: |
-      Include cells with the mitochondrial contamination percentage
+      Include cells with the percentage of transcripts mapped to mitochondrial genes
       not bigger than this value.
       Default: 5
 
@@ -137,8 +148,8 @@ inputs:
     inputBinding:
       prefix: "--mitopattern"
     doc: |
-      Regex pattern to identify mitochondrial reads.
-      Default: ^Mt-
+      Regex pattern to identify mitochondrial genes.
+      Default: '^Mt-'
 
   selected_features:
     type:
@@ -148,8 +159,8 @@ inputs:
     inputBinding:
       prefix: "--features"
     doc: |
-      Features to explore in the clustered filtered integrated datasets.
-      Default: do not highlight any features
+      Features of interest to evaluate expression.
+      Default: None
 
   regress_cellcycle:
     type: boolean?
@@ -164,8 +175,7 @@ inputs:
     inputBinding:
       prefix: "--regressmt"
     doc: |
-      Regress mitochondrial gene expression as a confounding source
-      of variation.
+      Regress mitochondrial genes expression as a confounding source of variation.
       Default: false
 
   high_var_features_count:
@@ -173,7 +183,8 @@ inputs:
     inputBinding:
       prefix: "--highvarcount"
     doc: |
-      Number of higly variable features to detect.
+      Number of highly variable features to detect. Used for datasets integration,
+      scaling, and dimensional reduction.
       Default: 3000
 
   dimensionality:
@@ -181,8 +192,8 @@ inputs:
     inputBinding:
       prefix: "--ndim"
     doc: |
-      Number of principal components to use in clustering (1:50).
-      Use Elbow plot to adjust this parameter.
+      Number of principal components to use in UMAP projection and clustering
+      (from 1 to 50). Use Elbow plot to adjust this parameter.
       Default: 10
 
   resolution:
@@ -193,7 +204,7 @@ inputs:
     inputBinding:
       prefix: "--resolution"
     doc: |
-      Clustering resolution. Can be set as array.
+      Clustering resolution. Can be set as an array.
       Default: 0.4 0.6 0.8 1.0 1.4
 
   minimum_logfc:
@@ -201,7 +212,8 @@ inputs:
     inputBinding:
       prefix: "--logfc"
     doc: |
-      Log fold change threshold for conserved gene markers identification.
+      Include only those genes that on average have log fold change difference in
+      expression between every tested pair of clusters not lower than this value.
       Default: 0.25
 
   minimum_pct:
@@ -209,8 +221,8 @@ inputs:
     inputBinding:
       prefix: "--minpct"
     doc: |
-      Minimum fraction of cells where genes used for conserved gene markers
-      identification should be detected in either of two tested clusters.
+      Include only those features that are detected in not lower than this fraction
+      of cells in either of the two tested clusters.
       Default: 0.1
 
   only_positive_markers:
@@ -218,8 +230,7 @@ inputs:
     inputBinding:
       prefix: "--onlypos"
     doc: |
-      Return only positive markers when running conserved gene markers
-      identification.
+      Return only positive markers when running gene markers identification.
       Default: false
 
   test_use:
@@ -239,8 +250,23 @@ inputs:
     inputBinding:
       prefix: "--testuse"
     doc: |
-      Set test type to use for putative and conserved gene marker identification.
+      Statistical test to use for gene markers identification.
       Default: wilcox
+
+  species:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "hs"
+      - "mm"
+      - "none"
+    inputBinding:
+      prefix: "--species"
+    doc: |
+      Select species for gene name conversion when running cell type prediction
+      with Garnett classifier.
+      Default: do not convert gene names
 
   export_pdf_plots:
     type: boolean?
@@ -346,7 +372,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_perc_dnst_spl_by_cond.png"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (not filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered).
       PNG format
 
   raw_mito_perc_dnst_spl_by_cond_plot_pdf:
@@ -354,7 +380,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_perc_dnst_spl_by_cond.pdf"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (not filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered).
       PDF format
 
   raw_nvlt_score_dnst_spl_by_cond_plot_png:
@@ -475,7 +501,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_mito_perc_dnst_spl_by_cond.png"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered).
       PNG format
 
   fltr_mito_perc_dnst_spl_by_cond_plot_pdf:
@@ -483,7 +509,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_mito_perc_dnst_spl_by_cond.pdf"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered).
       PDF format
 
   fltr_nvlt_score_dnst_spl_by_cond_plot_png:
@@ -540,7 +566,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_pca_spl_by_ph.png"
     doc: |
-      Split by cell cycle phase PCA of filtered unintegrated datasets.
+      Split by cell cycle phase PCA of filtered unintegrated/scaled datasets.
       PNG format
 
   fltr_pca_spl_by_ph_plot_pdf:
@@ -548,7 +574,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_pca_spl_by_ph.pdf"
     doc: |
-      Split by cell cycle phase PCA of filtered unintegrated datasets.
+      Split by cell cycle phase PCA of filtered unintegrated/scaled datasets.
       PDF format
 
   fltr_pca_spl_by_mito_perc_plot_png:
@@ -556,7 +582,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_pca_spl_by_mito_perc.png"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets.
+      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
       PNG format
 
   fltr_pca_spl_by_mito_perc_plot_pdf:
@@ -564,7 +590,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_pca_spl_by_mito_perc.pdf"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets.
+      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
       PDF format
 
   fltr_umap_spl_by_idnt_plot_png:
@@ -572,7 +598,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umap_spl_by_idnt.png"
     doc: |
-      Split by identity UMAP projected PCA of filtered unintegrated datasets.
+      Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets.
       PNG format
 
   fltr_umap_spl_by_idnt_plot_pdf:
@@ -580,7 +606,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umap_spl_by_idnt.pdf"
     doc: |
-      Split by identity UMAP projected PCA of filtered unintegrated datasets.
+      Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets.
       PDF format
 
 
@@ -589,7 +615,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_elbow.png"
     doc: |
-      Elbow plot from PCA of filtered integrated datasets.
+      Elbow plot from PCA of filtered integrated/scaled datasets.
       PNG format
 
   ntgr_elbow_plot_pdf:
@@ -597,7 +623,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_elbow.pdf"
     doc: |
-      Elbow plot from PCA of filtered integrated datasets.
+      Elbow plot from PCA of filtered integrated/scaled datasets.
       PDF format
 
   ntgr_pca_plot_png:
@@ -605,7 +631,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_pca.png"
     doc: |
-      PCA of filtered integrated datasets.
+      PCA of filtered integrated/scaled datasets.
       PNG format
 
   ntgr_pca_plot_pdf:
@@ -613,7 +639,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_pca.pdf"    
     doc: |
-      PCA of filtered integrated datasets.
+      PCA of filtered integrated/scaled datasets.
       PDF format
 
   ntgr_pca_heatmap_png:
@@ -621,7 +647,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_pca_heatmap.png"
     doc: |
-      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets.
+      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets.
       PNG format
 
   ntgr_pca_heatmap_pdf:
@@ -629,7 +655,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_pca_heatmap.pdf"
     doc: |
-      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets.
+      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets.
       PDF format
 
   ntgr_pca_loadings_plot_png:
@@ -637,7 +663,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_pca_loadings.png"
     doc: |
-      PC scores of the most variant genes from PCA of filtered integrated datasets.
+      PC scores of the most variant genes from PCA of filtered integrated/scaled datasets.
       PNG format
 
   ntgr_pca_loadings_plot_pdf:
@@ -645,7 +671,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_pca_loadings.pdf"
     doc: |
-      PC scores of the most variant genes from PCA of filtered integrated datasets.
+      PC scores of the most variant genes from PCA of filtered integrated/scaled datasets.
       PDF format
 
   ntgr_umap_spl_by_idnt_plot_png:
@@ -653,7 +679,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_umap_spl_by_idnt.png"
     doc: |
-      Split by identity UMAP projected PCA of filtered integrated datasets.
+      Split by identity UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
 
   ntgr_umap_spl_by_idnt_plot_pdf:
@@ -661,7 +687,7 @@ outputs:
     outputBinding:
       glob: "*_ntgr_umap_spl_by_idnt.pdf"
     doc: |
-      Split by identity UMAP projected PCA of filtered integrated datasets.
+      Split by identity UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -673,7 +699,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_res_*.png"
     doc: |
-      Clustered UMAP projected PCA of filtered integrated datasets.
+      Clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
 
   clst_umap_res_plot_pdf:
@@ -684,7 +710,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_res_*.pdf"
     doc: |
-      Clustered UMAP projected PCA of filtered integrated datasets.
+      Clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
   clst_umap_spl_by_cond_res_plot_png:
@@ -695,7 +721,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_spl_by_cond_res_*.png"
     doc: |
-      Split by condition clustered UMAP projected PCA of filtered integrated datasets.
+      Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
 
   clst_umap_spl_by_cond_res_plot_pdf:
@@ -706,7 +732,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_spl_by_cond_res_*.pdf"
     doc: |
-      Split by condition clustered UMAP projected PCA of filtered integrated datasets.
+      Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
   clst_umap_ctype_res_plot_png:
@@ -717,7 +743,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_ctype_res_*.png"
     doc: |
-      Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
+      Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
 
   clst_umap_ctype_res_plot_pdf:
@@ -728,7 +754,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_ctype_res_*.pdf"
     doc: |
-      Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
+      Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
   clst_umap_spl_by_ph_res_plot_png:
@@ -739,7 +765,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_spl_by_ph_res_*.png"
     doc: |
-      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets.
+      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
 
   clst_umap_spl_by_ph_res_plot_pdf:
@@ -750,7 +776,7 @@ outputs:
     outputBinding:
       glob: "*_clst_umap_spl_by_ph_res_*.pdf"
     doc: |
-      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets.
+      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
   clst_qc_mtrcs_res_plot_png:
@@ -761,7 +787,7 @@ outputs:
     outputBinding:
       glob: "*_clst_qc_mtrcs_res_*.png"
     doc: |
-      QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
 
   clst_qc_mtrcs_res_plot_pdf:
@@ -772,7 +798,7 @@ outputs:
     outputBinding:
       glob: "*_clst_qc_mtrcs_res_*.pdf"
     doc: |
-      QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
   expr_avg_per_clst_res_plot_png:
@@ -783,7 +809,7 @@ outputs:
     outputBinding:
       glob: "*_expr_avg_per_clst_res_*.png"
     doc: |
-      Scaled average gene expression per cluster of filtered integrated datasets.
+      Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets.
       PNG format
 
   expr_avg_per_clst_res_plot_pdf:
@@ -794,7 +820,7 @@ outputs:
     outputBinding:
       glob: "*_expr_avg_per_clst_res_*.pdf"
     doc: |
-      Scaled average gene expression per cluster of filtered integrated datasets.
+      Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets.
       PDF format
 
   expr_per_clst_cell_res_plot_png:
@@ -805,7 +831,7 @@ outputs:
     outputBinding:
       glob: "*_expr_per_clst_cell_res_*.png"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets.
       PNG format
 
   expr_per_clst_cell_res_plot_pdf:
@@ -816,7 +842,7 @@ outputs:
     outputBinding:
       glob: "*_expr_per_clst_cell_res_*.pdf"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets.
       PDF format
 
   expr_clst_heatmap_res_plot_png:
@@ -827,7 +853,7 @@ outputs:
     outputBinding:
       glob: "*_expr_clst_heatmap_res_*.png"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets.
       PNG format
 
   expr_clst_heatmap_res_plot_pdf:
@@ -838,7 +864,7 @@ outputs:
     outputBinding:
       glob: "*_expr_clst_heatmap_res_*.pdf"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets.
       PDF format
 
   expr_dnst_per_clst_res_plot_png:
@@ -849,7 +875,7 @@ outputs:
     outputBinding:
       glob: "*_expr_dnst_per_clst_res_*.png"
     doc: |
-      Log normalized gene expression densities per cluster of filtered integrated datasets.
+      Log normalized gene expression densities per cluster of filtered integrated/scaled datasets.
       PNG format
 
   expr_dnst_per_clst_res_plot_pdf:
@@ -860,7 +886,7 @@ outputs:
     outputBinding:
       glob: "*_expr_dnst_per_clst_res_*.pdf"
     doc: |
-      Log normalized gene expression densities per cluster of filtered integrated datasets.
+      Log normalized gene expression densities per cluster of filtered integrated/scaled datasets.
       PDF format
 
   expr_avg_per_ctype_res_plot_png:
@@ -871,7 +897,7 @@ outputs:
     outputBinding:
       glob: "*_expr_avg_per_ctype_res_*.png"
     doc: |
-      Scaled average gene expression per predicted cell type of filtered integrated datasets.
+      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets.
       PNG format
 
   expr_avg_per_ctype_res_plot_pdf:
@@ -882,7 +908,7 @@ outputs:
     outputBinding:
       glob: "*_expr_avg_per_ctype_res_*.pdf"
     doc: |
-      Scaled average gene expression per predicted cell type of filtered integrated datasets.
+      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets.
       PDF format
 
   expr_per_ctype_cell_res_plot_png:
@@ -893,7 +919,7 @@ outputs:
     outputBinding:
       glob: "*_expr_per_ctype_cell_res_*.png"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types.
       PNG format
 
   expr_per_ctype_cell_res_plot_pdf:
@@ -904,7 +930,7 @@ outputs:
     outputBinding:
       glob: "*_expr_per_ctype_cell_res_*.pdf"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types.
       PDF format
 
   expr_ctype_heatmap_res_plot_png:
@@ -915,7 +941,7 @@ outputs:
     outputBinding:
       glob: "*_expr_ctype_heatmap_res_*.png"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types.
       PNG format
 
   expr_ctype_heatmap_res_plot_pdf:
@@ -926,7 +952,7 @@ outputs:
     outputBinding:
       glob: "*_expr_ctype_heatmap_res_*.pdf"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types.
       PDF format
 
   expr_dnst_per_ctype_res_plot_png:
@@ -937,7 +963,7 @@ outputs:
     outputBinding:
       glob: "*_expr_dnst_per_ctype_res_*.png"
     doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated datasets.
+      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets.
       PNG format
 
   expr_dnst_per_ctype_res_plot_pdf:
@@ -948,7 +974,7 @@ outputs:
     outputBinding:
       glob: "*_expr_dnst_per_ctype_res_*.pdf"
     doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated datasets.
+      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets.
       PDF format
 
   clst_pttv_gene_markers:
@@ -972,7 +998,7 @@ outputs:
     outputBinding:
       glob: "*_clst_data.rds"
     doc: |
-      Clustered filtered integrated Seurat data.
+      Clustered filtered integrated/scaled Seurat data.
       RDS format
 
   cellbrowser_config_data:
@@ -1018,7 +1044,10 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-s:name: "seurat-cluster"
+label: "Seurat cluster"
+s:name: "Seurat cluster"
+s:alternateName: "Runs Seurat for comparative scRNA-seq analysis of across experimental conditions"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/seurat-cluster.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -1055,97 +1084,143 @@ s:creator:
 
 
 doc: |
-  Runs Seurat for comparative scRNA-seq analysis of across experimental conditions
+  Seurat cluster
+  ==============
+
+  The joint analysis of multiple scRNA-Seq datasets with [Seurat](https://satijalab.org/seurat/) starts with evaluation of common
+  single-cell quality control (QC) metrics – genes and UMIs counts, percentage of mitochondrial genes
+  expressed. QC allows to get a general overview of the datasets quality as well as to define filtering
+  thresholds for dead or low-quality cells removal. Filtered merged datasets are then being processed
+  with the integration algorithm. Its main goal is to identify integration anchors – pairs of cells that can
+  “pull together” the same cell type populations from the different datasets. An integration algorithm
+  can also solve batch correction problem by regressing out the unwanted sources of variation. The
+  integrated data then undergo the dimensionality reduction processing that starts from the principal
+  component analysis (PCA). Based on the PCA results the uniform manifold approximation and
+  projection (UMAP) and clustering analysis are run with the principal components of the highest
+  variance. Clustered data are then used for gene markers identification. These genes are differentially
+  expressed between clusters and can be used for cell types assignment.
+  More details about scRNA-Seq integration analysis with Seurat can be found in the official
+  [documentation](https://satijalab.org/seurat/articles/integration_introduction.html).
 
 
 s:about: |
-  usage: run_seurat.R
-        [-h] --mex MEX --identity IDENTITY [--condition CONDITION]
-        [--classifier CLASSIFIER] [--cellcycle CELLCYCLE] [--barcodes BARCODES]
-        [--mincells MINCELLS] [--minfeatures MINFEATURES]
-        [--maxfeatures MAXFEATURES] [--minumi MINUMI] [--minnovelty MINNOVELTY]
-        [--maxmt MAXMT] [--mitopattern MITOPATTERN]
-        [--features [FEATURES [FEATURES ...]]] [--regresscellcycle]
-        [--regressmt] [--highvarcount HIGHVARCOUNT] [--ndim NDIM]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--logfc LOGFC]
-        [--minpct MINPCT] [--onlypos]
-        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--species {hs,mm,none}] [--pdf] [--rds] [--output OUTPUT]
-        [--threads THREADS]
+  usage: run_seurat.R [-h] --mex MEX [MEX ...] --identity
+                                    IDENTITY [--condition CONDITION]
+                                    [--classifier CLASSIFIER]
+                                    [--cellcycle CELLCYCLE]
+                                    [--barcodes BARCODES] [--mincells MINCELLS]
+                                    [--minfeatures [MINFEATURES [MINFEATURES ...]]]
+                                    [--maxfeatures [MAXFEATURES [MAXFEATURES ...]]]
+                                    [--minumi [MINUMI [MINUMI ...]]]
+                                    [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                    [--maxmt MAXMT] [--mitopattern MITOPATTERN]
+                                    [--features [FEATURES [FEATURES ...]]]
+                                    [--regresscellcycle] [--regressmt]
+                                    [--highvarcount HIGHVARCOUNT] [--ndim NDIM]
+                                    [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                    [--logfc LOGFC] [--minpct MINPCT]
+                                    [--onlypos]
+                                    [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                    [--species {hs,mm,none}] [--pdf] [--rds]
+                                    [--output OUTPUT] [--threads THREADS]
 
   Runs Seurat for comparative scRNA-seq analysis of across experimental
   conditions
 
   optional arguments:
     -h, --help            show this help message and exit
-    --mex MEX             Path to the folder with not normalized aggregated
-                          feature-barcode matrices in MEX format
-    --identity IDENTITY   Path to the aggregation CSV file to set the initial
-                          cell identity classes
+    --mex MEX [MEX ...]   Path to the folder with not normalized aggregated
+                          feature-barcode matrix from Cell Ranger Aggregate in
+                          MEX format. If multiple locations provided data is
+                          assumed to be not aggregated (outputs from multiple
+                          Cell Ranger Count runs) and will be merged.
+    --identity IDENTITY   Path to the metadata TSV/CSV file to set the datasets
+                          identities. If --mex points to the Cell Ranger
+                          Aggregate outputs, the aggregation.csv file can be
+                          used as well. If multiple locations were provided
+                          through --mex, the file should include at least one
+                          column - 'library_id', and be sorted based on the the
+                          order of locations provided in --mex.
     --condition CONDITION
-                          Path to the TSV/CSV file to define datasets conditions
-                          for grouping. First column - 'library_id' with values
-                          from the --identity file, second column 'condition'.
-                          Default: each dataset is assigned to its own
-                          biological condition
+                          Path to the TSV/CSV file to define datasets grouping.
+                          First column - 'library_id' with the values provided
+                          in the correspondent column of the --identity file,
+                          second column 'condition'. Default: each dataset is
+                          assigned to a separate group.
     --classifier CLASSIFIER
-                          Path to the Garnett classifier rds file for cell type
-                          prediction. Default: skip cell type prediction
+                          Path to the Garnett classifier RDS file for cell type
+                          prediction. Default: skip cell type prediction.
     --cellcycle CELLCYCLE
                           Path to the TSV/CSV file with cell cycle data. First
                           column - 'phase', second column 'gene_id'. Default:
-                          skip cell cycle score assignment
-    --barcodes BARCODES   Path to the headerless TSV/CSV file with selected
-                          barcodes (one per line) to prefilter input feature-
-                          barcode matrices. Default: use all cells
-    --mincells MINCELLS   Include features detected in at least this many cells
-                          (applied to thoughout all datasets together). Default:
-                          10
-    --minfeatures MINFEATURES
+                          skip cell cycle score assignment.
+    --barcodes BARCODES   Path to the headerless TSV/CSV file with the list of
+                          barcodes to select cells of interest (one barcode per
+                          line). Prefilters input feature-barcode matrix to
+                          include only selected cells. Default: use all cells.
+    --mincells MINCELLS   Include only features detected in at least this many
+                          cells. Applied to aggregated feature-barcode matrix
+                          from Cell Ranger Aggregate. Ignored when --mex points
+                          to the locations of multiple Cell Ranger Count runs.
+                          Default: 5
+    --minfeatures [MINFEATURES [MINFEATURES ...]]
                           Include cells where at least this many features are
-                          detected. Default: 250
-    --maxfeatures MAXFEATURES
+                          detected. If multiple values provided each of them
+                          will be applied to the correspondent dataset from the
+                          --mex input. Default: 250 (applied to all datasets)
+    --maxfeatures [MAXFEATURES [MAXFEATURES ...]]
                           Include cells with the number of features not bigger
-                          than this value. Default: 5000
-    --minumi MINUMI       Include cells where at least this many UMI are
-                          detected. Default: 500
-    --minnovelty MINNOVELTY
+                          than this value. If multiple values provided each of
+                          them will be applied to the correspondent dataset from
+                          the --mex input. Default: 5000 (applied to all
+                          datasets)
+    --minumi [MINUMI [MINUMI ...]]
+                          Include cells where at least this many UMIs
+                          (transcripts) are detected. If multiple values
+                          provided each of them will be applied to the
+                          correspondent dataset from the --mex input. Default:
+                          500 (applied to all datasets)
+    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
-                          this value (calculated as log10(genes)/log10(UMIs)).
-                          Default: 0.8
-    --maxmt MAXMT         Include cells with the mitochondrial contamination
-                          percentage not bigger than this value. Default: 5
+                          this value, calculated as log10(genes)/log10(UMIs). If
+                          multiple values provided each of them will be applied
+                          to the correspondent dataset from the --mex input.
+                          Default: 0.8 (applied to all datasets)
+    --maxmt MAXMT         Include cells with the percentage of transcripts
+                          mapped to mitochondrial genes not bigger than this
+                          value. Default: 5
     --mitopattern MITOPATTERN
-                          Regex pattern to identify mitochondrial reads.
-                          Default: ^Mt-
+                          Regex pattern to identify mitochondrial genes.
+                          Default: '^Mt-'
     --features [FEATURES [FEATURES ...]]
-                          Features to explore in the clustered filtered
-                          integrated datasets. Default: do not highlight any
-                          features
+                          Features of interest to evaluate expression. Default:
+                          None
     --regresscellcycle    Regress cell cycle as a confounding source of
                           variation. Default: false
-    --regressmt           Regress mitochondrial gene expression as a confounding
-                          source of variation. Default: false
+    --regressmt           Regress mitochondrial genes expression as a
+                          confounding source of variation. Default: false
     --highvarcount HIGHVARCOUNT
-                          Number of higly variable features to detect. Default:
-                          3000
-    --ndim NDIM           Number of principal components to use in clustering
-                          (1:50). Use Elbow plot to adjust this parameter.
-                          Default: 10
+                          Number of highly variable features to detect. Used for
+                          datasets integration, scaling, and dimensional
+                          reduction. Default: 3000
+    --ndim NDIM           Number of principal components to use in UMAP
+                          projection and clustering (from 1 to 50). Use Elbow
+                          plot to adjust this parameter. Default: 10
     --resolution [RESOLUTION [RESOLUTION ...]]
-                          Clustering resolution. Can be set as array. Default:
-                          0.4 0.6 0.8 1.0 1.4
-    --logfc LOGFC         Log fold change threshold for conserved gene markers
-                          identification. Default: 0.25
-    --minpct MINPCT       Minimum fraction of cells where genes used for
-                          conserved gene markers identification should be
-                          detected in either of two tested clusters. Default:
-                          0.1
-    --onlypos             Return only positive markers when running conserved
-                          gene markers identification. Default: false
+                          Clustering resolution. Can be set as an array.
+                          Default: 0.4 0.6 0.8 1.0 1.4
+    --logfc LOGFC         Include only those genes that on average have log fold
+                          change difference in expression between every tested
+                          pair of clusters not lower than this value. Default:
+                          0.25
+    --minpct MINPCT       Include only those features that are detected in not
+                          lower than this fraction of cells in either of the two
+                          tested clusters. Default: 0.1
+    --onlypos             Return only positive markers when running gene markers
+                          identification. Default: false
     --testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
-                          Set test type to use for putative and conserved gene
-                          marker identification. Default: wilcox
+                          Statistical test to use for gene markers
+                          identification. Default: wilcox
     --species {hs,mm,none}
                           Select species for gene name conversion when running
                           cell type prediction with Garnett classifier. Default:

@@ -15,6 +15,11 @@ requirements:
           let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var split_numbers = function(line) {
+          let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
+
 
 'sd:upstream':
   sc_rnaseq_aggr_sample:
@@ -47,7 +52,7 @@ inputs:
 
   minimum_cells:
     type: int?
-    default: 10
+    default: 5
     label: "Include genes detected in at least this many cells"
     doc: |
       Include genes detected in at least this many cells
@@ -56,39 +61,46 @@ inputs:
       advanced: true
 
   minimum_features:
-    type: int?
-    default: 250
+    type: string?
+    default: "250"
     label: "Include cells where at least this many genes are detected"
     doc: |
       Include cells where at least this many genes are detected.
+      If multiple values provided each of them will be applied to
+      the correspondent dataset.
     'sd:layout':
       advanced: true
 
   maximum_features:
-    type: int?
-    default: 5000
+    type: string?
+    default: "5000"
     label: "Include cells with the number of genes not bigger than this value"
     doc: |
       Include cells with the number of genes not bigger than this value.
+      If multiple values provided each of them will be applied to the
+      correspondent dataset.
     'sd:layout':
       advanced: true
 
   minimum_umis:
-    type: int?
-    default: 500
+    type: string?
+    default: "500"
     label: "Include cells where at least this many UMIs are detected"
     doc: |
       Include cells where at least this many UMIs are detected.
+      If multiple values provided each of them will be applied
+      to the correspondent dataset.
     'sd:layout':
       advanced: true
 
   minimum_novelty_score:
-    type: float?
-    default: 0.8
+    type: string?
+    default: "0.8"
     label: "Include cells with the novelty score (the ratio of genes per cell over UMIs per cell) not lower than this value"
     doc: |
       Include cells with the novelty score (the ratio of genes per cell over UMIs per cell)
-      not lower than this value (calculated as log10(genes)/log10(UMIs)).
+      not lower than this value (calculated as log10(genes)/log10(UMIs)). If multiple values
+      provided each of them will be applied to the correspondent dataset.
     'sd:layout':
       advanced: true
 
@@ -130,11 +142,11 @@ inputs:
       advanced: true
 
   resolution:
-    type: float?
-    default: 0.1
-    label: "Clustering resolution"
+    type: string?
+    default: "0.1"
+    label: "Comma or space separated list of clustering resolutions"
     doc: |
-      Clustering resolution
+      Comma or space separated list of clustering resolutions
     'sd:layout':
       advanced: true
 
@@ -371,21 +383,21 @@ outputs:
   raw_mito_perc_dnst_spl_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/raw_mito_perc_dnst_spl_by_cond_plot_png
-    label: "Split by condition mitochondrial gene percentage density per cell (not filtered)"
+    label: "Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered)"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (not filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'QC (not filtered)'
-        Caption: 'Split by condition mitochondrial gene percentage density per cell (not filtered)'
+        Caption: 'Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered)'
 
   raw_mito_perc_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputSource: seurat_cluster/raw_mito_perc_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition mitochondrial gene percentage density per cell (not filtered)"
+    label: "Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered)"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (not filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered).
       PDF format
 
 
@@ -539,21 +551,21 @@ outputs:
   fltr_mito_perc_dnst_spl_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_mito_perc_dnst_spl_by_cond_plot_png
-    label: "Split by condition mitochondrial gene percentage density per cell (filtered)"
+    label: "Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered)"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'QC (filtered)'
-        Caption: 'Split by condition mitochondrial gene percentage density per cell (filtered)'
+        Caption: 'Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered)'
 
   fltr_mito_perc_dnst_spl_by_cond_plot_pdf:
     type: File?
     outputSource: seurat_cluster/fltr_mito_perc_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition mitochondrial gene percentage density per cell (filtered)"
+    label: "Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered)"
     doc: |
-      Split by condition mitochondrial gene percentage density per cell (filtered).
+      Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered).
       PDF format
 
 
@@ -623,168 +635,168 @@ outputs:
   fltr_pca_spl_by_ph_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_ph_plot_png
-    label: "Split by cell cycle phase PCA of filtered unintegrated datasets"
+    label: "Split by cell cycle phase PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by cell cycle phase PCA of filtered unintegrated datasets.
+      Split by cell cycle phase PCA of filtered unintegrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'QC (filtered)'
-        Caption: 'Split by cell cycle phase PCA of filtered unintegrated datasets'
+        Caption: 'Split by cell cycle phase PCA of filtered unintegrated/scaled datasets'
 
   fltr_pca_spl_by_ph_plot_pdf:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_ph_plot_pdf
-    label: "Split by cell cycle phase PCA of filtered unintegrated datasets"
+    label: "Split by cell cycle phase PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by cell cycle phase PCA of filtered unintegrated datasets.
+      Split by cell cycle phase PCA of filtered unintegrated/scaled datasets.
       PDF format
 
 
   fltr_pca_spl_by_mito_perc_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_mito_perc_plot_png
-    label: "Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets"
+    label: "Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets.
+      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'QC (filtered)'
-        Caption: 'Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets'
+        Caption: 'Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets'
 
   fltr_pca_spl_by_mito_perc_plot_pdf:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_mito_perc_plot_pdf
-    label: "Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets"
+    label: "Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated datasets.
+      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
       PDF format
 
 
   fltr_umap_spl_by_idnt_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_umap_spl_by_idnt_plot_png
-    label: "Split by identity UMAP projected PCA of filtered unintegrated datasets"
+    label: "Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by identity UMAP projected PCA of filtered unintegrated datasets.
+      Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'QC (filtered)'
-        Caption: 'Split by identity UMAP projected PCA of filtered unintegrated datasets'
+        Caption: 'Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets'
 
   fltr_umap_spl_by_idnt_plot_pdf:
     type: File?
     outputSource: seurat_cluster/fltr_umap_spl_by_idnt_plot_pdf
-    label: "Split by identity UMAP projected PCA of filtered unintegrated datasets"
+    label: "Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by identity UMAP projected PCA of filtered unintegrated datasets.
+      Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets.
       PDF format
 
 
   ntgr_elbow_plot_png:
     type: File?
     outputSource: seurat_cluster/ntgr_elbow_plot_png
-    label: "Elbow plot from PCA of filtered integrated datasets"
+    label: "Elbow plot from PCA of filtered integrated/scaled datasets"
     doc: |
-      Elbow plot from PCA of filtered integrated datasets.
+      Elbow plot from PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Dimensionality evaluation'
-        Caption: 'Elbow plot from PCA of filtered integrated datasets'
+        Caption: 'Elbow plot from PCA of filtered integrated/scaled datasets'
 
   ntgr_elbow_plot_pdf:
     type: File?
     outputSource: seurat_cluster/ntgr_elbow_plot_pdf
-    label: "Elbow plot from PCA of filtered integrated datasets"
+    label: "Elbow plot from PCA of filtered integrated/scaled datasets"
     doc: |
-      Elbow plot from PCA of filtered integrated datasets.
+      Elbow plot from PCA of filtered integrated/scaled datasets.
       PDF format
 
 
   ntgr_pca_plot_png:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_plot_png
-    label: "PCA of filtered integrated datasets"
+    label: "PCA of filtered integrated/scaled datasets"
     doc: |
-      PCA of filtered integrated datasets.
+      PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Dimensionality evaluation'
-        Caption: 'PCA of filtered integrated datasets'
+        Caption: 'PCA of filtered integrated/scaled datasets'
 
   ntgr_pca_plot_pdf:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_plot_pdf
-    label: "PCA of filtered integrated datasets"
+    label: "PCA of filtered integrated/scaled datasets"
     doc: |
-      PCA of filtered integrated datasets.
+      PCA of filtered integrated/scaled datasets.
       PDF format
 
 
   ntgr_pca_heatmap_png:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_heatmap_png
-    label: "Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets"
+    label: "Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets"
     doc: |
-      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets.
+      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Dimensionality evaluation'
-        Caption: 'Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets'
+        Caption: 'Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets'
 
   ntgr_pca_heatmap_pdf:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_heatmap_pdf
-    label: "Filtered integrated PCA heatmap to evaluate data dimensionality"
+    label: "Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets"
     doc: |
-      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated datasets.
+      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets.
       PDF format
 
 
   ntgr_pca_loadings_plot_png:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_loadings_plot_png
-    label: "PC scores of the most variant genes from PCA of filtered integrated datasets"
+    label: "PC scores of the most variant genes from PCA of filtered integrated/scaled datasets"
     doc: |
-      PC scores of the most variant genes from PCA of filtered integrated datasets.
+      PC scores of the most variant genes from PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Dimensionality evaluation'
-        Caption: 'PC scores of the most variant genes from PCA of filtered integrated datasets'
+        Caption: 'PC scores of the most variant genes from PCA of filtered integrated/scaled datasets'
 
   ntgr_pca_loadings_plot_pdf:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_loadings_plot_pdf
-    label: "PC scores of the most variant genes from PCA of filtered integrated datasets"
+    label: "PC scores of the most variant genes from PCA of filtered integrated/scaled datasets"
     doc: |
-      PC scores of the most variant genes from PCA of filtered integrated datasets.
+      PC scores of the most variant genes from PCA of filtered integrated/scaled datasets.
       PDF format
 
 
   ntgr_umap_spl_by_idnt_plot_png:
     type: File?
     outputSource: seurat_cluster/ntgr_umap_spl_by_idnt_plot_png
-    label: "Split by identity UMAP projected PCA of filtered integrated datasets"
+    label: "Split by identity UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Split by identity UMAP projected PCA of filtered integrated datasets.
+      Split by identity UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (integrated)'
-        Caption: 'Split by identity UMAP projected PCA of filtered integrated datasets'
+        tab: 'QC (integrated/scaled)'
+        Caption: 'Split by identity UMAP projected PCA of filtered integrated/scaled datasets'
 
   ntgr_umap_spl_by_idnt_plot_pdf:
     type: File?
     outputSource: seurat_cluster/ntgr_umap_spl_by_idnt_plot_pdf
-    label: "Split by identity UMAP projected PCA of filtered integrated datasets"
+    label: "Split by identity UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Split by identity UMAP projected PCA of filtered integrated datasets.
+      Split by identity UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -794,14 +806,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_res_plot_png
-    label: "Clustered UMAP projected PCA of filtered integrated datasets"
+    label: "Clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Clustered UMAP projected PCA of filtered integrated datasets.
+      Clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Clustering'
-        Caption: 'Clustered UMAP projected PCA of filtered integrated datasets'
+        Caption: 'Clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_res_plot_pdf:
     type:
@@ -809,9 +821,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_res_plot_pdf
-    label: "Clustered UMAP projected PCA of filtered integrated datasets"
+    label: "Clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Clustered UMAP projected PCA of filtered integrated datasets.
+      Clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -821,14 +833,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_spl_by_cond_res_plot_png
-    label: "Split by condition clustered UMAP projected PCA of filtered integrated datasets"
+    label: "Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Split by condition clustered UMAP projected PCA of filtered integrated datasets.
+      Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Clustering'
-        Caption: 'Split by condition clustered UMAP projected PCA of filtered integrated datasets'
+        Caption: 'Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_spl_by_cond_res_plot_pdf:
     type:
@@ -836,9 +848,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_spl_by_cond_res_plot_pdf
-    label: "Split by condition clustered UMAP projected PCA of filtered integrated datasets"
+    label: "Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Split by condition clustered UMAP projected PCA of filtered integrated datasets.
+      Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -848,14 +860,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_ctype_res_plot_png
-    label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets"
+    label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
+      Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Clustering'
-        Caption: 'Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets'
+        Caption: 'Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_ctype_res_plot_pdf:
     type:
@@ -863,9 +875,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_ctype_res_plot_pdf
-    label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets"
+    label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Grouped by predicted cell types UMAP projected PCA of filtered integrated datasets.
+      Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -875,14 +887,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_spl_by_ph_res_plot_png
-    label: "Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets"
+    label: "Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets.
+      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (integrated)'
-        Caption: 'Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets'
+        tab: 'QC (integrated/scaled)'
+        Caption: 'Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_spl_by_ph_res_plot_pdf:
     type:
@@ -890,9 +902,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_umap_spl_by_ph_res_plot_pdf
-    label: "Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets"
+    label: "Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated datasets.
+      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -902,14 +914,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_qc_mtrcs_res_plot_png
-    label: "QC metrics for clustered UMAP projected PCA of filtered integrated datasets"
+    label: "QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (integrated)'
-        Caption: 'QC metrics for clustered UMAP projected PCA of filtered integrated datasets'
+        tab: 'QC (integrated/scaled)'
+        Caption: 'QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_qc_mtrcs_res_plot_pdf:
     type:
@@ -917,9 +929,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/clst_qc_mtrcs_res_plot_pdf
-    label: "QC metrics for clustered UMAP projected PCA of filtered integrated datasets"
+    label: "QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets"
     doc: |
-      QC metrics for clustered UMAP projected PCA of filtered integrated datasets.
+      QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -929,14 +941,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_avg_per_clst_res_plot_png
-    label: "Scaled average gene expression per cluster of filtered integrated datasets"
+    label: "Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets"
     doc: |
-      Scaled average gene expression per cluster of filtered integrated datasets.
+      Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Scaled average gene expression per cluster of filtered integrated datasets'
+        Caption: 'Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets'
 
   expr_avg_per_clst_res_plot_pdf:
     type:
@@ -944,9 +956,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_avg_per_clst_res_plot_pdf
-    label: "Scaled average gene expression per cluster of filtered integrated datasets"
+    label: "Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets"
     doc: |
-      Scaled average gene expression per cluster of filtered integrated datasets.
+      Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -956,14 +968,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_per_clst_cell_res_plot_png
-    label: "Log normalized gene expression per cell of clustered filtered integrated datasets"
+    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Log normalized gene expression per cell of clustered filtered integrated datasets'
+        Caption: 'Log normalized gene expression per cell of clustered filtered integrated/scaled datasets'
 
   expr_per_clst_cell_res_plot_pdf:
     type:
@@ -971,9 +983,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_per_clst_cell_res_plot_pdf
-    label: "Log normalized gene expression per cell of clustered filtered integrated datasets"
+    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets.
       PDF format
 
 
@@ -983,14 +995,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_clst_heatmap_res_plot_png
-    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets"
+    label: "Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Log normalized gene expression heatmap of clustered filtered integrated datasets'
+        Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets'
 
   expr_clst_heatmap_res_plot_pdf:
     type:
@@ -998,9 +1010,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_clst_heatmap_res_plot_pdf
-    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets"
+    label: "Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets.
       PDF format
 
 
@@ -1010,14 +1022,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_dnst_per_clst_res_plot_png
-    label: "Log normalized gene expression densities per cluster of filtered integrated datasets"
+    label: "Log normalized gene expression densities per cluster of filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression densities per cluster of filtered integrated datasets.
+      Log normalized gene expression densities per cluster of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Log normalized gene expression densities per cluster of filtered integrated datasets'
+        Caption: 'Log normalized gene expression densities per cluster of filtered integrated/scaled datasets'
 
   expr_dnst_per_clst_res_plot_pdf:
     type:
@@ -1025,9 +1037,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_dnst_per_clst_res_plot_pdf
-    label: "Log normalized gene expression densities per cluster of filtered integrated datasets"
+    label: "Log normalized gene expression densities per cluster of filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression densities per cluster of filtered integrated datasets.
+      Log normalized gene expression densities per cluster of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -1037,14 +1049,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_avg_per_ctype_res_plot_png
-    label: "Scaled average gene expression per predicted cell type of filtered integrated datasets"
+    label: "Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets"
     doc: |
-      Scaled average gene expression per predicted cell type of filtered integrated datasets.
+      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Scaled average gene expression per predicted cell type of filtered integrated datasets'
+        Caption: 'Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets'
 
   expr_avg_per_ctype_res_plot_pdf:
     type:
@@ -1052,9 +1064,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_avg_per_ctype_res_plot_pdf
-    label: "Scaled average gene expression per predicted cell type of filtered integrated datasets"
+    label: "Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets"
     doc: |
-      Scaled average gene expression per predicted cell type of filtered integrated datasets.
+      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets.
       PDF format
 
 
@@ -1064,14 +1076,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_per_ctype_cell_res_plot_png
-    label: "Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types"
+    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression per cell of clustered filtered/scaled integrated datasets with predicted cell types.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types'
+        Caption: 'Log normalized gene expression per cell of clustered filtered/scaled integrated datasets with predicted cell types'
 
   expr_per_ctype_cell_res_plot_pdf:
     type:
@@ -1079,9 +1091,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_per_ctype_cell_res_plot_pdf
-    label: "Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types"
+    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types.
       PDF format
 
 
@@ -1091,14 +1103,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_ctype_heatmap_res_plot_png
-    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types"
+    label: "Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types'
+        Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types'
 
   expr_ctype_heatmap_res_plot_pdf:
     type:
@@ -1106,9 +1118,9 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_ctype_heatmap_res_plot_pdf
-    label: "Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types"
+    label: "Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types"
     doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated datasets with predicted cell types.
+      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types.
       PDF format
 
 
@@ -1118,14 +1130,14 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_dnst_per_ctype_res_plot_png
-    label: "Log normalized gene expression densities per predicted cell type of filtered integrated datasets"
+    label: "Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated datasets.
+      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression'
-        Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated datasets'
+        Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets'
 
   expr_dnst_per_ctype_res_plot_pdf:
     type:
@@ -1133,16 +1145,16 @@ outputs:
     - type: array
       items: File
     outputSource: seurat_cluster/expr_dnst_per_ctype_res_plot_pdf
-    label: "Log normalized gene expression densities per predicted cell type of filtered integrated datasets"
+    label: "Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets"
     doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated datasets.
+      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets.
       PDF format
 
 
   seurat_clst_data_rds:
     type: File
     outputSource: seurat_cluster/seurat_clst_data_rds
-    label: "Clustered filtered integrated Seurat data"
+    label: "Clustered filtered integrated/scaled Seurat data"
     doc: |
       Clustered filtered integrated Seurat data.
       RDS format
@@ -1251,20 +1263,30 @@ steps:
       species: species
       barcodes_data: barcodes_data
       minimum_cells: minimum_cells
-      minimum_features: minimum_features
-      maximum_features: maximum_features
+      minimum_features:
+        source: minimum_features
+        valueFrom: $(split_numbers(self))
+      maximum_features:
+        source: maximum_features
+        valueFrom: $(split_numbers(self))
       selected_features:
         source: selected_features
         valueFrom: $(split_features(self))
-      minimum_umis: minimum_umis
-      minimum_novelty_score: minimum_novelty_score
+      minimum_umis:
+        source: minimum_umis
+        valueFrom: $(split_numbers(self))
+      minimum_novelty_score:
+        source: minimum_novelty_score
+        valueFrom: $(split_numbers(self))
       maximum_mito_perc: maximum_mito_perc
       mito_pattern: mito_pattern
       regress_cellcycle: regress_cellcycle
       regress_mito_perc: regress_mito_perc
       high_var_features_count: high_var_features_count
       dimensionality: dimensionality
-      resolution: resolution
+      resolution:
+        source: resolution
+        valueFrom: $(split_numbers(self))
       minimum_logfc: minimum_logfc
       minimum_pct: minimum_pct
       only_positive_markers: only_positive_markers
@@ -1415,14 +1437,5 @@ doc: |
   Seurat Cluster
   ==============
 
-  Which test type to use for putative and conserved gene marker identification
-
-    - *wilcox* - Wilcoxon rank sum test (default)
-    - *bimod* - Likelihood-ratio test for single cell feature expression, (McDavid et al., Bioinformatics, 2013)
-    - *roc* - Standard AUC classifier
-    - *t* - Student’s t-test
-    - *poisson* - Likelihood ratio test assuming an underlying negative binomial distribution. Use only for UMI-based datasets
-    - *negbinom* - Likelihood ratio test assuming an underlying negative binomial distribution. Use only for UMI-based datasets
-    - *LR* - Uses a logistic regression framework to determine differentially expressed genes. Constructs a logistic regression model predicting group membership based on each feature individually and compares this to a null model with a likelihood ratio test.
-    - *MAST* - GLM-framework that treates cellular detection rate as a covariate (Finak et al, Genome Biology, 2015) (Installation instructions)
-    - *DESeq2* - DE based on a model using the negative binomial distribution (Love et al, Genome Biology, 2014) (Installation instructions)
+  Runs filtering, integration, and clustering analyses for Cell Ranger
+  Count Gene Expression or Cell Ranger Aggregate experiments.
