@@ -363,6 +363,10 @@ outputs:
     format: "http://edamontology.org/format_3750"
     doc: "YAML formatted combined log"
     outputSource: get_stat/collected_statistics_yaml
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'
 
   get_stat_markdown:
     type: File?
@@ -374,17 +378,12 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-
   get_stat_formatted_log:
     type: File?
     label: "Bowtie & Samtools Rmdup combined formatted log"
     format: "http://edamontology.org/format_3475"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
     outputSource: get_stat/collected_statistics_tsv
-    'sd:visualPlugins':
-    - tableView:
-        vertical: true
-        tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:
