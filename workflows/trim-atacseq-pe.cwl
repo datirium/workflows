@@ -272,6 +272,7 @@ outputs:
         colors: ["#b3de69"]
         height: 500
         data: [$1, $2]
+        comparable: "atdp"
 
   samtools_rmdup_log:
     type: File
@@ -466,6 +467,7 @@ outputs:
         colors: ["#4b78a3"]
         height: 500
         data: [$1, $2]
+        comparable: "preseq"
 
   estimated_fragment_size:
     type: int

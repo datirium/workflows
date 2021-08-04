@@ -174,6 +174,7 @@ outputs:
         colors: ["#b3de69"]
         height: 500
         data: [$1, $2]
+        comparable: "atdp"
 
   macs2_called_peaks:
     type: File
