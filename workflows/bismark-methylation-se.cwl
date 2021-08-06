@@ -157,7 +157,7 @@ outputs:
     'sd:visualPlugins':
     - tableView:
         vertical: true
-        # tab: 'Overview'
+        tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:

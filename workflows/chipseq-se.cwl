@@ -283,10 +283,6 @@ outputs:
     format: "http://edamontology.org/format_3750"
     doc: "YAML formatted combined log"
     outputSource: get_statistics/collected_statistics_yaml
-    'sd:visualPlugins':
-    - tableView:
-        vertical: true
-        tab: 'Overview'
 
   workflow_statistics_markdown:
     type: File?
@@ -304,6 +300,10 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Overall workflow execution statistics from bowtie_aligner and samtools_rmdup steps"
     outputSource: get_statistics/collected_statistics_tsv
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'    
     'sd:preview':
       'sd:visualPlugins':
       - pie:
