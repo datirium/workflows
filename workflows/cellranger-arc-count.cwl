@@ -281,6 +281,13 @@ outputs:
     doc: |
       Genome track of observed transposition sites in the experiment
       smoothed at a resolution of 400 bases in BIGWIG format.
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "ATAC cut sites"
+        height: 120
 
   atac_peak_annotation_file:
     type: File

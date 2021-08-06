@@ -154,10 +154,10 @@ outputs:
     doc: "Bismark generated alignment and splitting reports. Combined"
     format: "http://edamontology.org/format_3475"
     outputSource: format_bismark_report/collected_report_formatted
-    # 'sd:visualPlugins':
-    # - tableView:
-    #     vertical: true
-    #     tab: 'Overview'
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        # tab: 'Overview'
     'sd:preview':
       'sd:visualPlugins':
       - pie:
