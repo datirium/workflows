@@ -141,6 +141,39 @@ inputs:
     'sd:layout':
       advanced: true
 
+  umap_spread:
+    type: float?
+    default: 1
+    label: "Effective scale of embedded points on UMAP. Determines how clustered/clumped the embedded points are."
+    doc: |
+      The effective scale of embedded points on UMAP. In combination with mindist
+      this determines how clustered/clumped the embedded points are.
+    'sd:layout':
+      advanced: true
+
+  umap_mindist:
+    type: float?
+    default: 0.3
+    label: "Controls how tightly the embedding is allowed compress points together on UMAP. Sensible values are in the range 0.001 to 0.5"
+    doc: |
+      Controls how tightly the embedding is allowed compress points together on UMAP.
+      Larger values ensure embedded points are moreevenly distributed, while smaller
+      values allow the algorithm to optimise more accurately with regard to local structure.
+      Sensible values are in the range 0.001 to 0.5.
+    'sd:layout':
+      advanced: true
+
+  umap_nneighbors:
+    type: int?
+    default: 30
+    label: "Number of neighboring points used in UMAP. Larger values result in loss of detailed local structure."
+    doc: |
+      Determines the number of neighboring points used in UMAP. Larger values will result
+      in more global structure being preserved at the loss of detailed local structure.
+      In general this parameter should often be in the range 5 to 50.
+    'sd:layout':
+      advanced: true
+
   resolution:
     type: string?
     default: "0.1"
@@ -1284,6 +1317,9 @@ steps:
       regress_mito_perc: regress_mito_perc
       high_var_features_count: high_var_features_count
       dimensionality: dimensionality
+      umap_spread: umap_spread
+      umap_mindist: umap_mindist
+      umap_nneighbors: umap_nneighbors
       resolution:
         source: resolution
         valueFrom: $(split_numbers(self))

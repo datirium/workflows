@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.6
+  dockerPull: biowardrobe2/seurat:v0.0.7
 
 
 inputs:
@@ -195,6 +195,36 @@ inputs:
       Number of principal components to use in UMAP projection and clustering
       (from 1 to 50). Use Elbow plot to adjust this parameter.
       Default: 10
+
+  umap_spread:
+    type: float?
+    inputBinding:
+      prefix: "--spread"
+    doc: |
+      The effective scale of embedded points on UMAP. In combination with mindist
+      this determines how clustered/clumped the embedded points are.
+      Default: 1
+
+  umap_mindist:
+    type: float?
+    inputBinding:
+      prefix: "--mindist"
+    doc: |
+      Controls how tightly the embedding is allowed compress points together on UMAP.
+      Larger values ensure embedded points are moreevenly distributed, while smaller
+      values allow the algorithm to optimise more accurately with regard to local structure.
+      Sensible values are in the range 0.001 to 0.5.
+      Default:  0.3
+
+  umap_nneighbors:
+    type: int?
+    inputBinding:
+      prefix: "--nneighbors"
+    doc: |
+      Determines the number of neighboring points used in UMAP. Larger values will result
+      in more global structure being preserved at the loss of detailed local structure.
+      In general this parameter should often be in the range 5 to 50.
+      Default: 30
 
   resolution:
     type:
