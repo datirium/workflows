@@ -290,11 +290,11 @@ inputs:
 
   conditions_data:
     type: File?
-    label: "TSV/CSV file to define datasets conditions with 'library_id' and 'condition' columns"
+    label: "TSV/CSV file to define datasets conditions with 'library_id' and 'condition' columns. Rows order should correspond to the aggregation metadata."
     doc: |
-      Path to the TSV/CSV file to define datasets conditions
-      for grouping. First column - 'library_id' with values
-      from the --identity file, second column 'condition'.
+      Path to the TSV/CSV file to define datasets grouping. First column -
+      'library_id' with the values provided in the same order as in the
+      correspondent column of the --identity file, second column 'condition'.
       If not provided, each dataset is assigned to its own
       biological condition
 
@@ -689,21 +689,21 @@ outputs:
   fltr_pca_spl_by_mito_perc_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_mito_perc_plot_png
-    label: "Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets"
+    label: "Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
+      Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'QC (filtered)'
-        Caption: 'Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets'
+        Caption: 'Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets'
 
   fltr_pca_spl_by_mito_perc_plot_pdf:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_mito_perc_plot_pdf
-    label: "Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets"
+    label: "Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
+      Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets.
       PDF format
 
 

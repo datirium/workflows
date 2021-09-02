@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.8
+  dockerPull: biowardrobe2/seurat:v0.0.9
 
 
 inputs:
@@ -43,9 +43,9 @@ inputs:
       prefix: "--condition"
     doc: |
       Path to the TSV/CSV file to define datasets grouping. First column -
-      'library_id' with the values provided in the correspondent column of the
-      --identity file, second column 'condition'. Default: each dataset is
-      assigned to a separate group.
+      'library_id' with the values provided in the same order as in the
+      correspondent column of the --identity file, second column 'condition'.
+      Default: each dataset is assigned to a separate group.
 
   classifier_rds:
     type: File?
@@ -612,7 +612,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_pca_spl_by_mito_perc.png"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
+      Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets.
       PNG format
 
   fltr_pca_spl_by_mito_perc_plot_pdf:
@@ -620,7 +620,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_pca_spl_by_mito_perc.pdf"
     doc: |
-      Split by level of mitochondrial gene expression PCA of filtered unintegrated/scaled datasets.
+      Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets.
       PDF format
 
   fltr_umap_spl_by_idnt_plot_png:

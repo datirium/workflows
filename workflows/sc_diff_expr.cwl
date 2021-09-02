@@ -95,6 +95,18 @@ inputs:
     'sd:layout':
       advanced: true
 
+  excluded_features:
+    type: string?
+    default: null
+    label: "Comma or space separated list of genes to be excluded"
+    doc: |
+      Genes to be excluded from the differential expression analysis.
+      Excluded genes will be still present in the dataset, but they won't
+      be used in the FindMarkers function.
+      Default: include all genes
+    'sd:layout':
+      advanced: true
+
   minimum_logfc:
     type: float?
     default: 0.25
@@ -255,6 +267,9 @@ steps:
         default: 10
       selected_features:
         source: selected_features
+        valueFrom: $(split_features(self))
+      excluded_features:
+        source: excluded_features
         valueFrom: $(split_features(self))
       minimum_logfc: minimum_logfc
       minimum_pct: minimum_pct

@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.8
+  dockerPull: biowardrobe2/seurat:v0.0.9
 
 
 inputs:
@@ -77,6 +77,19 @@ inputs:
       Genes of interest to label on the generated plots.
       Default: --topn N genes with the highest and the
       lowest log2 fold change expression values.
+
+  excluded_features:
+    type:
+    - "null"
+    - string
+    - string[]
+    inputBinding:
+      prefix: "--exgenes"
+    doc: |
+      Genes to be excluded from the differential expression analysis.
+      Excluded genes will be still present in the dataset, but they won't
+      be used in the FindMarkers function.
+      Default: include all genes
 
   topn_genes_count:
     type: int?
@@ -278,13 +291,15 @@ doc: |
 
 
 s:about: |
-  usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/sc_diff_expr.R
-        [-h] --rds RDS [--splitby SPLITBY] --first FIRST --second SECOND
-        [--groupby GROUPBY] [--select [SELECT [SELECT ...]]]
-        [--genes [GENES [GENES ...]]] [--topn TOPN] [--minlogfc MINLOGFC]
-        [--minpct MINPCT] [--maxpvadj MAXPVADJ]
-        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--pdf] [--output OUTPUT] [--threads THREADS]
+  usage: sc_diff_expr.R [-h] --rds RDS [--splitby SPLITBY] --first FIRST
+                        --second SECOND [--groupby GROUPBY]
+                        [--select [SELECT [SELECT ...]]]
+                        [--genes [GENES [GENES ...]]]
+                        [--exgenes [EXGENES [EXGENES ...]]] [--topn TOPN]
+                        [--minlogfc MINLOGFC] [--minpct MINPCT]
+                        [--maxpvadj MAXPVADJ]
+                        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                        [--pdf] [--output OUTPUT] [--threads THREADS]
 
   Runs differential expression analysis for a subset of cells between two
   selected groups
@@ -312,6 +327,11 @@ s:about: |
                           Genes of interest to label on the generated plots.
                           Default: --topn N genes with the highest and the
                           lowest log2 fold change expression values.
+    --exgenes [EXGENES [EXGENES ...]]
+                          Genes to be excluded from the differential expression
+                          analysis. Excluded genes will be still present in the
+                          dataset, but they won't be used in the FindMarkers
+                          function. Default: include all genes
     --topn TOPN           Show N genes with the highest and N genes with the
                           lowest log2 fold change expression values. Ignored
                           when --genes is provided. Default: 10
