@@ -1,21 +1,9 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: ShellCommandRequirement
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return  [
-                {
-                  "entry": inputs.sort_input,
-                  "entryname": inputs.sort_input.basename,
-                  "writable": true
-                }
-              ]
-    }
-
-
 - class: InlineJavascriptRequirement
   expressionLib:
   - var ext = function() {
@@ -51,6 +39,9 @@ inputs:
         samtools sort "${@:1}"
       else
         echo "Skip samtools sort " ${@:1}
+        SOURCE=${@:(-1):1}
+        TARGET=$(basename "$SOURCE")
+        cp $SOURCE $TARGET
       fi
     inputBinding:
       position: 5
@@ -77,8 +68,7 @@ inputs:
     type: boolean?
     default: true
     doc: |
-      If true - run samtools, if false - return sort_input and optional index file in secondaryFiles, previously staged
-      into output directory.
+      If true - run samtools, if false - return sort_input and optional index file in secondaryFiles.
 
   sort_compression_level:
     type: int?
@@ -139,7 +129,9 @@ inputs:
     doc: |
       Generate BAI-format index for BAM files [default]. If input isn't cram.
 
+
 outputs:
+
   bam_bai_pair:
     type: File
     outputBinding:
@@ -160,7 +152,9 @@ outputs:
           }
       }
 
+
 baseCommand: [bash, '-c']
+
 
 arguments:
 #   run script sort position 5
@@ -263,20 +257,12 @@ doc: |
   If input `trigger` is set to `true` or isn't set at all (`true` is used by default), run `samtools sort` and
   `samtools index`, return sorted BAM and BAI/CSI index file.
   If input `trigger` is set to `false`, return unchanged `sort_input` (BAM/SAM/CRAM) and index (BAI/CSI, if provided in
-  `secondaryFiles`) files, previously staged into output directory.
-
-  Before execution `baseCommand`, `sort_input` and `secondaryFiles` (if provided) are staged into directory
-  set as docker parameter `--workdir` (tool's output directory), using `InitialWorkDirRequirement`. Setting
-  `writable: true` makes cwl-runner to make copies of the `sort_input` and `secondaryFiles` (if provided) and mount
-  them to docker container with `rw` mode as part of `--workdir` (if set to false, the files staged into output
-  directory will be mounted to docker container separately with `ro` mode). Because both `samtools sort` and
-  `samtools index` can overwrite files with the same names (and in case of `samtools sort` even the input file can be
-  overwritten), we don't need to rename any of the staged files.
+  `secondaryFiles`) files.
 
   Trigger logic is implemented in two bash scripts set by default as `bash_script_sort` and `bash_script_index` inputs.
   For both of then, if the first argument $0 (which is `trigger` input) is true, run `samtools sort/index` with the rest
   of the arguments. If $0 is not true, skip `samtools sort/index` and return `sort_input` and `secondaryFiles`
-  (if provided) staged into output directory.
+  (if provided).
 
   Input `trigger` is Boolean, but returns String, because of `valueFrom` field. The `valueFrom` is used, because if `trigger`
   is false, cwl-runner doesn't append this argument at all to the the `baseCommand` - new feature of CWL v1.0.2. Alternatively,
@@ -287,8 +273,8 @@ doc: |
   by `samtools index`.
 
   `default_bam` function is used to generate output filename for `samtools sort` if input `sort_output_filename` is not
-  set or when `trigger` is false and we need to return `sort_input` and `secondaryFiles` (if provided) files staged into
-  output directory. Output filename is generated on the base of `sort_input` basename with `.bam` extension by default.
+  set or when `trigger` is false and we need to return `sort_input` and `secondaryFiles` (if provided) files. Output
+  filename is generated on the base of `sort_input` basename with `.bam` extension by default.
 
   `ext` function is used to return the index file extension (BAI/CSI) based on `csi` and `bai` inputs according to the
   following logic

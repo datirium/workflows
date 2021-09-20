@@ -7,10 +7,10 @@ python:
 os:
 - linux
 install:
-- pip install --upgrade cwltool==1.0.20190831161204
-- pip install --upgrade cwltest==2.0.20200117101530
-- pip install --upgrade schema-salad==4.5.20190815125611
-- pip install --upgrade ruamel.yaml==0.15.97
+- pip install --upgrade cwltool==3.1.20210816212154
+- pip install --upgrade cwltest==2.1.20210626101542
+- pip install --upgrade schema-salad==8.2.20210914115719
+- pip install --upgrade ruamel.yaml==0.17.10
 #script: bash run_test.sh -n171 --verbose --junit-xml=result.xml RUNNER=cwltool
 #/home/travis/virtualenv/python3.6.3/bin/cwltool
 #script: cd ./tests/ && cwltool --debug --outdir=/tmp/tmpul0j1uu1 ../workflows/genome-indices.cwl ./genome-indices.json

@@ -10,18 +10,6 @@ requirements:
         var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
         return (root == "")?inputs.bam_file.basename+ext:root+ext;
     };
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return  [
-                {
-                  "entry": inputs.bam_file,
-                  "entryname": inputs.bam_file.basename,
-                  "writable": true
-                }
-              ]
-    }
-
 
 hints:
 - class: DockerRequirement
@@ -33,6 +21,8 @@ inputs:
   bam_file:
     type:
       - File
+    secondaryFiles:
+      - .bai
     inputBinding:
       position: 10
       prefix: --bam
@@ -225,10 +215,6 @@ doc: |
 
   `default_output_prefix` function returns default prefix based on `bam_file` basename, if `output_prefix` is not
   provided.
-
-  Before running `baseCommand` `bam_file` is staged into output directory with write permissions (`"writable": true`).
-  This allow to automatically generate index file at the same directory as input `bam_file`. In case when index file
-  is provided in `secondaryFiles` of `bam_file`, it's not generated twice.
 
 s:about: |
   Usage:
