@@ -245,8 +245,8 @@ s:isPartOf:
   s:name: Common Workflow Language
   s:url: http://commonwl.org/
 
-# s:mainEntity:
-#   $import: ./metadata/star-metadata.yaml
+s:mainEntity:
+  $import: ./metadata/star-metadata.yaml
 
 s:creator:
 - class: s:Organization

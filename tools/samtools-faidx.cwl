@@ -48,8 +48,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-# s:mainEntity:
-#   $import: ./metadata/samtools-metadata.yaml
+s:mainEntity:
+  $import: ./metadata/samtools-metadata.yaml
 
 s:name: "samtools-faidx"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/samtools-faidx.cwl

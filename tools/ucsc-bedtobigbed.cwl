@@ -230,8 +230,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-# s:mainEntity:
-#   $import: ./metadata/ucsc-metadata.yaml
+s:mainEntity:
+  $import: ./metadata/ucsc-metadata.yaml
 
 s:name: "ucsc-bedtobigbed"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/ucsc-bedtobigbed.cwl
