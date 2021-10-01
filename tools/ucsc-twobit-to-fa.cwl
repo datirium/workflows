@@ -84,8 +84,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:mainEntity:
-  $import: ./metadata/ucsc-metadata.yaml
+# s:mainEntity:
+#   $import: ./metadata/ucsc-metadata.yaml
 
 s:name: "ucsc-twobit-to-fa"
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/ucsc-twobit-to-fa.cwl
