@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.10
+  dockerPull: biowardrobe2/seurat:v0.0.11
 
 
 inputs:
@@ -225,6 +225,69 @@ inputs:
       in more global structure being preserved at the loss of detailed local structure.
       In general this parameter should often be in the range 5 to 50.
       Default: 30
+
+  umap_metric:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "euclidean"
+      - "manhattan"
+      - "chebyshev"
+      - "minkowski"
+      - "canberra"
+      - "braycurtis"
+      - "mahalanobis"
+      - "wminkowski"
+      - "seuclidean"
+      - "cosine"
+      - "correlation"
+      - "haversine"
+      - "hamming"
+      - "jaccard"
+      - "dice"
+      - "russelrao"
+      - "kulsinski"
+      - "ll_dirichlet"
+      - "hellinger"
+      - "rogerstanimoto"
+      - "sokalmichener"
+      - "sokalsneath"
+      - "yule"
+    inputBinding:
+      prefix: "--umetric"
+    doc: |
+      The metric to use to compute distances in high dimensional space for UMAP.
+      Default: cosine
+
+  umap_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "uwot"
+      - "uwot-learn"
+      - "umap-learn"
+    inputBinding:
+      prefix: "--umethod"
+    doc: |
+      UMAP implementation to run.
+      Default: uwot
+
+  cluster_metric:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "euclidean"
+      - "cosine"
+      - "manhattan"
+      - "hamming"
+    inputBinding:
+      prefix: "--ametric"
+    doc: |
+      Distance metric used by the nearest neighbors algorithm when running clustering.
+      Default: cosine
 
   resolution:
     type:

@@ -174,6 +174,72 @@ inputs:
     'sd:layout':
       advanced: true
 
+  umap_metric:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "euclidean"
+      - "manhattan"
+      - "chebyshev"
+      - "minkowski"
+      - "canberra"
+      - "braycurtis"
+      - "mahalanobis"
+      - "wminkowski"
+      - "seuclidean"
+      - "cosine"
+      - "correlation"
+      - "haversine"
+      - "hamming"
+      - "jaccard"
+      - "dice"
+      - "russelrao"
+      - "kulsinski"
+      - "ll_dirichlet"
+      - "hellinger"
+      - "rogerstanimoto"
+      - "sokalmichener"
+      - "sokalsneath"
+      - "yule"
+    default: "cosine"
+    label: "The metric to use to compute distances in high dimensional space for UMAP"
+    doc: |
+      The metric to use to compute distances in high dimensional space for UMAP.
+    'sd:layout':
+      advanced: true
+
+  umap_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "uwot"
+      - "uwot-learn"
+      - "umap-learn"
+    default: "uwot"
+    label: "UMAP implementation to run"
+    doc: |
+      UMAP implementation to run.
+    'sd:layout':
+      advanced: true
+
+  cluster_metric:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "euclidean"
+      - "cosine"
+      - "manhattan"
+      - "hamming"
+    default: "euclidean"
+    label: "Distance metric used by the nearest neighbors algorithm when running clustering"
+    doc: |
+      Distance metric used by the nearest neighbors algorithm when running clustering.
+    'sd:layout':
+      advanced: true
+
   resolution:
     type: string?
     default: "0.1"
@@ -1320,6 +1386,9 @@ steps:
       umap_spread: umap_spread
       umap_mindist: umap_mindist
       umap_nneighbors: umap_nneighbors
+      umap_metric: umap_metric
+      umap_method: umap_method
+      cluster_metric: cluster_metric
       resolution:
         source: resolution
         valueFrom: $(split_numbers(self))
