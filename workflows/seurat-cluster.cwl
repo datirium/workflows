@@ -344,6 +344,15 @@ inputs:
     'sd:layout':
       advanced: true
 
+  no_sct:
+    type: boolean?
+    default: false
+    label: "Use LogNormalize instead of SCTransform when integrating datasets"
+    doc: |
+      Do not use SCTransform when running datasets integration. Use LogNormalize instead.
+    'sd:layout':
+      advanced: true
+
   selected_features:
     type: string?
     default: null
@@ -1388,6 +1397,7 @@ steps:
       umap_nneighbors: umap_nneighbors
       umap_metric: umap_metric
       umap_method: umap_method
+      no_sct: no_sct
       cluster_metric: cluster_metric
       resolution:
         source: resolution

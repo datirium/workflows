@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.11
+  dockerPull: biowardrobe2/seurat:v0.0.12
 
 
 inputs:
@@ -324,6 +324,14 @@ inputs:
       prefix: "--onlypos"
     doc: |
       Return only positive markers when running gene markers identification.
+      Default: false
+
+  no_sct:
+    type: boolean?
+    inputBinding:
+      prefix: "--nosct"
+    doc: |
+      Do not use SCTransform when running datasets integration. Use LogNormalize instead.
       Default: false
 
   test_use:
