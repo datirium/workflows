@@ -161,19 +161,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  conditions_data:
-    type: File?
-    label: "TSV/CSV file to optionally extend metadata"
-    doc: |
-      Path to the TSV/CSV file to optionally extend Seurat object metadata. First
-      column 'library_id' should include all unique values from the 'new.ident'
-      column of the loaded from seurat_data_rds object metadata. All other columns will
-      be added to the Seurat object metadata. If any of the provided in this file
-      columns were already present in the Seurat object metadata, they will be
-      overwritten.
-    'sd:layout':
-      advanced: true
-
   batchby:
     type: string?
     default: null
@@ -218,6 +205,19 @@ inputs:
     label: "Threads number to use"
     doc: |
       Threads number
+    'sd:layout':
+      advanced: true
+
+  conditions_data:
+    type: File?
+    label: "TSV/CSV file to optionally extend metadata"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat object metadata. First
+      column 'library_id' should include all unique values from the 'new.ident'
+      column of the loaded from seurat_data_rds object metadata. All other columns will
+      be added to the Seurat object metadata. If any of the provided in this file
+      columns were already present in the Seurat object metadata, they will be
+      overwritten.
     'sd:layout':
       advanced: true
 
