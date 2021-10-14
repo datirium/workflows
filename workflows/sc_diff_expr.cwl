@@ -55,33 +55,36 @@ inputs:
     default: "condition"
     label: "Divide cell based on"
     doc: |
-      Field from the Seurat object metadata to split cells into groups
-      for differential expression analysis.
+      Column from the Seurat object metadata to split cells into two groups
+      to run second_cond vs first_cond differential expression analysis. May include
+      columns from the metadata fields added with conditions_data.
 
   first_cond:
     type: string
     label: "First group of cells"
     doc: |
-      Value from the column set with --splitby to define a first group of cells.
+      Value from the Seurat object metadata column set with splitby to define the
+      first group of cells or pseudobulk RNA-Seq samples (when using pseudo).
 
   second_cond:
     type: string
     label: "Second group of cells"
     doc: |
-      Value from the column set with --splitby to define a second group of cells.
+      Value from the Seurat object metadata column set with splitby to define the
+      the second group of cells or pseudobulk RNA-Seq samples (when using pseudo).
 
   resolution:
     type: string
     label: "Clustering resolution to subset cells"
     doc: |
-      Clustering resolution to subset cells. Will be used to define a dield from
+      Clustering resolution to subset cells. Will be used to define a field from
       the Seurat object metadata to group cells for subsetting.
 
   selected_clusters:
     type: string
     label: "Comma or space separated list of clusters to subset cells"
     doc: |
-      Value(s) from the column set with --groupby (inferred from resolution) to
+      Value(s) from the column set with groupby (inferred from resolution) to
       subset cells before running differential expression analysis.
 
   selected_features:
@@ -90,7 +93,7 @@ inputs:
     label: "Comma or space separated list of genes of interest"
     doc: |
       Genes of interest to label on the generated plots.
-      Default: --topn N genes with the highest and the
+      Default: 10 genes with the highest and the
       lowest log2 fold change expression values.
     'sd:layout':
       advanced: true
@@ -101,9 +104,6 @@ inputs:
     label: "Comma or space separated list of genes to be excluded"
     doc: |
       Genes to be excluded from the differential expression analysis.
-      Excluded genes will be still present in the dataset, but they won't
-      be used in the FindMarkers function.
-      Default: include all genes
     'sd:layout':
       advanced: true
 
@@ -113,7 +113,9 @@ inputs:
     label: "Include only those genes that on average have the absolute value of log2 fold change expression difference not lower than this value"
     doc: |
       Include only those genes that on average have the absolute value of log2
-      fold change expression difference not lower than this value.
+      fold change expression difference not lower than this value. Increasing
+      minimum_logfc speeds up calculations, but can cause missing weaker signals.
+      Ignored with pseudo.
     'sd:layout':
       advanced: true
 
@@ -122,14 +124,15 @@ inputs:
     default: 0.1
     label: "Include only those genes that are detected in not lower than this fraction of cells in either of the two tested groups"
     doc: |
-      Include only those genes that are detected in not lower than this
-      fraction of cells in either of the two tested groups.
+      Include only those genes that are detected in not lower than this fraction of cells
+      in either of the two tested groups. Increasing minimum_pct speeds up calculations by not
+      testing genes that are very infrequently expressed. Ignored with pseudo.
     'sd:layout':
       advanced: true
 
   maximum_pvadj:
     type: float?
-    default: 0.05
+    default: 0.1
     label: "Include only those genes for which adjusted P-val is not bigger that this value"
     doc: |
       Include only those genes for which adjusted P-val is not bigger that this value.
@@ -154,6 +157,58 @@ inputs:
     label: "Statistical test to use for differential gene expression analysis"
     doc: |
       Statistical test to use for differential gene expression analysis.
+      Ignored with pseudo.
+    'sd:layout':
+      advanced: true
+
+  conditions_data:
+    type: File?
+    label: "TSV/CSV file to optionally extend metadata"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat object metadata. First
+      column 'library_id' should include all unique values from the 'new.ident'
+      column of the loaded from seurat_data_rds object metadata. All other columns will
+      be added to the Seurat object metadata. If any of the provided in this file
+      columns were already present in the Seurat object metadata, they will be
+      overwritten.
+    'sd:layout':
+      advanced: true
+
+  batchby:
+    type: string?
+    default: null
+    label: "Column from the metadata to define the variable that should be modelled as a batch effect"
+    doc: |
+      Column from the Seurat object metadata to define the variable that should
+      be modelled as a batch effect when running differential expression analysis.
+      Applied only when test_use is one of 'LR', 'negbinom', 'poisson', or 'MAST',
+      or when using pseudo. May include columns from the metadata fields added
+      with conditions_data. Values selected from the column set with batchby should
+      establish 1:1 relation with the 'new.ident' column of the Seurat object loaded
+      from seurat_data_rds.
+    'sd:layout':
+      advanced: true
+
+  pseudo:
+    type: boolean?
+    default: false
+    label: "Aggregate gene expression of the cells from the same dataset into a pseudobulk RNA-Seq sample"
+    doc: |
+      Aggregate gene expression of the cells from the same dataset into a pseudobulk
+      RNA-Seq sample before running differential expression analysis with DESeq2.
+      The following parameters will be ignored: test_use, minimum_pct, minimum_logfc.
+    'sd:layout':
+      advanced: true
+
+  lrt:
+    type: boolean?
+    default: false
+    label: "Use LRT instead of the pair-wise Wald test"
+    doc: |
+      Use LRT instead of the pair-wise Wald test. Shows any differences across the variable
+      set with batchby whith the log2 fold changes calculated as the average expression
+      changes due to criteria set with splitby. Ignored when pseudo or batchby
+      parameters are not provided.
     'sd:layout':
       advanced: true
 
@@ -169,28 +224,48 @@ inputs:
 
 outputs:
 
-  avg_gene_expr_plot_png:
+  cell_abundance_plot_png:
     type: File?
-    outputSource: sc_diff_expr/avg_gene_expr_plot_png
-    label: "Log normalized average gene expression"
+    outputSource: sc_diff_expr/cell_abundance_plot_png
+    label: "Cell abundance"
     doc: |
-      Log normalized average gene expression for first_cond vs second_cond cells split
-      by criteria set in splitby (a.k.a condition). Cells are optionally subsetted by
-      selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Cell abundance plot split by criteria set in splitby (a.k.a condition) and optionally
+      subsetted by selected_groups (a.k.a clusters) from the groups defined in groupby.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Gene expression plots'
-        Caption: 'Log normalized average gene expression'
+        Caption: 'Cell abundance plot'
 
-  avg_gene_expr_plot_pdf:
+  cell_abundance_plot_pdf:
     type: File?
-    outputSource: sc_diff_expr/avg_gene_expr_plot_pdf
-    label: "Log normalized average gene expression"
+    outputSource: sc_diff_expr/cell_abundance_plot_pdf
+    label: "Cell abundance"
     doc: |
-      Log normalized average gene expression for first_cond vs second_cond cells split
-      by criteria set in splitby (a.k.a condition). Cells are optionally subsetted by
-      selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Cell abundance plot split by criteria set in splitby (a.k.a condition) and optionally
+      subsetted by selected_groups (a.k.a clusters) from the groups defined in groupby.
+      PDF format
+
+  aggr_gene_expr_plot_png:
+    type: File?
+    outputSource: sc_diff_expr/aggr_gene_expr_plot_png
+    label: "Log normalized aggregated gene expression"
+    doc: |
+      Log normalized aggregated gene expression split by criteria set in splitby
+      (a.k.a condition).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression plots'
+        Caption: 'Log normalized aggregated gene expression'
+
+  aggr_gene_expr_plot_pdf:
+    type: File?
+    outputSource: sc_diff_expr/aggr_gene_expr_plot_pdf
+    label: "Log normalized aggregated gene expression"
+    doc: |
+      Log normalized aggregated gene expression split by criteria set in splitby
+      (a.k.a condition).
       PDF format
 
   diff_expr_genes_plot_png:
@@ -198,9 +273,9 @@ outputs:
     outputSource: sc_diff_expr/diff_expr_genes_plot_png
     label: "Differentially expressed genes"
     doc: |
-      Volcano plot of differentially expressed genes for first_cond vs second_cond cells
-      split by criteria set in splitby (a.k.a condition). Cells are optionally subsetted
-      by selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Volcano plot of differentially expressed genes for second_cond vs first_cond cells
+      or pseudobulk RNA-Seq samples split by criteria set in splitby (a.k.a condition)
+      and optionally subsetted by selected_clusters from the groups defined in groupby.
       PNG format
     'sd:visualPlugins':
     - image:
@@ -212,9 +287,9 @@ outputs:
     outputSource: sc_diff_expr/diff_expr_genes_plot_pdf
     label: "Differentially expressed genes"
     doc: |
-      Volcano plot of differentially expressed genes for first_cond vs second_cond cells
-      split by criteria set in splitby (a.k.a condition). Cells are optionally subsetted
-      by selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Volcano plot of differentially expressed genes for second_cond vs first_cond cells
+      or pseudobulk RNA-Seq samples split by criteria set in splitby (a.k.a condition)
+      and optionally subsetted by selected_clusters from the groups defined in groupby.
       PDF format
 
   diff_expr_genes:
@@ -222,9 +297,9 @@ outputs:
     outputSource: sc_diff_expr/diff_expr_genes
     label: "Differentially expressed genes"
     doc: |
-      Differentially expressed genes for first_cond vs second_cond cells split by criteria
-      set in splitby (a.k.a condition). Cells are optionally subsetted by selected_groups
-      (a.k.a clusters) from the groups defined in groupby.
+      Differentially expressed genes for second_cond vs first_cond cells or pseudobulk
+      RNA-Seq samples split by criteria set in splitby (a.k.a condition) and optionally
+      subsetted by selected_clusters from the groups defined in groupby.
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
@@ -252,11 +327,13 @@ steps:
     run: ../tools/sc_diff_expr.cwl
     in:
       seurat_data_rds: seurat_data_rds
+      conditions_data: conditions_data
       splitby:
         source: splitby
         valueFrom: $(parse_splitby(self))
       first_cond: first_cond
       second_cond: second_cond
+      batchby: batchby
       groupby:
         source: resolution
         valueFrom: $(parse_resolution(self))
@@ -275,12 +352,16 @@ steps:
       minimum_pct: minimum_pct
       maximum_pvadj: maximum_pvadj
       test_use: test_use
+      pseudo: pseudo
+      lrt: lrt
       export_pdf_plots:
         default: true
       threads: threads
     out:
-    - avg_gene_expr_plot_png
-    - avg_gene_expr_plot_pdf
+    - cell_abundance_plot_png
+    - cell_abundance_plot_pdf
+    - aggr_gene_expr_plot_png
+    - aggr_gene_expr_plot_pdf
     - diff_expr_genes_plot_png
     - diff_expr_genes_plot_pdf
     - diff_expr_genes
@@ -294,9 +375,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Seurat Differential Expression"
-s:name: "Seurat Differential Expression"
-s:alternateName: "Runs differential expression analysis between two biological conditions for a group of cells"
+label: "Single-cell Differential Expression"
+s:name: "Single-cell Differential Expression"
+s:alternateName: "Runs differential expression analysis for a subset of cells between two selected conditions"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/sc_diff_expr.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -334,7 +415,7 @@ s:creator:
 
 
 doc: |
-  Seurat Differential Expression
-  ==============================
+  Single-cell Differential Expression
+  ===================================
 
-  Runs differential expression analysis between two biological conditions for a group of cells.
+  Runs differential expression analysis for a subset of cells between two selected conditions.

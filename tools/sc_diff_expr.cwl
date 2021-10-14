@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.12
+  dockerPull: biowardrobe2/seurat:v0.0.13
 
 
 inputs:
@@ -21,38 +21,67 @@ inputs:
       Path to the RDS file to load Seurat object from.
       RDS file can be produced by run_seurat.R script.
 
+  conditions_data:
+    type: File?
+    inputBinding:
+      prefix: "--condition"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat object metadata. First
+      column 'library_id' should include all unique values from the 'new.ident'
+      column of the loaded from --rds Seurat object metadata. All other columns will
+      be added to the Seurat object metadata. If any of the provided in this file
+      columns were already present in the Seurat object metadata, they will be
+      overwritten.
+      Default: no metadata columns will be added or overwritten
+
   splitby:
-    type: string?
+    type: string
     inputBinding:
       prefix: "--splitby"
     doc: |
-      Field from the Seurat object metadata to split cells into groups
-      for differential expression analysis.
-      Default: condition
+      Column from the Seurat object metadata to split cells into two groups
+      to run --second vs --first differential expression analysis. May include
+      columns from the metadata fields added with --condition.
 
   first_cond:
     type: string
     inputBinding:
       prefix: "--first"
     doc: |
-      Value from the column set with --splitby to define a first group of cells.
+      Value from the Seurat object metadata column set with --splitby to define the
+      first group of cells or pseudobulk RNA-Seq samples (when using --pseudo).
 
   second_cond:
     type: string
     inputBinding:
       prefix: "--second"
     doc: |
-      Value from the column set with --splitby to define a second group of cells.
+      Value from the Seurat object metadata column set with --splitby to define the
+      the second group of cells or pseudobulk RNA-Seq samples (when using --pseudo).
+
+  batchby:
+    type: string?
+    inputBinding:
+      prefix: "--batchby"
+    doc: |
+      Column from the Seurat object metadata to define the variable that should
+      be modelled as a batch effect when running differential expression analysis.
+      Applied only when --testuse is one of 'LR', 'negbinom', 'poisson', or 'MAST',
+      or when using --pseudo. May include columns from the metadata fields added
+      with --condition. Values selected from the column set with --batchby should
+      establish 1:1 relation with the 'new.ident' column of the Seurat object loaded
+      from --rds.
+      Default: do not model batch effect.
 
   groupby:
     type: string?
     inputBinding:
       prefix: "--groupby"
     doc: |
-      Field from the Seurat object metadata to group cells for optional subsetting
-      (for example, clustering or predicted cell type field). Ignored if select is
-      not set.
-      Default: do not subset, use all cells.
+      Column from the Seurat object metadata to group cells for optional
+      subsetting (for example, subset to the specific cluster or predicted
+      cell type). May include columns from the metadata fields added with
+      --condition.
 
   selected_groups:
     type:
@@ -62,8 +91,8 @@ inputs:
     inputBinding:
       prefix: "--select"
     doc: |
-      Value(s) from the column set with --groupby to optionally subset cells before
-      running differential expression analysis. Ignored if groupby is not set.
+      Value(s) from the column set with --groupby to optionally subset cells
+      before running differential expression analysis.
       Default: do not subset, use all cells.
 
   selected_features:
@@ -87,8 +116,6 @@ inputs:
       prefix: "--exgenes"
     doc: |
       Genes to be excluded from the differential expression analysis.
-      Excluded genes will be still present in the dataset, but they won't
-      be used in the FindMarkers function.
       Default: include all genes
 
   topn_genes_count:
@@ -97,7 +124,7 @@ inputs:
       prefix: "--topn"
     doc: |
       Show N genes with the highest and N genes with the lowest log2 fold
-      change expression values. Ignored when --genes is provided.
+      change expression values. Ignored with --genes.
       Default: 10
 
   minimum_logfc:
@@ -106,7 +133,9 @@ inputs:
       prefix: "--minlogfc"
     doc: |
       Include only those genes that on average have the absolute value of log2
-      fold change expression difference not lower than this value.
+      fold change expression difference not lower than this value. Increasing
+      --minlogfc speeds up calculations, but can cause missing weaker signals.
+      Ignored with --pseudo.
       Default: 0.25
 
   minimum_pct:
@@ -114,8 +143,9 @@ inputs:
     inputBinding:
       prefix: "--minpct"
     doc: |
-      Include only those genes that are detected in not lower than this
-      fraction of cells in either of the two tested groups.
+      Include only those genes that are detected in not lower than this fraction of cells
+      in either of the two tested groups. Increasing --minpct speeds up calculations by not
+      testing genes that are very infrequently expressed. Ignored with --pseudo.
       Default: 0.1
 
   maximum_pvadj:
@@ -124,7 +154,7 @@ inputs:
       prefix: "--maxpvadj"
     doc: |
       Include only those genes for which adjusted P-val is not bigger that this value.
-      Default: 0.05
+      Default: 0.1
 
   test_use:
     type:
@@ -144,7 +174,29 @@ inputs:
       prefix: "--testuse"
     doc: |
       Statistical test to use for differential gene expression analysis.
+      Ignored with --pseudo.
       Default: wilcox
+
+  pseudo:
+    type: boolean?
+    inputBinding:
+      prefix: "--pseudo"
+    doc: |
+      Aggregate gene expression of the cells from the same dataset into a pseudobulk
+      RNA-Seq sample before running differential expression analysis with DESeq2.
+      The following parameters will be ignored: --testuse, --minpct, --minlogfc.
+      Default: false
+
+  lrt:
+    type: boolean?
+    inputBinding:
+      prefix: "--lrt"
+    doc: |
+      Use LRT instead of the pair-wise Wald test. Shows any differences across the variable
+      set with --batchby whith the log2 fold changes calculated as the average expression
+      changes due to criteria set with --splitby. Ignored when --pseudo or --batchby
+      parameters are not provided.
+      Default: use Wald test
 
   export_pdf_plots:
     type: boolean?
@@ -173,24 +225,40 @@ inputs:
 
 outputs:
 
-  avg_gene_expr_plot_png:
+  cell_abundance_plot_png:
     type: File?
     outputBinding:
-      glob: "*_avg_gene_expr.png"
+      glob: "*_umap.png"
     doc: |
-      Log normalized average gene expression for first_cond vs second_cond cells split
-      by criteria set in splitby (a.k.a condition). Cells are optionally subsetted by
-      selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Cell abundance plot split by criteria set in splitby (a.k.a condition) and optionally
+      subsetted by selected_groups (a.k.a clusters) from the groups defined in groupby.
       PNG format
 
-  avg_gene_expr_plot_pdf:
+  cell_abundance_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_avg_gene_expr.pdf"
+      glob: "*_umap.pdf"
     doc: |
-      Log normalized average gene expression for first_cond vs second_cond cells split
-      by criteria set in splitby (a.k.a condition). Cells are optionally subsetted by
-      selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Cell abundance plot split by criteria set in splitby (a.k.a condition) and optionally
+      subsetted by selected_groups (a.k.a clusters) from the groups defined in groupby.
+      PDF format
+
+  aggr_gene_expr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_counts.png"
+    doc: |
+      Log normalized aggregated gene expression split by criteria set in splitby
+      (a.k.a condition).
+      PNG format
+
+  aggr_gene_expr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_counts.pdf"
+    doc: |
+      Log normalized aggregated gene expression split by criteria set in splitby
+      (a.k.a condition).
       PDF format
 
   diff_expr_genes_plot_png:
@@ -198,9 +266,10 @@ outputs:
     outputBinding:
       glob: "*_diff_expr_genes.png"
     doc: |
-      Volcano plot of differentially expressed genes for first_cond vs second_cond cells
-      split by criteria set in splitby (a.k.a condition). Cells are optionally subsetted
-      by selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Volcano plot of differentially expressed genes for second_cond vs first_cond cells
+      or pseudobulk RNA-Seq samples split by criteria set in splitby (a.k.a condition)
+      and optionally subsetted by selected_groups (a.k.a clusters) from the groups defined
+      in groupby.
       PNG format
 
   diff_expr_genes_plot_pdf:
@@ -208,9 +277,10 @@ outputs:
     outputBinding:
       glob: "*_diff_expr_genes.pdf"
     doc: |
-      Volcano plot of differentially expressed genes for first_cond vs second_cond cells
-      split by criteria set in splitby (a.k.a condition). Cells are optionally subsetted
-      by selected_groups (a.k.a clusters) from the groups defined in groupby.
+      Volcano plot of differentially expressed genes for second_cond vs first_cond cells
+      or pseudobulk RNA-Seq samples split by criteria set in splitby (a.k.a condition)
+      and optionally subsetted by selected_groups (a.k.a clusters) from the groups defined
+      in groupby.
       PDF format
 
   diff_expr_genes:
@@ -218,9 +288,9 @@ outputs:
     outputBinding:
       glob: "*_diff_expr_genes.tsv"
     doc: |
-      Differentially expressed genes for first_cond vs second_cond cells split by criteria
-      set in splitby (a.k.a condition). Cells are optionally subsetted by selected_groups
-      (a.k.a clusters) from the groups defined in groupby.
+      Differentially expressed genes for second_cond vs first_cond cells or pseudobulk
+      RNA-Seq samples split by criteria set in splitby (a.k.a condition) and optionally
+      subsetted by selected_groups (a.k.a clusters) from the groups defined in groupby.
       TSV format
 
   stdout_log:
@@ -244,9 +314,9 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Seurat Differential Expression"
-s:name: "Seurat Differential Expression"
-s:alternateName: "Runs differential expression analysis between two biological conditions for a group of cells"
+label: "Single-cell Differential Expression Analysis"
+s:name: "Single-cell Differential Expression Analysis"
+s:alternateName: "Runs differential expression analysis for a subset of cells between two selected conditions"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc_diff_expr.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -284,68 +354,107 @@ s:creator:
 
 
 doc: |
-  Seurat Differential Expression
-  ==============================
+  Single-cell Differential Expression Analysis
+  =============================================
 
-  Runs differential expression analysis between two biological conditions for a group of cells
+  Runs differential expression analysis for a subset of cells between two selected conditions
 
 
 s:about: |
-  usage: sc_diff_expr.R [-h] --rds RDS [--splitby SPLITBY] --first FIRST
-                        --second SECOND [--groupby GROUPBY]
-                        [--select [SELECT [SELECT ...]]]
-                        [--genes [GENES [GENES ...]]]
-                        [--exgenes [EXGENES [EXGENES ...]]] [--topn TOPN]
-                        [--minlogfc MINLOGFC] [--minpct MINPCT]
-                        [--maxpvadj MAXPVADJ]
-                        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                        [--pdf] [--output OUTPUT] [--threads THREADS]
+  usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/sc_diff_expr.R
+        [-h] --rds RDS [--condition CONDITION] --splitby SPLITBY --first FIRST
+        --second SECOND [--batchby BATCHBY] [--groupby GROUPBY]
+        [--select [SELECT ...]] [--genes [GENES ...]] [--exgenes [EXGENES ...]]
+        [--topn TOPN] [--minlogfc MINLOGFC] [--minpct MINPCT]
+        [--maxpvadj MAXPVADJ]
+        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--pseudo] [--lrt] [--pdf] [--output OUTPUT] [--threads THREADS]
 
-  Runs differential expression analysis for a subset of cells between two
-  selected groups
+  Differential expression analysis for a subset of cells between two selected
+  conditions
 
   optional arguments:
     -h, --help            show this help message and exit
     --rds RDS             Path to the RDS file to load Seurat object from. RDS
                           file can be produced by run_seurat.R script.
-    --splitby SPLITBY     Field from the Seurat object metadata to split cells
-                          into groups for differential expression analysis.
-                          Default: condition
-    --first FIRST         Value from the column set with --splitby to define a
-                          first group of cells.
-    --second SECOND       Value from the column set with --splitby to define a
-                          second group of cells.
-    --groupby GROUPBY     Field from the Seurat object metadata to group cells
-                          for optional subsetting (for example, clustering or
-                          predicted cell type field).
-    --select [SELECT [SELECT ...]]
+    --condition CONDITION
+                          Path to the TSV/CSV file to optionally extend Seurat
+                          object metadata. First column 'library_id' should
+                          include all unique values from the 'new.ident' column
+                          of the loaded from --rds Seurat object metadata. All
+                          other columns will be added to the Seurat object
+                          metadata. If any of the provided in this file columns
+                          were already present in the Seurat object metadata,
+                          they will be overwritten. Default: no metadata columns
+                          will be added or overwritten
+    --splitby SPLITBY     Column from the Seurat object metadata to split cells
+                          into two groups to run --second vs --first
+                          differential expression analysis. May include columns
+                          from the metadata fields added with --condition.
+    --first FIRST         Value from the Seurat object metadata column set with
+                          --splitby to define the first group of cells or
+                          pseudobulk RNA-Seq samples (when using --pseudo).
+    --second SECOND       Value from the Seurat object metadata column set with
+                          --splitby to define the the second group of cells or
+                          pseudobulk RNA-Seq samples (when using --pseudo)
+    --batchby BATCHBY     Column from the Seurat object metadata to define the
+                          variable that should be modelled as a batch effect
+                          when running differential expression analysis. Applied
+                          only when --testuse is one of 'LR', 'negbinom',
+                          'poisson', or 'MAST', or when using --pseudo. May
+                          include columns from the metadata fields added with
+                          --condition. Values selected from the column set with
+                          --batchby should establish 1:1 relation with the
+                          'new.ident' column of the Seurat object loaded from
+                          --rds. Default: do not model batch effect.
+    --groupby GROUPBY     Column from the Seurat object metadata to group cells
+                          for optional subsetting (for example, subset to the
+                          specific cluster or predicted cell type). May include
+                          columns from the metadata fields added with
+                          --condition.
+    --select [SELECT ...]
                           Value(s) from the column set with --groupby to
                           optionally subset cells before running differential
                           expression analysis. Default: do not subset, use all
                           cells.
-    --genes [GENES [GENES ...]]
-                          Genes of interest to label on the generated plots.
+    --genes [GENES ...]   Genes of interest to label on the generated plots.
                           Default: --topn N genes with the highest and the
                           lowest log2 fold change expression values.
-    --exgenes [EXGENES [EXGENES ...]]
+    --exgenes [EXGENES ...]
                           Genes to be excluded from the differential expression
-                          analysis. Excluded genes will be still present in the
-                          dataset, but they won't be used in the FindMarkers
-                          function. Default: include all genes
+                          analysis. Default: include all genes
     --topn TOPN           Show N genes with the highest and N genes with the
                           lowest log2 fold change expression values. Ignored
-                          when --genes is provided. Default: 10
+                          with --genes. Default: 10
     --minlogfc MINLOGFC   Include only those genes that on average have the
                           absolute value of log2 fold change expression
-                          difference not lower than this value. Default: 0.25
+                          difference not lower than this value. Increasing
+                          --minlogfc speeds up calculations, but can cause
+                          missing weaker signals. Ignored with --pseudo.
+                          Default: 0.25
     --minpct MINPCT       Include only those genes that are detected in not
                           lower than this fraction of cells in either of the two
-                          tested groups. Default: 0.1
+                          tested groups. Increasing --minpct speeds up
+                          calculations by not testing genes that are very
+                          infrequently expressed. Ignored with --pseudo.
+                          Default: 0.1
     --maxpvadj MAXPVADJ   Include only those genes for which adjusted P-val is
-                          not bigger that this value. Default: 0.05
+                          not bigger that this value. Default: 0.1
     --testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
                           Statistical test to use for differential gene
-                          expression analysis. Default: wilcox
+                          expression analysis. Ignored with --pseudo. Default:
+                          wilcox
+    --pseudo              Aggregate gene expression of the cells from the same
+                          dataset into a pseudobulk RNA-Seq sample before
+                          running differential expression analysis with DESeq2.
+                          The following parameters will be ignored: --testuse,
+                          --minpct, --minlogfc. Default: false
+    --lrt                 Use LRT instead of the pair-wise Wald test. Shows any
+                          differences across the variable set with --batchby
+                          whith the log2 fold changes calculated as the average
+                          expression changes due to criteria set with --splitby.
+                          Ignored when --pseudo or --batchby parameters are not
+                          provided. Default: use Wald test
     --pdf                 Export plots in PDF. Default: false
     --output OUTPUT       Output prefix. Default: ./seurat
     --threads THREADS     Threads. Default: 1
