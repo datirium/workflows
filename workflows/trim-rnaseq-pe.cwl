@@ -353,6 +353,7 @@ outputs:
         yAxisTitle: "Average Tag Density (per percentile)"
         colors: ["#232C15"]
         data: [$2]
+        comparable: "gbatdp"
 
   gene_body_plot_pdf:
     type: File?
