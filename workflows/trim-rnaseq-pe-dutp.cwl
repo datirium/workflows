@@ -341,6 +341,7 @@ outputs:
         colors: ["#4b78a3"]
         height: 500
         data: [$1, $2]
+        comparable: "isdp"
 
   trim_report_upstream:
     type: File
