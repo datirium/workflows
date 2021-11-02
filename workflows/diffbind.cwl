@@ -103,6 +103,24 @@ inputs:
     doc: "Narrow peaks file(s) for biological condition 2"
     'sd:upstreamSource': "second_biological_condition/macs2_narrow_peaks"
 
+  broad_peaks_files_cond_1:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3614"
+    label: "Called peaks for biological condition 1"
+    doc: "Broad peaks file(s) for biological condition 1"
+    'sd:upstreamSource': "first_biological_condition/macs2_broad_peaks"
+
+  broad_peaks_files_cond_2:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3614"
+    label: "Called peaks for biological condition 2"
+    doc: "Broad peaks file(s) for biological condition 2"
+    'sd:upstreamSource': "second_biological_condition/macs2_broad_peaks"
+
   name_cond_1:
     type: string?
     default: "condition_1"
@@ -305,7 +323,7 @@ outputs:
     format: "http://edamontology.org/format_3613"
     label: "Called peaks for biological condition 1"
     doc: "Narrow peaks file(s) for biological condition 1"
-    outputSource: pipe/peaks_files_cond_1
+    outputSource: pipe/n_peaks_files_cond_1
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -322,7 +340,41 @@ outputs:
     format: "http://edamontology.org/format_3613"
     label: "Called peaks for biological condition 2"
     doc: "Narrow peaks file(s) for biological condition 2"
-    outputSource: pipe/peaks_files_cond_2
+    outputSource: pipe/n_peaks_files_cond_2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Called peaks 2"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  broad_peaks_cond_1:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3614"
+    label: "Called peaks for biological condition 1"
+    doc: "Broad peaks file(s) for biological condition 1"
+    outputSource: pipe/b_peaks_files_cond_1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Called peaks 1"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  broad_peaks_cond_2:
+    type:
+      - "null"
+      - File[]
+    format: "http://edamontology.org/format_3614"
+    label: "Called peaks for biological condition 2"
+    doc: "Broad peaks file(s) for biological condition 2"
+    outputSource: pipe/b_peaks_files_cond_2
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -644,16 +696,32 @@ steps:
           type:
             - "null"
             - File[]
+        broad_peaks_files_cond_1:
+          type:
+            - "null"
+            - File[]
+        broad_peaks_files_cond_2:
+          type:
+            - "null"
+            - File[]
       outputs:
         coverage_files_cond_1:
           type: File[]
         coverage_files_cond_2:
           type: File[]
-        peaks_files_cond_1:
+        n_peaks_files_cond_1:
           type:
             - "null"
             - File[]
-        peaks_files_cond_2:
+        n_peaks_files_cond_2:
+          type:
+            - "null"
+            - File[]
+        b_peaks_files_cond_1:
+          type:
+            - "null"
+            - File[]
+        b_peaks_files_cond_2:
           type:
             - "null"
             - File[]
@@ -662,8 +730,10 @@ steps:
           return {
             "coverage_files_cond_1": inputs.genome_coverage_files_cond_1,
             "coverage_files_cond_2": inputs.genome_coverage_files_cond_2,
-            "peaks_files_cond_1": inputs.narrow_peaks_files_cond_1,
-            "peaks_files_cond_2": inputs.narrow_peaks_files_cond_2
+            "n_peaks_files_cond_1": inputs.narrow_peaks_files_cond_1,
+            "n_peaks_files_cond_2": inputs.narrow_peaks_files_cond_2,
+            "b_peaks_files_cond_1": inputs.broad_peaks_files_cond_1,
+            "b_peaks_files_cond_2": inputs.broad_peaks_files_cond_2
           };
         }
     in:
@@ -671,11 +741,15 @@ steps:
       genome_coverage_files_cond_2: genome_coverage_files_cond_2
       narrow_peaks_files_cond_1: narrow_peaks_files_cond_1
       narrow_peaks_files_cond_2: narrow_peaks_files_cond_2
+      broad_peaks_files_cond_1: broad_peaks_files_cond_1
+      broad_peaks_files_cond_2: broad_peaks_files_cond_2
     out:
       - coverage_files_cond_1
       - coverage_files_cond_2
-      - peaks_files_cond_1
-      - peaks_files_cond_2
+      - n_peaks_files_cond_1
+      - n_peaks_files_cond_2
+      - b_peaks_files_cond_1
+      - b_peaks_files_cond_2
 
   diffbind:
     run: ../tools/diffbind.cwl
