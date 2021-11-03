@@ -37,6 +37,8 @@ inputs:
 
   atac_fragments_file:
     type: File[]
+    secondaryFiles:
+    - .tbi
     label: "scRNA-Seq Cell Ranger ARC Experiment"
     doc: "Count and barcode information from individual runs of cellranger-arc count"
     'sd:upstreamSource': "sc_rnaseq_sample/atac_fragments_file"
