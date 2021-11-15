@@ -12,7 +12,8 @@ requirements:
 'sd:upstream':
   sc_rnaseq_sample:
   - "cellranger-arc-count.cwl"
-
+  genome_indices:
+    - "cellranger-mkref.cwl"
 
 inputs:
 
@@ -51,9 +52,9 @@ inputs:
 
   indices_folder:
     type: Directory
-    label: "scRNA-Seq Cell Ranger ARC Experiment"
+    label: "Genome Type"
     doc: "Cell Ranger ARC generated genome indices folder"
-    'sd:upstreamSource': "sc_rnaseq_sample/indices_folder"
+    'sd:upstreamSource': "genome_indices/arc_indices_folder"
 
   normalization_mode:
     type:
