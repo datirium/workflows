@@ -50,7 +50,7 @@ inputs:
     doc: "ATAC and GEX barcode metrics from individual runs of cellranger-arc count"
     'sd:upstreamSource': "sc_rnaseq_sample/barcode_metrics_report"
 
-  indices_folder:
+  arc_indices_folder:
     type: Directory
     label: "Genome Type"
     doc: "Cell Ranger ARC generated genome indices folder"
