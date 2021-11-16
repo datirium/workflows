@@ -55,6 +55,7 @@ inputs:
     label: "Genome Type"
     doc: "Cell Ranger ARC generated genome indices folder"
     'sd:upstreamSource': "genome_indices/arc_indices_folder"
+    'sd:localLabel': true
 
   normalization_mode:
     type:
@@ -104,7 +105,7 @@ outputs:
     doc: |
       Aggregated run summary metrics in CSV format
 
-  atac_fragments_file:
+  atac_fragments_aggr_file:
     type: File
     outputSource: aggregate_counts/atac_fragments_file
     label: "Aggregated count and barcode information"
