@@ -97,6 +97,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  max_multimap:
+    type: int?
+    default: 1
+    label: "Maximum number of loci the read is allowed to map to"
+    doc: "Maximum number of loci the read is allowed to map to"
+    'sd:layout':
+      advanced: true
+
 # System dependent
 
   threads:
@@ -461,8 +469,7 @@ steps:
     in:
       readFilesIn: [rename_upstream/target_file, rename_downstream/target_file]
       genomeDir: star_indices_folder
-      outFilterMultimapNmax:
-        default: 1
+      outFilterMultimapNmax: max_multimap
       outFilterMismatchNmax:
         default: 5
       alignSJDBoverhangMin:
