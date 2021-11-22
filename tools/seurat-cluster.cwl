@@ -4,6 +4,12 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
+- class: InitialWorkDirRequirement
+  listing:
+  - entryname: dummy_metadata.csv
+    entry: |
+      library_id
+      scRNA-Seq
 
 
 hints:
@@ -27,15 +33,16 @@ inputs:
       Count runs) and will be merged.
 
   aggregation_metadata:
-    type: File
-    inputBinding:
-      prefix: "--identity"
+    type: File?
     doc: |
       Path to the metadata TSV/CSV file to set the datasets identities.
       If --mex points to the Cell Ranger Aggregate outputs, the aggregation.csv
       file can be used as well. If multiple locations were provided through --mex,
       the file should include at least one column - 'library_id', and be sorted
-      based on the the order of locations provided in --mex.
+      based on the the order of locations provided in --mex. If metadata file was
+      not provided at all, the dummy_metadata.csv will be used instead assuming
+      that feature_bc_matrices_folder was a single file from not aggregated
+      expreriment.
 
   conditions_data:
     type: File?
@@ -1132,6 +1139,16 @@ outputs:
 
 
 baseCommand: ["run_seurat.R"]
+arguments:
+- valueFrom: |
+    ${
+      if (inputs.aggregation_metadata) {
+        return inputs.aggregation_metadata;
+      } else {
+        return runtime.outdir + "/dummy_metadata.csv"
+      }
+    }
+  prefix: "--identity"
 
 
 stdout: seurat_cluster_stdout.log

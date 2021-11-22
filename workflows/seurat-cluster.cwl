@@ -22,8 +22,9 @@ requirements:
 
 
 'sd:upstream':
-  sc_rnaseq_aggr_sample:
+  sc_rnaseq_sample:
   - "cellranger-aggr.cwl"
+  - "single-cell-preprocess-cellranger.cwl"
 
 
 inputs:
@@ -36,18 +37,20 @@ inputs:
 
   filtered_feature_bc_matrix_folder:
     type: File
-    label: "scRNA-Seq Cellranger Aggregate Experiment"
+    label: "scRNA-Seq Cellranger Experiment"
     doc: |
       Compressed folder with aggregated filtered feature-barcode matrices in MEX format
-    'sd:upstreamSource': "sc_rnaseq_aggr_sample/filtered_feature_bc_matrix_folder"
+    'sd:upstreamSource': "sc_rnaseq_sample/filtered_feature_bc_matrix_folder"
     'sd:localLabel': true
 
   aggregation_metadata:
-    type: File
-    label: "scRNA-Seq Cellranger Aggregate Experiment"
+    type: File?
+    label: "scRNA-Seq Cellranger Experiment"
     doc: |
-      Aggregation metadata in CSV format
-    'sd:upstreamSource': "sc_rnaseq_aggr_sample/aggregation_metadata"
+      Aggregation metadata in CSV format.
+      If not provided, we assume that upstream sc_rnaseq_sample
+      was not from aggregated sample
+    'sd:upstreamSource': "sc_rnaseq_sample/aggregation_metadata"
     'sd:localLabel': true
 
   minimum_cells:
