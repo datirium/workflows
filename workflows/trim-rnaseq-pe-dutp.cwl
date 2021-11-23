@@ -105,6 +105,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  max_multimap_anchor:
+    type: int?
+    default: 50
+    label: "Maximum number of loci anchors are allowed to map to"
+    doc: "Maximum number of loci anchors are allowed to map to"
+    'sd:layout':
+      advanced: true
+
 # System dependent
 
   threads:
@@ -470,6 +478,7 @@ steps:
       readFilesIn: [rename_upstream/target_file, rename_downstream/target_file]
       genomeDir: star_indices_folder
       outFilterMultimapNmax: max_multimap
+      winAnchorMultimapNmax: max_multimap_anchor
       outFilterMismatchNmax:
         default: 5
       alignSJDBoverhangMin:
