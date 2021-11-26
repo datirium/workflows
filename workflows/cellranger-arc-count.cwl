@@ -321,30 +321,30 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  # compressed_html_data_folder:
-  #   type: File
-  #   outputSource: compress_html_data_folder/compressed_folder
-  #   label: "Compressed folder with CellBrowser formatted results"
-  #   doc: |
-  #     Compressed folder with CellBrowser formatted results
+  compressed_html_data_folder:
+    type: File
+    outputSource: compress_html_data_folder/compressed_folder
+    label: "Compressed folder with CellBrowser formatted results"
+    doc: |
+      Compressed folder with CellBrowser formatted results
 
-  # html_data_folder:
-  #   type: Directory
-  #   outputSource: cellbrowser_build/html_data
-  #   label: "Folder with not compressed CellBrowser formatted results"
-  #   doc: |
-  #     Folder with not compressed CellBrowser formatted results
+  html_data_folder:
+    type: Directory
+    outputSource: cellbrowser_build/html_data
+    label: "Folder with not compressed CellBrowser formatted results"
+    doc: |
+      Folder with not compressed CellBrowser formatted results
 
-  # cellbrowser_report:
-  #   type: File
-  #   outputSource: cellbrowser_build/index_html_file
-  #   label: "CellBrowser formatted Cellranger report"
-  #   doc: |
-  #     CellBrowser formatted Cellranger report
-  #   'sd:visualPlugins':
-  #   - linkList:
-  #       tab: 'Overview'
-  #       target: "_blank"
+  cellbrowser_report:
+    type: File
+    outputSource: cellbrowser_build/index_html_file
+    label: "CellBrowser formatted Cellranger report"
+    doc: |
+      CellBrowser formatted Cellranger report
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
 
 steps:
@@ -521,22 +521,21 @@ steps:
     out:
     - collected_statistics
 
-  # Need to be updated to display data from Cell Ranger ARC pipeline
-  # cellbrowser_build:
-  #   run: ../tools/cellbrowser-build-cellranger.cwl
-  #   in:
-  #     secondary_analysis_report_folder: generate_counts_matrix/secondary_analysis_report_folder
-  #     filtered_feature_bc_matrix_folder: generate_counts_matrix/filtered_feature_bc_matrix_folder
-  #   out:
-  #   - html_data
-  #   - index_html_file
+  cellbrowser_build:
+    run: ../tools/cellbrowser-build-cellranger-arc.cwl
+    in:
+      secondary_analysis_report_folder: generate_counts_matrix/secondary_analysis_report_folder
+      filtered_feature_bc_matrix_folder: generate_counts_matrix/filtered_feature_bc_matrix_folder
+    out:
+    - html_data
+    - index_html_file
 
-  # compress_html_data_folder:
-  #   run: ../tools/tar-compress.cwl
-  #   in:
-  #     folder_to_compress: cellbrowser_build/html_data
-  #   out:
-  #   - compressed_folder
+  compress_html_data_folder:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: cellbrowser_build/html_data
+    out:
+    - compressed_folder
 
 
 $namespaces:
