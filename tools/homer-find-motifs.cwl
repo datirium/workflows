@@ -20,12 +20,12 @@ requirements:
       return  [
                 {
                   "entry": inputs.target_fasta_file,
-                  "entryname": inputs.target_fasta_file.basename,
+                  "entryname": "target.fa",
                   "writable": true
                 },
                 {
                   "entry": inputs.background_fasta_file,
-                  "entryname": inputs.background_fasta_file.basename,
+                  "entryname": "background.fa",
                   "writable": true
                 }
               ]
@@ -42,6 +42,7 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
+      ls -la
       echo findMotifs.pl $0 dummy homer_results ${@:2}
       echo samtools faidx $0
       echo samtools faidx $3
