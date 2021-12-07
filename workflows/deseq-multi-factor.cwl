@@ -8,7 +8,7 @@ requirements:
   - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
     expressionLib:
-    - var split_features = function(line) {
+    - var split_by_common_delim = function(line) {
           function get_unique(value, index, self) {
             return self.indexOf(value) === index && value != "";
           }
@@ -41,7 +41,6 @@ inputs:
     type:
     - "null"
     - File[]
-    default: null
     label: "RNA-Seq experiments"
     doc: |
       TSV/CSV files with expression data grouped by isoforms.
@@ -54,7 +53,6 @@ inputs:
     type:
     - "null"
     - File[]
-    default: null
     label: "RNA-Seq experiments"
     doc: |
       TSV/CSV files with expression data grouped by genes.
@@ -64,9 +62,7 @@ inputs:
     'sd:localLabel': true
 
   expression_names:
-    type:
-    - "null"
-    - string[]
+    type: string[]
     label: "RNA-Seq experiments"
     doc: |
       Unique names for files provided in 'isoforms_expression_files' or
@@ -102,7 +98,6 @@ inputs:
 
   use_wald:
     type: boolean?
-    default: false
     label: "Use pair-wise Wald test instead of LRT"
     doc: |
       Use pair-wise Wald test instead of LRT. 'reduced_formula' parameter will be ignored
@@ -116,10 +111,7 @@ inputs:
       of values from the 'metadata_file'
 
   base:
-    type:
-    - "null"
-    - string
-    - string[]
+    type: string?
     label: "Values from each column of the metadata file to be set as base levels"
     doc: |
       Value from each column of 'metadata_file' to be set as base levels.
@@ -206,7 +198,6 @@ inputs:
 
   use_pvalue:
     type: boolean?
-    default: false
     label: "Treat 'maximum_padj' as a theshold for P-value (plots only)"
     doc: |
       Used only in plots. Treat --padj as a theshold for P-value
@@ -331,7 +322,9 @@ steps:
       design_formula: design_formula
       reduced_formula: reduced_formula
       contrast: contrast
-      base: base
+      base:
+        source: base
+        valueFrom: $(split_by_common_delim(self))
       feature_type: feature_type
       minimum_counts: minimum_counts
       use_wald: use_wald
@@ -339,10 +332,10 @@ steps:
       groupby: groupby
       selected_features:
         source: selected_features
-        valueFrom: $(split_features(self))
+        valueFrom: $(split_by_common_delim(self))
       excluded_features:
         source: excluded_features
-        valueFrom: $(split_features(self))
+        valueFrom: $(split_by_common_delim(self))
       topn_features: topn_features
       maximum_padj: maximum_padj
       use_pvalue: use_pvalue

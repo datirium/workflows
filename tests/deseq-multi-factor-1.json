@@ -1,0 +1,42 @@
+{
+  "alias": "alias",
+  "isoforms_expression_files": [
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u1_1000.isoforms.csv"
+    },
+    {
+      "class": "File",
+       "location": "./data/dm3_chr4/main_inputs/geep/u2_1000.isoforms.csv"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/u3_1000.isoforms.csv"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t1_1000.isoforms.csv"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t2_1000.isoforms.csv"
+    },
+    {
+      "class": "File",
+      "location": "./data/dm3_chr4/main_inputs/geep/t3_1000.isoforms.csv"
+    }
+  ],
+  "expression_names": ["u1", "u2", "u3", "t1", "t2", "t3"],
+  "feature_type": "transcript",
+  "design_formula": "~condition+time+condition:time",
+  "use_wald": true,
+  "contrast": "KO - WT",
+  "base": "day5 WT",
+  "metadata_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/main_inputs/geep/metadata_with_sample.csv"
+  },
+  "minimum_counts": 0,
+  "splitby": "condition",
+  "groupby": "time"
+}
