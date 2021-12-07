@@ -64,7 +64,9 @@ inputs:
     'sd:localLabel': true
 
   expression_names:
-    type: string[]
+    type:
+    - "null"
+    - string[]
     label: "RNA-Seq experiments"
     doc: |
       Unique names for files provided in 'isoforms_expression_files' or
