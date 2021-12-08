@@ -224,7 +224,7 @@ outputs:
       TSV file with not filtered differentially expressed features
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Differential Expression Analysis'
+        tab: 'DE features'
         Title: 'Differentially expressed features'
 
   volcano_plot_png:
