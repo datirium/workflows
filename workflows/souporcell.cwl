@@ -49,12 +49,12 @@ inputs:
 
   filtered_feature_bc_matrix_folder:
     type: File
-    label: "Compressed folder with filtered feature-barcode matrices"
+    label: "scRNA-Seq Cell Ranger ARC Experiment"
     doc: |
-      Filtered feature barcode matrix stored as a CSC sparse matrix in MEX format.
-      The rows consist of all the gene and peak features concatenated together
-      (identical to raw feature barcode matrix) and the columns are restricted to
-      those barcodes that are identified as cells.
+      Compressed folder with filtered feature barcode matrix stored as a CSC sparse
+      matrix in MEX format. The rows consist of all the gene and peak features
+      concatenated together (identical to raw feature barcode matrix) and the columns
+      are restricted to those barcodes that are identified as cells.
     'sd:upstreamSource': "sc_rnaseq_sample/filtered_feature_bc_matrix_folder"
     'sd:localLabel': true
 
@@ -222,7 +222,6 @@ steps:
             tar xzf $0
             mv filtered_feature_bc_matrix/barcodes.tsv.gz .
             gunzip barcodes.tsv.gz
-            rm -rf $0 filtered_feature_bc_matrix barcodes.tsv.gz
           inputBinding:
             position: 5
         filtered_feature_bc_matrix_folder:
@@ -233,7 +232,7 @@ steps:
         barcodes_tsv_file:
           type: File
           outputBinding:
-            glob: "*"
+            glob: "barcodes.tsv"
       baseCommand: ["bash", "-c"]
     in:
       filtered_feature_bc_matrix_folder: filtered_feature_bc_matrix_folder
