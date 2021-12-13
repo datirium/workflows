@@ -477,8 +477,8 @@ s:name: "Repertoire Sequencing Analysis (paired-end)"
 label: "Repertoire Sequencing Analysis (paired-end)"
 s:alternateName: "Runs MiXCR and VDJTools for analysis of T- and B- cell receptor repertoire sequencing data (paired-end)"
 
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/workflows/mixcr-pe.cwl
-s:codeRepository: https://github.com/datirium/workflows
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/mixcr-pe.cwl
+s:codeRepository: https://github.com/Barski-lab/workflows-datirium
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
 s:isPartOf:
