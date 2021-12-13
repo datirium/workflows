@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.15
+  dockerPull: biowardrobe2/seurat:v0.0.16
 
 
 inputs:
@@ -523,6 +523,22 @@ outputs:
       QC metrics densities per cell (not filtered).
       PDF format
 
+  raw_miqc_mtrcs_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_miqc_mtrcs.png"
+    doc: |
+      MiQC evaluation of the compromised cells level (not filtered).
+      PNG format
+
+  raw_miqc_mtrcs_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_miqc_mtrcs.pdf"
+    doc: |
+      MiQC evaluation of the compromised cells level (not filtered).
+      PDF format
+
   raw_qc_mtrcs_gr_by_cond_plot_png:
     type: File?
     outputBinding:
@@ -650,6 +666,22 @@ outputs:
       glob: "*_fltr_qc_mtrcs.pdf"
     doc: |
       QC metrics densities per cell (filtered).
+      PDF format
+
+  fltr_miqc_mtrcs_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_miqc_mtrcs.png"
+    doc: |
+      MiQC evaluation of the compromised cells level (filtered).
+      PNG format
+
+  fltr_miqc_mtrcs_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_miqc_mtrcs.pdf"
+    doc: |
+      MiQC evaluation of the compromised cells level (filtered).
       PDF format
 
   fltr_qc_mtrcs_gr_by_cond_plot_png:

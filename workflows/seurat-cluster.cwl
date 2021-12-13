@@ -553,6 +553,25 @@ outputs:
       QC metrics densities per cell (not filtered).
       PDF format
 
+  raw_miqc_mtrcs_plot_png:
+    type: File?
+    outputSource: seurat_cluster/raw_miqc_mtrcs_plot_png
+    label: "MiQC evaluation of the compromised cells level (not filtered)"
+    doc: |
+      MiQC evaluation of the compromised cells level (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'QC (not filtered)'
+        Caption: 'MiQC evaluation of the compromised cells level (not filtered)'
+
+  raw_miqc_mtrcs_plot_pdf:
+    type: File?
+    outputSource: seurat_cluster/raw_miqc_mtrcs_plot_pdf
+    label: "MiQC evaluation of the compromised cells level (not filtered)"
+    doc: |
+      MiQC evaluation of the compromised cells level (not filtered).
+      PDF format
 
   raw_qc_mtrcs_gr_by_cond_plot_png:
     type: File?
@@ -1429,6 +1448,8 @@ steps:
     - raw_nvlt_score_dnst_spl_by_cond_plot_pdf
     - raw_qc_mtrcs_plot_png
     - raw_qc_mtrcs_plot_pdf
+    - raw_miqc_mtrcs_plot_png
+    - raw_miqc_mtrcs_plot_pdf
     - raw_qc_mtrcs_gr_by_cond_plot_png
     - raw_qc_mtrcs_gr_by_cond_plot_pdf
     - fltr_cell_count_plot_png
