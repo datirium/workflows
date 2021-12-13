@@ -32,6 +32,8 @@ inputs:
 
   possorted_genome_bam_bai:
     type: File
+    secondaryFiles:
+    - .bai
     label: "scRNA-Seq Cell Ranger ARC Experiment"
     doc: |
       GEX position-sorted reads aligned to the genome and transcriptome
