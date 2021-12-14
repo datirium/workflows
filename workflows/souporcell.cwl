@@ -177,6 +177,10 @@ outputs:
     label: "Cellurar barcodes file clustered by genotype"
     doc: |
       Cellurar barcodes file clustered by genotype
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Genotype clustering'
+        Title: 'Cells clustered by genotype'
 
   genotype_cluster_vcf_file:
     type: File
