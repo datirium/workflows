@@ -43,9 +43,11 @@ inputs:
 
   genome_fasta_file:
     type: File
+    secondaryFiles:
+    - .fai
     label: "scRNA-Seq Cell Ranger ARC Experiment"
     doc: |
-      Reference genome FASTA file that includes all chromosomes
+      Reference genome FASTA file that includes all chromosomes + fai index file
     'sd:upstreamSource': "sc_rnaseq_sample/genome_indices/genome_indices/fasta_output"
     'sd:localLabel': true
 

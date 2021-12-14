@@ -35,11 +35,13 @@ inputs:
 
   genome_fasta_file:
     type: File
+    secondaryFiles:
+    - .fai
     inputBinding:
       position: 7
       prefix: "--fasta"
     doc: |
-      Reference genome FASTA file
+      Reference genome FASTA file + fai index file
 
   clusters_count:
     type: int
