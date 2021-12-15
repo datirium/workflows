@@ -245,7 +245,7 @@ outputs:
       for track description when displaying in IGV.
 
   atac_ambient_rna_file:
-    type: File
+    type: File?
     outputSource: rename_outputs/atac_ambient_rna_file
     label: "Ambient RNA evaluation text file (ATAC)"
     doc: |
@@ -419,7 +419,7 @@ steps:
           outputBinding:
             glob: "atac_cluster_genotypes.vcf"
         atac_ambient_rna_file:
-          type: File
+          type: File?
           outputBinding:
             glob: "atac_ambient_rna.txt"
         atac_souporcell_stdout_log:

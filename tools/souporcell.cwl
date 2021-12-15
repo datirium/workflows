@@ -174,7 +174,7 @@ outputs:
       for track description when displaying in IGV.
 
   ambient_rna_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "./souporcell/ambient_rna.txt"
     doc: "Ambient RNA evaluation text file"
