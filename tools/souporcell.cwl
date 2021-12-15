@@ -137,10 +137,37 @@ inputs:
       Don't remap with minimap2 (not recommended unless in
       conjunction with --common_variants)
 
+  no_umi:
+    type: boolean?
+    default: false
+    inputBinding:
+      position: 18
+      prefix: "--no_umi"
+      valueFrom: $(self?"True":"False")                 # Souporcell expects word, not just boolean flag
+    doc: |
+      Set to True if your bam has no UMI tag, will
+      ignore/override --umi_tag
+
+  umi_tag:
+    type: string?
+    inputBinding:
+      position: 19
+      prefix: "--umi_tag"
+    doc: |
+      Set if your umi tag is not UB
+
+  cell_tag:
+    type: string?
+    inputBinding:
+      position: 20
+      prefix: "--cell_tag"
+    doc: |
+      Set if your cell barcode tag is not CB
+
   ignore_data_errors:
     type: boolean?
     inputBinding:
-      position: 18
+      position: 21
       prefix: "--ignore"
     doc: |
       Set to True to ignore data error assertions
@@ -149,7 +176,7 @@ inputs:
     type: int?
     default: 1
     inputBinding:
-      position: 19
+      position: 22
       prefix: "--threads"
     doc: |
       Max threads to use
@@ -174,7 +201,7 @@ outputs:
       for track description when displaying in IGV.
 
   ambient_rna_file:
-    type: File?
+    type: File
     outputBinding:
       glob: "./souporcell/ambient_rna.txt"
     doc: "Ambient RNA evaluation text file"
@@ -246,6 +273,7 @@ doc: |
 
   --out_dir - harcoded to ./souporcell
   --threads - forced to the default 1, because it's required parameter
+  --aligner - not added to CWL inputs
 
 
 s:about: |

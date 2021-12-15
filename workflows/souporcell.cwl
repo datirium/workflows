@@ -246,7 +246,7 @@ outputs:
       for track description when displaying in IGV.
 
   atac_ambient_rna_file:
-    type: File?
+    type: File
     outputSource: rename_outputs/atac_ambient_rna_file
     label: "Ambient RNA evaluation text file (ATAC)"
     doc: |
@@ -346,6 +346,8 @@ steps:
         source: known_genotypes_sample_names
         valueFrom: $(split_by_common_delim(self))
       skip_remap: skip_remap
+      no_umi:
+        default: true
       ignore_data_errors: ignore_data_errors
       threads: threads
     out:
@@ -355,7 +357,6 @@ steps:
     - stdout_log
     - stderr_log
 
-  # Souporcell produces files with the same names. We don't want to overwrite them
   rename_outputs:
     run:
       cwlVersion: v1.1
@@ -421,7 +422,7 @@ steps:
           outputBinding:
             glob: "atac_cluster_genotypes.vcf"
         atac_ambient_rna_file:
-          type: File?
+          type: File
           outputBinding:
             glob: "atac_ambient_rna.txt"
         atac_souporcell_stdout_log:
