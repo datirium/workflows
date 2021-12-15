@@ -229,7 +229,6 @@ steps:
       workflow_type: workflow_type
       h5ad:
         default: true
-
       threads: threads
       memory_limit: memory_limit
     out:
