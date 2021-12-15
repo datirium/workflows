@@ -368,6 +368,7 @@ steps:
           type: string?
           default: |
             #!/bin/bash
+            set -- "$0" "$@"
             for FILE in "$@"; do
               BASENAME=$(basename "$FILE")
               GEX=gex_${BASENAME}
