@@ -27,6 +27,14 @@ requirements:
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
+    - "rnaseq-se.cwl"
+    - "rnaseq-pe.cwl"
+    - "rnaseq-se-dutp.cwl"
+    - "rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe.cwl"
+    - "trim-rnaseq-se.cwl"
+    - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-se-dutp.cwl"
 
 
 inputs:

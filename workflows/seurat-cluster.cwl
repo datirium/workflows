@@ -25,6 +25,8 @@ requirements:
   sc_rnaseq_sample:
   - "https://github.com/datirium/workflows/workflows/cellranger-aggr.cwl"
   - "https://github.com/datirium/workflows/workflows/single-cell-preprocess-cellranger.cwl"
+  - "cellranger-aggr.cwl"
+  - "single-cell-preprocess-cellranger.cwl"
 
 
 inputs:

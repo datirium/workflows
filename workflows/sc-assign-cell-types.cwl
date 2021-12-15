@@ -29,6 +29,7 @@ requirements:
 
 'sd:upstream':
   seurat_cluster_sample:
+  - "https://github.com/datirium/workflows/workflows/seurat-cluster.cwl"
   - "seurat-cluster.cwl"
 
 

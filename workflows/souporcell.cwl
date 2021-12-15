@@ -20,6 +20,7 @@ requirements:
 'sd:upstream':
   sc_rnaseq_sample:
   - "https://github.com/datirium/workflows/workflows/cellranger-arc-count.cwl"
+  - "cellranger-arc-count.cwl"
 
 
 inputs:

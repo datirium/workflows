@@ -12,6 +12,7 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+    - "genome-indices.cwl"
 
 
 inputs:
