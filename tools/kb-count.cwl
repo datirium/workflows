@@ -229,7 +229,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "kb-count"
+
+s:name: "Kallisto | BUStools Quantify Gene Expression"
+label: "Kallisto | BUStools Quantify Gene Expression"
+s:alternateName: "Uses Kallisto to pseudoalign reads and BUStools to quantify the data"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/kb-count.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
