@@ -129,7 +129,7 @@ outputs:
 
   unfiltered_adata_file:
     type: File
-    outputSource: compress_counts_folder/unfiltered_adata_file
+    outputSource: kb_count/unfiltered_adata_file
     label: "h5ad file generated from unfiltered count matrix"
     doc: |
       h5ad file generated from unfiltered count matrix
