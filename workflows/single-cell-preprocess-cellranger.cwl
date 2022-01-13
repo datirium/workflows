@@ -196,13 +196,29 @@ outputs:
     doc: |
       Loupe Browser visualization and analysis file
 
-  collected_statistics:
+  collected_statistics_yaml:
     type: File
-    outputSource: collect_statistics/collected_statistics
+    outputSource: collect_statistics/collected_statistics_yaml
+    label: "Collected statistics in YAML format"
+    doc: "Collected statistics in YAML format"
+
+  collected_statistics_md:
+    type: File
+    outputSource: collect_statistics/collected_statistics_md
     label: "Collected statistics in Markdown format"
     doc: "Collected statistics in Markdown format"
     'sd:visualPlugins':
     - markdownView:
+        tab: 'Overview'
+
+  collected_statistics_tsv:
+    type: File
+    outputSource: collect_statistics/collected_statistics_tsv
+    label: "Collected statistics in TSV format"
+    doc: "Collected statistics in TSV format"
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
         tab: 'Overview'
 
   generate_counts_matrix_stdout_log:
@@ -329,45 +345,13 @@ steps:
     - compressed_folder
 
   collect_statistics:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: rackspacedot/python37
-      inputs:
-        script:
-          type: string?
-          default: |
-            #!/usr/bin/env python3
-            import sys, csv
-            with open(sys.argv[1], "r") as input_stream:
-              with open("collected_statistics.md", "w") as output_stream:
-                output_stream.write("### Cell Ranger Statistics\n")
-                keys, values = None, None
-                for i, row in enumerate(csv.reader(input_stream)):
-                  if i==0:
-                    keys = row
-                  else:
-                    values = row
-                for k,v in zip(keys, values):
-                  output_stream.write("- "+k+": "+v+"\n")
-          inputBinding:
-            position: 5
-        metrics_summary_report:
-          type: File
-          inputBinding:
-            position: 6
-      outputs:
-        collected_statistics:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: ["python3", "-c"]
+    run: ../tools/collect-stats-sc-count.cwl
     in:
       metrics_summary_report: generate_counts_matrix/metrics_summary_report
     out:
-    - collected_statistics
+    - collected_statistics_yaml
+    - collected_statistics_tsv
+    - collected_statistics_md
 
   cellbrowser_build:
     run: ../tools/cellbrowser-build-cellranger.cwl
