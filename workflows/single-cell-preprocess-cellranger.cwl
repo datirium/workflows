@@ -11,6 +11,7 @@ requirements:
 
 'sd:upstream':
   genome_indices:
+    - "https://github.com/datirium/workflows/workflows/cellranger-mkref.cwl"
     - "cellranger-mkref.cwl"
 
 
