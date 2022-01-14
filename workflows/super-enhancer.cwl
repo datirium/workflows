@@ -8,8 +8,8 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-'sd:metadata':
-  - "../metadata/advanced-header.cwl"
+# 'sd:metadata':
+#   - "../metadata/advanced-header.cwl"
 
 
 'sd:upstream':
@@ -28,6 +28,12 @@ requirements:
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Experiment short name/alias"
+    sd:preview:
+      position: 1
 
   peak_file:
     type: File
