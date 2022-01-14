@@ -8,27 +8,26 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
+'sd:metadata':
+  - "../metadata/advanced-header.cwl"
+
+
 'sd:upstream':
   chipseq_sample:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   chipseq_control:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
+    - "trim-chipseq-pe.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   genome_indices:
     - "genome-indices.cwl"
-    
-inputs:
 
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
+
+inputs:
 
   peak_file:
     type: File
@@ -58,8 +57,8 @@ inputs:
 
   annotation_file:
     type: File
-    label: "Genome annotation"
     format: "http://edamontology.org/format_3475"
+    label: "Genome annotation"
     doc: "TSV genome annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
 
@@ -72,11 +71,11 @@ inputs:
 
   stitching_distance:
     type: int?
-    default: 20000
+    default: 12500
     label: "Maximum distance between two regions that will be stitched together"
     doc: |
       Maximum distance between two regions that will be stitched together.
-      For ROSE default is 12.5kb, in workflow default is 20000
+      For ROSE default is 12.5kb
     'sd:layout':
       advanced: true
 
@@ -114,27 +113,16 @@ inputs:
 
 outputs:
 
-  ranked_super_enhancers_plot_png:
-    type: File
-    format: "http://edamontology.org/format_3603"
-    label: "Ranked super-enhancers plot"
-    doc: "Ranked super-enhancers plot"
-    outputSource: rename_png/target_file
-    'sd:visualPlugins':
-    - image:
-        tab: 'Plots'
-        Caption: 'Ranked super-enhancers plot'
-
   super_enhancers_report_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Super-enhancers report file with assigned genes"
-    doc: "Super-enhancers report file with assigned genes"
+    label: "Super-enhancers report file with the nearest genes assigned"
+    doc: "Super-enhancers report file with the nearest genes assigned"
     outputSource: add_island_names/output_file
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Super-enhancers'
-        Title: 'Super-enhancers Analysis Results'
+        Title: 'Super-enhancers'
 
   super_enhancers_bigbed_file:
     type: File
@@ -147,16 +135,48 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
-        name: "Super-enchancers"
+        name: "Super-enhancers"
         displayMode: "COLLAPSE"
         height: 40
 
-  super_enhancers_raw_txt:
+  ranked_super_enhancers_plot_png:
+    type: File
+    format: "http://edamontology.org/format_3603"
+    label: "Ranked super-enhancers plot in PNG format"
+    doc: "Ranked super-enhancers plot in PNG format"
+    outputSource: run_rose/plot_points_pic
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Ranked super-enhancers'
+
+  super_enhancers_table:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "Super-enhancers report file (raw, from ROSE)"
-    doc: "Super-enhancers report file (raw, from ROSE)"
+    label: "Super-enhancers table TXT file"
+    doc: "Super-enhancers table TXT file"
     outputSource: run_rose/super_enhancers_table
+
+  all_enhancers_table:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "All enhancers table TXT file"
+    doc: "All enhancers table TXT file"
+    outputSource: run_rose/all_enhancers_table
+
+  stitched_enhancer_region_map:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "All densities from calculated in stitched enhancers TXT file"
+    doc: "All densities from calculated in stitched enhancers TXT file"
+    outputSource: run_rose/stitched_enhancer_region_map
+
+  mapped_gff_directory:
+    type: File
+    format: "http://edamontology.org/format_3981"
+    label: "Compressed mapped GFF folder"
+    doc: "Compressed mapped GFF folder"
+    outputSource: compress_mapped_gff_directory/compressed_folder
 
 
 steps:
@@ -166,7 +186,8 @@ steps:
     in:
       islands_file: peak_file
       islands_control_file: peak_control_file
-    out: [gff_file]
+    out:
+    - gff_file
 
   run_rose:
     run: ../tools/rose.cwl
@@ -180,124 +201,37 @@ steps:
     - plot_points_pic
     - gateway_super_enhancers_bed
     - super_enhancers_table
+    - stitched_enhancer_region_map
+    - all_enhancers_table
+    - mapped_gff_directory
 
-  rename_png:
-    in:
-      source_file: run_rose/plot_points_pic
-      target_filename:
-        source: alignment_file
-        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_default_s_enhcr.png")
-    out: [target_file]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      inputs:
-        source_file:
-          type: File
-          inputBinding:
-            position: 5
-          doc: source file to rename
-        target_filename:
-          type: string
-          inputBinding:
-            position: 6
-          doc: filename to rename to
-      outputs:
-        target_file:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: ["cp"]
-      doc: Tool renames (copy) `source_file` to `target_filename`
-
-  sort_bed:
+  sort_super_enhancers_bed:
     run: ../tools/linux-sort.cwl
     in:
       unsorted_file: run_rose/gateway_super_enhancers_bed
       key:
         default: ["1,1","2,2n","3,3n"]
-    out: [sorted_file]
-
-  reduce_bed:
-    in:
-      input_file: sort_bed/sorted_file
-    out: [output_file]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      inputs:
-        input_file:
-          type: File
-          inputBinding:
-            position: 5
-          doc: Input BED6 file to be reduced to BED4
-      outputs:
-        output_file:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: [bash, '-c']
-      arguments:
-      - cat $0 | cut -f 1-4 > `basename $0`
-      doc: Tool converts BED6 to BED4 by reducing column numbers
+    out:
+    - sorted_file
 
   bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
     in:
-      input_bed: reduce_bed/output_file
-      chrom_length_file: chrom_length_file
+      input_bed: sort_super_enhancers_bed/sorted_file
       bed_type:
-        default: "bed4"
+        default: "bed3+3"
+      chrom_length_file: chrom_length_file
       output_filename:
-        source: alignment_file
-        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_default_s_enhcr.bb")
-    out: [bigbed_file]
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/ucscuserapps:v358
-      inputs:
-        bed_type:
-          type: string
-          inputBinding:
-            position: 5
-            prefix: -type=
-            separate: false
-          doc: Type of BED file in a form of bedN[+[P]]. By default bed3 to three required BED fields
-        input_bed:
-          type: File
-          inputBinding:
-            position: 6
-          doc: Input BED file
-        chrom_length_file:
-          type: File
-          inputBinding:
-            position: 7
-          doc: Chromosome length files
-        output_filename:
-          type: string
-          inputBinding:
-            position: 8
-          doc: Output filename
-      outputs:
-        bigbed_file:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: ["bedToBigBed"]
-      doc: Tool converts bed to bigBed
+        source: sort_super_enhancers_bed/sorted_file
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
+    out:
+    - bigbed_file
 
   bed_to_macs:
     in:
-      input_file: sort_bed/sorted_file
-    out: [output_file]
+      input_file: sort_super_enhancers_bed/sorted_file
+    out:
+    - output_file
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -317,7 +251,7 @@ steps:
             glob: "*"
       baseCommand: [bash, '-c']
       arguments:
-      - cat $0 | grep -v "#" | awk
+      - cat $0 | grep -v "#" | grep -v "track" | awk
         'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
         {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t0\t0\t0\t0\t"$4}' > `basename $0`
       doc: Tool converts `input_file` to the format compatible with the input of iaintersect from `assign_genes` step
@@ -329,14 +263,15 @@ steps:
       annotation_filename: annotation_file
       promoter_bp: promoter_distance
       upstream_bp: upstream_distance
-    out: [result_file]
+    out:
+    - result_file
 
   add_island_names:
     in:
-      input_file: [assign_genes/result_file, sort_bed/sorted_file]
+      input_file: [assign_genes/result_file, sort_super_enhancers_bed/sorted_file]
       param:
-        source: alignment_file
-        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"_default_s_enhcr.tsv")
+        source: sort_super_enhancers_bed/sorted_file
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".tsv")
     out: [output_file]
     run:
       cwlVersion: v1.0
@@ -364,6 +299,13 @@ steps:
       arguments:
       - echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tregion\tname\tscore" > `basename $2`;
         cat $0 | grep -v refseq_id | paste - $1 | cut -f 1-9,15,19,20 >> `basename $2`
+
+  compress_mapped_gff_directory:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: run_rose/mapped_gff_directory
+    out:
+    - compressed_folder
 
 
 $namespaces:
@@ -409,10 +351,6 @@ s:creator:
         s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
-
-
-# doc:
-#   $include: ../descriptions/super-enhancer.md
 
 
 doc: |
