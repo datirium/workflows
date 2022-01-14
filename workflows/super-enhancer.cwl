@@ -25,6 +25,7 @@ requirements:
     - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   genome_indices:
     - "genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
