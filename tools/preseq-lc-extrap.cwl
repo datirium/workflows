@@ -119,7 +119,7 @@ outputs:
 baseCommand: ["preseq", "lc_extrap", "-bam"]
 
 
-successCodes: [1]
+successCodes: [1, 139]
 
 
 $namespaces:
