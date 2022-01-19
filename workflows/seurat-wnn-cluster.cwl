@@ -1023,4 +1023,4 @@ s:creator:
 doc: |
   Seurat WNN Analysis
   ===================
-  Runs Seurat Weighted Nearest Neighbor Analysis
+  Runs Seurat Weighted Nearest Neighbor Analysis.
