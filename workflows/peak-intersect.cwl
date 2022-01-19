@@ -11,10 +11,13 @@ requirements:
 'sd:upstream':
   filtered_experiment_a:
   - "filter-peaks-for-heatmap.cwl"
+  - "super-enhancer.cwl"
   filtered_experiment_b:
   - "filter-peaks-for-heatmap.cwl"  
+  - "super-enhancer.cwl"
   genome_indices:
   - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:

@@ -185,6 +185,13 @@ outputs:
     doc: "Compressed mapped GFF folder"
     outputSource: compress_mapped_gff_directory/compressed_folder
 
+  filtered_file:                                                               # need to have this output name, so we can use it directly in intervene.cwl and peak-intersect.cwl pipelines
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Super-enhancers"
+    doc: "Super-enhancers BED file"
+    outputSource: sort_super_enhancers_bed/sorted_file
+
 
 steps:
 
