@@ -285,10 +285,10 @@ steps:
       what_to_show: what_to_show
       ref_point_label:
         default: "Peak Center"
-      x_axis_label:
-        default: "distance (bp)"
       regions_label: regions_labels
       samples_label: scores_labels
+      x_axis_label:
+        default: "distance (bp)"
       y_axisLabel:
         default: "Signal mean"
       per_group: per_group
