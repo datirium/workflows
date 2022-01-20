@@ -6,7 +6,7 @@ requirements:
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
-  - class: ScatterFeatureRequirement
+  - class: SubworkflowFeatureRequirement
 
 
 'sd:upstream':
@@ -218,23 +218,41 @@ outputs:
 steps:
 
   recenter_regions:
-    run: ../tools/custom-bash.cwl
+    run:
+      cwlVersion: v1.0
+      class: Workflow
+      requirements:
+      - class: ScatterFeatureRequirement
+      inputs:
+        regions_files:
+          type: File[]
+      outputs:
+        recentered_regions_files:
+          type: File[]
+          outputSource: recenter/output_file
+      steps:
+        recenter:
+          run: ../tools/custom-bash.cwl
+          in:
+            input_file: regions_files
+            script:
+              default: |
+                # chrom start end
+                echo "Recenter by the peak center"
+                cat "$0" | tr -d "\r" | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center+1}' > "${RANDOM}_"`basename $0`
+          scatter: input_file
+          out:
+          - output_file
     in:
-      input_file: regions_files
-      script:
-        default: |
-          # chrom start end
-          echo "Recenter by the peak center"
-          cat "$0" | tr -d "\r" | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center+1}' > "${RANDOM}_"`basename $0`
-    scatter: input_file
+      regions_files: regions_files
     out:
-    - output_file
+    - recentered_regions_files
 
   compute_score_matrix:
     run: ../tools/deeptools-computematrix-referencepoint.cwl
     in:
       score_files: scores_files
-      regions_files: recenter_regions/output_file
+      regions_files: recenter_regions/recentered_regions_files
       reference_point: 
         default: "TSS"  # doesn't matter what we set here because we centered regions ourlselves
       before_region_start_length: before_region_start_length
