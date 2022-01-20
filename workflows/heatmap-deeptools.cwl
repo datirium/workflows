@@ -225,7 +225,7 @@ steps:
         default: |
           # chrom start end
           echo "Recenter by the peak center"
-          cat "$0" | tr -d "\r" | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center+1}' > `basename $0`
+          cat "$0" | tr -d "\r" | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center+1}' > "${RANDOM}_"`basename $0`
     scatter: input_file
     out:
     - output_file
