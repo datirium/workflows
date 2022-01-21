@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat-wnn:v0.0.1
+  dockerPull: biowardrobe2/seurat-wnn:v0.0.2
 
 
 inputs:
@@ -46,6 +46,28 @@ inputs:
       prefix: "--blacklisted"
     doc: |
       Path to the blacklisted regions file in BED format
+
+  barcodes_data:
+    type: File?
+    inputBinding:
+      prefix: "--barcodes"
+    doc: |
+      Path to the headerless TSV/CSV file with the list of barcodes to select
+      cells of interest (one barcode per line). Prefilters input feature-barcode
+      matrix to include only selected cells.
+      Default: use all cells.
+
+  metadata_file:
+    type: File?
+    inputBinding:
+      prefix: "--metadata"
+    doc: |
+      Path to the TSV/CSV file to optionally extend cells metadata with
+      categorical values. First column - 'barcode' should include cells
+      barcodes that correspond to the data provided in --mex. Values from
+      all other columns will be added as extra metadata columns prefixed
+      with 'custom_'. Values for missing barcodes will be set to 'Unknown'.
+      Default: no extra cells metadata is added
 
   gex_minimum_cells:
     type: int?
@@ -899,29 +921,18 @@ doc: |
 
 
 s:about: |
-  usage: run_seurat_wnn.R [-h] --mex MEX --fragments FRAGMENTS
-                                        --annotations ANNOTATIONS
-                                        [--blacklisted BLACKLISTED]
-                                        [--gexmincells GEXMINCELLS]
-                                        [--mingenes MINGENES]
-                                        [--maxgenes MAXGENES]
-                                        [--gexminumi GEXMINUMI]
-                                        [--mitopattern MITOPATTERN]
-                                        [--maxmt MAXMT]
-                                        [--minnovelty MINNOVELTY]
-                                        [--atacmincells ATACMINCELLS]
-                                        [--atacminumi ATACMINUMI]
-                                        [--maxnuclsignal MAXNUCLSIGNAL]
-                                        [--minfrip MINFRIP]
-                                        [--maxblacklisted MAXBLACKLISTED]
-                                        [--callpeaks]
-                                        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
-                                        [--highvarcount HIGHVARCOUNT]
-                                        [--gexndim GEXNDIM]
-                                        [--atacndim ATACNDIM]
-                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                        [--pdf] [--rds] [--output OUTPUT]
-                                        [--threads THREADS]
+  usage: run_seurat_wnn.R
+        [-h] --mex MEX --fragments FRAGMENTS --annotations ANNOTATIONS
+        [--blacklisted BLACKLISTED] [--barcodes BARCODES] [--metadata METADATA]
+        [--gexmincells GEXMINCELLS] [--mingenes MINGENES] [--maxgenes MAXGENES]
+        [--gexminumi GEXMINUMI] [--mitopattern MITOPATTERN] [--maxmt MAXMT]
+        [--minnovelty MINNOVELTY] [--atacmincells ATACMINCELLS]
+        [--atacminumi ATACMINUMI] [--maxnuclsignal MAXNUCLSIGNAL]
+        [--minfrip MINFRIP] [--maxblacklisted MAXBLACKLISTED] [--callpeaks]
+        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
+        [--highvarcount HIGHVARCOUNT] [--gexndim GEXNDIM] [--atacndim ATACNDIM]
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--pdf] [--rds]
+        [--output OUTPUT] [--threads THREADS]
 
   Runs Seurat Weighted Nearest Neighbor Analysis
 
@@ -940,6 +951,18 @@ s:about: |
                           Path to the genome annotation file in GTF format
     --blacklisted BLACKLISTED
                           Path to the blacklisted regions file in BED format
+    --barcodes BARCODES   Path to the headerless TSV/CSV file with the list of
+                          barcodes to select cells of interest (one barcode per
+                          line). Prefilters input feature-barcode matrix to
+                          include only selected cells. Default: use all cells.
+    --metadata METADATA   Path to the TSV/CSV file to optionally extend cells
+                          metadata with categorical values. First column -
+                          'barcode' should include cells barcodes that
+                          correspond to the data provided in --mex. Values from
+                          all other columns will be added as extra metadata
+                          columns prefixed with 'custom_'. Values for missing
+                          barcodes will be set to 'Unknown'. Default: no extra
+                          cells metadata is added
     --gexmincells GEXMINCELLS
                           Include only GEX features detected in at least this
                           many cells. Default: 5

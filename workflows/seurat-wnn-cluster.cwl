@@ -1,4 +1,4 @@
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: Workflow
 
 
@@ -25,6 +25,8 @@ requirements:
   sc_arc_count_sample:
   - "https://github.com/datirium/workflows/workflows/cellranger-arc-count.cwl"
   - "cellranger-arc-count.cwl"
+  genotype_sample:
+  - "souporcell.cwl"
 
 
 inputs:
@@ -65,11 +67,36 @@ inputs:
     'sd:upstreamSource': "sc_arc_count_sample/genome_indices/genome_indices/annotation_gtf"
     'sd:localLabel': true
 
+  gex_genotype_cluster_tsv_file:
+    type: File?
+    label: "Souporcell Cluster by Genotype Experiment"
+    doc: |
+      Cellurar barcodes file clustered by genotype (GEX) generated in Souporcell
+    'sd:upstreamSource': "genotype_sample/gex_genotype_cluster_tsv_file"
+    'sd:localLabel': true
+
+  atac_genotype_cluster_tsv_file:
+    type: File?
+    label: "Souporcell Cluster by Genotype Experiment"
+    doc: |
+      Cellurar barcodes file clustered by genotype (ATAC) generated in Souporcell
+    'sd:upstreamSource': "genotype_sample/atac_genotype_cluster_tsv_file"
+    'sd:localLabel': true
+
   blacklisted_regions_file:
     type: File?
     label: "BED file with blacklisted regions"
     doc: |
       Path to the blacklisted regions file in BED format.
+
+  barcodes_data:
+    type: File?
+    label: "Headerless TSV/CSV file with the list of barcodes to select cells of interest (one barcode per line)"
+    doc: |
+      Path to the headerless TSV/CSV file with the list of barcodes to select
+      cells of interest (one barcode per line). Prefilters input feature-barcode
+      matrix to include only selected cells.
+      Default: use all cells.
 
   gex_minimum_cells:
     type: int?
@@ -891,6 +918,24 @@ steps:
             glob: "*"
       baseCommand: ["tar", "xzf"]
 
+  prepare_metadata:
+    run: ../tools/custom-bash.cwl
+    when: $(inputs.input_file.every(item => item !== null))
+    in:
+      input_file: [gex_genotype_cluster_tsv_file, atac_genotype_cluster_tsv_file]
+      script:
+        default: |
+          #!/bin/bash
+          echo -e "barcode\tgex_genotype" > gex_metadata.tsv
+          cat "$0" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $1, $3; else print $1, $2}' >> gex_metadata.tsv
+          echo "atac_genotype" > atac_metadata.tsv
+          cat "$1" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $3; else print $2}' >> atac_metadata.tsv
+          paste gex_metadata.tsv atac_metadata.tsv > extra_metadata.tsv
+          rm -f gex_metadata.tsv atac_metadata.tsv
+          head extra_metadata.tsv
+    out:
+    - output_file
+
   seurat_wnn_cluster:
     run: ../tools/seurat-wnn-cluster.cwl
     in:
@@ -898,6 +943,8 @@ steps:
       atac_fragments_file: atac_fragments_file
       annotation_gtf_file: annotation_gtf_file
       blacklisted_regions_file: blacklisted_regions_file
+      barcodes_data: barcodes_data
+      metadata_file: prepare_metadata/output_file
       gex_minimum_cells: gex_minimum_cells
       gex_minimum_features: gex_minimum_features
       gex_maximum_features: gex_maximum_features
