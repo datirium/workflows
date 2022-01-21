@@ -1,4 +1,4 @@
-cwlVersion: v1.2
+cwlVersion: v1.0
 class: Workflow
 
 
@@ -919,22 +919,49 @@ steps:
       baseCommand: ["tar", "xzf"]
 
   prepare_metadata:
-    run: ../tools/custom-bash.cwl
-    when: $(inputs.input_file.every(item => item !== null))
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        script:
+          type: string?
+          default: |
+            #!/bin/bash
+            if [ -f "$0" ] && [ -f "$1" ]; then
+              echo -e "barcode\tgex_genotype" > gex_metadata.tsv
+              cat "$0" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $1, $3; else print $1, $2}' >> gex_metadata.tsv
+              echo "atac_genotype" > atac_metadata.tsv
+              cat "$1" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $3; else print $2}' >> atac_metadata.tsv
+              paste gex_metadata.tsv atac_metadata.tsv > extra_metadata.tsv
+              rm -f gex_metadata.tsv atac_metadata.tsv
+              head extra_metadata.tsv
+            else
+              exit 0
+            fi
+          inputBinding:
+            position: 5
+        gex_genotype_cluster_tsv_file:
+          type: File?
+          inputBinding:
+            position: 6
+        atac_genotype_cluster_tsv_file:
+          type: File?
+          inputBinding:
+            position: 7
+      outputs:
+        metadata_file:
+          type: File?
+          outputBinding:
+            glob: "extra_metadata.tsv"
+      baseCommand: ["bash", "-c"]
     in:
-      input_file: [gex_genotype_cluster_tsv_file, atac_genotype_cluster_tsv_file]
-      script:
-        default: |
-          #!/bin/bash
-          echo -e "barcode\tgex_genotype" > gex_metadata.tsv
-          cat "$0" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $1, $3; else print $1, $2}' >> gex_metadata.tsv
-          echo "atac_genotype" > atac_metadata.tsv
-          cat "$1" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $3; else print $2}' >> atac_metadata.tsv
-          paste gex_metadata.tsv atac_metadata.tsv > extra_metadata.tsv
-          rm -f gex_metadata.tsv atac_metadata.tsv
-          head extra_metadata.tsv
+      gex_genotype_cluster_tsv_file: gex_genotype_cluster_tsv_file
+      atac_genotype_cluster_tsv_file: atac_genotype_cluster_tsv_file
     out:
-    - output_file
+    - metadata_file
 
   seurat_wnn_cluster:
     run: ../tools/seurat-wnn-cluster.cwl
@@ -944,7 +971,7 @@ steps:
       annotation_gtf_file: annotation_gtf_file
       blacklisted_regions_file: blacklisted_regions_file
       barcodes_data: barcodes_data
-      metadata_file: prepare_metadata/output_file
+      metadata_file: prepare_metadata/metadata_file
       gex_minimum_cells: gex_minimum_cells
       gex_minimum_features: gex_minimum_features
       gex_maximum_features: gex_maximum_features
