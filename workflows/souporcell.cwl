@@ -156,7 +156,7 @@ inputs:
 
   threads:
     type: int?
-    default: 4
+    default: 2
     label: "Threads number to use"
     doc: |
       Threads number
