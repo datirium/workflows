@@ -50,14 +50,14 @@ inputs:
     'sd:localLabel': true
 
   genelist_file:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_2330"
     label: "Target genes list. Headerless text file with 1 gene per line"
     doc: "Target genes list. Headerless text file with 1 gene per line"
 
   expression_threshold:
     type: float?
-    default: 0
+    default: 0.0
     label: "Expression threshold for displaying target genes on a plot (expression > threshold)"
     doc: "Expression threshold for displaying target genes on a plot (expression > threshold)"
     'sd:layout':
