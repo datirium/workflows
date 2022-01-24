@@ -5,6 +5,7 @@ class: Workflow
 'sd:upstream':
   genome:
     - "bismark-index.cwl"
+    - "https://github.com/datirium/workflows/workflows/bismark-index.cwl"
 
 
 'sd:metadata':

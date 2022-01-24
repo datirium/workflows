@@ -13,10 +13,13 @@ requirements:
   sc_rnaseq_sample:
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-aggr.cwl"
+  - "https://github.com/datirium/workflows/workflows/single-cell-preprocess-cellranger.cwl"
   altanalyze_icgs_sample:
   - "altanalyze-icgs.cwl"
+  - "https://github.com/datirium/workflows/workflows/altanalyze-icgs.cwl"
   altanalyze_prepare_genome_sample:
   - "altanalyze-prepare-genome.cwl"
+  - "https://github.com/datirium/workflows/workflows/altanalyze-prepare-genome.cwl"
 
 
 inputs:

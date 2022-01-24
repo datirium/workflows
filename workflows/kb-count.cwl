@@ -11,7 +11,7 @@ requirements:
 
 'sd:upstream':
   kb_indices:
-    - "kb-ref.cwl"
+  - "kb-ref.cwl"
 
 
 inputs:

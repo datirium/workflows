@@ -12,6 +12,7 @@ requirements:
 'sd:upstream':
   filtered_regions_sample:
   - "filter-diffbind-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-diffbind-for-heatmap.cwl"
   chipseq_sample:
   - "trim-chipseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"

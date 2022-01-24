@@ -11,7 +11,8 @@ requirements:
 
 'sd:upstream':
   deseq_experiment:
-    - "deseq.cwl"
+  - "deseq.cwl"
+  - "https://github.com/datirium/workflows/workflows/deseq.cwl"
 
 
 inputs:

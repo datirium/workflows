@@ -18,11 +18,11 @@ requirements:
 
 'sd:upstream':
   genome_indices:
-    - "genome-indices.cwl"
-    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+  - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   control_file:
-    - "trim-atacseq-pe.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
+  - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
 
 
 inputs:

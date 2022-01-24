@@ -28,6 +28,23 @@ requirements:
   - "trim-rnaseq-pe-smarter-dutp.cwl"
   - "trim-quantseq-mrnaseq-se.cwl"
   - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+  - "https://github.com/datirium/workflows/workflows/chipseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/rnaseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/rnaseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/rnaseq-se-dutp.cwl"
+  - "https://github.com/datirium/workflows/workflows/rnaseq-pe-dutp.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-smarter-dutp.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-quantseq-mrnaseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-quantseq-mrnaseq-se-strand-specific.cwl"
 
 
 inputs:

@@ -12,8 +12,11 @@ requirements:
 'sd:upstream':
   sc_rnaseq_sample:
   - "cellranger-arc-count.cwl"
+  - "https://github.com/datirium/workflows/workflows/cellranger-arc-count.cwl"
   genome_indices:
-    - "cellranger-mkref.cwl"
+  - "cellranger-mkref.cwl"
+  - "https://github.com/datirium/workflows/workflows/cellranger-mkref.cwl"
+
 
 inputs:
 

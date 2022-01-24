@@ -13,13 +13,18 @@ requirements:
 
 'sd:upstream':
   base_experiment:
-    - "trim-chipseq-pe.cwl"
-    - "trim-atacseq-pe.cwl"
+  - "trim-chipseq-pe.cwl"
+  - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
   control_experiment:
-    - "trim-chipseq-pe.cwl"
-    - "trim-atacseq-pe.cwl"
+  - "trim-chipseq-pe.cwl"
+  - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
   genome_indices:
-    - "genome-indices.cwl"
+  - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:

@@ -10,13 +10,19 @@ requirements:
 
 'sd:upstream':
   first_chipseq_sample:
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-pe.cwl"
-    - "trim-atacseq-pe.cwl"
+  - "chipseq-pe.cwl"
+  - "trim-chipseq-pe.cwl"
+  - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
   second_chipseq_sample:
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-pe.cwl"
-    - "trim-atacseq-pe.cwl"
+  - "chipseq-pe.cwl"
+  - "trim-chipseq-pe.cwl"
+  - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
 
 
 inputs:

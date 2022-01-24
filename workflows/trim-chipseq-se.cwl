@@ -19,11 +19,11 @@ requirements:
 
 'sd:upstream':
   genome_indices:
-    - "genome-indices.cwl"
-    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+  - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   control_file:
-    - "trim-chipseq-se.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+  - "trim-chipseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
 
 
 inputs:

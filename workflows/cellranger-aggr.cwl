@@ -12,6 +12,7 @@ requirements:
 'sd:upstream':
   sc_rnaseq_sample:
   - "single-cell-preprocess-cellranger.cwl"
+  - "https://github.com/datirium/workflows/workflows/single-cell-preprocess-cellranger.cwl"
 
 
 inputs:
