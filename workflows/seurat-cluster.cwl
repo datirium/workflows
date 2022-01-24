@@ -920,7 +920,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 3. Integration QC'
+        tab: 'Step 4. Integration QC'
         Caption: 'Split by identity UMAP projected PCA of filtered integrated/scaled datasets'
 
   ntgr_umap_spl_by_idnt_plot_pdf:
@@ -944,7 +944,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 4. Clustering'
+        tab: 'Step 5. Clustering'
         Caption: 'Clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_res_plot_pdf:
@@ -971,7 +971,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 4. Clustering'
+        tab: 'Step 5. Clustering'
         Caption: 'Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_spl_by_cond_res_plot_pdf:
@@ -998,7 +998,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 4. Clustering'
+        tab: 'Step 5. Clustering'
         Caption: 'Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_ctype_res_plot_pdf:
@@ -1025,7 +1025,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 3. Integration QC'
+        tab: 'Step 4. Integration QC'
         Caption: 'Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_spl_by_ph_res_plot_pdf:
@@ -1079,7 +1079,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets'
 
   expr_avg_per_clst_res_plot_pdf:
@@ -1106,7 +1106,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered filtered integrated/scaled datasets'
 
   expr_per_clst_cell_res_plot_pdf:
@@ -1133,7 +1133,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets'
 
   expr_clst_heatmap_res_plot_pdf:
@@ -1160,7 +1160,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression densities per cluster of filtered integrated/scaled datasets'
 
   expr_dnst_per_clst_res_plot_pdf:
@@ -1187,7 +1187,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets'
 
   expr_avg_per_ctype_res_plot_pdf:
@@ -1214,7 +1214,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered filtered/scaled integrated datasets with predicted cell types'
 
   expr_per_ctype_cell_res_plot_pdf:
@@ -1241,7 +1241,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types'
 
   expr_ctype_heatmap_res_plot_pdf:
@@ -1268,7 +1268,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 5. Gene expression'
+        tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets'
 
   expr_dnst_per_ctype_res_plot_pdf:
@@ -1301,7 +1301,7 @@ outputs:
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Step 6. Putative gene markers'
+        tab: 'Step 7. Putative gene markers'
         Title: 'Putative gene markers'
 
 
@@ -1314,7 +1314,7 @@ outputs:
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Step 7. Conserved gene markers'
+        tab: 'Step 8. Conserved gene markers'
         Title: 'Conserved gene markers'
 
 
