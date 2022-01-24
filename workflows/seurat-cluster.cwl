@@ -418,7 +418,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Number of cells per dataset (not filtered)'
 
   raw_cell_count_plot_pdf:
@@ -439,7 +439,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition UMI density per cell (not filtered)'
 
   raw_umi_dnst_spl_by_cond_plot_pdf:
@@ -460,7 +460,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition gene density per cell (not filtered)'
 
   raw_gene_dnst_spl_by_cond_plot_pdf:
@@ -481,7 +481,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Split by identity genes vs UMIs per cell correlation (not filtered)'
 
   raw_gene_umi_corr_spl_by_ident_plot_pdf:
@@ -502,7 +502,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered)'
 
   raw_mito_perc_dnst_spl_by_cond_plot_pdf:
@@ -523,7 +523,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition novelty score density per cell (not filtered)'
 
   raw_nvlt_score_dnst_spl_by_cond_plot_pdf:
@@ -544,7 +544,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'QC metrics densities per cell (not filtered)'
 
   raw_qc_mtrcs_plot_pdf:
@@ -558,21 +558,21 @@ outputs:
   raw_miqc_mtrcs_plot_png:
     type: File?
     outputSource: seurat_cluster/raw_miqc_mtrcs_plot_png
-    label: "MiQC evaluation of the compromised cells level (not filtered)"
+    label: "MiQC prediction of the compromised cells level (not filtered)"
     doc: |
-      MiQC evaluation of the compromised cells level (not filtered).
+      MiQC prediction of the compromised cells level (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
-        Caption: 'MiQC evaluation of the compromised cells level (not filtered)'
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'MiQC prediction of the compromised cells level (not filtered)'
 
   raw_miqc_mtrcs_plot_pdf:
     type: File?
     outputSource: seurat_cluster/raw_miqc_mtrcs_plot_pdf
-    label: "MiQC evaluation of the compromised cells level (not filtered)"
+    label: "MiQC prediction of the compromised cells level (not filtered)"
     doc: |
-      MiQC evaluation of the compromised cells level (not filtered).
+      MiQC prediction of the compromised cells level (not filtered).
       PDF format
 
   raw_qc_mtrcs_gr_by_cond_plot_png:
@@ -584,7 +584,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Grouped by condition QC metrics densities per cell (not filtered)'
 
   raw_qc_mtrcs_gr_by_cond_plot_pdf:
@@ -605,7 +605,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Number of cells per dataset (filtered)'
 
   fltr_cell_count_plot_pdf:
@@ -626,7 +626,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition UMI density per cell (filtered)'
 
   fltr_umi_dnst_spl_by_cond_plot_pdf:
@@ -647,7 +647,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition gene density per cell (filtered)'
 
   fltr_gene_dnst_spl_by_cond_plot_pdf:
@@ -668,7 +668,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by identity genes vs UMIs per cell correlation (filtered)'
 
   fltr_gene_umi_corr_spl_by_ident_plot_pdf:
@@ -689,7 +689,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered)'
 
   fltr_mito_perc_dnst_spl_by_cond_plot_pdf:
@@ -710,7 +710,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition novelty score density per cell (filtered)'
 
   fltr_nvlt_score_dnst_spl_by_cond_plot_pdf:
@@ -731,7 +731,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'QC metrics densities per cell (filtered)'
 
   fltr_qc_mtrcs_plot_pdf:
@@ -752,7 +752,7 @@ outputs:
       PDF format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Grouped by condition QC metrics densities per cell (filtered)'
 
   fltr_qc_mtrcs_gr_by_cond_plot_pdf:
@@ -773,7 +773,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by cell cycle phase PCA of filtered unintegrated/scaled datasets'
 
   fltr_pca_spl_by_ph_plot_pdf:
@@ -794,7 +794,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets'
 
   fltr_pca_spl_by_mito_perc_plot_pdf:
@@ -815,7 +815,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets'
 
   fltr_umap_spl_by_idnt_plot_pdf:
@@ -836,7 +836,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality evaluation'
+        tab: 'Step 3. Dimensionality evaluation'
         Caption: 'Elbow plot from PCA of filtered integrated/scaled datasets'
 
   ntgr_elbow_plot_pdf:
@@ -857,7 +857,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality evaluation'
+        tab: 'Step 3. Dimensionality evaluation'
         Caption: 'PCA of filtered integrated/scaled datasets'
 
   ntgr_pca_plot_pdf:
@@ -878,7 +878,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality evaluation'
+        tab: 'Step 3. Dimensionality evaluation'
         Caption: 'Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets'
 
   ntgr_pca_heatmap_pdf:
@@ -899,7 +899,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality evaluation'
+        tab: 'Step 3. Dimensionality evaluation'
         Caption: 'PC scores of the most variant genes from PCA of filtered integrated/scaled datasets'
 
   ntgr_pca_loadings_plot_pdf:
@@ -920,7 +920,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (integrated/scaled)'
+        tab: 'Step 3. Integration QC'
         Caption: 'Split by identity UMAP projected PCA of filtered integrated/scaled datasets'
 
   ntgr_umap_spl_by_idnt_plot_pdf:
@@ -944,7 +944,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering'
+        tab: 'Step 4. Clustering'
         Caption: 'Clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_res_plot_pdf:
@@ -971,7 +971,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering'
+        tab: 'Step 4. Clustering'
         Caption: 'Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_spl_by_cond_res_plot_pdf:
@@ -998,7 +998,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering'
+        tab: 'Step 4. Clustering'
         Caption: 'Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_ctype_res_plot_pdf:
@@ -1025,7 +1025,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (integrated/scaled)'
+        tab: 'Step 3. Integration QC'
         Caption: 'Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_umap_spl_by_ph_res_plot_pdf:
@@ -1052,7 +1052,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (integrated/scaled)'
+        tab: 'Step 3. Integration QC'
         Caption: 'QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_qc_mtrcs_res_plot_pdf:
@@ -1079,7 +1079,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets'
 
   expr_avg_per_clst_res_plot_pdf:
@@ -1106,7 +1106,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered filtered integrated/scaled datasets'
 
   expr_per_clst_cell_res_plot_pdf:
@@ -1133,7 +1133,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets'
 
   expr_clst_heatmap_res_plot_pdf:
@@ -1160,7 +1160,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression densities per cluster of filtered integrated/scaled datasets'
 
   expr_dnst_per_clst_res_plot_pdf:
@@ -1187,7 +1187,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets'
 
   expr_avg_per_ctype_res_plot_pdf:
@@ -1214,7 +1214,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered filtered/scaled integrated datasets with predicted cell types'
 
   expr_per_ctype_cell_res_plot_pdf:
@@ -1241,7 +1241,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types'
 
   expr_ctype_heatmap_res_plot_pdf:
@@ -1268,7 +1268,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets'
 
   expr_dnst_per_ctype_res_plot_pdf:
@@ -1301,7 +1301,7 @@ outputs:
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Putative gene markers'
+        tab: 'Step 6. Putative gene markers'
         Title: 'Putative gene markers'
 
 
@@ -1314,7 +1314,7 @@ outputs:
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Conserved gene markers'
+        tab: 'Step 7. Conserved gene markers'
         Title: 'Conserved gene markers'
 
 
