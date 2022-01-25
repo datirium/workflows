@@ -1052,7 +1052,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Step 3. Integration QC'
+        tab: 'Step 4. Integration QC'
         Caption: 'QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
   clst_qc_mtrcs_res_plot_pdf:
