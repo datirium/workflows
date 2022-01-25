@@ -22,9 +22,11 @@ requirements:
 
 
 'sd:upstream':
-  sc_arc_count_sample:
+  sc_arc_sample:
   - "https://github.com/datirium/workflows/workflows/cellranger-arc-count.cwl"
+  - "https://github.com/datirium/workflows/workflows/cellranger-arc-aggr.cwl"
   - "cellranger-arc-count.cwl"
+  - "cellranger-arc-aggr.cwl"
   genotype_sample:
   - "souporcell.cwl"
 
@@ -39,32 +41,44 @@ inputs:
 
   filtered_feature_bc_matrix_folder:
     type: File
-    label: "Cell Ranger ARC Count Experiment"
+    label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
-      Filtered feature barcode matrix stored as a CSC sparse matrix in MEX format.
-      The rows consist of all the gene and peak features concatenated together
-      (identical to raw feature barcode matrix) and the columns are restricted to
-      those barcodes that are identified as cells.
-    'sd:upstreamSource': "sc_arc_count_sample/filtered_feature_bc_matrix_folder"
+      Path to the folder with feature-barcode matrix from Cell Ranger ARC Count/Aggregate
+      experiment in MEX format. The rows consist of all the gene and peak features
+      concatenated together and the columns are restricted to those barcodes that are
+      identified as cells.
+    'sd:upstreamSource': "sc_arc_sample/filtered_feature_bc_matrix_folder"
     'sd:localLabel': true
 
   atac_fragments_file:
     type: File
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ARC Count Experiment"
+    label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
       Count and barcode information for every ATAC fragment observed in
       the experiment in TSV format.
-    'sd:upstreamSource': "sc_arc_count_sample/atac_fragments_file"
+    'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
     'sd:localLabel': true
 
   annotation_gtf_file:
     type: File
-    label: "Cell Ranger ARC Count Experiment"
+    label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
       GTF annotation file that includes refGene and mitochondrial DNA annotations.
-    'sd:upstreamSource': "sc_arc_count_sample/genome_indices/genome_indices/annotation_gtf"
+    'sd:upstreamSource': "sc_arc_sample/genome_indices/genome_indices/annotation_gtf"
+    'sd:localLabel': true
+
+  aggregation_metadata:
+    type: File?
+    label: "Cell Ranger ARC Count/Aggregate Experiment"
+    doc: |
+      Path to the metadata TSV/CSV file to set the datasets identities.
+      If --mex points to the Cell Ranger ARC Aggregate outputs, the aggr.csv
+      file can be used. If Cell Ranger ARC Count outputs have been used in
+      --mex, the file should include at least one column - 'library_id' and
+      one row with the alias for Cell Ranger ARC Count experiment.
+    'sd:upstreamSource': "sc_rnaseq_sample/aggregation_metadata"
     'sd:localLabel': true
 
   gex_genotype_cluster_tsv_file:
@@ -82,6 +96,15 @@ inputs:
       Cellurar barcodes file clustered by genotype (ATAC) generated in Souporcell
     'sd:upstreamSource': "genotype_sample/atac_genotype_cluster_tsv_file"
     'sd:localLabel': true
+  
+  conditions_data:
+    type: File?
+    label: "TSV/CSV file to define datasets grouping with 'library_id' and 'condition' columns. Rows order should correspond to the aggregation metadata."
+    doc: |
+      Path to the TSV/CSV file to define datasets grouping. First column -
+      'library_id' with the values provided in the same order as in the
+      correspondent column of the --identity file, second column 'condition'.
+      Default: each dataset is assigned to a separate group.
 
   blacklisted_regions_file:
     type: File?
@@ -108,29 +131,38 @@ inputs:
       advanced: true
 
   gex_minimum_features:
-    type: int?
-    default: 250
+    type: string?
+    default: "250"
     label: "Include cells where at least this many GEX features are detected"
     doc: |
       Include cells where at least this many GEX features are detected.
+      If multiple values provided, each of them will be applied to the
+      correspondent dataset from the --mex input based on the --identity
+      file.
     'sd:layout':
       advanced: true
 
   gex_maximum_features:
-    type: int?
-    default: 5000
+    type: string?
+    default: "5000"
     label: "Include cells with the number of GEX features not bigger than this value"
     doc: |
       Include cells with the number of GEX features not bigger than this value.
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the --mex input based on the --identity file.
+      Default: 5000 (applied to all datasets)
     'sd:layout':
       advanced: true
 
   gex_minimum_umis:
-    type: int?
-    default: 500
+    type: string?
+    default: "500"
     label: "Include cells where at least this many GEX UMIs (transcripts) are detected"
     doc: |
       Include cells where at least this many GEX UMIs (transcripts) are detected.
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the --mex input based on the --identity file.
+      Default: 500 (applied to all datasets)
     'sd:layout':
       advanced: true
 
@@ -154,12 +186,15 @@ inputs:
       advanced: true
 
   minimum_novelty_score:
-    type: float?
-    default: 0.8
+    type: string?
+    default: "0.8"
     label: "Include cells with the novelty score not lower than this value, calculated for GEX as log10(genes)/log10(UMIs)"
     doc: |
-      Include cells with the novelty score not lower than this value
-      calculated for GEX as log10(genes)/log10(UMIs).
+      Include cells with the novelty score not lower than this value, calculated for
+      GEX as log10(genes)/log10(UMIs). If multiple values provided, each of them will
+      be applied to the correspondent dataset from the --mex input based on the
+      --identity file.
+      Default: 0.8 (applied to all datasets)
     'sd:layout':
       advanced: true
 
@@ -176,20 +211,30 @@ inputs:
   gex_high_var_features_count:
     type: int?
     default: 3000
-    label: "Number of highly variable features to detect. Used for datasets integration, scaling, and dimensional reduction"
+    label: "Number of highly variable GEX features to detect. Used for datasets integration, scaling, and dimensional reduction"
     doc: |
-      Number of highly variable features to detect. Used for datasets integration,
-      scaling, and dimensional reduction.
+      Number of highly variable GEX features to detect. Used for GEX datasets
+      integration, scaling, and dimensional reduction.
     'sd:layout':
       advanced: true
 
   gex_dimensionality:
     type: int?
-    default: 50
+    default: 10
     label: "Number of principal components to use in GEX UMAP projection and clustering (from 1 to 50)"
     doc: |
       Number of principal components to use in GEX UMAP projection and clustering
-      (from 1 to 50). Use Elbow plot to adjust this parameter.
+      (from 1 to 50).
+    'sd:layout':
+      advanced: true
+
+  no_sct:
+    type: boolean?
+    default: false
+    label: "Do not use SCTransform when running RNA datasets integration"
+    doc: |
+      Do not use SCTransform when running RNA datasets integration.
+      Use LogNormalize instead.
     'sd:layout':
       advanced: true
 
@@ -203,60 +248,88 @@ inputs:
       advanced: true
 
   atac_minimum_umis:
-    type: int?
-    default: 1000
+    type: string?
+    default: "1000"
     label: "Include cells where at least this many ATAC UMIs (transcripts) are detected"
     doc: |
       Include cells where at least this many ATAC UMIs (transcripts) are detected.
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the --mex input based on the --identity file.
+      Default: 1000 (applied to all datasets)
     'sd:layout':
       advanced: true
 
   maximum_nucl_signal:
-    type: float?
-    default: 4
+    type: string?
+    default: "4"
     label: "Include cells with the nucleosome signal not bigger than this value"
     doc: |
       Include cells with the nucleosome signal not bigger than this value.
       Nucleosome signal quantifies the approximate ratio of mononucleosomal
-      to nucleosome-free fragments.
+      to nucleosome-free fragments. If multiple values provided, each of
+      them will be applied to the correspondent dataset from the --mex input
+      based on the --identity file
+      Default: 4 (applied to all datasets)
     'sd:layout':
       advanced: true
 
   minimum_frip:
-    type: float?
-    default: 0.15
+    type: string?
+    default: "0.15"
     label: "Include cells with the FRiP not lower than this value"
     doc: |
-      Include cells with the FRiP not lower than this value.
+      Include cells with the FRiP not lower than this value. If multiple values
+      provided, each of them will be applied to the correspondent dataset from
+      the --mex input based on the --identity file.
+      Default: 0.15 (applied to all datasets)
     'sd:layout':
       advanced: true
 
   maximum_blacklisted_ratio:
-    type: float?
-    default: 0.05
+    type: string?
+    default: "0.05"
     label: "Include cells with the ratio of reads in genomic blacklist regions not bigger than this value"
     doc: |
       Include cells with the ratio of reads in genomic blacklist regions
-      not bigger than this value.
+      not bigger than this value. If multiple values provided, each of them
+      will be applied to the correspondent dataset from the --mex input based
+      on the --identity file.
+      Default: 0.05 (applied to all datasets)
     'sd:layout':
       advanced: true
 
   call_peaks:
     type: boolean?
     default: false
-    label: "Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count"
+    label: "Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count/Aggregate"
     doc: |
       Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
+      If --mex points to the Cell Ranger ARC Aggregate experiment, peaks will be called for
+      each dataset independently and then combined
+      Default: false
     'sd:layout':
       advanced: true
 
   atac_dimensionality:
     type: int?
-    default: 50
+    default: 10
     label: "Number of principal components to use in ATAC UMAP projection and clustering (from 1 to 50)"
     doc: |
       Number of principal components to use in ATAC UMAP projection and clustering
       (from 1 to 50).
+    'sd:layout':
+      advanced: true
+
+  atac_high_var_features_perc:
+    type: int?
+    default: 75
+    label: "Minimum percentile to set the top most common ATAC features as highly variable"
+    doc: |
+      Minimum percentile to set the top most common ATAC features as highly variable.
+      For example, setting to 5 will use the the top 95% most common among all cells
+      ATAC features as highly variable. Used for ATAC datasets integration, scaling,
+      and dimensional reduction.
+      Default: 75 (use only the top 25% of all common peaks)
     'sd:layout':
       advanced: true
 
@@ -290,7 +363,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Number of cells per dataset (not filtered)'
   
   raw_gex_umi_dnst_plot_png:
@@ -302,7 +375,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'GEX UMI density per cell (not filtered)'
 
   raw_atac_umi_dnst_plot_png:
@@ -314,7 +387,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'ATAC UMI density per cell (not filtered)'
 
   raw_gene_dnst_plot_png:
@@ -326,7 +399,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Gene density per cell (not filtered)'
 
   raw_peak_dnst_plot_png:
@@ -338,7 +411,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Peak density per cell (not filtered)'
 
   raw_bl_cnts_dnst_plot_png:
@@ -350,7 +423,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Density of fraction of reads within blacklisted regions per cell (not filtered)'
 
   raw_gex_atac_umi_corr_plot_png:
@@ -362,20 +435,20 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'GEX vs ATAC UMIs per cell correlation (not filtered)'
 
-  raw_frg_len_hist_png:
-    type: File?
-    outputSource: seurat_wnn_cluster/raw_frg_len_hist_png
-    label: "Fragments Length Histogram (not filtered)"
-    doc: |
-      Fragments Length Histogram (not filtered).
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'QC (not filtered)'
-        Caption: 'Fragments Length Histogram (not filtered)'
+  # raw_frg_len_hist_png:
+  #   type: File?
+  #   outputSource: seurat_wnn_cluster/raw_frg_len_hist_png
+  #   label: "Fragments Length Histogram (not filtered)"
+  #   doc: |
+  #     Fragments Length Histogram (not filtered).
+  #     PNG format
+  #   'sd:visualPlugins':
+  #   - image:
+  #       tab: 'QC (not filtered)'
+  #       Caption: 'Fragments Length Histogram (not filtered)'
 
   raw_gene_umi_corr_plot_png:
     type: File?
@@ -386,7 +459,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Genes vs GEX UMIs per cell correlation (not filtered)'
 
   raw_mito_perc_dnst_plot_png:
@@ -398,8 +471,20 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Density of transcripts mapped to mitochondrial genes per cell (not filtered)'
+
+  raw_miqc_mtrcs_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/raw_miqc_mtrcs_plot_png
+    label: "MiQC prediction of the compromised cells level (not filtered)"
+    doc: |
+      MiQC prediction of the compromised cells level (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'MiQC prediction of the compromised cells level (not filtered)'
 
   raw_nvlt_score_dnst_plot_png:
     type: File?
@@ -410,7 +495,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'Novelty score density per cell (not filtered)'
 
   raw_qc_mtrcs_plot_png:
@@ -422,89 +507,89 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (not filtered)'
+        tab: 'Step 1. Not filtered QC'
         Caption: 'QC metrics densities per cell (not filtered)'
 
-  raw_qc_mtrcs_tsv:
-    type: File?
-    outputSource: seurat_wnn_cluster/raw_qc_mtrcs_tsv
-    label: "QC metrics densities per cell (not filtered)"
-    doc: |
-      QC metrics densities per cell (not filtered).
-      TSV format
-    'sd:visualPlugins':
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'GEX UMI density per cell (not filtered)'
-        xAxisTitle: 'GEX UMIs per cell'
-        yAxisTitle: 'Density'
-        colors: ["#2e8b57"]
-        height: 300
-        data: [$1, $2]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Gene density per cell (not filtered)'
-        xAxisTitle: 'Genes per cell'
-        yAxisTitle: 'Density'
-        colors: ["#191970"]
-        height: 300
-        data: [$3, $4]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of transcripts mapped to mitochondrial genes per cell (not filtered)'
-        xAxisTitle: 'Percentage of transcripts mapped to mitochondrial genes per cell'
-        yAxisTitle: 'Density'
-        colors: ["#ff0000"]
-        height: 300
-        data: [$5, $6]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Novelty score density per cell (not filtered)'
-        xAxisTitle: 'log10 Genes / log10 UMIs per cell'
-        yAxisTitle: 'Density'
-        colors: ["#ffd700"]
-        height: 300
-        data: [$7, $8]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'ATAC UMI density per cell (not filtered)'
-        xAxisTitle: 'ATAC UMIs per cell'
-        yAxisTitle: 'Density'
-        colors: ["#7cfc00"]
-        height: 300
-        data: [$9, $10]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Peak density per cell (not filtered)'
-        xAxisTitle: 'Peaks per cell'
-        yAxisTitle: 'Density'
-        colors: ["#e9967a"]
-        height: 300
-        data: [$11, $12]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of mononucleosomal to nucleosome-free fragments ratio per cell (not filtered)'
-        xAxisTitle: 'Mononucleosomal to nucleosome-free fragments ratio per cell'
-        yAxisTitle: 'Density'
-        colors: ["#00bfff"]
-        height: 300
-        data: [$13, $14]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of FRiP per cell (not filtered)'
-        xAxisTitle: 'Fraction of reads in peaks per cell'
-        yAxisTitle: 'Density'
-        colors: ["#0000ff"]
-        height: 300
-        data: [$15, $16]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of fraction of reads within blacklisted regions per cell (not filtered)'
-        xAxisTitle: 'Fraction of reads within blacklisted regions per cell'
-        yAxisTitle: 'Density'
-        colors: ["#ff1493"]
-        height: 300
-        data: [$17, $18]
+  # raw_qc_mtrcs_tsv:
+  #   type: File?
+  #   outputSource: seurat_wnn_cluster/raw_qc_mtrcs_tsv
+  #   label: "QC metrics densities per cell (not filtered)"
+  #   doc: |
+  #     QC metrics densities per cell (not filtered).
+  #     TSV format
+  #   'sd:visualPlugins':
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'GEX UMI density per cell (not filtered)'
+  #       xAxisTitle: 'GEX UMIs per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#2e8b57"]
+  #       height: 300
+  #       data: [$1, $2]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Gene density per cell (not filtered)'
+  #       xAxisTitle: 'Genes per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#191970"]
+  #       height: 300
+  #       data: [$3, $4]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of transcripts mapped to mitochondrial genes per cell (not filtered)'
+  #       xAxisTitle: 'Percentage of transcripts mapped to mitochondrial genes per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#ff0000"]
+  #       height: 300
+  #       data: [$5, $6]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Novelty score density per cell (not filtered)'
+  #       xAxisTitle: 'log10 Genes / log10 UMIs per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#ffd700"]
+  #       height: 300
+  #       data: [$7, $8]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'ATAC UMI density per cell (not filtered)'
+  #       xAxisTitle: 'ATAC UMIs per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#7cfc00"]
+  #       height: 300
+  #       data: [$9, $10]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Peak density per cell (not filtered)'
+  #       xAxisTitle: 'Peaks per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#e9967a"]
+  #       height: 300
+  #       data: [$11, $12]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of mononucleosomal to nucleosome-free fragments ratio per cell (not filtered)'
+  #       xAxisTitle: 'Mononucleosomal to nucleosome-free fragments ratio per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#00bfff"]
+  #       height: 300
+  #       data: [$13, $14]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of FRiP per cell (not filtered)'
+  #       xAxisTitle: 'Fraction of reads in peaks per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#0000ff"]
+  #       height: 300
+  #       data: [$15, $16]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of fraction of reads within blacklisted regions per cell (not filtered)'
+  #       xAxisTitle: 'Fraction of reads within blacklisted regions per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#ff1493"]
+  #       height: 300
+  #       data: [$17, $18]
 
   fltr_cell_count_plot_png:
     type: File?
@@ -515,7 +600,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Number of cells per dataset (filtered)'
   
   fltr_gex_umi_dnst_plot_png:
@@ -527,7 +612,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'GEX UMI density per cell (filtered)'
 
   fltr_atac_umi_dnst_plot_png:
@@ -539,7 +624,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'ATAC UMI density per cell (filtered)'
 
   fltr_gene_dnst_plot_png:
@@ -551,7 +636,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Gene density per cell (filtered)'
 
   fltr_peak_dnst_plot_png:
@@ -563,7 +648,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Peak density per cell (filtered)'
 
   fltr_bl_cnts_dnst_plot_png:
@@ -575,7 +660,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Density of fraction of reads within blacklisted regions per cell (filtered)'
 
   fltr_gex_atac_umi_corr_plot_png:
@@ -587,20 +672,20 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'GEX vs ATAC UMIs per cell correlation (filtered)'
 
-  fltr_frg_len_hist_png:
-    type: File?
-    outputSource: seurat_wnn_cluster/fltr_frg_len_hist_png
-    label: "Fragments Length Histogram (filtered)"
-    doc: |
-      Fragments Length Histogram (filtered).
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'QC (filtered)'
-        Caption: 'Fragments Length Histogram (filtered)'
+  # fltr_frg_len_hist_png:
+  #   type: File?
+  #   outputSource: seurat_wnn_cluster/fltr_frg_len_hist_png
+  #   label: "Fragments Length Histogram (filtered)"
+  #   doc: |
+  #     Fragments Length Histogram (filtered).
+  #     PNG format
+  #   'sd:visualPlugins':
+  #   - image:
+  #       tab: 'QC (filtered)'
+  #       Caption: 'Fragments Length Histogram (filtered)'
 
   fltr_gene_umi_corr_plot_png:
     type: File?
@@ -611,7 +696,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Genes vs GEX UMIs per cell correlation (filtered)'
 
   fltr_mito_perc_dnst_plot_png:
@@ -623,7 +708,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Density of transcripts mapped to mitochondrial genes per cell (filtered)'
 
   fltr_nvlt_score_dnst_plot_png:
@@ -635,7 +720,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'Novelty score density per cell (filtered)'
 
   fltr_qc_mtrcs_plot_png:
@@ -647,113 +732,113 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'QC (filtered)'
+        tab: 'Step 2. Filtered QC'
         Caption: 'QC metrics densities per cell (filtered)'
 
-  fltr_qc_mtrcs_tsv:
-    type: File?
-    outputSource: seurat_wnn_cluster/fltr_qc_mtrcs_tsv
-    label: "QC metrics densities per cell (filtered)"
-    doc: |
-      QC metrics densities per cell (filtered).
-      TSV format
-    'sd:visualPlugins':
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'GEX UMI density per cell (filtered)'
-        xAxisTitle: 'GEX UMIs per cell'
-        yAxisTitle: 'Density'
-        colors: ["#2e8b57"]
-        height: 300
-        data: [$1, $2]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Gene density per cell (filtered)'
-        xAxisTitle: 'Genes per cell'
-        yAxisTitle: 'Density'
-        colors: ["#191970"]
-        height: 300
-        data: [$3, $4]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of transcripts mapped to mitochondrial genes per cell (filtered)'
-        xAxisTitle: 'Percentage of transcripts mapped to mitochondrial genes per cell'
-        yAxisTitle: 'Density'
-        colors: ["#ff0000"]
-        height: 300
-        data: [$5, $6]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Novelty score density per cell (filtered)'
-        xAxisTitle: 'log10 Genes / log10 UMIs per cell'
-        yAxisTitle: 'Density'
-        colors: ["#ffd700"]
-        height: 300
-        data: [$7, $8]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'ATAC UMI density per cell (filtered)'
-        xAxisTitle: 'ATAC UMIs per cell'
-        yAxisTitle: 'Density'
-        colors: ["#7cfc00"]
-        height: 300
-        data: [$9, $10]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Peak density per cell (filtered)'
-        xAxisTitle: 'Peaks per cell'
-        yAxisTitle: 'Density'
-        colors: ["#e9967a"]
-        height: 300
-        data: [$11, $12]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of mononucleosomal to nucleosome-free fragments ratio per cell (filtered)'
-        xAxisTitle: 'Mononucleosomal to nucleosome-free fragments ratio per cell'
-        yAxisTitle: 'Density'
-        colors: ["#00bfff"]
-        height: 300
-        data: [$13, $14]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of FRiP per cell (filtered)'
-        xAxisTitle: 'Fraction of reads in peaks per cell'
-        yAxisTitle: 'Density'
-        colors: ["#0000ff"]
-        height: 300
-        data: [$15, $16]
-    - scatter:
-        tab: 'QC (interactive)'
-        Title: 'Density of fraction of reads within blacklisted regions per cell (filtered)'
-        xAxisTitle: 'Fraction of reads within blacklisted regions per cell'
-        yAxisTitle: 'Density'
-        colors: ["#ff1493"]
-        height: 300
-        data: [$17, $18]
+  # fltr_qc_mtrcs_tsv:
+  #   type: File?
+  #   outputSource: seurat_wnn_cluster/fltr_qc_mtrcs_tsv
+  #   label: "QC metrics densities per cell (filtered)"
+  #   doc: |
+  #     QC metrics densities per cell (filtered).
+  #     TSV format
+  #   'sd:visualPlugins':
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'GEX UMI density per cell (filtered)'
+  #       xAxisTitle: 'GEX UMIs per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#2e8b57"]
+  #       height: 300
+  #       data: [$1, $2]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Gene density per cell (filtered)'
+  #       xAxisTitle: 'Genes per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#191970"]
+  #       height: 300
+  #       data: [$3, $4]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of transcripts mapped to mitochondrial genes per cell (filtered)'
+  #       xAxisTitle: 'Percentage of transcripts mapped to mitochondrial genes per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#ff0000"]
+  #       height: 300
+  #       data: [$5, $6]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Novelty score density per cell (filtered)'
+  #       xAxisTitle: 'log10 Genes / log10 UMIs per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#ffd700"]
+  #       height: 300
+  #       data: [$7, $8]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'ATAC UMI density per cell (filtered)'
+  #       xAxisTitle: 'ATAC UMIs per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#7cfc00"]
+  #       height: 300
+  #       data: [$9, $10]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Peak density per cell (filtered)'
+  #       xAxisTitle: 'Peaks per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#e9967a"]
+  #       height: 300
+  #       data: [$11, $12]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of mononucleosomal to nucleosome-free fragments ratio per cell (filtered)'
+  #       xAxisTitle: 'Mononucleosomal to nucleosome-free fragments ratio per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#00bfff"]
+  #       height: 300
+  #       data: [$13, $14]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of FRiP per cell (filtered)'
+  #       xAxisTitle: 'Fraction of reads in peaks per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#0000ff"]
+  #       height: 300
+  #       data: [$15, $16]
+  #   - scatter:
+  #       tab: 'QC (interactive)'
+  #       Title: 'Density of fraction of reads within blacklisted regions per cell (filtered)'
+  #       xAxisTitle: 'Fraction of reads within blacklisted regions per cell'
+  #       yAxisTitle: 'Density'
+  #       colors: ["#ff1493"]
+  #       height: 300
+  #       data: [$17, $18]
 
-  ntgr_elbow_plot_png:
+  ntgr_gex_elbow_plot_png:
     type: File?
-    outputSource: seurat_wnn_cluster/ntgr_elbow_plot_png
-    label: "Elbow plot from PCA of filtered integrated/scaled datasets"
+    outputSource: seurat_wnn_cluster/ntgr_gex_elbow_plot_png
+    label: "Elbow plot from GEX PCA of filtered integrated/scaled datasets"
     doc: |
-      Elbow plot from PCA of filtered integrated/scaled datasets.
+      Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality evaluation'
-        Caption: 'Elbow plot from PCA of filtered integrated/scaled datasets'
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'Elbow plot from GEX PCA of filtered integrated/scaled datasets'
 
-  ntgr_pca_plot_png:
+  ntgr_gex_pca_plot_png:
     type: File?
-    outputSource: seurat_wnn_cluster/ntgr_pca_plot_png
-    label: "PCA of filtered integrated/scaled datasets"
+    outputSource: seurat_wnn_cluster/ntgr_gex_pca_plot_png
+    label: "GEX PCA of filtered integrated/scaled datasets"
     doc: |
-      PCA of filtered integrated/scaled datasets.
+      GEX PCA of filtered integrated/scaled datasets.
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Dimensionality evaluation'
-        Caption: 'PCA of filtered integrated/scaled datasets'
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'GEX PCA of filtered integrated/scaled datasets'
   
   clst_gex_umap_res_plot_png:
     type:
@@ -767,8 +852,23 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering'
+        tab: 'Step 4. Clustering'
         Caption: 'Clustered UMAP projected PCA of filtered GEX datasets'
+
+  clst_gex_umap_spl_by_cond_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_wnn_cluster/clst_gex_umap_spl_by_cond_res_plot_png
+    label: "Split by condition clustered UMAP projected PCA of filtered GEX datasets"
+    doc: |
+      Split by condition clustered UMAP projected PCA of filtered GEX datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 4. Clustering'
+        Caption: 'Split by condition clustered UMAP projected PCA of filtered GEX datasets'
 
   clst_atac_umap_res_plot_png:
     type:
@@ -782,8 +882,23 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering'
+        tab: 'Step 4. Clustering'
         Caption: 'Clustered UMAP projected LSI of filtered ATAC datasets'
+
+  clst_atac_umap_spl_by_cond_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_wnn_cluster/clst_atac_umap_spl_by_cond_res_plot_png
+    label: "Split by condition clustered UMAP projected LSI of filtered ATAC datasets"
+    doc: |
+      Split by condition clustered UMAP projected LSI of filtered ATAC datasets.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 4. Clustering'
+        Caption: 'Split by condition clustered UMAP projected LSI of filtered ATAC datasets'
 
   clst_wnn_umap_res_plot_png:
     type:
@@ -797,8 +912,38 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Clustering'
+        tab: 'Step 4. Clustering'
         Caption: 'Clustered UMAP projected WNN'
+
+  clst_wnn_umap_spl_by_cond_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_wnn_cluster/clst_wnn_umap_spl_by_cond_res_plot_png
+    label: "Split by condition clustered UMAP projected WNN"
+    doc: |
+      Split by condition clustered UMAP projected WNN.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 4. Clustering'
+        Caption: 'Split by condition clustered UMAP projected WNN'
+
+  clst_wnn_qc_mtrcs_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: seurat_wnn_cluster/clst_wnn_qc_mtrcs_res_plot_png
+    label: "QC metrics for clustered UMAP projected WNN"
+    doc: |
+      QC metrics for clustered UMAP projected WNN.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 4. Clustering'
+        Caption: 'QC metrics for clustered UMAP projected WNN'
 
   expr_avg_per_clst_res_plot_png:
     type:
@@ -812,7 +957,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Scaled average log normalized gene expression per cluster'
   
   expr_per_clst_cell_res_plot_png:
@@ -827,7 +972,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered datasets'
 
   expr_dnst_per_clst_res_plot_png:
@@ -842,7 +987,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Step 5. Gene expression'
         Caption: 'Log normalized gene expression densities per cluster'
 
   compressed_cellbrowser_config_data:
@@ -969,28 +1114,48 @@ steps:
       feature_bc_matrices_folder: uncompress_feature_bc_matrices/uncompressed
       atac_fragments_file: atac_fragments_file
       annotation_gtf_file: annotation_gtf_file
+      aggregation_metadata: aggregation_metadata
+      conditions_data: conditions_data
       blacklisted_regions_file: blacklisted_regions_file
       barcodes_data: barcodes_data
       metadata_file: prepare_metadata/metadata_file
       gex_minimum_cells: gex_minimum_cells
-      gex_minimum_features: gex_minimum_features
-      gex_maximum_features: gex_maximum_features
-      gex_minimum_umis: gex_minimum_umis
+      gex_minimum_features:
+        source: gex_minimum_features
+        valueFrom: $(split_numbers(self))
+      gex_maximum_features:
+        source: gex_maximum_features
+        valueFrom: $(split_numbers(self))
+      gex_minimum_umis:
+        source: gex_minimum_umis
+        valueFrom: $(split_numbers(self))
       mito_pattern: mito_pattern
       maximum_mito_perc: maximum_mito_perc
-      minimum_novelty_score: minimum_novelty_score
+      minimum_novelty_score:
+        source: minimum_novelty_score
+        valueFrom: $(split_numbers(self))
       atac_minimum_cells: atac_minimum_cells
-      atac_minimum_umis: atac_minimum_umis
-      maximum_nucl_signal: maximum_nucl_signal
-      minimum_frip: minimum_frip
-      maximum_blacklisted_ratio: maximum_blacklisted_ratio
+      atac_minimum_umis:
+        source: atac_minimum_umis
+        valueFrom: $(split_numbers(self))
+      maximum_nucl_signal:
+        source: maximum_nucl_signal
+        valueFrom: $(split_numbers(self))
+      minimum_frip:
+        source: minimum_frip
+        valueFrom: $(split_numbers(self))
+      maximum_blacklisted_ratio:
+        source: maximum_blacklisted_ratio
+        valueFrom: $(split_numbers(self))
       call_peaks: call_peaks
       gex_selected_features:
         source: gex_selected_features
         valueFrom: $(split_features(self))
       gex_high_var_features_count: gex_high_var_features_count
+      no_sct: no_sct
       gex_dimensionality: gex_dimensionality
       atac_dimensionality: atac_dimensionality
+      atac_high_var_features_perc: atac_high_var_features_perc
       resolution:
         source: resolution
         valueFrom: $(split_numbers(self))
@@ -1007,12 +1172,13 @@ steps:
     - raw_peak_dnst_plot_png
     - raw_bl_cnts_dnst_plot_png
     - raw_gex_atac_umi_corr_plot_png
-    - raw_frg_len_hist_png
+    # - raw_frg_len_hist_png
     - raw_gene_umi_corr_plot_png
     - raw_mito_perc_dnst_plot_png
+    - raw_miqc_mtrcs_plot_png
     - raw_nvlt_score_dnst_plot_png
     - raw_qc_mtrcs_plot_png
-    - raw_qc_mtrcs_tsv
+    # - raw_qc_mtrcs_tsv
     - fltr_cell_count_plot_png
     - fltr_gex_umi_dnst_plot_png
     - fltr_atac_umi_dnst_plot_png
@@ -1020,17 +1186,21 @@ steps:
     - fltr_peak_dnst_plot_png
     - fltr_bl_cnts_dnst_plot_png
     - fltr_gex_atac_umi_corr_plot_png
-    - fltr_frg_len_hist_png
+    # - fltr_frg_len_hist_png
     - fltr_gene_umi_corr_plot_png
     - fltr_mito_perc_dnst_plot_png
     - fltr_nvlt_score_dnst_plot_png
     - fltr_qc_mtrcs_plot_png
-    - fltr_qc_mtrcs_tsv
-    - ntgr_elbow_plot_png
-    - ntgr_pca_plot_png
+    # - fltr_qc_mtrcs_tsv
+    - ntgr_gex_elbow_plot_png
+    - ntgr_gex_pca_plot_png
     - clst_gex_umap_res_plot_png
+    - clst_gex_umap_spl_by_cond_res_plot_png
     - clst_atac_umap_res_plot_png
+    - clst_atac_umap_spl_by_cond_res_plot_png
     - clst_wnn_umap_res_plot_png
+    - clst_wnn_umap_spl_by_cond_res_plot_png
+    - clst_wnn_qc_mtrcs_res_plot_png
     - seurat_clst_data_rds
     - expr_avg_per_clst_res_plot_png
     - expr_per_clst_cell_res_plot_png

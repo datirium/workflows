@@ -4,11 +4,17 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
+- class: InitialWorkDirRequirement
+  listing:
+  - entryname: dummy_metadata.csv
+    entry: |
+      library_id
+      Experiment
 
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat-wnn:v0.0.2
+  dockerPull: biowardrobe2/seurat-wnn:v0.0.3
 
 
 inputs:
@@ -18,10 +24,10 @@ inputs:
     inputBinding:
       prefix: "--mex"
     doc: |
-      Path to the folder with feature-barcode matrix from Cell Ranger ARC Count
-      in MEX format. The rows consist of all the gene and peak features concatenated
-      together and the columns are restricted to those barcodes that are identified
-      as cells.
+      Path to the folder with feature-barcode matrix from Cell Ranger ARC Count/Aggregate
+      experiment in MEX format. The rows consist of all the gene and peak features
+      concatenated together and the columns are restricted to those barcodes that are
+      identified as cells.
 
   atac_fragments_file:
     type: File
@@ -40,6 +46,37 @@ inputs:
     doc: |
       Path to the genome annotation file in GTF format
 
+  aggregation_metadata:
+    type: File?
+    doc: |
+      Path to the metadata TSV/CSV file to set the datasets identities.
+      If --mex points to the Cell Ranger ARC Aggregate outputs, the aggr.csv
+      file can be used. If Cell Ranger ARC Count outputs have been used in
+      --mex, the file should include at least one column - 'library_id' and
+      one row with the alias for Cell Ranger ARC Count experiment.
+
+  conditions_data:
+    type: File?
+    inputBinding:
+      prefix: "--condition"
+    doc: |
+      Path to the TSV/CSV file to define datasets grouping. First column -
+      'library_id' with the values provided in the same order as in the
+      correspondent column of the --identity file, second column 'condition'.
+      Default: each dataset is assigned to a separate group.
+
+  metadata_file:
+    type: File?
+    inputBinding:
+      prefix: "--metadata"
+    doc: |
+      Path to the TSV/CSV file to optionally extend cells metadata with categorical
+      values using cells barcodes. First column - 'barcode' should include cells
+      barcodes that correspond to the data provided in --mex. Values from
+      all other columns will be added as extra metadata columns prefixed
+      with 'custom_'. Values for missing barcodes will be set to 'Unknown'.
+      Default: no extra cells metadata is added
+
   blacklisted_regions_file:
     type: File?
     inputBinding:
@@ -57,18 +94,6 @@ inputs:
       matrix to include only selected cells.
       Default: use all cells.
 
-  metadata_file:
-    type: File?
-    inputBinding:
-      prefix: "--metadata"
-    doc: |
-      Path to the TSV/CSV file to optionally extend cells metadata with
-      categorical values. First column - 'barcode' should include cells
-      barcodes that correspond to the data provided in --mex. Values from
-      all other columns will be added as extra metadata columns prefixed
-      with 'custom_'. Values for missing barcodes will be set to 'Unknown'.
-      Default: no extra cells metadata is added
-
   gex_minimum_cells:
     type: int?
     inputBinding:
@@ -78,28 +103,44 @@ inputs:
       Default: 5
 
   gex_minimum_features:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--mingenes"
     doc: |
       Include cells where at least this many GEX features are detected.
-      Default: 250
+      If multiple values provided, each of them will be applied to the
+      correspondent dataset from the --mex input based on the --identity
+      file.
+      Default: 250 (applied to all datasets)
 
   gex_maximum_features:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--maxgenes"
     doc: |
       Include cells with the number of GEX features not bigger than this value.
-      Default: 5000
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the --mex input based on the --identity file.
+      Default: 5000 (applied to all datasets)
 
   gex_minimum_umis:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--gexminumi"
     doc: |
       Include cells where at least this many GEX UMIs (transcripts) are detected.
-      Default: 500
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the --mex input based on the --identity file.
+      Default: 500 (applied to all datasets)
 
   mito_pattern:
     type: string?
@@ -119,13 +160,18 @@ inputs:
       Default: 5
 
   minimum_novelty_score:
-    type: float?
+    type:
+    - "null"
+    - float
+    - float[]
     inputBinding:
       prefix: "--minnovelty"
     doc: |
-      Include cells with the novelty score not lower than this value
-      calculated for GEX as log10(genes)/log10(UMIs).
-      Default: 0.8
+      Include cells with the novelty score not lower than this value, calculated for
+      GEX as log10(genes)/log10(UMIs). If multiple values provided, each of them will
+      be applied to the correspondent dataset from the --mex input based on the
+      --identity file.
+      Default: 0.8 (applied to all datasets)
 
   atac_minimum_cells:
     type: int?
@@ -136,39 +182,59 @@ inputs:
       Default: 5
 
   atac_minimum_umis:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--atacminumi"
     doc: |
       Include cells where at least this many ATAC UMIs (transcripts) are detected.
-      Default: 1000
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the --mex input based on the --identity file.
+      Default: 1000 (applied to all datasets)
 
   maximum_nucl_signal:
-    type: float?
+    type:
+    - "null"
+    - float
+    - float[]
     inputBinding:
       prefix: "--maxnuclsignal"
     doc: |
       Include cells with the nucleosome signal not bigger than this value.
       Nucleosome signal quantifies the approximate ratio of mononucleosomal
-      to nucleosome-free fragments.
-      Default: 4
+      to nucleosome-free fragments. If multiple values provided, each of
+      them will be applied to the correspondent dataset from the --mex input
+      based on the --identity file
+      Default: 4 (applied to all datasets)
 
   minimum_frip:
-    type: float?
+    type:
+    - "null"
+    - float
+    - float[]
     inputBinding:
       prefix: "--minfrip"
     doc: |
-      Include cells with the FRiP not lower than this value.
-      Default: 0.15
+      Include cells with the FRiP not lower than this value. If multiple values
+      provided, each of them will be applied to the correspondent dataset from
+      the --mex input based on the --identity file.
+      Default: 0.15 (applied to all datasets)
 
   maximum_blacklisted_ratio:
-    type: float?
+    type:
+    - "null"
+    - float
+    - float[]
     inputBinding:
       prefix: "--maxblacklisted"
     doc: |
       Include cells with the ratio of reads in genomic blacklist regions
-      not bigger than this value.
-      Default: 0.05
+      not bigger than this value. If multiple values provided, each of them
+      will be applied to the correspondent dataset from the --mex input based
+      on the --identity file.
+      Default: 0.05 (applied to all datasets)
 
   call_peaks:
     type: boolean?
@@ -176,6 +242,8 @@ inputs:
       prefix: "--callpeaks"
     doc: |
       Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
+      If --mex points to the Cell Ranger ARC Aggregate experiment, peaks will be called for
+      each dataset independently and then combined
       Default: false
 
   gex_selected_features:
@@ -189,23 +257,32 @@ inputs:
       GEX features of interest to evaluate expression.
       Default: None
 
-  gex_high_var_features_count:
-    type: int?
-    inputBinding:
-      prefix: "--highvarcount"
-    doc: |
-      Number of highly variable features to detect. Used for datasets integration,
-      scaling, and dimensional reduction.
-      Default: 3000
-
   gex_dimensionality:
     type: int?
     inputBinding:
       prefix: "--gexndim"
     doc: |
       Number of principal components to use in GEX UMAP projection and clustering
-      (from 1 to 50). Use Elbow plot to adjust this parameter.
-      Default: 50
+      (from 1 to 50).
+      Default: 10
+
+  gex_high_var_features_count:
+    type: int?
+    inputBinding:
+      prefix: "--highvargex"
+    doc: |
+      Number of highly variable GEX features to detect. Used for GEX datasets
+      integration, scaling, and dimensional reduction.
+      Default: 3000
+
+  no_sct:
+    type: boolean?
+    inputBinding:
+      prefix: "--nosct"
+    doc: |
+      Do not use SCTransform when running RNA datasets integration.
+      Use LogNormalize instead.
+      Default: false
 
   atac_dimensionality:
     type: int?
@@ -213,8 +290,19 @@ inputs:
       prefix: "--atacndim"
     doc: |
       Number of principal components to use in ATAC UMAP projection and clustering
-      (from 1 to 50). Use Elbow plot to adjust this parameter.
-      Default: 50
+      (from 1 to 50).
+      Default: 10
+
+  atac_high_var_features_perc:
+    type: int?
+    inputBinding:
+      prefix: "--highvaratac"
+    doc: |
+      Minimum percentile to set the top most common ATAC features as highly variable.
+      For example, setting to 5 will use the the top 95% most common among all cells
+      ATAC features as highly variable. Used for ATAC datasets integration, scaling,
+      and dimensional reduction.
+      Default: 75 (use only the top 25% of all common peaks)
 
   resolution:
     type:
@@ -225,7 +313,7 @@ inputs:
       prefix: "--resolution"
     doc: |
       Clustering resolution. Can be set as an array.
-      Default: 0.3
+      Default: 0.3, 0.5, 1.0
 
   export_pdf_plots:
     type: boolean?
@@ -374,21 +462,21 @@ outputs:
       GEX vs ATAC UMIs per cell correlation (not filtered).
       PDF format
 
-  raw_frg_len_hist_png:
-    type: File?
-    outputBinding:
-      glob: "*_raw_frg_len_hist.png"
-    doc: |
-      Fragments Length Histogram (not filtered).
-      PNG format
+  # raw_frg_len_hist_png:
+  #   type: File?
+  #   outputBinding:
+  #     glob: "*_raw_frg_len_hist.png"
+  #   doc: |
+  #     Fragments Length Histogram (not filtered).
+  #     PNG format
 
-  raw_frg_len_hist_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_frg_len_hist.pdf"
-    doc: |
-      Fragments Length Histogram (not filtered).
-      PDF format
+  # raw_frg_len_hist_pdf:
+  #   type: File?
+  #   outputBinding:
+  #     glob: "*_raw_frg_len_hist.pdf"
+  #   doc: |
+  #     Fragments Length Histogram (not filtered).
+  #     PDF format
 
   raw_gene_umi_corr_plot_png:
     type: File?
@@ -420,6 +508,22 @@ outputs:
       glob: "*_raw_mito_perc_dnst.pdf"
     doc: |
       Density of transcripts mapped to mitochondrial genes per cell (not filtered).
+      PDF format
+
+  raw_miqc_mtrcs_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_miqc_mtrcs.png"
+    doc: |
+      MiQC prediction of the compromised cells level (not filtered).
+      PNG format
+
+  raw_miqc_mtrcs_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_miqc_mtrcs.pdf"
+    doc: |
+      MiQC prediction of the compromised cells level (not filtered).
       PDF format
 
   raw_nvlt_score_dnst_plot_png:
@@ -454,13 +558,13 @@ outputs:
       QC metrics densities per cell (not filtered).
       PDF format
 
-  raw_qc_mtrcs_tsv:
-    type: File?
-    outputBinding:
-      glob: "*_raw_qc_mtrcs.tsv"
-    doc: |
-      QC metrics densities per cell (not filtered).
-      TSV format
+  # raw_qc_mtrcs_tsv:
+  #   type: File?
+  #   outputBinding:
+  #     glob: "*_raw_qc_mtrcs.tsv"
+  #   doc: |
+  #     QC metrics densities per cell (not filtered).
+  #     TSV format
 
   fltr_cell_count_plot_png:
     type: File?
@@ -574,21 +678,21 @@ outputs:
       GEX vs ATAC UMIs per cell correlation (filtered).
       PDF format
 
-  fltr_frg_len_hist_png:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_frg_len_hist.png"
-    doc: |
-      Fragments Length Histogram (filtered).
-      PNG format
+  # fltr_frg_len_hist_png:
+  #   type: File?
+  #   outputBinding:
+  #     glob: "*_fltr_frg_len_hist.png"
+  #   doc: |
+  #     Fragments Length Histogram (filtered).
+  #     PNG format
 
-  fltr_frg_len_hist_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_frg_len_hist.pdf"
-    doc: |
-      Fragments Length Histogram (filtered).
-      PDF format
+  # fltr_frg_len_hist_pdf:
+  #   type: File?
+  #   outputBinding:
+  #     glob: "*_fltr_frg_len_hist.pdf"
+  #   doc: |
+  #     Fragments Length Histogram (filtered).
+  #     PDF format
 
   fltr_gene_umi_corr_plot_png:
     type: File?
@@ -620,6 +724,22 @@ outputs:
       glob: "*_fltr_mito_perc_dnst.pdf"
     doc: |
       Density of transcripts mapped to mitochondrial genes per cell (filtered).
+      PDF format
+
+  fltr_miqc_mtrcs_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_miqc_mtrcs.png"
+    doc: |
+      MiQC prediction of the compromised cells level (filtered).
+      PNG format
+
+  fltr_miqc_mtrcs_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_miqc_mtrcs.pdf"
+    doc: |
+      MiQC prediction of the compromised cells level (filtered).
       PDF format
 
   fltr_nvlt_score_dnst_plot_png:
@@ -654,44 +774,44 @@ outputs:
       QC metrics densities per cell (filtered).
       PDF format
 
-  fltr_qc_mtrcs_tsv:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_qc_mtrcs.tsv"
-    doc: |
-      QC metrics densities per cell (filtered).
-      TSV format
+  # fltr_qc_mtrcs_tsv:
+  #   type: File?
+  #   outputBinding:
+  #     glob: "*_fltr_qc_mtrcs.tsv"
+  #   doc: |
+  #     QC metrics densities per cell (filtered).
+  #     TSV format
 
-  ntgr_elbow_plot_png:
+  ntgr_gex_elbow_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntgr_elbow.png"
+      glob: "*_ntgr_gex_elbow.png"
     doc: |
-      Elbow plot from PCA of filtered integrated/scaled datasets.
+      Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PNG format
 
-  ntgr_elbow_plot_pdf:
+  ntgr_gex_elbow_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_ntgr_elbow.pdf"
+      glob: "*_ntgr_gex_elbow.pdf"
     doc: |
-      Elbow plot from PCA of filtered integrated/scaled datasets.
+      Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PDF format
 
-  ntgr_pca_plot_png:
+  ntgr_gex_pca_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntgr_pca.png"
+      glob: "*_ntgr_gex_pca.png"
     doc: |
-      PCA of filtered integrated/scaled datasets.
+      GEX PCA of filtered integrated/scaled datasets.
       PNG format
 
-  ntgr_pca_plot_pdf:
+  ntgr_gex_pca_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_ntgr_pca.pdf"
+      glob: "*_ntgr_gex_pca.pdf"
     doc: |
-      PCA of filtered integrated/scaled datasets.
+      GEX PCA of filtered integrated/scaled datasets.
       PDF format
 
   clst_gex_umap_res_plot_png:
@@ -716,6 +836,28 @@ outputs:
       Clustered UMAP projected PCA of filtered GEX datasets.
       PDF format
 
+  clst_gex_umap_spl_by_cond_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_gex_umap_spl_by_cond_res_*.png"
+    doc: |
+      Split by condition clustered UMAP projected PCA of filtered GEX datasets.
+      PNG format
+
+  clst_gex_umap_spl_by_cond_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_gex_umap_spl_by_cond_res_*.pdf"
+    doc: |
+      Split by condition clustered UMAP projected PCA of filtered GEX datasets.
+      PDF format
+
   clst_atac_umap_res_plot_png:
     type:
     - "null"
@@ -738,6 +880,28 @@ outputs:
       Clustered UMAP projected LSI of filtered ATAC datasets.
       PDF format
 
+  clst_atac_umap_spl_by_cond_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_atac_umap_spl_by_cond_res_*.png"
+    doc: |
+      Split by condition clustered UMAP projected LSI of filtered ATAC datasets.
+      PNG format
+
+  clst_atac_umap_spl_by_cond_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_atac_umap_spl_by_cond_res_*.pdf"
+    doc: |
+      Split by condition clustered UMAP projected LSI of filtered ATAC datasets.
+      PDF format
+
   clst_wnn_umap_res_plot_png:
     type:
     - "null"
@@ -758,6 +922,50 @@ outputs:
       glob: "*_clst_wnn_umap_res_*.pdf"
     doc: |
       Clustered UMAP projected WNN.
+      PDF format
+
+  clst_wnn_umap_spl_by_cond_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_wnn_umap_spl_by_cond_res_*.png"
+    doc: |
+      Split by condition clustered UMAP projected WNN.
+      PNG format
+
+  clst_wnn_umap_spl_by_cond_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_wnn_umap_spl_by_cond_res_*.pdf"
+    doc: |
+      Split by condition clustered UMAP projected WNN.
+      PDF format
+
+  clst_wnn_qc_mtrcs_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_wnn_qc_mtrcs_res_*.png"
+    doc: |
+      QC metrics for clustered UMAP projected WNN.
+      PNG format
+
+  clst_wnn_qc_mtrcs_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_clst_wnn_qc_mtrcs_res_*.pdf"
+    doc: |
+      QC metrics for clustered UMAP projected WNN.
       PDF format
 
   seurat_clst_data_rds:
@@ -863,6 +1071,17 @@ outputs:
 
 
 baseCommand: ["run_seurat_wnn.R"]
+arguments:
+- valueFrom: |
+    ${
+      if (inputs.aggregation_metadata) {
+        return inputs.aggregation_metadata;
+      } else {
+        return runtime.outdir + "/dummy_metadata.csv"
+      }
+    }
+  prefix: "--identity"
+
 
 stdout: seurat_wnn_stdout.log
 stderr: seurat_wnn_stderr.log
@@ -922,15 +1141,21 @@ doc: |
 
 s:about: |
   usage: run_seurat_wnn.R
-        [-h] --mex MEX --fragments FRAGMENTS --annotations ANNOTATIONS
-        [--blacklisted BLACKLISTED] [--barcodes BARCODES] [--metadata METADATA]
-        [--gexmincells GEXMINCELLS] [--mingenes MINGENES] [--maxgenes MAXGENES]
-        [--gexminumi GEXMINUMI] [--mitopattern MITOPATTERN] [--maxmt MAXMT]
-        [--minnovelty MINNOVELTY] [--atacmincells ATACMINCELLS]
-        [--atacminumi ATACMINUMI] [--maxnuclsignal MAXNUCLSIGNAL]
-        [--minfrip MINFRIP] [--maxblacklisted MAXBLACKLISTED] [--callpeaks]
+        [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
+        ANNOTATIONS [--condition CONDITION] [--metadata METADATA]
+        [--blacklisted BLACKLISTED] [--barcodes BARCODES]
+        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES [MINGENES ...]]]
+        [--maxgenes [MAXGENES [MAXGENES ...]]]
+        [--gexminumi [GEXMINUMI [GEXMINUMI ...]]] [--mitopattern MITOPATTERN]
+        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+        [--atacmincells ATACMINCELLS]
+        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+        [--minfrip [MINFRIP [MINFRIP ...]]]
+        [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]] [--callpeaks]
         [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
-        [--highvarcount HIGHVARCOUNT] [--gexndim GEXNDIM] [--atacndim ATACNDIM]
+        [--highvargex HIGHVARGEX] [--gexndim GEXNDIM] [--nosct]
+        [--atacndim ATACNDIM] [--highvaratac HIGHVARATAC]
         [--resolution [RESOLUTION [RESOLUTION ...]]] [--pdf] [--rds]
         [--output OUTPUT] [--threads THREADS]
 
@@ -939,85 +1164,140 @@ s:about: |
   optional arguments:
     -h, --help            show this help message and exit
     --mex MEX             Path to the folder with feature-barcode matrix from
-                          Cell Ranger ARC Count in MEX format. The rows consist
-                          of all the gene and peak features concatenated
-                          together and the columns are restricted to those
-                          barcodes that are identified as cells.
+                          Cell Ranger ARC Count/Aggregate experiment in MEX
+                          format. The rows consist of all the gene and peak
+                          features concatenated together and the columns are
+                          restricted to those barcodes that are identified as
+                          cells.
+    --identity IDENTITY   Path to the metadata TSV/CSV file to set the datasets
+                          identities. If --mex points to the Cell Ranger ARC
+                          Aggregate outputs, the aggr.csv file can be used. If
+                          Cell Ranger ARC Count outputs have been used in --mex,
+                          the file should include at least one column -
+                          'library_id' and one row with the alias for Cell
+                          Ranger ARC Count experiment.
     --fragments FRAGMENTS
                           Count and barcode information for every ATAC fragment
                           observed in the experiment in TSV format. Tbi-index
                           file is required.
     --annotations ANNOTATIONS
                           Path to the genome annotation file in GTF format
+    --condition CONDITION
+                          Path to the TSV/CSV file to define datasets grouping.
+                          First column - 'library_id' with the values provided
+                          in the same order as in the correspondent column of
+                          the --identity file, second column 'condition'.
+                          Default: each dataset is assigned to a separate group.
+    --metadata METADATA   Path to the TSV/CSV file to optionally extend cells
+                          metadata with categorical values using cells barcodes.
+                          First column - 'barcode' should include cells barcodes
+                          that correspond to the data provided in --mex. Values
+                          from all other columns will be added as extra metadata
+                          columns prefixed with 'custom_'. Values for missing
+                          barcodes will be set to 'Unknown'. Default: no extra
+                          cells metadata is added
     --blacklisted BLACKLISTED
                           Path to the blacklisted regions file in BED format
     --barcodes BARCODES   Path to the headerless TSV/CSV file with the list of
                           barcodes to select cells of interest (one barcode per
                           line). Prefilters input feature-barcode matrix to
                           include only selected cells. Default: use all cells.
-    --metadata METADATA   Path to the TSV/CSV file to optionally extend cells
-                          metadata with categorical values. First column -
-                          'barcode' should include cells barcodes that
-                          correspond to the data provided in --mex. Values from
-                          all other columns will be added as extra metadata
-                          columns prefixed with 'custom_'. Values for missing
-                          barcodes will be set to 'Unknown'. Default: no extra
-                          cells metadata is added
     --gexmincells GEXMINCELLS
                           Include only GEX features detected in at least this
-                          many cells. Default: 5
-    --mingenes MINGENES   Include cells where at least this many GEX features
-                          are detected Default: 250
-    --maxgenes MAXGENES   Include cells with the number of GEX features not
-                          bigger than this value. Default: 5000
-    --gexminumi GEXMINUMI
+                          many cells. Default: 5 (applied to all datasets)
+    --mingenes [MINGENES [MINGENES ...]]
+                          Include cells where at least this many GEX features
+                          are detected. If multiple values provided, each of
+                          them will be applied to the correspondent dataset from
+                          the --mex input based on the --identity file. Default:
+                          250 (applied to all datasets)
+    --maxgenes [MAXGENES [MAXGENES ...]]
+                          Include cells with the number of GEX features not
+                          bigger than this value. If multiple values provided,
+                          each of them will be applied to the correspondent
+                          dataset from the --mex input based on the --identity
+                          file. Default: 5000 (applied to all datasets)
+    --gexminumi [GEXMINUMI [GEXMINUMI ...]]
                           Include cells where at least this many GEX UMIs
-                          (transcripts) are detected. Default: 500
+                          (transcripts) are detected. If multiple values
+                          provided, each of them will be applied to the
+                          correspondent dataset from the --mex input based on
+                          the --identity file. Default: 500 (applied to all
+                          datasets)
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial GEX features.
                           Default: '^Mt-'
     --maxmt MAXMT         Include cells with the percentage of GEX transcripts
                           mapped to mitochondrial genes not bigger than this
-                          value. Default: 5
-    --minnovelty MINNOVELTY
+                          value. Default: 5 (applied to all datasets)
+    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for GEX as
-                          log10(genes)/log10(UMIs). Default: 0.8
+                          log10(genes)/log10(UMIs). If multiple values provided,
+                          each of them will be applied to the correspondent
+                          dataset from the --mex input based on the --identity
+                          file. Default: 0.8 (applied to all datasets)
     --atacmincells ATACMINCELLS
                           Include only ATAC features detected in at least this
-                          many cells. Default: 5
-    --atacminumi ATACMINUMI
+                          many cells. Default: 5 (applied to all datasets)
+    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
                           Include cells where at least this many ATAC UMIs
-                          (transcripts) are detected. Default: 1000
-    --maxnuclsignal MAXNUCLSIGNAL
+                          (transcripts) are detected. If multiple values
+                          provided, each of them will be applied to the
+                          correspondent dataset from the --mex input based on
+                          the --identity file. Default: 1000 (applied to all
+                          datasets)
+    --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
-                          free fragments. Default: 4
-    --minfrip MINFRIP     Include cells with the FRiP not lower than this value.
-                          Default: 0.15
-    --maxblacklisted MAXBLACKLISTED
+                          free fragments. If multiple values provided, each of
+                          them will be applied to the correspondent dataset from
+                          the --mex input based on the --identity file Default:
+                          4 (applied to all datasets)
+    --minfrip [MINFRIP [MINFRIP ...]]
+                          Include cells with the FRiP not lower than this value.
+                          If multiple values provided, each of them will be
+                          applied to the correspondent dataset from the --mex
+                          input based on the --identity file. Default: 0.15
+                          (applied to all datasets)
+    --maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]
                           Include cells with the ratio of reads in genomic
-                          blacklist regions not bigger than this value. Default:
-                          0.05
+                          blacklist regions not bigger than this value. If
+                          multiple values provided, each of them will be applied
+                          to the correspondent dataset from the --mex input
+                          based on the --identity file. Default: 0.05 (applied
+                          to all datasets)
     --callpeaks           Call peaks with MACS2 instead of those that are
-                          provided by Cell Ranger ARC Count. Default: false
+                          provided by Cell Ranger ARC Count. If --mex points to
+                          the Cell Ranger ARC Aggregate experiment, peaks will
+                          be called for each dataset independently and then
+                          combined Default: false
     --gexfeatures [GEXFEATURES [GEXFEATURES ...]]
                           GEX features of interest to evaluate expression.
                           Default: None
-    --highvarcount HIGHVARCOUNT
-                          Number of highly variable features to detect. Used for
-                          datasets integration, scaling, and dimensional
+    --highvargex HIGHVARGEX
+                          Number of highly variable GEX features to detect. Used
+                          for GEX datasets integration, scaling, and dimensional
                           reduction. Default: 3000
-    --gexndim GEXNDIM     Number of principal components to use in GEX UMAP
-                          projection and clustering (from 1 to 50). Use Elbow
-                          plot to adjust this parameter. Default: 50
-    --atacndim ATACNDIM   Number of principal components to use in ATAC UMAP
-                          projection and clustering (from 1 to 50). Use Elbow
-                          plot to adjust this parameter. Default: 50
+    --gexndim GEXNDIM     Dimensionality to use in GEX UMAP projection and
+                          clustering (from 1 to 50). Default: 10
+    --nosct               Do not use SCTransform when running RNA datasets
+                          integration. Use LogNormalize instead. Default: false
+    --atacndim ATACNDIM   Dimensionality to use in ATAC UMAP projection and
+                          clustering (from 2 to 50). The first LSI dimension
+                          will be always excluded. Default: 10
+    --highvaratac HIGHVARATAC
+                          Minimum percentile to set the top most common ATAC
+                          features as highly variable. For example, setting to 5
+                          will use the the top 95 percent most common among all
+                          cells ATAC features as highly variable. Used for ATAC
+                          datasets integration, scaling, and dimensional
+                          reduction. Default: 75 (use only the top 25 percent of
+                          all common peaks)
     --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution. Can be set as an array.
-                          Default: 0.3
+                          Default: 0.3, 0.5, 1.0
     --pdf                 Export plots in PDF. Default: false
     --rds                 Save Seurat data to RDS file. Default: false
     --output OUTPUT       Output prefix. Default: ./seurat
