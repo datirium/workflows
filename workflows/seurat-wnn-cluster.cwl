@@ -78,7 +78,7 @@ inputs:
       file can be used. If Cell Ranger ARC Count outputs have been used in
       --mex, the file should include at least one column - 'library_id' and
       one row with the alias for Cell Ranger ARC Count experiment.
-    'sd:upstreamSource': "sc_rnaseq_sample/aggregation_metadata"
+    'sd:upstreamSource': "sc_arc_sample/aggregation_metadata"
     'sd:localLabel': true
 
   gex_genotype_cluster_tsv_file:
