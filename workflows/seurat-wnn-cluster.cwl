@@ -58,7 +58,7 @@ inputs:
     doc: |
       Count and barcode information for every ATAC fragment observed in
       the experiment in TSV format.
-    'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
+    'sd:upstreamSource': "sc_arc_sample/atac_fragments_aggr_file"
     'sd:localLabel': true
 
   annotation_gtf_file:
