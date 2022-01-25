@@ -15,7 +15,7 @@ requirements:
     ${
       var entry = "library_id,atac_fragments,per_barcode_metrics,gex_molecule_info\n"
       for (var i=0; i < inputs.gex_molecule_info_h5.length; i++){
-        entry += get_label(i) + "," + inputs.atac_fragments_file[i].path + "," + inputs.barcode_metrics_report[i].path + "," + inputs.gex_molecule_info_h5[i].path + "\n"
+        entry += get_label(i) + "," + inputs.atac_fragments_file_from_count[i].path + "," + inputs.barcode_metrics_report[i].path + "," + inputs.gex_molecule_info_h5[i].path + "\n"
       }
       return [{
         "entry": entry,
@@ -31,7 +31,7 @@ hints:
 
 inputs:
 
-  atac_fragments_file:
+  atac_fragments_file_from_count:
     type: File[]
     secondaryFiles:
     - .tbi

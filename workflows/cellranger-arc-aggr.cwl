@@ -39,7 +39,7 @@ inputs:
     doc: "Molecule-level information from individual runs of cellranger-arc count"
     'sd:upstreamSource': "sc_rnaseq_sample/gex_molecule_info_h5"
 
-  atac_fragments_file:
+  atac_fragments_file_from_count:
     type: File[]
     secondaryFiles:
     - .tbi
@@ -108,7 +108,7 @@ outputs:
     doc: |
       Aggregated run summary metrics in CSV format
 
-  atac_fragments_aggr_file:
+  atac_fragments_file:
     type: File
     outputSource: aggregate_counts/atac_fragments_file
     label: "Aggregated count and barcode information"
@@ -228,7 +228,7 @@ steps:
   aggregate_counts:
     run: ../tools/cellranger-arc-aggr.cwl
     in:
-      atac_fragments_file: atac_fragments_file
+      atac_fragments_file_from_count: atac_fragments_file_from_count
       barcode_metrics_report: barcode_metrics_report
       gex_molecule_info_h5: gex_molecule_info_h5
       gem_well_labels: gem_well_labels
