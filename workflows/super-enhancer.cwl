@@ -136,13 +136,28 @@ outputs:
     format: "http://edamontology.org/format_3004"
     label: "Super-enhancers"
     doc: "Super-enhancers bigBed file"
-    outputSource: bed_to_bigbed/bigbed_file
+    outputSource: super_enhancers_bed_to_bigbed/bigbed_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
         name: "Super-enhancers"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  all_enhancers_bigbed_file:
+    type: File
+    format: "http://edamontology.org/format_3004"
+    label: "All enhancers"
+    doc: "All enhancers bigBed file"
+    outputSource: all_enhancers_bed_to_bigbed/bigbed_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "All enhancers"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -213,6 +228,7 @@ steps:
       tss_distance: tss_exclusion_zone_size
     out:
     - plot_points_pic
+    - gateway_enhancers_bed
     - gateway_super_enhancers_bed
     - super_enhancers_table
     - stitched_enhancer_region_map
@@ -228,7 +244,7 @@ steps:
     out:
     - sorted_file
 
-  bed_to_bigbed:
+  super_enhancers_bed_to_bigbed:
     run: ../tools/ucsc-bedtobigbed.cwl
     in:
       input_bed: sort_super_enhancers_bed/sorted_file
@@ -237,6 +253,28 @@ steps:
       chrom_length_file: chrom_length_file
       output_filename:
         source: sort_super_enhancers_bed/sorted_file
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
+    out:
+    - bigbed_file
+
+  sort_all_enhancers_bed:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: run_rose/gateway_enhancers_bed
+      key:
+        default: ["1,1","2,2n","3,3n"]
+    out:
+    - sorted_file
+
+  all_enhancers_bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
+    in:
+      input_bed: sort_all_enhancers_bed/sorted_file
+      bed_type:
+        default: "bed3+3"
+      chrom_length_file: chrom_length_file
+      output_filename:
+        source: sort_all_enhancers_bed/sorted_file
         valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
     out:
     - bigbed_file
