@@ -115,6 +115,16 @@ inputs:
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
+  q_value:
+    type: float?
+    default: 0.05
+    'sd:layout':
+      advanced: true
+    label: "Minimum FDR (q-value) cutoff for peak detection"
+    doc: |
+      Minimum FDR (q-value) cutoff for peak detection. -q, and
+      -p are mutually exclusive.
+
   promoter_dist:
     type: int?
     default: 1000
@@ -593,8 +603,7 @@ steps:
         valueFrom: $(!self)
       keep_dup:
         default: auto
-      q_value:
-        default: 0.05
+      q_value: q_value
       format_mode:
         default: BAM
       buffer_size:
