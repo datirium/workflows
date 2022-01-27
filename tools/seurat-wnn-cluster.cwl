@@ -209,6 +209,21 @@ inputs:
       based on the --identity file
       Default: 4 (applied to all datasets)
 
+  minimum_tss_enrich:
+    type:
+    - "null"
+    - float
+    - float[]
+    inputBinding:
+      prefix: "--mintssenrich"
+    doc: |
+      Include cells with the TSS enrichment score not lower than this value.
+      Score is calculated based on the ratio of fragments centered at the TSS
+      to fragments in TSS-flanking regions. If multiple values provided, each
+      of them will be applied to the correspondent dataset from the --mex input
+      based on the --identity file.
+      Default: 2 (applied to all datasets)
+
   minimum_frip:
     type:
     - "null"
@@ -284,6 +299,15 @@ inputs:
       Use LogNormalize instead.
       Default: false
 
+  skip_miqc:
+    type: boolean?
+    inputBinding:
+      prefix: "--skipmiqc"
+    doc: |
+      Skip threshold prediction for the percentage of transcripts
+      mapped to mitochondrial genes (do not run MiQC).
+      Default: false
+
   atac_dimensionality:
     type: int?
     inputBinding:
@@ -331,6 +355,14 @@ inputs:
       Save Seurat data to RDS file.
       Default: false
 
+  verbose:
+    type: boolean?
+    inputBinding:
+      prefix: "--verbose"
+    doc: |
+      Print debug information.
+      Default: false
+
   output_prefix:
     type: string?
     inputBinding:
@@ -339,12 +371,21 @@ inputs:
       Output prefix.
       Default: ./seurat
 
+  memory:
+    type: int?
+    inputBinding:
+      prefix: "--memory"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Default: 32
+
   threads:
     type: int?
     inputBinding:
-      prefix: "--threads"
+      prefix: "--cpus"
     doc: |
-      Threads number
+      Number of cores/cpus to use.
       Default: 1
 
 
@@ -462,21 +503,37 @@ outputs:
       GEX vs ATAC UMIs per cell correlation (not filtered).
       PDF format
 
-  # raw_frg_len_hist_png:
-  #   type: File?
-  #   outputBinding:
-  #     glob: "*_raw_frg_len_hist.png"
-  #   doc: |
-  #     Fragments Length Histogram (not filtered).
-  #     PNG format
+  raw_tss_enrch_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_tss_enrch.png"
+    doc: |
+      TSS Enrichment Score (not filtered).
+      PNG format
 
-  # raw_frg_len_hist_pdf:
-  #   type: File?
-  #   outputBinding:
-  #     glob: "*_raw_frg_len_hist.pdf"
-  #   doc: |
-  #     Fragments Length Histogram (not filtered).
-  #     PDF format
+  raw_tss_enrch_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_tss_enrch.pdf"
+    doc: |
+      TSS Enrichment Score (not filtered).
+      PDF format
+
+  raw_frg_len_hist_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_frg_len_hist.png"
+    doc: |
+      Fragments Length Histogram (not filtered).
+      PNG format
+
+  raw_frg_len_hist_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_frg_len_hist.pdf"
+    doc: |
+      Fragments Length Histogram (not filtered).
+      PDF format
 
   raw_gene_umi_corr_plot_png:
     type: File?
@@ -678,21 +735,37 @@ outputs:
       GEX vs ATAC UMIs per cell correlation (filtered).
       PDF format
 
-  # fltr_frg_len_hist_png:
-  #   type: File?
-  #   outputBinding:
-  #     glob: "*_fltr_frg_len_hist.png"
-  #   doc: |
-  #     Fragments Length Histogram (filtered).
-  #     PNG format
+  fltr_tss_enrch_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_tss_enrch.png"
+    doc: |
+      TSS Enrichment Score (filtered).
+      PNG format
 
-  # fltr_frg_len_hist_pdf:
-  #   type: File?
-  #   outputBinding:
-  #     glob: "*_fltr_frg_len_hist.pdf"
-  #   doc: |
-  #     Fragments Length Histogram (filtered).
-  #     PDF format
+  fltr_tss_enrch_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_tss_enrch.pdf"
+    doc: |
+      TSS Enrichment Score (filtered).
+      PDF format
+
+  fltr_frg_len_hist_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_frg_len_hist.png"
+    doc: |
+      Fragments Length Histogram (filtered).
+      PNG format
+
+  fltr_frg_len_hist_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_frg_len_hist.pdf"
+    doc: |
+      Fragments Length Histogram (filtered).
+      PDF format
 
   fltr_gene_umi_corr_plot_png:
     type: File?
@@ -1144,20 +1217,18 @@ s:about: |
         [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
         ANNOTATIONS [--condition CONDITION] [--metadata METADATA]
         [--blacklisted BLACKLISTED] [--barcodes BARCODES]
-        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES [MINGENES ...]]]
-        [--maxgenes [MAXGENES [MAXGENES ...]]]
-        [--gexminumi [GEXMINUMI [GEXMINUMI ...]]] [--mitopattern MITOPATTERN]
-        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-        [--atacmincells ATACMINCELLS]
-        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-        [--minfrip [MINFRIP [MINFRIP ...]]]
-        [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]] [--callpeaks]
-        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
-        [--highvargex HIGHVARGEX] [--gexndim GEXNDIM] [--nosct]
-        [--atacndim ATACNDIM] [--highvaratac HIGHVARATAC]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--pdf] [--rds]
-        [--output OUTPUT] [--threads THREADS]
+        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES ...]]
+        [--maxgenes [MAXGENES ...]] [--gexminumi [GEXMINUMI ...]]
+        [--mitopattern MITOPATTERN] [--maxmt MAXMT]
+        [--minnovelty [MINNOVELTY ...]] [--atacmincells ATACMINCELLS]
+        [--atacminumi [ATACMINUMI ...]] [--maxnuclsignal [MAXNUCLSIGNAL ...]]
+        [--mintssenrich [MINTSSENRICH ...]] [--minfrip [MINFRIP ...]]
+        [--maxblacklisted [MAXBLACKLISTED ...]] [--callpeaks]
+        [--gexfeatures [GEXFEATURES ...]] [--highvargex HIGHVARGEX]
+        [--gexndim GEXNDIM] [--nosct] [--atacndim ATACNDIM]
+        [--highvaratac HIGHVARATAC] [--resolution [RESOLUTION ...]] [--pdf]
+        [--rds] [--verbose] [--skipmiqc] [--output OUTPUT] [--cpus CPUS]
+        [--memory MEMORY]
 
   Runs Seurat Weighted Nearest Neighbor Analysis
 
@@ -1205,19 +1276,19 @@ s:about: |
     --gexmincells GEXMINCELLS
                           Include only GEX features detected in at least this
                           many cells. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES [MINGENES ...]]
+    --mingenes [MINGENES ...]
                           Include cells where at least this many GEX features
                           are detected. If multiple values provided, each of
                           them will be applied to the correspondent dataset from
                           the --mex input based on the --identity file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES [MAXGENES ...]]
+    --maxgenes [MAXGENES ...]
                           Include cells with the number of GEX features not
                           bigger than this value. If multiple values provided,
                           each of them will be applied to the correspondent
                           dataset from the --mex input based on the --identity
                           file. Default: 5000 (applied to all datasets)
-    --gexminumi [GEXMINUMI [GEXMINUMI ...]]
+    --gexminumi [GEXMINUMI ...]
                           Include cells where at least this many GEX UMIs
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
@@ -1230,7 +1301,7 @@ s:about: |
     --maxmt MAXMT         Include cells with the percentage of GEX transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
-    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
+    --minnovelty [MINNOVELTY ...]
                           Include cells with the novelty score not lower than
                           this value, calculated for GEX as
                           log10(genes)/log10(UMIs). If multiple values provided,
@@ -1240,14 +1311,14 @@ s:about: |
     --atacmincells ATACMINCELLS
                           Include only ATAC features detected in at least this
                           many cells. Default: 5 (applied to all datasets)
-    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
+    --atacminumi [ATACMINUMI ...]
                           Include cells where at least this many ATAC UMIs
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the --mex input based on
                           the --identity file. Default: 1000 (applied to all
                           datasets)
-    --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
+    --maxnuclsignal [MAXNUCLSIGNAL ...]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
@@ -1255,13 +1326,21 @@ s:about: |
                           them will be applied to the correspondent dataset from
                           the --mex input based on the --identity file Default:
                           4 (applied to all datasets)
-    --minfrip [MINFRIP [MINFRIP ...]]
+    --mintssenrich [MINTSSENRICH ...]
+                          Include cells with the TSS enrichment score not lower
+                          than this value. Score is calculated based on the
+                          ratio of fragments centered at the TSS to fragments in
+                          TSS-flanking regions. If multiple values provided,
+                          each of them will be applied to the correspondent
+                          dataset from the --mex input based on the --identity
+                          file. Default: 2 (applied to all datasets)
+    --minfrip [MINFRIP ...]
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the --mex
                           input based on the --identity file. Default: 0.15
                           (applied to all datasets)
-    --maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]
+    --maxblacklisted [MAXBLACKLISTED ...]
                           Include cells with the ratio of reads in genomic
                           blacklist regions not bigger than this value. If
                           multiple values provided, each of them will be applied
@@ -1273,7 +1352,7 @@ s:about: |
                           the Cell Ranger ARC Aggregate experiment, peaks will
                           be called for each dataset independently and then
                           combined Default: false
-    --gexfeatures [GEXFEATURES [GEXFEATURES ...]]
+    --gexfeatures [GEXFEATURES ...]
                           GEX features of interest to evaluate expression.
                           Default: None
     --highvargex HIGHVARGEX
@@ -1295,10 +1374,16 @@ s:about: |
                           datasets integration, scaling, and dimensional
                           reduction. Default: 75 (use only the top 25 percent of
                           all common peaks)
-    --resolution [RESOLUTION [RESOLUTION ...]]
+    --resolution [RESOLUTION ...]
                           Clustering resolution. Can be set as an array.
                           Default: 0.3, 0.5, 1.0
     --pdf                 Export plots in PDF. Default: false
     --rds                 Save Seurat data to RDS file. Default: false
+    --verbose             Print debug information. Default: false
+    --skipmiqc            Skip threshold prediction for the percentage of
+                          transcripts mapped to mitochondrial genes (do not run
+                          MiQC). Default: false
     --output OUTPUT       Output prefix. Default: ./seurat
-    --threads THREADS     Threads. Default: 1
+    --cpus CPUS           Number of cores/cpus to use. Default: 1
+    --memory MEMORY       Maximum memory in GB allowed to be shared between the
+                          workers when using multiple --cpus. Default: 32

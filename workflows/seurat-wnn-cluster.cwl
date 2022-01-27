@@ -238,6 +238,17 @@ inputs:
     'sd:layout':
       advanced: true
 
+  skip_miqc:
+    type: boolean?
+    default: false
+    label: "Skip threshold prediction for the percentage of transcripts mapped to mitochondrial genes"
+    doc: |
+      Skip threshold prediction for the percentage of transcripts
+      mapped to mitochondrial genes (do not run MiQC).
+      Default: false
+    'sd:layout':
+      advanced: true
+
   atac_minimum_cells:
     type: int?
     default: 5
@@ -270,6 +281,20 @@ inputs:
       them will be applied to the correspondent dataset from the --mex input
       based on the --identity file
       Default: 4 (applied to all datasets)
+    'sd:layout':
+      advanced: true
+
+  minimum_tss_enrich:
+    type: string?
+    default: "2"
+    label: "Include cells with the TSS enrichment score not lower than this value"
+    doc: |
+      Include cells with the TSS enrichment score not lower than this value.
+      Score is calculated based on the ratio of fragments centered at the TSS
+      to fragments in TSS-flanking regions. If multiple values provided, each
+      of them will be applied to the correspondent dataset from the --mex input
+      based on the --identity file.
+      Default: 2 (applied to all datasets)
     'sd:layout':
       advanced: true
 
@@ -342,12 +367,23 @@ inputs:
     'sd:layout':
       advanced: true
 
+  memory:
+    type: int?
+    default: 32
+    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Default: 32
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
     default: 4
-    label: "Threads number to use"
+    label: "Number of cores/cpus to use"
     doc: |
-      Threads number
+      Number of cores/cpus to use
     'sd:layout':
       advanced: true
 
@@ -438,17 +474,29 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'GEX vs ATAC UMIs per cell correlation (not filtered)'
 
-  # raw_frg_len_hist_png:
-  #   type: File?
-  #   outputSource: seurat_wnn_cluster/raw_frg_len_hist_png
-  #   label: "Fragments Length Histogram (not filtered)"
-  #   doc: |
-  #     Fragments Length Histogram (not filtered).
-  #     PNG format
-  #   'sd:visualPlugins':
-  #   - image:
-  #       tab: 'QC (not filtered)'
-  #       Caption: 'Fragments Length Histogram (not filtered)'
+  raw_tss_enrch_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/raw_tss_enrch_plot_png
+    label: "TSS Enrichment Score (not filtered)"
+    doc: |
+      TSS Enrichment Score (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'TSS Enrichment Score (not filtered)'
+
+  raw_frg_len_hist_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/raw_frg_len_hist_png
+    label: "Fragments Length Histogram (not filtered)"
+    doc: |
+      Fragments Length Histogram (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'Fragments Length Histogram (not filtered)'
 
   raw_gene_umi_corr_plot_png:
     type: File?
@@ -675,17 +723,29 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'GEX vs ATAC UMIs per cell correlation (filtered)'
 
-  # fltr_frg_len_hist_png:
-  #   type: File?
-  #   outputSource: seurat_wnn_cluster/fltr_frg_len_hist_png
-  #   label: "Fragments Length Histogram (filtered)"
-  #   doc: |
-  #     Fragments Length Histogram (filtered).
-  #     PNG format
-  #   'sd:visualPlugins':
-  #   - image:
-  #       tab: 'QC (filtered)'
-  #       Caption: 'Fragments Length Histogram (filtered)'
+  fltr_tss_enrch_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/fltr_tss_enrch_plot_png
+    label: "TSS Enrichment Score (filtered)"
+    doc: |
+      TSS Enrichment Score (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 2. Filtered QC'
+        Caption: 'TSS Enrichment Score (filtered)'
+
+  fltr_frg_len_hist_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/fltr_frg_len_hist_png
+    label: "Fragments Length Histogram (filtered)"
+    doc: |
+      Fragments Length Histogram (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 2. Filtered QC'
+        Caption: 'Fragments Length Histogram (filtered)'
 
   fltr_gene_umi_corr_plot_png:
     type: File?
@@ -1141,6 +1201,9 @@ steps:
       maximum_nucl_signal:
         source: maximum_nucl_signal
         valueFrom: $(split_numbers(self))
+      minimum_tss_enrich:
+        source: minimum_tss_enrich
+        valueFrom: $(split_numbers(self))
       minimum_frip:
         source: minimum_frip
         valueFrom: $(split_numbers(self))
@@ -1153,16 +1216,20 @@ steps:
         valueFrom: $(split_features(self))
       gex_high_var_features_count: gex_high_var_features_count
       no_sct: no_sct
+      skip_miqc: skip_miqc
       gex_dimensionality: gex_dimensionality
       atac_dimensionality: atac_dimensionality
       atac_high_var_features_perc: atac_high_var_features_perc
       resolution:
         source: resolution
         valueFrom: $(split_numbers(self))
+      verbose:
+        default: true
       export_pdf_plots:
         default: false
       export_rds_data:
         default: true
+      memory: memory
       threads: threads
     out:
     - raw_cell_count_plot_png
@@ -1172,7 +1239,8 @@ steps:
     - raw_peak_dnst_plot_png
     - raw_bl_cnts_dnst_plot_png
     - raw_gex_atac_umi_corr_plot_png
-    # - raw_frg_len_hist_png
+    - raw_tss_enrch_plot_png
+    - raw_frg_len_hist_png
     - raw_gene_umi_corr_plot_png
     - raw_mito_perc_dnst_plot_png
     - raw_miqc_mtrcs_plot_png
@@ -1186,7 +1254,8 @@ steps:
     - fltr_peak_dnst_plot_png
     - fltr_bl_cnts_dnst_plot_png
     - fltr_gex_atac_umi_corr_plot_png
-    # - fltr_frg_len_hist_png
+    - fltr_tss_enrch_plot_png
+    - fltr_frg_len_hist_png
     - fltr_gene_umi_corr_plot_png
     - fltr_mito_perc_dnst_plot_png
     - fltr_nvlt_score_dnst_plot_png
