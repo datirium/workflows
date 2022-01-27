@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat-wnn:v0.0.3
+  dockerPull: biowardrobe2/seurat-wnn:v0.0.4
 
 
 inputs:
@@ -296,7 +296,32 @@ inputs:
       prefix: "--nosct"
     doc: |
       Do not use SCTransform when running RNA datasets integration.
-      Use LogNormalize instead.
+      Use LogNormalize instead. Ignored when --mex points to the
+      Cell Ranger ARC Count outputs (single, not aggregated dataset
+      that doesn't require any integration) or --skipgexntrg parameter
+      was applied.
+      Default: false
+
+  skip_gex_ntrg:
+    type: boolean?
+    inputBinding:
+      prefix: "--skipgexntrg"
+    doc: |
+      Do not integrate RNA datasets, use merged data instead.
+      Applied by default if --mex points to the Cell Ranger ARC Count
+      outputs (single, not aggregated dataset that doesn't require any
+      integration).
+      Default: false
+
+  skip_atac_ntrg:
+    type: boolean?
+    inputBinding:
+      prefix: "--skipatacntrg"
+    doc: |
+      Do not integrate ATAC datasets, use merged data instead.
+      Applied by default if --mex pointed to the Cell Ranger ARC Count
+      outputs (single, not aggregated dataset that doesn't require any
+      integration).
       Default: false
 
   skip_miqc:
@@ -1217,18 +1242,22 @@ s:about: |
         [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
         ANNOTATIONS [--condition CONDITION] [--metadata METADATA]
         [--blacklisted BLACKLISTED] [--barcodes BARCODES]
-        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES ...]]
-        [--maxgenes [MAXGENES ...]] [--gexminumi [GEXMINUMI ...]]
-        [--mitopattern MITOPATTERN] [--maxmt MAXMT]
-        [--minnovelty [MINNOVELTY ...]] [--atacmincells ATACMINCELLS]
-        [--atacminumi [ATACMINUMI ...]] [--maxnuclsignal [MAXNUCLSIGNAL ...]]
-        [--mintssenrich [MINTSSENRICH ...]] [--minfrip [MINFRIP ...]]
-        [--maxblacklisted [MAXBLACKLISTED ...]] [--callpeaks]
-        [--gexfeatures [GEXFEATURES ...]] [--highvargex HIGHVARGEX]
-        [--gexndim GEXNDIM] [--nosct] [--atacndim ATACNDIM]
-        [--highvaratac HIGHVARATAC] [--resolution [RESOLUTION ...]] [--pdf]
-        [--rds] [--verbose] [--skipmiqc] [--output OUTPUT] [--cpus CPUS]
-        [--memory MEMORY]
+        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES [MINGENES ...]]]
+        [--maxgenes [MAXGENES [MAXGENES ...]]]
+        [--gexminumi [GEXMINUMI [GEXMINUMI ...]]] [--mitopattern MITOPATTERN]
+        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+        [--atacmincells ATACMINCELLS]
+        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+        [--minfrip [MINFRIP [MINFRIP ...]]]
+        [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]] [--callpeaks]
+        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
+        [--highvargex HIGHVARGEX] [--gexndim GEXNDIM] [--nosct]
+        [--atacndim ATACNDIM] [--highvaratac HIGHVARATAC]
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--skipgexntrg]
+        [--skipatacntrg] [--pdf] [--rds] [--verbose] [--skipmiqc]
+        [--output OUTPUT] [--cpus CPUS] [--memory MEMORY]
 
   Runs Seurat Weighted Nearest Neighbor Analysis
 
@@ -1276,19 +1305,19 @@ s:about: |
     --gexmincells GEXMINCELLS
                           Include only GEX features detected in at least this
                           many cells. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES ...]
+    --mingenes [MINGENES [MINGENES ...]]
                           Include cells where at least this many GEX features
                           are detected. If multiple values provided, each of
                           them will be applied to the correspondent dataset from
                           the --mex input based on the --identity file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES ...]
+    --maxgenes [MAXGENES [MAXGENES ...]]
                           Include cells with the number of GEX features not
                           bigger than this value. If multiple values provided,
                           each of them will be applied to the correspondent
                           dataset from the --mex input based on the --identity
                           file. Default: 5000 (applied to all datasets)
-    --gexminumi [GEXMINUMI ...]
+    --gexminumi [GEXMINUMI [GEXMINUMI ...]]
                           Include cells where at least this many GEX UMIs
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
@@ -1301,7 +1330,7 @@ s:about: |
     --maxmt MAXMT         Include cells with the percentage of GEX transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
-    --minnovelty [MINNOVELTY ...]
+    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for GEX as
                           log10(genes)/log10(UMIs). If multiple values provided,
@@ -1311,14 +1340,14 @@ s:about: |
     --atacmincells ATACMINCELLS
                           Include only ATAC features detected in at least this
                           many cells. Default: 5 (applied to all datasets)
-    --atacminumi [ATACMINUMI ...]
+    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
                           Include cells where at least this many ATAC UMIs
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the --mex input based on
                           the --identity file. Default: 1000 (applied to all
                           datasets)
-    --maxnuclsignal [MAXNUCLSIGNAL ...]
+    --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
@@ -1326,7 +1355,7 @@ s:about: |
                           them will be applied to the correspondent dataset from
                           the --mex input based on the --identity file Default:
                           4 (applied to all datasets)
-    --mintssenrich [MINTSSENRICH ...]
+    --mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]
                           Include cells with the TSS enrichment score not lower
                           than this value. Score is calculated based on the
                           ratio of fragments centered at the TSS to fragments in
@@ -1334,13 +1363,13 @@ s:about: |
                           each of them will be applied to the correspondent
                           dataset from the --mex input based on the --identity
                           file. Default: 2 (applied to all datasets)
-    --minfrip [MINFRIP ...]
+    --minfrip [MINFRIP [MINFRIP ...]]
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the --mex
                           input based on the --identity file. Default: 0.15
                           (applied to all datasets)
-    --maxblacklisted [MAXBLACKLISTED ...]
+    --maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]
                           Include cells with the ratio of reads in genomic
                           blacklist regions not bigger than this value. If
                           multiple values provided, each of them will be applied
@@ -1352,7 +1381,7 @@ s:about: |
                           the Cell Ranger ARC Aggregate experiment, peaks will
                           be called for each dataset independently and then
                           combined Default: false
-    --gexfeatures [GEXFEATURES ...]
+    --gexfeatures [GEXFEATURES [GEXFEATURES ...]]
                           GEX features of interest to evaluate expression.
                           Default: None
     --highvargex HIGHVARGEX
@@ -1362,7 +1391,11 @@ s:about: |
     --gexndim GEXNDIM     Dimensionality to use in GEX UMAP projection and
                           clustering (from 1 to 50). Default: 10
     --nosct               Do not use SCTransform when running RNA datasets
-                          integration. Use LogNormalize instead. Default: false
+                          integration. Use LogNormalize instead. Ignored when
+                          --mex points to the Cell Ranger ARC Count outputs
+                          (single, not aggregated dataset that doesn't require
+                          any integration) or --skipgexntrg parameter was
+                          applied. Default: false
     --atacndim ATACNDIM   Dimensionality to use in ATAC UMAP projection and
                           clustering (from 2 to 50). The first LSI dimension
                           will be always excluded. Default: 10
@@ -1374,9 +1407,19 @@ s:about: |
                           datasets integration, scaling, and dimensional
                           reduction. Default: 75 (use only the top 25 percent of
                           all common peaks)
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution. Can be set as an array.
                           Default: 0.3, 0.5, 1.0
+    --skipgexntrg         Do not integrate RNA datasets, use merged data
+                          instead. Applied by default if --mex points to the
+                          Cell Ranger ARC Count outputs (single, not aggregated
+                          dataset that doesn't require any integration).
+                          Default: false
+    --skipatacntrg        Do not integrate ATAC datasets, use merged data
+                          instead. Applied by default if --mex pointed to the
+                          Cell Ranger ARC Count outputs (single, not aggregated
+                          dataset that doesn't require any integration).
+                          Default: false
     --pdf                 Export plots in PDF. Default: false
     --rds                 Save Seurat data to RDS file. Default: false
     --verbose             Print debug information. Default: false

@@ -234,7 +234,10 @@ inputs:
     label: "Do not use SCTransform when running RNA datasets integration"
     doc: |
       Do not use SCTransform when running RNA datasets integration.
-      Use LogNormalize instead.
+      Use LogNormalize instead. Ignored when --mex points to the
+      Cell Ranger ARC Count outputs (single, not aggregated dataset
+      that doesn't require any integration) or --skipgexntrg parameter
+      was applied.
     'sd:layout':
       advanced: true
 
@@ -246,6 +249,18 @@ inputs:
       Skip threshold prediction for the percentage of transcripts
       mapped to mitochondrial genes (do not run MiQC).
       Default: false
+    'sd:layout':
+      advanced: true
+
+  skip_gex_ntrg:
+    type: boolean?
+    default: false
+    label: "Do not integrate RNA datasets, use merged data instead"
+    doc: |
+      Do not integrate RNA datasets, use merged data instead.
+      Applied by default if --mex points to the Cell Ranger ARC Count
+      outputs (single, not aggregated dataset that doesn't require any
+      integration).
     'sd:layout':
       advanced: true
 
@@ -332,6 +347,18 @@ inputs:
       If --mex points to the Cell Ranger ARC Aggregate experiment, peaks will be called for
       each dataset independently and then combined
       Default: false
+    'sd:layout':
+      advanced: true
+
+  skip_atac_ntrg:
+    type: boolean?
+    default: false
+    label: "Do not integrate ATAC datasets, use merged data instead"
+    doc: |
+      Do not integrate ATAC datasets, use merged data instead.
+      Applied by default if --mex pointed to the Cell Ranger ARC Count
+      outputs (single, not aggregated dataset that doesn't require any
+      integration).
     'sd:layout':
       advanced: true
 
@@ -1216,6 +1243,8 @@ steps:
         valueFrom: $(split_features(self))
       gex_high_var_features_count: gex_high_var_features_count
       no_sct: no_sct
+      skip_gex_ntrg: skip_gex_ntrg
+      skip_atac_ntrg: skip_atac_ntrg
       skip_miqc: skip_miqc
       gex_dimensionality: gex_dimensionality
       atac_dimensionality: atac_dimensionality
