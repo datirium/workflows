@@ -121,7 +121,7 @@ inputs:
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
-  q_value:
+  min_peak_calling_fdr:
     type: float?
     default: 0.05
     'sd:layout':
@@ -699,7 +699,7 @@ steps:
         valueFrom: $(!self)
       keep_dup:
         default: auto
-      q_value: q_value
+      q_value: min_peak_calling_fdr
       format_mode:
         default: BAMPE
       buffer_size:
