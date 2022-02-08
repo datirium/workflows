@@ -138,6 +138,14 @@ inputs:
     label: "Exclude chromosomes"
     doc: "Space separated list of chromosomes to be excluded"
 
+  do_not_scale:
+    type: boolean?
+    default: false
+    'sd:layout':
+      advanced: true
+    label: "Do not scale genome coverage based on mapped reads number"
+    doc: "When converting BAM to bigWig, the scale will be set to 1 by default"
+
   promoter_dist:
     type: int?
     default: 1000
@@ -736,7 +744,9 @@ steps:
     in:
       bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length
-      mapped_reads_number: get_stat/mapped_reads
+      mapped_reads_number:
+        source: [do_not_scale, get_stat/mapped_reads]
+        valueFrom: $(self[0]?null:self[1])
       fragment_size:
         default: 9
     out: [bigwig_file]
