@@ -185,6 +185,15 @@ inputs:
     'sd:layout':
       advanced: true
 
+  regress_mito_perc:
+    type: boolean?
+    default: false
+    label: "Regress mitochondrial genes expression as a confounding source of variation"
+    doc: |
+      Regress mitochondrial genes expression as a confounding source of variation.
+    'sd:layout':
+      advanced: true
+
   minimum_novelty_score:
     type: string?
     default: "0.8"
@@ -365,10 +374,10 @@ inputs:
   atac_dimensionality:
     type: int?
     default: 10
-    label: "Number of principal components to use in ATAC UMAP projection and clustering (from 1 to 50)"
+    label: "Number of principal components to use in ATAC UMAP projection and clustering (from 2 to 50)"
     doc: |
       Number of principal components to use in ATAC UMAP projection and clustering
-      (from 1 to 50).
+      (from 2 to 50).
     'sd:layout':
       advanced: true
 
@@ -926,7 +935,31 @@ outputs:
     - image:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'GEX PCA of filtered integrated/scaled datasets'
-  
+
+  ntgr_gex_depth_corr_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/ntgr_gex_depth_corr_plot_png
+    label: "GEX correlation plot between depth and reduced dimension components"
+    doc: |
+      GEX correlation plot between depth and reduced dimension components.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'GEX correlation plot between depth and reduced dimension components'
+
+  ntgr_atac_depth_corr_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/ntgr_atac_depth_corr_plot_png
+    label: "ATAC correlation plot between depth and reduced dimension components"
+    doc: |
+      ATAC correlation plot between depth and reduced dimension components.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'ATAC correlation plot between depth and reduced dimension components'
+
   clst_gex_umap_res_plot_png:
     type:
     - "null"
@@ -1218,6 +1251,7 @@ steps:
         valueFrom: $(split_numbers(self))
       mito_pattern: mito_pattern
       maximum_mito_perc: maximum_mito_perc
+      regress_mito_perc: regress_mito_perc
       minimum_novelty_score:
         source: minimum_novelty_score
         valueFrom: $(split_numbers(self))
@@ -1291,6 +1325,8 @@ steps:
     - fltr_qc_mtrcs_plot_png
     # - fltr_qc_mtrcs_tsv
     - ntgr_gex_elbow_plot_png
+    - ntgr_gex_depth_corr_plot_png
+    - ntgr_atac_depth_corr_plot_png
     - ntgr_gex_pca_plot_png
     - clst_gex_umap_res_plot_png
     - clst_gex_umap_spl_by_cond_res_plot_png

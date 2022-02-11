@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat-wnn:v0.0.4
+  dockerPull: biowardrobe2/seurat-wnn:v0.0.5
 
 
 inputs:
@@ -159,6 +159,14 @@ inputs:
       genes not bigger than this value.
       Default: 5
 
+  regress_mito_perc:
+    type: boolean?
+    inputBinding:
+      prefix: "--regressmt"
+    doc: |
+      Regress mitochondrial genes expression as a confounding source of variation.
+      Default: false
+
   minimum_novelty_score:
     type:
     - "null"
@@ -273,13 +281,17 @@ inputs:
       Default: None
 
   gex_dimensionality:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--gexndim"
     doc: |
-      Number of principal components to use in GEX UMAP projection and clustering
-      (from 1 to 50).
-      Default: 10
+      Dimensionality to use in GEX UMAP projection and clustering (from 1 to 50).
+      If single number N is provided, use from 1 to N PCs. If multiple numbers are
+      provided, subset to only selected PCs.
+      Default: from 1 to 10
 
   gex_high_var_features_count:
     type: int?
@@ -334,13 +346,17 @@ inputs:
       Default: false
 
   atac_dimensionality:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--atacndim"
     doc: |
-      Number of principal components to use in ATAC UMAP projection and clustering
-      (from 1 to 50).
-      Default: 10
+      Dimensionality to use in ATAC UMAP projection and clustering (from 2 to 50).
+      If single number N is provided, use from 2 to N LSI components. If multiple
+      numbers are provided, subset to only selected LSI components.
+      Default: from 2 to 10
 
   atac_high_var_features_perc:
     type: int?
@@ -896,6 +912,22 @@ outputs:
       Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PDF format
 
+  ntgr_gex_depth_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ntgr_gex_depth_corr.png"
+    doc: |
+      GEX correlation plot between depth and reduced dimension components.
+      PNG format
+
+  ntgr_gex_depth_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ntgr_gex_depth_corr.pdf"
+    doc: |
+      GEX correlation plot between depth and reduced dimension components.
+      PDF format
+
   ntgr_gex_pca_plot_png:
     type: File?
     outputBinding:
@@ -910,6 +942,22 @@ outputs:
       glob: "*_ntgr_gex_pca.pdf"
     doc: |
       GEX PCA of filtered integrated/scaled datasets.
+      PDF format
+
+  ntgr_atac_depth_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ntgr_atac_depth_corr.png"
+    doc: |
+      ATAC correlation plot between depth and reduced dimension components.
+      PNG format
+
+  atac_gex_depth_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ntgr_atac_depth_corr.pdf"
+    doc: |
+      ATAC correlation plot between depth and reduced dimension components.
       PDF format
 
   clst_gex_umap_res_plot_png:
@@ -1245,7 +1293,8 @@ s:about: |
         [--gexmincells GEXMINCELLS] [--mingenes [MINGENES [MINGENES ...]]]
         [--maxgenes [MAXGENES [MAXGENES ...]]]
         [--gexminumi [GEXMINUMI [GEXMINUMI ...]]] [--mitopattern MITOPATTERN]
-        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+        [--maxmt MAXMT] [--regressmt]
+        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
         [--atacmincells ATACMINCELLS]
         [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
         [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
@@ -1253,8 +1302,8 @@ s:about: |
         [--minfrip [MINFRIP [MINFRIP ...]]]
         [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]] [--callpeaks]
         [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
-        [--highvargex HIGHVARGEX] [--gexndim GEXNDIM] [--nosct]
-        [--atacndim ATACNDIM] [--highvaratac HIGHVARATAC]
+        [--highvargex HIGHVARGEX] [--gexndim [GEXNDIM [GEXNDIM ...]]] [--nosct]
+        [--atacndim [ATACNDIM [ATACNDIM ...]]] [--highvaratac HIGHVARATAC]
         [--resolution [RESOLUTION [RESOLUTION ...]]] [--skipgexntrg]
         [--skipatacntrg] [--pdf] [--rds] [--verbose] [--skipmiqc]
         [--output OUTPUT] [--cpus CPUS] [--memory MEMORY]
@@ -1330,6 +1379,8 @@ s:about: |
     --maxmt MAXMT         Include cells with the percentage of GEX transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
+    --regressmt           Regress mitochondrial genes expression as a
+                          confounding source of variation. Default: false
     --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for GEX as
@@ -1388,17 +1439,24 @@ s:about: |
                           Number of highly variable GEX features to detect. Used
                           for GEX datasets integration, scaling, and dimensional
                           reduction. Default: 3000
-    --gexndim GEXNDIM     Dimensionality to use in GEX UMAP projection and
-                          clustering (from 1 to 50). Default: 10
+    --gexndim [GEXNDIM [GEXNDIM ...]]
+                          Dimensionality to use in GEX UMAP projection and
+                          clustering (from 1 to 50). If single number N is
+                          provided, use from 1 to N PCs. If multiple numbers are
+                          provided, subset to only selected PCs. Default: from 1
+                          to 10
     --nosct               Do not use SCTransform when running RNA datasets
                           integration. Use LogNormalize instead. Ignored when
                           --mex points to the Cell Ranger ARC Count outputs
                           (single, not aggregated dataset that doesn't require
                           any integration) or --skipgexntrg parameter was
                           applied. Default: false
-    --atacndim ATACNDIM   Dimensionality to use in ATAC UMAP projection and
-                          clustering (from 2 to 50). The first LSI dimension
-                          will be always excluded. Default: 10
+    --atacndim [ATACNDIM [ATACNDIM ...]]
+                          Dimensionality to use in ATAC UMAP projection and
+                          clustering (from 2 to 50). If single number N is
+                          provided, use from 2 to N LSI components. If multiple
+                          numbers are provided, subset to only selected LSI
+                          components. Default: from 2 to 10
     --highvaratac HIGHVARATAC
                           Minimum percentile to set the top most common ATAC
                           features as highly variable. For example, setting to 5
