@@ -8,40 +8,104 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.17
+  dockerPull: biowardrobe2/seurat:v0.0.18
 
 
 inputs:
 
-  seurat_data_rds:
+  query_data_rds:
     type: File
     inputBinding:
-      prefix: "--rds"
+      prefix: "--query"
     doc: |
-      Path to the RDS file to load Seurat object from.
-      RDS file produced by run_seurat.R script.
+      Path to the query RDS file to load Seurat object from.
+      RDS file can be produced by run_seurat.R or
+      run_seurat_wnn.R scripts.
+
+  ref_data_rds:
+    type: File?
+    inputBinding:
+      prefix: "--ref"
+    doc: |
+      Path to the reference RDS file for automatic cell type
+      assignment. Either --ref or --ctype parameters should be
+      provided.
 
   cell_type_data:
-    type: File
+    type: File?
     inputBinding:
       prefix: "--ctype"
     doc: |
-      Path to the cell types metadata TSV/CSV file with
-      "cluster" and "type" columns
+      Path to the cell types metadata TSV/CSV file for manual
+      cell type assignment. Either --ref or --ctype parameters
+      should be provided.
 
-  source_column:
+  ref_source_column:
+    type: string?
+    inputBinding:
+      prefix: "--refsource"
+    doc: |
+      Metadata column from the reference RDS file to select
+      labels to transfer. Required if running with --ref
+
+  ref_reduction:
+    type: string?
+    inputBinding:
+      prefix: "--refreduction"
+    doc: |
+      Reduction name from the reference RDS file to transfer
+      embeddings from. Required if running with --ref
+
+  query_source_column:
+    type: string?
+    inputBinding:
+      prefix: "--querysource"
+    doc: |
+      Metadata column from the query RDS file to select clusters
+      for manual cell type assignment. Required if running with
+      --ctype. When running with --ref and --downsample parameter
+      was provided, defines clusters each of which will be dowsampled
+      to a fixed number of cells.
+
+  query_target_column:
     type: string
     inputBinding:
-      prefix: "--source"
+      prefix: "--querytarget"
     doc: |
-      Column name to select clusters for cell type assignment
+      Column to be added to metadata of the query RDS file for
+      automatically or manually assigned cell types.
 
-  target_column:
-    type: string
+  high_var_features_count:
+    type: int?
     inputBinding:
-      prefix: "--target"
+      prefix: "--highvarcount"
     doc: |
-      Column name to store assigned cell types
+      Number of highly variable features to detect. Used for anchors
+      detection between the reference and query datasets.
+      Default: 3000
+
+  regress_mito_perc:
+    type: boolean?
+    inputBinding:
+      prefix: "--regressmt"
+    doc: |
+      Regress the percentage of transcripts mapped to mitochondrial genes
+      as a confounding source of variation. Applied for query dataset only.
+      Default: false
+
+  dimensionality:
+    type:
+    - "null"
+    - int
+    - int[]
+    inputBinding:
+      prefix: "--ndim"
+    doc: |
+      Dimensions from the specified with --refreduction reference dataset's
+      reduction that should be used in label transfer. If single value N is
+      provided, use from 1 to N dimensions. If multiple values are provided,
+      subset to only selected dimensions. Ignored when running with --ctype.
+      Default: from 1 to 30
 
   selected_features:
     type:
@@ -51,9 +115,17 @@ inputs:
     inputBinding:
       prefix: "--features"
     doc: |
-      Features of interest to evaluate expression.
+      Features of interest to highlight.
       Default: None
   
+  verbose:
+    type: boolean?
+    inputBinding:
+      prefix: "--verbose"
+    doc: |
+      Print debug information.
+      Default: false
+
   output_prefix:
     type: string?
     inputBinding:
@@ -70,95 +142,149 @@ inputs:
       Export plots in PDF.
       Default: false
 
+  downsample:
+    type: int?
+    inputBinding:
+      prefix: "--downsample"
+    doc: |
+      Downsample query dataset to include a fixed number of
+      cells per cluster defined by --querysource parameter.
+      Applied only when running automatic cell type assignment
+      with both --ref and --querysource parameters provided.
+      Default: do not downsample
+
+  memory:
+    type: int?
+    inputBinding:
+      prefix: "--memory"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Default: 32
+
   threads:
     type: int?
     inputBinding:
-      prefix: "--threads"
+      prefix: "--cpus"
     doc: |
-      Threads number
+      Number of cores/cpus to use.
       Default: 1
 
 
 outputs:
 
-  umap_ctype_plot_png:
+  ref_elbow_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_ctype.png"
+      glob: "*_ref_elbow.png"
     doc: |
-      Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets.
+      Elbow plot for selected reduction of the reference dataset.
       PNG format
 
-  umap_ctype_plot_pdf:
+  ref_elbow_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_umap_ctype.pdf"
+      glob: "*_ref_elbow.pdf"
     doc: |
-      Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets.
+      Elbow plot for selected reduction of the reference dataset.
       PDF format
 
-  umap_ctype_spl_by_cond_plot_png:
+  ref_depth_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_ctype_spl_by_cond.png"
+      glob: "*_ref_depth_corr.png"
     doc: |
-      Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets
+      Correlation plot between depth and selected reduction
+      dimensions of the reference dataset.
       PNG format
 
-  umap_ctype_spl_by_cond_plot_pdf:
+  ref_depth_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_umap_ctype_spl_by_cond.pdf"
+      glob: "*_ref_depth_corr.pdf"
     doc: |
-      Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets
+      Correlation plot between depth and selected reduction
+      dimensions of the reference dataset.
       PDF format
 
-  expr_avg_per_ctype_plot_png:
+  query_umap_ctype_plot_png:
     type: File?
     outputBinding:
-      glob: "*_avg_per_ctype.png"
+      glob: "*_query_umap_ctype.png"
+    doc: |
+      Query UMAP grouped by cell type.
+      PNG format
+
+  query_umap_ctype_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_query_umap_ctype.pdf"
+    doc: |
+      Query UMAP grouped by cell type.
+      PDF format
+
+  query_umap_ctype_spl_by_cond_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_query_umap_ctype_spl_by_cond.png"
+    doc: |
+      Query UMAP split by condition grouped by cell type.
+      PNG format
+
+  query_umap_ctype_spl_by_cond_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_query_umap_ctype_spl_by_cond.pdf"
+    doc: |
+      Query UMAP split by condition grouped by cell type.
+      PDF format
+
+  query_expr_avg_per_ctype_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_query_expr_avg_per_ctype.png"
+    doc: |
+      Scaled average log normalized gene expression per predicted cell type of query dataset.
+      PNG format
+
+  query_expr_avg_per_ctype_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_query_expr_avg_per_ctype.pdf"
     doc: |
       Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets
-      PNG format
-
-  expr_avg_per_ctype_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_avg_per_ctype.pdf"
-    doc: |
-      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets
       PDF format
 
-  expr_per_ctype_cell_plot_png:
+  query_expr_per_ctype_cell_plot_png:
     type: File?
     outputBinding:
-      glob: "*_per_ctype_cell.png"
+      glob: "*_query_expr_per_ctype_cell.png"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types
+      Log normalized gene expression per cell of query dataset with predicted cell types.
       PNG format
 
-  expr_per_ctype_cell_plot_pdf:
+  query_expr_per_ctype_cell_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_per_ctype_cell.pdf"
+      glob: "*_query_expr_per_ctype_cell.pdf"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types
+      Log normalized gene expression per cell of query dataset with predicted cell types.
       PDF format
 
-  expr_dnst_per_ctype_plot_png:
+  query_expr_dnst_per_ctype_plot_png:
     type: File?
     outputBinding:
-      glob: "*_dnst_per_ctype.png"
+      glob: "*_query_expr_dnst_per_ctype.png"
     doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets
+      Log normalized gene expression densities per predicted cell type of query dataset.
       PNG format
 
-  expr_dnst_per_ctype_plot_pdf:
+  query_expr_dnst_per_ctype_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_dnst_per_ctype.pdf"
+      glob: "*_query_expr_dnst_per_ctype.pdf"
     doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets
+      Log normalized gene expression densities per predicted cell type of query dataset.
       PDF format
 
   seurat_ctype_data_rds:
@@ -166,7 +292,7 @@ outputs:
     outputBinding:
       glob: "*_ctype_data.rds"
     doc: |
-      Clustered filtered integrated/scaled Seurat data with assigned cell types.
+      Query Seurat data with assigned cell types.
       RDS format
 
   cellbrowser_config_data:
@@ -256,24 +382,79 @@ doc: |
 
 
 s:about: |
-  usage: assign_cell_types.R
-        [-h] --rds RDS --ctype CTYPE --source SOURCE --target TARGET
-        [--features [FEATURES [FEATURES ...]]] [--output OUTPUT] [--pdf]
-        [--threads THREADS]
+  usage: assign_cell_types.R [-h] --query QUERY
+                                            (--ref REF | --ctype CTYPE)
+                                            [--refsource REFSOURCE]
+                                            [--refreduction REFREDUCTION]
+                                            [--querysource QUERYSOURCE]
+                                            --querytarget QUERYTARGET
+                                            [--highvarcount HIGHVARCOUNT]
+                                            [--regressmt]
+                                            [--ndim [NDIM [NDIM ...]]]
+                                            [--features [FEATURES [FEATURES ...]]]
+                                            [--verbose] [--output OUTPUT]
+                                            [--pdf] [--cpus CPUS]
+                                            [--downsample DOWNSAMPLE]
+                                            [--memory MEMORY]
 
   Assigns cell types to clusters
 
   optional arguments:
     -h, --help            show this help message and exit
-    --rds RDS             Path to the RDS file to load Seurat object from. RDS
-                          file produced by run_seurat.R script
-    --ctype CTYPE         Path to the cell types metadata TSV/CSV file with
-                          cluster and type columns
-    --source SOURCE       Column name to select clusters for cell type
-                          assignment
-    --target TARGET       Column name to store assigned cell types
+    --query QUERY         Path to the query RDS file to load Seurat object from.
+                          RDS file can be produced by run_seurat.R or
+                          run_seurat_wnn.R scripts.
+    --ref REF             Path to the reference RDS file for automatic cell type
+                          assignment. Either --ref or --ctype parameters should
+                          be provided.
+    --ctype CTYPE         Path to the cell types metadata TSV/CSV file for
+                          manual cell type assignment. Either --ref or --ctype
+                          parameters should be provided.
+    --refsource REFSOURCE
+                          Metadata column from the reference RDS file to select
+                          labels to transfer. Required if running with --ref
+    --refreduction REFREDUCTION
+                          Reduction name from the reference RDS file to transfer
+                          embeddings from. Required if running with --ref
+    --querysource QUERYSOURCE
+                          Metadata column from the query RDS file to select
+                          clusters for manual cell type assignment. Required if
+                          running with --ctype. When running with --ref and
+                          --downsample parameter was provided, defines clusters
+                          each of which will be dowsampled to a fixed number of
+                          cells.
+    --querytarget QUERYTARGET
+                          Column to be added to metadata of the query RDS file
+                          for automatically or manually assigned cell types.
+    --highvarcount HIGHVARCOUNT
+                          Number of highly variable features to detect. Used for
+                          anchors detection between the reference and query
+                          datasets. Default: 3000
+    --regressmt           Regress the percentage of transcripts mapped to
+                          mitochondrial genes as a confounding source of
+                          variation. Applied for query dataset only. Default:
+                          false
+    --ndim [NDIM [NDIM ...]]
+                          Dimensions from the specified with --refreduction
+                          reference dataset's reduction that should be used in
+                          label transfer. If single value N is provided, use
+                          from 1 to N dimensions. If multiple values are
+                          provided, subset to only selected dimensions. Ignored
+                          when running with --ctype. Default: from 1 to 30
     --features [FEATURES [FEATURES ...]]
                           Features of interest to highlight. Default: None
-    --output OUTPUT       Output prefix. Default: ./seurat
-    --pdf                 Export plots in PDF. Default: false
-    --threads THREADS     Threads. Default: 1
+    --verbose             Print debug information. Default: false
+    --output OUTPUT       Output prefix for all generated files. Default:
+                          ./seurat
+    --pdf                 Export plots in PDF format in additions to PNG.
+                          Default: false
+    --cpus CPUS           Number of cores/cpus to use. Default: 1
+    --downsample DOWNSAMPLE
+                          Downsample query dataset to include a fixed number of
+                          cells per cluster defined by --querysource parameter.
+                          Applied only when running automatic cell type
+                          assignment with both --ref and --querysource
+                          parameters provided. Default: do not downsample
+    --memory MEMORY       Maximum memory in GB allowed to be shared between the
+                          workers when using multiple --cpus. Default: 32
+

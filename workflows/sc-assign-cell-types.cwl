@@ -15,14 +15,16 @@ requirements:
           var splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
-    - var get_source_column = function(resolution, from_aggregated) {
-          if (from_aggregated) {
-            return "integrated_snn_res."+resolution;
-          } else {
+    - var get_query_source_column = function(resolution, query_data_type) {
+          if (query_data_type=="Seurat WNN Analysis") {
+            return "wsnn_res."+resolution;
+          } else if (query_data_type=="Seurat Cluster (single)") {
             return "RNA_snn_res."+resolution;
+          } else if (query_data_type=="Seurat Cluster (integrated)") {
+            return "integrated_snn_res."+resolution;
           }
       };
-    - var get_target_column = function(resolution) {
+    - var get_query_target_column = function(resolution) {
           return "cluster_ext_type_res."+resolution;
       };
 
@@ -31,38 +33,47 @@ requirements:
   seurat_cluster_sample:
   - "https://github.com/datirium/workflows/workflows/seurat-cluster.cwl"
   - "seurat-cluster.cwl"
+  - "seurat-wnn-cluster.cwl"
 
 
 inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
-  seurat_data_rds:
+  query_data_rds:
     type: File
     label: "Seurat Cluster Experiment"
     doc: |
-      Path to the RDS file to load Seurat object from.
-      RDS file can be produced by run_seurat.R script.
+      Path to the query RDS file to load Seurat object from.
+      RDS file can be produced by run_seurat.R or
+      run_seurat_wnn.R scripts.
     'sd:upstreamSource': "seurat_cluster_sample/seurat_clst_data_rds"
     'sd:localLabel': true
 
-  from_aggregated:
-    type: boolean?
-    default: true
-    label: "Treat Seurat Cluster Experiment as aggregated"
+  query_data_type:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "Seurat WNN Analysis"
+      - "Seurat Cluster (single)"
+      - "Seurat Cluster (integrated)"
+    default: "Seurat Cluster (single)"
+    label: "Seurat Cluster Experiment Type"
     doc: |
-      If set to true the 'source_column' and 'target_column' inputs will have
-      prefix 'integrated_snn_res.{resolution}', otherwise 'RNA_res.{resolution}'
+      If set to 'Seurat WNN Analysis', then 'query_source_column' will have prefix 'wsnn_res'.
+      If set to 'Seurat Cluster (single)', then 'query_source_column' will have prefix 'RNA_snn_res'.
+      If set to 'Seurat Cluster (integrated)', then 'query_source_column' will have prefix 'integrated_snn_res'.
 
   resolution:
     type: string
     label: "Clustering resolution to assign cell types to"
     doc: |
-      Clustering resolution define 'source_column' and 'target_column'
+      Clustering resolution defines 'query_source_column' and 'query_target_column'
       inputs for 'assign_cell_types' step
 
   cell_type_data:
@@ -81,124 +92,95 @@ inputs:
     'sd:layout':
       advanced: true
 
+  memory:
+    type: int?
+    default: 32
+    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Default: 32
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
     default: 2
-    label: "Threads number to use"
+    label: "Number of cores/cpus to use"
     doc: |
-      Threads number
+      Number of cores/cpus to use
     'sd:layout':
       advanced: true
 
 
 outputs:
 
-  umap_ctype_plot_png:
+  query_umap_ctype_plot_png:
     type: File?
-    outputSource: assign_cell_types/umap_ctype_plot_png
-    label: "Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets"
+    outputSource: assign_cell_types/query_umap_ctype_plot_png
+    label: "Query UMAP grouped by cell type"
     doc: |
-      Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets.
+      Query UMAP grouped by cell type.
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Cell Types'
-        Caption: 'Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets'
+        tab: 'Step 1. Cell Types'
+        Caption: 'Query UMAP grouped by cell type'
 
-  umap_ctype_plot_pdf:
+  query_umap_ctype_spl_by_cond_plot_png:
     type: File?
-    outputSource: assign_cell_types/umap_ctype_plot_pdf
-    label: "Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets"
+    outputSource: assign_cell_types/query_umap_ctype_spl_by_cond_plot_png
+    label: "Query UMAP split by condition grouped by cell type"
     doc: |
-      Grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
-  umap_ctype_spl_by_cond_plot_png:
-    type: File?
-    outputSource: assign_cell_types/umap_ctype_spl_by_cond_plot_png
-    label: "Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets
+      Query UMAP split by condition grouped by cell type
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Cell Types'
-        Caption: 'Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets'
+        tab: 'Step 1. Cell Types'
+        Caption: 'Query UMAP split by condition grouped by cell type'
 
-  umap_ctype_spl_by_cond_plot_pdf:
+  query_expr_avg_per_ctype_plot_png:
     type: File?
-    outputSource: assign_cell_types/umap_ctype_spl_by_cond_plot_pdf
-    label: "Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets"
+    outputSource: assign_cell_types/query_expr_avg_per_ctype_plot_png
+    label: "Scaled average log normalized gene expression per predicted cell type of query dataset"
     doc: |
-      Split by condition grouped by cell type UMAP projected PCA of filtered integrated/scaled datasets
-      PDF format
-
-  expr_avg_per_ctype_plot_png:
-    type: File?
-    outputSource: assign_cell_types/expr_avg_per_ctype_plot_png
-    label: "Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets"
-    doc: |
-      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets
+      Scaled average log normalized gene expression per predicted cell type of query dataset
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Cell Types'
-        Caption: 'Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets'
+        tab: 'Step 2. Gene expression'
+        Caption: 'Scaled average log normalized gene expression per predicted cell type of query dataset'
 
-  expr_avg_per_ctype_plot_pdf:
+  query_expr_per_ctype_cell_plot_png:
     type: File?
-    outputSource: assign_cell_types/expr_avg_per_ctype_plot_pdf
-    label: "Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets"
+    outputSource: assign_cell_types/query_expr_per_ctype_cell_plot_png
+    label: "Log normalized gene expression per cell of query dataset with predicted cell types"
     doc: |
-      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets
-      PDF format
-
-  expr_per_ctype_cell_plot_png:
-    type: File?
-    outputSource: assign_cell_types/expr_per_ctype_cell_plot_png
-    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types"
-    doc: |
-      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types
+      Log normalized gene expression per cell of query dataset with predicted cell types
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Cell Types'
-        Caption: 'Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types'
+        tab: 'Step 2. Gene expression'
+        Caption: 'Log normalized gene expression per cell of query dataset with predicted cell types'
 
-  expr_per_ctype_cell_plot_pdf:
+  query_expr_dnst_per_ctype_plot_png:
     type: File?
-    outputSource: assign_cell_types/expr_per_ctype_cell_plot_pdf
-    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types"
+    outputSource: assign_cell_types/query_expr_dnst_per_ctype_plot_png
+    label: "Log normalized gene expression densities per predicted cell type of query dataset"
     doc: |
-      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types
-      PDF format
-
-  expr_dnst_per_ctype_plot_png:
-    type: File?
-    outputSource: assign_cell_types/expr_dnst_per_ctype_plot_png
-    label: "Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets"
-    doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets
+      Log normalized gene expression densities per predicted cell type of query dataset
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Cell Types'
-        Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets'
-
-  expr_dnst_per_ctype_plot_pdf:
-    type: File?
-    outputSource: assign_cell_types/expr_dnst_per_ctype_plot_pdf
-    label: "Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets"
-    doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets
-      PDF format
+        tab: 'Step 2. Gene expression'
+        Caption: 'Log normalized gene expression densities per predicted cell type of query dataset'
 
   seurat_ctype_data_rds:
     type: File
     outputSource: assign_cell_types/seurat_ctype_data_rds
-    label: "Clustered filtered integrated/scaled Seurat data with assigned cell types"
+    label: "Query Seurat data with assigned cell types"
     doc: |
-      Clustered filtered integrated/scaled Seurat data with assigned cell types.
+      Query Seurat data with assigned cell types.
       RDS format
 
   compressed_cellbrowser_config_data:
@@ -246,31 +228,29 @@ steps:
   assign_cell_types:
     run: ../tools/sc-assign-cell-types.cwl
     in:
-      seurat_data_rds: seurat_data_rds
+      query_data_rds: query_data_rds
       cell_type_data: cell_type_data
-      source_column:
-        source: [resolution, from_aggregated]
-        valueFrom: $(get_source_column(self[0], self[1]))
-      target_column:
+      query_source_column:
+        source: [resolution, query_data_type]
+        valueFrom: $(get_query_source_column(self[0], self[1]))
+      query_target_column:
         source: resolution
-        valueFrom: $(get_target_column(self))
+        valueFrom: $(get_query_target_column(self))
       selected_features:
         source: selected_features
         valueFrom: $(split_features(self))
       export_pdf_plots:
+        default: false
+      verbose:
         default: true
+      memory: memory
       threads: threads
     out:
-    - umap_ctype_plot_png
-    - umap_ctype_plot_pdf
-    - umap_ctype_spl_by_cond_plot_png
-    - umap_ctype_spl_by_cond_plot_pdf
-    - expr_avg_per_ctype_plot_png
-    - expr_avg_per_ctype_plot_pdf
-    - expr_per_ctype_cell_plot_png
-    - expr_per_ctype_cell_plot_pdf
-    - expr_dnst_per_ctype_plot_png
-    - expr_dnst_per_ctype_plot_pdf
+    - query_umap_ctype_plot_png
+    - query_umap_ctype_spl_by_cond_plot_png
+    - query_expr_avg_per_ctype_plot_png
+    - query_expr_per_ctype_cell_plot_png
+    - query_expr_dnst_per_ctype_plot_png
     - seurat_ctype_data_rds
     - cellbrowser_config_data
     - cellbrowser_html_data
@@ -292,9 +272,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Assign Cell Types"
-s:name: "Single-cell Assign Cell Types"
-s:alternateName: "Assigns cell types to Seurat clusters"
+label: "Single-cell Manual Cell Types Assignment"
+s:name: "Single-cell Manual Cell Types Assignment"
+s:alternateName: "Assigns cell types to Seurat clusters based on provided metadata file"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/sc-assign-cell-types.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -332,7 +312,7 @@ s:creator:
 
 
 doc: |
-  Single-cell Assign Cell Types
-  =============================
+  Single-cell Manual Cell Types Assignment
+  ========================================
 
-  Assigns cell types to Seurat clusters.
+  Assigns cell types to Seurat clusters based on provided metadata file.
