@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.17
+  dockerPull: biowardrobe2/seurat:v0.0.18
 
 
 inputs:
@@ -392,6 +392,14 @@ inputs:
       Save Seurat data to RDS file.
       Default: false
 
+  verbose:
+    type: boolean?
+    inputBinding:
+      prefix: "--verbose"
+    doc: |
+      Print debug information.
+      Default: false
+
   output_prefix:
     type: string?
     inputBinding:
@@ -400,12 +408,21 @@ inputs:
       Output prefix.
       Default: ./seurat
 
+  memory:
+    type: int?
+    inputBinding:
+      prefix: "--memory"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Default: 32
+
   threads:
     type: int?
     inputBinding:
-      prefix: "--threads"
+      prefix: "--cpus"
     doc: |
-      Threads number
+      Number of cores/cpus to use.
       Default: 1
 
 
@@ -1267,12 +1284,18 @@ s:about: |
                                     [--features [FEATURES [FEATURES ...]]]
                                     [--regresscellcycle] [--regressmt]
                                     [--highvarcount HIGHVARCOUNT] [--ndim NDIM]
+                                    [--spread SPREAD] [--mindist MINDIST]
+                                    [--nneighbors NNEIGHBORS]
+                                    [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                    [--umethod {uwot,uwot-learn,umap-learn}]
+                                    [--ametric {euclidean,cosine,manhattan,hamming}]
                                     [--resolution [RESOLUTION [RESOLUTION ...]]]
                                     [--logfc LOGFC] [--minpct MINPCT]
-                                    [--onlypos]
+                                    [--onlypos] [--nosct]
                                     [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                     [--species {hs,mm,none}] [--pdf] [--rds]
-                                    [--output OUTPUT] [--threads THREADS]
+                                    [--verbose] [--output OUTPUT] [--cpus CPUS]
+                                    [--memory MEMORY]
 
   Runs Seurat for comparative scRNA-seq analysis of across experimental
   conditions
@@ -1294,9 +1317,9 @@ s:about: |
     --condition CONDITION
                           Path to the TSV/CSV file to define datasets grouping.
                           First column - 'library_id' with the values provided
-                          in the correspondent column of the --identity file,
-                          second column 'condition'. Default: each dataset is
-                          assigned to a separate group.
+                          in the same order as in the correspondent column of
+                          the --identity file, second column 'condition'.
+                          Default: each dataset is assigned to a separate group.
     --classifier CLASSIFIER
                           Path to the Garnett classifier RDS file for cell type
                           prediction. Default: skip cell type prediction.
@@ -1356,6 +1379,29 @@ s:about: |
     --ndim NDIM           Number of principal components to use in UMAP
                           projection and clustering (from 1 to 50). Use Elbow
                           plot to adjust this parameter. Default: 10
+    --spread SPREAD       The effective scale of embedded points on UMAP. In
+                          combination with mindist this determines how
+                          clustered/clumped the embedded points are. Default: 1
+    --mindist MINDIST     Controls how tightly the embedding is allowed compress
+                          points together on UMAP. Larger values ensure embedded
+                          points are moreevenly distributed, while smaller
+                          values allow the algorithm to optimise more accurately
+                          with regard to local structure. Sensible values are in
+                          the range 0.001 to 0.5. Default: 0.3
+    --nneighbors NNEIGHBORS
+                          Determines the number of neighboring points used in
+                          UMAP. Larger values will result in more global
+                          structure being preserved at the loss of detailed
+                          local structure. In general this parameter should
+                          often be in the range 5 to 50. Default: 30
+    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}
+                          The metric to use to compute distances in high
+                          dimensional space for UMAP. Default: cosine
+    --umethod {uwot,uwot-learn,umap-learn}
+                          UMAP implementation to run. Default: uwot
+    --ametric {euclidean,cosine,manhattan,hamming}
+                          Distance metric used by the nearest neighbors
+                          algorithm when running clustering. Default: cosine
     --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution. Can be set as an array.
                           Default: 0.4 0.6 0.8 1.0 1.4
@@ -1368,6 +1414,8 @@ s:about: |
                           tested clusters. Default: 0.1
     --onlypos             Return only positive markers when running gene markers
                           identification. Default: false
+    --nosct               Do not use SCTransform when running datasets
+                          integration. Use LogNormalize instead. Default: false
     --testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
                           Statistical test to use for gene markers
                           identification. Default: wilcox
@@ -1377,5 +1425,8 @@ s:about: |
                           do not convert gene names
     --pdf                 Export plots in PDF. Default: false
     --rds                 Save Seurat data to RDS file. Default: false
+    --verbose             Print debug information. Default: false
     --output OUTPUT       Output prefix. Default: ./seurat
-    --threads THREADS     Threads. Default: 1
+    --cpus CPUS           Number of cores/cpus to use. Default: 1
+    --memory MEMORY       Maximum memory in GB allowed to be shared between the
+                          workers when using multiple --cpus. Default: 32

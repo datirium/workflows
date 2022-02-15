@@ -237,6 +237,58 @@ inputs:
     'sd:layout':
       advanced: true
 
+  gex_minimum_logfc:
+    type: float?
+    default: 0.25
+    label: "Include only those GEX features that on average have log fold change difference in expression between every tested pair of clusters not lower than this value"
+    doc: |
+      For putative gene markers identification include only those GEX features that
+      on average have log fold change difference in expression between every tested
+      pair of clusters not lower than this value.
+    'sd:layout':
+      advanced: true
+
+  gex_minimum_pct:
+    type: float?
+    default: 0.1
+    label: "Include only those GEX features that are detected in not lower than this fraction of cells in either of the two tested clusters"
+    doc: |
+      For putative gene markers identification include only those GEX features that
+      are detected in not lower than this fraction of cells in either of the two
+      tested clusters.
+    'sd:layout':
+      advanced: true
+
+  gex_only_positive_markers:
+    type: boolean?
+    default: false
+    label: "For putative gene markers identification return only positive markers"
+    doc: |
+      For putative gene markers identification return only positive markers.
+    'sd:layout':
+      advanced: true
+
+  gex_test_use:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "wilcox"
+      - "bimod"
+      - "roc"
+      - "t"
+      - "negbinom"
+      - "poisson"
+      - "LR"
+      - "MAST"
+      - "DESeq2"
+    default: "wilcox"
+    label: "Statistical test to use for putative gene markers identification"
+    doc: |
+      Statistical test to use for putative gene markers identification.
+    'sd:layout':
+      advanced: true
+
   no_sct:
     type: boolean?
     default: false
@@ -1135,6 +1187,18 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  gex_clst_pttv_gene_markers:
+    type: File
+    outputSource: seurat_wnn_cluster/gex_clst_pttv_gene_markers
+    label: "GEX putative gene markers file for all clusters and all resolutions"
+    doc: |
+      GEX putative gene markers file for all clusters and all resolutions.
+      TSV format
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Step 6. Putative gene markers'
+        Title: 'Putative gene markers'
+
   seurat_clst_data_rds:
     type: File?
     outputSource: seurat_wnn_cluster/seurat_clst_data_rds
@@ -1281,6 +1345,10 @@ steps:
       skip_atac_ntrg: skip_atac_ntrg
       skip_miqc: skip_miqc
       gex_dimensionality: gex_dimensionality
+      gex_minimum_logfc: gex_minimum_logfc
+      gex_minimum_pct: gex_minimum_pct
+      gex_only_positive_markers: gex_only_positive_markers
+      gex_test_use: gex_test_use
       atac_dimensionality: atac_dimensionality
       atac_high_var_features_perc: atac_high_var_features_perc
       resolution:
@@ -1335,6 +1403,7 @@ steps:
     - clst_wnn_umap_res_plot_png
     - clst_wnn_umap_spl_by_cond_res_plot_png
     - clst_wnn_qc_mtrcs_res_plot_png
+    - gex_clst_pttv_gene_markers
     - seurat_clst_data_rds
     - expr_avg_per_clst_res_plot_png
     - expr_per_clst_cell_res_plot_png

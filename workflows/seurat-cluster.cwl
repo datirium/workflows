@@ -295,12 +295,23 @@ inputs:
     'sd:layout':
       advanced: true
 
+  memory:
+    type: int?
+    default: 32
+    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Default: 32
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
-    default: 6
-    label: "Threads number to use"
+    default: 4
+    label: "Number of cores/cpus to use"
     doc: |
-      Threads number
+      Number of cores/cpus to use
     'sd:layout':
       advanced: true
 
@@ -1430,10 +1441,13 @@ steps:
       minimum_pct: minimum_pct
       only_positive_markers: only_positive_markers
       test_use: test_use
+      verbose:
+        default: true
       export_pdf_plots:
         default: true
       export_rds_data:
         default: true
+      memory: memory
       threads: threads
     out:
     - raw_cell_count_plot_png

@@ -293,6 +293,54 @@ inputs:
       provided, subset to only selected PCs.
       Default: from 1 to 10
 
+  gex_minimum_logfc:
+    type: float?
+    inputBinding:
+      prefix: "--gexlogfc"
+    doc: |
+      For putative gene markers identification include only those GEX features that
+      on average have log fold change difference in expression between every tested
+      pair of clusters not lower than this value.
+      Default: 0.25
+
+  gex_minimum_pct:
+    type: float?
+    inputBinding:
+      prefix: "--gexminpct"
+    doc: |
+      For putative gene markers identification include only those GEX features that
+      are detected in not lower than this fraction of cells in either of the two
+      tested clusters.
+      Default: 0.1
+
+  gex_only_positive_markers:
+    type: boolean?
+    inputBinding:
+      prefix: "--gexonlypos"
+    doc: |
+      For putative gene markers identification return only positive markers.
+      Default: false
+
+  gex_test_use:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "wilcox"
+      - "bimod"
+      - "roc"
+      - "t"
+      - "negbinom"
+      - "poisson"
+      - "LR"
+      - "MAST"
+      - "DESeq2"
+    inputBinding:
+      prefix: "--gextestuse"
+    doc: |
+      Statistical test to use for putative gene markers identification.
+      Default: wilcox
+
   gex_high_var_features_count:
     type: int?
     inputBinding:
@@ -1114,6 +1162,14 @@ outputs:
       QC metrics for clustered UMAP projected WNN.
       PDF format
 
+  gex_clst_pttv_gene_markers:
+    type: File
+    outputBinding:
+      glob: "*_clst_pttv_gene_markers.tsv"
+    doc: |
+      GEX putative gene markers file for all clusters and all resolutions.
+      TSV format
+
   seurat_clst_data_rds:
     type: File?
     outputBinding:
@@ -1286,27 +1342,40 @@ doc: |
 
 
 s:about: |
-  usage: run_seurat_wnn.R
-        [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
-        ANNOTATIONS [--condition CONDITION] [--metadata METADATA]
-        [--blacklisted BLACKLISTED] [--barcodes BARCODES]
-        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES [MINGENES ...]]]
-        [--maxgenes [MAXGENES [MAXGENES ...]]]
-        [--gexminumi [GEXMINUMI [GEXMINUMI ...]]] [--mitopattern MITOPATTERN]
-        [--maxmt MAXMT] [--regressmt]
-        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-        [--atacmincells ATACMINCELLS]
-        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-        [--minfrip [MINFRIP [MINFRIP ...]]]
-        [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]] [--callpeaks]
-        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
-        [--highvargex HIGHVARGEX] [--gexndim [GEXNDIM [GEXNDIM ...]]] [--nosct]
-        [--atacndim [ATACNDIM [ATACNDIM ...]]] [--highvaratac HIGHVARATAC]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--skipgexntrg]
-        [--skipatacntrg] [--pdf] [--rds] [--verbose] [--skipmiqc]
-        [--output OUTPUT] [--cpus CPUS] [--memory MEMORY]
+  usage: run_seurat_wnn.R [-h] --mex MEX --identity IDENTITY
+                                        --fragments FRAGMENTS --annotations
+                                        ANNOTATIONS [--condition CONDITION]
+                                        [--metadata METADATA]
+                                        [--blacklisted BLACKLISTED]
+                                        [--barcodes BARCODES]
+                                        [--gexmincells GEXMINCELLS]
+                                        [--mingenes [MINGENES [MINGENES ...]]]
+                                        [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                        [--gexminumi [GEXMINUMI [GEXMINUMI ...]]]
+                                        [--mitopattern MITOPATTERN]
+                                        [--maxmt MAXMT] [--regressmt]
+                                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                        [--atacmincells ATACMINCELLS]
+                                        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+                                        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+                                        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+                                        [--minfrip [MINFRIP [MINFRIP ...]]]
+                                        [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]]
+                                        [--callpeaks]
+                                        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
+                                        [--highvargex HIGHVARGEX]
+                                        [--gexndim [GEXNDIM [GEXNDIM ...]]]
+                                        [--gexlogfc GEXLOGFC]
+                                        [--gexminpct GEXMINPCT] [--gexonlypos]
+                                        [--gextestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--nosct]
+                                        [--atacndim [ATACNDIM [ATACNDIM ...]]]
+                                        [--highvaratac HIGHVARATAC]
+                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                        [--skipgexntrg] [--skipatacntrg]
+                                        [--pdf] [--rds] [--verbose]
+                                        [--skipmiqc] [--output OUTPUT]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Runs Seurat Weighted Nearest Neighbor Analysis
 
@@ -1445,6 +1514,21 @@ s:about: |
                           provided, use from 1 to N PCs. If multiple numbers are
                           provided, subset to only selected PCs. Default: from 1
                           to 10
+    --gexlogfc GEXLOGFC   For putative gene markers identification include only
+                          those GEX features that on average have log fold
+                          change difference in expression between every tested
+                          pair of clusters not lower than this value. Default:
+                          0.25
+    --gexminpct GEXMINPCT
+                          For putative gene markers identification include only
+                          those GEX features that are detected in not lower than
+                          this fraction of cells in either of the two tested
+                          clusters. Default: 0.1
+    --gexonlypos          For putative gene markers identification return only
+                          positive markers. Default: false
+    --gextestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
+                          Statistical test to use for putative gene markers
+                          identification. Default: wilcox
     --nosct               Do not use SCTransform when running RNA datasets
                           integration. Use LogNormalize instead. Ignored when
                           --mex points to the Cell Ranger ARC Count outputs
