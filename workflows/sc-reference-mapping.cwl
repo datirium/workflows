@@ -272,10 +272,6 @@ steps:
       query_target_column:
         default: "transferred_cell_type"
       high_var_features_count: high_var_features_count
-      query_source_column:
-        default: "integrated_snn_res.0.4"
-      downsample:
-        default: 100
       regress_mito_perc: regress_mito_perc
       dimensionality: dimensionality
       selected_features:
