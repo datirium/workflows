@@ -39,7 +39,7 @@ inputs:
     sd:preview:
       position: 1
 
-  filtered_feature_bc_matrix_dir:
+  filtered_feature_bc_matrix_folder:
     type: File
     label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
@@ -1226,7 +1226,7 @@ steps:
 
   uncompress_feature_bc_matrices:
     in:
-      compressed: filtered_feature_bc_matrix_dir
+      compressed: filtered_feature_bc_matrix_folder
     out:
     - uncompressed
     run:
