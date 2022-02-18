@@ -116,6 +116,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  max_cycles:
+    type: int?
+    default: 2000
+    label: "Maximum number of cycles used for RPKM calculation balancing"
+    doc: "Set the maximum number of cycles used for read balancing"
+    'sd:layout':
+      advanced: true
+
 # System dependent
 
   threads:
@@ -542,6 +550,7 @@ steps:
       rpkm_threshold:
         default: 0.001
       exclude_chr: exclude_chr
+      max_cycles: max_cycles
       threads: threads
     out: [isoforms_file]
 
