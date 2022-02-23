@@ -490,9 +490,9 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Number of cells per dataset (not filtered)'
   
-  raw_pca_1_2_pca_plot_png:
+  raw_pca_1_2_qc_mtrcs_plot_png:
     type: File?
-    outputSource: seurat_wnn_cluster/raw_pca_1_2_pca_plot_png
+    outputSource: seurat_wnn_cluster/raw_pca_1_2_qc_mtrcs_plot_png
     label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered)"
     doc: |
       PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
@@ -502,9 +502,9 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered)'
 
-  raw_pca_2_3_pca_plot_png:
+  raw_pca_2_3_qc_mtrcs_plot_png:
     type: File?
-    outputSource: seurat_wnn_cluster/raw_pca_2_3_pca_plot_png
+    outputSource: seurat_wnn_cluster/raw_pca_2_3_qc_mtrcs_plot_png
     label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered)"
     doc: |
       PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
@@ -763,9 +763,9 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Number of cells per dataset (filtered)'
 
-  fltr_pca_1_2_pca_plot_png:
+  fltr_pca_1_2_qc_mtrcs_plot_png:
     type: File?
-    outputSource: seurat_wnn_cluster/fltr_pca_1_2_pca_plot_png
+    outputSource: seurat_wnn_cluster/fltr_pca_1_2_qc_mtrcs_plot_png
     label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered)"
     doc: |
       PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
@@ -775,9 +775,9 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered)'
 
-  fltr_pca_2_3_pca_plot_png:
+  fltr_pca_2_3_qc_mtrcs_plot_png:
     type: File?
-    outputSource: seurat_wnn_cluster/fltr_pca_2_3_pca_plot_png
+    outputSource: seurat_wnn_cluster/fltr_pca_2_3_qc_mtrcs_plot_png
     label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered)"
     doc: |
       PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
@@ -1412,8 +1412,8 @@ steps:
       threads: threads
     out:
     - raw_cell_count_plot_png
-    - raw_pca_1_2_pca_plot_png
-    - raw_pca_2_3_pca_plot_png
+    - raw_pca_1_2_qc_mtrcs_plot_png
+    - raw_pca_2_3_qc_mtrcs_plot_png
     - raw_gex_umi_dnst_plot_png
     - raw_atac_umi_dnst_plot_png
     - raw_gene_dnst_plot_png
@@ -1429,8 +1429,8 @@ steps:
     - raw_qc_mtrcs_plot_png
     # - raw_qc_mtrcs_tsv
     - fltr_cell_count_plot_png
-    - fltr_pca_1_2_pca_plot_png
-    - fltr_pca_2_3_pca_plot_png
+    - fltr_pca_1_2_qc_mtrcs_plot_png
+    - fltr_pca_2_3_qc_mtrcs_plot_png
     - fltr_gex_umi_dnst_plot_png
     - fltr_atac_umi_dnst_plot_png
     - fltr_gene_dnst_plot_png

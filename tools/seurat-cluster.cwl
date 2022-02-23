@@ -444,34 +444,34 @@ outputs:
       Number of cells per dataset (not filtered).
       PDF format
 
-  raw_pca_1_2_pca_plot_png:
+  raw_pca_1_2_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_pca_1_2_pca.png"
+      glob: "*_raw_pca_1_2_qc_mtrcs.png"
     doc: |
       PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
       PNG format
 
-  raw_pca_1_2_pca_plot_pdf:
+  raw_pca_1_2_qc_mtrcs_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_pca_1_2_pca.pdf"
+      glob: "*_raw_pca_1_2_qc_mtrcs.pdf"
     doc: |
       PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
       PDF format
 
-  raw_pca_2_3_pca_plot_png:
+  raw_pca_2_3_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_pca_2_3_pca.png"
+      glob: "*_raw_pca_2_3_qc_mtrcs.png"
     doc: |
       PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
       PNG format
 
-  raw_pca_2_3_pca_plot_pdf:
+  raw_pca_2_3_qc_mtrcs_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_pca_2_3_pca.pdf"
+      glob: "*_raw_pca_2_3_qc_mtrcs.pdf"
     doc: |
       PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
       PDF format
@@ -621,34 +621,34 @@ outputs:
       Number of cells per dataset (filtered).
       PDF format
 
-  fltr_pca_1_2_pca_plot_png:
+  fltr_pca_1_2_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
-      glob: "*_fltr_pca_1_2_pca.png"
+      glob: "*_fltr_pca_1_2_qc_mtrcs.png"
     doc: |
       PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
       PNG format
 
-  fltr_pca_1_2_pca_plot_pdf:
+  fltr_pca_1_2_qc_mtrcs_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_fltr_pca_1_2_pca.pdf"
+      glob: "*_fltr_pca_1_2_qc_mtrcs.pdf"
     doc: |
       PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
       PDF format
 
-  fltr_pca_2_3_pca_plot_png:
+  fltr_pca_2_3_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
-      glob: "*_fltr_pca_2_3_pca.png"
+      glob: "*_fltr_pca_2_3_qc_mtrcs.png"
     doc: |
       PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
       PNG format
 
-  fltr_pca_2_3_pca_plot_pdf:
+  fltr_pca_2_3_qc_mtrcs_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_fltr_pca_2_3_pca.pdf"
+      glob: "*_fltr_pca_2_3_qc_mtrcs.pdf"
     doc: |
       PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
       PDF format
