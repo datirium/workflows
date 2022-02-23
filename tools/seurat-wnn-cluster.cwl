@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat-wnn:v0.0.6
+  dockerPull: biowardrobe2/seurat-wnn:v0.0.7
 
 
 inputs:
@@ -496,6 +496,38 @@ outputs:
       Number of cells per dataset (not filtered).
       PDF format
 
+  raw_pca_1_2_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_1_2_pca.png"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+
+  raw_pca_1_2_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_1_2_pca.pdf"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
+      PDF format
+
+  raw_pca_2_3_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_2_3_pca.png"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+
+  raw_pca_2_3_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_2_3_pca.pdf"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
+      PDF format
+
   raw_gex_umi_dnst_plot_png:
     type: File?
     outputBinding:
@@ -726,6 +758,38 @@ outputs:
       glob: "*_fltr_cell_count.pdf"
     doc: |
       Number of cells per dataset (filtered).
+      PDF format
+
+  fltr_pca_1_2_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_1_2_pca.png"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+
+  fltr_pca_1_2_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_1_2_pca.pdf"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
+      PDF format
+
+  fltr_pca_2_3_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_2_3_pca.png"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+
+  fltr_pca_2_3_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_2_3_pca.pdf"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
       PDF format
 
   fltr_gex_umi_dnst_plot_png:
@@ -960,20 +1024,20 @@ outputs:
       Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PDF format
 
-  ntgr_gex_depth_corr_plot_png:
+  ntgr_gex_qc_dim_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntgr_gex_depth_corr.png"
+      glob: "*_ntgr_gex_qc_dim_corr.png"
     doc: |
-      GEX correlation plot between depth and reduced dimension components.
+      Correlation plots between main QC metrics and PCA reduction on GEX assay.
       PNG format
 
-  ntgr_gex_depth_corr_plot_pdf:
+  ntgr_gex_qc_dim_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_ntgr_gex_depth_corr.pdf"
+      glob: "*_ntgr_gex_qc_dim_corr.pdf"
     doc: |
-      GEX correlation plot between depth and reduced dimension components.
+      Correlation plots between main QC metrics and PCA reduction on GEX assay.
       PDF format
 
   ntgr_gex_pca_plot_png:
@@ -992,20 +1056,20 @@ outputs:
       GEX PCA of filtered integrated/scaled datasets.
       PDF format
 
-  ntgr_atac_depth_corr_plot_png:
+  ntgr_atac_qc_dim_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntgr_atac_depth_corr.png"
+      glob: "*_ntgr_atac_qc_dim_corr.png"
     doc: |
-      ATAC correlation plot between depth and reduced dimension components.
+      Correlation plots between main QC metrics and LSI reduction on ATAC assay.
       PNG format
 
-  atac_gex_depth_corr_plot_pdf:
+  ntgr_atac_qc_dim_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_ntgr_atac_depth_corr.pdf"
+      glob: "*_ntgr_atac_qc_dim_corr.pdf"
     doc: |
-      ATAC correlation plot between depth and reduced dimension components.
+      Correlation plots between main QC metrics and LSI reduction on ATAC assay.
       PDF format
 
   clst_gex_umap_res_plot_png:
@@ -1342,40 +1406,25 @@ doc: |
 
 
 s:about: |
-  usage: run_seurat_wnn.R [-h] --mex MEX --identity IDENTITY
-                                        --fragments FRAGMENTS --annotations
-                                        ANNOTATIONS [--condition CONDITION]
-                                        [--metadata METADATA]
-                                        [--blacklisted BLACKLISTED]
-                                        [--barcodes BARCODES]
-                                        [--gexmincells GEXMINCELLS]
-                                        [--mingenes [MINGENES [MINGENES ...]]]
-                                        [--maxgenes [MAXGENES [MAXGENES ...]]]
-                                        [--gexminumi [GEXMINUMI [GEXMINUMI ...]]]
-                                        [--mitopattern MITOPATTERN]
-                                        [--maxmt MAXMT] [--regressmt]
-                                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                                        [--atacmincells ATACMINCELLS]
-                                        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-                                        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-                                        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-                                        [--minfrip [MINFRIP [MINFRIP ...]]]
-                                        [--maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]]
-                                        [--callpeaks]
-                                        [--gexfeatures [GEXFEATURES [GEXFEATURES ...]]]
-                                        [--highvargex HIGHVARGEX]
-                                        [--gexndim [GEXNDIM [GEXNDIM ...]]]
-                                        [--gexlogfc GEXLOGFC]
-                                        [--gexminpct GEXMINPCT] [--gexonlypos]
-                                        [--gextestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                                        [--nosct]
-                                        [--atacndim [ATACNDIM [ATACNDIM ...]]]
-                                        [--highvaratac HIGHVARATAC]
-                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                        [--skipgexntrg] [--skipatacntrg]
-                                        [--pdf] [--rds] [--verbose]
-                                        [--skipmiqc] [--output OUTPUT]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: run_seurat_wnn.R
+        [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
+        ANNOTATIONS [--condition CONDITION] [--metadata METADATA]
+        [--blacklisted BLACKLISTED] [--barcodes BARCODES]
+        [--gexmincells GEXMINCELLS] [--mingenes [MINGENES ...]]
+        [--maxgenes [MAXGENES ...]] [--gexminumi [GEXMINUMI ...]]
+        [--mitopattern MITOPATTERN] [--maxmt MAXMT] [--regressmt]
+        [--minnovelty [MINNOVELTY ...]] [--atacmincells ATACMINCELLS]
+        [--atacminumi [ATACMINUMI ...]] [--maxnuclsignal [MAXNUCLSIGNAL ...]]
+        [--mintssenrich [MINTSSENRICH ...]] [--minfrip [MINFRIP ...]]
+        [--maxblacklisted [MAXBLACKLISTED ...]] [--callpeaks]
+        [--gexfeatures [GEXFEATURES ...]] [--highvargex HIGHVARGEX]
+        [--gexndim [GEXNDIM ...]] [--gexlogfc GEXLOGFC] [--gexminpct GEXMINPCT]
+        [--gexonlypos]
+        [--gextestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--nosct] [--atacndim [ATACNDIM ...]] [--highvaratac HIGHVARATAC]
+        [--resolution [RESOLUTION ...]] [--skipgexntrg] [--skipatacntrg]
+        [--pdf] [--rds] [--verbose] [--skipmiqc] [--output OUTPUT]
+        [--cpus CPUS] [--memory MEMORY]
 
   Runs Seurat Weighted Nearest Neighbor Analysis
 
@@ -1423,19 +1472,19 @@ s:about: |
     --gexmincells GEXMINCELLS
                           Include only GEX features detected in at least this
                           many cells. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES [MINGENES ...]]
+    --mingenes [MINGENES ...]
                           Include cells where at least this many GEX features
                           are detected. If multiple values provided, each of
                           them will be applied to the correspondent dataset from
                           the --mex input based on the --identity file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES [MAXGENES ...]]
+    --maxgenes [MAXGENES ...]
                           Include cells with the number of GEX features not
                           bigger than this value. If multiple values provided,
                           each of them will be applied to the correspondent
                           dataset from the --mex input based on the --identity
                           file. Default: 5000 (applied to all datasets)
-    --gexminumi [GEXMINUMI [GEXMINUMI ...]]
+    --gexminumi [GEXMINUMI ...]
                           Include cells where at least this many GEX UMIs
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
@@ -1450,7 +1499,7 @@ s:about: |
                           value. Default: 5 (applied to all datasets)
     --regressmt           Regress mitochondrial genes expression as a
                           confounding source of variation. Default: false
-    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
+    --minnovelty [MINNOVELTY ...]
                           Include cells with the novelty score not lower than
                           this value, calculated for GEX as
                           log10(genes)/log10(UMIs). If multiple values provided,
@@ -1460,14 +1509,14 @@ s:about: |
     --atacmincells ATACMINCELLS
                           Include only ATAC features detected in at least this
                           many cells. Default: 5 (applied to all datasets)
-    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
+    --atacminumi [ATACMINUMI ...]
                           Include cells where at least this many ATAC UMIs
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the --mex input based on
                           the --identity file. Default: 1000 (applied to all
                           datasets)
-    --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
+    --maxnuclsignal [MAXNUCLSIGNAL ...]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
@@ -1475,7 +1524,7 @@ s:about: |
                           them will be applied to the correspondent dataset from
                           the --mex input based on the --identity file Default:
                           4 (applied to all datasets)
-    --mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]
+    --mintssenrich [MINTSSENRICH ...]
                           Include cells with the TSS enrichment score not lower
                           than this value. Score is calculated based on the
                           ratio of fragments centered at the TSS to fragments in
@@ -1483,13 +1532,13 @@ s:about: |
                           each of them will be applied to the correspondent
                           dataset from the --mex input based on the --identity
                           file. Default: 2 (applied to all datasets)
-    --minfrip [MINFRIP [MINFRIP ...]]
+    --minfrip [MINFRIP ...]
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the --mex
                           input based on the --identity file. Default: 0.15
                           (applied to all datasets)
-    --maxblacklisted [MAXBLACKLISTED [MAXBLACKLISTED ...]]
+    --maxblacklisted [MAXBLACKLISTED ...]
                           Include cells with the ratio of reads in genomic
                           blacklist regions not bigger than this value. If
                           multiple values provided, each of them will be applied
@@ -1501,14 +1550,14 @@ s:about: |
                           the Cell Ranger ARC Aggregate experiment, peaks will
                           be called for each dataset independently and then
                           combined Default: false
-    --gexfeatures [GEXFEATURES [GEXFEATURES ...]]
+    --gexfeatures [GEXFEATURES ...]
                           GEX features of interest to evaluate expression.
                           Default: None
     --highvargex HIGHVARGEX
                           Number of highly variable GEX features to detect. Used
                           for GEX datasets integration, scaling, and dimensional
                           reduction. Default: 3000
-    --gexndim [GEXNDIM [GEXNDIM ...]]
+    --gexndim [GEXNDIM ...]
                           Dimensionality to use in GEX UMAP projection and
                           clustering (from 1 to 50). If single number N is
                           provided, use from 1 to N PCs. If multiple numbers are
@@ -1535,7 +1584,7 @@ s:about: |
                           (single, not aggregated dataset that doesn't require
                           any integration) or --skipgexntrg parameter was
                           applied. Default: false
-    --atacndim [ATACNDIM [ATACNDIM ...]]
+    --atacndim [ATACNDIM ...]
                           Dimensionality to use in ATAC UMAP projection and
                           clustering (from 2 to 50). If single number N is
                           provided, use from 2 to N LSI components. If multiple
@@ -1549,7 +1598,7 @@ s:about: |
                           datasets integration, scaling, and dimensional
                           reduction. Default: 75 (use only the top 25 percent of
                           all common peaks)
-    --resolution [RESOLUTION [RESOLUTION ...]]
+    --resolution [RESOLUTION ...]
                           Clustering resolution. Can be set as an array.
                           Default: 0.3, 0.5, 1.0
     --skipgexntrg         Do not integrate RNA datasets, use merged data

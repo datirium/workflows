@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.18
+  dockerPull: biowardrobe2/seurat:v0.0.19
 
 
 inputs:
@@ -444,6 +444,38 @@ outputs:
       Number of cells per dataset (not filtered).
       PDF format
 
+  raw_pca_1_2_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_1_2_pca.png"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+
+  raw_pca_1_2_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_1_2_pca.pdf"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
+      PDF format
+
+  raw_pca_2_3_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_2_3_pca.png"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+
+  raw_pca_2_3_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_pca_2_3_pca.pdf"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
+      PDF format
+
   raw_umi_dnst_spl_by_cond_plot_png:
     type: File?
     outputBinding:
@@ -587,6 +619,38 @@ outputs:
       glob: "*_fltr_cell_count.pdf"
     doc: |
       Number of cells per dataset (filtered).
+      PDF format
+
+  fltr_pca_1_2_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_1_2_pca.png"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+
+  fltr_pca_1_2_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_1_2_pca.pdf"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
+      PDF format
+
+  fltr_pca_2_3_pca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_2_3_pca.png"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+
+  fltr_pca_2_3_pca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_pca_2_3_pca.pdf"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
       PDF format
 
   fltr_umi_dnst_spl_by_cond_plot_png:
@@ -781,6 +845,22 @@ outputs:
       glob: "*_ntgr_elbow.pdf"
     doc: |
       Elbow plot from PCA of filtered integrated/scaled datasets.
+      PDF format
+
+  ntgr_qc_dim_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ntgr_qc_dim_corr.png"
+    doc: |
+      Correlation plots between main QC metrics and PCA reduction.
+      PNG format
+
+  ntgr_qc_dim_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ntgr_qc_dim_corr.pdf"
+    doc: |
+      Correlation plots between main QC metrics and PCA reduction.
       PDF format
 
   ntgr_pca_plot_png:
@@ -1271,31 +1351,25 @@ doc: |
 
 
 s:about: |
-  usage: run_seurat.R [-h] --mex MEX [MEX ...] --identity
-                                    IDENTITY [--condition CONDITION]
-                                    [--classifier CLASSIFIER]
-                                    [--cellcycle CELLCYCLE]
-                                    [--barcodes BARCODES] [--mincells MINCELLS]
-                                    [--minfeatures [MINFEATURES [MINFEATURES ...]]]
-                                    [--maxfeatures [MAXFEATURES [MAXFEATURES ...]]]
-                                    [--minumi [MINUMI [MINUMI ...]]]
-                                    [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                                    [--maxmt MAXMT] [--mitopattern MITOPATTERN]
-                                    [--features [FEATURES [FEATURES ...]]]
-                                    [--regresscellcycle] [--regressmt]
-                                    [--highvarcount HIGHVARCOUNT] [--ndim NDIM]
-                                    [--spread SPREAD] [--mindist MINDIST]
-                                    [--nneighbors NNEIGHBORS]
-                                    [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-                                    [--umethod {uwot,uwot-learn,umap-learn}]
-                                    [--ametric {euclidean,cosine,manhattan,hamming}]
-                                    [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                    [--logfc LOGFC] [--minpct MINPCT]
-                                    [--onlypos] [--nosct]
-                                    [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                                    [--species {hs,mm,none}] [--pdf] [--rds]
-                                    [--verbose] [--output OUTPUT] [--cpus CPUS]
-                                    [--memory MEMORY]
+  usage: run_seurat.R
+        [-h] --mex MEX [MEX ...] --identity IDENTITY [--condition CONDITION]
+        [--classifier CLASSIFIER] [--cellcycle CELLCYCLE] [--barcodes BARCODES]
+        [--mincells MINCELLS] [--minfeatures [MINFEATURES [MINFEATURES ...]]]
+        [--maxfeatures [MAXFEATURES [MAXFEATURES ...]]]
+        [--minumi [MINUMI [MINUMI ...]]]
+        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]] [--maxmt MAXMT]
+        [--mitopattern MITOPATTERN] [--features [FEATURES [FEATURES ...]]]
+        [--regresscellcycle] [--regressmt] [--highvarcount HIGHVARCOUNT]
+        [--ndim NDIM] [--spread SPREAD] [--mindist MINDIST]
+        [--nneighbors NNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--umethod {uwot,uwot-learn,umap-learn}]
+        [--ametric {euclidean,cosine,manhattan,hamming}]
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--logfc LOGFC]
+        [--minpct MINPCT] [--onlypos] [--nosct]
+        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--species {hs,mm,none}] [--pdf] [--rds] [--verbose] [--output OUTPUT]
+        [--cpus CPUS] [--memory MEMORY]
 
   Runs Seurat for comparative scRNA-seq analysis of across experimental
   conditions

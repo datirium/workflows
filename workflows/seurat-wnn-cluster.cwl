@@ -490,6 +490,30 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Number of cells per dataset (not filtered)'
   
+  raw_pca_1_2_pca_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/raw_pca_1_2_pca_plot_png
+    label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered)"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered)'
+
+  raw_pca_2_3_pca_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/raw_pca_2_3_pca_plot_png
+    label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered)"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered)'
+
   raw_gex_umi_dnst_plot_png:
     type: File?
     outputSource: seurat_wnn_cluster/raw_gex_umi_dnst_plot_png
@@ -738,7 +762,31 @@ outputs:
     - image:
         tab: 'Step 2. Filtered QC'
         Caption: 'Number of cells per dataset (filtered)'
-  
+
+  fltr_pca_1_2_pca_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/fltr_pca_1_2_pca_plot_png
+    label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered)"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 2. Filtered QC'
+        Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered)'
+
+  fltr_pca_2_3_pca_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/fltr_pca_2_3_pca_plot_png
+    label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered)"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 2. Filtered QC'
+        Caption: 'PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered)'
+
   fltr_gex_umi_dnst_plot_png:
     type: File?
     outputSource: seurat_wnn_cluster/fltr_gex_umi_dnst_plot_png
@@ -976,6 +1024,30 @@ outputs:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'Elbow plot from GEX PCA of filtered integrated/scaled datasets'
 
+  ntgr_gex_qc_dim_corr_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/ntgr_gex_qc_dim_corr_plot_png
+    label: "Correlation plots between main QC metrics and PCA reduction on GEX assay"
+    doc: |
+      Correlation plots between main QC metrics and PCA reduction on GEX assay.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'Correlation plots between main QC metrics and PCA reduction on GEX assay'
+
+  ntgr_atac_qc_dim_corr_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/ntgr_atac_qc_dim_corr_plot_png
+    label: "Correlation plots between main QC metrics and LSI reduction on ATAC assay"
+    doc: |
+      Correlation plots between main QC metrics and LSI reduction on ATAC assay.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'Correlation plots between main QC metrics and LSI reduction on ATAC assay'
+
   ntgr_gex_pca_plot_png:
     type: File?
     outputSource: seurat_wnn_cluster/ntgr_gex_pca_plot_png
@@ -987,30 +1059,6 @@ outputs:
     - image:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'GEX PCA of filtered integrated/scaled datasets'
-
-  ntgr_gex_depth_corr_plot_png:
-    type: File?
-    outputSource: seurat_wnn_cluster/ntgr_gex_depth_corr_plot_png
-    label: "GEX correlation plot between depth and reduced dimension components"
-    doc: |
-      GEX correlation plot between depth and reduced dimension components.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Step 3. Dimensionality evaluation'
-        Caption: 'GEX correlation plot between depth and reduced dimension components'
-
-  ntgr_atac_depth_corr_plot_png:
-    type: File?
-    outputSource: seurat_wnn_cluster/ntgr_atac_depth_corr_plot_png
-    label: "ATAC correlation plot between depth and reduced dimension components"
-    doc: |
-      ATAC correlation plot between depth and reduced dimension components.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Step 3. Dimensionality evaluation'
-        Caption: 'ATAC correlation plot between depth and reduced dimension components'
 
   clst_gex_umap_res_plot_png:
     type:
@@ -1364,6 +1412,8 @@ steps:
       threads: threads
     out:
     - raw_cell_count_plot_png
+    - raw_pca_1_2_pca_plot_png
+    - raw_pca_2_3_pca_plot_png
     - raw_gex_umi_dnst_plot_png
     - raw_atac_umi_dnst_plot_png
     - raw_gene_dnst_plot_png
@@ -1379,6 +1429,8 @@ steps:
     - raw_qc_mtrcs_plot_png
     # - raw_qc_mtrcs_tsv
     - fltr_cell_count_plot_png
+    - fltr_pca_1_2_pca_plot_png
+    - fltr_pca_2_3_pca_plot_png
     - fltr_gex_umi_dnst_plot_png
     - fltr_atac_umi_dnst_plot_png
     - fltr_gene_dnst_plot_png
@@ -1393,8 +1445,8 @@ steps:
     - fltr_qc_mtrcs_plot_png
     # - fltr_qc_mtrcs_tsv
     - ntgr_gex_elbow_plot_png
-    - ntgr_gex_depth_corr_plot_png
-    - ntgr_atac_depth_corr_plot_png
+    - ntgr_gex_qc_dim_corr_plot_png
+    - ntgr_atac_qc_dim_corr_plot_png
     - ntgr_gex_pca_plot_png
     - clst_gex_umap_res_plot_png
     - clst_gex_umap_spl_by_cond_res_plot_png

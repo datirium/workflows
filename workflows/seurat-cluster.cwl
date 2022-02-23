@@ -432,14 +432,29 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Number of cells per dataset (not filtered)'
 
-  raw_cell_count_plot_pdf:
+  raw_pca_1_2_pca_plot_png:
     type: File?
-    outputSource: seurat_cluster/raw_cell_count_plot_pdf
-    label: "Number of cells per dataset (not filtered)"
+    outputSource: seurat_cluster/raw_pca_1_2_pca_plot_png
+    label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered)"
     doc: |
-      Number of cells per dataset (not filtered).
-      PDF format
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (not filtered)'
 
+  raw_pca_2_3_pca_plot_png:
+    type: File?
+    outputSource: seurat_cluster/raw_pca_2_3_pca_plot_png
+    label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered)"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1. Not filtered QC'
+        Caption: 'PC2 and PC3 of ORQ-transformed QC metrics PCA (not filtered)'
 
   raw_umi_dnst_spl_by_cond_plot_png:
     type: File?
@@ -453,15 +468,6 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition UMI density per cell (not filtered)'
 
-  raw_umi_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_umi_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition UMI density per cell (not filtered)"
-    doc: |
-      Split by condition UMI density per cell (not filtered).
-      PDF format
-
-
   raw_gene_dnst_spl_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/raw_gene_dnst_spl_by_cond_plot_png
@@ -473,15 +479,6 @@ outputs:
     - image:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition gene density per cell (not filtered)'
-
-  raw_gene_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_gene_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition gene density per cell (not filtered)"
-    doc: |
-      Split by condition gene density per cell (not filtered).
-      PDF format
-
 
   raw_gene_umi_corr_spl_by_ident_plot_png:
     type: File?
@@ -495,15 +492,6 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Split by identity genes vs UMIs per cell correlation (not filtered)'
 
-  raw_gene_umi_corr_spl_by_ident_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_gene_umi_corr_spl_by_ident_plot_pdf
-    label: "Split by identity genes vs UMIs per cell correlation (not filtered)"
-    doc: |
-      Split by identity genes vs UMIs per cell correlation (not filtered).
-      PDF format
-
-
   raw_mito_perc_dnst_spl_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/raw_mito_perc_dnst_spl_by_cond_plot_png
@@ -515,15 +503,6 @@ outputs:
     - image:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered)'
-
-  raw_mito_perc_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_mito_perc_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered)"
-    doc: |
-      Split by condition density of transcripts mapped to mitochondrial genes per cell (not filtered).
-      PDF format
-
 
   raw_nvlt_score_dnst_spl_by_cond_plot_png:
     type: File?
@@ -537,15 +516,6 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Split by condition novelty score density per cell (not filtered)'
 
-  raw_nvlt_score_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_nvlt_score_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition novelty score density per cell (not filtered)"
-    doc: |
-      Split by condition novelty score density per cell (not filtered).
-      PDF format
-
-
   raw_qc_mtrcs_plot_png:
     type: File?
     outputSource: seurat_cluster/raw_qc_mtrcs_plot_png
@@ -557,14 +527,6 @@ outputs:
     - image:
         tab: 'Step 1. Not filtered QC'
         Caption: 'QC metrics densities per cell (not filtered)'
-
-  raw_qc_mtrcs_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_qc_mtrcs_plot_pdf
-    label: "QC metrics densities per cell (not filtered)"
-    doc: |
-      QC metrics densities per cell (not filtered).
-      PDF format
 
   raw_miqc_mtrcs_plot_png:
     type: File?
@@ -578,14 +540,6 @@ outputs:
         tab: 'Step 1. Not filtered QC'
         Caption: 'MiQC prediction of the compromised cells level (not filtered)'
 
-  raw_miqc_mtrcs_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_miqc_mtrcs_plot_pdf
-    label: "MiQC prediction of the compromised cells level (not filtered)"
-    doc: |
-      MiQC prediction of the compromised cells level (not filtered).
-      PDF format
-
   raw_qc_mtrcs_gr_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/raw_qc_mtrcs_gr_by_cond_plot_png
@@ -597,15 +551,6 @@ outputs:
     - image:
         tab: 'Step 1. Not filtered QC'
         Caption: 'Grouped by condition QC metrics densities per cell (not filtered)'
-
-  raw_qc_mtrcs_gr_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/raw_qc_mtrcs_gr_by_cond_plot_pdf
-    label: "Grouped by condition QC metrics densities per cell (not filtered)"
-    doc: |
-      Grouped by condition QC metrics densities per cell (not filtered).
-      PDF format
-
 
   fltr_cell_count_plot_png:
     type: File?
@@ -619,14 +564,29 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Number of cells per dataset (filtered)'
 
-  fltr_cell_count_plot_pdf:
+  fltr_pca_1_2_pca_plot_png:
     type: File?
-    outputSource: seurat_cluster/fltr_cell_count_plot_pdf
-    label: "Number of cells per dataset (filtered)"
+    outputSource: seurat_cluster/fltr_pca_1_2_pca_plot_png
+    label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered)"
     doc: |
-      Number of cells per dataset (filtered).
-      PDF format
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 2. Filtered QC'
+        Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (filtered)'
 
+  fltr_pca_2_3_pca_plot_png:
+    type: File?
+    outputSource: seurat_cluster/fltr_pca_2_3_pca_plot_png
+    label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered)"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 2. Filtered QC'
+        Caption: 'PC2 and PC3 of ORQ-transformed QC metrics PCA (filtered)'
 
   fltr_umi_dnst_spl_by_cond_plot_png:
     type: File?
@@ -640,15 +600,6 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition UMI density per cell (filtered)'
 
-  fltr_umi_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_umi_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition UMI density per cell (filtered)"
-    doc: |
-      Split by condition UMI density per cell (filtered).
-      PDF format
-
-
   fltr_gene_dnst_spl_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_gene_dnst_spl_by_cond_plot_png
@@ -660,15 +611,6 @@ outputs:
     - image:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition gene density per cell (filtered)'
-
-  fltr_gene_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_gene_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition gene density per cell (filtered)"
-    doc: |
-      Split by condition gene density per cell (filtered).
-      PDF format
-
 
   fltr_gene_umi_corr_spl_by_ident_plot_png:
     type: File?
@@ -682,15 +624,6 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by identity genes vs UMIs per cell correlation (filtered)'
 
-  fltr_gene_umi_corr_spl_by_ident_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_gene_umi_corr_spl_by_ident_plot_pdf
-    label: "Split by identity genes vs UMIs per cell correlation (filtered)"
-    doc: |
-      Split by identity genes vs UMIs per cell correlation (filtered).
-      PDF format
-
-
   fltr_mito_perc_dnst_spl_by_cond_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_mito_perc_dnst_spl_by_cond_plot_png
@@ -702,15 +635,6 @@ outputs:
     - image:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered)'
-
-  fltr_mito_perc_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_mito_perc_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered)"
-    doc: |
-      Split by condition density of transcripts mapped to mitochondrial genes per cell (filtered).
-      PDF format
-
 
   fltr_nvlt_score_dnst_spl_by_cond_plot_png:
     type: File?
@@ -724,15 +648,6 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by condition novelty score density per cell (filtered)'
 
-  fltr_nvlt_score_dnst_spl_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_nvlt_score_dnst_spl_by_cond_plot_pdf
-    label: "Split by condition novelty score density per cell (filtered)"
-    doc: |
-      Split by condition novelty score density per cell (filtered).
-      PDF format
-
-
   fltr_qc_mtrcs_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_qc_mtrcs_plot_png
@@ -744,15 +659,6 @@ outputs:
     - image:
         tab: 'Step 2. Filtered QC'
         Caption: 'QC metrics densities per cell (filtered)'
-
-  fltr_qc_mtrcs_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_qc_mtrcs_plot_pdf
-    label: "QC metrics densities per cell (filtered)"
-    doc: |
-      QC metrics densities per cell (filtered).
-      PDF format
-
 
   fltr_qc_mtrcs_gr_by_cond_plot_png:
     type: File?
@@ -766,15 +672,6 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Grouped by condition QC metrics densities per cell (filtered)'
 
-  fltr_qc_mtrcs_gr_by_cond_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_qc_mtrcs_gr_by_cond_plot_pdf
-    label: "Grouped by condition QC metrics densities per cell (filtered)"
-    doc: |
-      Grouped by condition QC metrics densities per cell (filtered).
-      PDF format
-
-
   fltr_pca_spl_by_ph_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_pca_spl_by_ph_plot_png
@@ -786,15 +683,6 @@ outputs:
     - image:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by cell cycle phase PCA of filtered unintegrated/scaled datasets'
-
-  fltr_pca_spl_by_ph_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_pca_spl_by_ph_plot_pdf
-    label: "Split by cell cycle phase PCA of filtered unintegrated/scaled datasets"
-    doc: |
-      Split by cell cycle phase PCA of filtered unintegrated/scaled datasets.
-      PDF format
-
 
   fltr_pca_spl_by_mito_perc_plot_png:
     type: File?
@@ -808,15 +696,6 @@ outputs:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets'
 
-  fltr_pca_spl_by_mito_perc_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_pca_spl_by_mito_perc_plot_pdf
-    label: "Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets"
-    doc: |
-      Split by level of transcripts mapped to mitochondrial genes PCA of filtered unintegrated/scaled datasets.
-      PDF format
-
-
   fltr_umap_spl_by_idnt_plot_png:
     type: File?
     outputSource: seurat_cluster/fltr_umap_spl_by_idnt_plot_png
@@ -828,15 +707,6 @@ outputs:
     - image:
         tab: 'Step 2. Filtered QC'
         Caption: 'Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets'
-
-  fltr_umap_spl_by_idnt_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/fltr_umap_spl_by_idnt_plot_pdf
-    label: "Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets"
-    doc: |
-      Split by identity UMAP projected PCA of filtered unintegrated/scaled datasets.
-      PDF format
-
 
   ntgr_elbow_plot_png:
     type: File?
@@ -850,14 +720,17 @@ outputs:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'Elbow plot from PCA of filtered integrated/scaled datasets'
 
-  ntgr_elbow_plot_pdf:
+  ntgr_qc_dim_corr_plot_png:
     type: File?
-    outputSource: seurat_cluster/ntgr_elbow_plot_pdf
-    label: "Elbow plot from PCA of filtered integrated/scaled datasets"
+    outputSource: seurat_cluster/ntgr_qc_dim_corr_plot_png
+    label: "Correlation plots between main QC metrics and PCA reduction"
     doc: |
-      Elbow plot from PCA of filtered integrated/scaled datasets.
-      PDF format
-
+      Correlation plots between main QC metrics and PCA reduction.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 3. Dimensionality evaluation'
+        Caption: 'Correlation plots between main QC metrics and PCA reduction'
 
   ntgr_pca_plot_png:
     type: File?
@@ -871,15 +744,6 @@ outputs:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'PCA of filtered integrated/scaled datasets'
 
-  ntgr_pca_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/ntgr_pca_plot_pdf
-    label: "PCA of filtered integrated/scaled datasets"
-    doc: |
-      PCA of filtered integrated/scaled datasets.
-      PDF format
-
-
   ntgr_pca_heatmap_png:
     type: File?
     outputSource: seurat_cluster/ntgr_pca_heatmap_png
@@ -891,15 +755,6 @@ outputs:
     - image:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets'
-
-  ntgr_pca_heatmap_pdf:
-    type: File?
-    outputSource: seurat_cluster/ntgr_pca_heatmap_pdf
-    label: "Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets"
-    doc: |
-      Genes per cells expression heatmap sorted by their PC scores from PCA of filtered integrated/scaled datasets.
-      PDF format
-
 
   ntgr_pca_loadings_plot_png:
     type: File?
@@ -913,15 +768,6 @@ outputs:
         tab: 'Step 3. Dimensionality evaluation'
         Caption: 'PC scores of the most variant genes from PCA of filtered integrated/scaled datasets'
 
-  ntgr_pca_loadings_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/ntgr_pca_loadings_plot_pdf
-    label: "PC scores of the most variant genes from PCA of filtered integrated/scaled datasets"
-    doc: |
-      PC scores of the most variant genes from PCA of filtered integrated/scaled datasets.
-      PDF format
-
-
   ntgr_umap_spl_by_idnt_plot_png:
     type: File?
     outputSource: seurat_cluster/ntgr_umap_spl_by_idnt_plot_png
@@ -933,15 +779,6 @@ outputs:
     - image:
         tab: 'Step 4. Integration QC'
         Caption: 'Split by identity UMAP projected PCA of filtered integrated/scaled datasets'
-
-  ntgr_umap_spl_by_idnt_plot_pdf:
-    type: File?
-    outputSource: seurat_cluster/ntgr_umap_spl_by_idnt_plot_pdf
-    label: "Split by identity UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      Split by identity UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
 
   clst_umap_res_plot_png:
     type:
@@ -958,18 +795,6 @@ outputs:
         tab: 'Step 5. Clustering'
         Caption: 'Clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
-  clst_umap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/clst_umap_res_plot_pdf
-    label: "Clustered UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      Clustered UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
-
   clst_umap_spl_by_cond_res_plot_png:
     type:
     - "null"
@@ -984,18 +809,6 @@ outputs:
     - image:
         tab: 'Step 5. Clustering'
         Caption: 'Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets'
-
-  clst_umap_spl_by_cond_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/clst_umap_spl_by_cond_res_plot_pdf
-    label: "Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      Split by condition clustered UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
 
   clst_umap_ctype_res_plot_png:
     type:
@@ -1012,18 +825,6 @@ outputs:
         tab: 'Step 5. Clustering'
         Caption: 'Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets'
 
-  clst_umap_ctype_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/clst_umap_ctype_res_plot_pdf
-    label: "Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      Grouped by predicted cell types UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
-
   clst_umap_spl_by_ph_res_plot_png:
     type:
     - "null"
@@ -1038,18 +839,6 @@ outputs:
     - image:
         tab: 'Step 4. Integration QC'
         Caption: 'Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets'
-
-  clst_umap_spl_by_ph_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/clst_umap_spl_by_ph_res_plot_pdf
-    label: "Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      Split by cell cycle phase clustered UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
 
   clst_qc_mtrcs_res_plot_png:
     type:
@@ -1066,18 +855,6 @@ outputs:
         tab: 'Step 4. Integration QC'
         Caption: 'QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets'
 
-  clst_qc_mtrcs_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/clst_qc_mtrcs_res_plot_pdf
-    label: "QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets"
-    doc: |
-      QC metrics for clustered UMAP projected PCA of filtered integrated/scaled datasets.
-      PDF format
-
-
   expr_avg_per_clst_res_plot_png:
     type:
     - "null"
@@ -1092,18 +869,6 @@ outputs:
     - image:
         tab: 'Step 6. Gene expression'
         Caption: 'Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets'
-
-  expr_avg_per_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_avg_per_clst_res_plot_pdf
-    label: "Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets"
-    doc: |
-      Scaled average log normalized gene expression per cluster of filtered integrated/scaled datasets.
-      PDF format
-
 
   expr_per_clst_cell_res_plot_png:
     type:
@@ -1120,18 +885,6 @@ outputs:
         tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered filtered integrated/scaled datasets'
 
-  expr_per_clst_cell_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_per_clst_cell_res_plot_pdf
-    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets"
-    doc: |
-      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets.
-      PDF format
-
-
   expr_clst_heatmap_res_plot_png:
     type:
     - "null"
@@ -1146,18 +899,6 @@ outputs:
     - image:
         tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets'
-
-  expr_clst_heatmap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_clst_heatmap_res_plot_pdf
-    label: "Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets"
-    doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets.
-      PDF format
-
 
   expr_dnst_per_clst_res_plot_png:
     type:
@@ -1174,18 +915,6 @@ outputs:
         tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression densities per cluster of filtered integrated/scaled datasets'
 
-  expr_dnst_per_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_dnst_per_clst_res_plot_pdf
-    label: "Log normalized gene expression densities per cluster of filtered integrated/scaled datasets"
-    doc: |
-      Log normalized gene expression densities per cluster of filtered integrated/scaled datasets.
-      PDF format
-
-
   expr_avg_per_ctype_res_plot_png:
     type:
     - "null"
@@ -1200,18 +929,6 @@ outputs:
     - image:
         tab: 'Step 6. Gene expression'
         Caption: 'Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets'
-
-  expr_avg_per_ctype_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_avg_per_ctype_res_plot_pdf
-    label: "Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets"
-    doc: |
-      Scaled average log normalized gene expression per predicted cell type of filtered integrated/scaled datasets.
-      PDF format
-
 
   expr_per_ctype_cell_res_plot_png:
     type:
@@ -1228,18 +945,6 @@ outputs:
         tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression per cell of clustered filtered/scaled integrated datasets with predicted cell types'
 
-  expr_per_ctype_cell_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_per_ctype_cell_res_plot_pdf
-    label: "Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types"
-    doc: |
-      Log normalized gene expression per cell of clustered filtered integrated/scaled datasets with predicted cell types.
-      PDF format
-
-
   expr_ctype_heatmap_res_plot_png:
     type:
     - "null"
@@ -1254,18 +959,6 @@ outputs:
     - image:
         tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types'
-
-  expr_ctype_heatmap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_ctype_heatmap_res_plot_pdf
-    label: "Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types"
-    doc: |
-      Log normalized gene expression heatmap of clustered filtered integrated/scaled datasets with predicted cell types.
-      PDF format
-
 
   expr_dnst_per_ctype_res_plot_png:
     type:
@@ -1282,18 +975,6 @@ outputs:
         tab: 'Step 6. Gene expression'
         Caption: 'Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets'
 
-  expr_dnst_per_ctype_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: seurat_cluster/expr_dnst_per_ctype_res_plot_pdf
-    label: "Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets"
-    doc: |
-      Log normalized gene expression densities per predicted cell type of filtered integrated/scaled datasets.
-      PDF format
-
-
   seurat_clst_data_rds:
     type: File
     outputSource: seurat_cluster/seurat_clst_data_rds
@@ -1301,7 +982,6 @@ outputs:
     doc: |
       Clustered filtered integrated Seurat data.
       RDS format
-
 
   clst_pttv_gene_markers:
     type: File
@@ -1315,7 +995,6 @@ outputs:
         tab: 'Step 7. Putative gene markers'
         Title: 'Putative gene markers'
 
-
   clst_csrvd_gene_markers:
     type: File
     outputSource: seurat_cluster/clst_csrvd_gene_markers
@@ -1327,7 +1006,6 @@ outputs:
     - syncfusiongrid:
         tab: 'Step 8. Conserved gene markers'
         Title: 'Conserved gene markers'
-
 
   compressed_cellbrowser_config_data:
     type: File
@@ -1353,7 +1031,6 @@ outputs:
     - linkList:
         tab: 'Overview'
         target: "_blank"
-
 
   seurat_cluster_stdout_log:
     type: File
@@ -1444,90 +1121,57 @@ steps:
       verbose:
         default: true
       export_pdf_plots:
-        default: true
+        default: false
       export_rds_data:
         default: true
       memory: memory
       threads: threads
     out:
     - raw_cell_count_plot_png
-    - raw_cell_count_plot_pdf
+    - raw_pca_1_2_pca_plot_png
+    - raw_pca_2_3_pca_plot_png
     - raw_umi_dnst_spl_by_cond_plot_png
-    - raw_umi_dnst_spl_by_cond_plot_pdf
     - raw_gene_dnst_spl_by_cond_plot_png
-    - raw_gene_dnst_spl_by_cond_plot_pdf
     - raw_gene_umi_corr_spl_by_ident_plot_png
-    - raw_gene_umi_corr_spl_by_ident_plot_pdf
     - raw_mito_perc_dnst_spl_by_cond_plot_png
-    - raw_mito_perc_dnst_spl_by_cond_plot_pdf
     - raw_nvlt_score_dnst_spl_by_cond_plot_png
-    - raw_nvlt_score_dnst_spl_by_cond_plot_pdf
     - raw_qc_mtrcs_plot_png
-    - raw_qc_mtrcs_plot_pdf
     - raw_miqc_mtrcs_plot_png
-    - raw_miqc_mtrcs_plot_pdf
     - raw_qc_mtrcs_gr_by_cond_plot_png
-    - raw_qc_mtrcs_gr_by_cond_plot_pdf
     - fltr_cell_count_plot_png
-    - fltr_cell_count_plot_pdf
+    - fltr_pca_1_2_pca_plot_png
+    - fltr_pca_2_3_pca_plot_png
     - fltr_umi_dnst_spl_by_cond_plot_png
-    - fltr_umi_dnst_spl_by_cond_plot_pdf
     - fltr_gene_dnst_spl_by_cond_plot_png
-    - fltr_gene_dnst_spl_by_cond_plot_pdf
     - fltr_gene_umi_corr_spl_by_ident_plot_png
-    - fltr_gene_umi_corr_spl_by_ident_plot_pdf
     - fltr_mito_perc_dnst_spl_by_cond_plot_png
-    - fltr_mito_perc_dnst_spl_by_cond_plot_pdf
     - fltr_nvlt_score_dnst_spl_by_cond_plot_png
-    - fltr_nvlt_score_dnst_spl_by_cond_plot_pdf
     - fltr_qc_mtrcs_plot_png
-    - fltr_qc_mtrcs_plot_pdf
     - fltr_qc_mtrcs_gr_by_cond_plot_png
-    - fltr_qc_mtrcs_gr_by_cond_plot_pdf
     - fltr_pca_spl_by_ph_plot_png
-    - fltr_pca_spl_by_ph_plot_pdf
     - fltr_pca_spl_by_mito_perc_plot_png
-    - fltr_pca_spl_by_mito_perc_plot_pdf
     - fltr_umap_spl_by_idnt_plot_png
-    - fltr_umap_spl_by_idnt_plot_pdf
     - ntgr_elbow_plot_png
-    - ntgr_elbow_plot_pdf
+    - ntgr_qc_dim_corr_plot_png
     - ntgr_pca_plot_png
-    - ntgr_pca_plot_pdf
     - ntgr_pca_heatmap_png
-    - ntgr_pca_heatmap_pdf
     - ntgr_pca_loadings_plot_png
-    - ntgr_pca_loadings_plot_pdf
     - ntgr_umap_spl_by_idnt_plot_png
-    - ntgr_umap_spl_by_idnt_plot_pdf
     - clst_umap_res_plot_png
-    - clst_umap_res_plot_pdf
     - clst_umap_spl_by_cond_res_plot_png
-    - clst_umap_spl_by_cond_res_plot_pdf
     - clst_umap_ctype_res_plot_png
-    - clst_umap_ctype_res_plot_pdf
     - clst_umap_spl_by_ph_res_plot_png
-    - clst_umap_spl_by_ph_res_plot_pdf
     - clst_qc_mtrcs_res_plot_png
-    - clst_qc_mtrcs_res_plot_pdf
     - clst_pttv_gene_markers   
     - clst_csrvd_gene_markers
     - expr_avg_per_clst_res_plot_png
-    - expr_avg_per_clst_res_plot_pdf
     - expr_per_clst_cell_res_plot_png
-    - expr_per_clst_cell_res_plot_pdf
     - expr_clst_heatmap_res_plot_png
-    - expr_clst_heatmap_res_plot_pdf
     - expr_dnst_per_clst_res_plot_png
-    - expr_dnst_per_clst_res_plot_pdf
     - expr_avg_per_ctype_res_plot_png
-    - expr_avg_per_ctype_res_plot_pdf
     - expr_per_ctype_cell_res_plot_png
-    - expr_per_ctype_cell_res_plot_pdf
     - expr_ctype_heatmap_res_plot_png
-    - expr_ctype_heatmap_res_plot_pdf
     - expr_dnst_per_ctype_res_plot_png
-    - expr_dnst_per_ctype_res_plot_pdf
     - seurat_clst_data_rds
     - cellbrowser_config_data
     - cellbrowser_html_data

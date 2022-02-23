@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.18
+  dockerPull: biowardrobe2/seurat:v0.0.19
 
 
 inputs:
