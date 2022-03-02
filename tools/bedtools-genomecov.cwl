@@ -137,7 +137,7 @@ inputs:
       for -d and -bedGraph
       - (INTEGER)
 
-  m5_bp:
+  m5:
     type: boolean?
     inputBinding:
       position: 14
@@ -145,7 +145,7 @@ inputs:
     doc: |
       Calculate coverage of 5" positions (instead of entire interval)
 
-  m3_bp:
+  m3:
     type: boolean?
     inputBinding:
       position: 15
