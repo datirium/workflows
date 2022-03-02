@@ -234,12 +234,12 @@ steps:
         coverage:
           run: ../tools/bam-bedgraph-bigwig.cwl
           in:
-            alignment_file: atac_fragments_file
+            bam_file: atac_fragments_file
             chrom_length_file: chrom_length_file
             mapped_reads_number: mapped_reads_number
             split:
               default: False
-          scatter: [alignment_file, mapped_reads_number]
+          scatter: [bam_file, mapped_reads_number]
           scatterMethod: dotproduct
           out:
           - bigwig_file

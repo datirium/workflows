@@ -469,7 +469,7 @@ steps:
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      alignment_file: samtools_sort_index2/bam_bai_pair
+      bam_file: samtools_sort_index2/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
       bigwig_filename:
