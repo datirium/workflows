@@ -76,7 +76,7 @@ steps:
   bam_to_bedgraph:
     run: ../tools/bedtools-genomecov.cwl
     in:
-      input_file: bam_file
+      input_file: alignment_file
       depth:
         default: "-bg"
       split:
