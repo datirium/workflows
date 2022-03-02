@@ -516,7 +516,7 @@ steps:
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index_2/bam_bai_pair
+      alignment_file: samtools_sort_index_2/bam_bai_pair
       chrom_length_file: chrom_length_file
       mapped_reads_number: star_aligner/uniquely_mapped_reads_number
 #     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.

@@ -513,7 +513,7 @@ steps:
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      alignment_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: get_statistics/mapped_reads
       fragment_size: macs2_callpeak/macs2_fragments_calculated
