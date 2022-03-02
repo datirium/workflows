@@ -9,7 +9,7 @@ requirements:
 
 inputs:
 
-  bam_file:
+  alignment_file:
     type: File
     label: "Input BAM file"
     doc: "Input BAM file, sorted by coordinates"
