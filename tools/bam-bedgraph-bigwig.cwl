@@ -9,7 +9,7 @@ requirements:
 
 inputs:
 
-  alignment_file:
+  bam_file:
     type: File
     label: "Input BAM file"
     doc: "Input BAM file, sorted by coordinates"
@@ -76,7 +76,7 @@ steps:
   bam_to_bedgraph:
     run: ../tools/bedtools-genomecov.cwl
     in:
-      input_file: alignment_file
+      input_file: bam_file
       depth:
         default: "-bg"
       split:
