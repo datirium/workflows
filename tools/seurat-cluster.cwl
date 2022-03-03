@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.19
+  dockerPull: biowardrobe2/seurat:v0.0.20
 
 
 inputs:
@@ -195,13 +195,17 @@ inputs:
       Default: 3000
 
   dimensionality:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--ndim"
     doc: |
       Number of principal components to use in UMAP projection and clustering
-      (from 1 to 50). Use Elbow plot to adjust this parameter.
-      Default: 10
+      (from 1 to 50). If single number N is provided, use from 1 to N PCs. If
+      multiple numbers are provided, subset to only selected PCs.
+      Default: from 1 to 10
 
   umap_spread:
     type: float?
@@ -1354,19 +1358,18 @@ s:about: |
   usage: run_seurat.R
         [-h] --mex MEX [MEX ...] --identity IDENTITY [--condition CONDITION]
         [--classifier CLASSIFIER] [--cellcycle CELLCYCLE] [--barcodes BARCODES]
-        [--mincells MINCELLS] [--minfeatures [MINFEATURES [MINFEATURES ...]]]
-        [--maxfeatures [MAXFEATURES [MAXFEATURES ...]]]
-        [--minumi [MINUMI [MINUMI ...]]]
-        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]] [--maxmt MAXMT]
-        [--mitopattern MITOPATTERN] [--features [FEATURES [FEATURES ...]]]
+        [--mincells MINCELLS] [--minfeatures [MINFEATURES ...]]
+        [--maxfeatures [MAXFEATURES ...]] [--minumi [MINUMI ...]]
+        [--minnovelty [MINNOVELTY ...]] [--maxmt MAXMT]
+        [--mitopattern MITOPATTERN] [--features [FEATURES ...]]
         [--regresscellcycle] [--regressmt] [--highvarcount HIGHVARCOUNT]
         [--ndim NDIM] [--spread SPREAD] [--mindist MINDIST]
         [--nneighbors NNEIGHBORS]
         [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}]
         [--ametric {euclidean,cosine,manhattan,hamming}]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--logfc LOGFC]
-        [--minpct MINPCT] [--onlypos] [--nosct]
+        [--resolution [RESOLUTION ...]] [--logfc LOGFC] [--minpct MINPCT]
+        [--onlypos] [--nosct]
         [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
         [--species {hs,mm,none}] [--pdf] [--rds] [--verbose] [--output OUTPUT]
         [--cpus CPUS] [--memory MEMORY]
@@ -1410,24 +1413,24 @@ s:about: |
                           from Cell Ranger Aggregate. Ignored when --mex points
                           to the locations of multiple Cell Ranger Count runs.
                           Default: 5
-    --minfeatures [MINFEATURES [MINFEATURES ...]]
+    --minfeatures [MINFEATURES ...]
                           Include cells where at least this many features are
                           detected. If multiple values provided each of them
                           will be applied to the correspondent dataset from the
                           --mex input. Default: 250 (applied to all datasets)
-    --maxfeatures [MAXFEATURES [MAXFEATURES ...]]
+    --maxfeatures [MAXFEATURES ...]
                           Include cells with the number of features not bigger
                           than this value. If multiple values provided each of
                           them will be applied to the correspondent dataset from
                           the --mex input. Default: 5000 (applied to all
                           datasets)
-    --minumi [MINUMI [MINUMI ...]]
+    --minumi [MINUMI ...]
                           Include cells where at least this many UMIs
                           (transcripts) are detected. If multiple values
                           provided each of them will be applied to the
                           correspondent dataset from the --mex input. Default:
                           500 (applied to all datasets)
-    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
+    --minnovelty [MINNOVELTY ...]
                           Include cells with the novelty score not lower than
                           this value, calculated as log10(genes)/log10(UMIs). If
                           multiple values provided each of them will be applied
@@ -1439,7 +1442,7 @@ s:about: |
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
                           Default: '^Mt-'
-    --features [FEATURES [FEATURES ...]]
+    --features [FEATURES ...]
                           Features of interest to evaluate expression. Default:
                           None
     --regresscellcycle    Regress cell cycle as a confounding source of
@@ -1451,8 +1454,10 @@ s:about: |
                           datasets integration, scaling, and dimensional
                           reduction. Default: 3000
     --ndim NDIM           Number of principal components to use in UMAP
-                          projection and clustering (from 1 to 50). Use Elbow
-                          plot to adjust this parameter. Default: 10
+                          projection and clustering (from 1 to 50). If single
+                          number N is provided, use from 1 to N PCs. If multiple
+                          numbers are provided, subset to only selected PCs.
+                          Default: from 1 to 10
     --spread SPREAD       The effective scale of embedded points on UMAP. In
                           combination with mindist this determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -1476,7 +1481,7 @@ s:about: |
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used by the nearest neighbors
                           algorithm when running clustering. Default: cosine
-    --resolution [RESOLUTION [RESOLUTION ...]]
+    --resolution [RESOLUTION ...]
                           Clustering resolution. Can be set as an array.
                           Default: 0.4 0.6 0.8 1.0 1.4
     --logfc LOGFC         Include only those genes that on average have log fold
