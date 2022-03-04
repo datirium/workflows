@@ -351,6 +351,24 @@ inputs:
     'sd:layout':
       advanced: true
 
+  regress_umis:
+    type: boolean?
+    default: false
+    label: "Regress UMIs per cell as a confounding source of variation"
+    doc: |
+      Regress UMIs per cell as a confounding source of variation
+    'sd:layout':
+      advanced: true
+
+  regress_features:
+    type: boolean?
+    default: false
+    label: "Regress genes per cell as a confounding source of variation"
+    doc: |
+      Regress genes per cell as a confounding source of variation
+    'sd:layout':
+      advanced: true
+
   only_positive_markers:
     type: boolean?
     default: false
@@ -1102,6 +1120,8 @@ steps:
       mito_pattern: mito_pattern
       regress_cellcycle: regress_cellcycle
       regress_mito_perc: regress_mito_perc
+      regress_umis: regress_umis
+      regress_features: regress_features
       high_var_features_count: high_var_features_count
       dimensionality: dimensionality
       umap_spread: umap_spread
