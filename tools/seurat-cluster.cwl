@@ -14,7 +14,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/seurat:v0.0.20
+  dockerPull: biowardrobe2/seurat:v0.0.21
 
 
 inputs:
@@ -183,6 +183,22 @@ inputs:
       prefix: "--regressmt"
     doc: |
       Regress mitochondrial genes expression as a confounding source of variation.
+      Default: false
+
+  regress_umis:
+    type: boolean?
+    inputBinding:
+      prefix: "--regressumis"
+    doc: |
+      Regress UMIs per cell as a confounding source of variation.
+      Default: false
+
+  regress_features:
+    type: boolean?
+    inputBinding:
+      prefix: "--regressgenes"
+    doc: |
+      Regress genes per cell as a confounding source of variation.
       Default: false
 
   high_var_features_count:
@@ -1355,24 +1371,33 @@ doc: |
 
 
 s:about: |
-  usage: run_seurat.R
-        [-h] --mex MEX [MEX ...] --identity IDENTITY [--condition CONDITION]
-        [--classifier CLASSIFIER] [--cellcycle CELLCYCLE] [--barcodes BARCODES]
-        [--mincells MINCELLS] [--minfeatures [MINFEATURES ...]]
-        [--maxfeatures [MAXFEATURES ...]] [--minumi [MINUMI ...]]
-        [--minnovelty [MINNOVELTY ...]] [--maxmt MAXMT]
-        [--mitopattern MITOPATTERN] [--features [FEATURES ...]]
-        [--regresscellcycle] [--regressmt] [--highvarcount HIGHVARCOUNT]
-        [--ndim NDIM] [--spread SPREAD] [--mindist MINDIST]
-        [--nneighbors NNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-        [--umethod {uwot,uwot-learn,umap-learn}]
-        [--ametric {euclidean,cosine,manhattan,hamming}]
-        [--resolution [RESOLUTION ...]] [--logfc LOGFC] [--minpct MINPCT]
-        [--onlypos] [--nosct]
-        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--species {hs,mm,none}] [--pdf] [--rds] [--verbose] [--output OUTPUT]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: run_seurat.R [-h] --mex MEX [MEX ...] --identity
+                                    IDENTITY [--condition CONDITION]
+                                    [--classifier CLASSIFIER]
+                                    [--cellcycle CELLCYCLE]
+                                    [--barcodes BARCODES] [--mincells MINCELLS]
+                                    [--minfeatures [MINFEATURES [MINFEATURES ...]]]
+                                    [--maxfeatures [MAXFEATURES [MAXFEATURES ...]]]
+                                    [--minumi [MINUMI [MINUMI ...]]]
+                                    [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                    [--maxmt MAXMT] [--mitopattern MITOPATTERN]
+                                    [--features [FEATURES [FEATURES ...]]]
+                                    [--regresscellcycle] [--regressmt]
+                                    [--regressumis] [--regressgenes]
+                                    [--highvarcount HIGHVARCOUNT]
+                                    [--ndim [NDIM [NDIM ...]]]
+                                    [--spread SPREAD] [--mindist MINDIST]
+                                    [--nneighbors NNEIGHBORS]
+                                    [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                    [--umethod {uwot,uwot-learn,umap-learn}]
+                                    [--ametric {euclidean,cosine,manhattan,hamming}]
+                                    [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                    [--logfc LOGFC] [--minpct MINPCT]
+                                    [--onlypos] [--nosct]
+                                    [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                    [--species {hs,mm,none}] [--pdf] [--rds]
+                                    [--verbose] [--output OUTPUT] [--cpus CPUS]
+                                    [--memory MEMORY]
 
   Runs Seurat for comparative scRNA-seq analysis of across experimental
   conditions
@@ -1413,24 +1438,24 @@ s:about: |
                           from Cell Ranger Aggregate. Ignored when --mex points
                           to the locations of multiple Cell Ranger Count runs.
                           Default: 5
-    --minfeatures [MINFEATURES ...]
+    --minfeatures [MINFEATURES [MINFEATURES ...]]
                           Include cells where at least this many features are
                           detected. If multiple values provided each of them
                           will be applied to the correspondent dataset from the
                           --mex input. Default: 250 (applied to all datasets)
-    --maxfeatures [MAXFEATURES ...]
+    --maxfeatures [MAXFEATURES [MAXFEATURES ...]]
                           Include cells with the number of features not bigger
                           than this value. If multiple values provided each of
                           them will be applied to the correspondent dataset from
                           the --mex input. Default: 5000 (applied to all
                           datasets)
-    --minumi [MINUMI ...]
+    --minumi [MINUMI [MINUMI ...]]
                           Include cells where at least this many UMIs
                           (transcripts) are detected. If multiple values
                           provided each of them will be applied to the
                           correspondent dataset from the --mex input. Default:
                           500 (applied to all datasets)
-    --minnovelty [MINNOVELTY ...]
+    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated as log10(genes)/log10(UMIs). If
                           multiple values provided each of them will be applied
@@ -1442,18 +1467,23 @@ s:about: |
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
                           Default: '^Mt-'
-    --features [FEATURES ...]
+    --features [FEATURES [FEATURES ...]]
                           Features of interest to evaluate expression. Default:
                           None
     --regresscellcycle    Regress cell cycle as a confounding source of
                           variation. Default: false
     --regressmt           Regress mitochondrial genes expression as a
                           confounding source of variation. Default: false
+    --regressumis         Regress UMIs per cell as a confounding source of
+                          variation. Default: false
+    --regressgenes        Regress genes per cell as a confounding source of
+                          variation. Default: false
     --highvarcount HIGHVARCOUNT
                           Number of highly variable features to detect. Used for
                           datasets integration, scaling, and dimensional
                           reduction. Default: 3000
-    --ndim NDIM           Number of principal components to use in UMAP
+    --ndim [NDIM [NDIM ...]]
+                          Number of principal components to use in UMAP
                           projection and clustering (from 1 to 50). If single
                           number N is provided, use from 1 to N PCs. If multiple
                           numbers are provided, subset to only selected PCs.
@@ -1481,7 +1511,7 @@ s:about: |
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used by the nearest neighbors
                           algorithm when running clustering. Default: cosine
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution. Can be set as an array.
                           Default: 0.4 0.6 0.8 1.0 1.4
     --logfc LOGFC         Include only those genes that on average have log fold
