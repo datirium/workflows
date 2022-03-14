@@ -302,16 +302,16 @@ inputs:
     'sd:layout':
       advanced: true
 
-  skip_miqc:
-    type: boolean?
-    default: false
-    label: "Skip threshold prediction for the percentage of transcripts mapped to mitochondrial genes"
-    doc: |
-      Skip threshold prediction for the percentage of transcripts
-      mapped to mitochondrial genes (do not run MiQC).
-      Default: false
-    'sd:layout':
-      advanced: true
+  # skip_miqc:
+  #   type: boolean?
+  #   default: true
+  #   label: "Skip miQC threshold prediction for the percentage of transcripts mapped to mitochondrial genes"
+  #   doc: |
+  #     Skip threshold prediction for the percentage of transcripts
+  #     mapped to mitochondrial genes (do not run MiQC).
+  #     Default: false
+  #   'sd:layout':
+  #     advanced: true
 
   skip_gex_ntrg:
     type: boolean?
@@ -400,14 +400,22 @@ inputs:
       advanced: true
 
   call_peaks:
-    type: boolean?
-    default: false
-    label: "Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count/Aggregate"
+    type:
+    - type: enum
+      symbols:
+      - "do not call peaks"
+      - "identity"
+      - "cluster"
+    default: "do not call peaks"
+    label: "Cells grouping when calling peaks with MACS2 (use instead of Cell Ranger peaks)"
     doc: |
       Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
-      If --mex points to the Cell Ranger ARC Aggregate experiment, peaks will be called for
-      each dataset independently and then combined
-      Default: false
+      Peaks are called per GEX cluster (cluster) or per identity (identity) after
+      applying all GEX related thresholds, maximum nucleosome signal, and minimum TSS
+      enrichment score filters. If set to 'cluster' GEX clusters are identified based on the
+      first value from the --resolution array using --gexndim principal components when
+      building nearest-neighbour graph.
+      Default: do not call peaks
     'sd:layout':
       advanced: true
 
@@ -750,6 +758,198 @@ outputs:
   #       colors: ["#ff1493"]
   #       height: 300
   #       data: [$17, $18]
+
+  mid_fltr_cell_count_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_cell_count_plot_png
+    label: "Number of cells per dataset (intermediate filtered)"
+    doc: |
+      Number of cells per dataset (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Number of cells per dataset (intermediate filtered)'
+
+  mid_fltr_pca_1_2_qc_mtrcs_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_pca_1_2_qc_mtrcs_plot_png
+    label: "PC1 and PC2 of ORQ-transformed QC metrics PCA (intermediate filtered)"
+    doc: |
+      PC1 and PC2 of ORQ-transformed QC metrics PCA (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'PC1 and PC2 of ORQ-transformed QC metrics PCA (intermediate filtered)'
+
+  mid_fltr_pca_2_3_qc_mtrcs_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_pca_2_3_qc_mtrcs_plot_png
+    label: "PC2 and PC3 of ORQ-transformed QC metrics PCA (intermediate filtered)"
+    doc: |
+      PC2 and PC3 of ORQ-transformed QC metrics PCA (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'PC2 and PC3 of ORQ-transformed QC metrics PCA (intermediate filtered)'
+
+  mid_fltr_gex_umi_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_gex_umi_dnst_plot_png
+    label: "GEX UMI density per cell (intermediate filtered)"
+    doc: |
+      GEX UMI density per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'GEX UMI density per cell (intermediate filtered)'
+
+  mid_fltr_atac_umi_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_atac_umi_dnst_plot_png
+    label: "ATAC UMI density per cell (intermediate filtered)"
+    doc: |
+      ATAC UMI density per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'ATAC UMI density per cell (intermediate filtered)'
+
+  mid_fltr_gene_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_gene_dnst_plot_png
+    label: "Gene density per cell (intermediate filtered)"
+    doc: |
+      Gene density per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Gene density per cell (intermediate filtered)'
+
+  mid_fltr_peak_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_peak_dnst_plot_png
+    label: "Peak density per cell (intermediate filtered)"
+    doc: |
+      Peak density per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Peak density per cell (intermediate filtered)'
+
+  mid_fltr_bl_cnts_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_bl_cnts_dnst_plot_png
+    label: "Density of fraction of reads within blacklisted regions per cell (intermediate filtered)"
+    doc: |
+      Density of fraction of reads within blacklisted regions per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Density of fraction of reads within blacklisted regions per cell (intermediate filtered)'
+
+  mid_fltr_gex_atac_umi_corr_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_gex_atac_umi_corr_plot_png
+    label: "GEX vs ATAC UMIs per cell correlation (intermediate filtered)"
+    doc: |
+      GEX vs ATAC UMIs per cell correlation (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'GEX vs ATAC UMIs per cell correlation (intermediate filtered)'
+
+  mid_fltr_tss_enrch_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_tss_enrch_plot_png
+    label: "TSS Enrichment Score (intermediate filtered)"
+    doc: |
+      TSS Enrichment Score (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'TSS Enrichment Score (intermediate filtered)'
+
+  mid_fltr_frg_len_hist_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_frg_len_hist_png
+    label: "Fragments Length Histogram (intermediate filtered)"
+    doc: |
+      Fragments Length Histogram (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Fragments Length Histogram (intermediate filtered)'
+
+  mid_fltr_gene_umi_corr_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_gene_umi_corr_plot_png
+    label: "Genes vs GEX UMIs per cell correlation (intermediate filtered)"
+    doc: |
+      Genes vs GEX UMIs per cell correlation (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Genes vs GEX UMIs per cell correlation (intermediate filtered)'
+
+  mid_fltr_mito_perc_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_mito_perc_dnst_plot_png
+    label: "Density of transcripts mapped to mitochondrial genes per cell (intermediate filtered)"
+    doc: |
+      Density of transcripts mapped to mitochondrial genes per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Density of transcripts mapped to mitochondrial genes per cell (intermediate filtered)'
+
+  mid_fltr_miqc_mtrcs_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_miqc_mtrcs_plot_png
+    label: "MiQC prediction of the compromised cells level (intermediate filtered)"
+    doc: |
+      MiQC prediction of the compromised cells level (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'MiQC prediction of the compromised cells level (intermediate filtered)'
+
+  mid_fltr_nvlt_score_dnst_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_nvlt_score_dnst_plot_png
+    label: "Novelty score density per cell (intermediate filtered)"
+    doc: |
+      Novelty score density per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'Novelty score density per cell (intermediate filtered)'
+
+  mid_fltr_qc_mtrcs_plot_png:
+    type: File?
+    outputSource: seurat_wnn_cluster/mid_fltr_qc_mtrcs_plot_png
+    label: "QC metrics densities per cell (intermediate filtered)"
+    doc: |
+      QC metrics densities per cell (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Step 1.5. Intermediate filtered QC'
+        Caption: 'QC metrics densities per cell (intermediate filtered)'
 
   fltr_cell_count_plot_png:
     type: File?
@@ -1383,7 +1583,9 @@ steps:
       maximum_blacklisted_ratio:
         source: maximum_blacklisted_ratio
         valueFrom: $(split_numbers(self))
-      call_peaks: call_peaks
+      call_peaks:
+        source: call_peaks
+        valueFrom: $(self=="do not call peaks"?null:self)
       gex_selected_features:
         source: gex_selected_features
         valueFrom: $(split_features(self))
@@ -1391,7 +1593,9 @@ steps:
       no_sct: no_sct
       skip_gex_ntrg: skip_gex_ntrg
       skip_atac_ntrg: skip_atac_ntrg
-      skip_miqc: skip_miqc
+      # skip_miqc: skip_miqc
+      skip_miqc:
+        default: true                                            # running miQC dramatically increases memory footprint and running time
       gex_dimensionality: gex_dimensionality
       gex_minimum_logfc: gex_minimum_logfc
       gex_minimum_pct: gex_minimum_pct
@@ -1428,6 +1632,22 @@ steps:
     - raw_nvlt_score_dnst_plot_png
     - raw_qc_mtrcs_plot_png
     # - raw_qc_mtrcs_tsv
+    - mid_fltr_cell_count_plot_png
+    - mid_fltr_pca_1_2_qc_mtrcs_plot_png
+    - mid_fltr_pca_2_3_qc_mtrcs_plot_png
+    - mid_fltr_gex_umi_dnst_plot_png
+    - mid_fltr_atac_umi_dnst_plot_png
+    - mid_fltr_gene_dnst_plot_png
+    - mid_fltr_peak_dnst_plot_png
+    - mid_fltr_bl_cnts_dnst_plot_png
+    - mid_fltr_gex_atac_umi_corr_plot_png
+    - mid_fltr_tss_enrch_plot_png
+    - mid_fltr_frg_len_hist_png
+    - mid_fltr_gene_umi_corr_plot_png
+    - mid_fltr_mito_perc_dnst_plot_png
+    - mid_fltr_miqc_mtrcs_plot_png
+    - mid_fltr_nvlt_score_dnst_plot_png
+    - mid_fltr_qc_mtrcs_plot_png
     - fltr_cell_count_plot_png
     - fltr_pca_1_2_qc_mtrcs_plot_png
     - fltr_pca_2_3_qc_mtrcs_plot_png
