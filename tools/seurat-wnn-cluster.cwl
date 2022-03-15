@@ -992,7 +992,7 @@ outputs:
       Novelty score density per cell (intermediate filtered).
       PDF format
 
-  mid_fltr_qc_mtrcs_plot:
+  mid_fltr_qc_mtrcs_plot_png:
     type: File?
     outputBinding:
       glob: "*_mid_fltr_qc_mtrcs.png"
