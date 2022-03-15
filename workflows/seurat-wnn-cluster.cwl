@@ -1,4 +1,4 @@
-cwlVersion: v1.0
+cwlVersion: v1.1
 class: Workflow
 
 
@@ -18,6 +18,26 @@ requirements:
     - var split_numbers = function(line) {
           let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
+    - var get_correct_order = function(cluster_files=null, cluster_aliases=null, aggregation_metadata=null) {
+        if (cluster_files === null || cluster_aliases === null){
+          return [null, null];
+        } else if (aggregation_metadata === null) {
+          if (cluster_files.length == 1 && cluster_aliases.length == 1){
+            return [cluster_files, cluster_aliases];
+          } else {
+            return [null, null];
+          }
+        } else {
+          let updated_cluster_aliases = cluster_aliases.map(alias => alias.replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"));
+          let ordered_cluster_aliases = aggregation_metadata.contents.split("\n").map(line => line.split(",")[0]).filter(value => value != "" && value != "library_id");
+          let ordered_cluster_files = ordered_cluster_aliases.map(alias => cluster_files[updated_cluster_aliases.indexOf(alias)]);
+          if (ordered_cluster_files.includes(undefined)){
+            return [null, null];
+          } else {
+            return [ordered_cluster_files, ordered_cluster_aliases];
+          }
+        }
       };
 
 
@@ -71,6 +91,7 @@ inputs:
 
   aggregation_metadata:
     type: File?
+    loadContents: true
     label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
       Path to the metadata TSV/CSV file to set the datasets identities.
@@ -82,21 +103,37 @@ inputs:
     'sd:localLabel': true
 
   gex_genotype_cluster_tsv_file:
-    type: File?
-    label: "Souporcell Cluster by Genotype Experiment"
+    type:
+      - "null"
+      - File[]
+    label: "Souporcell Cluster by Genotype Experiment(s)"
     doc: |
-      Cellurar barcodes file clustered by genotype (GEX) generated in Souporcell
+      Cellurar barcodes file(s) clustered by genotype (GEX) generated in Souporcell
     'sd:upstreamSource': "genotype_sample/gex_genotype_cluster_tsv_file"
     'sd:localLabel': true
 
   atac_genotype_cluster_tsv_file:
-    type: File?
-    label: "Souporcell Cluster by Genotype Experiment"
+    type:
+      - "null"
+      - File[]
+    label: "Souporcell Cluster by Genotype Experiment(s)"
     doc: |
-      Cellurar barcodes file clustered by genotype (ATAC) generated in Souporcell
+      Cellurar barcodes file(s) clustered by genotype (ATAC) generated in Souporcell
     'sd:upstreamSource': "genotype_sample/atac_genotype_cluster_tsv_file"
     'sd:localLabel': true
-  
+
+  genotype_cluster_names:
+    type:
+      - "null"
+      - string[]
+    label: "Souporcell Cluster by Genotype Experiment(s)"
+    doc: |
+      Aliases of the scRNA-Seq Cell Ranger ARC Experiments used in Souporcell analysis.
+      The order of samples will be defined based on the rows from aggregation_metadata
+      input if it was provided.
+    'sd:upstreamSource': "genotype_sample/sc_rnaseq_sample/alias"
+    'sd:localLabel': true
+
   conditions_data:
     type: File?
     label: "TSV/CSV file to define datasets grouping with 'library_id' and 'condition' columns. Rows order should correspond to the aggregation metadata."
@@ -1506,28 +1543,78 @@ steps:
         script:
           type: string?
           default: |
-            #!/bin/bash
-            if [ -f "$0" ] && [ -f "$1" ]; then
-              echo -e "barcode\tgex_genotype" > gex_metadata.tsv
-              cat "$0" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $1, $3; else print $1, $2}' >> gex_metadata.tsv
-              echo "atac_genotype" > atac_metadata.tsv
-              cat "$1" | grep -v "barcode" | awk 'BEGIN {OFS = "\t"} ; {if ($2 == "singlet") print $3; else print $2}' >> atac_metadata.tsv
-              paste gex_metadata.tsv atac_metadata.tsv > extra_metadata.tsv
-              rm -f gex_metadata.tsv atac_metadata.tsv
-              head extra_metadata.tsv
+            set -- "$0" "$@"
+            if [ ${#@} -lt 3 ]; then
+                echo "Not enough arguments provided"
+                exit 0
             else
-              exit 0
+              echo "Provided arguments:"
+              for i in "$@";
+                  do echo $i;
+              done;
             fi
+
+            FILES=()
+            ALIASES=()
+
+            for ITEM in "$@"; do
+                if [ -f "$ITEM" ]; then
+                    echo "Add ${ITEM} as a file"
+                    FILES+=("$ITEM")
+                else
+                    echo "Add ${ITEM} as an alias"
+                    ALIASES+=("$ITEM")
+                fi
+            done;
+
+            CENTER="${#FILES[@]}/2"
+            GEX_FILES=( "${FILES[@]:0:$CENTER}" )
+            ATAC_FILES=( "${FILES[@]:$CENTER}" )
+
+            echo "Processing GEX clusters"
+            echo -e "barcode\tgex_genotype" > gex_metadata.tsv
+            let CNT=0
+            for FILE in ${GEX_FILES[@]}; do
+                ALIAS=${ALIASES[CNT]}
+                echo "Saving rows from ${FILE} with label ${ALIAS} and barcode $((CNT+1))"
+                cat "$FILE" | grep -v "barcode" | cut -f 1-3 | awk -v i="$((CNT+1))" -v c="${ALIAS}" '{split($1,b,"-"); print b[1]"-"i"\t"$2"\t"c"_"$3}' >> gex_metadata.tsv
+                (( CNT++ ))
+            done;
+
+            echo "Processing ATAC clusters"
+            echo "atac_genotype" > atac_metadata.tsv
+            let CNT=0
+            for FILE in ${ATAC_FILES[@]}; do
+                ALIAS=${ALIASES[CNT]}
+                echo "Saving rows from ${FILE} with label ${ALIAS} and barcode $((CNT+1))"
+                cat "$FILE" | grep -v "barcode" | cut -f 1-3 | awk -v i="$((CNT+1))" -v c="${ALIAS}" '{split($1,b,"-"); print b[1]"-"i"\t"$2"\t"c"_"$3}' >> atac_metadata.tsv
+                (( CNT++ ))
+            done;
+
+            echo "Combining results"
+            paste gex_metadata.tsv atac_metadata.tsv > extra_metadata.tsv
+            rm -f gex_metadata.tsv atac_metadata.tsv
+            head extra_metadata.tsv
           inputBinding:
             position: 5
         gex_genotype_cluster_tsv_file:
-          type: File?
+          type:
+            - "null"
+            - File[]
           inputBinding:
             position: 6
         atac_genotype_cluster_tsv_file:
-          type: File?
+          type:
+            - "null"
+            - File[]
           inputBinding:
             position: 7
+        genotype_cluster_names:
+          type:
+            - "null"
+            - string[]
+          inputBinding:
+            position: 8
       outputs:
         metadata_file:
           type: File?
@@ -1535,8 +1622,15 @@ steps:
             glob: "extra_metadata.tsv"
       baseCommand: ["bash", "-c"]
     in:
-      gex_genotype_cluster_tsv_file: gex_genotype_cluster_tsv_file
-      atac_genotype_cluster_tsv_file: atac_genotype_cluster_tsv_file
+      gex_genotype_cluster_tsv_file:
+        source: [gex_genotype_cluster_tsv_file, genotype_cluster_names, aggregation_metadata]
+        valueFrom: $(get_correct_order(self[0], self[1], self[2])[0])
+      atac_genotype_cluster_tsv_file:
+        source: [atac_genotype_cluster_tsv_file, genotype_cluster_names, aggregation_metadata]
+        valueFrom: $(get_correct_order(self[0], self[1], self[2])[0])
+      genotype_cluster_names:
+        source: [gex_genotype_cluster_tsv_file, genotype_cluster_names, aggregation_metadata]      # doesn't matter either use GEX or ATAC, as the size and order should be the same
+        valueFrom: $(get_correct_order(self[0], self[1], self[2])[1])
     out:
     - metadata_file
 
