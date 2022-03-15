@@ -1577,7 +1577,7 @@ steps:
             for FILE in ${GEX_FILES[@]}; do
                 ALIAS=${ALIASES[CNT]}
                 echo "Saving rows from ${FILE} with label ${ALIAS} and barcode $((CNT+1))"
-                cat "$FILE" | grep -v "barcode" | cut -f 1-3 | awk -v i="$((CNT+1))" -v c="${ALIAS}" '{split($1,b,"-"); print b[1]"-"i"\t"$2"\t"c"_"$3}' >> gex_metadata.tsv
+                cat "$FILE" | grep -v "barcode" | cut -f 1-3 | awk -v i="$((CNT+1))" -v c="${ALIAS}" '{split($1,b,"-"); if ($2 == "singlet") print b[1]"-"i"\t"c"__singlet_"$3; else print b[1]"-"i"\t"c"__"$2}' >> gex_metadata.tsv
                 (( CNT++ ))
             done;
 
@@ -1587,7 +1587,7 @@ steps:
             for FILE in ${ATAC_FILES[@]}; do
                 ALIAS=${ALIASES[CNT]}
                 echo "Saving rows from ${FILE} with label ${ALIAS} and barcode $((CNT+1))"
-                cat "$FILE" | grep -v "barcode" | cut -f 1-3 | awk -v i="$((CNT+1))" -v c="${ALIAS}" '{split($1,b,"-"); print b[1]"-"i"\t"$2"\t"c"_"$3}' >> atac_metadata.tsv
+                cat "$FILE" | grep -v "barcode" | cut -f 1-3 | awk -v c="${ALIAS}" '{if ($2 == "singlet") print c"__singlet_"$3; else print c"__"$2}' >> atac_metadata.tsv
                 (( CNT++ ))
             done;
 
