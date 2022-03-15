@@ -122,7 +122,7 @@ inputs:
     'sd:upstreamSource': "genotype_sample/atac_genotype_cluster_tsv_file"
     'sd:localLabel': true
 
-  genotype_cluster_aliases:
+  genotype_cluster_names:
     type:
       - "null"
       - string[]
@@ -1623,13 +1623,13 @@ steps:
       baseCommand: ["bash", "-c"]
     in:
       gex_genotype_cluster_tsv_file:
-        source: [gex_genotype_cluster_tsv_file, genotype_cluster_aliases, aggregation_metadata]
+        source: [gex_genotype_cluster_tsv_file, genotype_cluster_names, aggregation_metadata]
         valueFrom: $(get_correct_order(self[0], self[1], self[2])[0])
       atac_genotype_cluster_tsv_file:
-        source: [atac_genotype_cluster_tsv_file, genotype_cluster_aliases, aggregation_metadata]
+        source: [atac_genotype_cluster_tsv_file, genotype_cluster_names, aggregation_metadata]
         valueFrom: $(get_correct_order(self[0], self[1], self[2])[0])
       genotype_cluster_names:
-        source: [gex_genotype_cluster_tsv_file, genotype_cluster_aliases, aggregation_metadata]      # doesn't matter either use GEX or ATAC, as the size and order should be the same
+        source: [gex_genotype_cluster_tsv_file, genotype_cluster_names, aggregation_metadata]      # doesn't matter either use GEX or ATAC, as the size and order should be the same
         valueFrom: $(get_correct_order(self[0], self[1], self[2])[1])
     out:
     - metadata_file
