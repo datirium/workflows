@@ -441,17 +441,17 @@ inputs:
     - type: enum
       symbols:
       - "do not call peaks"
-      - "identity"
-      - "cluster"
+      - "sample"
+      - "RNA based cluster"
     default: "do not call peaks"
     label: "Cells grouping when calling peaks with MACS2 (use instead of Cell Ranger peaks)"
     doc: |
       Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
-      Peaks are called per GEX cluster (cluster) or per identity (identity) after
-      applying all GEX related thresholds, maximum nucleosome signal, and minimum TSS
-      enrichment score filters. If set to 'cluster' GEX clusters are identified based on the
-      first value from the --resolution array using --gexndim principal components when
-      building nearest-neighbour graph.
+      Peaks are called per GEX cluster ("RNA based cluster") or per identity ("sample")
+      after applying all GEX related thresholds, maximum nucleosome signal, and minimum TSS
+      enrichment score filters. If set to "RNA based cluster" GEX clusters are identified
+      based on the first value from the --resolution array using --gexndim principal components
+      when building nearest-neighbour graph.
       Default: do not call peaks
     'sd:layout':
       advanced: true
@@ -1679,7 +1679,16 @@ steps:
         valueFrom: $(split_numbers(self))
       call_peaks:
         source: call_peaks
-        valueFrom: $(self=="do not call peaks"?null:self)
+        valueFrom: |
+          ${
+            if (self == "do not call peaks") {
+              return null;
+            } else if (self == "sample") {
+              return "identity";
+            } else if (self == "RNA based cluster") {
+              return "cluster";
+            }
+          }
       gex_selected_features:
         source: gex_selected_features
         valueFrom: $(split_features(self))
