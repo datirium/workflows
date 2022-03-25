@@ -834,12 +834,12 @@ outputs:
         tab: 'Step 1.5. Intermediate filtered QC'
         Caption: 'Split by condition clustered UMAP projected PCA of filtered GEX datasets'
 
-  mid_fltr_gex_umap_qc_mtrcs_res_plot_png:
+  mid_clst_gex_umap_qc_mtrcs_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_multiome_filter/mid_fltr_gex_umap_qc_mtrcs_res_plot_png
+    outputSource: sc_multiome_filter/mid_clst_gex_umap_qc_mtrcs_res_plot_png
     label: "QC metrics for clustered UMAP projected PCA of filtered GEX datasets"
     doc: |
       QC metrics for clustered UMAP projected PCA of filtered GEX datasets.
@@ -1189,7 +1189,7 @@ steps:
     - mid_ntgr_gex_qc_dim_corr_plot_png
     - mid_clst_gex_umap_res_plot_png
     - mid_clst_gex_umap_spl_by_cond_res_plot_png
-    - mid_fltr_gex_umap_qc_mtrcs_res_plot_png
+    - mid_clst_gex_umap_qc_mtrcs_res_plot_png
     - fltr_peak_dnst_plot_png
     - fltr_bl_cnts_dnst_plot_png
     - fltr_pca_1_2_qc_mtrcs_plot_png
