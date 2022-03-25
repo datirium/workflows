@@ -348,7 +348,7 @@ inputs:
       advanced: true
 
   resolution:
-    type: int?
+    type: float?
     default: 0.3
     label: "Resolution to be used when identifying GEX based clusters. Ignored if not calling MACS2 peaks by RNA based cluster."
     doc: |
