@@ -886,82 +886,82 @@ outputs:
       QC metrics densities per cell (intermediate filtered).
       PDF format
 
-  mid_fltr_gex_elbow_plot_png:
+  mid_ntgr_gex_elbow_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_elbow.png"
+      glob: "*_mid_ntgr_gex_elbow.png"
     doc: |
       Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PNG format
 
-  mid_fltr_gex_elbow_plot_pdf:
+  mid_ntgr_gex_elbow_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_elbow.pdf"
+      glob: "*_mid_ntgr_elbow.pdf"
     doc: |
       Elbow plot from GEX PCA of filtered integrated/scaled datasets.
       PDF format
 
-  mid_fltr_gex_qc_dim_corr_plot_png:
+  mid_ntgr_gex_qc_dim_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_qc_dim_corr.png"
+      glob: "*_mid_ntgr_gex_qc_dim_corr.png"
     doc: |
       Correlation plots between main QC metrics and PCA reduction on GEX assay.
       PNG format
 
-  mid_fltr_gex_qc_dim_corr_plot_pdf:
+  mid_ntgr_gex_qc_dim_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_qc_dim_corr.pdf"
+      glob: "*_mid_ntgr_gex_qc_dim_corr.pdf"
     doc: |
       Correlation plots between main QC metrics and PCA reduction on GEX assay.
       PDF format
 
-  mid_fltr_gex_umap_res_plot_png:
+  mid_clst_gex_umap_res_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_umap_res_*.png"
+      glob: "*_mid_clst_gex_umap_res_*.png"
     doc: |
       Clustered UMAP projected PCA of filtered GEX datasets.
       PNG format
 
-  mid_fltr_gex_umap_res_plot_pdf:
+  mid_clst_gex_umap_res_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_umap_res_*.pdf"
+      glob: "*_mid_clst_gex_umap_res_*.pdf"
     doc: |
       Clustered UMAP projected PCA of filtered GEX datasets.
       PDF format
 
-  mid_fltr_gex_umap_spl_by_cond_res_plot_png:
+  mid_clst_gex_umap_spl_by_cond_res_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_umap_spl_by_cond_res_*.png"
+      glob: "*_mid_clst_gex_umap_spl_by_cond_res_*.png"
     doc: |
       Split by condition clustered UMAP projected PCA of filtered GEX datasets.
       PNG format
 
-  mid_fltr_gex_umap_spl_by_cond_res_plot_pdf:
+  mid_clst_gex_umap_spl_by_cond_res_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_umap_spl_by_cond_res_*.pdf"
+      glob: "*_mid_clst_gex_umap_spl_by_cond_res_*.pdf"
     doc: |
       Split by condition clustered UMAP projected PCA of filtered GEX datasets.
       PDF format
 
-  mid_fltr_gex_umap_qc_mtrcs_res_plot_png:
+  mid_clst_gex_umap_qc_mtrcs_res_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_umap_qc_mtrcs_res_*.png"
+      glob: "*_mid_clst_gex_umap_qc_mtrcs_res_*.png"
     doc: |
       QC metrics for clustered UMAP projected PCA of filtered GEX datasets.
       PNG format
 
-  mid_fltr_gex_umap_qc_mtrcs_res_plot_pdf:
+  mid_clst_gex_umap_qc_mtrcs_res_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gex_umap_qc_mtrcs_res_*.pdf"
+      glob: "*_mid_clst_gex_umap_qc_mtrcs_res_*.pdf"
     doc: |
       QC metrics for clustered UMAP projected PCA of filtered GEX datasets.
       PDF format
