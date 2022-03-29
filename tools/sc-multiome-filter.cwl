@@ -246,7 +246,7 @@ inputs:
     inputBinding:
       prefix: "--maxblacklisted"
     doc: |
-      Include cells with the ratio of reads in genomic blacklist regions
+      Include cells with the ratio of fragments in genomic blacklist regions
       not bigger than this value. If multiple values provided, each of them
       will be applied to the correspondent dataset from the --mex input based
       on the --identity file.
@@ -426,7 +426,7 @@ outputs:
     outputBinding:
       glob: "*_raw_bl_cnts_dnst.png"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (not filtered).
+      Density of fraction of fragments within blacklisted regions per cell (not filtered).
       PNG format
 
   raw_bl_cnts_dnst_plot_pdf:
@@ -434,7 +434,7 @@ outputs:
     outputBinding:
       glob: "*_raw_bl_cnts_dnst.pdf"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (not filtered).
+      Density of fraction of fragments within blacklisted regions per cell (not filtered).
       PDF format
 
   raw_pca_1_2_qc_mtrcs_plot_png:
@@ -667,7 +667,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_bl_cnts_dnst.png"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (intermediate filtered).
+      Density of fraction of fragments within blacklisted regions per cell (intermediate filtered).
       PNG format
 
   mid_fltr_bl_cnts_dnst_plot_pdf:
@@ -675,7 +675,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_bl_cnts_dnst.pdf"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (intermediate filtered).
+      Density of fraction of fragments within blacklisted regions per cell (intermediate filtered).
       PDF format
 
   mid_fltr_pca_1_2_qc_mtrcs_plot_png:
@@ -988,7 +988,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_bl_cnts_dnst.png"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (filtered).
+      Density of fraction of fragments within blacklisted regions per cell (filtered).
       PNG format
 
   fltr_bl_cnts_dnst_plot_pdf:
@@ -996,7 +996,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_bl_cnts_dnst.pdf"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (filtered).
+      Density of fraction of fragments within blacklisted regions per cell (filtered).
       PDF format
 
   fltr_pca_1_2_qc_mtrcs_plot_png:
@@ -1423,7 +1423,7 @@ s:about: |
                           input based on the --identity file. Default: 0.15
                           (applied to all datasets)
     --maxblacklisted [MAXBLACKLISTED ...]
-                          Include cells with the ratio of reads in genomic
+                          Include cells with the ratio of fragments in genomic
                           blacklist regions not bigger than this value. If
                           multiple values provided, each of them will be applied
                           to the correspondent dataset from the --mex input

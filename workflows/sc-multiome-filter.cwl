@@ -245,9 +245,9 @@ inputs:
   maximum_blacklisted_ratio:
     type: string?
     default: "0.05"
-    label: "Include cells with the ratio of reads in genomic blacklist regions not bigger than this value"
+    label: "Include cells with the ratio of fragments in genomic blacklist regions not bigger than this value"
     doc: |
-      Include cells with the ratio of reads in genomic blacklist regions
+      Include cells with the ratio of fragments in genomic blacklist regions
       not bigger than this value. If multiple values provided, each of them
       will be applied to the correspondent dataset from the --mex input based
       on the --identity file.
@@ -434,14 +434,14 @@ outputs:
   raw_bl_cnts_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_bl_cnts_dnst_plot_png
-    label: "Density of fraction of reads within blacklisted regions per cell (not filtered)"
+    label: "Density of fraction of fragments within blacklisted regions per cell (not filtered)"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (not filtered).
+      Density of fraction of fragments within blacklisted regions per cell (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Step 1. Not filtered QC'
-        Caption: 'Density of fraction of reads within blacklisted regions per cell (not filtered)'
+        Caption: 'Density of fraction of fragments within blacklisted regions per cell (not filtered)'
 
   raw_pca_1_2_qc_mtrcs_plot_png:
     type: File?
@@ -615,14 +615,14 @@ outputs:
   mid_fltr_bl_cnts_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/mid_fltr_bl_cnts_dnst_plot_png
-    label: "Density of fraction of reads within blacklisted regions per cell (intermediate filtered)"
+    label: "Density of fraction of fragments within blacklisted regions per cell (intermediate filtered)"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (intermediate filtered).
+      Density of fraction of fragments within blacklisted regions per cell (intermediate filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Step 1.5. Intermediate filtered QC'
-        Caption: 'Density of fraction of reads within blacklisted regions per cell (intermediate filtered)'
+        Caption: 'Density of fraction of fragments within blacklisted regions per cell (intermediate filtered)'
 
   mid_fltr_pca_1_2_qc_mtrcs_plot_png:
     type: File?
@@ -856,14 +856,14 @@ outputs:
   fltr_bl_cnts_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_bl_cnts_dnst_plot_png
-    label: "Density of fraction of reads within blacklisted regions per cell (filtered)"
+    label: "Density of fraction of fragments within blacklisted regions per cell (filtered)"
     doc: |
-      Density of fraction of reads within blacklisted regions per cell (filtered).
+      Density of fraction of fragments within blacklisted regions per cell (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Step 2. Filtered QC'
-        Caption: 'Density of fraction of reads within blacklisted regions per cell (filtered)'
+        Caption: 'Density of fraction of fragments within blacklisted regions per cell (filtered)'
 
   fltr_pca_1_2_qc_mtrcs_plot_png:
     type: File?
