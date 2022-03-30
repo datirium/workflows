@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.1
+  dockerPull: biowardrobe2/sc-tools:v0.0.2
 
 
 inputs:
@@ -235,7 +235,7 @@ inputs:
     doc: |
       Include cells with the FRiP not lower than this value. If multiple values
       provided, each of them will be applied to the correspondent dataset from
-      the --mex input based on the --identity file.
+      the --mex input based on the --identity file. FRiP is calculated for fragments.
       Default: 0.15 (applied to all datasets)
 
   maximum_blacklisted_ratio:
@@ -1420,8 +1420,8 @@ s:about: |
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the --mex
-                          input based on the --identity file. Default: 0.15
-                          (applied to all datasets)
+                          input based on the --identity file. FRiP is calculated
+                          for fragments. Default: 0.15 (applied to all datasets)
     --maxblacklisted [MAXBLACKLISTED ...]
                           Include cells with the ratio of fragments in genomic
                           blacklist regions not bigger than this value. If
