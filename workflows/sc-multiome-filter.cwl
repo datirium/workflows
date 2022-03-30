@@ -8,13 +8,6 @@ requirements:
   - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
     expressionLib:
-    - var split_features = function(line) {
-          function get_unique(value, index, self) {
-            return self.indexOf(value) === index && value != "";
-          }
-          let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
-          return (splitted_line && !!splitted_line.length)?splitted_line:null;
-      };
     - var split_numbers = function(line) {
           let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
@@ -50,7 +43,6 @@ inputs:
 
   aggregation_metadata:
     type: File?
-    loadContents: true
     label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
       Path to the metadata TSV/CSV file to set the datasets identities.
@@ -237,7 +229,7 @@ inputs:
     doc: |
       Include cells with the FRiP not lower than this value. If multiple values
       provided, each of them will be applied to the correspondent dataset from
-      the --mex input based on the --identity file.
+      the --mex input based on the --identity file. FRiP is calculated for fragments.
       Default: 0.15 (applied to all datasets)
     'sd:layout':
       advanced: true
