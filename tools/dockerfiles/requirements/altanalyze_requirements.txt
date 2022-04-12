@@ -15,7 +15,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 kiwisolver==1.1.0
 llvmlite==0.29.0
-lxml==4.5.2
+lxml==4.6.5
 MarkupSafe==1.1.1
 matplotlib==2.2.5
 networkx==2.2
