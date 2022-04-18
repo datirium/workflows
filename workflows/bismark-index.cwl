@@ -6,18 +6,25 @@ class: Workflow
   - "../metadata/indices-header.cwl"
 
 
+'sd:upstream':
+  genome_indices:
+    - "genome-indices.cwl"
+
+
 inputs:
 
   genome:
     type: string
     label: "Genome type"
     doc: "Genome type, such as mm10, hg19, hg38, etc"
+    'sd:upstreamSource': "genome_indices/genome"
 
   fasta_file:
     type: File
     format: "http://edamontology.org/format_1929"
     label: "Reference genome FASTA file (*.fa or *.fasta, or *.gz)"
     doc: "Reference genome FASTA file (*.fa or *.fasta, or *.gz). Includes all chromosomes"
+    'sd:upstreamSource': "genome_indices/fasta_output"
 
 
 outputs:
