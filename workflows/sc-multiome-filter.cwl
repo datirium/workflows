@@ -76,7 +76,7 @@ inputs:
       '--identity' file, second column 'condition'.
       Default: each dataset is assigned to its own group.
 
-  blacklisted_regions_file:
+  blacklist_regions_file:
     type: File?
     label: "Optional BED file with the genomic blacklist regions"
     doc: |
@@ -865,7 +865,7 @@ steps:
       atac_fragments_file: atac_fragments_file
       annotation_gtf_file: annotation_gtf_file
       grouping_data: grouping_data
-      blacklist_regions_file: blacklisted_regions_file
+      blacklist_regions_file: blacklist_regions_file
       barcodes_data: barcodes_data
       rna_minimum_cells:
         default: 1
