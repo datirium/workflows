@@ -96,9 +96,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger mkref - builds a Cell Ranger compatible indices"
-s:name: "Cell Ranger mkref - builds a Cell Ranger compatible indices"
-s:alternateName: "Builds a Cell Ranger compatible reference folder from user-supplied genome FASTA and gene GTF files"
+label: "Cell Ranger Build Reference Indices"
+s:name: "Cell Ranger Build Reference Indices"
+s:alternateName: "Builds Cell Ranger compatible reference folder from the custom genome FASTA and gene GTF annotation files"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-mkref.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -136,8 +136,11 @@ s:creator:
 
 
 doc: |
-  Builds a Cell Ranger compatible reference folder from user-supplied
-  genome FASTA and gene GTF files.
+  Cell Ranger Build Reference Indices
+  ======================================================
+  
+  Builds Cell Ranger compatible reference folder from
+  the custom genome FASTA and gene GTF annotation files.
 
 
 s:about: |

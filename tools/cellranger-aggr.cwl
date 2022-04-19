@@ -172,9 +172,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger aggr - aggregates data from multiple Cellranger runs"
-s:name: "Cellranger aggr - aggregates data from multiple Cellranger runs"
-s:alternateName: "Cellranger aggr takes a list of cellranger count output files and produces a single feature-barcode matrix containing all the data"
+label: "Cell Ranger Aggregate"
+s:name: "Cell Ranger Aggregate"
+s:alternateName: "Aggregates outputs from multiple runs of Cell Ranger Count Gene Expression"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-aggr.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -212,6 +212,34 @@ s:creator:
 
 
 doc: |
+  Cell Ranger Aggregate
+  ===========================================================================
+
+  Aggregates outputs from multiple runs of Cell Ranger Count Gene Expression.
+
+  Parameters set by default:
+  --disable-ui - no need in any UI when running in Docker container
+  --id - hardcoded to `aggregated` as we want to return the content
+         of the outputs folder as separate outputs
+
+  Skipped parameters:
+  --nosecondary
+  --dry
+  --noexit
+  --nopreflight
+  --description
+  --jobmode
+  --mempercore
+  --maxjobs
+  --jobinterval
+  --overrides
+  --uiport
+
+  Not supported features:
+  - Batch correction caused by different versions of the Single Cell Gene
+    Expression chemistry is not supported as the generated metadata file
+    doesn't include "batch" field.
+
   Tool calls "cellranger aggr" command to combine output files from "cellranger count"
   (the molecule_info.h5 file from each run) into a single feature-barcode matrix containing
   all the data. When combining multiple GEM wells, the barcode sequences for each channel
@@ -233,27 +261,6 @@ doc: |
   input. The "none" value may be appropriate if you want to maximize sensitivity and plan to deal
   with depth normalization in a downstream step.
 
-  Parameters set by default:
-  --disable-ui - no need in any UI when running in Docker container
-  --id - hardcoded to `aggregated` as we want to return the content of the
-         outputs folder as separate outputs
-
-  Skipped parameters:
-  --nosecondary
-  --dry
-  --noexit
-  --nopreflight
-  --description
-  --jobmode
-  --mempercore
-  --maxjobs
-  --jobinterval
-  --overrides
-  --uiport
-
-  Not supported features:
-  - Batch correction caused by different versions of the Single Cell Gene Expression chemistry is
-    not supported as the generated metadata file doesn't include "batch" field.
 
 s:about: |
   Aggregate data from multiple Cell Ranger runs

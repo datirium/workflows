@@ -116,9 +116,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger ARC mkref - builds compatible with Cell Ranger ARC indices"
-s:name: "Cell Ranger ARC mkref - builds compatible with Cell Ranger ARC indices"
-s:alternateName: "Builds compatible with Cell Ranger ARC reference folder from user-supplied genome FASTA and gene GTF files"
+label: "Cell Ranger ARC Build Reference Indices"
+s:name: "Cell Ranger ARC Build Reference Indices"
+s:alternateName: "Builds Cell Ranger ARC compatible reference folder from the custom genome FASTA and gene GTF annotation files"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-arc-mkref.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -156,12 +156,18 @@ s:creator:
 
 
 doc: |
-  Reference preparation tool for 10x Genomics Cell Ranger Multiome ATAC + Gene Expression
-
+  Cell Ranger ARC Build Reference Indices
+  ====================================================================
+  
+  Builds Cell Ranger ARC compatible reference folder from the custom
+  genome FASTA and gene GTF annotation files.
+  
   Notes:
-  - `input_motifs` parameter in the `config.txt` file is not implemented
-  - if GTF file provided in `annotation_gtf_file` has duplicate gene_id, they should be
-    grouped together. Applicable to to USCS RefGene annotations.
+  - `input_motifs` parameter in the `config.txt` file is not
+    implemented.
+  - if GTF file provided in `annotation_gtf_file` has records with
+    duplicate gene_id, they should be grouped together. Applicable to
+    USCS RefGene annotations.
 
 
 s:about: |

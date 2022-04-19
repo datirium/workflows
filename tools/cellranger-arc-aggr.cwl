@@ -229,9 +229,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger ARC aggr - aggregates data from multiple Cellranger ARC runs"
-s:name: "Cellranger ARC aggr - aggregates data from multiple Cellranger ARC runs"
-s:alternateName: "Cellranger ARC aggr takes a list of cellranger ARC count output files and produces a single feature-barcode matrix containing all the data"
+label: "Cellranger ARC Aggregate"
+s:name: "Cellranger ARC Aggregate"
+s:alternateName: "Aggregates outputs from multiple runs of Cell Ranger ARC Count Chromatin Accessibility and Gene Expression"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-arc-aggr.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -269,16 +269,11 @@ s:creator:
 
 
 doc: |
+  Cellranger ARC Aggregate
+  ========================================================================
 
-  Tool calls "cellranger-arc aggr" command that takes as input a CSV file specifying a list
-  of cellranger-arc count output files for each GEM well being aggregated and produces a
-  single feature-barcode matrix containing all the data. When combining multiple GEM wells,
-  the barcode sequences for each channel are distinguished by a GEM well suffix appended to
-  the barcode sequence. By default, the reads from each GEM well are subsampled such that all
-  GEM wells have the same effective sequencing depth for both ATAC and gene expression modalities;
-  for the ATAC data it is measured in terms of median unique fragments per cell and for gene
-  expression it is measured in terms of the average number of reads that are confidently mapped
-  to the transcriptome per cell. However, it is possible to turn off this normalization altogether.
+  Aggregates outputs from multiple runs of Cell Ranger ARC Count Chromatin
+  Accessibility and Gene Expression.
 
   Parameters set by default:
   --disable-ui - no need in any UI when running in Docker container
@@ -298,6 +293,16 @@ doc: |
   --jobinterval
   --overrides
   --uiport
+
+  Tool calls "cellranger-arc aggr" command that takes as input a CSV file specifying a list
+  of cellranger-arc count output files for each GEM well being aggregated and produces a
+  single feature-barcode matrix containing all the data. When combining multiple GEM wells,
+  the barcode sequences for each channel are distinguished by a GEM well suffix appended to
+  the barcode sequence. By default, the reads from each GEM well are subsampled such that all
+  GEM wells have the same effective sequencing depth for both ATAC and gene expression modalities;
+  for the ATAC data it is measured in terms of median unique fragments per cell and for gene
+  expression it is measured in terms of the average number of reads that are confidently mapped
+  to the transcriptome per cell. However, it is possible to turn off this normalization altogether.
 
 
 s:about: |

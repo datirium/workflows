@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap:v0.0.3
+  dockerPull: ubuntu:20.04
 
 
 inputs:
@@ -43,7 +43,10 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-s:name: "tar-compress"
+label: "TAR compress"
+s:name: "TAR compress"
+s:alternateName: "Creates compressed TAR file from a folder"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/tar-compress.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -80,5 +83,8 @@ s:creator:
 
         
 doc: |
-  Compresses input directory to tar.gz
+  TAR compress
+  =========================================
+  
+  Creates compressed TAR file from a folder
 

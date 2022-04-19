@@ -219,9 +219,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger count - generates single cell feature counts for a single library"
-s:name: "Cellranger count - generates single cell feature counts for a single library"
-s:alternateName: "Counts gene expression and feature barcoding reads from a single sample and GEM well"
+label: "Cell Ranger Count Gene Expression"
+s:name: "Cell Ranger Count Gene Expression"
+s:alternateName: "Quantifies gene expression from a single scRNA-Seq library"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-count.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -259,18 +259,25 @@ s:creator:
 
 
 doc: |
-  Generates single cell feature counts for a single library.
+  Cell Ranger Count Gene Expression
+  ==============================================================
+  
+  Quantifies gene expression from a single-cell RNA-Seq library.
 
-  Input parameters for Feature Barcode, Targeted Gene Expression and CRISPR-specific
-  analyses are not implemented, therefore the correspondent outputs are also excluded.
+  Input parameters for Feature Barcode, Targeted Gene
+  Expression and CRISPR-specific analyses are not implemented,
+  therefore the correspondent outputs are also excluded.
 
   Parameters set by default:
-  --disable-ui - no need in any UI when running in Docker container
+  --disable-ui - no need in any UI when running in Docker
+    container
   --id - can be hardcoded as we rename input files anyway
-  --fastqs - points to the current directory, because input FASTQ files are staged there
+  --fastqs - points to the current directory, because input
+    FASTQ files are staged there
 
   Why do we need to rename input files?
-  Refer to the "My FASTQs are not named like any of the above examples" section of
+  Refer to the "My FASTQs are not named like any of the above
+  examples" section of
   https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
 
 

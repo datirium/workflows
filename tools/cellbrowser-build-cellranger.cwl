@@ -139,7 +139,12 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "cellbrowser-build-cellranger"
+label: "Cell Ranger Count/Aggregate to UCSC Cell Browser"
+s:name: "Cell Ranger Count/Aggregate to UCSC Cell Browser"
+s:alternateName: |
+  Exports clustering results from Cell Ranger Count Gene Expression or Cell Ranger
+  Aggregate experiments into compatible with UCSC Cell Browser format
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellbrowser-build-cellranger.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -176,7 +181,12 @@ s:creator:
 
 
 doc: |
-  Converts Cellranger outputs into the data structure supported by UCSC CellBrowser
+  Cell Ranger Count/Aggregate to UCSC Cell Browser
+  =================================================================
+  
+  Exports clustering results from Cell Ranger Count Gene Expression
+  and Cell Ranger Aggregate experiments into compatible with UCSC
+  Cell Browser format.
 
 
 s:about: |

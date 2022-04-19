@@ -93,7 +93,10 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "extract-fastq"
+label: "Extract FASTQ"
+s:name: "Extract FASTQ"
+s:alternateName: "Extracts bzip2-/gzip-/zip-compressed FASTQ file"
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/extract-fastq.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -129,15 +132,21 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool to decompress input FASTQ file(s).
-  If several FASTQ files are provided, they will be concatenated in the order that corresponds to files in input.
+  Extract FASTQ
+  ==============================================================
+  
+  Extracts bzip2-/gzip-/zip-compressed FASTQ file.
+  If several FASTQ files are provided, they will be concatenated
+  in the order that corresponds to files in input.
   Bash script's logic:
   - disable case sensitive glob check
-  - check if root name of input file already include '.fastq' or '.fq' extension. If yes, set DEFAULT_EXT to "",
-    otherwise use '.fastq'
+  - check if root name of input file already include '.fastq' or
+    '.fq' extension.
+    If yes, set DEFAULT_EXT to "", otherwise use '.fastq'
   - check file type, decompress if needed
   - return 1, if file type is not recognized
-  This script also works of input file doesn't have any extension at all
+  This script also works of input file doesn't have any extension
+  at all.
 
 s:about: |
   Tool to decompress input FASTQ file

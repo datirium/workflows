@@ -369,9 +369,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger ARC count - generates single cell feature counts for a single multiome library"
-s:name: "Cell Ranger ARC count - generates single cell feature counts for a single multiome library"
-s:alternateName: "Counts ATAC and gene expression reads from a single 10x Genomics Cell Ranger Multiome ATAC + Gene Expression library"
+label: "Cell Ranger ARC Count Chromatin Accessibility and Gene Expression"
+s:name: "Cell Ranger ARC Count Chromatin Accessibility and Gene Expression"
+s:alternateName: "Quantifies chromatin accessibility and gene expression from a single-cell Multiome ATAC/RNA-Seq library"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-arc-count.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -409,20 +409,17 @@ s:creator:
 
 
 doc: |
-  Count ATAC and gene expression reads from a single library.
+  Cell Ranger ARC Count Chromatin Accessibility and Gene Expression
+  =================================================================
 
-  Cell Ranger ARC count performs alignment, filtering, barcode counting,
-  peak calling and counting of both ATAC and GEX molecules. Furthermore,
-  it uses the Chromium cellular barcodes to generate feature-barcode matrices,
-  perform dimensionality reduction, determine clusters, perform differential
-  analysis on clusters and identify linkages between peaks and genes. The
-  count pipeline can take input from multiple sequencing runs on the same
-  GEM well.
+  Quantifies chromatin accessibility and gene expression from a
+  single-cell Multiome ATAC/RNA-Seq library.
 
   Parameters set by default:
   --disable-ui - no need in any UI when running in Docker container
   --id - hardcoded to `sample` to simplify output files location
-  --libraries - points to the file libraries.csv generated based on the input FASTQ files
+  --libraries - points to the file libraries.csv generated based on
+    the input FASTQ files
 
   No implemented parameters:
   --no-bam - we want to always generate BAM files
@@ -439,6 +436,15 @@ doc: |
 
   Why do we need to rename input files?
   https://support.10xgenomics.com/single-cell-multiome-atac-gex/software/pipelines/latest/using/using/fastq-input
+
+
+  Cell Ranger ARC count performs alignment, filtering, barcode counting,
+  peak calling and counting of both ATAC and GEX molecules. Furthermore,
+  it uses the Chromium cellular barcodes to generate feature-barcode matrices,
+  perform dimensionality reduction, determine clusters, perform differential
+  analysis on clusters and identify linkages between peaks and genes. The
+  count pipeline can take input from multiple sequencing runs on the same
+  GEM well.
 
 
 s:about: |
