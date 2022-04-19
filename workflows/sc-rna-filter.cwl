@@ -536,7 +536,7 @@ label: "Single-cell GEX Filter"
 s:name: "Single-cell GEX Filter"
 s:alternateName: "Filters single-cell GEX datasets based on the common QC metrics"
 
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-gex-filter.cwl
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-filter.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
