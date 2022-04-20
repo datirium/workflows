@@ -2,29 +2,43 @@ cwlVersion: v1.0
 class: Workflow
 
 
-'sd:metadata':
-  - "../metadata/indices-header.cwl"
-
-
-'sd:upstream':
-  genome_indices:
-    - "genome-indices.cwl"
-
-
 inputs:
 
   genome:
     type: string
     label: "Genome type"
     doc: "Genome type, such as mm10, hg19, hg38, etc"
-    'sd:upstreamSource': "genome_indices/genome"
 
-  fasta_file:
+  genome_label:
+    type: string?
+    label: "Genome label"
+    sd:preview:
+      position: 1
+
+  genome_description:
+    type: string?
+    label: "Genome description"
+    sd:preview:
+      position: 2
+
+  genome_details:
+    type: string?
+    label: "Genome details"
+    sd:preview:
+      position: 3
+
+  genome_file:
     type: File
-    format: "http://edamontology.org/format_1929"
-    label: "Reference genome FASTA file (*.fa or *.fasta, or *.gz)"
-    doc: "Reference genome FASTA file (*.fa or *.fasta, or *.gz). Includes all chromosomes"
-    'sd:upstreamSource': "genome_indices/fasta_output"
+    format: "http://edamontology.org/format_3009"
+    label: "Reference genome file (*.2bit, *.fasta, *.fa, *.fa.gz, *.fasta.gz)"
+    doc: "Reference genome file (*.2bit, *.fasta, *.fa, *.fa.gz, *.fasta.gz). All chromosomes are included"
+
+  chromosome_list:
+    type:
+      - "null"
+      - string[]
+    label: "Chromosome list to be included into the reference genome FASTA file"
+    doc: "Filter chromosomes while extracting FASTA from 2bit"
 
 
 outputs:
@@ -50,9 +64,17 @@ outputs:
 
 steps:
 
+  extract_fasta:
+    run: ../tools/ucsc-twobit-to-fa.cwl
+    in:
+      reference_file: genome_file
+      chr_list: chromosome_list
+    out:
+    - fasta_file
+
   fasta_to_folder:
     in:
-      genome_fasta: fasta_file
+      genome_fasta: extract_fasta/fasta_file
       genome_type: genome
     out: [genome_folder]
     run:
