@@ -21,15 +21,17 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      cp $0 $1
-      if [ -f $0.bai ]; then
-        cp $0.bai $1.bai
+      if [ -f $0 ]; then
+        cp $0 $1
+        if [ -f $0.bai ]; then
+          cp $0.bai $1.bai
+        fi
       fi
     inputBinding:
       position: 1
 
   source_file:
-    type: File
+    type: File?
     inputBinding:
       position: 5
 
@@ -43,12 +45,12 @@ inputs:
 outputs:
 
   target_file:
-    type: File
+    type: File?
     outputBinding:
       glob: $(get_target_name())
     secondaryFiles: |
       ${
-          if (inputs.source_file.secondaryFiles && inputs.source_file.secondaryFiles.length > 0){
+          if (inputs.source_file && inputs.source_file.secondaryFiles && inputs.source_file.secondaryFiles.length > 0){
             return inputs.target_filename+".bai";
           } else {
             return "null";

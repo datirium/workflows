@@ -1108,7 +1108,7 @@ inputs:
       BySJout ... keep only those reads that contain junctions that passed filtering into SJ.out.tab
 
   alignIntronMin:
-    type: int?
+    type: boolean?
     inputBinding:
       position: 1
       prefix: --alignIntronMin

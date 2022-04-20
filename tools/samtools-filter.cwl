@@ -17,14 +17,14 @@ inputs:
     default: |
       #!/bin/bash
       echo "Filtering BAM file"
-      echo "samtools idxstats $0 | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -o $3 $0"
-      samtools idxstats $0 | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -o $3 $0
+      echo "samtools idxstats $0 | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -F $3 -o $4 $0"
+      samtools idxstats $0 | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -F $3 -o $4 $0
       echo "Sorting BAM file"
-      echo "samtools sort $3 -o $3"
-      samtools sort $3 -o $3
+      echo "samtools sort $4 -o $4"
+      samtools sort $4 -o $4
       echo "Indexing BAM file"
-      echo "samtools index $3"
-      samtools index $3
+      echo "samtools index $4"
+      samtools index $4
     inputBinding:
       position: 5
     doc: "Script to exclude chromosomes from the BAM file and filter reads by quality"
@@ -49,11 +49,18 @@ inputs:
       position: 8
     default: 0
     doc: "Skip alignments with MAPQ smaller than INT. Default 0"
-      
+  
+  negative_flag:
+    type: int?
+    inputBinding:
+      position: 9
+    default: 0
+    doc: "Do not output alignments with any bits set in INT present in the FLAG field. Default 0"
+
   output_filename:
     type: string?
     inputBinding:
-      position: 9
+      position: 10
       valueFrom: |
         ${
           return (self == "")?inputs.bam_bai_pair.basename:self;

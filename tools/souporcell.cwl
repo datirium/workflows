@@ -95,7 +95,7 @@ inputs:
     doc: |
       Number of restarts in clustering, when there are > 12
       clusters we recommend increasing this to avoid local
-      minima.
+      minima
       Default: 100
 
   common_variants_vcf_file:
