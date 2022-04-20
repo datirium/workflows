@@ -825,6 +825,7 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: sc_multiome_filter/seurat_data_rds
+    label: "Processed Seurat data in RDS format"
     doc: |
       Processed Seurat data in RDS format
 
