@@ -1563,13 +1563,71 @@
       location: upstream_trimmed_bismark_bt2.M-bias.txt
       class: File
     mbias_plot_png:
-      location: upstream_trimmed_bismark_bt2.M-bias_R1.png
+    - location: upstream_trimmed_bismark_bt2.M-bias_R1.png
       class: File
     splitting_report:
       location: upstream_trimmed_bismark_bt2_splitting_report.txt
       class: File
     trim_adapters_report:
       location: upstream.fastq_trimming_report.txt
+      class: File
+
+# ========================================================
+# bismark-methylation-pe
+# ========================================================
+
+- job: ./bismark-methylation-pe-1.json
+  tool: ../workflows/bismark-methylation-se.cwl
+  output:
+    bambai_pair:
+      location: upstream_val_1_bismark_bt2_pe.bam
+      class: File
+      secondaryFiles:
+      - location: upstream_val_1_bismark_bt2_pe.bam.bai
+        class: File
+    bedgraph_coverage_file:
+      location: upstream_val_1_bismark_bt2_pe.bedGraph.gz
+      class: File
+    bismark_alignment_report:
+      location: upstream_val_1_bismark_bt2_PE_report.txt
+      class: File
+    bismark_coverage_file:
+      location: upstream_val_1_bismark_bt2_pe.bismark.cov.gz
+      class: File
+    chg_context_file:
+      location: CHG_context_upstream_val_1_bismark_bt2_pe.txt
+      class: File
+    chh_context_file:
+      location: CHH_context_upstream_val_1_bismark_bt2_pe.txt
+      class: File
+    collected_report:
+      location: upstream_val_1_bismark_bt2_PE_report.html
+      class: File
+    collected_report_formatted:
+      location: collected_report_formatted.tsv
+      class: File
+    cpg_context_file:
+      location: CpG_context_upstream_val_1_bismark_bt2_pe.txt
+      class: File
+    genome_wide_methylation_report:
+      location: upstream_trimmed_bismark_bt2.CpG_report.txt
+      class: File
+    mbias_plot:
+      location: upstream_val_1_bismark_bt2_pe.M-bias.txt
+      class: File
+    mbias_plot_png:
+    - location: upstream_val_1_bismark_bt2_pe.M-bias_R1.png
+      class: File
+    - location: upstream_val_1_bismark_bt2_pe.M-bias_R2.png
+      class: File
+    splitting_report:
+      location: upstream_val_1_bismark_bt2_pe_splitting_report.txt
+      class: File
+    trim_adapters_report:
+      location: upstream.fastq_trimming_report.txt
+      class: File
+    trim_adapters_report_pair:
+      location: downstream.fastq_trimming_report.txt
       class: File
 
 # ========================================================

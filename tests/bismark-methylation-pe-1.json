@@ -4,6 +4,11 @@
         "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/upstream.fastq",
         "format": "http://edamontology.org/format_1930"
     },
+    "fastq_file_r2": {
+        "class": "File",
+        "location": "./data/dm3_chr4/main_inputs/fastq/chr4_100_chrM_25_mapped_reads/downstream.fastq",
+        "format": "http://edamontology.org/format_1930"
+    },
     "indices_folder": {
         "class": "Directory",
         "location": "./data/dm3_chr4/generated_inputs/indices/bismark/data"
