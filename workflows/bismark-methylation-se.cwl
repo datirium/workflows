@@ -13,7 +13,7 @@ class: Workflow
 
 inputs:
 
-  fastq_file:
+  fastq_file_r1:
     type: File
     format: "http://edamontology.org/format_1930"
     label: "FASTQ file"
@@ -177,7 +177,7 @@ steps:
   trim_adapters:
     run: ../tools/trimgalore.cwl
     in:
-      input_file: fastq_file
+      input_file: fastq_file_r1
       dont_gzip:
         default: true
       length:
