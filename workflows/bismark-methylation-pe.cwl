@@ -16,8 +16,14 @@ inputs:
   fastq_file_r1:
     type: File
     format: "http://edamontology.org/format_1930"
-    label: "FASTQ file"
-    doc: "Uncompressed or gzipped FASTQ file, single-end"
+    label: "FASTQ read 1 file"
+    doc: "Uncompressed or gzipped FASTQ read 1 file"
+
+  fastq_file_r2:
+    type: File
+    format: "http://edamontology.org/format_1930"
+    label: "FASTQ read 2 file"
+    doc: "Uncompressed or gzipped FASTQ read 2 file"
 
   indices_folder:
     type: Directory
@@ -157,10 +163,17 @@ outputs:
 
   trim_adapters_report:
     type: File
-    label: "TrimGalore report"
-    doc: "TrimGalore generated report"
+    label: "TrimGalore report for R1"
+    doc: "TrimGalore generated report for R1"
     format: "http://edamontology.org/format_2330"
     outputSource: trim_adapters/report_file
+
+  trim_adapters_report_pair:
+    type: File
+    label: "TrimGalore report for R1"
+    doc: "TrimGalore generated report for R1"
+    format: "http://edamontology.org/format_2330"
+    outputSource: trim_adapters/report_file_pair
 
 
 steps:
@@ -172,22 +185,37 @@ steps:
     out:
     - fastq_file
 
+  extract_fastq_r2:
+    run: ../tools/extract-fastq.cwl
+    in:
+      compressed_file: fastq_file_r2
+    out:
+    - fastq_file
+
   trim_adapters:
     run: ../tools/trimgalore.cwl
     in:
       input_file: extract_fastq_r1/fastq_file
+      input_file_pair: extract_fastq_r2/fastq_file
       dont_gzip:
         default: true
       length:
         default: 30
+      trim1:
+        default: true
+      paired:
+        default: true
     out:
       - trimmed_file
+      - trimmed_file_pair
       - report_file
+      - report_file_pair
 
   bismark_align:
     run: ../tools/bismark-align.cwl
     in:
       fastq_file_r1: trim_adapters/trimmed_file
+      fastq_file_r2: trim_adapters/trimmed_file_pair
       indices_folder: indices_folder
       processes:
         default: 1
@@ -240,11 +268,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Bismark Methylation SE"
-label: "Bismark Methylation SE"
+s:name: "Bismark Methylation PE"
+label: "Bismark Methylation PE"
 s:alternateName: "Bisulfite-Sequencing analysis pipeline to map bisulfite converted sequence reads and determine cytosine methylation states"
 
-s:downloadUrl: https://github.com/Barski-lab/workflows/blob/master/workflows/bismark-methylation-se.cwl
+s:downloadUrl: https://github.com/Barski-lab/workflows/blob/master/workflows/bismark-methylation-pe.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

@@ -18,9 +18,9 @@ inputs:
       with open(sys.argv[1], 'r') as alignment_report:
         for line in alignment_report:
           line = line.strip()
-          if "Sequences analysed in total:" in line:
+          if "in total:" in line:
             TOTAL = line.split("\t")[1]
-          if 'different alignments:' in line:
+          if 'unique best hit' in line:
             UNIQUE = line.split("\t")[1]
           if 'under any condition:' in line:
             UNMAPPED = line.split("\t")[1]

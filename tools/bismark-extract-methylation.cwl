@@ -70,7 +70,7 @@ outputs:
       glob: "*M-bias.txt"
 
   mbias_plot_png:
-    type: File
+    type: File[]
     label: "Methylation bias plot (PNG)"
     doc: "QC data showing methylation bias across read lengths"
     outputBinding:

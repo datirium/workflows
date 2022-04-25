@@ -17,12 +17,19 @@ inputs:
     label: "Bismark indices folder"
     doc: "Path to Bismark generated indices folder"
 
-  fastq_file:
+  fastq_file_r1:
     type: File
     inputBinding:
-      position: 4
-    label: "FASTQ file"
-    doc: "Uncompressed or gzipped FASTQ file, single-end"
+      position: 5
+    label: "FASTQ read 1 file"
+    doc: "Uncompressed or gzipped FASTQ read 1 file"
+
+  fastq_file_r2:
+    type: File?
+    inputBinding:
+      position: 7
+    label: "Optional FASTQ read 2 file"
+    doc: "Optional uncompressed or gzipped FASTQ read 2 file"
 
   processes:
     type: int?
@@ -59,6 +66,23 @@ outputs:
 
 
 baseCommand: ["bismark", "--non_directional"]
+arguments:
+- valueFrom: |
+    ${
+      if (inputs.fastq_file_r1 && inputs.fastq_file_r2){
+        return "-1";
+      }
+      return null;
+    }
+  position: 4
+- valueFrom: |
+    ${
+      if (inputs.fastq_file_r1 && inputs.fastq_file_r2){
+        return "-2";
+      }
+      return null;
+    }
+  position: 6
 
 
 $namespaces:
@@ -107,7 +131,6 @@ s:creator:
 
 doc: |
   Default aligner - Bowtie2.
-  Only Single-End supported.
   Parameters used:
   --non_directional
     The sequencing library was constructed in a non strand-specific manner, alignments to all four bisulfite strands
