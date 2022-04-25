@@ -229,7 +229,7 @@ inputs:
   call_peaks:
     type: boolean?
     default: false
-    label: "Replace Cell Ranger peaks with MACS2 called peaks"
+    label: "Replace Cell Ranger peaks with per sample MACS2 peaks"
     doc: |
       Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
       Peaks are called per identity (identity) or per GEX cluster (cluster) after applying
@@ -244,15 +244,13 @@ inputs:
     type:
     - type: enum
       symbols:
-      - "8"
-      - "16"
       - "32"
     default: "32"
     label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
     doc: |
       Maximum memory in GB allowed to be shared between the workers
       when using multiple --cpus.
-      Default: 32
+      Forced to 32 GB
     'sd:layout':
       advanced: true
 
@@ -260,14 +258,12 @@ inputs:
     type:
     - type: enum
       symbols:
-      - "32"
-      - "64"
       - "96"
-    default: "64"
+    default: "96"
     label: "Maximum vector memory in GB allowed to be used by R"
     doc: |
       Maximum vector memory in GB allowed to be used by R.
-      Default: 128
+      Forced to 96 GB
     'sd:layout':
       advanced: true
 
@@ -276,13 +272,11 @@ inputs:
     - type: enum
       symbols:
       - "1"
-      - "2"
-      - "3"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
       Number of cores/cpus to use.
-      Default: 1
+      Forced to 1
     'sd:layout':
       advanced: true
 

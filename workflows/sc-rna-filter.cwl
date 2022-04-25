@@ -141,15 +141,13 @@ inputs:
     type:
     - type: enum
       symbols:
-      - "8"
-      - "16"
       - "32"
     default: "32"
     label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
     doc: |
       Maximum memory in GB allowed to be shared between the workers
       when using multiple --cpus.
-      Default: 32
+      Forced to 32 GB
     'sd:layout':
       advanced: true
 
@@ -158,13 +156,11 @@ inputs:
     - type: enum
       symbols:
       - "32"
-      - "64"
-      - "96"
-    default: "64"
+    default: "32"
     label: "Maximum vector memory in GB allowed to be used by R"
     doc: |
       Maximum vector memory in GB allowed to be used by R.
-      Default: 64
+      Forced to 32 GB
     'sd:layout':
       advanced: true
 
@@ -173,12 +169,11 @@ inputs:
     - type: enum
       symbols:
       - "1"
-      - "2"
-      - "3"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
       Number of cores/cpus to use
+      Forced to 1
     'sd:layout':
       advanced: true
 
