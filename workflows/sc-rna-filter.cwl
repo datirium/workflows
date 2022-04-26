@@ -139,6 +139,7 @@ inputs:
 
   parallel_memory_limit:
     type:
+    - "null"
     - type: enum
       symbols:
       - "32"
@@ -153,6 +154,7 @@ inputs:
 
   vector_memory_limit:
     type:
+    - "null"
     - type: enum
       symbols:
       - "32"
@@ -166,6 +168,7 @@ inputs:
 
   threads:
     type:
+    - "null"
     - type: enum
       symbols:
       - "1"
