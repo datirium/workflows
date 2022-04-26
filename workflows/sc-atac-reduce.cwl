@@ -11,9 +11,8 @@ requirements:
 
 'sd:upstream':
   sc_filter_sample:
-  - "sc-rna-filter.cwl"
   - "sc-multiome-filter.cwl"
-  - "sc-atac-reduce.cwl"
+  - "sc-rna-reduce.cwl"
 
 
 inputs:
@@ -26,10 +25,10 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Single-cell RNA-Seq or Multiome ATAC and RNA-Seq Filtering or ATAC-Seq Dimensionality Reduction Analysis"
+    label: "Single-cell Multiome ATAC and RNA-Seq Filtering or RNA-Seq Dimensionality Reduction Analysis"
     doc: |
-      Path to the RDS file to load Seurat object from. This file should include genes
-      expression information stored in the RNA assay.
+      Path to the RDS file to load Seurat object from. This file should include
+      chromatin accessibility information stored in the ATAC assay.
     'sd:upstreamSource': "sc_filter_sample/seurat_data_rds"
     'sd:localLabel': true
 
@@ -42,78 +41,28 @@ inputs:
       to include only specific set of cells.
       Default: use all cells.
 
-  cell_cycle_data:
-    type: File?
-    label: "Optional TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'"
-    doc: |
-      Path to the TSV/CSV file with the information for cell cycle score assignment.
-      First column - 'phase', second column 'gene_id'. If loaded Seurat object already
-      includes cell cycle scores in 'S.Score' and 'G2M.Score' metatada columns they will
-      be removed.
-      Default: skip cell cycle score assignment.
-
   dimensions:
     type: int?
-    label: "Dimensionality to use in UMAP projection (from 1 to 50)"
+    label: "Dimensionality to use for datasets integration and UMAP projection (from 2 to 50)"
     default: 40
     doc: |
-      Dimensionality to use in UMAP projection (from 1 to 50). If single value N
-      is provided, use from 1 to N PCs. If multiple values are provided, subset to
-      only selected PCs.
-      Default: from 1 to 10
+      Dimensionality to use for datasets integration and UMAP projection (from 2 to 50).
+      If single value N is provided, use from 2 to N LSI components. If multiple values are
+      provided, subset to only selected LSI components.
+      Default: from 2 to 10
     'sd:layout':
       advanced: true
 
-  highly_var_genes_count:
+  minimum_var_peaks_perc:
     type: int?
-    label: "Number of highly variable genes used in datasets integration, scaling and dimensionality reduction"
-    default: 3000
+    label: "Minimum percentile for identifying the top most common peaks as highly variable"
+    default: 0
     doc: |
-      Number of highly variable genes used in datasets integration, scaling and
-      dimensionality reduction.
-      Default: 3000
-    'sd:layout':
-      advanced: true
-
-  regress_mito_perc:
-    type: boolean?
-    label: "Regress the percentage of transcripts mapped to mitochondrial genes as a confounding source of variation"
-    default: false
-    doc: |
-      Regress the percentage of transcripts mapped to mitochondrial genes as a
-      confounding source of variation.
-      Default: false
-    'sd:layout':
-      advanced: true
-
-  regress_rna_umi:
-    type: boolean?
-    label: "Regress UMI per cell counts as a confounding source of variation"
-    default: false
-    doc: |
-      Regress UMI per cell counts as a confounding source of variation.
-      Default: false
-    'sd:layout':
-      advanced: true
-
-  regress_genes:
-    type: boolean?
-    label: "Regress genes per cell counts as a confounding source of variation"
-    default: false
-    doc: |
-      Regress genes per cell counts as a confounding source of variation.
-      Default: false
-    'sd:layout':
-      advanced: true
-
-  regress_cellcycle:
-    type: boolean?
-    label: "Regress cell cycle scores as a confounding source of variation"
-    default: false
-    doc: |
-      Regress cell cycle scores as a confounding source of variation.
-      Ignored if --cellcycle is not provided.
-      Default: false
+      Minimum percentile for identifying the top most common peaks as highly variable.
+      For example, setting to 5 will use the the top 95 percent most common among all cells
+      peaks as highly variable. These peaks are used for datasets integration, scaling
+      and dimensionality reduction.
+      Default: 0 (use all available peaks)
     'sd:layout':
       advanced: true
 
@@ -238,33 +187,21 @@ inputs:
 
 outputs:
 
-  elbow_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/elbow_plot_png
-    label: "Elbow plot (from cells PCA)"
-    doc: |
-      Elbow plot (from cells PCA).
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Overall'
-        Caption: 'Elbow plot (from cells PCA)'
-
   qc_dim_corr_plot_png:
     type: File?
-    outputSource: sc_rna_reduce/qc_dim_corr_plot_png
-    label: "Correlation plots between QC metrics and cells PCA components"
+    outputSource: sc_atac_reduce/qc_dim_corr_plot_png
+    label: "Correlation plots between QC metrics and cells LSI dimensions"
     doc: |
-      Correlation plots between QC metrics and cells PCA components.
+      Correlation plots between QC metrics and cells LSI dimensions.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Overall'
-        Caption: 'Correlation plots between QC metrics and cells PCA components'
+        Caption: 'Correlation plots between QC metrics and cells LSI dimensions'
 
   umap_qc_mtrcs_plot_png:
     type: File?
-    outputSource: sc_rna_reduce/umap_qc_mtrcs_plot_png
+    outputSource: sc_atac_reduce/umap_qc_mtrcs_plot_png
     label: "QC metrics on cells UMAP"
     doc: |
       QC metrics on cells UMAP.
@@ -276,7 +213,7 @@ outputs:
 
   umap_plot_png:
     type: File?
-    outputSource: sc_rna_reduce/umap_plot_png
+    outputSource: sc_atac_reduce/umap_plot_png
     label: "Cells UMAP"
     doc: |
       Cells UMAP.
@@ -286,57 +223,9 @@ outputs:
         tab: 'Overall'
         Caption: 'Cells UMAP'
 
-  umap_spl_ph_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_ph_plot_png
-    label: "Split by cell cycle phase cells UMAP"
-    doc: |
-      Split by cell cycle phase cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by cell cycle phase cells UMAP'
-
-  umap_spl_mito_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_mito_plot_png
-    label: "Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP"
-    doc: |
-      Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP'
-
-  umap_spl_umi_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_umi_plot_png
-    label: "Split by the UMI per cell counts cells UMAP"
-    doc: |
-      Split by the UMI per cell counts cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by the UMI per cell counts cells UMAP'
-
-  umap_spl_gene_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_gene_plot_png
-    label: "Split by the genes per cell counts cells UMAP"
-    doc: |
-      Split by the genes per cell counts cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by the genes per cell counts cells UMAP'
-
   umap_spl_idnt_plot_png:
     type: File?
-    outputSource: sc_rna_reduce/umap_spl_idnt_plot_png
+    outputSource: sc_atac_reduce/umap_spl_idnt_plot_png
     label: "Split by dataset cells UMAP"
     doc: |
       Split by dataset cells UMAP.
@@ -348,7 +237,7 @@ outputs:
 
   umap_spl_cnd_plot_png:
     type: File?
-    outputSource: sc_rna_reduce/umap_spl_cnd_plot_png
+    outputSource: sc_atac_reduce/umap_spl_cnd_plot_png
     label: "Split by grouping condition cells UMAP"
     doc: |
       Split by grouping condition cells UMAP.
@@ -357,54 +246,6 @@ outputs:
     - image:
         tab: 'Per group'
         Caption: 'Split by grouping condition cells UMAP'
-
-  umap_gr_cnd_spl_ph_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_gr_cnd_spl_ph_plot_png
-    label: "Grouped by condition split by cell cycle cells UMAP"
-    doc: |
-      Grouped by condition split by cell cycle cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Grouped by condition split by cell cycle cells UMAP'
-
-  umap_gr_cnd_spl_mito_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_gr_cnd_spl_mito_plot_png
-    label: "Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP"
-    doc: |
-      Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP'
-
-  umap_gr_cnd_spl_umi_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_gr_cnd_spl_umi_plot_png
-    label: "Grouped by condition split by the UMI per cell counts cells UMAP"
-    doc: |
-      Grouped by condition split by the UMI per cell counts cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Grouped by condition split by the UMI per cell counts cells UMAP'
-
-  umap_gr_cnd_spl_gene_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_gr_cnd_spl_gene_plot_png
-    label: "Grouped by condition split by the genes per cell counts cells UMAP"
-    doc: |
-      Grouped by condition split by the genes per cell counts cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Grouped by condition split by the genes per cell counts cells UMAP'
 
   ucsc_cb_config_data:
     type: File?
@@ -415,14 +256,14 @@ outputs:
 
   ucsc_cb_html_data:
     type: Directory?
-    outputSource: sc_rna_reduce/ucsc_cb_html_data
+    outputSource: sc_atac_reduce/ucsc_cb_html_data
     label: "Directory with UCSC Cellbrowser html data"
     doc: |
       Directory with UCSC Cellbrowser html data.
 
   ucsc_cb_html_file:
     type: File?
-    outputSource: sc_rna_reduce/ucsc_cb_html_file
+    outputSource: sc_atac_reduce/ucsc_cb_html_file
     label: "Open in UCSC Cell Browser"
     doc: |
       HTML index file from the directory with UCSC Cellbrowser html data.
@@ -433,46 +274,39 @@ outputs:
 
   seurat_data_rds:
     type: File
-    outputSource: sc_rna_reduce/seurat_data_rds
+    outputSource: sc_atac_reduce/seurat_data_rds
     label: "Processed Seurat data in RDS format"
     doc: |
       Processed Seurat data in RDS format
 
-  sc_rna_reduce_stdout_log:
+  sc_atac_reduce_stdout_log:
     type: File
-    outputSource: sc_rna_reduce/stdout_log
-    label: "stdout log generated by sc_rna_reduce step"
+    outputSource: sc_atac_reduce/stdout_log
+    label: "stdout log generated by sc_atac_reduce step"
     doc: |
-      stdout log generated by sc_rna_reduce step
+      stdout log generated by sc_atac_reduce step
 
-  sc_rna_reduce_stderr_log:
+  sc_atac_reduce_stderr_log:
     type: File
-    outputSource: sc_rna_reduce/stderr_log
-    label: "stderr log generated by sc_rna_reduce step"
+    outputSource: sc_atac_reduce/stderr_log
+    label: "stderr log generated by sc_atac_reduce step"
     doc: |
-      stderr log generated by sc_rna_reduce step
+      stderr log generated by sc_atac_reduce step
 
 
 steps:
 
-  sc_rna_reduce:
+  sc_atac_reduce:
     doc: |
-      Integrates multiple single-cell RNA-Seq datasets,
-      reduces dimensionality using PCA
-    run: ../tools/sc-rna-reduce.cwl
+      Integrates multiple single-cell ATAC-Seq datasets,
+      reduces dimensionality using LSI
+    run: ../tools/sc-atac-reduce.cwl
     in:
       query_data_rds: query_data_rds
       barcodes_data: barcodes_data
-      cell_cycle_data: cell_cycle_data
-      normalization_method:
-        default: "sctglm"
       integration_method:
-        default: "seurat"
-      highly_var_genes_count: highly_var_genes_count
-      regress_mito_perc: regress_mito_perc
-      regress_rna_umi: regress_rna_umi
-      regress_genes: regress_genes
-      regress_cellcycle: regress_cellcycle
+        default: "signac"
+      minimum_var_peaks_perc: minimum_var_peaks_perc
       dimensions: dimensions
       umap_spread: umap_spread
       umap_mindist: umap_mindist
@@ -482,8 +316,6 @@ steps:
       verbose:
         default: true
       export_ucsc_cb: export_ucsc_cb
-      low_memory:
-        default: true
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))
@@ -494,20 +326,11 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - elbow_plot_png
     - qc_dim_corr_plot_png
     - umap_qc_mtrcs_plot_png
     - umap_plot_png
-    - umap_spl_ph_plot_png
-    - umap_spl_mito_plot_png
-    - umap_spl_umi_plot_png
-    - umap_spl_gene_plot_png
     - umap_spl_idnt_plot_png
     - umap_spl_cnd_plot_png
-    - umap_gr_cnd_spl_ph_plot_png
-    - umap_gr_cnd_spl_mito_plot_png
-    - umap_gr_cnd_spl_umi_plot_png
-    - umap_gr_cnd_spl_gene_plot_png
     - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
@@ -519,7 +342,7 @@ steps:
     run: ../tools/tar-compress.cwl
     when: $(inputs.folder_to_compress != null)
     in:
-      folder_to_compress: sc_rna_reduce/ucsc_cb_config_data
+      folder_to_compress: sc_atac_reduce/ucsc_cb_config_data
     out:
     - compressed_folder
 
@@ -530,11 +353,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell RNA-Seq Dimensionality Reduction Analysis"
-s:name: "Single-cell RNA-Seq Dimensionality Reduction Analysis"
-s:alternateName: "Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA"
+label: "Single-cell ATAC-Seq Dimensionality Reduction Analysis"
+s:name: "Single-cell ATAC-Seq Dimensionality Reduction Analysis"
+s:alternateName: "Integrates multiple single-cell ATAC-Seq datasets, reduces dimensionality using LSI"
 
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-reduce.cwl
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-reduce.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -570,6 +393,7 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Dimensionality Reduction Analysis
+  Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
-  Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA.
+  Integrates multiple single-cell ATAC-Seq datasets,
+  reduces dimensionality using LSI.
