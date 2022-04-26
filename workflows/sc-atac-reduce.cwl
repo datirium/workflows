@@ -104,7 +104,6 @@ inputs:
 
   umap_metric:
     type:
-    - "null"
     - type: enum
       symbols:
       - "euclidean"
@@ -120,7 +119,6 @@ inputs:
 
   umap_method:
     type:
-    - "null"
     - type: enum
       symbols:
       - "uwot"
