@@ -23,7 +23,7 @@ inputs:
     sd:preview:
       position: 1
 
-  query_data_rds:
+  query_data__rds:
     type: File
     label: "Single-cell Multiome ATAC and RNA-Seq Filtering or RNA-Seq Dimensionality Reduction Analysis"
     doc: |
@@ -300,7 +300,7 @@ steps:
       reduces dimensionality using LSI
     run: ../tools/sc-atac-reduce.cwl
     in:
-      query_data_rds: query_data_rds
+      query_data_rds: query_data__rds
       barcodes_data: barcodes_data
       integration_method:
         default: "signac"

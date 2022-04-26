@@ -24,7 +24,7 @@ inputs:
     sd:preview:
       position: 1
 
-  query_data_rds:
+  query_data__rds:
     type: File
     label: "Single-cell RNA-Seq or Multiome ATAC and RNA-Seq Filtering or ATAC-Seq Dimensionality Reduction Analysis"
     doc: |
@@ -459,7 +459,7 @@ steps:
       reduces dimensionality using PCA
     run: ../tools/sc-rna-reduce.cwl
     in:
-      query_data_rds: query_data_rds
+      query_data_rds: query_data__rds
       barcodes_data: barcodes_data
       cell_cycle_data: cell_cycle_data
       normalization_method:
