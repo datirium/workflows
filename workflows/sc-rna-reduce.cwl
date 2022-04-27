@@ -185,15 +185,15 @@ inputs:
     'sd:layout':
       advanced: true
 
-  export_ucsc_cb:
-    type: boolean?
-    label: "Export results to UCSC Cell Browser"
-    default: false
-    doc: |
-      Export results to UCSC Cell Browser.
-      Default: false
-    'sd:layout':
-      advanced: true
+  # export_ucsc_cb:
+  #   type: boolean?
+  #   label: "Export results to UCSC Cell Browser"
+  #   default: false
+  #   doc: |
+  #     Export results to UCSC Cell Browser.
+  #     Default: false
+  #   'sd:layout':
+  #     advanced: true
 
   parallel_memory_limit:
     type:
@@ -410,21 +410,21 @@ outputs:
         Caption: 'Grouped by condition split by the genes per cell counts cells UMAP'
 
   ucsc_cb_config_data:
-    type: File?
+    type: File
     outputSource: compress_cellbrowser_config_data/compressed_folder
     label: "Compressed directory with UCSC Cellbrowser configuration data"
     doc: |
       Compressed directory with UCSC Cellbrowser configuration data.
 
   ucsc_cb_html_data:
-    type: Directory?
+    type: Directory
     outputSource: sc_rna_reduce/ucsc_cb_html_data
     label: "Directory with UCSC Cellbrowser html data"
     doc: |
       Directory with UCSC Cellbrowser html data.
 
   ucsc_cb_html_file:
-    type: File?
+    type: File
     outputSource: sc_rna_reduce/ucsc_cb_html_file
     label: "Open in UCSC Cell Browser"
     doc: |
@@ -484,7 +484,9 @@ steps:
       umap_method: umap_method
       verbose:
         default: true
-      export_ucsc_cb: export_ucsc_cb
+      # export_ucsc_cb: export_ucsc_cb
+      export_ucsc_cb:
+        default: true
       low_memory:
         default: true
       parallel_memory_limit:
@@ -520,7 +522,7 @@ steps:
 
   compress_cellbrowser_config_data:
     run: ../tools/tar-compress.cwl
-    when: $(inputs.folder_to_compress != null)
+    # when: $(inputs.folder_to_compress != null)
     in:
       folder_to_compress: sc_rna_reduce/ucsc_cb_config_data
     out:
