@@ -1,4 +1,4 @@
-cwlVersion: v1.2
+cwlVersion: v1.1
 class: Workflow
 
 
@@ -182,16 +182,6 @@ inputs:
     doc: |
       UMAP implementation to run. If set to 'umap-learn' use --umetric 'correlation'
       Default: uwot
-    'sd:layout':
-      advanced: true
-
-  export_ucsc_cb:
-    type: boolean?
-    label: "Export results to UCSC Cell Browser"
-    default: false
-    doc: |
-      Export results to UCSC Cell Browser.
-      Default: false
     'sd:layout':
       advanced: true
 
@@ -409,31 +399,6 @@ outputs:
         tab: 'Per group'
         Caption: 'Grouped by condition split by the genes per cell counts cells UMAP'
 
-  ucsc_cb_config_data:
-    type: File?
-    outputSource: compress_cellbrowser_config_data/compressed_folder
-    label: "Compressed directory with UCSC Cellbrowser configuration data"
-    doc: |
-      Compressed directory with UCSC Cellbrowser configuration data.
-
-  ucsc_cb_html_data:
-    type: Directory?
-    outputSource: sc_rna_reduce/ucsc_cb_html_data
-    label: "Directory with UCSC Cellbrowser html data"
-    doc: |
-      Directory with UCSC Cellbrowser html data.
-
-  ucsc_cb_html_file:
-    type: File?
-    outputSource: sc_rna_reduce/ucsc_cb_html_file
-    label: "Open in UCSC Cell Browser"
-    doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
-    'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
   seurat_data_rds:
     type: File
     outputSource: sc_rna_reduce/seurat_data_rds
@@ -484,7 +449,8 @@ steps:
       umap_method: umap_method
       verbose:
         default: true
-      export_ucsc_cb: export_ucsc_cb
+      export_ucsc_cb:
+        default: false
       low_memory:
         default: true
       parallel_memory_limit:
@@ -511,20 +477,9 @@ steps:
     - umap_gr_cnd_spl_mito_plot_png
     - umap_gr_cnd_spl_umi_plot_png
     - umap_gr_cnd_spl_gene_plot_png
-    - ucsc_cb_config_data
-    - ucsc_cb_html_data
-    - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
-
-  compress_cellbrowser_config_data:
-    run: ../tools/tar-compress.cwl
-    when: $(inputs.folder_to_compress != null)
-    in:
-      folder_to_compress: sc_rna_reduce/ucsc_cb_config_data
-    out:
-    - compressed_folder
 
 
 $namespaces:

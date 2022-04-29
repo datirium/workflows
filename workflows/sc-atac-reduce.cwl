@@ -1,4 +1,4 @@
-cwlVersion: v1.2
+cwlVersion: v1.0
 class: Workflow
 
 
@@ -134,16 +134,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  export_ucsc_cb:
-    type: boolean?
-    label: "Export results to UCSC Cell Browser"
-    default: false
-    doc: |
-      Export results to UCSC Cell Browser.
-      Default: false
-    'sd:layout':
-      advanced: true
-
   parallel_memory_limit:
     type:
     - "null"
@@ -250,31 +240,6 @@ outputs:
         tab: 'Per group'
         Caption: 'Split by grouping condition cells UMAP'
 
-  ucsc_cb_config_data:
-    type: File?
-    outputSource: compress_cellbrowser_config_data/compressed_folder
-    label: "Compressed directory with UCSC Cellbrowser configuration data"
-    doc: |
-      Compressed directory with UCSC Cellbrowser configuration data.
-
-  ucsc_cb_html_data:
-    type: Directory?
-    outputSource: sc_atac_reduce/ucsc_cb_html_data
-    label: "Directory with UCSC Cellbrowser html data"
-    doc: |
-      Directory with UCSC Cellbrowser html data.
-
-  ucsc_cb_html_file:
-    type: File?
-    outputSource: sc_atac_reduce/ucsc_cb_html_file
-    label: "Open in UCSC Cell Browser"
-    doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
-    'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
   seurat_data_rds:
     type: File
     outputSource: sc_atac_reduce/seurat_data_rds
@@ -318,7 +283,8 @@ steps:
       umap_method: umap_method
       verbose:
         default: true
-      export_ucsc_cb: export_ucsc_cb
+      export_ucsc_cb:
+        default: false
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))
@@ -334,20 +300,9 @@ steps:
     - umap_plot_png
     - umap_spl_idnt_plot_png
     - umap_spl_cnd_plot_png
-    - ucsc_cb_config_data
-    - ucsc_cb_html_data
-    - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
-
-  compress_cellbrowser_config_data:
-    run: ../tools/tar-compress.cwl
-    when: $(inputs.folder_to_compress != null)
-    in:
-      folder_to_compress: sc_atac_reduce/ucsc_cb_config_data
-    out:
-    - compressed_folder
 
 
 $namespaces:
