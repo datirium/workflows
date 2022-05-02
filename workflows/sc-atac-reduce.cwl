@@ -10,9 +10,10 @@ requirements:
 
 
 'sd:upstream':
-  sc_filter_sample:
-  - "sc-multiome-filter.cwl"
+  sc_tools_sample:
+  - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
+  - "sc-multiome-filter.cwl"
 
 
 inputs:
@@ -25,11 +26,11 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Single-cell Multiome ATAC and RNA-Seq Filtering or RNA-Seq Dimensionality Reduction Analysis"
+    label: "Experiment run through Single-cell Multiome ATAC and RNA-Seq Filtering Analysis"
     doc: |
       Path to the RDS file to load Seurat object from. This file should include
       chromatin accessibility information stored in the ATAC assay.
-    'sd:upstreamSource': "sc_filter_sample/seurat_data_rds"
+    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
   barcodes_data:

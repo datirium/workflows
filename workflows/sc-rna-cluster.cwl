@@ -22,7 +22,8 @@ requirements:
 
 
 'sd:upstream':
-  sc_reduce_sample:
+  sc_tools_sample:
+  - "sc-atac-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
 
@@ -37,12 +38,12 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Single-cell RNA-Seq or ATAC-Seq Dimensionality Reduction Analysis"
+    label: "Experiment run through Single-cell RNA-Seq Dimensionality Reduction Analysis"
     doc: |
       Path to the RDS file to load Seurat object from. This file should include genes
       expression information stored in the RNA assay, as well as 'pca' and 'rnaumap'
       dimensionality reductions applied to that assay.
-    'sd:upstreamSource': "sc_reduce_sample/seurat_data_rds"
+    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
   dimensions:

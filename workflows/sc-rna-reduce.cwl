@@ -10,10 +10,11 @@ requirements:
 
 
 'sd:upstream':
-  sc_filter_sample:
+  sc_tools_sample:
+  - "sc-atac-cluster.cwl"
+  - "sc-atac-reduce.cwl"
   - "sc-rna-filter.cwl"
   - "sc-multiome-filter.cwl"
-  - "sc-atac-reduce.cwl"
 
 
 inputs:
@@ -26,11 +27,11 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Single-cell RNA-Seq or Multiome ATAC and RNA-Seq Filtering or ATAC-Seq Dimensionality Reduction Analysis"
+    label: "Experiment run through either Single-cell RNA-Seq or Multiome ATAC and RNA-Seq Filtering Analysis"
     doc: |
       Path to the RDS file to load Seurat object from. This file should include genes
       expression information stored in the RNA assay.
-    'sd:upstreamSource': "sc_filter_sample/seurat_data_rds"
+    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
   barcodes_data:
