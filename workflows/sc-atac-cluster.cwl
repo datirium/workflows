@@ -58,8 +58,6 @@ inputs:
       (from 1 to 50). If single value N is provided, use from 2 to N dimensions. If
       multiple values are provided, subset to only selected dimensions.
       Default: from 2 to 10
-    'sd:layout':
-      advanced: true
 
   resolution:
     type: string?
@@ -117,7 +115,7 @@ inputs:
   minimum_pct:
     type: float?
     default: 0.05
-    label: "Include only those genes that are detected in not lower than this fraction of cells in either of the two tested clusters"
+    label: "Include only those peaks that are detected in not lower than this fraction of cells in either of the two tested clusters"
     doc: |
       For differentially accessible peaks identification include only those peaks that
       are detected in not lower than this fraction of cells in either of the two tested

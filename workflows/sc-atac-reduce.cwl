@@ -51,8 +51,6 @@ inputs:
       If single value N is provided, use from 2 to N LSI components. If multiple values are
       provided, subset to only selected LSI components.
       Default: from 2 to 10
-    'sd:layout':
-      advanced: true
 
   minimum_var_peaks_perc:
     type: int?
@@ -69,7 +67,7 @@ inputs:
 
   umap_spread:
     type: float?
-    label: "The effective scale of embedded points on UMAP (determines how clustered/clumped the embedded points are)"
+    label: "UMAP Spread - the effective scale of embedded points (determines how clustered/clumped the embedded points are)"
     default: 1
     doc: |
       The effective scale of embedded points on UMAP. In combination with '--mindist'
@@ -80,7 +78,7 @@ inputs:
 
   umap_mindist:
     type: float?
-    label: "Controls how tightly the embedding is allowed compress points together on UMAP"
+    label: "UMAP Min. Dist. - controls how tightly the embedding is allowed compress points together"
     default: 0.3
     doc: |
       Controls how tightly the embedding is allowed compress points together on UMAP.
@@ -93,7 +91,7 @@ inputs:
 
   umap_neighbors:
     type: int?
-    label: "Determines the number of neighboring points used in UMAP"
+    label: "UMAP Neighbors Number - determines the number of neighboring points used"
     default: 30
     doc: |
       Determines the number of neighboring points used in UMAP. Larger values will result
@@ -111,7 +109,7 @@ inputs:
       - "euclidean"
       - "cosine"
       - "correlation"
-    label: "The metric to use to compute distances in high dimensional space for UMAP"
+    label: "UMAP Dist. Metric - the metric to use to compute distances in high dimensional space"
     default: "cosine"
     doc: |
       The metric to use to compute distances in high dimensional space for UMAP.

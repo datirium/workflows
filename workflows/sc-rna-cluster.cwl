@@ -55,8 +55,6 @@ inputs:
       (from 1 to 50). If single value N is provided, use from 1 to N dimensions. If
       multiple values are provided, subset to only selected dimensions.
       Default: from 1 to 10
-    'sd:layout':
-      advanced: true
 
   resolution:
     type: string?
