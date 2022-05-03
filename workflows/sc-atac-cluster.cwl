@@ -29,6 +29,8 @@ requirements:
   sc_arc_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
+  - "https://github.com/datirium/workflows/workflows/cellranger-arc-count.cwl"
+  - "https://github.com/datirium/workflows/workflows/cellranger-arc-aggr.cwl"
 
 
 inputs:
