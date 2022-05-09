@@ -43,6 +43,22 @@ outputs:
     format: "http://edamontology.org/format_2572"
     outputSource: bismark_align/bam_file
 
+  bambai_pair:
+    type: File
+    label: "BAM alignment and BAI index files"
+    doc: "Bismark generated coordinate sorted BAM alignment and BAI index files"
+    format: "http://edamontology.org/format_2572"
+    outputSource: samtools_sort_index/bam_bai_pair
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        optional: true
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
+
   bismark_alignment_report:
     type: File
     label: "Bismark alignment and methylation report"
@@ -94,13 +110,14 @@ outputs:
     doc: "Coverage text file summarising cytosine methylation values in bedGraph format (tab-delimited; 0-based start coords, 1-based end coords)"
     format: "http://edamontology.org/format_3583"
     outputSource: bismark_extract_methylation/bedgraph_coverage_file
-    # 'sd:visualPlugins':
-    # - igvbrowser:
-    #     tab: 'IGV Genome Browser'
-    #     id: 'igvbrowser'
-    #     type: 'annotation'
-    #     name: "Methylation statuses"
-    #     height: 120
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Methylation statuses"
+        displayMode: "COLLAPSE"
+        height: 40
 
   bismark_coverage_file:
     type: File
@@ -217,6 +234,14 @@ steps:
       alignment_report: bismark_align/alignment_report
       splitting_report: bismark_extract_methylation/splitting_report
     out: [collected_report_formatted]
+
+  samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: bismark_align/bam_file
+      threads: threads
+    out: [bam_bai_pair]
+
 
 $namespaces:
   s: http://schema.org/
