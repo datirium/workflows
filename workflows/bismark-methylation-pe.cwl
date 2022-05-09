@@ -42,21 +42,12 @@ inputs:
 
 outputs:
 
-  bambai_pair:
+  alignment_file:
     type: File
-    label: "BAM alignment and BAI index files"
-    doc: "Bismark generated coordinate sorted BAM alignment and BAI index files"
+    label: "BAM alignment file"
+    doc: "Bismark generated not sorted BAM alignment file"
     format: "http://edamontology.org/format_2572"
-    outputSource: samtools_sort_index/bam_bai_pair
-    # 'sd:visualPlugins':
-    # - igvbrowser:
-    #     tab: 'IGV Genome Browser'
-    #     id: 'igvbrowser'
-    #     optional: true
-    #     type: 'alignment'
-    #     format: 'bam'
-    #     name: "BAM Track"
-    #     displayMode: "SQUISHED"
+    outputSource: bismark_align/bam_file
 
   bismark_alignment_report:
     type: File
@@ -222,18 +213,11 @@ steps:
       threads: threads
     out: [bam_file, alignment_report]
 
-  samtools_sort_index:
-    run: ../tools/samtools-sort-index.cwl
-    in:
-      sort_input: bismark_align/bam_file
-      threads: threads
-    out: [bam_bai_pair]
-
   bismark_extract_methylation:
     run: ../tools/bismark-extract-methylation.cwl
     in:
       genome_folder: indices_folder
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: bismark_align/bam_file
       processes:
         default: 1
     out:
