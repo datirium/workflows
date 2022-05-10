@@ -2,6 +2,14 @@ cwlVersion: v1.0
 class: Workflow
 
 
+requirements:
+  - class: SubworkflowFeatureRequirement
+  - class: ScatterFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: MultipleInputFeatureRequirement
+  - class: InlineJavascriptRequirement
+
+
 'sd:upstream':
   genome:
     - "bismark-index.cwl"
@@ -65,6 +73,20 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
+  bigwig_file:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "BigWig file"
+    doc: "Generated BigWig file"
+    outputSource: bam_to_bigwig/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "BigWig Track"
+        height: 120
+
   bismark_alignment_report:
     type: File
     label: "Bismark alignment and methylation report"
@@ -116,14 +138,29 @@ outputs:
     doc: "Coverage text file summarising cytosine methylation values in bedGraph format (tab-delimited; 0-based start coords, 1-based end coords)"
     format: "http://edamontology.org/format_3583"
     outputSource: bismark_extract_methylation/bedgraph_coverage_file
+    # 'sd:visualPlugins':
+    # - igvbrowser:
+    #     tab: 'IGV Genome Browser'
+    #     id: 'igvbrowser'
+    #     type: 'annotation'
+    #     name: "Methylation statuses"
+    #     displayMode: "COLLAPSE"
+    #     height: 120
+
+  bigbed_coverage_file:
+    type: File
+    label: "Methylation statuses bigBed coverage file"
+    doc: "Coverage text file summarising cytosine methylation values in bedGraph format (tab-delimited; 0-based start coords, 1-based end coords)"
+    format: "http://edamontology.org/format_3004"
+    outputSource: bed_to_bigbed/bigbed_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
+        format: 'bigbed'
         name: "Methylation statuses"
-        displayMode: "COLLAPSE"
-        height: 120
+        height: 40
 
   bismark_coverage_file:
     type: File
@@ -265,7 +302,7 @@ steps:
     in:
       alignment_report: bismark_align/alignment_report
       splitting_report: bismark_extract_methylation/splitting_report
-    out: [collected_report_formatted]
+    out: [collected_report_formatted, mapped_reads]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
@@ -275,6 +312,74 @@ steps:
         default: "sorted_alignments.bam"
       threads: threads
     out: [bam_bai_pair]
+
+  get_chr_name_length:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/samtools:v1.4
+      inputs:
+        script:
+          type: string?
+          default: |
+            #!/bin/bash
+            samtools view -H "$0" |  grep SN | cut -f 2,3 | tr -d "SN:" | tr -d "LN:"
+          inputBinding:
+            position: 5
+        bam_bai_pair:
+          type: File
+          inputBinding:
+            position: 6
+      outputs:
+        chrom_length_file:
+          type: stdout
+      baseCommand: ["bash", "-c"]
+      stdout: "chrom_length_file.tsv"
+    in:
+      bam_bai_pair: samtools_sort_index/bam_bai_pair
+    out:
+    - chrom_length_file
+
+  bam_to_bigwig:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      chrom_length_file: get_chr_name_length/chrom_length_file
+      mapped_reads_number: format_bismark_report/mapped_reads
+      pairchip:
+        default: true
+    out: [bigwig_file]
+
+  extract_bed:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: bismark_extract_methylation/bedgraph_coverage_file
+      script:
+        default: |
+          zcat "$0" > methylation_statuses.bedGraph
+    out: [output_file]
+
+  sort_bed:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: extract_bed/output_file
+      key:
+        default: ["1,1","2,2n"]
+    out: [sorted_file]
+
+  bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
+    in:
+      input_bed: sort_bed/sorted_file
+      bed_type:
+        default: "bed4"
+      chrom_length_file: get_chr_name_length/chrom_length_file
+      output_filename:
+        source: sort_bed/sorted_file
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
+    out: [bigbed_file]
 
 
 $namespaces:
