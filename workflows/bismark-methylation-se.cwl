@@ -142,10 +142,14 @@ outputs:
 
   collected_report:
     type: File
-    label: "HTML report page"
+    label: "Bismark Processing Report"
     doc: "Bismark generated graphical HTML report page"
     format: "http://edamontology.org/format_2331"
     outputSource: bismark_report/collected_report
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   collected_report_formatted:
     type: File
@@ -239,6 +243,8 @@ steps:
     run: ../tools/samtools-sort-index.cwl
     in:
       sort_input: bismark_align/bam_file
+      sort_output_filename:
+        default: "sorted_alignments.bam"
       threads: threads
     out: [bam_bai_pair]
 
