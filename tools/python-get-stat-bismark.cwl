@@ -3,6 +3,7 @@ class: CommandLineTool
 
 
 requirements:
+- class: InlineJavascriptRequirement
 - class: DockerRequirement
   dockerPull: biowardrobe2/scidap:v0.0.3
 
@@ -66,6 +67,14 @@ outputs:
   collected_report_formatted:
     type: stdout
     doc: "Combined Bismark alignment and splitting reports"
+
+  mapped_reads:
+    type: int
+    outputBinding:
+      loadContents: true
+      glob: "collected_report_formatted.tsv"
+      outputEval: $(parseInt(self[0].contents.split('\n')[1].split('\t')[1]))
+
 
 stdout: "collected_report_formatted.tsv"
 baseCommand: [python, '-c']
