@@ -26,6 +26,11 @@ requirements:
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
+  filtered_experiment:
+  - "filter-peaks-for-heatmap.cwl"
+  - "filter-deseq-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-peaks-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-deseq-for-heatmap.cwl"
 
 
 inputs:
@@ -55,12 +60,12 @@ inputs:
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: |
-      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
-       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    label: "Filter ChIP/ATAC peaks or filter DESeq genes experiment"
     doc: |
       "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
        [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    'sd:upstreamSource': "filtered_experiment/filtered_file"
+    'sd:localLabel': true
 
   recentering:
     type:
