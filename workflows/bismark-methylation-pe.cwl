@@ -358,7 +358,7 @@ steps:
       input_file: bismark_extract_methylation/bedgraph_coverage_file
       script:
         default: |
-          zcat "$0" > methylation_statuses.bedGraph
+          zcat "$0" | grep -v "track" > methylation_statuses.bedGraph
     out: [output_file]
 
   sort_bed:
