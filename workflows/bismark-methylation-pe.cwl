@@ -277,6 +277,8 @@ steps:
     in:
       genome_folder: indices_folder
       bam_file: bismark_align/bam_file
+      ignore_r2_bp:
+        default: 2
       processes:
         default: 1
     out:

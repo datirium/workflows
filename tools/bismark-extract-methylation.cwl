@@ -14,29 +14,57 @@ inputs:
     type: Directory
     label: "Genome folder"
     doc: |
-      "Genome folder with FASTA (fa, fasta) files.
-       Bismark generated indices folder can be used also"
+      Genome folder with FASTA (fa, fasta) files.
+      Bismark generated indices folder can be used also
     inputBinding:
-      position: 2
+      position: 4
       prefix: "--genome_folder"
 
   bam_file:
     type: File
     label: "BAM alignment file"
-    doc: "Bismark generated BAM alignment file"
+    doc: |
+      Bismark generated BAM alignment file
     inputBinding:
-      position: 3
+      position: 5
 
   processes:
     type: int?
     label: "Number of Bismark instances to run"
     doc: |
-      "Set the number of parallel Bismark instances to run concurrently.
-       Each Bismark instance simultainously runs the methylation extractor,
-       samtools stream and GZIP streams"
+      Set the number of parallel Bismark instances to run concurrently.
+      Each Bismark instance simultainously runs the methylation extractor,
+      samtools stream and GZIP streams
     inputBinding:
       position: 1
       prefix: "--multicore"
+
+  ignore_r1_bp:
+    type: int?
+    label: "Number of bp to ignore from the 5' end of read 1"
+    doc: |
+      Ignore the first <int> bp from the 5' end of Read 1 (or single-end alignment
+      files) when processing the methylation call string. This can remove e.g. a
+      restriction enzyme site at the start of each read or any other source of
+      bias (such as PBAT-Seq data).
+    inputBinding:
+      position: 2
+      prefix: "--ignore"
+
+  ignore_r2_bp:
+    type: int?
+    label: "Number of bp to ignore from the 5' end of read 2"
+    doc: |
+      Ignore the first <int> bp from the 5' end of Read 2 of paired-end sequencing
+      results only. Since the first couple of bases in Read 2 of BS-Seq experiments
+      show a severe bias towards non-methylation as a result of end-repairing
+      sonicated fragments with unmethylated cytosines (see M-bias plot), it is
+      recommended that the first couple of bp of Read 2 are removed before
+      starting downstream analysis. Please see the section on M-bias plots in the
+      Bismark User Guide for more details.
+    inputBinding:
+      position: 3
+      prefix: "--ignore_r2"
 
 
 outputs:
