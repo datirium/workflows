@@ -130,6 +130,7 @@ outputs:
     outputSource: bismark_extract_methylation/mbias_plot_png
     'sd:visualPlugins':
     - image:
+        tab: 'Plots'
         Caption: 'Methylation bias plot'
 
   bedgraph_coverage_file:
