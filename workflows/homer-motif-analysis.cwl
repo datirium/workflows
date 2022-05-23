@@ -12,6 +12,9 @@ requirements:
   genome_indices:
   - "genome-indices.cwl"
   - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+  regions_of_interest:
+  - "filter-peaks-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-peaks-for-heatmap.cwl"
 
 
 inputs:
@@ -27,6 +30,8 @@ inputs:
     format: "http://edamontology.org/format_3003"
     label: "Regions file. Headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
     doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
+    'sd:upstreamSource': "regions_of_interest/filtered_file"
+    'sd:localLabel': true
 
   motifs_db:
     type:

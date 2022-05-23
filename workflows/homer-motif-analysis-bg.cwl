@@ -12,6 +12,12 @@ requirements:
   genome_indices:
   - "genome-indices.cwl"
   - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+  target_regions_of_interest:
+  - "filter-peaks-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-peaks-for-heatmap.cwl"
+  background_regions_of_interest:
+  - "filter-peaks-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-peaks-for-heatmap.cwl"
 
 
 inputs:
@@ -27,12 +33,16 @@ inputs:
     format: "http://edamontology.org/format_3003"
     label: "Target regions. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
     doc: "Target regions. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+    'sd:upstreamSource': "target_regions_of_interest/filtered_file"
+    'sd:localLabel': true
 
   background_regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Background regions. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
     doc: "Background regions. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+    'sd:upstreamSource': "background_regions_of_interest/filtered_file"
+    'sd:localLabel': true
 
   genome_fasta_file:
     type: File
