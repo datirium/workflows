@@ -7,6 +7,14 @@ requirements:
   - class: StepInputExpressionRequirement
   - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
+    expressionLib:
+    - var split_features = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 
 'sd:upstream':
@@ -85,23 +93,13 @@ inputs:
     'sd:layout':
       advanced: true
 
-  regress_rna_umi:
-    type: boolean?
-    label: "Regress UMI per cell counts as a confounding source of variation"
-    default: false
-    doc: |
-      Regress UMI per cell counts as a confounding source of variation.
-      Default: false
-    'sd:layout':
-      advanced: true
-
   regress_genes:
-    type: boolean?
+    type: string?
     label: "Regress genes per cell counts as a confounding source of variation"
-    default: false
+    default: null
     doc: |
-      Regress genes per cell counts as a confounding source of variation.
-      Default: false
+      Genes which expression should be regressed as a confounding source of variation.
+      Default: None
     'sd:layout':
       advanced: true
 
@@ -437,8 +435,9 @@ steps:
         default: "seurat"
       highly_var_genes_count: highly_var_genes_count
       regress_mito_perc: regress_mito_perc
-      regress_rna_umi: regress_rna_umi
-      regress_genes: regress_genes
+      regress_genes:
+        source: regress_genes
+        valueFrom: $(split_features(self))
       regress_cellcycle: regress_cellcycle
       dimensions: dimensions
       umap_spread: umap_spread

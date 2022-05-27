@@ -467,6 +467,21 @@ outputs:
         tab: 'Gene expression'
         Caption: 'Log normalized gene expression on cells UMAP'
 
+  xpr_per_cell_sgnl_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_wnn_cluster/xpr_per_cell_sgnl_res_plot_png
+    label: "Log normalized gene expression density on cells UMAP"
+    doc: |
+      Log normalized gene expression density on cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Log normalized gene expression density on cells UMAP'
+
   xpr_dnst_res_plot_png:
     type:
     - "null"
@@ -629,6 +644,7 @@ steps:
     - cmp_gr_ph_spl_clst_res_plot_png
     - xpr_avg_res_plot_png
     - xpr_per_cell_res_plot_png
+    - xpr_per_cell_sgnl_res_plot_png
     - xpr_dnst_res_plot_png
     - cvrg_res_plot_png
     - gene_markers_tsv
