@@ -89,6 +89,7 @@ inputs:
       object. File should be saved in TSV format with tbi-index file. Ignored if the
       loaded Seurat object doesn't include ATAC assay.
     'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
+    'sd:localLabel': true
 
   genes_of_interest:
     type: string?
