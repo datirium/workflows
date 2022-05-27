@@ -6,12 +6,12 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: EnvVarRequirement
   envDef:
-    R_MAX_VSIZE: $(inputs.vector_memory_limit * 1000000000)
+    R_MAX_VSIZE: $((inputs.vector_memory_limit * 1000000000).toString())
 
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.4
+  dockerPull: biowardrobe2/sc-tools:v0.0.7
 
 
 inputs:
@@ -605,6 +605,28 @@ outputs:
       glob: "*_xpr_per_cell_res_*.pdf"
     doc: |
       Log normalized gene expression on cells UMAP.
+      PDF format
+
+  xpr_per_cell_sgnl_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_xpr_per_cell_sgnl_res_*.png"
+    doc: |
+      Log normalized gene expression density on cells UMAP.
+      PNG format
+
+  xpr_per_cell_sgnl_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_xpr_per_cell_sgnl_res_*.pdf"
+    doc: |
+      Log normalized gene expression density on cells UMAP.
       PDF format
 
   xpr_dnst_res_plot_png:
