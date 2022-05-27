@@ -6,12 +6,12 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: EnvVarRequirement
   envDef:
-    R_MAX_VSIZE: $(inputs.vector_memory_limit * 1000000000)
+    R_MAX_VSIZE: $((inputs.vector_memory_limit * 1000000000).toString())
 
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.4
+  dockerPull: biowardrobe2/sc-tools:v0.0.7
 
 
 inputs:
@@ -93,21 +93,16 @@ inputs:
       confounding source of variation.
       Default: false
 
-  regress_rna_umi:
-    type: boolean?
-    inputBinding:
-      prefix: "--regressrnaumi"
-    doc: |
-      Regress UMI per cell counts as a confounding source of variation.
-      Default: false
-
   regress_genes:
-    type: boolean?
+    type:
+    - "null"
+    - string
+    - string[]
     inputBinding:
       prefix: "--regressgenes"
     doc: |
-      Regress genes per cell counts as a confounding source of variation.
-      Default: false
+      Genes which expression should be regressed as a confounding source of variation.
+      Default: None
 
   regress_cellcycle:
     type: boolean?
@@ -614,9 +609,9 @@ s:about: |
   usage: sc_rna_reduce.R
         [-h] --query QUERY [--barcodes BARCODES] [--cellcycle CELLCYCLE]
         [--norm {sct,log,sctglm}] [--ntgr {seurat,none}]
-        [--highvargenes HIGHVARGENES] [--regressmt] [--regressrnaumi]
-        [--regressgenes] [--regresscellcycle]
-        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
+        [--highvargenes HIGHVARGENES] [--regressmt]
+        [--regressgenes [REGRESSGENES ...]] [--regresscellcycle]
+        [--dimensions [DIMENSIONS ...]] [--uspread USPREAD]
         [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
         [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
@@ -657,14 +652,13 @@ s:about: |
     --regressmt           Regress the percentage of transcripts mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
-    --regressrnaumi       Regress UMI per cell counts as a confounding source of
-                          variation. Default: false
-    --regressgenes        Regress genes per cell counts as a confounding source
-                          of variation. Default: false
+    --regressgenes [REGRESSGENES ...]
+                          Genes which expression should be regressed as a
+                          confounding source of variation. Default: None
     --regresscellcycle    Regress cell cycle scores as a confounding source of
                           variation. Ignored if --cellcycle is not provided.
                           Default: false
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+    --dimensions [DIMENSIONS ...]
                           Dimensionality to use in UMAP projection (from 1 to
                           50). If single value N is provided, use from 1 to N
                           PCs. If multiple values are provided, subset to only
