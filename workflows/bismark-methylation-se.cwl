@@ -61,25 +61,11 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        optional: true
+        # optional: true
         type: 'alignment'
         format: 'bam'
         name: "BAM Track"
         displayMode: "SQUISHED"
-
-  bigwig_file:
-    type: File
-    format: "http://edamontology.org/format_3006"
-    label: "BigWig file"
-    doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "BigWig Track"
-        height: 120
 
   bismark_alignment_report:
     type: File
@@ -275,7 +261,7 @@ steps:
     in:
       alignment_report: bismark_align/alignment_report
       splitting_report: bismark_extract_methylation/splitting_report
-    out: [collected_report_formatted, mapped_reads]
+    out: [collected_report_formatted]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
@@ -314,14 +300,6 @@ steps:
       bam_bai_pair: samtools_sort_index/bam_bai_pair
     out:
     - chrom_length_file
-
-  bam_to_bigwig:
-    run: ../tools/bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: samtools_sort_index/bam_bai_pair
-      chrom_length_file: get_chr_name_length/chrom_length_file
-      mapped_reads_number: format_bismark_report/mapped_reads
-    out: [bigwig_file]
 
   extract_bed:
     run: ../tools/custom-bash.cwl
