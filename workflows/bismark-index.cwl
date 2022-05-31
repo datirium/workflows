@@ -2,6 +2,12 @@ cwlVersion: v1.0
 class: Workflow
 
 
+requirements:
+- class: SubworkflowFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: InlineJavascriptRequirement
+
+
 inputs:
 
   genome:
