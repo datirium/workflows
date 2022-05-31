@@ -11,7 +11,7 @@ requirements:
 
 
 'sd:upstream':
-  genome:
+  genome_indices:
     - "bismark-index.cwl"
 
 
@@ -31,7 +31,7 @@ inputs:
     type: Directory
     label: "Bismark indices folder"
     doc: "Path to Bismark generated indices folder"
-    'sd:upstreamSource': "genome/indices_folder"
+    'sd:upstreamSource': "genome_indices/indices_folder"
 
   threads:
     type: int?
