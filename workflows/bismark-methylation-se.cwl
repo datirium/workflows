@@ -35,6 +35,7 @@ inputs:
 
   chrom_length:
     type: File
+    format: "http://edamontology.org/format_2330"
     label: "Chromosomes length file"
     doc: "Chromosomes length file"
     'sd:upstreamSource': "genome_indices/chrom_length"
