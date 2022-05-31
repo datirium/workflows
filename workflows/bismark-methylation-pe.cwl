@@ -39,6 +39,12 @@ inputs:
     doc: "Path to Bismark generated indices folder"
     'sd:upstreamSource': "genome_indices/indices_folder"
 
+  chrom_length:
+    type: File
+    label: "Chromosomes length file"
+    doc: "Chromosomes length file"
+    'sd:upstreamSource': "genome_indices/chrom_length"
+
   threads:
     type: int?
     default: 2
@@ -302,35 +308,6 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
-  get_chr_name_length:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/samtools:v1.4
-      inputs:
-        script:
-          type: string?
-          default: |
-            #!/bin/bash
-            samtools view -H "$0" |  grep SN | cut -f 2,3 | tr -d "SN:" | tr -d "LN:"
-          inputBinding:
-            position: 5
-        bam_bai_pair:
-          type: File
-          inputBinding:
-            position: 6
-      outputs:
-        chrom_length_file:
-          type: stdout
-      baseCommand: ["bash", "-c"]
-      stdout: "chrom_length_file.tsv"
-    in:
-      bam_bai_pair: samtools_sort_index/bam_bai_pair
-    out:
-    - chrom_length_file
-
   extract_bed:
     run: ../tools/custom-bash.cwl
     in:
@@ -354,7 +331,7 @@ steps:
       input_bed: sort_bed/sorted_file
       bed_type:
         default: "bed4"
-      chrom_length_file: get_chr_name_length/chrom_length_file
+      chrom_length_file: chrom_length
       output_filename:
         source: sort_bed/sorted_file
         valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
