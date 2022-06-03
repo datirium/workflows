@@ -2,6 +2,12 @@ cwlVersion: v1.0
 class: Workflow
 
 
+requirements:
+- class: SubworkflowFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: InlineJavascriptRequirement
+
+
 inputs:
 
   genome:
@@ -40,6 +46,30 @@ inputs:
     label: "Chromosome list to be included into the reference genome FASTA file"
     doc: "Filter chromosomes while extracting FASTA from 2bit"
 
+  chrom_sizes:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Genome chromosome length file. All chromosomes are included"
+    doc: "Genome chromosome length file. All chromosomes are included"
+
+  annotation_tab:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Compressed tsv.gz annotation file"
+    doc: "Compressed tab-separated annotation file. Doesn't include chrM"
+
+  mitochondrial_annotation_tab:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Compressed tsv.gz mitochondrial DNA annotation file"
+    doc: "Compressed mitochondrial DNA tab-separated annotation file. Includes only chrM"
+
+  cytoband:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Compressed cytoBand file for IGV browser"
+    doc: "Compressed tab-separated cytoBand file for IGV browser"
+
 
 outputs:
 
@@ -48,6 +78,62 @@ outputs:
     label: "Bismark indices folder"
     doc: "Bismark generated indices folder"
     outputSource: prepare_indices/indices_folder
+
+  fasta_output:
+    type: File
+    format: "http://edamontology.org/format_1929"
+    label: "Reference genome FASTA file"
+    doc: "Reference genome FASTA file. Includes only selected chromosomes"
+    outputSource: extract_fasta/fasta_file
+
+  fasta_fai_output:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "FAI index for genome FASTA file"
+    doc: "Tab-separated FAI index file"
+    outputSource: index_fasta/fai_file
+
+  annotation:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "TSV annotation file"
+    doc: "Tab-separated annotation file. Includes reference genome and mitochondrial DNA annotations"
+    outputSource: prepare_annotation/annotation_tsv_file
+
+  annotation_gtf:
+    type: File
+    format: "http://edamontology.org/format_2306"
+    label: "GTF annotation file"
+    doc: "GTF annotation file. Includes reference genome and mitochondrial DNA annotations"
+    outputSource: prepare_annotation/annotation_gtf_file
+
+  annotation_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Sorted BED annotation file"
+    doc: "Sorted BED annotation file"
+    outputSource: sort_annotation_bed/sorted_file
+
+  annotation_bed_tbi:
+    type: File
+    format: "http://edamontology.org/format_3004"
+    label: "Sorted bigBed annotation file"
+    doc: "Sorted bigBed annotation file"
+    outputSource: annotation_bed_to_bigbed/bigbed_file
+
+  cytoband_output:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "CytoBand file for IGV browser"
+    doc: "Tab-separated cytoBand file for IGV browser"
+    outputSource: extract_cytoband/output_file
+
+  chrom_length:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    outputSource: filter_chrom_sizes/output_file
+    label: "Genome chromosome length file"
+    doc: "Genome chromosome length file"
 
   stdout_log:
     type: File
@@ -104,6 +190,207 @@ steps:
     - indices_folder
     - stdout_log
     - stderr_log
+
+  index_fasta:
+    run: ../tools/samtools-faidx.cwl
+    in:
+      fasta_file: extract_fasta/fasta_file
+    out:
+    - fai_file
+
+  filter_chrom_sizes:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: chrom_sizes
+      param: chromosome_list
+      script:
+        default: |
+          CHR="$(IFS="|"; echo "$*")"
+          cat "$0" | grep -E -w $CHR > chrom_length_file.tsv
+    out:
+    - output_file
+
+  prepare_annotation:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/ucscuserapps:v358
+      inputs:
+        script:
+          type: string?
+          default: |
+            #!/bin/bash
+            gunzip $0 -c | grep -v "exonCount" > refgene.txt
+            gunzip $1 -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> refgene.txt
+            if [ "$#" -ge 2 ]; then
+              FILTER=${@:2}
+              FILTER=$( IFS=$','; echo "${FILTER[*]}" )
+              FILTER=(${FILTER//, / })
+              echo "Filtering by" ${FILTER[*]}
+              cat refgene.txt | awk -v filter="${FILTER[*]}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
+              mv refgene_filtered.txt refgene.txt
+            fi
+            cut -f 2- refgene.txt | genePredToGtf file stdin refgene.gtf
+            echo -e "bin\tname\tchrom\tstrand\ttxStart\ttxEnd\tcdsStart\tcdsEnd\texonCount\texonStarts\texonEnds\tscore\tname2\tcdsStartStat\tcdsEndStat\texonFrames" > refgene.tsv
+            cat refgene.txt >> refgene.tsv
+          inputBinding:
+            position: 5
+        genome_annotation:
+          type: File
+          inputBinding:
+            position: 6
+        mitochondrial_annotation:
+          type: File
+          inputBinding:
+            position: 7
+        chromosome_list:
+          type:
+            - "null"
+            - string
+            - string[]
+          inputBinding:
+            position: 8
+      outputs:
+        annotation_tsv_file:
+          type: File
+          outputBinding:
+            glob: "refgene.tsv"
+        annotation_gtf_file:
+          type: File
+          outputBinding:
+            glob: "refgene.gtf"
+      baseCommand: ["bash", "-c"]
+    in:
+      genome_annotation:  annotation_tab
+      mitochondrial_annotation: mitochondrial_annotation_tab
+      chromosome_list: chromosome_list
+    out:
+    - annotation_tsv_file
+    - annotation_gtf_file
+
+  convert_annotation_to_bed:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: InlineJavascriptRequirement
+        expressionLib:
+        - var default_output_filename = function() {
+                var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
+                return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
+              };
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        script:
+          type: string?
+          default: |
+            import fileinput
+            for line in fileinput.input():
+                if "txStart" in line:
+                  continue
+                cols = line.split("\t")
+                refName = cols[1]
+                chrom = cols[2]
+                txStart = cols[4]
+                txEnd = cols[5]
+                txStart1 = cols[6]
+                txEnd1 = cols[7]
+                try: 
+                    name = cols[12]
+                except Exception:
+                    name = cols[11]
+                    pass
+                strand = cols[3]
+                exonCount = cols[8]
+                cdsStart = cols[9].split(',')[0:-1]
+                cdsEnd = cols[10].split(',')[0:-1]
+                startEndPairs = zip(cdsStart, cdsEnd)
+                sizes =  ','.join(map(lambda pair: str(int(pair[1])-int(pair[0])), startEndPairs))
+                deltas = ','.join(map(lambda offset: str(int(offset)-int(txStart)), cdsStart))
+                if 'fix' in chrom or '_' in chrom:
+                    continue
+                output = [chrom, txStart, txEnd, name, '1000', strand, txStart1, txEnd1, '.', exonCount, sizes, deltas]
+                print "\t".join(output)
+          inputBinding:
+            position: 5
+          doc: "Python script to get convert TSV annotation file to BED"
+        annotation_tsv_file:
+          type: File
+          inputBinding:
+            position: 6
+          doc: "Annotation TSV file"
+      outputs:
+        annotation_bed_file:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: ["python", "-c"]
+      stdout: $(default_output_filename())
+    in:
+      annotation_tsv_file: prepare_annotation/annotation_tsv_file
+    out:
+    - annotation_bed_file
+
+  sort_annotation_bed:
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: convert_annotation_to_bed/annotation_bed_file
+      key:
+        default: ["1,1","2,2n"]
+    out:
+    - sorted_file
+
+  annotation_bed_to_bigbed:
+    run: ../tools/ucsc-bedtobigbed.cwl
+    in:
+      input_bed: sort_annotation_bed/sorted_file
+      chrom_length_file: filter_chrom_sizes/output_file
+      bed_type:
+        default: "bed4+8"
+      output_filename:
+        source: sort_annotation_bed/sorted_file
+        valueFrom: $(self.basename + ".tbi")
+    out:
+    - bigbed_file
+
+  extract_cytoband:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: InitialWorkDirRequirement
+        listing: |
+          ${
+            return  [
+                      {
+                        "entry": inputs.input_file,
+                        "entryname": inputs.input_file.basename,
+                        "writable": true
+                      }
+                    ]
+          }
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        input_file:
+          type: File
+          inputBinding:
+            position: 1
+      outputs:
+        output_file:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: [gunzip]
+    in:
+      input_file: cytoband
+    out:
+    - output_file
 
 
 $namespaces:
