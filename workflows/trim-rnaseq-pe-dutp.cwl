@@ -56,14 +56,20 @@ inputs:
     doc: "GTF or TAB-separated annotation file"
 
   fastq_file_upstream:
-    type: File
-    label: "FASTQ read1 input file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ read1 input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
-    type: File
-    label: "FASTQ read2 input file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ read2 input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
