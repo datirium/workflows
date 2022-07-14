@@ -38,23 +38,8 @@ inputs:
         esac
       } 
       
-      COMBINED=""
-      for FILE in "$@"; do
-          BASENAME=$(basename "$FILE")
-          ROOTNAME="${BASENAME%.*}"
-          EXT_LIST=( ".fastq" ".fq" )
-          for ITEM in $EXT_LIST; do
-            if [[ $ROOTNAME == *$ITEM ]]; then
-              ROOTNAME="${ROOTNAME%.*}"
-            fi
-          done
-          if [[ $COMBINED == "" ]]; then
-            COMBINED="${ROOTNAME}"
-          else
-            COMBINED="${COMBINED}"_"${ROOTNAME}"
-          fi
-      done
-      COMBINED="${COMBINED}".fastq
+      COMBINED="merged_fastq_file_$(openssl rand -hex 20).fastq"
+
 
       for FILE in "$@"; do
           echo "Extracting:" $FILE;
