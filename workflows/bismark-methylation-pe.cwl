@@ -22,13 +22,19 @@ requirements:
 inputs:
 
   fastq_file_r1:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
     label: "FASTQ read 1 file"
     doc: "Uncompressed or gzipped FASTQ read 1 file"
 
   fastq_file_r2:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
     label: "FASTQ read 2 file"
     doc: "Uncompressed or gzipped FASTQ read 2 file"

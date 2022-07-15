@@ -52,7 +52,10 @@ inputs:
     doc: "GTF or TAB-separated annotation file"
 
   fastq_file:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format"

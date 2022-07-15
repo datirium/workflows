@@ -20,7 +20,10 @@ inputs:
       position: 1
 
   fastq_file:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     label: "FASTQ file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, optionally compressed"

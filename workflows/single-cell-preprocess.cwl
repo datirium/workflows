@@ -23,13 +23,19 @@ inputs:
       position: 1
 
   fastq_file_1:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
     label: "FASTQ file 1 (optionally compressed)"
     doc: "FASTQ file 1 (optionally compressed)"
 
   fastq_file_2:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
     label: "FASTQ file 2 (optionally compressed)"
     doc: "FASTQ file 2 (optionally compressed)"

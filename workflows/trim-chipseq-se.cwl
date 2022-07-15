@@ -64,7 +64,10 @@ inputs:
     doc: "Set to call broad peak for MACS2"
 
   fastq_file:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
