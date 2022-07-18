@@ -18,7 +18,8 @@ inputs:
     default: |
       #!/bin/bash
       shopt -s nocaseglob
-      set -- "$0" "$@"
+
+      COMBINED="$0".fastq
 
       function extract {
         FILE=$1
@@ -37,9 +38,6 @@ inputs:
             exit 1
         esac
       } 
-      
-      COMBINED="merged_fastq_file_$(openssl rand -hex 20).fastq"
-
 
       for FILE in "$@"; do
           echo "Extracting:" $FILE;
@@ -51,13 +49,21 @@ inputs:
     doc: |
       Bash script to extract compressed FASTQ file
 
+  output_prefix:
+    type: string?
+    inputBinding:
+      position: 6
+    default: "merged"
+    doc: |
+      Output prefix for extracted file
+
   compressed_file:
     type:
     - File
     - type: array
       items: File
     inputBinding:
-      position: 6
+      position: 7
     doc: |
       Compressed or uncompressed FASTQ file(s)
 
