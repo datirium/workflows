@@ -353,7 +353,7 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       output_prefix:  
-        default: "read_1"
+        default: "read_2"
       compressed_file: fastq_file_downstream
     out: [fastq_file]
 
