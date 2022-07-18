@@ -53,7 +53,10 @@ inputs:
     doc: "species: one of ce10 ce11 dm3 hg19 GRCh38 mm9 mm10"
 
   fastq_file:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     label: "FASTQ input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
