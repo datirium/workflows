@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-UBUNTU_VERSION=${1:-"18.04"}
-PYTHON_VERSION=${2:-"3.6.0"}
+UBUNTU_VERSION=${1:-"20.04"}
+PYTHON_VERSION=${2:-"3.8.10"}
 CWLTOOL_VERSION=${3:-"main"}
 CWLTEST_VERSION=${4:-"main"}
 
