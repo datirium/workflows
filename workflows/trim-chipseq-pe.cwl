@@ -490,6 +490,8 @@ steps:
       the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
+      output_prefix:  
+        default: "read_1"
       compressed_file: fastq_file_upstream
     out: [fastq_file]
 
@@ -501,6 +503,8 @@ steps:
       the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
+      output_prefix:  
+        default: "read_2"
       compressed_file: fastq_file_downstream
     out: [fastq_file]
 

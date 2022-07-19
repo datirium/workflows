@@ -337,12 +337,16 @@ steps:
   extract_fastq_upstream:
     run: ../tools/extract-fastq.cwl
     in:
+      output_prefix:  
+        default: "read_1"
       compressed_file: fastq_file_upstream
     out: [fastq_file]
 
   extract_fastq_downstream:
     run: ../tools/extract-fastq.cwl
     in:
+      output_prefix:  
+        default: "read_2"
       compressed_file: fastq_file_downstream
     out: [fastq_file]
 
