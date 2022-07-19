@@ -12,5 +12,10 @@
     "indices_folder": {
         "class": "Directory",
         "location": "./data/dm3_chr4/generated_inputs/indices/bismark/data"
+    },
+    "chrom_length": {
+        "class": "File",
+        "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4_v2.7.5c/dm3/chrNameLength.txt",
+        "format": "http://edamontology.org/format_2330"
     }
 }

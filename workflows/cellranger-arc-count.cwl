@@ -31,34 +31,49 @@ inputs:
     'sd:localLabel': true
 
   gex_fastq_file_r1:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "GEX FASTQ file R1 (optionally compressed)"
-    doc: "GEX FASTQ file R1 (optionally compressed)"
+    label: "GEX FASTQ file(s) R1 (optionally compressed)"
+    doc: "GEX FASTQ file(s) R1 (optionally compressed)"
 
   gex_fastq_file_r2:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "GEX FASTQ file R2 (optionally compressed)"
-    doc: "GEX FASTQ file R2 (optionally compressed)"
+    label: "GEX FASTQ file(s) R2 (optionally compressed)"
+    doc: "GEX FASTQ file(s) R2 (optionally compressed)"
 
   atac_fastq_file_r1:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "ATAC FASTQ file R1 (optionally compressed)"
-    doc: "ATAC FASTQ file R1 (optionally compressed)"
+    label: "ATAC FASTQ file(s) R1 (optionally compressed)"
+    doc: "ATAC FASTQ file(s) R1 (optionally compressed)"
 
   atac_fastq_file_r2:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "ATAC FASTQ file R2 (optionally compressed)"
-    doc: "ATAC FASTQ file R2 (optionally compressed)"
+    label: "ATAC FASTQ file(s) R2 (optionally compressed)"
+    doc: "ATAC FASTQ file(s) R2 (optionally compressed)"
 
   atac_fastq_file_r3:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "ATAC FASTQ file R3 (optionally compressed)"
-    doc: "ATAC FASTQ file R3 (optionally compressed)"
+    label: "ATAC FASTQ file(s) R3 (optionally compressed)"
+    doc: "ATAC FASTQ file(s) R3 (optionally compressed)"
 
   exclude_introns:
     type: boolean?
@@ -370,6 +385,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: gex_fastq_file_r1
+      output_prefix:
+        default: "gex_read_1"
     out:
     - fastq_file
 
@@ -377,6 +394,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: gex_fastq_file_r2
+      output_prefix:
+        default: "gex_read_2"
     out:
     - fastq_file
 
@@ -384,6 +403,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: atac_fastq_file_r1
+      output_prefix:
+        default: "atac_read_1"
     out:
     - fastq_file
 
@@ -391,6 +412,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: atac_fastq_file_r2
+      output_prefix:
+        default: "atac_read_2"
     out:
     - fastq_file
 
@@ -398,6 +421,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: atac_fastq_file_r3
+      output_prefix:
+        default: "atac_read_3"
     out:
     - fastq_file
 

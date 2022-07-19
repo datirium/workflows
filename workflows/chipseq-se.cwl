@@ -71,8 +71,11 @@ inputs:
     doc: "Make MACS2 call broad peaks by linking nearby highly enriched regions"
 
   fastq_file:
-    type: File
-    label: "FASTQ file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Single-read sequencing data in FASTQ format (fastq, fq, bzip2, gzip, zip)"
 
@@ -381,6 +384,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   fastx_quality_stats:

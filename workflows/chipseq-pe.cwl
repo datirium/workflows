@@ -68,14 +68,20 @@ inputs:
     doc: "Set to call broad peak for MACS2"
 
   fastq_file_upstream:
-    type: File
-    label: "FASTQ 1 input file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ 1 input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
-    type: File
-    label: "FASTQ 2 input file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ 2 input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
@@ -485,6 +491,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_upstream
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   extract_fastq_downstream:
@@ -496,6 +504,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_downstream
+      output_prefix:
+        default: "read_2"
     out: [fastq_file]
 
   fastx_quality_stats_upstream:

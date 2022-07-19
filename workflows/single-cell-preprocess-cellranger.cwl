@@ -31,16 +31,22 @@ inputs:
     'sd:localLabel': true
 
   fastq_file_r1:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "FASTQ file R1 (optionally compressed)"
-    doc: "FASTQ file R1 (optionally compressed)"
+    label: "FASTQ file(s) R1 (optionally compressed)"
+    doc: "FASTQ file(s) R1 (optionally compressed)"
 
   fastq_file_r2:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "FASTQ file R2 (optionally compressed)"
-    doc: "FASTQ file R2 (optionally compressed)"
+    label: "FASTQ file(s) R2 (optionally compressed)"
+    doc: "FASTQ file(s) R2 (optionally compressed)"
 
   expect_cells:
     type: int?
@@ -268,6 +274,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_r1
+      output_prefix:
+        default: "read_1"
     out:
     - fastq_file
 
@@ -275,6 +283,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_r2
+      output_prefix:
+        default: "read_2"
     out:
     - fastq_file
 

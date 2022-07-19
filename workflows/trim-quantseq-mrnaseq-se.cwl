@@ -61,8 +61,11 @@ inputs:
     doc: "GTF annotation file"
 
   fastq_file:
-    type: File
-    label: "FASTQ input file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format"
 
@@ -370,6 +373,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   # trim_fastq:

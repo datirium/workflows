@@ -302,56 +302,56 @@
   tool: ../workflows/trim-rnaseq-se.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     trim_report:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     htseq_count_gene_expression_file:
       location: feature_counts_report.tsv
@@ -380,59 +380,59 @@
   tool: ../workflows/trim-rnaseq-se-dutp.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig_downstream:
-      location: upstream_downstream.bigWig
+      location: read_1_downstream.bigWig
       class: File
     bigwig_upstream:
-      location: upstream_upstream.bigWig
+      location: read_1_upstream.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     trim_report:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     htseq_count_gene_expression_file:
       location: feature_counts_report.tsv
@@ -462,62 +462,62 @@
   tool: ../workflows/trim-rnaseq-pe.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     trim_report_downstream:
-      location: downstream.fastq_trimming_report.txt
+      location: read_2.fastq_trimming_report.txt
       class: File
     trim_report_upstream:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     insert_size_report:
       location: is_section.tsv
@@ -549,65 +549,65 @@
   tool: ../workflows/trim-rnaseq-pe-dutp.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig_downstream:
-      location: upstream_downstream.bigWig
+      location: read_1_downstream.bigWig
       class: File
     bigwig_upstream:
-      location: upstream_upstream.bigWig
+      location: read_1_upstream.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     trim_report_downstream:
-      location: downstream.fastq_trimming_report.txt
+      location: read_2.fastq_trimming_report.txt
       class: File
     trim_report_upstream:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     insert_size_report:
       location: is_section.tsv
@@ -643,71 +643,71 @@
     - class: File
       location: unaligned_reads.fastq
     atdp_log:
-      location: upstream_atdp.log
+      location: read_1_atdp.log
       class: File
     atdp_result:
-      location: upstream_atdp.tsv
+      location: read_1_atdp.tsv
       class: File
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_collected_statistics_report.tsv
+      location: read_1_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream_collected_statistics_report.yaml
+      location: read_1_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream_collected_statistics_report.md
+      location: read_1_collected_statistics_report.md
       class: File
     iaintersect_log:
-      location: upstream_macs_peaks_iaintersect.log
+      location: read_1_macs_peaks_iaintersect.log
       class: File
     iaintersect_result:
-      location: upstream_macs_peaks_iaintersect.tsv
+      location: read_1_macs_peaks_iaintersect.tsv
       class: File
     macs2_broad_peaks: null
     macs2_called_peaks:
-      location: upstream_macs_peaks.xls
+      location: read_1_macs_peaks.xls
       class: File
     macs2_fragment_stat:
-      location: upstream_fragment_stat.tsv
+      location: read_1_fragment_stat.tsv
       class: File
     macs2_gapped_peak: null
     macs2_log:
-      location: upstream_macs.log
+      location: read_1_macs.log
       class: File
     macs2_moder_r: null
     macs2_narrow_peaks:
-      location: upstream_macs_peaks.narrowPeak
+      location: read_1_macs_peaks.narrowPeak
       class: File
     macs2_peak_summits:
-      location: upstream_macs_summits.bed
+      location: read_1_macs_summits.bed
       class: File
     preseq_estimates: null
     samtools_rmdup_log:
-      location: upstream.rmdup
+      location: read_1.rmdup
       class: File
     trim_report:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     bam_statistics_report_after_filtering:
-      location: upstream_bam_statistics_report_after_filtering.txt
+      location: read_1_bam_statistics_report_after_filtering.txt
       class: File
     estimated_fragment_size: 150
     mapped_reads_number: 90
@@ -726,77 +726,77 @@
     - class: File
       location: unaligned_reads_2.fastq
     atdp_log:
-      location: upstream_atdp.log
+      location: read_1_atdp.log
       class: File
     atdp_result:
-      location: upstream_atdp.tsv
+      location: read_1_atdp.tsv
       class: File
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_collected_statistics_report.tsv
+      location: read_1_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream_collected_statistics_report.yaml
+      location: read_1_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream_collected_statistics_report.md
+      location: read_1_collected_statistics_report.md
       class: File
     iaintersect_log:
-      location: upstream_macs_peaks_iaintersect.log
+      location: read_1_macs_peaks_iaintersect.log
       class: File
     iaintersect_result:
-      location: upstream_macs_peaks_iaintersect.tsv
+      location: read_1_macs_peaks_iaintersect.tsv
       class: File
     macs2_broad_peaks: null
     macs2_called_peaks:
-      location: upstream_macs_peaks.xls
+      location: read_1_macs_peaks.xls
       class: File
     macs2_fragment_stat:
-      location: upstream_fragment_stat.tsv
+      location: read_1_fragment_stat.tsv
       class: File
     macs2_gapped_peak: null
     macs2_log:
-      location: upstream_macs.log
+      location: read_1_macs.log
       class: File
     macs2_moder_r: null
     macs2_narrow_peaks:
-      location: upstream_macs_peaks.narrowPeak
+      location: read_1_macs_peaks.narrowPeak
       class: File
     macs2_peak_summits:
-      location: upstream_macs_summits.bed
+      location: read_1_macs_summits.bed
       class: File
     preseq_estimates: null
     samtools_rmdup_log:
-      location: upstream.rmdup
+      location: read_1.rmdup
       class: File
     trim_report_downstream:
-      location: downstream.fastq_trimming_report.txt
+      location: read_2.fastq_trimming_report.txt
       class: File
     trim_report_upstream:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     bam_statistics_report_after_filtering:
-      location: upstream_bam_statistics_report_after_filtering.txt
+      location: read_1_bam_statistics_report_after_filtering.txt
       class: File
     estimated_fragment_size: 156
     mapped_reads_number: 31
@@ -816,71 +816,71 @@
     - class: File
       location: unaligned_reads.fastq
     atdp_log:
-      location: upstream_atdp.log
+      location: read_1_atdp.log
       class: File
     atdp_result:
-      location: upstream_atdp.tsv
+      location: read_1_atdp.tsv
       class: File
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_collected_statistics_report.tsv
+      location: read_1_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream_collected_statistics_report.yaml
+      location: read_1_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream_collected_statistics_report.md
+      location: read_1_collected_statistics_report.md
       class: File
     iaintersect_log:
-      location: upstream_macs_peaks_iaintersect.log
+      location: read_1_macs_peaks_iaintersect.log
       class: File
     iaintersect_result:
-      location: upstream_macs_peaks_iaintersect.tsv
+      location: read_1_macs_peaks_iaintersect.tsv
       class: File
     macs2_broad_peaks: null
     macs2_called_peaks:
-      location: upstream_macs_peaks.xls
+      location: read_1_macs_peaks.xls
       class: File
     macs2_fragment_stat:
-      location: upstream_fragment_stat.tsv
+      location: read_1_fragment_stat.tsv
       class: File
     macs2_gapped_peak: null
     macs2_log:
-      location: upstream_macs.log
+      location: read_1_macs.log
       class: File
     macs2_moder_r: null
     macs2_narrow_peaks:
-      location: upstream_macs_peaks.narrowPeak
+      location: read_1_macs_peaks.narrowPeak
       class: File
     macs2_peak_summits:
-      location: upstream_macs_summits.bed
+      location: read_1_macs_summits.bed
       class: File
     preseq_estimates: null
     samtools_rmdup_log:
-      location: upstream.rmdup
+      location: read_1.rmdup
       class: File
     trim_report:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     bam_statistics_report_after_filtering:
-      location: upstream_bam_statistics_report_after_filtering.txt
+      location: read_1_bam_statistics_report_after_filtering.txt
       class: File
     estimated_fragment_size: 150
     mapped_reads_number: 90
@@ -899,77 +899,77 @@
     - class: File
       location: unaligned_reads_2.fastq
     atdp_log:
-      location: upstream_atdp.log
+      location: read_1_atdp.log
       class: File
     atdp_result:
-      location: upstream_atdp.tsv
+      location: read_1_atdp.tsv
       class: File
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_collected_statistics_report.tsv
+      location: read_1_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream_collected_statistics_report.yaml
+      location: read_1_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream_collected_statistics_report.md
+      location: read_1_collected_statistics_report.md
       class: File
     iaintersect_log:
-      location: upstream_macs_peaks_iaintersect.log
+      location: read_1_macs_peaks_iaintersect.log
       class: File
     iaintersect_result:
-      location: upstream_macs_peaks_iaintersect.tsv
+      location: read_1_macs_peaks_iaintersect.tsv
       class: File
     macs2_broad_peaks: null
     macs2_called_peaks:
-      location: upstream_macs_peaks.xls
+      location: read_1_macs_peaks.xls
       class: File
     macs2_fragment_stat:
-      location: upstream_fragment_stat.tsv
+      location: read_1_fragment_stat.tsv
       class: File
     macs2_gapped_peak: null
     macs2_log:
-      location: upstream_macs.log
+      location: read_1_macs.log
       class: File
     macs2_moder_r: null
     macs2_narrow_peaks:
-      location: upstream_macs_peaks.narrowPeak
+      location: read_1_macs_peaks.narrowPeak
       class: File
     macs2_peak_summits:
-      location: upstream_macs_summits.bed
+      location: read_1_macs_summits.bed
       class: File
     preseq_estimates: null
     samtools_rmdup_log:
-      location: upstream.rmdup
+      location: read_1.rmdup
       class: File
     trim_report_downstream:
-      location: downstream.fastq_trimming_report.txt
+      location: read_2.fastq_trimming_report.txt
       class: File
     trim_report_upstream:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     bam_statistics_report_after_filtering:
-      location: upstream_bam_statistics_report_after_filtering.txt
+      location: read_1_bam_statistics_report_after_filtering.txt
       class: File
     estimated_fragment_size: 156
     mapped_reads_number: 31
@@ -1018,7 +1018,7 @@
   tool: ../workflows/super-enhancer.cwl
   output:
     super_enhancers_bigbed_file:
-      location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.bb
+      location: chr4_100_mapped_reads_Gateway_SuperEnhancers.bigBed
       class: File
     super_enhancers_report_file:
       location: chr4_100_mapped_reads.Aligned.out_default_s_enhcr.tsv
@@ -1038,56 +1038,56 @@
   tool: ../workflows/rnaseq-se-dutp-mitochondrial.cwl
   output:
     bam_merged_index:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig_downstream:
-      location: upstream_downstream.bigWig
+      location: read_1_downstream.bigWig
       class: File
     bigwig_upstream:
-      location: upstream_upstream.bigWig
+      location: read_1_upstream.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     bam_statistics_report:
-      location: upstream_sorted_bam_statistics_report.txt
+      location: read_1_sorted_bam_statistics_report.txt
       class: File
     htseq_count_gene_expression_file:
       location: feature_counts_report.tsv
@@ -1107,59 +1107,59 @@
   tool: ../workflows/rnaseq-pe-dutp-mitochondrial.cwl
   output:
     bam_merged_index:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig_downstream:
-      location: upstream_downstream.bigWig
+      location: read_1_downstream.bigWig
       class: File
     bigwig_upstream:
-      location: upstream_upstream.bigWig
+      location: read_1_upstream.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     bam_statistics_report:
-      location: upstream_sorted_bam_statistics_report.txt
+      location: read_1_sorted_bam_statistics_report.txt
       class: File
     insert_size_report:
       location: is_section.tsv
@@ -1527,49 +1527,49 @@
   tool: ../workflows/bismark-methylation-se.cwl
   output:
     bambai_pair:
-      location: upstream_trimmed_bismark_bt2.bam
+      location: sorted_alignments.bam
       class: File
       secondaryFiles:
-      - location: upstream_trimmed_bismark_bt2.bam.bai
+      - location: sorted_alignments.bam.bai
         class: File
     bedgraph_coverage_file:
-      location: upstream_trimmed_bismark_bt2.bedGraph.gz
+      location: read_1_trimmed_bismark_bt2.bedGraph.gz
       class: File
     bismark_alignment_report:
-      location: upstream_trimmed_bismark_bt2_SE_report.txt
+      location: read_1_trimmed_bismark_bt2_SE_report.txt
       class: File
     bismark_coverage_file:
-      location: upstream_trimmed_bismark_bt2.bismark.cov.gz
+      location: read_1_trimmed_bismark_bt2.bismark.cov.gz
       class: File
     chg_context_file:
-      location: CHG_context_upstream_trimmed_bismark_bt2.txt
+      location: CHG_context_read_1_trimmed_bismark_bt2.txt
       class: File
     chh_context_file:
-      location: CHH_context_upstream_trimmed_bismark_bt2.txt
+      location: CHH_context_read_1_trimmed_bismark_bt2.txt
       class: File
     collected_report:
-      location: upstream_trimmed_bismark_bt2_SE_report.html
+      location: read_1_trimmed_bismark_bt2_SE_report.html
       class: File
     collected_report_formatted:
       location: collected_report_formatted.tsv
       class: File
     cpg_context_file:
-      location: CpG_context_upstream_trimmed_bismark_bt2.txt
+      location: CpG_context_read_1_trimmed_bismark_bt2.txt
       class: File
     genome_wide_methylation_report:
-      location: upstream_trimmed_bismark_bt2.CpG_report.txt
+      location: read_1_trimmed_bismark_bt2.CpG_report.txt
       class: File
     mbias_plot:
-      location: upstream_trimmed_bismark_bt2.M-bias.txt
+      location: read_1_trimmed_bismark_bt2.M-bias.txt
       class: File
     mbias_plot_png:
-    - location: upstream_trimmed_bismark_bt2.M-bias_R1.png
+    - location: read_1_trimmed_bismark_bt2.M-bias_R1.png
       class: File
     splitting_report:
-      location: upstream_trimmed_bismark_bt2_splitting_report.txt
+      location: read_1_trimmed_bismark_bt2_splitting_report.txt
       class: File
     trim_adapters_report:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
 
 # ========================================================
@@ -1577,57 +1577,57 @@
 # ========================================================
 
 - job: ./bismark-methylation-pe-1.json
-  tool: ../workflows/bismark-methylation-se.cwl
+  tool: ../workflows/bismark-methylation-pe.cwl
   output:
     bambai_pair:
-      location: upstream_val_1_bismark_bt2_pe.bam
+      location: read_1_val_1_bismark_bt2_pe.bam
       class: File
       secondaryFiles:
-      - location: upstream_val_1_bismark_bt2_pe.bam.bai
+      - location: read_1_val_1_bismark_bt2_pe.bam.bai
         class: File
     bedgraph_coverage_file:
-      location: upstream_val_1_bismark_bt2_pe.bedGraph.gz
+      location: read_1_val_1_bismark_bt2_pe.bedGraph.gz
       class: File
     bismark_alignment_report:
-      location: upstream_val_1_bismark_bt2_PE_report.txt
+      location: read_1_val_1_bismark_bt2_PE_report.txt
       class: File
     bismark_coverage_file:
-      location: upstream_val_1_bismark_bt2_pe.bismark.cov.gz
+      location: read_1_val_1_bismark_bt2_pe.bismark.cov.gz
       class: File
     chg_context_file:
-      location: CHG_context_upstream_val_1_bismark_bt2_pe.txt
+      location: CHG_context_read_1_val_1_bismark_bt2_pe.txt
       class: File
     chh_context_file:
-      location: CHH_context_upstream_val_1_bismark_bt2_pe.txt
+      location: CHH_context_read_1_val_1_bismark_bt2_pe.txt
       class: File
     collected_report:
-      location: upstream_val_1_bismark_bt2_PE_report.html
+      location: read_1_val_1_bismark_bt2_PE_report.html
       class: File
     collected_report_formatted:
       location: collected_report_formatted.tsv
       class: File
     cpg_context_file:
-      location: CpG_context_upstream_val_1_bismark_bt2_pe.txt
+      location: CpG_context_read_1_val_1_bismark_bt2_pe.txt
       class: File
     genome_wide_methylation_report:
-      location: upstream_trimmed_bismark_bt2.CpG_report.txt
+      location: read_1_trimmed_bismark_bt2.CpG_report.txt
       class: File
     mbias_plot:
-      location: upstream_val_1_bismark_bt2_pe.M-bias.txt
+      location: read_1_val_1_bismark_bt2_pe.M-bias.txt
       class: File
     mbias_plot_png:
-    - location: upstream_val_1_bismark_bt2_pe.M-bias_R1.png
+    - location: read_1_val_1_bismark_bt2_pe.M-bias_R1.png
       class: File
-    - location: upstream_val_1_bismark_bt2_pe.M-bias_R2.png
+    - location: read_1_val_1_bismark_bt2_pe.M-bias_R2.png
       class: File
     splitting_report:
-      location: upstream_val_1_bismark_bt2_pe_splitting_report.txt
+      location: read_1_val_1_bismark_bt2_pe_splitting_report.txt
       class: File
     trim_adapters_report:
-      location: upstream.fastq_trimming_report.txt
+      location: read_1.fastq_trimming_report.txt
       class: File
     trim_adapters_report_pair:
-      location: downstream.fastq_trimming_report.txt
+      location: read_2.fastq_trimming_report.txt
       class: File
 
 # ========================================================
@@ -1638,53 +1638,53 @@
   tool: ../workflows/rnaseq-se.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     htseq_count_gene_expression_file:
       location: feature_counts_report.tsv
@@ -1704,56 +1704,56 @@
   tool: ../workflows/rnaseq-pe.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     insert_size_report:
       location: is_section.tsv
@@ -1780,48 +1780,48 @@
     - class: File
       location: unaligned_reads.fastq
     atdp_result:
-      location: upstream_atdp.tsv
+      location: read_1_atdp.tsv
       class: File
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     iaintersect_result:
-      location: upstream_macs_peaks_iaintersect.tsv
+      location: read_1_macs_peaks_iaintersect.tsv
       class: File
     macs2_broad_peaks: null
     macs2_called_peaks:
-      location: upstream_macs_peaks.xls
+      location: read_1_macs_peaks.xls
       class: File
     macs2_narrow_peaks:
-      location: upstream_macs_peaks.narrowPeak
+      location: read_1_macs_peaks.narrowPeak
       class: File
     preseq_estimates: null
     workflow_statistics_tsv:
-      location: upstream_collected_statistics_report.tsv
+      location: read_1_collected_statistics_report.tsv
       class: File
     workflow_statistics_yaml:
-      location: upstream_collected_statistics_report.yaml
+      location: read_1_collected_statistics_report.yaml
       class: File
     workflow_statistics_markdown:
-      location: upstream_collected_statistics_report.md
+      location: read_1_collected_statistics_report.md
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     bam_statistics_report_after_filtering:
-      location: upstream_bam_statistics_report_after_filtering.txt
+      location: read_1_bam_statistics_report_after_filtering.txt
       class: File
     estimated_fragment_size: 150
     mapped_reads_number: 95
@@ -1840,71 +1840,71 @@
     - class: File
       location: unaligned_reads_2.fastq
     atdp_log:
-      location: upstream_atdp.log
+      location: read_1_atdp.log
       class: File
     atdp_result:
-      location: upstream_atdp.tsv
+      location: read_1_atdp.tsv
       class: File
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig:
-      location: upstream.bigWig
+      location: read_1.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_stat_formatted_log:
-      location: upstream_collected_statistics_report.tsv
+      location: read_1_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream_collected_statistics_report.yaml
+      location: read_1_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream_collected_statistics_report.md
+      location: read_1_collected_statistics_report.md
       class: File
     iaintersect_log:
-      location: upstream_macs_peaks_iaintersect.log
+      location: read_1_macs_peaks_iaintersect.log
       class: File
     iaintersect_result:
-      location: upstream_macs_peaks_iaintersect.tsv
+      location: read_1_macs_peaks_iaintersect.tsv
       class: File
     macs2_broad_peaks: null
     macs2_called_peaks:
-      location: upstream_macs_peaks.xls
+      location: read_1_macs_peaks.xls
       class: File
     macs2_fragment_stat:
-      location: upstream_fragment_stat.tsv
+      location: read_1_fragment_stat.tsv
       class: File
     macs2_gapped_peak: null
     macs2_log:
-      location: upstream_macs.log
+      location: read_1_macs.log
       class: File
     macs2_moder_r: null
     macs2_narrow_peaks:
-      location: upstream_macs_peaks.narrowPeak
+      location: read_1_macs_peaks.narrowPeak
       class: File
     macs2_peak_summits:
-      location: upstream_macs_summits.bed
+      location: read_1_macs_summits.bed
       class: File
     preseq_estimates: null
     samtools_rmdup_log:
-      location: upstream.rmdup
+      location: read_1.rmdup
       class: File
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     bam_statistics_report_after_filtering:
-      location: upstream_bam_statistics_report_after_filtering.txt
+      location: read_1_bam_statistics_report_after_filtering.txt
       class: File
     estimated_fragment_size: 156
     mapped_reads_number: 31
@@ -1920,56 +1920,56 @@
   tool: ../workflows/rnaseq-se-dutp.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig_downstream:
-      location: upstream_downstream.bigWig
+      location: read_1_downstream.bigWig
       class: File
     bigwig_upstream:
-      location: upstream_upstream.bigWig
+      location: read_1_upstream.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     htseq_count_gene_expression_file:
       location: feature_counts_report.tsv
@@ -1989,59 +1989,59 @@
   tool: ../workflows/rnaseq-pe-dutp.cwl
   output:
     bambai_pair:
-      location: upstream.bam
+      location: read_1.bam
       class: File
       secondaryFiles:
-      - location: upstream.bam.bai
+      - location: read_1.bam.bai
         class: File
     bigwig_downstream:
-      location: upstream_downstream.bigWig
+      location: read_1_downstream.bigWig
       class: File
     bigwig_upstream:
-      location: upstream_upstream.bigWig
+      location: read_1_upstream.bigWig
       class: File
     bowtie_log:
-      location: upstream.bw
+      location: read_1.bw
       class: File
     fastx_statistics_downstream:
-      location: downstream.fastxstat
+      location: read_2.fastxstat
       class: File
     fastx_statistics_upstream:
-      location: upstream.fastxstat
+      location: read_1.fastxstat
       class: File
     get_formatted_stats:
-      location: upstream.Log.final_collected_statistics_report.tsv
+      location: read_1.Log.final_collected_statistics_report.tsv
       class: File
     get_stat_log:
-      location: upstream.Log.final_collected_statistics_report.yaml
+      location: read_1.Log.final_collected_statistics_report.yaml
       class: File
     get_stat_markdown:
-      location: upstream.Log.final_collected_statistics_report.md
+      location: read_1.Log.final_collected_statistics_report.md
       class: File
     rpkm_common_tss:
-      location: upstream.common_tss.tsv
+      location: read_1.common_tss.tsv
       class: File
     rpkm_genes:
-      location: upstream.genes.tsv
+      location: read_1.genes.tsv
       class: File
     rpkm_isoforms:
-      location: upstream.isoforms.csv
+      location: read_1.isoforms.csv
       class: File
     star_final_log:
-      location: upstream.Log.final.out
+      location: read_1.Log.final.out
       class: File
     star_out_log:
-      location: upstream.Log.out
+      location: read_1.Log.out
       class: File
     star_progress_log:
-      location: upstream.Log.progress.out
+      location: read_1.Log.progress.out
       class: File
     star_sj_log:
-      location: upstream.SJ.out.tab
+      location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
     bam_statistics_report:
-      location: upstream_bam_statistics_report.txt
+      location: read_1_bam_statistics_report.txt
       class: File
     insert_size_report:
       location: is_section.tsv
@@ -2088,7 +2088,7 @@
   output:
     fastqc_report:
       class: File
-      location: upstream_fastqc_report.html
+      location: read_1_fastqc_report.html
 
 # ========================================================
 # gseapy

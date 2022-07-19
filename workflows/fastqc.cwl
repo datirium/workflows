@@ -20,8 +20,11 @@ inputs:
       position: 1
 
   fastq_file:
-    type: File
-    label: "FASTQ file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, optionally compressed"
 
@@ -45,6 +48,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   run_fastqc:
@@ -59,7 +64,7 @@ steps:
     in:
       source_file: run_fastqc/html_file
       target_filename:
-        source: fastq_file
+        source: extract_fastq/fastq_file
         valueFrom: $(get_root(self.basename)+"_fastqc_report.html")
     out: [target_file]
 

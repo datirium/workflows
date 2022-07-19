@@ -55,8 +55,11 @@ inputs:
     doc: "species: one of ce10 ce11 dm3 hg19 GRCh38 mm9 mm10"
 
   fastq_file:
-    type: File
-    label: "FASTQ input file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
@@ -355,6 +358,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   fastx_quality_stats_original:

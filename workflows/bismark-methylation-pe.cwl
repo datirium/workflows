@@ -22,16 +22,22 @@ requirements:
 inputs:
 
   fastq_file_r1:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "FASTQ read 1 file"
-    doc: "Uncompressed or gzipped FASTQ read 1 file"
+    label: "FASTQ read 1 file(s)"
+    doc: "Uncompressed or gzipped FASTQ read 1 file(s)"
 
   fastq_file_r2:
-    type: File
+    type:
+    - File
+    - type: array
+      items: File
     format: "http://edamontology.org/format_1930"
-    label: "FASTQ read 2 file"
-    doc: "Uncompressed or gzipped FASTQ read 2 file"
+    label: "FASTQ read 2 file(s)"
+    doc: "Uncompressed or gzipped FASTQ read 2 file(s)"
 
   indices_folder:
     type: Directory
@@ -225,6 +231,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_r1
+      output_prefix:
+        default: "read_1"
     out:
     - fastq_file
 
@@ -232,6 +240,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_r2
+      output_prefix:
+        default: "read_2"
     out:
     - fastq_file
 

@@ -64,9 +64,12 @@ inputs:
       trd, igh, igk, igl.
 
   fastq_file:
-    type: File
-    label: "FASTQ file (optionally compressed)"
-    doc: "FASTQ file (optionally compressed)"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ file(s) (optionally compressed)"
+    doc: "FASTQ file(s) (optionally compressed)"
 
   min_trim_length:
     type: int?
@@ -308,6 +311,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out:
     - fastq_file
 
