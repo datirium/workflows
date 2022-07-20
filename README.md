@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/datirium/workflows.svg?branch=master)](https://travis-ci.org/datirium/workflows)
+[![Build Status](https://travis-ci.com/datirium/workflows.svg?branch=master)](https://travis-ci.com/github/datirium/workflows)
 
 
 ## Bioinformatics Workflows by Datirium LLC
