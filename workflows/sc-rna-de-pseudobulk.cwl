@@ -296,7 +296,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
+        tab: 'Gene expression'
         Caption: 'Log normalized gene expression density per dataset'
 
   xpr_per_cell_rd_rnaumap_plot_png:
@@ -312,7 +312,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
+        tab: 'Gene expression'
         Caption: 'Log normalized gene expression on cells RNA UMAP per dataset'
 
   xpr_per_cell_rd_atacumap_plot_png:
@@ -328,7 +328,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
+        tab: 'Gene expression'
         Caption: 'Log normalized gene expression on cells ATAC UMAP per dataset'
 
   xpr_per_cell_rd_wnnumap_plot_png:
@@ -344,7 +344,7 @@ outputs:
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
+        tab: 'Gene expression'
         Caption: 'Log normalized gene expression on cells WNN UMAP per dataset'
 
   xpr_htmp_plot_png:
@@ -372,7 +372,7 @@ outputs:
         tab: 'Diff expressed genes'
         Title: 'Differentially expressed genes'
 
-  vst_counts_gct:
+  read_counts_file:
     type: File
     outputSource: de_pseudobulk/vst_counts_gct
     label: "GSEA compatible VST normalized counts"
@@ -380,7 +380,7 @@ outputs:
       GSEA compatible VST normalized counts, optionally, batch corrected.
       GCT format
 
-  phenotypes_cls:
+  phenotypes_file:
     type: File
     outputSource: de_pseudobulk/phenotypes_cls
     label: "GSEA compatible phenotypes file"
