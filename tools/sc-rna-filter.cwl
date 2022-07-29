@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.7
+  dockerPull: biowardrobe2/sc-tools:v0.0.9
 
 
 inputs:
@@ -157,6 +157,14 @@ inputs:
       prefix: "--h5seurat"
     doc: |
       Save Seurat data to h5seurat file.
+      Default: false
+
+  export_h5ad_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--h5ad"
+    doc: |
+      Save Seurat data to h5ad file.
       Default: false
 
   output_prefix:
@@ -627,6 +635,13 @@ outputs:
       glob: "*_data.h5seurat"
     doc: |
       Filtered Seurat data in h5seurat format
+
+  seurat_data_h5ad:
+    type: File?
+    outputBinding:
+      glob: "*_data.h5ad"
+    doc: |
+      Reduced Seurat data in h5ad format
 
   stdout_log:
     type: stdout
