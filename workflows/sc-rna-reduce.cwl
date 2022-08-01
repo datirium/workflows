@@ -71,6 +71,40 @@ inputs:
       only selected PCs.
       Default: from 1 to 10
 
+  normalization_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "sct"
+      - "log"
+      - "sctglm"
+    label: "Normalization method applied to genes expression counts"
+    default: "sctglm"
+    doc: |
+      Normalization method applied to genes expression counts. If loaded Seurat object
+      includes multiple datasets, normalization will be run independently for each of
+      them, unless integration is disabled with --ntgr set to 'none'
+      Default: sct
+    'sd:layout':
+      advanced: true
+
+  integration_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "seurat"
+      - "none"
+    label: "Integration method used for joint analysis of multiple datasets"
+    default: "seurat"
+    doc: |
+      Integration method used for joint analysis of multiple datasets. Automatically
+      set to 'none' if loaded Suerat object includes only one dataset.
+      Default: seurat
+    'sd:layout':
+      advanced: true
+
   highly_var_genes_count:
     type: int?
     label: "Number of highly variable genes used in datasets integration, scaling and dimensionality reduction"
@@ -429,10 +463,8 @@ steps:
       query_data_rds: query_data_rds
       barcodes_data: barcodes_data
       cell_cycle_data: cell_cycle_data
-      normalization_method:
-        default: "sctglm"
-      integration_method:
-        default: "seurat"
+      normalization_method: normalization_method
+      integration_method: integration_method
       highly_var_genes_count: highly_var_genes_count
       regress_mito_perc: regress_mito_perc
       regress_genes:
