@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.9
+  dockerPull: biowardrobe2/sc-tools:v0.0.10
 
 
 inputs:
@@ -23,6 +23,20 @@ inputs:
     doc: |
       Path to the RDS file to load Seurat object from. This file should include genes
       expression information stored in the RNA assay.
+
+  datasets_metadata:
+    type: File?
+    inputBinding:
+      prefix: "--metadata"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat object metadata with
+      categorical values using samples identities. First column - 'library_id'
+      should correspond to all unique values from the 'new.ident' column of the
+      loaded Seurat object. If any of the provided in this file columns are already
+      present in the Seurat object metadata, they will be overwritten. When combined
+      with --barcodes parameter, first the metadata will be extended, then barcode
+      filtering will be applied.
+      Default: no extra metadata is added
 
   barcodes_data:
     type: File?
@@ -58,7 +72,7 @@ inputs:
     doc: |
       Normalization method applied to genes expression counts. If loaded Seurat object
       includes multiple datasets, normalization will be run independently for each of
-      them, unless integration is disabled with --ntgr set to 'none'
+      them, unless integration is disabled with 'none' or set to 'harmony'
       Default: sct
 
   integration_method:
@@ -67,13 +81,28 @@ inputs:
     - type: enum
       symbols:
       - "seurat"
+      - "harmony"
       - "none"
     inputBinding:
       prefix: "--ntgr"
     doc: |
       Integration method used for joint analysis of multiple datasets. Automatically
-      set to 'none' if loaded Suerat object includes only one dataset.
+      set to 'none' if loaded Seurat object includes only one dataset.
       Default: seurat
+
+  integrate_by:
+    type:
+    - "null"
+    - string
+    - string[]
+    inputBinding:
+      prefix: "--ntgrby"
+    doc: |
+      Column(s) from the Seurat object metadata to define the variable(s) that should
+      be integrated out when running multiple datasets integration with harmony. May
+      include columns from the extra metadata added with --metadata parameter. Ignored
+      if --ntgr is not set to harmony.
+      Default: new.ident
 
   highly_var_genes_count:
     type: int?
@@ -123,7 +152,8 @@ inputs:
     doc: |
       Dimensionality to use in UMAP projection (from 1 to 50). If single value N
       is provided, use from 1 to N PCs. If multiple values are provided, subset to
-      only selected PCs.
+      only selected PCs. In combination with --ntgr set to harmony, selected principle
+      components will be used in Harmony integration.
       Default: from 1 to 10
 
   umap_spread:
@@ -622,16 +652,20 @@ doc: |
 
 s:about: |
   usage: sc_rna_reduce.R
-        [-h] --query QUERY [--barcodes BARCODES] [--cellcycle CELLCYCLE]
-        [--norm {sct,log,sctglm}] [--ntgr {seurat,none}]
+        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
+        [--cellcycle CELLCYCLE] [--norm {sct,log,sctglm}]
+        [--ntgr {seurat,harmony,none}] [--ntgrby [NTGRBY ...]]
         [--highvargenes HIGHVARGENES] [--regressmt]
         [--regressgenes [REGRESSGENES ...]] [--regresscellcycle]
         [--dimensions [DIMENSIONS ...]] [--uspread USPREAD]
         [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,
+                    wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,
+                    russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,
+                    sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
-        [--h5seurat] [--cbbuild] [--lowmem] [--output OUTPUT] [--cpus CPUS]
-        [--memory MEMORY]
+        [--h5seurat] [--h5ad] [--cbbuild] [--lowmem] [--output OUTPUT]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Dimensionality Reduction Analysis
 
@@ -640,6 +674,16 @@ s:about: |
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
                           stored in the RNA assay.
+    --metadata METADATA   Path to the TSV/CSV file to optionally extend Seurat
+                          object metadata with categorical values using samples
+                          identities. First column - 'library_id' should
+                          correspond to all unique values from the 'new.ident'
+                          column of the loaded Seurat object. If any of the
+                          provided in this file columns are already present in
+                          the Seurat object metadata, they will be overwritten.
+                          When combined with --barcodes parameter, first the
+                          metadata will be extended, then barcode filtering will
+                          be applied. Default: no extra metadata is added
     --barcodes BARCODES   Path to the headerless TSV/CSV file with the list of
                           barcodes to select cells of interest (one barcode per
                           line). Prefilters loaded Seurat object to include only
@@ -656,10 +700,18 @@ s:about: |
                           counts. If loaded Seurat object includes multiple
                           datasets, normalization will be run independently for
                           each of them, unless integration is disabled with
-                          --ntgr set to 'none' Default: sct
-    --ntgr {seurat,none}  Integration method used for joint analysis of multiple
-                          datasets. Automatically set to 'none' if loaded Suerat
+                          'none' or set to 'harmony' Default: sct
+    --ntgr {seurat,harmony,none}
+                          Integration method used for joint analysis of multiple
+                          datasets. Automatically set to 'none' if loaded Seurat
                           object includes only one dataset. Default: seurat
+    --ntgrby [NTGRBY ...]
+                          Column(s) from the Seurat object metadata to define
+                          the variable(s) that should be integrated out when
+                          running multiple datasets integration with harmony.
+                          May include columns from the extra metadata added with
+                          --metadata parameter. Ignored if --ntgr is not set to
+                          harmony. Default: new.ident
     --highvargenes HIGHVARGENES
                           Number of highly variable genes used in datasets
                           integration, scaling and dimensionality reduction.
@@ -677,7 +729,9 @@ s:about: |
                           Dimensionality to use in UMAP projection (from 1 to
                           50). If single value N is provided, use from 1 to N
                           PCs. If multiple values are provided, subset to only
-                          selected PCs. Default: from 1 to 10
+                          selected PCs. In combination with --ntgr set to
+                          harmony, selected principle components will be used in
+                          Harmony integration. Default: from 1 to 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -702,6 +756,7 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
+    --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --lowmem              Attempts to minimize RAM usage when integrating
                           multiple datasets with SCTransform algorithm (slows
