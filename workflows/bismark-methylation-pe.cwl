@@ -147,20 +147,19 @@ outputs:
     #     displayMode: "COLLAPSE"
     #     height: 120
 
-  bigbed_coverage_file:
+  bigwig_coverage_file:
     type: File
-    label: "Methylation statuses bigBed coverage file"
-    doc: "Coverage text file summarising cytosine methylation values in bedGraph format (tab-delimited; 0-based start coords, 1-based end coords)"
-    format: "http://edamontology.org/format_3004"
-    outputSource: bed_to_bigbed/bigbed_file
+    label: "Methylation statuses bigWig coverage file"
+    doc: "Coverage text file summarising cytosine methylation values in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    format: "http://edamontology.org/format_3006"
+    outputSource: sorted_bedgraph_to_bigwig/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'annotation'
-        format: 'bigbed'
+        type: 'wig'
         name: "Methylation statuses"
-        height: 40
+        height: 120
 
   bismark_coverage_file:
     type: File
@@ -319,7 +318,7 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
-  extract_bed:
+  remove_metadata:
     run: ../tools/custom-bash.cwl
     in:
       input_file: bismark_extract_methylation/bedgraph_coverage_file
@@ -328,25 +327,23 @@ steps:
           zcat "$0" | grep -v "track" > methylation_statuses.bedGraph
     out: [output_file]
 
-  sort_bed:
+  sort_bedgraph:
     run: ../tools/linux-sort.cwl
     in:
-      unsorted_file: extract_bed/output_file
+      unsorted_file: remove_metadata/output_file
       key:
         default: ["1,1","2,2n"]
     out: [sorted_file]
 
-  bed_to_bigbed:
-    run: ../tools/ucsc-bedtobigbed.cwl
+  sorted_bedgraph_to_bigwig:
+    run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
-      input_bed: sort_bed/sorted_file
-      bed_type:
-        default: "bed4"
+      bedgraph_file: sort_bedgraph/sorted_file
       chrom_length_file: chrom_length
       output_filename:
-        source: sort_bed/sorted_file
-        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
-    out: [bigbed_file]
+        source: sort_bedgraph/sorted_file
+        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigWig")
+    out: [bigwig_file]
 
 
 $namespaces:
