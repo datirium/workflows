@@ -1,11 +1,11 @@
 {
   "treatment_bedgraph": {
     "class": "File",
-    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/trim-seacr-pe_TEST04/SRR8581584_1.bedGraph",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST03/SRR8581584_1.bedGraph",
     "format": "http://edamontology.org/format_1930"
   },
   "numeric_threshold": 0.01,
   "norm_control_to_treatment": "non",
   "peakcalling_mode": "stringent",
-  "output_prefix": "SRR8581584_1.bedGraph"
+  "output_prefix": "SRR8581584_1"
 }
