@@ -598,8 +598,7 @@ steps:
     in:
       bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length
-      scale:
-        default: get_scale_from_spikein/scaling_factor
+      scale: get_scale_from_spikein/scaling_factor
       pairchip:
         default: true
     out: [bigwig_file, bedgraph_file]
@@ -647,9 +646,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Trim Galore ChIP-Seq pipeline paired-end"
-label: "Trim Galore ChIP-Seq pipeline paired-end"
-s:alternateName: "ChIP-Seq basic analysis workflow for a paired-end experiment with Trim Galore"
+s:name: "cutandrun with trimgalore pipeline paired-end"
+label: "cutandrun with trimgalore pipeline paired-end"
+s:alternateName: "Cut & Run basic analysis workflow for a paired-end experiment with Trim Galore"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/datirium/trim-chipseq-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -662,28 +661,28 @@ s:isPartOf:
 
 s:creator:
 - class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:legalName: "Datirium LLC"
   s:location:
   - class: s:PostalAddress
     s:addressCountry: "USA"
     s:addressLocality: "Cincinnati"
     s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
+    s:postalCode: ""
+    s:streetAddress: ""
     s:telephone: "+1(513)636-4200"
   s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
   s:department:
   - class: s:Organization
-    s:legalName: "Allergy and Immunology"
+    s:legalName: "Datirium LLC"
     s:department:
     - class: s:Organization
-      s:legalName: "Barski Research Lab"
+      s:legalName: "Bioinformatics"
       s:member:
       - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:michael.kotliar@cchmc.org
+        s:name: Robert Player
+        s:email: mailto:robert.player@datirium.com
         s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
+        - id: https://orcid.org/0000-0001-5872-259X
 
 
 
@@ -691,21 +690,23 @@ s:creator:
 
 
 doc: |
+  **SEACR** basic analysis workflow for a **paired-read** experiment with Trim Galore.
+    
   This SEACR (Sparse Enrichment Analysis of Cut & Run data) pipeline calls
   enriched regions in target data by selecting the top 1% of regions by AUC.
   It is based on the
   [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0)
-  and the ChIP-Seq pipeline from [BioWardrobe's](https://biowardrobe.com)
-  [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) **SEACR**
-  basic analysis workflow for a **paired-read** experiment with Trim Galore.
+  pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com)
+  [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as a CWL
+  template.
 
   ### Data Analysis
   SciDAP starts from the .fastq files which most DNA cores and commercial NGS
   companies return. Starting from raw data allows us to ensure that all
   experiments have been processed in the same way and simplifies the deposition
-  of data to GEO upon publication. The data can be uploaded from users computer,
-  downloaded directly from an ftp server of the core facility by providing a URL
-  or from GEO by providing SRA accession number.
+  of data to GEO upon publication. The data can be uploaded from the user's
+  computer, downloaded directly from an ftp server of the core facility by
+  providing a URL, or from GEO by providing an SRA accession number.
   
   Our current pipelines include the following steps:
   1. Trimming the adapters with TrimGalore. This step is particularly important
