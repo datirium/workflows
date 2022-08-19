@@ -3,7 +3,7 @@
     "class": "File",
     "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST03/SRR8581584_1.bedGraph",
     "format": "http://edamontology.org/format_1930"
-  },
+  }
   "numeric_threshold": 0.01,
   "norm_control_to_treatment": "non",
   "peakcalling_mode": "stringent",
