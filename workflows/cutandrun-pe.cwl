@@ -18,7 +18,7 @@ requirements:
 
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
-  control_file: "trim-chipseq-pe.cwl"
+  genome_indices_spikein: "genome-indices.cwl"
 
 inputs:
 
@@ -30,7 +30,7 @@ inputs:
 
   indices_folder_for_spikein:
     type: Directory
-    'sd:upstreamSource': "genome_indices/bowtie_indices"
+    'sd:upstreamSource': "genome_indices_spikein/bowtie_indices"
     label: "Indexed genome folder (bowtie)"
     doc: "Path to bowtie indexed genome folder for spike-in organism"
 
