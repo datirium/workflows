@@ -54,23 +54,20 @@ inputs:
     format: "http://edamontology.org/format_2330"
     doc: "Chromosomes length file"
 
-  control_file:
-    type: File?
-    default: null
-    'sd:upstreamSource': "control_file/bambai_pair"
-    'sd:localLabel': true
-    label: "Use experiment as a control"
-    format: "http://edamontology.org/format_2572"
-    doc: "Use experiment as a control for peak calling"
-
   fastq_file_upstream:
-    type: File
+    type:
+      - File
+      - type: array
+        items: File
     label: "FASTQ 1 input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
-    type: File
+    type:
+      - File
+      - type: array
+        items: File
     label: "FASTQ 2 input file"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
@@ -669,8 +666,8 @@ s:creator:
     s:addressRegion: "OH"
     s:postalCode: ""
     s:streetAddress: ""
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+    s:telephone: ""
+  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
   s:department:
   - class: s:Organization
     s:legalName: "Datirium LLC"
