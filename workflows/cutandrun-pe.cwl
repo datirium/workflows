@@ -102,23 +102,7 @@ inputs:
     'sd:layout':
       advanced: true
     label: "Remove duplicates"
-    doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
-
-  promoter_dist:
-    type: int?
-    default: 1000
-    'sd:layout':
-      advanced: true
-    label: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
-    doc: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
-
-  upstream_dist:
-    type: int?
-    default: 20000
-    'sd:layout':
-      advanced: true
-    label: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
-    doc: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
+    doc: "Calls samtools rmdup to remove duplicates from sorted BAM file"
 
   threads:
     type: int?
@@ -341,14 +325,14 @@ outputs:
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file"
     doc: "Bed file of enriched regions"
-    outputSource: seacr_callpeak/bedgraph_file
+    outputSource: seacr_callpeak/peak_tsv_file
 
   norm_peak_tsv:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file"
     doc: "Bed file of enriched regions"
-    outputSource: seacr_callpeak_spikein_norm/bedgraph_file 
+    outputSource: seacr_callpeak_spikein_norm/peak_tsv_file
     
 
 steps:
@@ -654,7 +638,8 @@ steps:
       output_prefix:
         source: bam_to_bigwig/bedgraph_file
         valueFrom: $(get_root(self.basename))
-    out: [peak_tsv_file]
+    out:
+      - peak_tsv_file
 
 
   seacr_callpeak_spikein_norm:
@@ -670,12 +655,13 @@ steps:
       output_prefix:
         source: bam_to_bigwig_scaled/bedgraph_file
         valueFrom: $(get_root(self.basename)+"_spikein_norm")
-    out: [peak_tsv_file]
+    out:
+      - peak_tsv_file
     doc: |
       input is normalized depth data using spike-in mapped reads (E. coli by default)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
-  get_stat_raw:
+  get_stat:
     run: ../tools/collect-statistics-cutandrun.cwl
     in:
       trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
@@ -683,7 +669,7 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      peaks_raw: seacr_callpeak/peak_tsv_file
+      seacr_called_peaks: seacr_callpeak/peak_tsv_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True
@@ -697,7 +683,7 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      peaks_norm: seacr_callpeak_spikein_norm/peak_tsv_file
+      seacr_called_peaks: seacr_callpeak_spikein_norm/peak_tsv_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True
