@@ -221,6 +221,32 @@ outputs:
         format: 'bam'
         name: "BAM Track"
         displayMode: "SQUISHED"
+  
+  get_stat_markdown:
+    type: File?
+    label: "Markdown formatted combined log"
+    format: "http://edamontology.org/format_3835"
+    doc: "Markdown formatted combined log"
+    outputSource: get_stat/collected_statistics_md
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
+  get_stat_formatted_log:
+    type: File?
+    label: "Bowtie & Samtools Rmdup combined formatted log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
+    outputSource: get_stat/collected_statistics_tsv
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          data: [$2, $3, $4, $5]
 
   bam_statistics_report:
     type: File
@@ -309,6 +335,21 @@ outputs:
     label: "bedgraph file"
     doc: "Generated bedgraph file"
     outputSource: bam_to_bigwig/bedgraph_file 
+
+  peak_tsv:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file"
+    doc: "Bed file of enriched regions"
+    outputSource: seacr_callpeak/bedgraph_file
+
+  norm_peak_tsv:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file"
+    doc: "Bed file of enriched regions"
+    outputSource: seacr_callpeak_spikein_norm/bedgraph_file 
+    
 
 steps:
 
@@ -634,6 +675,33 @@ steps:
       input is normalized depth data using spike-in mapped reads (E. coli by default)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
+  get_stat_raw:
+    run: ../tools/collect-statistics-cutandrun.cwl
+    in:
+      trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
+      trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
+      bowtie_alignment_report: bowtie_aligner/log_file
+      bam_statistics_report: get_bam_statistics/log_file
+      bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
+      peaks_raw: seacr_callpeak/peak_tsv_file
+      preseq_results: preseq/estimates_file
+      paired_end:
+        default: True
+    out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
+
+  get_stat_norm:
+    run: ../tools/collect-statistics-cutandrun.cwl
+    in:
+      trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
+      trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
+      bowtie_alignment_report: bowtie_aligner/log_file
+      bam_statistics_report: get_bam_statistics/log_file
+      bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
+      peaks_norm: seacr_callpeak_spikein_norm/peak_tsv_file
+      preseq_results: preseq/estimates_file
+      paired_end:
+        default: True
+    out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
 
 
@@ -647,7 +715,7 @@ s:name: "cutandrun with trimgalore pipeline paired-end"
 label: "cutandrun with trimgalore pipeline paired-end"
 s:alternateName: "Cut & Run basic analysis workflow for a paired-end experiment with Trim Galore"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/datirium/trim-chipseq-pe.cwl
+s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/cutandrun-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
