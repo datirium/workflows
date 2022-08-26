@@ -30,5 +30,5 @@
     "format": "http://edamontology.org/format_1930"
   },
   "exp_fragment_size": 150,
-  "threads": 6
+  "threads": 8
 }
