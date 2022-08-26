@@ -346,6 +346,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_upstream
+      output_prefix:
+        default: "merged_R1"
     out: [fastq_file]
 
   extract_fastq_downstream:
@@ -357,6 +359,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file_downstream
+      output_prefix:
+        default: "merged_R2"
     out: [fastq_file]
 
   trim_fastq:
