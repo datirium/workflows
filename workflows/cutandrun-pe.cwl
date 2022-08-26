@@ -642,8 +642,7 @@ steps:
       output_prefix:
         source: bam_to_bigwig/bedgraph_file
         valueFrom: $(get_root(self.basename))
-    out:
-      - peak_tsv_file
+    out: [peak_tsv_file]
 
 
   seacr_callpeak_spikein_norm:
@@ -659,8 +658,7 @@ steps:
       output_prefix:
         source: bam_to_bigwig_scaled/bedgraph_file
         valueFrom: $(get_root(self.basename)+"_spikein_norm")
-    out:
-      - peak_tsv_file
+    out: [peak_tsv_file]
     doc: |
       input is normalized depth data using spike-in mapped reads (E. coli by default)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
