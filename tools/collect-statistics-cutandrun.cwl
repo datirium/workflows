@@ -186,37 +186,9 @@ inputs:
 
 
         SEACR = {
-            "total fragments in treatment": {
-                "alias": "total reads/pairs in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "total tags in treatment": {
-                "alias": "total reads/pairs in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "fragments after filtering in treatment": {
-                "alias": "reads/pairs after filtering in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "tags after filtering in treatment": {
-                "alias": "reads/pairs after filtering in treatment",
-                "function": int,
-                "pair_end_specific": False
-            },
-            "Redundant rate in treatment": {
-                "alias": "redundant rate in treatment",
-                "function": float,
-                "pair_end_specific": False
-            },
             "order": ["number of peaks called",
-                    "mean peak size",
-                    "total reads/pairs in treatment",
-                    "reads/pairs after filtering in treatment",
-                    "redundant rate in treatment",
-                    "fraction of reads in peaks"]
+                    "mean peak size"
+                    ]
         }
 
 
@@ -324,9 +296,7 @@ inputs:
                 prev_start, prev_end, prev_chr = start, end, chr
             collected_results[header]["number of peaks called"] = count
             collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
-            in_treatment = collected_results[header]["reads/pairs after filtering in treatment"]
             mapped = collected_results["BAM statistics after filtering"]["reads/pairs mapped"]
-            collected_results[header]["fraction of reads in peaks"] = round(float(in_treatment)/float(mapped),2)
             if SEACR.get("order", None):
                 collected_results[header] = {k: collected_results[header][k] for k in SEACR["order"] if k in collected_results[header]}
 
@@ -424,11 +394,8 @@ inputs:
                 
                             "peak calling statistics",
                             "number of peaks called",
-                            "mean peak size",
-                            "total reads/pairs in treatment",
-                            "reads/pairs after filtering in treatment",
-                            "redundant rate in treatment",
-                            "fraction of reads in peaks"]
+                            "mean peak size"
+                            ]
 
                 if collected_data.get("adapter trimming statistics", None):
                     header.extend(["adapter trimming statistics",
@@ -483,10 +450,7 @@ inputs:
                         "",
                         collected_data["peak calling statistics"]["number of peaks called"],
                         collected_data["peak calling statistics"]["mean peak size"],
-                        collected_data["peak calling statistics"]["total reads/pairs in treatment"],
-                        collected_data["peak calling statistics"]["reads/pairs after filtering in treatment"],
-                        collected_data["peak calling statistics"]["redundant rate in treatment"],
-                        collected_data["peak calling statistics"]["fraction of reads in peaks"]]
+                        ]
 
                 if collected_data.get("adapter trimming statistics", None):
                     data.extend(["",
@@ -520,6 +484,7 @@ inputs:
 
         if __name__ == "__main__":
             sys.exit(main(sys.argv[1:]))
+
     inputBinding:
       position: 5
 
