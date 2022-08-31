@@ -1,6 +1,7 @@
 cwlVersion: v1.0
 class: Workflow
 
+
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: ScatterFeatureRequirement
@@ -19,6 +20,7 @@ requirements:
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
   genome_indices_spikein: "genome-indices.cwl"
+
 
 inputs:
 
@@ -111,6 +113,7 @@ inputs:
       advanced: true
     doc: "Number of threads for those steps that support multithreading"
     label: "Number of threads"
+
 
 outputs:
 
@@ -658,7 +661,6 @@ steps:
         valueFrom: $(get_root(self.basename))
     out: [peak_tsv_file]
 
-
   seacr_callpeak_spikein_norm:
     run: ../tools/seacr.cwl
     in:
@@ -751,10 +753,6 @@ s:creator:
         s:email: mailto:robert.player@datirium.com
         s:sameAs:
         - id: https://orcid.org/0000-0001-5872-259X
-
-
-
-
 
 
 doc: |
