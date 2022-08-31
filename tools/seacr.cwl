@@ -62,12 +62,13 @@ inputs:
       output tsv file: <output_prefix>.<peakcalling_mode>.bed
 
 outputs:
+
   peak_tsv_file:
     type: File
     outputBinding:
       glob: ${return inputs.output_prefix + '.stringent.bed'}
     doc: |
-      Generated peak bed formatted file.
+      SEACR peak calls in bed formatted file.
 
 baseCommand: [SEACR_1.3.sh]
 

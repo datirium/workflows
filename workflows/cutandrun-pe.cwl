@@ -211,7 +211,7 @@ outputs:
     label: "Markdown formatted combined log"
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
-    outputSource: get_stat/collected_statistics_md
+    outputSource: stats_for_vis/modified_file_md
     'sd:visualPlugins':
     - markdownView:
         tab: 'Overview'
@@ -221,7 +221,7 @@ outputs:
     label: "Bowtie & Samtools Rmdup combined formatted log"
     format: "http://edamontology.org/format_3475"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
-    outputSource: get_stat/collected_statistics_tsv
+    outputSource: stats_for_vis/modified_file_tsv
     'sd:visualPlugins':
     - tableView:
         vertical: true
@@ -311,6 +311,20 @@ outputs:
         id: 'igvbrowser'
         type: 'wig'
         name: "BigWig Track"
+        height: 120
+
+  bigwig_scaled:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "scaled BigWig file"
+    doc: "Generated scaled BigWig file"
+    outputSource: bam_to_bigwig_scaled/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "BigWig Track Scaled"
         height: 120
 
   bedgraph:
@@ -671,26 +685,27 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: seacr_callpeak/peak_tsv_file
-      preseq_results: preseq/estimates_file
-      paired_end:
-        default: True
-    out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
-
-  get_stat_norm:
-    run: ../tools/collect-statistics-cutandrun.cwl
-    in:
-      trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
-      trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
-      bowtie_alignment_report: bowtie_aligner/log_file
-      bam_statistics_report: get_bam_statistics/log_file
-      bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
       seacr_called_peaks: seacr_callpeak_spikein_norm/peak_tsv_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True
+      output_prefix:
+        source: seacr_callpeak_spikein_norm/peak_tsv_file
+        valueFrom: $(get_root(self.basename))
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
+    doc: |
+      Statistics pulled from alignment reports and other logs, as well as spike-in normalized peak calling.
 
+  stats_for_vis:
+    run: ../tools/collect-statistics-frip.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      seacr_called_peaks: seacr_callpeak/peak_tsv_file
+      seacr_called_peaks_norm: seacr_callpeak_spikein_norm/peak_tsv_file
+      collected_statistics_md: get_stat/collected_statistics_md
+      collected_statistics_tsv: get_stat/collected_statistics_tsv
+      collected_statistics_yaml: get_stat/collected_statistics_yaml
+    out: [log_file, modified_file_md, modified_file_tsv, modified_file_yaml]
 
 
 $namespaces:

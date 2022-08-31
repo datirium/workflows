@@ -48,5 +48,5 @@ baseCommand: ["bash", "-c"]
 
 doc: |
   Takes as input the *_bam_statistics*.report.txt from `samtools_stat.cwl` tool.
-  Returns an int scale factor for normalizing a bam-to-bedgraph, using the
+  Returns a float scale factor for normalizing a bam-to-bedgraph, using the
   `bam-bedgraph-bigwig.cwl` tool.
