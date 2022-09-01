@@ -66,7 +66,7 @@ outputs:
   peak_tsv_file:
     type: File
     outputBinding:
-      glob: ${return inputs.output_prefix + '.stringent.bed'}
+      glob: $(inputs.output_prefix + '.stringent.bed')
     doc: |
       SEACR peak calls in bed formatted file.
 
