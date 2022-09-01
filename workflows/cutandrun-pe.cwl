@@ -27,13 +27,13 @@ inputs:
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Indexed genome folder (bowtie)"
+    label: "Indexed genome folder (bowtie build)"
     doc: "Path to bowtie indexed genome folder for treatment organism"
 
   indices_folder_for_spikein:
     type: Directory
     'sd:upstreamSource': "genome_indices_spikein/bowtie_indices"
-    label: "Indexed genome folder (bowtie)"
+    label: "Indexed genome folder (bowtie build)"
     doc: "Path to bowtie indexed genome folder for spike-in organism"
 
   annotation_file:
