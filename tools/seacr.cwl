@@ -70,7 +70,19 @@ outputs:
     doc: |
       SEACR peak calls in bed formatted file.
 
+  log_file:
+    type: File
+    outputBinding:
+      glob: "seacr.log"
+    doc: |
+      log for stderr and stdout for seacr call
+
+
 baseCommand: [SEACR_1.3.sh]
+arguments:
+  - valueFrom: $('1&2> ' + 'seacr.log')
+    position: 1000
+    shellQuote: false
 
 
 doc: |

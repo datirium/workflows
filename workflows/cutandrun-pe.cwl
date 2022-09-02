@@ -659,7 +659,7 @@ steps:
       output_prefix:
         source: bam_to_bigwig/bedgraph_file
         valueFrom: $(get_root(self.basename))
-    out: [peak_tsv_file]
+    out: [peak_tsv_file, log_file]
 
   seacr_callpeak_spikein_norm:
     run: ../tools/seacr.cwl
