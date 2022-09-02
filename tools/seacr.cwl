@@ -1,8 +1,11 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
 - class: InlineJavascriptRequirement
+- class: ShellCommandRequirement
+
 
 hints:
 - class: DockerRequirement
@@ -61,6 +64,7 @@ inputs:
       Basename of input file that SEACR will use to name the
       output tsv file: <output_prefix>.<peakcalling_mode>.bed
 
+
 outputs:
 
   peak_tsv_file:
@@ -73,16 +77,13 @@ outputs:
   log_file:
     type: File
     outputBinding:
-      glob: "seacr.log"
+      glob: $(inputs.output_prefix + '.seacr.log')
     doc: |
       log for stderr and stdout for seacr call
 
 
 baseCommand: [SEACR_1.3.sh]
-arguments:
-  - valueFrom: $('1&2> ' + 'seacr.log')
-    position: 1000
-    shellQuote: false
+stderr: $(inputs.output_prefix + '.seacr.log')
 
 
 doc: |
