@@ -344,13 +344,27 @@ outputs:
     doc: "Bed file of enriched regions"
     outputSource: seacr_callpeak/peak_tsv_file
 
+  peak_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile"
+    doc: "stderr from seacr command"
+    outputSource: seacr_callpeak/log_file
+
   norm_peak_tsv:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file"
     doc: "Bed file of enriched regions"
     outputSource: seacr_callpeak_spikein_norm/peak_tsv_file
-    
+
+  norm_peak_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile"
+    doc: "stderr from seacr command"
+    outputSource: seacr_callpeak_spikein_norm/log_file
+
 
 steps:
 
@@ -674,7 +688,7 @@ steps:
       output_prefix:
         source: bam_to_bigwig_scaled/bedgraph_file
         valueFrom: $(get_root(self.basename)+"_spikein_norm")
-    out: [peak_tsv_file]
+    out: [peak_tsv_file, log_file]
     doc: |
       input is normalized depth data using spike-in mapped reads (E. coli by default)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
