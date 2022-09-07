@@ -632,8 +632,8 @@ outputs:
   diffbind_volcano_plot:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "Volcano plot for for significantly differentially bound sites"
-    doc: "Volcano plot for for significantly differentially bound sites"
+    label: "Volcano plot for significantly differentially bound sites"
+    doc: "Volcano plot for significantly differentially bound sites"
     outputSource: select_files/selected_volcano_plot
     'sd:visualPlugins':
       - image:
@@ -643,8 +643,8 @@ outputs:
   diffbind_volcano_plot_pdf:
     type: File?
     format: "http://edamontology.org/format_3508"
-    label: "Volcano plot for for significantly differentially bound sites"
-    doc: "Volcano plot for for significantly differentially bound sites"
+    label: "Volcano plot for significantly differentially bound sites"
+    doc: "Volcano plot for significantly differentially bound sites"
     outputSource: select_files/selected_volcano_plot_pdf
 
   diffbind_boxplot_plot:
