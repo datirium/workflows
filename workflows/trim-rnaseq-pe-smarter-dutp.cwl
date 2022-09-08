@@ -112,28 +112,28 @@ outputs:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
-    doc: "Generated BigWig file"
+    doc: "Generated BigWig file for (+)strand reads"
     outputSource: bam_to_bigwig_upstream/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "BigWig 1"
+        name: "(+)strand BigWig"
         height: 120
 
   bigwig_downstream:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
-    doc: "Generated BigWig file"
+    doc: "Generated BigWig file for (-)strand reads"
     outputSource: bam_to_bigwig_downstream/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "BigWig 2"
+        name: "(-)strand BigWig"
         height: 120
 
   star_final_log:
