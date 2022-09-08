@@ -132,29 +132,29 @@ outputs:
   bigwig_upstream:
     type: File
     format: "http://edamontology.org/format_3006"
-    label: "Upstream bigWig file"
-    doc: "bigWig file from the 5' - 3' strand"
+    label: "BigWig file"
+    doc: "Generated BigWig file for (+)strand reads"
     outputSource: bam_to_bigwig_upstream/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "5' - 3' genome coverage"
-        height: 100
+        name: "(+)strand BigWig"
+        height: 120
 
   bigwig_downstream:
     type: File
     format: "http://edamontology.org/format_3006"
-    label: "Downstream bigWig file"
-    doc: "bigWig file from the 3' - 5' strand"
+    label: "BigWig file"
+    doc: "Generated BigWig file for (-)strand reads"
     outputSource: bam_to_bigwig_downstream/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "3' - 5' genome coverage"
+        name: "(-)strand BigWig"
         height: 120
 
   star_final_log:
