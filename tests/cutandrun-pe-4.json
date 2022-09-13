@@ -21,14 +21,14 @@
   "broad_peak": false,
   "fastq_file_upstream": {
     "class": "File",
-    "location": "/Users/robertplayer/scidap/seqdata/ABSP28_CKDL220018093-1A_H3GCJDSX5_L1_1.fq.gz",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R1.fq",
     "format": "http://edamontology.org/format_1930"
   },
   "fastq_file_downstream": {
     "class": "File",
-    "location": "/Users/robertplayer/scidap/seqdata/ABSP28_CKDL220018093-1A_H3GCJDSX5_L1_2.fq.gz",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R2.fq",
     "format": "http://edamontology.org/format_1930"
   },
   "exp_fragment_size": 150,
-  "threads": 6
+  "threads": 8
 }

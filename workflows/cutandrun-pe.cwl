@@ -330,12 +330,31 @@ outputs:
         name: "BigWig Track Scaled"
         height: 120
 
-  bedgraph:
+  fc_sorted_bed:
     type: File
     format: "http://edamontology.org/format_3583"
     label: "bedgraph file"
     doc: "Generated bedgraph file"
-    outputSource: bam_to_bigwig/bedgraph_file 
+    outputSource: fragment_counts/sorted_bed 
+
+  fc_sorted_bed_scaled:
+    type: File
+    format: "http://edamontology.org/format_3583"
+    label: "bedgraph file"
+    doc: "Generated bedgraph file"
+    outputSource: fragment_counts/sorted_bed_scaled
+
+  fc_log_file_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stderr logfile"
+    outputSource: fragment_counts/log_file_stderr
+
+  fc_log_file_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stdout logfile"
+    outputSource: fragment_counts/log_file_stdout     
 
   peak_tsv:
     type: File
@@ -344,12 +363,19 @@ outputs:
     doc: "Bed file of enriched regions"
     outputSource: seacr_callpeak/peak_tsv_file
 
-  peak_log:
+  peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "seacr logfile"
+    label: "seacr logfile stderr"
     doc: "stderr from seacr command"
-    outputSource: seacr_callpeak/log_file
+    outputSource: seacr_callpeak/log_file_stderr
+
+  peak_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile stdout"
+    doc: "stdout from seacr command"
+    outputSource: seacr_callpeak/log_file_stdout
 
   norm_peak_tsv:
     type: File
@@ -358,12 +384,19 @@ outputs:
     doc: "Bed file of enriched regions"
     outputSource: seacr_callpeak_spikein_norm/peak_tsv_file
 
-  norm_peak_log:
+  norm_peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile"
     doc: "stderr from seacr command"
-    outputSource: seacr_callpeak_spikein_norm/log_file
+    outputSource: seacr_callpeak_spikein_norm/log_file_stderr
+
+  norm_peak_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile stdout"
+    doc: "stdout from seacr command"
+    outputSource: seacr_callpeak_spikein_norm/log_file_stdout
 
 
 steps:
@@ -648,7 +681,7 @@ steps:
       chrom_length_file: chrom_length
       pairchip:
         default: true
-    out: [bigwig_file, bedgraph_file]
+    out: [bigwig_file]
 
   bam_to_bigwig_scaled:
     run: ../tools/bam-bedgraph-bigwig.cwl
@@ -658,12 +691,25 @@ steps:
       scale: get_scale_from_spikein/scaling_factor
       pairchip:
         default: true
-    out: [bigwig_file, bedgraph_file]
+      bigwig_filename:
+        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_scaled.bigWig")
+    out: [bigwig_file]
+
+  fragment_counts:
+    run: ../tools/bedtools-fragmentcounts.cwl
+    in:
+      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      scale: get_scale_from_spikein/scaling_factor
+      output_prefix:
+        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        valueFrom: $(get_root(self.basename))
+    out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
 
   seacr_callpeak:
     run: ../tools/seacr.cwl
     in:
-      treatment_bedgraph: bam_to_bigwig/bedgraph_file
+      treatment_bedgraph: fragment_counts/sorted_bed
       numeric_threshold:
         default: 0.01
       norm_control_to_treatment:
@@ -671,14 +717,14 @@ steps:
       peakcalling_mode:
         default: "stringent"
       output_prefix:
-        source: bam_to_bigwig/bedgraph_file
+        source: fragment_counts/sorted_bed
         valueFrom: $(get_root(self.basename))
-    out: [peak_tsv_file, log_file]
+    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
 
   seacr_callpeak_spikein_norm:
     run: ../tools/seacr.cwl
     in:
-      treatment_bedgraph: bam_to_bigwig_scaled/bedgraph_file
+      treatment_bedgraph: fragment_counts/sorted_bed_scaled
       numeric_threshold:
         default: 0.01
       norm_control_to_treatment:
@@ -686,9 +732,9 @@ steps:
       peakcalling_mode:
         default: "stringent"
       output_prefix:
-        source: bam_to_bigwig_scaled/bedgraph_file
-        valueFrom: $(get_root(self.basename)+"_spikein_norm")
-    out: [peak_tsv_file, log_file]
+        source: fragment_counts/sorted_bed_scaled
+        valueFrom: $(get_root(self.basename)+"_scaled")
+    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
     doc: |
       input is normalized depth data using spike-in mapped reads (E. coli by default)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
