@@ -15,20 +15,17 @@ hints:
 inputs:
 
   treatment_bedgraph:
-    type: File?
+    type: File
     inputBinding:
-      position: 1
+      position: 2
     doc: |
-      A bedgraph formatted file from paired-end sequencing as
-      input, which can be generated from read pair BED files
-      (i.e. BED coordinates eflecting the 5' and 3' termini
-      of each read pair) using bedtools genomecov with the
-      "-bg" flag.
+      A sorted bed file from 'bedtools-fragmentcounts.cwl',
+      ready for peak calling by SEACR.
 
   numeric_threshold:
     type: float
     inputBinding:
-      position: 2
+      position: 3
     doc: |
       A numeric threshold n between 0 and 1 returns the top n
       fraction of peaks based on total signal within peaks.
@@ -37,7 +34,7 @@ inputs:
   norm_control_to_treatment:
     type: string
     inputBinding:
-      position: 3
+      position: 4
     doc: |
       Two options, “norm” denotes normalization of control to
       treatment data, “non” skips this behavior. "norm" is 
@@ -48,7 +45,7 @@ inputs:
   peakcalling_mode:
     type: string
     inputBinding:
-      position: 4
+      position: 5
     doc: |
       Two options, “relaxed” uses a total signal threshold
       between the knee and peak of the total signal curve, and
@@ -59,7 +56,7 @@ inputs:
   output_prefix:
     type: string
     inputBinding:
-      position: 5
+      position: 6
     doc: |
       Basename of input file that SEACR will use to name the
       output tsv file: <output_prefix>.<peakcalling_mode>.bed
@@ -74,16 +71,24 @@ outputs:
     doc: |
       SEACR peak calls in bed formatted file.
 
-  log_file:
+  log_file_stderr:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.seacr.log')
+      glob: $(inputs.output_prefix + '.seacr.stderr')
     doc: |
-      log for stderr and stdout for seacr call
+      log for stderr for seacr call
+
+  log_file_stdout:
+    type: File
+    outputBinding:
+      glob: $(inputs.output_prefix + '.seacr.stdout')
+    doc: |
+      log for stdout for seacr call
 
 
-baseCommand: [SEACR_1.3.sh]
-stderr: $(inputs.output_prefix + '.seacr.log')
+baseCommand: ["SEACR_1.3.sh"]
+stderr: $(inputs.output_prefix + '.seacr.stderr')
+stdout: $(inputs.output_prefix + '.seacr.stdout')
 
 
 doc: |
