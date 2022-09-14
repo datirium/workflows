@@ -19,7 +19,7 @@ inputs:
     default: |
       #!/bin/bash
       printf "$(date)\nLog file for collect-statistics-frip.cwl tool:\n\n" > "calc_frip.log"
-      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4
+      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5
       # count of total aligned reads
       tar=$(samtools view -cF0x4 $bam)
       # counts of reads in peaks (split col6 due to start(col2) and end(col3) not always in ascending order - req by samtools)
@@ -29,20 +29,23 @@ inputs:
       # calculate mean max signal length (mmsl) from end-start sites
       mmsl=$(cut -f6 $bed | sed 's/.*://' | awk -F'-' '{x+=$2-$1}END{printf("%.0f",x/NR)}')
       printf "$tar, $rip, $frip\n" >> "calc_frip.log"
-      # concatenate frip and mmsl onto md, tsv, and yaml files
+      # concatenate frip, mmsl, and spikein read count onto md, tsv, and yaml files
       #   md
       cat $md > collected_statistics_report.md
       printf "-" >> collected_statistics_report.md
       printf "   fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.md
       printf "-" >> collected_statistics_report.md
       printf "   mean maximum signal length: $mmsl\n" >> collected_statistics_report.md
+      printf "-" >> collected_statistics_report.md
+      printf "   spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.md
       #   tsv
       headers=$(head -1 $tsv); data=$(tail -1 $tsv)
-      printf "%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum signal length" "$data" "$frip" "$mmsl" > collected_statistics_report.tsv
+      printf "%s\t%s\t%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum signal length" "spike-in mapped read count (scaling_factor=10,000/x)" "$data" "$frip" "$mmsl" "$spikein" > collected_statistics_report.tsv
       #   yaml
       cat $yaml > collected_statistics_report.yaml
       printf "  fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.yaml
       printf "  mean maximum signal length: $mmsl\n" >> collected_statistics_report.yaml
+      printf "  spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.yaml
     inputBinding:
         position: 4
 
@@ -72,6 +75,12 @@ inputs:
     type: File
     inputBinding:
       position: 22
+
+  spikein_reads_mapped:
+      type: int
+      label: "spike-in mapped reads from get_spikein_bam_statistics"
+      inputBinding:
+          position: 50
 
 
 outputs:
