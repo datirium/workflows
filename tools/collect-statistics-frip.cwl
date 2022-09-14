@@ -18,32 +18,31 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      printf "$(date)\nLog file for calc_frip function in collect-statistics-frip.cwl tool:\n\n" > "calc_frip.log"
-      bam="$0"; bed1="$1"; bed2="$2";
-      md="$3"; tsv="$4"; yaml="$5"
+      printf "$(date)\nLog file for collect-statistics-frip.cwl tool:\n\n" > "calc_frip.log"
+      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4
       # count of total aligned reads
-      tar=$(samtools view -cF0x4 "$bam" 2>> "calc_frip.log")
-      # counts of reads in peaks (raw/rip2, norm/rip2)
-      rip1=$(samtools view -c "$bam" -L "$bed1" 2>> "calc_frip.log")
-      rip2=$(samtools view -c "$bam" -L "$bed2" 2>> "calc_frip.log")
+      tar=$(samtools view -cF0x4 $bam)
+      # counts of reads in peaks (split col6 due to start(col2) and end(col3) not always in ascending order - req by samtools)
+      rip=$(samtools view -c $bam -L <(cut -f6 $bed | sed -e 's/:/\t/' -e 's/-/\t/'))
       # frip=rip/tar
-      frip=$(printf "$tar" | awk -v rip="$rip1" '{printf("%.3f",rip/$0)}' 2>> "calc_frip.log")
-      frip_norm=$(printf "$tar" | awk -v rip="$rip2" '{printf("%.3f",rip/$0)}' 2>> "calc_frip.log")
-      printf "$tar, $rip1, $rip2, $frip, $frip_norm\n" >> "calc_frip.log"
-      # concatenate formatted frip onto md, tsv, and yaml files
+      frip=$(printf $tar | awk -v rip=$rip '{printf("%.3f",rip/$0)}')
+      # calculate mean max signal length (mmsl) from end-start sites
+      mmsl=$(cut -f6 $bed | sed 's/.*://' | awk -F'-' '{x+=$2-$1}END{printf("%.0f",x/NR)}')
+      printf "$tar, $rip, $frip\n" >> "calc_frip.log"
+      # concatenate frip and mmsl onto md, tsv, and yaml files
       #   md
-      cat "$md" > collected_statistics_report.md
-      printf "-" >> collected_statistics_report.md 2>> "calc_frip.log"
-      printf "   fraction of (aligned) reads in peaks (raw): $frip\n" >> collected_statistics_report.md 2>> "calc_frip.log"
-      printf "-" >> collected_statistics_report.md 2>> "calc_frip.log"
-      printf "   fraction of (aligned) reads in peaks (scaled): $frip_norm\n" >> collected_statistics_report.md 2>> "calc_frip.log"
+      cat $md > collected_statistics_report.md
+      printf "-" >> collected_statistics_report.md
+      printf "   fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.md
+      printf "-" >> collected_statistics_report.md
+      printf "   mean maximum signal length: $mmsl\n" >> collected_statistics_report.md
       #   tsv
-      headers=$(head -1 "$tsv"); data=$(tail -1 "$tsv")
-      printf "%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks (raw)" "fraction of (aligned) reads in peaks (scaled)" "$data" "$frip" "$frip_norm" > collected_statistics_report.tsv 2>> "calc_frip.log"
+      headers=$(head -1 $tsv); data=$(tail -1 $tsv)
+      printf "%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum signal length" "$data" "$frip" "$mmsl" > collected_statistics_report.tsv
       #   yaml
-      cat "$yaml" > collected_statistics_report.yaml
-      printf "  fraction of (aligned) reads in peaks (raw): $frip\n" >> collected_statistics_report.yaml 2>> "calc_frip.log"
-      printf "  fraction of (aligned) reads in peaks (scaled): $frip_norm\n" >> collected_statistics_report.yaml 2>> "calc_frip.log"
+      cat $yaml > collected_statistics_report.yaml
+      printf "  fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.yaml
+      printf "  mean maximum signal length: $mmsl\n" >> collected_statistics_report.yaml
     inputBinding:
         position: 4
 
@@ -53,11 +52,6 @@ inputs:
     inputBinding:
       position: 5
     doc: "Input BAM file, does not have to be coordinates sorted"
-
-  seacr_called_peaks:
-    type: File
-    inputBinding:
-      position: 11
 
   seacr_called_peaks_norm:
     type: File
@@ -97,13 +91,24 @@ outputs:
     outputBinding:
       glob: "collected_statistics_report.yaml"
 
-  log_file:
+  log_file_stdout:
     type: File
     outputBinding:
-      glob: "calc_frip.log"
+      glob: "collected_stats_for_vis.log.stdout"
+    doc: |
+      log for stdout
+
+  log_file_stderr:
+    type: File
+    outputBinding:
+      glob: "collected_stats_for_vis.log.stderr"
+    doc: |
+      log for stderr
 
 
 baseCommand: ["bash", "-c"]
+stdout: 'collected_stats_for_vis.log.stdout'
+stderr: 'collected_stats_for_vis.log.stderr'
 
 
 $namespaces:
@@ -148,7 +153,8 @@ s:creator:
         - id: https://orcid.org/0000-0001-5872-259X
 
 doc: |
-    Tool processes BAM file and output from SEACR to produce the FRIP (fraction of reads in peaks)
-    statistic for ATAC-seq and cut&run type sequencing experiments. This stat is calculated for
-    raw and spike-in normalized peak data, then concatentated to the *"_collected_statistics_report"
-    files (md, tsv, and yaml).
+    Tool processes BAM file and output from SEACR to produce the FRIP (fraction of
+    reads in peaks) and mean peak size statistics for ATAC-seq and cut&run type
+    sequencing experiments. These stats are calculated for spike-in normalized 
+    peak data, then concatentated to the *"_collected_statistics_report" files (md,
+    tsv, and yaml).
