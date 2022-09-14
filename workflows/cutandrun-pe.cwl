@@ -382,6 +382,7 @@ outputs:
     label: "YAML formatted combined log"
     format: "http://edamontology.org/format_3750"
     doc: "YAML formatted combined log"
+    outputSource: stats_for_vis/modified_file_yaml
 
   stats_for_vis_log_stdout:
     type: File
@@ -759,8 +760,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "cutandrun with trimgalore pipeline paired-end"
-label: "cutandrun with trimgalore pipeline paired-end"
+s:name: "cutandrun paired-end workflow"
+label: "cutandrun paired-end workflow"
 s:alternateName: "Cut & Run basic analysis workflow for a paired-end experiment with Trim Galore"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/cutandrun-pe.cwl
@@ -799,25 +800,29 @@ s:creator:
 
 
 doc: |
-  **SEACR** basic analysis workflow for a **paired-read** experiment with Trim Galore.
+  A basic analysis workflow for a **paired-read** Cut & Run/TAG experiment.
     
-  This SEACR (Sparse Enrichment Analysis of Cut & Run data) pipeline calls
-  enriched regions in target data by selecting the top 1% of regions by AUC.
-  It is based on the
+  This workflow utilized the tool SEACR (Sparse Enrichment Analysis of Cut & Run
+  data) which calls enriched regions in target data by selecting the top 1% of
+  regions by AUC. This workflow is loosely based on the
   [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0)
   pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com)
-  [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as a CWL
-  template.
+  [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as
+  a CWL template.
 
-  ### Data Analysis
-  SciDAP starts from the .fastq files which most DNA cores and commercial NGS
-  companies return. Starting from raw data allows us to ensure that all
-  experiments have been processed in the same way and simplifies the deposition
-  of data to GEO upon publication. The data can be uploaded from the user's
-  computer, downloaded directly from an ftp server of the core facility by
-  providing a URL, or from GEO by providing an SRA accession number.
-  
-  Our current pipelines include the following steps:
+  User-provided inputs required to run this workflow include the 
+  [FASTQ](http://maq.sourceforge.net/fastq.shtml)
+  input files for R1 (upstream) and R2 (downstream) reads, selection from the dropdown of a reference genome the
+  sample library was prepared from, and selection from the dropdown of a spike-in genome (default should be E.
+  coli K-12).
+
+  Intermediate and final downloadable outputs include coordinate sorted BAM file with associated BAI file,
+  quality statistics for both R1/R2 input FASTQ files, read pileup/coverage in BigWig format, and SEACR-called
+  peak BED files (raw and spike-in normalized).
+
+
+  ### Data Analysis  
+  This pipeline includes the following steps:
   1. Trimming the adapters with TrimGalore. This step is particularly important
           when the reads are long and the fragments are short-resulting in
           sequencing adapters at the end of read. If adapter is not removed the
@@ -853,15 +858,7 @@ doc: |
   and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
   apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data.
 
-  A [FASTQ](http://maq.sourceforge.net/fastq.shtml) input file has to be provided.
-
-
-  In outputs it returns coordinate sorted BAM file alongside with index BAI file,
-  quality statistics for both the input FASTQ files, reads coverage in a form of BigWig file,
-  peaks calling data in a form of narrowPeak or broadPeak files, islands with the assigned nearest
-  genes and region type, data for average tag density plot (on the base of BAM file).
-
-  Workflow starts with running fastx_quality_stats (steps fastx_quality_stats_upstream and
+  This workflow starts with running fastx_quality_stats (steps fastx_quality_stats_upstream and
   fastx_quality_stats_downstream) from FASTX-Toolkit to calculate quality statistics for both upstream
   and downstream input FASTQ files. At the same time Bowtie is used to align reads from input FASTQ
   files to reference genome (Step bowtie_aligner). The output of this step is unsorted SAM file which
