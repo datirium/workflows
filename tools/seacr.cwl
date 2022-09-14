@@ -71,12 +71,6 @@ outputs:
     doc: |
       SEACR peak calls in bed formatted file.
 
-  log_file_stderr:
-    type: File
-    outputBinding:
-      glob: $(inputs.output_prefix + '.seacr.stderr')
-    doc: |
-      log for stderr for seacr call
 
   log_file_stdout:
     type: File
@@ -85,10 +79,18 @@ outputs:
     doc: |
       log for stdout for seacr call
 
+  log_file_stderr:
+    type: File
+    outputBinding:
+      glob: $(inputs.output_prefix + '.seacr.stderr')
+    doc: |
+      log for stderr for seacr call
+
 
 baseCommand: ["SEACR_1.3.sh"]
-stderr: $(inputs.output_prefix + '.seacr.stderr')
 stdout: $(inputs.output_prefix + '.seacr.stdout')
+stderr: $(inputs.output_prefix + '.seacr.stderr')
+
 
 
 doc: |

@@ -208,32 +208,6 @@ outputs:
         format: 'bam'
         name: "BAM Track"
         displayMode: "SQUISHED"
-  
-  get_stat_markdown:
-    type: File?
-    label: "Markdown formatted combined log"
-    format: "http://edamontology.org/format_3835"
-    doc: "Markdown formatted combined log"
-    outputSource: stats_for_vis/modified_file_md
-    'sd:visualPlugins':
-    - markdownView:
-        tab: 'Overview'
-
-  get_stat_formatted_log:
-    type: File?
-    label: "Bowtie & Samtools Rmdup combined formatted log"
-    format: "http://edamontology.org/format_3475"
-    doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
-    outputSource: stats_for_vis/modified_file_tsv
-    'sd:visualPlugins':
-    - tableView:
-        vertical: true
-        tab: 'Overview'
-    'sd:preview':
-      'sd:visualPlugins':
-      - pie:
-          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
-          data: [$2, $3, $4, $5]
 
   bam_statistics_report:
     type: File
@@ -356,27 +330,6 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  peak_tsv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bedgraph file"
-    doc: "Bed file of enriched regions"
-    outputSource: seacr_callpeak/peak_tsv_file
-
-  peak_log_stderr:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "seacr logfile stderr"
-    doc: "stderr from seacr command"
-    outputSource: seacr_callpeak/log_file_stderr
-
-  peak_log_stdout:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "seacr logfile stdout"
-    doc: "stdout from seacr command"
-    outputSource: seacr_callpeak/log_file_stdout
-
   norm_peak_tsv:
     type: File
     format: "http://edamontology.org/format_3003"
@@ -397,6 +350,52 @@ outputs:
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
     outputSource: seacr_callpeak_spikein_norm/log_file_stdout
+
+  stats_for_vis_md:
+    type: File?
+    label: "Markdown formatted combined log"
+    format: "http://edamontology.org/format_3835"
+    doc: "Markdown formatted combined log"
+    outputSource: stats_for_vis/modified_file_md
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
+  stats_for_vis_tsv:
+    type: File?
+    label: "Bowtie & Samtools Rmdup combined formatted log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
+    outputSource: stats_for_vis/modified_file_tsv
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
+        tab: 'Overview'
+    'sd:preview':
+      'sd:visualPlugins':
+      - pie:
+          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          data: [$2, $3, $4, $5]
+
+  stats_for_vis_yaml:
+    type: File?
+    label: "YAML formatted combined log"
+    format: "http://edamontology.org/format_3750"
+    doc: "YAML formatted combined log"
+
+  stats_for_vis_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stats logfile stdout"
+    doc: "stdout from stats_for_vis step"
+    outputSource: stats_for_vis/log_file_stdout
+
+  stats_for_vis_log_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stats logfile stderr"
+    doc: "stderr from stats_for_vis step"
+    outputSource: stats_for_vis/log_file_stderr
 
 
 steps:
@@ -706,21 +705,6 @@ steps:
         valueFrom: $(get_root(self.basename))
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
 
-  seacr_callpeak:
-    run: ../tools/seacr.cwl
-    in:
-      treatment_bedgraph: fragment_counts/sorted_bed
-      numeric_threshold:
-        default: 0.01
-      norm_control_to_treatment:
-        default: "non"
-      peakcalling_mode:
-        default: "stringent"
-      output_prefix:
-        source: fragment_counts/sorted_bed
-        valueFrom: $(get_root(self.basename))
-    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
-
   seacr_callpeak_spikein_norm:
     run: ../tools/seacr.cwl
     in:
@@ -754,7 +738,7 @@ steps:
       output_prefix:
         source: seacr_callpeak_spikein_norm/peak_tsv_file
         valueFrom: $(get_root(self.basename))
-    out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
+    out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
       Statistics pulled from alignment reports and other logs, as well as spike-in normalized peak calling.
 
@@ -762,12 +746,11 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks: seacr_callpeak/peak_tsv_file
       seacr_called_peaks_norm: seacr_callpeak_spikein_norm/peak_tsv_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
-    out: [log_file, modified_file_md, modified_file_tsv, modified_file_yaml]
+    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
 
 
 $namespaces:
@@ -888,27 +871,4 @@ doc: |
   In a case when removing duplicates is not necessary the step returns original input BAM and BAI
   files without any processing. If the duplicates were removed the following step
   (Step samtools_sort_index_after_rmdup) reruns samtools sort and samtools index with BAM and BAI files,
-  if not - the step returns original unchanged input files. Right after that macs2 callpeak performs
-  peak calling (Step seacr_callpeak). On the base of returned outputs the next step
-  (Step macs2_island_count) calculates the number of islands and estimated fragment size. If the last
-  one is less than 80 (hardcoded in a workflow) macs2 callpeak is rerun again with forced fixed
-  fragment size value (Step seacr_callpeak_forced). If at the very beginning it was set in workflow
-  input parameters to force run peak calling with fixed fragment size, this step is skipped and the
-  original peak calling results are saved. In the next step workflow again calculates the number
-  of islands and estimated fragment size (Step macs2_island_count_forced) for the data obtained from
-  seacr_callpeak_forced step. If the last one was skipped the results from macs2_island_count_forced step
-  are equal to the ones obtained from macs2_island_count step.
-  Next step (Step macs2_stat) is used to define which of the islands and estimated fragment size should be used
-  in workflow output: either from macs2_island_count step or from macs2_island_count_forced step. If input
-  trigger of this step is set to True it means that seacr_callpeak_forced step was run and it returned different
-  from seacr_callpeak step results, so macs2_stat step should return [fragments_new, fragments_old, islands_new],
-  if trigger is False the step returns [fragments_old, fragments_old, islands_old], where sufix "old" defines
-  results obtained from macs2_island_count step and sufix "new" - from macs2_island_count_forced step.
-  The following two steps (Step bamtools_stats and bam_to_bigwig) are used to calculate coverage on the base
-  of input BAM file and save it in BigWig format. For that purpose bamtools stats returns the number of
-  mapped reads number which is then used as scaling factor by bedtools genomecov when it performs coverage
-  calculation and saves it in BED format. The last one is then being sorted and converted to BigWig format by
-  bedGraphToBigWig tool from UCSC utilities. Step get_stat is used to return a text file with statistics
-  in a form of [TOTAL, ALIGNED, SUPRESSED, USED] reads count. Step island_intersect assigns genes and regions
-  to the islands obtained from seacr_callpeak_forced. Step average_tag_density is used to calculate data for
-  average tag density plot on the base of BAM file.
+  if not - the step returns original unchanged input files. 

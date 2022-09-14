@@ -186,9 +186,7 @@ inputs:
 
 
         SEACR = {
-            "order": ["number of peaks called",
-                    "mean peak size"
-                    ]
+            "order": ["number of peaks called"]
         }
 
 
@@ -292,10 +290,8 @@ inputs:
                 if start == prev_start and end == prev_end and chr == prev_chr:
                     continue
                 count = count + 1
-                length = length + end - start
                 prev_start, prev_end, prev_chr = start, end, chr
             collected_results[header]["number of peaks called"] = count
-            collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
             mapped = collected_results["BAM statistics after filtering"]["reads/pairs mapped"]
             if SEACR.get("order", None):
                 collected_results[header] = {k: collected_results[header][k] for k in SEACR["order"] if k in collected_results[header]}
@@ -393,8 +389,7 @@ inputs:
                             "reads maximum length",
                 
                             "peak calling statistics",
-                            "number of peaks called",
-                            "mean peak size"
+                            "number of peaks called"
                             ]
 
                 if collected_data.get("adapter trimming statistics", None):
@@ -448,8 +443,7 @@ inputs:
                         collected_data["BAM statistics after filtering"]["reads maximum length"],
                         
                         "",
-                        collected_data["peak calling statistics"]["number of peaks called"],
-                        collected_data["peak calling statistics"]["mean peak size"],
+                        collected_data["peak calling statistics"]["number of peaks called"]
                         ]
 
                 if collected_data.get("adapter trimming statistics", None):

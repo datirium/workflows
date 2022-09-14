@@ -23,7 +23,7 @@ inputs:
       bam="$0"; scale="$1"; prefix="$2"
       # clean bam/bed
       bedtools bamtobed -i $bam -bedpe > mapped_pairs.bed
-      awk '$1==$4 && $6-$2 < 1000 {print $0}' mapped_pairs.bed > mapped_pairs.clean.bed
+      awk '$1==$4 && $6-$2 < 1000 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed
       sort mapped_pairs.fragments.bed | uniq -c | awk -F'\t' '{
         split($1,count_chr," ")
