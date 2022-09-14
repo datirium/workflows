@@ -3,7 +3,9 @@ class: CommandLineTool
 requirements:
 - class: InlineJavascriptRequirement
 
+
 inputs:
+
     script:
         type: string?
         default: |
@@ -15,13 +17,16 @@ inputs:
             fi
         inputBinding:
             position: 4
+
     reads_mapped:
         type: int
         label: "spike-in mapped reads from get_spikein_bam_statistics"
         inputBinding:
             position: 5
 
+
 outputs:
+
     scaling_factor:
         type: float?
         outputBinding:
@@ -35,6 +40,7 @@ outputs:
         doc: |
             Scaling factor (sf) for seq library normalization.
             sf=C/mapped reads where C is a constant (10000 used here)
+
     scaling_factor_file:
         type: File
         outputBinding:
@@ -45,6 +51,7 @@ outputs:
 
 
 baseCommand: ["bash", "-c"]
+
 
 doc: |
   Takes as input the *_bam_statistics*.report.txt from `samtools_stat.cwl` tool.

@@ -322,9 +322,9 @@ inputs:
             process_custom_report(args.bamstats, collected_results, "BAM statistics", BAMSTATS, bool(args.paired))
             process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.paired))
             process_custom_report(args.seacr, collected_results, "peak calling statistics", SEACR)
-            process_seacr_tsv(args.seacr, collected_results, "peak calling statistics")
             if args.preseq:
                 process_preseq_results(args.preseq, collected_results, "library preparation")
+            process_seacr_tsv(args.seacr, collected_results, "peak calling statistics")
             return (collected_results)
 
 
@@ -341,7 +341,7 @@ inputs:
                     if line.startswith("  - "):
                         output_stream.write(line+"\n")
                     elif line.startswith("    "):
-                        output_stream.write("<br>"+line+"\n")
+                        output_stream.write("- "+line+"\n")
                     elif line.startswith("  "):
                         output_stream.write("- "+line+"\n")
                     else:
@@ -459,8 +459,8 @@ inputs:
                                 collected_data["adapter trimming statistics"]["fastq"][0]["total reads processed"],
                                 collected_data["adapter trimming statistics"]["fastq"][0]["reads with adapters"]])
                     if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
-                        data.extend([collected_data["adapter trimming statistics"]["fastq"][1]["total reads processed"],
-                                    collected_data["adapter trimming statistics"]["fastq"][1]["reads with adapters"]])
+                        data.extend([collected_data["adapter trimming statistics"]["fastq"][1]["R2 total reads processed"],
+                                    collected_data["adapter trimming statistics"]["fastq"][1]["R2 reads with adapters"]])
 
                 output_stream.write("\t".join(str(l) for l in data))
 

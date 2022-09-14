@@ -751,6 +751,7 @@ steps:
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
+      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
     out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
 
 
