@@ -330,7 +330,7 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  norm_peak_tsv:
+  macs2_called_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file"
