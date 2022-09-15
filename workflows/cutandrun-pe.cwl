@@ -335,21 +335,21 @@ outputs:
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file"
     doc: "Bed file of enriched regions"
-    outputSource: seacr_callpeak_spikein_norm/peak_tsv_file
+    outputSource: seacr_callpeak/peak_tsv_file
 
   norm_peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile"
     doc: "stderr from seacr command"
-    outputSource: seacr_callpeak_spikein_norm/log_file_stderr
+    outputSource: seacr_callpeak/log_file_stderr
 
   norm_peak_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
-    outputSource: seacr_callpeak_spikein_norm/log_file_stdout
+    outputSource: seacr_callpeak/log_file_stdout
 
   stats_for_vis_md:
     type: File?
@@ -706,7 +706,7 @@ steps:
         valueFrom: $(get_root(self.basename))
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
 
-  seacr_callpeak_spikein_norm:
+  seacr_callpeak:
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
@@ -721,7 +721,9 @@ steps:
         valueFrom: $(get_root(self.basename)+"_scaled")
     out: [peak_tsv_file, log_file_stderr, log_file_stdout]
     doc: |
-      input is normalized depth data using spike-in mapped reads (E. coli by default)
+      Input is normalized depth data using spike-in mapped reads (E. coli by default).
+      Scaling factor (sf) for seq library normalization:
+            sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
   get_stat:
@@ -732,12 +734,12 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: seacr_callpeak_spikein_norm/peak_tsv_file
+      seacr_called_peaks: seacr_callpeak/peak_tsv_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True
       output_prefix:
-        source: seacr_callpeak_spikein_norm/peak_tsv_file
+        source: seacr_callpeak/peak_tsv_file
         valueFrom: $(get_root(self.basename))
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
@@ -747,7 +749,7 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak_spikein_norm/peak_tsv_file
+      seacr_called_peaks_norm: seacr_callpeak/peak_tsv_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
