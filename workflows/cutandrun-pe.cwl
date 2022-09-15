@@ -335,7 +335,7 @@ outputs:
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file"
     doc: "Bed file of enriched regions"
-    outputSource: seacr_callpeak/peak_tsv
+    outputSource: seacr_callpeak/peak_tsv_file
 
   norm_peak_log_stderr:
     type: File
@@ -719,7 +719,7 @@ steps:
       output_prefix:
         source: fragment_counts/sorted_bed_scaled
         valueFrom: $(get_root(self.basename)+"_scaled")
-    out: [peak_tsv, log_file_stderr, log_file_stdout]
+    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
     doc: |
       Input is normalized depth data using spike-in mapped reads (E. coli by default).
       Scaling factor (sf) for seq library normalization:
@@ -734,12 +734,12 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: seacr_callpeak/peak_tsv
+      seacr_called_peaks: seacr_callpeak/peak_tsv_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True
       output_prefix:
-        source: seacr_callpeak/peak_tsv
+        source: seacr_callpeak/peak_tsv_file
         valueFrom: $(get_root(self.basename))
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
@@ -749,7 +749,7 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak/peak_tsv
+      seacr_called_peaks_norm: seacr_callpeak/peak_tsv_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
