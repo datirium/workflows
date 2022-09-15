@@ -459,8 +459,8 @@ inputs:
                                 collected_data["adapter trimming statistics"]["fastq"][0]["total reads processed"],
                                 collected_data["adapter trimming statistics"]["fastq"][0]["reads with adapters"]])
                     if len(collected_data["adapter trimming statistics"]["fastq"]) > 1:
-                        data.extend([collected_data["adapter trimming statistics"]["fastq"][1]["R2 total reads processed"],
-                                    collected_data["adapter trimming statistics"]["fastq"][1]["R2 reads with adapters"]])
+                        data.extend([collected_data["adapter trimming statistics"]["fastq"][1]["total reads processed"],
+                                    collected_data["adapter trimming statistics"]["fastq"][1]["reads with adapters"]])
 
                 output_stream.write("\t".join(str(l) for l in data))
 
