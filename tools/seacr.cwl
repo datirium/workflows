@@ -64,7 +64,7 @@ inputs:
 
 outputs:
 
-  macs2_called_peaks:
+  peak_tsv_file:
     type: File
     outputBinding:
       glob: $(inputs.output_prefix + '.stringent.bed')
