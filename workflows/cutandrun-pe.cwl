@@ -805,16 +805,13 @@ s:creator:
 doc: |
   A basic analysis workflow for a **paired-read** Cut & Run/TAG experiment.
     
-  This workflow utilized the tool SEACR (Sparse Enrichment Analysis of Cut & Run
-  data) which calls enriched regions in target data by selecting the top 1% of
-  regions by AUC. This workflow is loosely based on the
-  [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0)
-  pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com)
-  [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as
-  a CWL template.
+  This workflow utilized the tool SEACR (Sparse Enrichment Analysis of Cut & Run data) which calls enriched
+  regions in target data by selecting the top 1% of regions by AUC. This workflow is loosely based on the
+  [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline
+  from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
+  was used as a CWL template.
 
-  User-provided inputs required to run this workflow include the 
-  [FASTQ](http://maq.sourceforge.net/fastq.shtml)
+  User-provided inputs required to run this workflow include the [FASTQ](http://maq.sourceforge.net/fastq.shtml)
   input files for R1 (upstream) and R2 (downstream) reads, selection from the dropdown of a reference genome the
   sample library was prepared from, and selection from the dropdown of a spike-in genome (default should be E.
   coli K-12).
@@ -845,30 +842,24 @@ doc: |
           remove duplicates unless the library is heavily duplicated.
   6.  Call enriched regions using SEACR. Note, there is no native way of
           specifying a custom calculated read extension length for SEACR as there
-          is more MACS2.
-  7.  Generation of BigWig coverage files for display on the browser. The coverage
-          shows the number of fragments at each base in the genome normalized to
-          the number of millions of mapped reads.
+          is for the ChIP-Seq peak calling tool MACS2. The only output of SEACR
+          are the called peaks in a single BED format file.
+  7.  Generation of read, alignment, and peak statistics, as well as BigWig
+          coverage files for display on the browser. The coverage shows the number
+          of fragments at each base in the genome normalized to the number of
+          millions of mapped reads.
 
 
-  Note, the upstream analyses should not have duplicates removed
-
-
-
-
-  ### Details
-  _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt)
-  and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently
-  apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data.
-
-  This workflow starts with running fastx_quality_stats (steps fastx_quality_stats_upstream and
-  fastx_quality_stats_downstream) from FASTX-Toolkit to calculate quality statistics for both upstream
-  and downstream input FASTQ files. At the same time Bowtie is used to align reads from input FASTQ
-  files to reference genome (Step bowtie_aligner). The output of this step is unsorted SAM file which
-  is being sorted and indexed by samtools sort and samtools index (Step samtools_sort_index).
-  Depending on workflow’s input parameters indexed and sorted BAM file
-  could be processed by samtools rmdup (Step samtools_rmdup) to remove all possible read duplicates.
-  In a case when removing duplicates is not necessary the step returns original input BAM and BAI
-  files without any processing. If the duplicates were removed the following step
-  (Step samtools_sort_index_after_rmdup) reruns samtools sort and samtools index with BAM and BAI files,
-  if not - the step returns original unchanged input files. 
+  ### Additional Processing Details & Notes
+  _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and
+  [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality
+  trimming to FASTQ files, with extra functionality for RRBS data. This workflow starts with running
+  fastx_quality_stats (step: fastx_quality_stats_upstream, fastx_quality_stats_downstream) from FASTX-Toolkit
+  to calculate quality statistics for both R1 and R2 input FASTQ files. Bowtie is run in parallel to align reads
+  from input FASTQ files to the selected reference genome (step: bowtie_aligner). The output of this step is an
+  unsorted SAM file that is then sorted and indexed by samtools sort and index (step: samtools_sort_index).
+  Depending on workflow input parameters, indexed and sorted BAM files could be processed by samtools rmdup
+  (step: samtools_rmdup) to remove all detected instances of read duplication. In the case when removing
+  duplicates is not necessary, this step returns the original input BAM and BAI files without any processing. If
+  the duplicates were removed, the following step (step: samtools_sort_index_after_rmdup) reruns samtools sort
+  and index with the BAM and BAI files, if not, the step returns the original unchanged input files.
