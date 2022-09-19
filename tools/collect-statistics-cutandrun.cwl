@@ -339,9 +339,9 @@ inputs:
                     if not line.strip():
                         continue
                     if line.startswith("  - "):
-                        output_stream.write(line+"\n")
+                        output_stream.write("-   "+line.lstrip("- ")+"\n")
                     elif line.startswith("    "):
-                        output_stream.write("- "+line+"\n")
+                        output_stream.write("-   "+line.lstrip()+"\n")
                     elif line.startswith("  "):
                         output_stream.write("- "+line+"\n")
                     else:
