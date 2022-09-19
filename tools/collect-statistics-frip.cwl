@@ -22,29 +22,31 @@ inputs:
       bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5
       # count of total aligned reads
       tar=$(samtools view -cF0x4 $bam)
+      # order bed coordinates
+      awk -F'\t' '{if($3>$2){printf("%s\t%s\t%s\n",$1,$2,$3)}else{printf("%s\t%s\t%s\n",$1,$3,$2)}}' $bed > ordered.bed
       # counts of reads in peaks (split col6 due to start(col2) and end(col3) not always in ascending order - req by samtools)
-      rip=$(samtools view -c $bam -L <(cut -f6 $bed | sed -e 's/:/\t/' -e 's/-/\t/'))
+      rip=$(samtools view -c $bam -L ordered.bed)
       # frip=rip/tar
       frip=$(printf $tar | awk -v rip=$rip '{printf("%.3f",rip/$0)}')
-      # calculate mean max signal length (mmsl) from end-start sites
-      mmsl=$(cut -f6 $bed | sed 's/.*://' | awk -F'-' '{x+=$2-$1}END{printf("%.0f",x/NR)}')
+      # calculate mean max peak length (mmpl) from end-start sites
+      mmpl=$(awk -F'\t' '{if($3>$2){x+=$3-$2}else{$2-$3}}END{printf("%.0f\n",x/NR)}' ordered.bed)
       printf "$tar, $rip, $frip\n" >> "calc_frip.log"
-      # concatenate frip, mmsl, and spikein read count onto md, tsv, and yaml files
+      # concatenate frip, mmpl, and spikein read count onto md, tsv, and yaml files
       #   md
       cat $md > collected_statistics_report.md
       printf "-" >> collected_statistics_report.md
       printf "   fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.md
       printf "-" >> collected_statistics_report.md
-      printf "   mean maximum signal length: $mmsl\n" >> collected_statistics_report.md
+      printf "   mean maximum peak length: $mmpl\n" >> collected_statistics_report.md
       printf "-" >> collected_statistics_report.md
       printf "   spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.md
       #   tsv
       headers=$(head -1 $tsv); data=$(tail -1 $tsv)
-      printf "%s\t%s\t%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum signal length" "spike-in mapped read count (scaling_factor=10,000/x)" "$data" "$frip" "$mmsl" "$spikein" > collected_statistics_report.tsv
+      printf "%s\t%s\t%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum peak length" "spike-in mapped read count (scaling_factor=10,000/x)" "$data" "$frip" "$mmpl" "$spikein" > collected_statistics_report.tsv
       #   yaml
       cat $yaml > collected_statistics_report.yaml
       printf "  fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.yaml
-      printf "  mean maximum signal length: $mmsl\n" >> collected_statistics_report.yaml
+      printf "  mean maximum peak length: $mmpl\n" >> collected_statistics_report.yaml
       printf "  spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.yaml
     inputBinding:
         position: 4
