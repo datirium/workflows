@@ -333,8 +333,8 @@ outputs:
   macs2_called_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "bedgraph file"
-    doc: "Bed file of enriched regions"
+    label: "bedgraph file of peaks from seacr"
+    doc: "Bed file of enriched regions called by seacr (not macs2 as output name suggests)"
     outputSource: seacr_callpeak/peak_tsv_file
 
   norm_peak_log_stderr:
@@ -350,6 +350,17 @@ outputs:
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
     outputSource: seacr_callpeak/log_file_stdout
+
+  called_peaks_tab:
+    type: File
+    label: "SEACR generated peak calls"
+    format: "http://edamontology.org/format_3475"
+    doc: "SEACR generated peak calls"
+    outputSource: seacr_callpeak/peak_tsv_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Called Peaks'
+        Title: 'sparse enriched peak list'
 
   stats_for_vis_md:
     type: File?
