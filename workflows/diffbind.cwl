@@ -12,7 +12,7 @@ requirements:
   first_biological_condition:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
-    - "cutandrun-pe.cwl"
+    - "https://github.com/robert-player/workflows/blob/main/workflows/cutandrun-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
@@ -20,7 +20,7 @@ requirements:
   second_biological_condition:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
-    - "cutandrun-pe.cwl"
+    - "https://github.com/robert-player/workflows/blob/main/workflows/cutandrun-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
@@ -28,7 +28,7 @@ requirements:
   blocked_condition:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
-    - "cutandrun-pe.cwl"
+    - "https://github.com/robert-player/workflows/blob/main/workflows/cutandrun-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
@@ -1366,9 +1366,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data"
-s:name: "DiffBind - Differential Binding Analysis of ChIP-Seq Peak Data"
-s:alternateName: "Compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) and occupancy data."
+label: "DiffBind - Differential Binding Analysis of ChIP-Seq or CUTß&RUN/Tag Peak Data"
+s:name: "DiffBind - Differential Binding Analysis of ChIP-Seq or CUT&RUN/Tag Peak Data"
+s:alternateName: "Compute differentially bound sites from multiple ChIP-seq or CUT&RUN/Tag experiments using affinity (quantitative) and occupancy data."
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/diffbind.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -1410,14 +1410,19 @@ s:creator:
 
 
 doc: |
-  Differential Binding Analysis of ChIP-Seq Peak Data
+  Differential Binding Analysis of ChIP-Seq or CUT&RUN/Tag Peak Data
   ---------------------------------------------------
   
-  DiffBind processes ChIP-Seq data enriched for genomic loci where specific protein/DNA binding occurs, including peak sets identified by ChIP-Seq peak callers and
-  aligned sequence read datasets. It is designed to work with multiple peak sets simultaneously, representing different ChIP experiments (antibodies, transcription
-  factor and/or histone marks, experimental conditions, replicates) as well as managing the results of multiple peak callers.
+  DiffBind processes ChIP-Seq or CUT&RUN/Tag data enriched for genomic loci where specific
+  protein/DNA binding occurs, including peak sets identified by peak caller tools and aligned
+  sequence read datasets. It is designed to work with multiple peak sets simultaneously,
+  representing different ChIP or CUT&RUN/Tag experiments (antibodies, transcription factor
+  and/or histone marks, experimental conditions, replicates) as well as managing the results
+  of multiple peak callers.
 
   For more information please refer to:
   -------------------------------------
-  Ross-Innes CS, Stark R, Teschendorff AE, Holmes KA, Ali HR, Dunning MJ, Brown GD, Gojis O, Ellis IO, Green AR, Ali S, Chin S, Palmieri C, Caldas C, Carroll JS (2012).
-  “Differential oestrogen receptor binding is associated with clinical outcome in breast cancer.” Nature, 481, -4.
+  Ross-Innes CS, Stark R, Teschendorff AE, Holmes KA, Ali HR, Dunning MJ, Brown GD, Gojis O,
+  Ellis IO, Green AR, Ali S, Chin S, Palmieri C, Caldas C, Carroll JS (2012). “Differential
+  oestrogen receptor binding is associated with clinical outcome in breast cancer.” Nature,
+  481, -4.

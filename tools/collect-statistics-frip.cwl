@@ -18,7 +18,7 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      printf "$(date)\nLog file for collect-statistics-frip.cwl tool:\n\n" > "calc_frip.log"
+      printf "$(date)\nLog file for collect-statistics-frip.cwl tool:\n\n"
       bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5
       # count of total aligned reads
       tar=$(samtools view -cF0x4 $bam)
@@ -30,7 +30,7 @@ inputs:
       frip=$(printf $tar | awk -v rip=$rip '{printf("%.3f",rip/$0)}')
       # calculate mean max signal length (mmpl) from end-start sites
       mmpl=$(awk -F'\t' '{if($3>$2){x+=$3-$2}else{$2-$3}}END{printf("%.0f\n",x/NR)}' ordered.bed)
-      printf "$tar, $rip, $frip\n" >> "calc_frip.log"
+      printf "$tar, $rip, $frip, $mmpl\n"
       # concatenate frip, mmpl, and spikein read count onto md, tsv, and yaml files
       #   md
       cat $md > collected_statistics_report.md
