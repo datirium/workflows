@@ -42,7 +42,7 @@ inputs:
       printf "   spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.md
       #   tsv
       headers=$(head -1 $tsv); data=$(tail -1 $tsv)
-      printf "%s\t%s\t%s\t%s\t%s\n%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum signal length" "spike-in mapped read count (scaling_factor=10,000/x)" "$data" "$frip" "$mmpl" "$spikein" > collected_statistics_report.tsv
+      printf "%s\t%s\t%s\t%s\n%s\t%s\t%s\t%s\n" "$headers" "fraction of (aligned) reads in peaks" "mean maximum signal length" "spike-in mapped read count (scaling_factor=10,000/x)" "$data" "$frip" "$mmpl" "$spikein" > collected_statistics_report.tsv
       #   yaml
       cat $yaml > collected_statistics_report.yaml
       printf "  fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.yaml
