@@ -23,7 +23,7 @@ inputs:
       # count of total aligned reads
       tar=$(samtools view -cF0x4 $bam)
       # order bed coordinates of max bedgraph signal (col6)
-      cut -f6 $bed | sed -e 's/:/\t/' -e 's/-/\t/' awk -F'\t' '{if($3>$2){printf("%s\t%s\t%s\n",$1,$2,$3)}else{printf("%s\t%s\t%s\n",$1,$3,$2)}}' > ordered.bed
+      cut -f6 $bed | sed -e 's/:/\t/' -e 's/-/\t/' | awk -F'\t' '{if($3>$2){printf("%s\t%s\t%s\n",$1,$2,$3)}else{printf("%s\t%s\t%s\n",$1,$3,$2)}}' > ordered.bed
       # counts of reads in peaks (split col6 due to start(col2) and end(col3) not always in ascending order - req by samtools)
       rip=$(samtools view -c $bam -L ordered.bed)
       # frip=rip/tar
