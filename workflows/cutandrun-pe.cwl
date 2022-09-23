@@ -351,7 +351,7 @@ outputs:
     doc: "stdout from seacr command"
     outputSource: seacr_callpeak/log_file_stdout
 
-  called_peaks_tab:
+  norm_peak_calls_tab:
     type: File
     label: "SEACR generated peak calls"
     format: "http://edamontology.org/format_3475"
