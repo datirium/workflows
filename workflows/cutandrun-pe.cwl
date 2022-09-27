@@ -809,7 +809,7 @@ s:creator:
 doc: |
   A basic analysis workflow for a **paired-read** Cut & Run/TAG experiment.
     
-  This workflow utilized the tool SEACR (Sparse Enrichment Analysis of Cut & Run data) which calls enriched
+  This workflow utilizes the tool SEACR (Sparse Enrichment Analysis of Cut & Run data) which calls enriched
   regions in target data by selecting the top 1% of regions by AUC. This workflow is loosely based on the
   [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline
   from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
