@@ -27,8 +27,12 @@ inputs:
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed
       sort mapped_pairs.fragments.bed | uniq -c | awk -F'\t' '{
         split($1,count_chr," ")
-        printf("%s\t%s\t%s\t%s\n",count_chr[2],$2,$3,count_chr[1])
-        }' > $prefix.fragmentcounts.bed
+        if($3>$2){
+          printf("%s\t%s\t%s\t%s\n",count_chr[2],$2,$3,count_chr[1])
+        }else{
+          printf("%s\t%s\t%s\t%s\n",count_chr[2],$3,$2,count_chr[1])
+        }
+      }' > $prefix.fragmentcounts.bed
       awk -F'\t' -v scale=$scale '{
         printf("%s\t%s\t%s\t%s\n",$1,$2,$3,$4*scale)
         }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bed
