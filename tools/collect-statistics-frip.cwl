@@ -165,7 +165,8 @@ s:creator:
 
 doc: |
     Tool processes BAM file and output from SEACR to produce the FRIP (fraction of
-    reads in peaks) and mean peak size statistics for ATAC-seq and cut&run type
+    reads in peaks) and mean peak length statistics for ATAC-seq and cut&run type
     sequencing experiments. These stats are calculated for spike-in normalized 
     peak data, then concatentated to the *"_collected_statistics_report" files (md,
-    tsv, and yaml).
+    tsv, and yaml). Additionally, a re-formatted peakcalled bed file is produced
+    with headers per column, and "nearest gene" annotation per peak.
