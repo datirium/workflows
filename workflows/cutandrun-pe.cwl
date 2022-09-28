@@ -74,14 +74,6 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after paired end sequencing"
 
-  exp_fragment_size:
-    type: int?
-    default: 150
-    'sd:layout':
-      advanced: true
-    label: "Expected fragment size"
-    doc: "Expected fragment size for experimental sample"
-
   clip_3p_end:
     type: int?
     default: 0
@@ -105,6 +97,22 @@ inputs:
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sorted BAM file"
+
+  promoter_dist:
+    type: int?
+    default: 1000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
+    doc: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
+    doc: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"    
 
   threads:
     type: int?
@@ -330,17 +338,6 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  macs2_called_peaks:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bedgraph file of peaks from seacr"
-    doc: "Bed file of enriched regions called by seacr (not macs2 as output name suggests)"
-    outputSource: seacr_callpeak/peak_tsv_file
-    'sd:visualPlugins':
-    - syncfusiongrid:
-        tab: 'Called Peaks'
-        Title: 'sparse enriched peak list'
-
   norm_peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -401,6 +398,31 @@ outputs:
     label: "stats logfile stderr"
     doc: "stderr from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stderr
+
+  macs2_called_peaks:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file of peaks from seacr"
+    doc: "Bed file of enriched regions called by seacr (from normalized bigwig) in macs2's bed format. *peaks removed where col2>col3"
+    outputSource: convert_bed_to_xls/output_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Called Peaks"
+        height: 120
+
+  annotated_peaks:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "gene annotated peaks file"
+    doc: "nearest gene annotation per peak"
+    outputSource: island_intersect/result_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Annotated Peaks'
+        Title: 'sparse enriched peak list with nearest gene annotation'
 
 
 steps:
@@ -556,6 +578,12 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  clean_sam_headers_for_preseq:
+    run: ../tools/samtools-clean-headers.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+    out: [preseq_bam]
+
   preseq:
     label: "Sequencing depth estimation"
     doc: |
@@ -563,7 +591,7 @@ steps:
       be expected from the additional sequencing of the same experiment.
     run: ../tools/preseq-lc-extrap.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: clean_sam_headers_for_preseq/preseq_bam
       pe_mode:
         default: true
       extrapolation:
@@ -730,6 +758,20 @@ steps:
             sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
+  convert_bed_to_xls:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: seacr_callpeak/peak_tsv_file
+      script:
+        default: >
+          cat $0 | awk -F'\t'
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`
+    out:
+    - output_file
+    doc: |
+      This step also removes rows where start (col2) > end (col3). Still investigating why SEACR produces peak coordinates in this way.
+
   get_stat:
     run: ../tools/collect-statistics-cutandrun.cwl
     in:
@@ -738,12 +780,12 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: seacr_callpeak/peak_tsv_file
+      seacr_called_peaks: convert_bed_to_xls/output_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True
       output_prefix:
-        source: seacr_callpeak/peak_tsv_file
+        source: convert_bed_to_xls/output_file
         valueFrom: $(get_root(self.basename))
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
@@ -753,12 +795,25 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak/peak_tsv_file
+      seacr_called_peaks_norm: convert_bed_to_xls/output_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
       spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
     out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
+
+  island_intersect:
+    label: "Peak annotation"
+    doc: |
+      Assigns nearest genes to peaks to explore the biological implication of the open
+      chromatin binding sites.
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: convert_bed_to_xls/output_file
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
+    out: [result_file, log_file]
 
 
 $namespaces:
