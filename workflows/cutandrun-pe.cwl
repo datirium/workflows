@@ -758,6 +758,35 @@ steps:
             sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
+  get_stat:
+    run: ../tools/collect-statistics-cutandrun.cwl
+    in:
+      trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
+      trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
+      bowtie_alignment_report: bowtie_aligner/log_file
+      bam_statistics_report: get_bam_statistics/log_file
+      bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
+      seacr_called_peaks: seacr_callpeak/peak_tsv_file
+      paired_end:
+        default: True
+      output_prefix:
+        source: seacr_callpeak/peak_tsv_file
+        valueFrom: $(get_root(self.basename))
+    out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
+    doc: |
+      Statistics pulled from alignment reports and other logs, as well as spike-in normalized peak calling.
+
+  stats_for_vis:
+    run: ../tools/collect-statistics-frip.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      seacr_called_peaks_norm: seacr_callpeak/peak_tsv_file
+      collected_statistics_md: get_stat/collected_statistics_md
+      collected_statistics_tsv: get_stat/collected_statistics_tsv
+      collected_statistics_yaml: get_stat/collected_statistics_yaml
+      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
+    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
+
   convert_bed_to_xls:
     run: ../tools/custom-bash.cwl
     in:
@@ -771,36 +800,6 @@ steps:
     - output_file
     doc: |
       This step also removes rows where start (col2) > end (col3). Still investigating why SEACR produces peak coordinates in this way.
-
-  get_stat:
-    run: ../tools/collect-statistics-cutandrun.cwl
-    in:
-      trimgalore_report_fastq_1: bypass_trim/selected_report_file_1
-      trimgalore_report_fastq_2: bypass_trim/selected_report_file_2
-      bowtie_alignment_report: bowtie_aligner/log_file
-      bam_statistics_report: get_bam_statistics/log_file
-      bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: convert_bed_to_xls/output_file
-      preseq_results: preseq/estimates_file
-      paired_end:
-        default: True
-      output_prefix:
-        source: convert_bed_to_xls/output_file
-        valueFrom: $(get_root(self.basename))
-    out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
-    doc: |
-      Statistics pulled from alignment reports and other logs, as well as spike-in normalized peak calling.
-
-  stats_for_vis:
-    run: ../tools/collect-statistics-frip.cwl
-    in:
-      bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: convert_bed_to_xls/output_file
-      collected_statistics_md: get_stat/collected_statistics_md
-      collected_statistics_tsv: get_stat/collected_statistics_tsv
-      collected_statistics_yaml: get_stat/collected_statistics_yaml
-      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
-    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
 
   island_intersect:
     label: "Peak annotation"
