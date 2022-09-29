@@ -27,14 +27,16 @@ inputs:
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Indexed genome folder (bowtie build)"
-    doc: "Path to bowtie indexed genome folder for treatment organism"
+    label: "Sample genome index for alignment and peak calling:"
+    'sd:localLabel': true
+    doc: "Sample genome index for alignment and peak calling"
 
   indices_folder_for_spikein:
     type: Directory
     'sd:upstreamSource': "genome_indices_spikein/bowtie_indices"
-    label: "Indexed genome folder (bowtie build)"
-    doc: "Path to bowtie indexed genome folder for spike-in organism"
+    label: "Spike-in genome index for normalization:"
+    'sd:localLabel': true
+    doc: "Spike-in genome index for normalization"
 
   annotation_file:
     type: File
@@ -61,25 +63,28 @@ inputs:
       - File
       - type: array
         items: File
-    label: "FASTQ 1 input file"
+    label: "FASTQ file for R1:"
+    'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Read1 data in a FASTQ format, received after paired end sequencing"
 
   fastq_file_downstream:
     type:
       - File
       - type: array
         items: File
-    label: "FASTQ 2 input file"
+    label: "FASTQ file for R2:"
+    'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
-    doc: "Reads data in a FASTQ format, received after paired end sequencing"
+    doc: "Read2 data in a FASTQ format, received after paired end sequencing"
 
   clip_3p_end:
     type: int?
     default: 0
     'sd:layout':
       advanced: true
-    label: "Clip from 3p end"
+    label: "Number of bases to clip from the 3p end:"
+    'sd:localLabel': true
     doc: "Number of bases to clip from the 3p end"
 
   clip_5p_end:
@@ -87,7 +92,8 @@ inputs:
     default: 0
     'sd:layout':
       advanced: true
-    label: "Clip from 5p end"
+    label: "Number of bases to clip from the 3p end:"
+    'sd:localLabel': true
     doc: "Number of bases to clip from the 5p end"
 
   remove_duplicates:
@@ -95,7 +101,8 @@ inputs:
     default: false
     'sd:layout':
       advanced: true
-    label: "Remove duplicates"
+    label: "Call samtools rmdup to remove duplicates from sorted BAM file?"
+    'sd:localLabel': true
     doc: "Calls samtools rmdup to remove duplicates from sorted BAM file"
 
   promoter_dist:
@@ -103,24 +110,27 @@ inputs:
     default: 1000
     'sd:layout':
       advanced: true
-    label: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
-    doc: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
+    label: "Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region:"
+    'sd:localLabel': true
+    doc: "Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region:"
 
   upstream_dist:
     type: int?
     default: 20000
     'sd:layout':
       advanced: true
-    label: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
-    doc: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"    
+    label: "Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region:"
+    'sd:localLabel': true
+    doc: "Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region:"    
 
   threads:
     type: int?
     default: 2
     'sd:layout':
       advanced: true
-    doc: "Number of threads for those steps that support multithreading"
-    label: "Number of threads"
+    label: "Number of threads for steps that support multithreading:"
+    'sd:localLabel': true
+    doc: "Number of threads for steps that support multithreading"
 
 
 outputs:
