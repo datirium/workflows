@@ -51,7 +51,7 @@ inputs:
       between the knee and peak of the total signal curve, and
       corresponds to the “relaxed” mode described in the text,
       whereas “stringent” uses the peak of the curve, and
-      corresponds to “stringent” mode. Default is "stringent".
+      corresponds to “stringent” mode. Default is "relaxed".
 
   output_prefix:
     type: string
@@ -67,7 +67,7 @@ outputs:
   peak_tsv_file:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.stringent.bed')
+      glob: $(inputs.output_prefix + '.relaxed.bed')
     doc: |
       SEACR peak calls in bed formatted file.
 
@@ -121,7 +121,7 @@ doc: |
         Field 5:    Output prefix
 
     Output file:
-    <output prefix>.stringent.bed (Bed file of enriched regions)
+    <output prefix>.relaxed.bed (Bed file of enriched regions)
 
     Output data structure: 
     <chr>	<start>	<end>	<AUC>	<max signal>	<max signal region>
@@ -135,12 +135,12 @@ doc: |
     Field 6: Region representing the farthest upstream and farthest downstream bases within the denoted coordinates that are represented by the maximum bedgraph signal
 
     Examples:
-    bash SEACR_1.3.sh target.bedgraph IgG.bedgraph norm stringent output
-    Calls enriched regions in target data using normalized IgG control track with stringent threshold
+    bash SEACR_1.3.sh target.bedgraph IgG.bedgraph norm relaxed output
+    Calls enriched regions in target data using normalized IgG control track with relaxed threshold
 
     bash SEACR_1.3.sh target.bedgraph IgG.bedgraph non relaxed output
     Calls enriched regions in target data using non-normalized IgG control track with relaxed threshold
-    bash SEACR_1.3.sh target.bedgraph 0.01 non stringent output
+    bash SEACR_1.3.sh target.bedgraph 0.01 non relaxed output
     Calls enriched regions in target data by selecting the top 1% of regions by area under the curve (AUC)
 
 

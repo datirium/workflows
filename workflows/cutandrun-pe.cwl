@@ -746,6 +746,7 @@ steps:
       output_prefix:
         source: samtools_sort_index_after_rmdup/bam_bai_pair
         valueFrom: $(get_root(self.basename))
+      chrom_length_file: chrom_length
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
 
   seacr_callpeak:

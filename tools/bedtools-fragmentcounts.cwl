@@ -20,19 +20,12 @@ inputs:
       #!/bin/bash
       printf "$(date)\nLog file for bash script in seacr.cwl tool:\n\n"
       # inputs
-      bam="$0"; scale="$1"; prefix="$2"
+      bam="$0"; scale="$1"; prefix="$2"; genome="$3"
       # clean bam/bed
-      bedtools bamtobed -i $bam -bedpe > mapped_pairs.bed
+      bedtools bamtobed -i $bam -bedpe 2> /dev/null > mapped_pairs.bed
       awk '$1==$4 && $6-$2 < 1000 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed
-      sort mapped_pairs.fragments.bed | uniq -c | awk -F'\t' '{
-        split($1,count_chr," ")
-        if($3>$2){
-          printf("%s\t%s\t%s\t%s\n",count_chr[2],$2,$3,count_chr[1])
-        }else{
-          printf("%s\t%s\t%s\t%s\n",count_chr[2],$3,$2,count_chr[1])
-        }
-      }' > $prefix.fragmentcounts.bed
+      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g genome > $prefix.fragmentcounts.bed
       awk -F'\t' -v scale=$scale '{
         printf("%s\t%s\t%s\t%s\n",$1,$2,$3,$4*scale)
         }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bed
@@ -60,6 +53,14 @@ inputs:
     doc: |
       Basename of input file that SEACR will use to name the
       output tsv file: <output_prefix>.<peakcalling_mode>.bed
+
+  chrom_length_file:
+    type: File?
+    inputBinding:
+      position: 11
+    doc: |
+      A genome file, where col1 are chromosome names and col2
+      contains an integer length (bp) of the chromosome.
 
 
 outputs:
