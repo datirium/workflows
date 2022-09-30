@@ -25,7 +25,7 @@ inputs:
       bedtools bamtobed -i $bam -bedpe 2> /dev/null > mapped_pairs.bed
       awk '$1==$4 && $6-$2 < 1000 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed
-      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g genome > $prefix.fragmentcounts.bed
+      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g $genome > $prefix.fragmentcounts.bed
       awk -F'\t' -v scale=$scale '{
         printf("%s\t%s\t%s\t%s\n",$1,$2,$3,$4*scale)
         }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bed

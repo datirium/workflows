@@ -758,7 +758,7 @@ steps:
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
-        default: "stringent"
+        default: "relaxed"
       output_prefix:
         source: fragment_counts/sorted_bed_scaled
         valueFrom: $(get_root(self.basename)+"_scaled")
