@@ -51,9 +51,13 @@ inputs:
       - C2_curated_gene_sets
       - C3_regulatory_target_gene_sets
       - C4_computational_gene_sets
-      - C5_GO_gene_sets
-      - C6_oncogenic_signatures
-      - C7_immunologic_signatures
+      - C5_ontology_gene_sets
+      - C6_oncogenic_signature_gene_sets
+      - C7_immunologic_signature_gene_sets
+      - C8_cell_type_signature_gene_sets
+      - KEGG_2021_Human
+      - Reactome_2022
+      - WikiPathways_2019_Human
     default: "H_hallmark_gene_sets"
     label: "Gene set database. Ignored if GMT file is privided"
     doc: "Gene set database"
