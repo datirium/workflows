@@ -105,7 +105,22 @@ inputs:
     'sd:localLabel': true
     doc: "Calls samtools rmdup to remove duplicates from sorted BAM file"
 
-  promoter_dist:
+  fragment_length_filter:
+    type:
+    - "null"
+    - type: enum
+      name: "Fragment Length Filter"
+      symbols:
+      - Default_Range
+      - Histone_Binding_Library
+      - Transcription_Factor_Binding_Library
+    default: "Default_Range"
+    label: "Fragment Length Filter will retain fragments between set ranges for peak analysis."
+    'sd:localLabel': true
+    doc: "Fragment Length Filter options: 1) Default_Range retains fragments <1000 bp, 2) Histone_Binding_Library retains fragments
+      between 130-300 bp, and 3) Transcription_Factor_Binding_Library retains fragments <130 bp."
+
+  promoter_dist:    
     type: int?
     default: 1000
     'sd:layout':
@@ -353,14 +368,14 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile"
     doc: "stderr from seacr command"
-    outputSource: seacr_callpeak/log_file_stderr
+    outputSource: seacr_callpeak_stringent/log_file_stderr
 
   norm_peak_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
-    outputSource: seacr_callpeak/log_file_stdout
+    outputSource: seacr_callpeak_stringent/log_file_stdout
 
   stats_for_vis_md:
     type: File?
@@ -747,9 +762,16 @@ steps:
         source: samtools_sort_index_after_rmdup/bam_bai_pair
         valueFrom: $(get_root(self.basename))
       chrom_length_file: chrom_length
+      fragment_length_filter:
+        source: fragment_length_filter
+        valueFrom: $(self)
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
+    doc: |
+      Formatting alignment file to account for fragments based on PE bam.
+      Output is a filtered and scaled (normalized) bed file to be used as
+      input for SEACR peak calling.
 
-  seacr_callpeak:
+  seacr_callpeak_stringent:
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
@@ -758,13 +780,13 @@ steps:
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
-        default: "relaxed"
+        default: "stringent"
       output_prefix:
         source: fragment_counts/sorted_bed_scaled
         valueFrom: $(get_root(self.basename)+"_scaled")
     out: [peak_tsv_file, log_file_stderr, log_file_stdout]
     doc: |
-      Input is normalized depth data using spike-in mapped reads (E. coli by default).
+      Sparse Enrichment Analysis. Input is normalized depth data using spike-in mapped reads (E. coli by default).
       Scaling factor (sf) for seq library normalization:
             sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
@@ -777,11 +799,11 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: seacr_callpeak/peak_tsv_file
+      seacr_called_peaks: seacr_callpeak_stringent/peak_tsv_file
       paired_end:
         default: True
       output_prefix:
-        source: seacr_callpeak/peak_tsv_file
+        source: seacr_callpeak_stringent/peak_tsv_file
         valueFrom: $(get_root(self.basename))
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
@@ -791,7 +813,7 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak/peak_tsv_file
+      seacr_called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
@@ -801,16 +823,16 @@ steps:
   convert_bed_to_xls:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: seacr_callpeak/peak_tsv_file
+      input_file: seacr_callpeak_stringent/peak_tsv_file
       script:
         default: >
           cat $0 | awk -F'\t'
-          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
-          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`
+          'BEGIN {print "chr\tstart\tend\tlength\ttotal_signal\tmax_signal\tname"}
+          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$4"\t"$5"\tpeak_"NR}}' > `basename $0`
     out:
     - output_file
     doc: |
-      This step also removes rows where start (col2) > end (col3). Still investigating why SEACR produces peak coordinates in this way.
+      formatting seacr bed output into xls for input into island_instersect
 
   island_intersect:
     label: "Peak annotation"
