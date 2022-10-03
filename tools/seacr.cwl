@@ -67,7 +67,7 @@ outputs:
   peak_tsv_file:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.relaxed.bed')
+      glob: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.bed')
     doc: |
       SEACR peak calls in bed formatted file.
 
@@ -75,26 +75,29 @@ outputs:
   log_file_stdout:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.seacr.stdout')
+      glob: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stdout')
     doc: |
       log for stdout for seacr call
 
   log_file_stderr:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.seacr.stderr')
+      glob: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stderr')
     doc: |
       log for stderr for seacr call
 
 
 baseCommand: ["SEACR_1.3.sh"]
-stdout: $(inputs.output_prefix + '.seacr.stdout')
-stderr: $(inputs.output_prefix + '.seacr.stderr')
+stdout: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stdout')
+stderr: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stderr')
 
+
+successCodes: [1]
 
 
 doc: |
-  Tool runs peak calling using SEACR_1.3.sh command.
+  Tool runs peak calling using SEACR_1.3.sh command. When running in stringent mode (default), if zero peaks are called from
+  your input data
 
   SEACR: Sparse Enrichment Analysis for CUT&RUN
 
