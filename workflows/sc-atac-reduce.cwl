@@ -7,7 +7,14 @@ requirements:
   - class: StepInputExpressionRequirement
   - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
-
+    expressionLib:
+    - var split_features = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 'sd:upstream':
   sc_tools_sample:
@@ -33,24 +40,99 @@ inputs:
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
+  datasets_metadata:
+    type: File?
+    label: "Path to the TSV/CSV file to optionally extend Seurat object metadata with categorical values"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat
+      object metadata with categorical values using samples
+      identities. First column - 'library_id' should
+      correspond to all unique values from the 'new.ident'
+      column of the loaded Seurat object. If any of the
+      provided in this file columns are already present in
+      the Seurat object metadata, they will be overwritten.
+      When combined with --barcodes parameter, first the
+      metadata will be extended, then barcode filtering will
+      be applied.
+      Default: no extra metadata is added
+
   barcodes_data:
     type: File?
-    label: "Optional headerless TSV/CSV file with the list of barcodes to select cells of interest (one barcode per line)"
+    label: "Optional TSV/CSV file to prefilter and extend metadata be barcodes. First column should be named as 'barcode'"
     doc: |
-      Path to the headerless TSV/CSV file with the list of barcodes to select
-      cells of interest (one barcode per line). Prefilters loaded Seurat object
-      to include only specific set of cells.
-      Default: use all cells.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata be selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present.
+      Default: all cells used, no extra metadata is added
 
   dimensions:
     type: int?
     label: "Dimensionality to use for datasets integration and UMAP projection (from 2 to 50)"
     default: 40
     doc: |
-      Dimensionality to use for datasets integration and UMAP projection (from 2 to 50).
-      If single value N is provided, use from 2 to N LSI components. If multiple values are
-      provided, subset to only selected LSI components.
+      Dimensionality to use for datasets integration and
+      UMAP projection (from 2 to 50). If single value N is
+      provided, use from 2 to N LSI components. If multiple
+      values are provided, subset to only selected LSI
+      components. In combination with --ntgr set to harmony,
+      selected principle components will be used in Harmony
+      integration.
       Default: from 2 to 10
+
+  normalization_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "log-tfidf"
+      - "tf-logidf"
+      - "logtf-logidf"
+      - "idf"
+    label: "TF-IDF normalization method applied to chromatin accessibility counts"
+    default: "log-tfidf"
+    doc: |
+      TF-IDF normalization method applied to chromatin
+      accessibility counts. log-tfidf - Stuart & Butler et
+      al. 2019, tf-logidf - Cusanovich & Hill et al. 2018,
+      logtf-logidf - Andrew Hill, idf - 10x Genomics,
+      Default: log-tfidf
+    'sd:layout':
+      advanced: true
+
+  integration_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "signac"
+      - "harmony"
+      - "none"
+    label: "Integration method used for joint analysis of multiple datasets"
+    default: "signac"
+    doc: |
+      Integration method used for joint analysis of multiple
+      datasets. Automatically set to 'none' if loaded Suerat
+      object includes only one dataset. Default: signac
+    'sd:layout':
+      advanced: true
+
+  integrate_by:
+    type: string?
+    label: "Variable(s) to be integrated out when running multiple integration with Harmony"
+    default: "new.ident"
+    doc: |
+      Column(s) from the Seurat object metadata to define
+      the variable(s) that should be integrated out when
+      running multiple datasets integration with harmony.
+      May include columns from the extra metadata added with
+      --metadata parameter. Ignored if --ntgr is not set to
+      harmony.
+      Default: new.ident
+    'sd:layout':
+      advanced: true
 
   minimum_var_peaks_perc:
     type: int?
@@ -130,6 +212,28 @@ inputs:
     doc: |
       UMAP implementation to run. If set to 'umap-learn' use --umetric 'correlation'
       Default: uwot
+    'sd:layout':
+      advanced: true
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    default: "classic"
+    label: "Color theme for all generated plots"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
     'sd:layout':
       advanced: true
 
@@ -271,8 +375,12 @@ steps:
     in:
       query_data_rds: query_data_rds
       barcodes_data: barcodes_data
-      integration_method:
-        default: "signac"
+      datasets_metadata: datasets_metadata
+      normalization_method: normalization_method
+      integration_method: integration_method
+      integrate_by:
+        source: integrate_by
+        valueFrom: $(split_features(self))
       minimum_var_peaks_perc: minimum_var_peaks_perc
       dimensions: dimensions
       umap_spread: umap_spread
@@ -284,6 +392,7 @@ steps:
         default: true
       export_ucsc_cb:
         default: false
+      color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))

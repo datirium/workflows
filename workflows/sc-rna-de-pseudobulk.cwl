@@ -153,6 +153,28 @@ inputs:
     'sd:layout':
       advanced: true
 
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    default: "classic"
+    label: "Color theme for all generated plots"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
+    'sd:layout':
+      advanced: true
+
   parallel_memory_limit:
     type:
     - "null"
@@ -429,6 +451,7 @@ steps:
         default: 10
       verbose:
         default: true
+      color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))

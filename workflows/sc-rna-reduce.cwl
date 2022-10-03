@@ -57,12 +57,15 @@ inputs:
 
   barcodes_data:
     type: File?
-    label: "Optional headerless TSV/CSV file with the list of barcodes to select cells of interest (one barcode per line)"
+    label: "Optional TSV/CSV file to prefilter and extend metadata be barcodes. First column should be named as 'barcode'"
     doc: |
-      Path to the headerless TSV/CSV file with the list of barcodes to select
-      cells of interest (one barcode per line). Prefilters loaded Seurat object
-      to include only specific set of cells.
-      Default: use all cells.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata be selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present.
+      Default: all cells used, no extra metadata is added
 
   cell_cycle_data:
     type: File?
@@ -241,6 +244,28 @@ inputs:
     doc: |
       UMAP implementation to run. If set to 'umap-learn' use --umetric 'correlation'
       Default: uwot
+    'sd:layout':
+      advanced: true
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    default: "classic"
+    label: "Color theme for all generated plots"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
     'sd:layout':
       advanced: true
 
@@ -515,6 +540,7 @@ steps:
         default: false
       low_memory:
         default: true
+      color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))

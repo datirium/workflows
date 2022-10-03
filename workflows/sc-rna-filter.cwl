@@ -53,19 +53,23 @@ inputs:
     type: File?
     label: "Optional TSV/CSV file to define datasets grouping with 'library_id' and 'condition' columns. Rows order should correspond to the aggregation metadata."
     doc: |
-      Path to the TSV/CSV file to define datasets grouping. First column - 'library_id'
-      with the values and order that correspond to the 'library_id' column from the
-      '--identity' file, second column 'condition'.
+      Path to the TSV/CSV file to define datasets grouping.
+      First column - 'library_id' with the values and order
+      that correspond to the 'library_id' column from the '
+      --identity' file, second column 'condition'.
       Default: each dataset is assigned to its own group.
 
   barcodes_data:
     type: File?
-    label: "Optional headerless TSV/CSV file with the list of barcodes to select cells of interest (one barcode per line)"
+    label: "Optional TSV/CSV file to prefilter and extend metadata be barcodes. First column should be named as 'barcode'"
     doc: |
-      Path to the headerless TSV/CSV file with the list of barcodes to select
-      cells of interest (one barcode per line). Prefilters input feature-barcode
-      matrix to include only selected cells.
-      Default: use all cells.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata be selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present.
+      Default: all cells used, no extra metadata is added
 
   minimum_genes:
     type: string?
@@ -134,6 +138,28 @@ inputs:
       Include cells with the percentage of transcripts mapped to mitochondrial
       genes not bigger than this value.
       Default: 5 (applied to all datasets)
+    'sd:layout':
+      advanced: true
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    default: "classic"
+    label: "Color theme for all generated plots"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
     'sd:layout':
       advanced: true
 
@@ -557,6 +583,7 @@ steps:
       maximum_mito_perc: maximum_mito_perc
       verbose:
         default: true
+      color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))

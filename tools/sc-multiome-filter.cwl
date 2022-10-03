@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.10
+  dockerPull: biowardrobe2/sc-tools:v0.0.12
 
 
 inputs:
@@ -60,9 +60,10 @@ inputs:
     inputBinding:
       prefix: "--grouping"
     doc: |
-      Path to the TSV/CSV file to define datasets grouping. First column - 'library_id'
-      with the values and order that correspond to the 'library_id' column from the
-      '--identity' file, second column 'condition'.
+      Path to the TSV/CSV file to define datasets grouping.
+      First column - 'library_id' with the values and order
+      that correspond to the 'library_id' column from the '
+      --identity' file, second column 'condition'.
       Default: each dataset is assigned to its own group.
 
   blacklist_regions_file:
@@ -77,10 +78,13 @@ inputs:
     inputBinding:
       prefix: "--barcodes"
     doc: |
-      Path to the headerless TSV/CSV file with the list of barcodes to select
-      cells of interest (one barcode per line). Prefilters input feature-barcode
-      matrix to include only selected cells.
-      Default: use all cells.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata be selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present.
+      Default: all cells used, no extra metadata is added
 
   rna_minimum_cells:
     type: int?
@@ -232,94 +236,27 @@ inputs:
     inputBinding:
       prefix: "--maxblacklist"
     doc: |
-      Include cells with the fraction of fragments in genomic blacklist regions
-      not bigger than this value. If multiple values provided, each of them
-      will be applied to the correspondent dataset from the '--mex' input based
-      on the '--identity' file.
+      Include cells with the fraction of fragments in
+      genomic blacklist regions not bigger than this value.
+      If multiple values provided, each of them will be
+      applied to the correspondent dataset from the '--mex'
+      input based on the '--identity' file.
       Default: 0.05 (applied to all datasets)
 
-  call_peaks:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "identity"
-      - "cluster"
+  call_by:
+    type: string?
     inputBinding:
-      prefix: "--callpeaks"
+      prefix: "--callby"
     doc: |
-      Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
-      Peaks are called per identity or per RNA cluster after applying all RNA related
-      thresholds, maximum nucleosome signal, and minimum TSS enrichment scores filters.
-      If set to 'cluster' RNA clusters are identified based on the parameters set with
-      '--resolution', '--dimensions', '--highvargenes', '--norm', and '--ntgr'.
+      Replace Cell Ranger ARC peaks with MACS2 peaks called
+      for cells grouped by the column from the optionally
+      provided --barcodes file. If --barcodes file was not
+      provided MACS2 peaks can be still called per dataset
+      by setting --callby to new.ident. Peaks are called
+      only after applying all RNA related thresholds,
+      maximum nucleosome signal, and minimum TSS enrichment
+      scores filters.
       Default: do not call peaks
-
-  normalization_method:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "sct"
-      - "log"
-      - "sctglm"
-    inputBinding:
-      prefix: "--norm"
-    doc: |
-      Normalization method applied to genes expression counts when identifying RNA based
-      clusters before calling custom MACS2 peaks. Ignored if '--callpeaks' is not set to
-      'cluster'.
-      Default: sct
-
-  highly_var_genes_count:
-    type: int?
-    inputBinding:
-      prefix: "--highvargenes"
-    doc: |
-      Number of highly variable genes used in RNA datasets integration, scaling and
-      dimensionality reduction when identifying RNA based clusters for calling
-      custom MACS2 peaks. Ignored if '--callpeaks' is not set to 'cluster'.
-      Default: 3000
-
-  integration_method:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "seurat"
-      - "none"
-    inputBinding:
-      prefix: "--ntgr"
-    doc: |
-      RNA datasets integration method used for identifying RNA based clusters
-      before calling custom MACS2 peaks. Automatically set to 'none' if '--mex' points
-      to the Cell Ranger ARC Count outputs (single, not aggregated dataset that
-      doesn't require any integration). Ignored if '--callpeaks' is not set to
-      'cluster'.
-      Default: seurat
-
-  dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
-    inputBinding:
-      prefix: "--dimensions"
-    doc: |
-      Dimensionality to use in projection and clustering for RNA assay when identifying
-      RNA based clusters for calling custom MACS2 peaks (from 1 to 50). If single
-      number N is provided, use from 1 to N PCs. If multiple numbers are provided,
-      subset to only selected PCs. Ignored if '--callpeaks' is not set to 'cluster'.
-      Default: from 1 to 10
-
-  resolution:
-    type: float?
-    inputBinding:
-      prefix: "--resolution"
-    doc: |
-      Resolution to be used when identifying RNA based clusters for calling
-      custom MACS2 peaks. Ignored if '--callpeaks' is not set to 'cluster'.
-      Default: 0.3
 
   export_pdf_plots:
     type: boolean?
@@ -328,6 +265,26 @@ inputs:
     doc: |
       Export plots in PDF.
       Default: false
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    inputBinding:
+      prefix: "--theme"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
 
   verbose:
     type: boolean?
@@ -351,17 +308,6 @@ inputs:
       prefix: "--h5ad"
     doc: |
       Save Seurat data to h5ad file.
-      Default: false
-
-  low_memory:
-    type: boolean?
-    inputBinding:
-      prefix: "--lowmem"
-    doc: |
-      Attempts to minimize RAM usage when integrating multiple datasets
-      with SCTransform algorithm (slows down the computation).
-      Ignored if '--callpeaks' is not set to 'cluster', if '--ntgr' is not set
-      to 'seurat', if '--norm' is not set to either 'sct' or 'sctglm'.
       Default: false
 
   output_prefix:
@@ -589,6 +535,22 @@ outputs:
       glob: "*_raw_rna_atac_umi_corr.pdf"
     doc: |
       UMI per cell correlation for RNA vs ATAC assays (not filtered).
+      PDF format
+
+  raw_tss_atac_umi_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_tss_atac_umi_corr.png"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (not filtered).
+      PNG format
+
+  raw_tss_atac_umi_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_tss_atac_umi_corr.pdf"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (not filtered).
       PDF format
 
   raw_qc_mtrcs_dnst_plot_png:
@@ -947,6 +909,22 @@ outputs:
       UMI per cell correlation for RNA vs ATAC assays (intermediate filtered).
       PDF format
 
+  mid_fltr_tss_atac_umi_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_tss_atac_umi_corr.png"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (intermediate filtered).
+      PNG format
+
+  mid_fltr_tss_atac_umi_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_tss_atac_umi_corr.pdf"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (intermediate filtered).
+      PDF format
+
   mid_fltr_qc_mtrcs_dnst_plot_png:
     type: File?
     outputBinding:
@@ -1109,70 +1087,6 @@ outputs:
     doc: |
       Split by grouping condition the fraction of ATAC fragments within genomic
       blacklist regions per cell density (intermediate filtered).
-      PDF format
-
-  mid_fltr_elbow_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_elbow.png"
-    doc: |
-      Elbow plot (from cells PCA) for RNA assay (intermediate filtered).
-      PNG format
-
-  mid_fltr_elbow_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_elbow.pdf"
-    doc: |
-      Elbow plot (from cells PCA) for RNA assay (intermediate filtered).
-      PDF format
-
-  mid_fltr_qc_dim_corr_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_qc_dim_corr.png"
-    doc: |
-      Correlation plots between QC metrics and cells PCA components for RNA assay (intermediate filtered).
-      PNG format
-
-  mid_fltr_qc_dim_corr_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_qc_dim_corr.pdf"
-    doc: |
-      Correlation plots between QC metrics and cells PCA components for RNA assay (intermediate filtered).
-      PDF format
-
-  mid_fltr_umap_res_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_umap_res_*.png"
-    doc: |
-      Clustered cells UMAP for RNA assay (intermediate filtered).
-      PNG format
-
-  mid_fltr_umap_res_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_umap_res_*.pdf"
-    doc: |
-      Clustered cells UMAP for RNA assay (intermediate filtered).
-      PDF format
-
-  mid_fltr_umap_qc_mtrcs_res_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_umap_qc_mtrcs_res_*.png"
-    doc: |
-      QC metrics on cells UMAP for RNA assay (intermediate filtered).
-      PNG format
-
-  mid_fltr_umap_qc_mtrcs_res_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_mid_fltr_umap_qc_mtrcs_res_*.pdf"
-    doc: |
-      QC metrics on cells UMAP for RNA assay (intermediate filtered).
       PDF format
 
   fltr_1_2_qc_mtrcs_pca_plot_png:
@@ -1365,6 +1279,22 @@ outputs:
       glob: "*[!_mid]_fltr_rna_atac_umi_corr.pdf"
     doc: |
       UMI per cell correlation for RNA vs ATAC assays (filtered).
+      PDF format
+
+  fltr_tss_atac_umi_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_tss_atac_umi_corr.png"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (filtered).
+      PNG format
+
+  fltr_tss_atac_umi_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_tss_atac_umi_corr.pdf"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (filtered).
       PDF format
 
   fltr_qc_mtrcs_dnst_plot_png:
@@ -1624,30 +1554,34 @@ s:creator:
 
 doc: |
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
-  ======================================================================================
+
   Filters single-cell multiome ATAC and RNA-Seq datasets based on the common QC metrics.
 
 
 s:about: |
-  usage: sc_multiome_filter.R
-        [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
-        ANNOTATIONS [--grouping GROUPING] [--blacklist BLACKLIST]
-        [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
-        [--mingenes [MINGENES [MINGENES ...]]]
-        [--maxgenes [MAXGENES [MAXGENES ...]]]
-        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]] [--mitopattern MITOPATTERN]
-        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-        [--atacmincells ATACMINCELLS]
-        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-        [--minfrip [MINFRIP [MINFRIP ...]]]
-        [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
-        [--callpeaks {identity,cluster}] [--norm {sct,log,sctglm}]
-        [--highvargenes HIGHVARGENES] [--ntgr {seurat,none}]
-        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--resolution RESOLUTION]
-        [--pdf] [--verbose] [--h5seurat] [--lowmem] [--output OUTPUT]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
+                                            --fragments FRAGMENTS --annotations
+                                            ANNOTATIONS [--grouping GROUPING]
+                                            [--blacklist BLACKLIST]
+                                            [--barcodes BARCODES]
+                                            [--rnamincells RNAMINCELLS]
+                                            [--mingenes [MINGENES [MINGENES ...]]]
+                                            [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                            [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
+                                            [--mitopattern MITOPATTERN]
+                                            [--maxmt MAXMT]
+                                            [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                            [--atacmincells ATACMINCELLS]
+                                            [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+                                            [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+                                            [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+                                            [--minfrip [MINFRIP [MINFRIP ...]]]
+                                            [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
+                                            [--callby CALLBY] [--pdf]
+                                            [--verbose] [--h5seurat] [--h5ad]
+                                            [--output OUTPUT]
+                                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                            [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
@@ -1672,17 +1606,20 @@ s:about: |
     --annotations ANNOTATIONS
                           Path to the genome annotation file in GTF format
     --grouping GROUPING   Path to the TSV/CSV file to define datasets grouping.
-                          First column - 'library_id' with the values provided
-                          in the same order as in the correspondent column from
-                          the '--identity' file, second column 'condition'.
-                          Default: each dataset is assigned to its own group.
+                          First column - 'library_id' with the values and order
+                          that correspond to the 'library_id' column from the '
+                          --identity' file, second column 'condition'. Default:
+                          each dataset is assigned to its own group.
     --blacklist BLACKLIST
                           Path to the optional BED file with the genomic
                           blacklist regions.
-    --barcodes BARCODES   Path to the headerless TSV/CSV file with the list of
-                          barcodes to select cells of interest (one barcode per
-                          line). Prefilters input feature-barcode matrix to
-                          include only selected cells. Default: use all cells.
+    --barcodes BARCODES   Path to the TSV/CSV file to optionally prefilter and
+                          extend Seurat object metadata be selected barcodes.
+                          First column should be named as 'barcode'. If file
+                          includes any other columns they will be added to the
+                          Seurat object metadata ovewriting the existing ones if
+                          those are present. Default: all cells used, no extra
+                          metadata is added
     --rnamincells RNAMINCELLS
                           Include only genes detected in at least this many
                           cells. Default: 5 (applied to all datasets)
@@ -1752,62 +1689,27 @@ s:about: |
                           calculated for fragments. Default: 0.15 (applied to
                           all datasets)
     --maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]
-                          Include cells with the ratio of fragments in genomic
-                          blacklist regions not bigger than this value. If
-                          multiple values provided, each of them will be applied
-                          to the correspondent dataset from the '--mex' input
-                          based on the '--identity' file. Default: 0.05 (applied
-                          to all datasets)
-    --callpeaks {identity,cluster}
-                          Call peaks with MACS2 instead of those that are
-                          provided by Cell Ranger ARC Count. Peaks are called
-                          per identity or per RNA cluster after applying all RNA
-                          related thresholds, maximum nucleosome signal, and
-                          minimum TSS enrichment scores filters. If set to
-                          'cluster' RNA clusters are identified based on the
-                          parameters set with '--resolution', '--dimensions', '
-                          --highvargenes', '--norm', and '--ntgr'. Default: do
-                          not call peaks
-    --norm {sct,log,sctglm}
-                          Normalization method applied to genes expression
-                          counts when identifying RNA based clusters before
-                          calling custom MACS2 peaks. Ignored if '--callpeaks'
-                          is not set to 'cluster'. Default: sct
-    --highvargenes HIGHVARGENES
-                          Number of highly variable genes used in RNA datasets
-                          integration, scaling and dimensionality reduction when
-                          identifying RNA based clusters for calling custom
-                          MACS2 peaks. Ignored if '--callpeaks' is not set to
-                          'cluster'. Default: 3000
-    --ntgr {seurat,none}  RNA datasets integration method used for identifying
-                          RNA based clusters before calling custom MACS2 peaks.
-                          Automatically set to 'none' if '--mex' points to the
-                          Cell Ranger ARC Count outputs (single, not aggregated
-                          dataset that doesn't require any integration). Ignored
-                          if '--callpeaks' is not set to 'cluster'. Default:
-                          seurat
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
-                          Dimensionality to use in projection and clustering for
-                          RNA assay when identifying RNA based clusters for
-                          calling custom MACS2 peaks (from 1 to 50). If single
-                          number N is provided, use from 1 to N PCs. If multiple
-                          numbers are provided, subset to only selected PCs.
-                          Ignored if '--callpeaks' is not set to 'cluster'.
-                          Default: from 1 to 10
-    --resolution RESOLUTION
-                          Resolution to be used when identifying RNA based
-                          clusters for calling custom MACS2 peaks. Ignored if '
-                          --callpeaks' is not set to 'cluster'. Default: 0.3
+                          Include cells with the fraction of fragments in
+                          genomic blacklist regions not bigger than this value.
+                          If multiple values provided, each of them will be
+                          applied to the correspondent dataset from the '--mex'
+                          input based on the '--identity' file. Default: 0.05
+                          (applied to all datasets)
+    --callby CALLBY       Replace Cell Ranger ARC peaks with MACS2 peaks called
+                          for cells grouped by the column from the optionally
+                          provided --barcodes file. If --barcodes file was not
+                          provided MACS2 peaks can be still called per dataset
+                          by setting --callby to new.ident. Peaks are called
+                          only after applying all RNA related thresholds,
+                          maximum nucleosome signal, and minimum TSS enrichment
+                          scores filters. Default: do not call peaks
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --lowmem              Attempts to minimize RAM usage when integrating
-                          multiple datasets with SCTransform algorithm (slows
-                          down the computation). Ignored if '--callpeaks' is not
-                          set to 'cluster', if '--ntgr' is not set to 'seurat',
-                          if '--norm' is not set to either 'sct' or 'sctglm'.
-                          Default: false
+    --h5ad                Save Seurat data to h5ad file. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
+    --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
+                          Color theme for all generated plots. Default: classic
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple '--cpus'. Default: 32

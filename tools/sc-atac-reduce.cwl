@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.10
+  dockerPull: biowardrobe2/sc-tools:v0.0.12
 
 
 inputs:
@@ -24,15 +24,53 @@ inputs:
       Path to the RDS file to load Seurat object from. This file should include
       chromatin accessibility information stored in the ATAC assay.
 
+  datasets_metadata:
+    type: File?
+    inputBinding:
+      prefix: "--metadata"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat
+      object metadata with categorical values using samples
+      identities. First column - 'library_id' should
+      correspond to all unique values from the 'new.ident'
+      column of the loaded Seurat object. If any of the
+      provided in this file columns are already present in
+      the Seurat object metadata, they will be overwritten.
+      When combined with --barcodes parameter, first the
+      metadata will be extended, then barcode filtering will
+      be applied.
+      Default: no extra metadata is added
+
   barcodes_data:
     type: File?
     inputBinding:
       prefix: "--barcodes"
     doc: |
-      Path to the headerless TSV/CSV file with the list of barcodes to select
-      cells of interest (one barcode per line). Prefilters loaded Seurat object
-      to include only specific set of cells.
-      Default: use all cells.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata be selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present.
+      Default: all cells used, no extra metadata is added
+
+  normalization_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "log-tfidf"
+      - "tf-logidf"
+      - "logtf-logidf"
+      - "idf"
+    inputBinding:
+      prefix: "--norm"
+    doc: |
+      TF-IDF normalization method applied to chromatin
+      accessibility counts. log-tfidf - Stuart & Butler et
+      al. 2019, tf-logidf - Cusanovich & Hill et al. 2018,
+      logtf-logidf - Andrew Hill, idf - 10x Genomics,
+      Default: log-tfidf
 
   integration_method:
     type:
@@ -40,13 +78,30 @@ inputs:
     - type: enum
       symbols:
       - "signac"
+      - "harmony"
       - "none"
     inputBinding:
       prefix: "--ntgr"
     doc: |
-      Integration method used for joint analysis of multiple datasets. Automatically
-      set to 'none' if loaded Suerat object includes only one dataset.
-      Default: signac
+      Integration method used for joint analysis of multiple
+      datasets. Automatically set to 'none' if loaded Suerat
+      object includes only one dataset. Default: signac
+
+  integrate_by:
+    type:
+    - "null"
+    - string
+    - string[]
+    inputBinding:
+      prefix: "--ntgrby"
+    doc: |
+      Column(s) from the Seurat object metadata to define
+      the variable(s) that should be integrated out when
+      running multiple datasets integration with harmony.
+      May include columns from the extra metadata added with
+      --metadata parameter. Ignored if --ntgr is not set to
+      harmony.
+      Default: new.ident
 
   minimum_var_peaks_perc:
     type: int?
@@ -67,9 +122,13 @@ inputs:
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use for datasets integration and UMAP projection (from 2 to 50).
-      If single value N is provided, use from 2 to N LSI components. If multiple values are
-      provided, subset to only selected LSI components.
+      Dimensionality to use for datasets integration and
+      UMAP projection (from 2 to 50). If single value N is
+      provided, use from 2 to N LSI components. If multiple
+      values are provided, subset to only selected LSI
+      components. In combination with --ntgr set to harmony,
+      selected principle components will be used in Harmony
+      integration.
       Default: from 2 to 10
 
   umap_spread:
@@ -157,6 +216,26 @@ inputs:
     doc: |
       Export plots in PDF.
       Default: false
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    inputBinding:
+      prefix: "--theme"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
 
   verbose:
     type: boolean?
@@ -407,19 +486,28 @@ s:creator:
 
 doc: |
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
-  ====================================================================================
+
   Integrates multiple single-cell ATAC-Seq datasets, reduces dimensionality using LSI.
 
 
 s:about: |
-  usage: sc_atac_reduce.R
-        [-h] --query QUERY [--barcodes BARCODES] [--ntgr {signac,none}]
-        [--minvarpeaks MINVARPEAKS] [--dimensions [DIMENSIONS ...]]
-        [--uspread USPREAD] [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
-        [--h5seurat] [--cbbuild] [--output OUTPUT] [--cpus CPUS]
-        [--memory MEMORY]
+  usage: sc_atac_reduce.R [-h] --query QUERY
+                                        [--metadata METADATA]
+                                        [--barcodes BARCODES]
+                                        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
+                                        [--ntgr {signac,harmony,none}]
+                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
+                                        [--minvarpeaks MINVARPEAKS]
+                                        [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
+                                        [--uspread USPREAD]
+                                        [--umindist UMINDIST]
+                                        [--uneighbors UNEIGHBORS]
+                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                        [--umethod {uwot,uwot-learn,umap-learn}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
@@ -428,13 +516,40 @@ s:about: |
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include chromatin accessibility
                           information stored in the ATAC assay.
-    --barcodes BARCODES   Path to the headerless TSV/CSV file with the list of
-                          barcodes to select cells of interest (one barcode per
-                          line). Prefilters loaded Seurat object to include only
-                          specific set of cells. Default: use all cells.
-    --ntgr {signac,none}  Integration method used for joint analysis of multiple
+    --metadata METADATA   Path to the TSV/CSV file to optionally extend Seurat
+                          object metadata with categorical values using samples
+                          identities. First column - 'library_id' should
+                          correspond to all unique values from the 'new.ident'
+                          column of the loaded Seurat object. If any of the
+                          provided in this file columns are already present in
+                          the Seurat object metadata, they will be overwritten.
+                          When combined with --barcodes parameter, first the
+                          metadata will be extended, then barcode filtering will
+                          be applied. Default: no extra metadata is added
+    --barcodes BARCODES   Path to the TSV/CSV file to optionally prefilter and
+                          extend Seurat object metadata be selected barcodes.
+                          First column should be named as 'barcode'. If file
+                          includes any other columns they will be added to the
+                          Seurat object metadata ovewriting the existing ones if
+                          those are present. Default: all cells used, no extra
+                          metadata is added
+    --norm {log-tfidf,tf-logidf,logtf-logidf,idf}
+                          TF-IDF normalization method applied to chromatin
+                          accessibility counts. log-tfidf - Stuart & Butler et
+                          al. 2019, tf-logidf - Cusanovich & Hill et al. 2018,
+                          logtf-logidf - Andrew Hill, idf - 10x Genomics,
+                          Default: log-tfidf
+    --ntgr {signac,harmony,none}
+                          Integration method used for joint analysis of multiple
                           datasets. Automatically set to 'none' if loaded Suerat
                           object includes only one dataset. Default: signac
+    --ntgrby [NTGRBY [NTGRBY ...]]
+                          Column(s) from the Seurat object metadata to define
+                          the variable(s) that should be integrated out when
+                          running multiple datasets integration with harmony.
+                          May include columns from the extra metadata added with
+                          --metadata parameter. Ignored if --ntgr is not set to
+                          harmony. Default: new.ident
     --minvarpeaks MINVARPEAKS
                           Minimum percentile for identifying the top most common
                           peaks as highly variable. For example, setting to 5
@@ -442,12 +557,14 @@ s:about: |
                           cells peaks as highly variable. These peaks are used
                           for datasets integration, scaling and dimensionality
                           reduction. Default: 0 (use all available peaks)
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use for datasets integration and
                           UMAP projection (from 2 to 50). If single value N is
                           provided, use from 2 to N LSI components. If multiple
                           values are provided, subset to only selected LSI
-                          components. Default: from 2 to 10
+                          components. In combination with --ntgr set to harmony,
+                          selected principle components will be used in Harmony
+                          integration. Default: from 2 to 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -472,8 +589,11 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
+    --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
+    --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
+                          Color theme for all generated plots. Default: classic
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32

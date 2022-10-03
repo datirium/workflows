@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.10
+  dockerPull: biowardrobe2/sc-tools:v0.0.12
 
 
 inputs:
@@ -33,9 +33,11 @@ inputs:
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use when constructing nearest-neighbor graph before clustering
-      (from 1 to 50). If single value N is provided, use from 1 to N dimensions. If
-      multiple values are provided, subset to only selected dimensions.
+      Dimensionality to use when constructing nearest-
+      neighbor graph before clustering (from 1 to 50). If
+      single value N is provided, use from 1 to N
+      dimensions. If multiple values are provided, subset to
+      only selected dimensions.
       Default: from 1 to 10
 
   cluster_metric:
@@ -143,6 +145,26 @@ inputs:
     doc: |
       Export plots in PDF.
       Default: false
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    inputBinding:
+      prefix: "--theme"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
 
   verbose:
     type: boolean?
@@ -651,19 +673,23 @@ s:creator:
 
 doc: |
   Single-cell RNA-Seq Cluster Analysis
-  ===============================================================
+
   Clusters single-cell RNA-Seq datasets, identifies gene markers.
 
 
 s:about: |
-  usage: sc_rna_cluster.R
-        [-h] --query QUERY [--dimensions [DIMENSIONS ...]]
-        [--ametric {euclidean,cosine,manhattan,hamming}]
-        [--resolution [RESOLUTION ...]] [--genes [GENES ...]] [--diffgenes]
-        [--logfc LOGFC] [--minpct MINPCT] [--onlypos]
-        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--pdf] [--verbose] [--h5seurat] [--cbbuild] [--output OUTPUT]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_cluster.R [-h] --query QUERY
+                                        [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
+                                        [--ametric {euclidean,cosine,manhattan,hamming}]
+                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                        [--genes [GENES [GENES ...]]]
+                                        [--diffgenes] [--logfc LOGFC]
+                                        [--minpct MINPCT] [--onlypos]
+                                        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Cluster Analysis
 
@@ -674,7 +700,7 @@ s:about: |
                           stored in the RNA assay, as well as 'pca' and
                           'rnaumap' dimensionality reductions applied to that
                           assay.
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when constructing nearest-
                           neighbor graph before clustering (from 1 to 50). If
                           single value N is provided, use from 1 to N
@@ -683,11 +709,12 @@ s:about: |
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used when constructing nearest-
                           neighbor graph before clustering. Default: euclidean
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution applied to the constructed
                           nearest-neighbor graph. Can be set as an array.
                           Default: 0.3, 0.5, 1.0
-    --genes [GENES ...]   Genes of interest to build genes expression plots.
+    --genes [GENES [GENES ...]]
+                          Genes of interest to build genes expression plots.
                           Default: None
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) between each pair of clusters for all
@@ -712,8 +739,11 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
+    --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
+    --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
+                          Color theme for all generated plots. Default: classic
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32

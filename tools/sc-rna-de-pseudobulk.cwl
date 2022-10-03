@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.10
+  dockerPull: biowardrobe2/sc-tools:v0.0.12
 
 
 inputs:
@@ -155,6 +155,26 @@ inputs:
     doc: |
       Export plots in PDF.
       Default: false
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    inputBinding:
+      prefix: "--theme"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
 
   verbose:
     type: boolean?
@@ -525,12 +545,19 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_de_pseudobulk.R
-        [-h] --query QUERY [--metadata METADATA] --splitby SPLITBY --first
-        FIRST --second SECOND [--batchby BATCHBY] [--groupby GROUPBY]
-        [--subset [SUBSET ...]] [--lrt] [--alpha ALPHA] [--genes [GENES ...]]
-        [--exclude EXCLUDE] [--topgenes TOPGENES] [--pdf] [--verbose]
-        [--output OUTPUT] [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_de_pseudobulk.R [-h] --query QUERY
+                                              [--metadata METADATA] --splitby
+                                              SPLITBY --first FIRST --second
+                                              SECOND [--batchby BATCHBY]
+                                              [--groupby GROUPBY]
+                                              [--subset [SUBSET [SUBSET ...]]]
+                                              [--lrt] [--alpha ALPHA]
+                                              [--genes [GENES [GENES ...]]]
+                                              [--exclude EXCLUDE]
+                                              [--topgenes TOPGENES] [--pdf]
+                                              [--verbose] [--output OUTPUT]
+                                              [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                              [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Pseudobulk Differential Expression Analysis
 
@@ -570,7 +597,7 @@ s:about: |
                           added with --metadata parameter. Ignored if --subset
                           is not provided. Default: do not subset, run
                           pseudobulk DE analysis for all cells jointly
-    --subset [SUBSET ...]
+    --subset [SUBSET [SUBSET ...]]
                           Value(s) from the column set with --groupby parameter
                           to subset cells before running pseudobulk DE analysis.
                           If multiple values are provided run analysis jointly
@@ -587,7 +614,8 @@ s:about: |
                           threshold will be set to NA and removed from the
                           outputs. The same threshold will be used for
                           identifying --topgenes the most DE genes. Default: 0.1
-    --genes [GENES ...]   Genes of interest to label on the generated plots.
+    --genes [GENES [GENES ...]]
+                          Genes of interest to label on the generated plots.
                           Default: --topgenes N genes with the highest and the
                           lowest log2 fold change expression values.
     --exclude EXCLUDE     Regex pattern to identify and exclude non-coding RNA
@@ -601,6 +629,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
+    --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
+                          Color theme for all generated plots. Default: classic
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32

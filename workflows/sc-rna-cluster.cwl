@@ -51,9 +51,11 @@ inputs:
     default: 40
     label: "Dimensionality to use when constructing nearest-neighbor graph before clustering (from 1 to 50)"
     doc: |
-      Dimensionality to use when constructing nearest-neighbor graph before clustering
-      (from 1 to 50). If single value N is provided, use from 1 to N dimensions. If
-      multiple values are provided, subset to only selected dimensions.
+      Dimensionality to use when constructing nearest-
+      neighbor graph before clustering (from 1 to 50). If
+      single value N is provided, use from 1 to N
+      dimensions. If multiple values are provided, subset to
+      only selected dimensions.
       Default: from 1 to 10
 
   resolution:
@@ -106,6 +108,28 @@ inputs:
       are detected in not lower than this fraction of cells in either of the
       two tested clusters. Ignored if '--diffgenes' is not set.
       Default: 0.1
+    'sd:layout':
+      advanced: true
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    default: "classic"
+    label: "Color theme for all generated plots"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
     'sd:layout':
       advanced: true
 
@@ -467,6 +491,7 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))

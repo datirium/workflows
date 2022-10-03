@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.10
+  dockerPull: biowardrobe2/sc-tools:v0.0.12
 
 
 inputs:
@@ -126,6 +126,26 @@ inputs:
     doc: |
       Export plots in PDF.
       Default: false
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    inputBinding:
+      prefix: "--theme"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
 
   verbose:
     type: boolean?
@@ -512,13 +532,18 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_da_cells.R
-        [-h] --query QUERY [--reduction REDUCTION]
-        [--dimensions [DIMENSIONS ...]] [--knn [KNN ...]] [--metadata METADATA]
-        --splitby SPLITBY --first FIRST --second SECOND
-        [--resolution [RESOLUTION ...]] [--ranges RANGES RANGES] [--pdf]
-        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_da_cells.R [-h] --query QUERY
+                                          [--reduction REDUCTION]
+                                          [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
+                                          [--knn [KNN [KNN ...]]]
+                                          [--metadata METADATA] --splitby
+                                          SPLITBY --first FIRST --second SECOND
+                                          [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                          [--ranges RANGES RANGES] [--pdf]
+                                          [--verbose] [--h5seurat] [--h5ad]
+                                          [--cbbuild] [--output OUTPUT]
+                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                          [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Differential Abundance Analysis
 
@@ -533,12 +558,13 @@ s:about: |
     --reduction REDUCTION
                           Dimensionality reduction to be used for DA analysis.
                           Default: pca
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when running DA analysis (from 1
                           to 50). If single value N is provided, use from 1 to N
                           PCs. If multiple values are provided, subset to only
                           selected PCs. Default: from 1 to 10
-    --knn [KNN ...]       Array of k values for kNN graph construction when
+    --knn [KNN [KNN ...]]
+                          Array of k values for kNN graph construction when
                           calculating the score vector for each cell to
                           represent the DA behavior in the neighborhood.
                           Default: calculated based on the cells number
@@ -560,7 +586,7 @@ s:about: |
     --second SECOND       Value from the Seurat object metadata column set with
                           --splitby to define the second group of cells for DA
                           analysis.
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution applied to DA cells to identify
                           DA cells populations. Can be set as an array. Default:
                           0.01, 0.03, 0.05
@@ -574,6 +600,8 @@ s:about: |
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
+    --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
+                          Color theme for all generated plots. Default: classic
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32

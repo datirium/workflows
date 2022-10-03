@@ -71,9 +71,10 @@ inputs:
     type: File?
     label: "Optional TSV/CSV file to define datasets grouping with 'library_id' and 'condition' columns. Rows order should correspond to the aggregation metadata."
     doc: |
-      Path to the TSV/CSV file to define datasets grouping. First column - 'library_id'
-      with the values and order that correspond to the 'library_id' column from the
-      '--identity' file, second column 'condition'.
+      Path to the TSV/CSV file to define datasets grouping.
+      First column - 'library_id' with the values and order
+      that correspond to the 'library_id' column from the '
+      --identity' file, second column 'condition'.
       Default: each dataset is assigned to its own group.
 
   blacklist_regions_file:
@@ -84,12 +85,15 @@ inputs:
 
   barcodes_data:
     type: File?
-    label: "Optional headerless TSV/CSV file with the list of barcodes to select cells of interest (one barcode per line)"
+    label: "Optional TSV/CSV file to prefilter and extend metadata be barcodes. First column should be named as 'barcode'"
     doc: |
-      Path to the headerless TSV/CSV file with the list of barcodes to select
-      cells of interest (one barcode per line). Prefilters input feature-barcode
-      matrix to include only selected cells.
-      Default: use all cells.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata be selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present.
+      Default: all cells used, no extra metadata is added
 
   minimum_genes:
     type: string?
@@ -218,25 +222,51 @@ inputs:
     default: "0.05"
     label: "Include cells with the fraction of fragments in genomic blacklist regions not bigger than this value"
     doc: |
-      Include cells with the fraction of fragments in genomic blacklist regions
-      not bigger than this value. If multiple values provided, each of them
-      will be applied to the correspondent dataset from the '--mex' input based
-      on the '--identity' file.
+      Include cells with the fraction of fragments in
+      genomic blacklist regions not bigger than this value.
+      If multiple values provided, each of them will be
+      applied to the correspondent dataset from the '--mex'
+      input based on the '--identity' file.
       Default: 0.05 (applied to all datasets)
     'sd:layout':
       advanced: true
 
-  call_peaks:
-    type: boolean?
-    default: false
-    label: "Replace Cell Ranger peaks with per sample MACS2 peaks"
+  call_by:
+    type: string?
+    default: null
+    label: "Replace Cell Ranger ARC peaks with MACS2 peaks called for cells grouped by selected column"
     doc: |
-      Call peaks with MACS2 instead of those that are provided by Cell Ranger ARC Count.
-      Peaks are called per identity (identity) or per GEX cluster (cluster) after applying
-      all GEX related thresholds, maximum nucleosome signal, and minimum TSS enrichment
-      score filters. If set to 'cluster' GEX clusters are identified based on the parameters
-      set with --resolution, --gexndim, --highvargex, --gexnorm, and --skipgexntrg.
+      Replace Cell Ranger ARC peaks with MACS2 peaks called
+      for cells grouped by the column from the optionally
+      provided --barcodes file. If --barcodes file was not
+      provided MACS2 peaks can be still called per dataset
+      by setting --callby to new.ident. Peaks are called
+      only after applying all RNA related thresholds,
+      maximum nucleosome signal, and minimum TSS enrichment
+      scores filters.
       Default: do not call peaks
+    'sd:layout':
+      advanced: true
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    default: "classic"
+    label: "Color theme for all generated plots"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
     'sd:layout':
       advanced: true
 
@@ -431,6 +461,18 @@ outputs:
         tab: 'Not filtered QC'
         Caption: 'UMI per cell correlation for RNA vs ATAC assays'
 
+  raw_tss_atac_umi_corr_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/raw_tss_atac_umi_corr_plot_png
+    label: "TSS enrichment score vs UMI per cell correlation for ATAC assay (not filtered)"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Not filtered QC'
+        Caption: 'TSS enrichment score vs UMI per cell correlation for ATAC assay'
+
   raw_qc_mtrcs_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_qc_mtrcs_dnst_plot_png
@@ -551,6 +593,284 @@ outputs:
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
+        Caption: 'Split by grouping condition the fraction of ATAC fragments within genomic blacklist regions per cell density'
+
+  mid_fltr_1_2_qc_mtrcs_pca_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_1_2_qc_mtrcs_pca_plot_png
+    label: "PC1 and PC2 from the QC metrics PCA (intermediate filtered)"
+    doc: |
+      PC1 and PC2 from the QC metrics PCA (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'PC1 and PC2 from the QC metrics PCA'
+
+  mid_fltr_2_3_qc_mtrcs_pca_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_2_3_qc_mtrcs_pca_plot_png
+    label: "PC2 and PC3 from the QC metrics PCA (intermediate filtered)"
+    doc: |
+      PC2 and PC3 from the QC metrics PCA (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'PC2 and PC3 from the QC metrics PCA'
+
+  mid_fltr_cells_count_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_cells_count_plot_png
+    label: "Number of cells per dataset (intermediate filtered)"
+    doc: |
+      Number of cells per dataset (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Number of cells per dataset'
+
+  mid_fltr_rna_umi_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_rna_umi_dnst_plot_png
+    label: "UMI per cell density for RNA assay (intermediate filtered)"
+    doc: |
+      UMI per cell density for RNA assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'UMI per cell density for RNA assay'
+
+  mid_fltr_gene_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_gene_dnst_plot_png
+    label: "Genes per cell density (intermediate filtered)"
+    doc: |
+      Genes per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Genes per cell density'
+
+  mid_fltr_gene_umi_corr_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_gene_umi_corr_plot_png
+    label: "Genes vs UMI per cell correlation for RNA assay (intermediate filtered)"
+    doc: |
+      Genes vs UMI per cell correlation for RNA assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Genes vs UMI per cell correlation for RNA assay'
+
+  mid_fltr_mito_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_mito_dnst_plot_png
+    label: "Percentage of transcripts mapped to mitochondrial genes per cell density (intermediate filtered)"
+    doc: |
+      Percentage of transcripts mapped to mitochondrial genes per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Percentage of transcripts mapped to mitochondrial genes per cell density'
+
+  mid_fltr_nvlt_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_nvlt_dnst_plot_png
+    label: "Novelty score per cell density for RNA assay (intermediate filtered)"
+    doc: |
+      Novelty score per cell density for RNA assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Novelty score per cell density for RNA assay'
+
+  mid_fltr_atac_umi_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_atac_umi_dnst_plot_png
+    label: "UMI per cell density for ATAC assay (intermediate filtered)"
+    doc: |
+      UMI per cell density for ATAC assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'UMI per cell density for ATAC assay'
+
+  mid_fltr_peak_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_peak_dnst_plot_png
+    label: "Peaks per cell density (intermediate filtered)"
+    doc: |
+      Peaks per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Peaks per cell density'
+
+  mid_fltr_blck_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_blck_dnst_plot_png
+    label: "Fraction of ATAC fragments within genomic blacklist regions per cell density (intermediate filtered)"
+    doc: |
+      Fraction of ATAC fragments within genomic blacklist regions per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Fraction of ATAC fragments within genomic blacklist regions per cell density'
+
+  mid_fltr_rna_atac_umi_corr_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_rna_atac_umi_corr_plot_png
+    label: "UMI per cell correlation for RNA vs ATAC assays (intermediate filtered)"
+    doc: |
+      UMI per cell correlation for RNA vs ATAC assays (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'UMI per cell correlation for RNA vs ATAC assays'
+
+  mid_fltr_tss_atac_umi_corr_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_tss_atac_umi_corr_plot_png
+    label: "TSS enrichment score vs UMI per cell correlation for ATAC assay (intermediate filtered)"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'TSS enrichment score vs UMI per cell correlation for ATAC assay'
+
+  mid_fltr_qc_mtrcs_dnst_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_qc_mtrcs_dnst_plot_png
+    label: "QC metrics per cell density (intermediate filtered)"
+    doc: |
+      QC metrics per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'QC metrics per cell density'
+
+  mid_fltr_tss_nrch_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_tss_nrch_plot_png
+    label: "TSS enrichment score (intermediate filtered)"
+    doc: |
+      TSS enrichment score (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'TSS enrichment score'
+
+  mid_fltr_frgm_hist_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_frgm_hist_png
+    label: "Fragments length histogram (intermediate filtered)"
+    doc: |
+      Fragments length histogram (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Fragments length histogram'
+
+  mid_fltr_rna_umi_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_rna_umi_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition UMI per cell density for RNA assay (intermediate filtered)"
+    doc: |
+      Split by grouping condition UMI per cell density for RNA assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Split by grouping condition UMI per cell density for RNA assay'
+
+  mid_fltr_gene_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_gene_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition genes per cell density (intermediate filtered)"
+    doc: |
+      Split by grouping condition genes per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Split by grouping condition genes per cell density'
+
+  mid_fltr_mito_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_mito_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition the percentage of transcripts mapped to mitochondrial genes per cell density (intermediate filtered)"
+    doc: |
+      Split by grouping condition the percentage of transcripts mapped
+      to mitochondrial genes per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Split by grouping condition the percentage of transcripts mapped to mitochondrial genes per cell density'
+
+  mid_fltr_nvlt_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_nvlt_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition the novelty score per cell density for RNA assay (intermediate filtered)"
+    doc: |
+      Split by grouping condition the novelty score per cell density for RNA assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Split by grouping condition the novelty score per cell density for RNA assay'
+
+  mid_fltr_atac_umi_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_atac_umi_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition UMI per cell density for ATAC assay (intermediate filtered)"
+    doc: |
+      Split by grouping condition UMI per cell density for ATAC assay (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Split by grouping condition UMI per cell density for ATAC assay'
+
+  mid_fltr_peak_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_peak_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition peaks per cell density (intermediate filtered)"
+    doc: |
+      Split by grouping condition peaks per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Split by grouping condition peaks per cell density'
+
+  mid_fltr_blck_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_blck_dnst_spl_cnd_plot_png
+    label: "Split by grouping condition the fraction of ATAC fragments within genomic blacklist regions per cell density (intermediate filtered)"
+    doc: |
+      Split by grouping condition the fraction of ATAC fragments within genomic
+      blacklist regions per cell density (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
         Caption: 'Split by grouping condition the fraction of ATAC fragments within genomic blacklist regions per cell density'
 
   fltr_1_2_qc_mtrcs_pca_plot_png:
@@ -696,6 +1016,18 @@ outputs:
     - image:
         tab: 'Filtered QC'
         Caption: 'UMI per cell correlation for RNA vs ATAC assays'
+
+  fltr_tss_atac_umi_corr_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/fltr_tss_atac_umi_corr_plot_png
+    label: "TSS enrichment score vs UMI per cell correlation for ATAC assay (filtered)"
+    doc: |
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Filtered QC'
+        Caption: 'TSS enrichment score vs UMI per cell correlation for ATAC assay'
 
   fltr_qc_mtrcs_dnst_plot_png:
     type: File?
@@ -898,11 +1230,10 @@ steps:
       maximum_blacklist_fraction:
         source: maximum_blacklist_fraction
         valueFrom: $(split_numbers(self))
-      call_peaks:
-        source: call_peaks
-        valueFrom: $(self?"identity":null)
+      call_by: call_by
       verbose:
         default: true
+      color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))
@@ -925,6 +1256,7 @@ steps:
     - raw_peak_dnst_plot_png
     - raw_blck_dnst_plot_png
     - raw_rna_atac_umi_corr_plot_png
+    - raw_tss_atac_umi_corr_plot_png
     - raw_qc_mtrcs_dnst_plot_png
     - raw_tss_nrch_plot_png
     - raw_frgm_hist_png
@@ -935,6 +1267,29 @@ steps:
     - raw_atac_umi_dnst_spl_cnd_plot_png
     - raw_peak_dnst_spl_cnd_plot_png
     - raw_blck_dnst_spl_cnd_plot_png
+    - mid_fltr_1_2_qc_mtrcs_pca_plot_png
+    - mid_fltr_2_3_qc_mtrcs_pca_plot_png
+    - mid_fltr_cells_count_plot_png
+    - mid_fltr_rna_umi_dnst_plot_png
+    - mid_fltr_gene_dnst_plot_png
+    - mid_fltr_gene_umi_corr_plot_png
+    - mid_fltr_mito_dnst_plot_png
+    - mid_fltr_nvlt_dnst_plot_png
+    - mid_fltr_atac_umi_dnst_plot_png
+    - mid_fltr_peak_dnst_plot_png
+    - mid_fltr_blck_dnst_plot_png
+    - mid_fltr_rna_atac_umi_corr_plot_png
+    - mid_fltr_tss_atac_umi_corr_plot_png
+    - mid_fltr_qc_mtrcs_dnst_plot_png
+    - mid_fltr_tss_nrch_plot_png
+    - mid_fltr_frgm_hist_png
+    - mid_fltr_rna_umi_dnst_spl_cnd_plot_png
+    - mid_fltr_gene_dnst_spl_cnd_plot_png
+    - mid_fltr_mito_dnst_spl_cnd_plot_png
+    - mid_fltr_nvlt_dnst_spl_cnd_plot_png
+    - mid_fltr_atac_umi_dnst_spl_cnd_plot_png
+    - mid_fltr_peak_dnst_spl_cnd_plot_png
+    - mid_fltr_blck_dnst_spl_cnd_plot_png
     - fltr_1_2_qc_mtrcs_pca_plot_png
     - fltr_2_3_qc_mtrcs_pca_plot_png
     - fltr_cells_count_plot_png
@@ -947,6 +1302,7 @@ steps:
     - fltr_peak_dnst_plot_png
     - fltr_blck_dnst_plot_png
     - fltr_rna_atac_umi_corr_plot_png
+    - fltr_tss_atac_umi_corr_plot_png
     - fltr_qc_mtrcs_dnst_plot_png
     - fltr_tss_nrch_plot_png
     - fltr_frgm_hist_png

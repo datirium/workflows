@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.10
+  dockerPull: biowardrobe2/sc-tools:v0.0.12
 
 
 inputs:
@@ -284,6 +284,26 @@ inputs:
     doc: |
       Export plots in PDF.
       Default: false
+
+  color_theme:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "gray"
+      - "bw"
+      - "linedraw"
+      - "light"
+      - "dark"
+      - "minimal"
+      - "classic"
+      - "void"
+    inputBinding:
+      prefix: "--theme"
+    doc: |
+      Color theme for all generated plots. One of gray, bw, linedraw, light,
+      dark, minimal, classic, void.
+      Default: classic
 
   verbose:
     type: boolean?
@@ -800,27 +820,34 @@ s:creator:
 
 doc: |
   Single-cell WNN Cluster Analysis
-  ====================================================================
+
   Clusters multiome ATAC and RNA-Seq datasets, identifies gene markers
   and differentially accessible peaks.
 
 
 s:about: |
-  usage: sc_wnn_cluster.R
-        [-h] --query QUERY
-        [--rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]]
-        [--atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]]
-        [--uspread USPREAD] [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-        [--umethod {uwot,uwot-learn,umap-learn}]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--fragments FRAGMENTS]
-        [--genes [GENES [GENES ...]]] [--diffgenes] [--diffpeaks]
-        [--rnalogfc RNALOGFC] [--rnaminpct RNAMINPCT] [--rnaonlypos]
-        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
-        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--pdf] [--verbose] [--h5seurat] [--cbbuild] [--output OUTPUT]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_wnn_cluster.R [-h] --query QUERY
+                                        [--rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]]
+                                        [--atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]]
+                                        [--uspread USPREAD]
+                                        [--umindist UMINDIST]
+                                        [--uneighbors UNEIGHBORS]
+                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                        [--umethod {uwot,uwot-learn,umap-learn}]
+                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                        [--fragments FRAGMENTS]
+                                        [--genes [GENES [GENES ...]]]
+                                        [--diffgenes] [--diffpeaks]
+                                        [--rnalogfc RNALOGFC]
+                                        [--rnaminpct RNAMINPCT] [--rnaonlypos]
+                                        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--ataclogfc ATACLOGFC]
+                                        [--atacminpct ATACMINPCT]
+                                        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell WNN Cluster Analysis
 
@@ -923,8 +950,11 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
+    --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
+    --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
+                          Color theme for all generated plots. Default: classic
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
