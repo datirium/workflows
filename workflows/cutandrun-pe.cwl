@@ -426,18 +426,32 @@ outputs:
     doc: "stderr from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stderr
 
+  relaxed_peaks:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file of peaks from seacr relaxed mode"
+    doc: "Bed file of enriched regions called by seacr relaxed mode (from normalized bigwig) in macs2's bed format."
+    outputSource: convert_bed_to_xls_relaxed/output_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Relaxed Peaks"
+        height: 120
+
   macs2_called_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "bedgraph file of peaks from seacr"
-    doc: "Bed file of enriched regions called by seacr (from normalized bigwig) in macs2's bed format. *peaks removed where col2>col3"
+    label: "bedgraph file of peaks from seacr stringent mode"
+    doc: "Bed file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2's bed format."
     outputSource: convert_bed_to_xls/output_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "Called Peaks"
+        name: "Stringent Peaks"
         height: 120
 
   annotated_peaks:
@@ -448,7 +462,7 @@ outputs:
     outputSource: island_intersect/result_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Annotated Peaks'
+        tab: 'Annotated Peaks (Stringent)'
         Title: 'sparse enriched peak list with nearest gene annotation'
 
 
@@ -773,6 +787,21 @@ steps:
       Output is a filtered and scaled (normalized) bed file to be used as
       input for SEACR peak calling.
 
+  seacr_callpeak_relaxed:
+    run: ../tools/seacr.cwl
+    in:
+      treatment_bedgraph: fragment_counts/sorted_bed_scaled
+      numeric_threshold:
+        default: 0.01
+      norm_control_to_treatment:
+        default: "non"
+      peakcalling_mode:
+        default: "relaxed"
+      output_prefix:
+        source: fragment_counts/sorted_bed_scaled
+        valueFrom: $(get_root(self.basename)+"_scaled")
+    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
+
   seacr_callpeak_stringent:
     run: ../tools/seacr.cwl
     in:
@@ -834,7 +863,21 @@ steps:
     out:
     - output_file
     doc: |
-      formatting seacr bed output into xls for input into island_instersect
+      formatting seacr bed output into xls for igv browser and input into island_instersect
+
+  convert_bed_to_xls_relaxed:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: seacr_callpeak_relaxed/peak_tsv_file
+      script:
+        default: >
+          cat $0 | awk -F'\t'
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`
+    out:
+    - output_file
+    doc: |
+      formatting seacr bed output into xls for igv browser and input into island_instersect
 
   island_intersect:
     label: "Peak annotation"
