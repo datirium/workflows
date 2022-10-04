@@ -1,0 +1,34 @@
+{
+  "indices_folder": {
+    "class": "Directory",
+    "location": "./data/dm3_chr4/generated_inputs/indices/bowtie_dm3_chr4"
+  },
+  "indices_folder_for_spikein": {
+    "class": "Directory",
+    "location": "./data/dm3_chr4/generated_inputs/indices/ecoli_k12_mg1655"
+  },
+  "annotation_file": {
+    "class": "File",
+    "location": "./data/dm3_chr4/main_inputs/gtf/dm3_chr4.tsv",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "genome_size": "dm",
+  "chrom_length": {
+    "class": "File",
+    "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4_v2.7.5c/dm3/chrNameLength.txt",
+    "format": "http://edamontology.org/format_2330"
+  },
+  "broad_peak": false,
+  "fastq_file_upstream": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/test_data/SRR8581584_1.fastq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "fastq_file_downstream": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/test_data/SRR8581584_2.fastq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "exp_fragment_size": 150,
+  "threads": 4
+}

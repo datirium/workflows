@@ -1,0 +1,34 @@
+{
+  "indices_folder": {
+    "class": "Directory",
+    "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/hg38_bowtie_genome/"
+  },
+  "indices_folder_for_spikein": {
+    "class": "Directory",
+    "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/q8zH8un9oiGAPaCWg/ecoli_k12_mg1655_bowtie_genome/"
+  },
+  "annotation_file": {
+    "class": "File",
+    "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/refgene.tsv",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "genome_size": "hg38",
+  "chrom_length": {
+    "class": "File",
+    "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/hg38_star_genome/chrNameLength.txt",
+    "format": "http://edamontology.org/format_2330"
+  },
+  "broad_peak": false,
+  "fastq_file_upstream": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R1.fq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "fastq_file_downstream": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R2.fq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "exp_fragment_size": 150,
+  "threads": 8
+}
