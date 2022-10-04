@@ -432,13 +432,6 @@ outputs:
     label: "bedgraph file of peaks from seacr relaxed mode"
     doc: "Bed file of enriched regions called by seacr relaxed mode (from normalized bigwig) in macs2's bed format."
     outputSource: convert_bed_to_xls_relaxed/output_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "Relaxed Peaks"
-        height: 120
 
   macs2_called_peaks:
     type: File
