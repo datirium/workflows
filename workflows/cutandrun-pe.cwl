@@ -27,16 +27,17 @@ inputs:
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Sample genome index for alignment and peak calling:"
+    label: "Primary genome index for peak calling:"
     'sd:localLabel': true
-    doc: "Sample genome index for alignment and peak calling"
+    doc: "Preprocessed genome index of sample organism for primary alignment and peak calling."
 
   indices_folder_for_spikein:
     type: Directory
     'sd:upstreamSource': "genome_indices_spikein/bowtie_indices"
-    label: "Spike-in genome index for normalization:"
+    label: "Secondary genome index for spike-in normalization:"
     'sd:localLabel': true
-    doc: "Spike-in genome index for normalization"
+    doc: "preprocessed genome index of spike-in organism for secondary alignment (of unaligned
+      reads from primary alignment) and spike-in normalization, default should be E. coli K-12"
 
   annotation_file:
     type: File
@@ -92,7 +93,7 @@ inputs:
     default: 0
     'sd:layout':
       advanced: true
-    label: "Number of bases to clip from the 3p end:"
+    label: "Number of bases to clip from the 5p end:"
     'sd:localLabel': true
     doc: "Number of bases to clip from the 5p end"
 
@@ -431,7 +432,14 @@ outputs:
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr relaxed mode"
     doc: "Bed file of enriched regions called by seacr relaxed mode (from normalized bigwig) in macs2's bed format."
-    outputSource: convert_bed_to_xls_relaxed/output_file
+    outputSource: seacr_callpeak_relaxed/peak_tsv_file
+
+  stringent_peaks:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file of peaks from seacr stringent mode"
+    doc: "Bed file of enriched regions called by seacr stringent mode (from normalized bigwig) in macs2's bed format."
+    outputSource: seacr_callpeak_stringent/peak_tsv_file
 
   macs2_called_peaks:
     type: File
@@ -712,7 +720,10 @@ steps:
   get_scale_from_spikein:
     label: "return scaling factor from spike-in aligned read count (x)"
     doc: |
-      scaling factor = (10000/x)
+      Returns a float scaling factor equal to (10000/x), where x is the
+      number of spike-in aligned reads. This scale is then used for normalizing
+      the bam-to-bedgraph that is used as input to the `bam-bedgraph-bigwig.cwl`
+      tool (in step `bam_to_bigwig_scaled`).
     run: ../tools/get_scale.cwl
     in:
       reads_mapped: get_spikein_bam_statistics/reads_mapped
@@ -858,20 +869,6 @@ steps:
     doc: |
       formatting seacr bed output into xls for igv browser and input into island_instersect
 
-  convert_bed_to_xls_relaxed:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: seacr_callpeak_relaxed/peak_tsv_file
-      script:
-        default: >
-          cat $0 | awk -F'\t'
-          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
-          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`
-    out:
-    - output_file
-    doc: |
-      formatting seacr bed output into xls for igv browser and input into island_instersect
-
   island_intersect:
     label: "Peak annotation"
     doc: |
@@ -894,7 +891,7 @@ $schemas:
 
 s:name: "cutandrun paired-end workflow"
 label: "cutandrun paired-end workflow"
-s:alternateName: "Cut & Run basic analysis workflow for a paired-end experiment with Trim Galore"
+s:alternateName: "CUR&RUN and CUT&TAG basic sparse enrichment analysis workflow for a paired-end experiment with Trim Galore"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/cutandrun-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -926,69 +923,68 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Robert Player
-        s:email: mailto:robert.player@datirium.com
+        s:email: mailto:support@datirium.com
         s:sameAs:
         - id: https://orcid.org/0000-0001-5872-259X
 
 
 doc: |
-  A basic analysis workflow for a **paired-read** Cut & Run/TAG experiment.
-    
-  This workflow utilizes the tool SEACR (Sparse Enrichment Analysis of Cut & Run data) which calls enriched
-  regions in target data by selecting the top 1% of regions by AUC. This workflow is loosely based on the
-  [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline
-  from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  was used as a CWL template.
+  A basic analysis workflow for **paired-read** CUT&RUN and CUT&TAG sequencing experiments.
 
-  User-provided inputs required to run this workflow include the [FASTQ](http://maq.sourceforge.net/fastq.shtml)
-  input files for R1 (upstream) and R2 (downstream) reads, selection from the dropdown of a reference genome the
-  sample library was prepared from, and selection from the dropdown of a spike-in genome (default should be E.
-  coli K-12).
+  This workflow utilizes the tool [SEACR (Sparse Enrichment Analysis of CUT&RUN data)](https://github.com/FredHutch/SEACR) which calls enriched regions in the target sequence data by identifying the top 1% of regions by area under the curve (of the alignment pileup). This workflow is loosely based on the [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as a CWL template.
 
-  Intermediate and final downloadable outputs include coordinate sorted BAM file with associated BAI file,
-  quality statistics for both R1/R2 input FASTQ files, read pileup/coverage in BigWig format, and SEACR-called
-  peak BED files (raw and spike-in normalized).
+  ### __Inputs__
+  *General Info (required\*):*
+  - Experiment short name/Alias* - a unique name for the sample (e.g. what was used on tubes while processing it)
+  - Cells* - sample cell type or organism name
+  - Conditions* - experimental condition name
+  - Catalog # - catalog number for cells from vender/supplier
+  - Primary [genome index](https://scidap.com/tutorials/basic/genome-indices) for peak calling* - preprocessed genome index of sample organism for primary alignment and peak calling
+  - Secondary [genome index](https://scidap.com/tutorials/basic/genome-indices) for spike-in normalization* - preprocessed genome index of spike-in organism for secondary alignment (of unaligned reads from primary alignment) and spike-in normalization, default should be E. coli K-12
+  - FASTQ file for R1* - read 1 file of a pair-end library
+  - FASTQ file for R2* - read 2 file of a pair-end library
 
-
-  ### Data Analysis  
-  This pipeline includes the following steps:
-  1. Trimming the adapters with TrimGalore. This step is particularly important
-          when the reads are long and the fragments are short-resulting in
-          sequencing adapters at the end of read. If adapter is not removed the
-          read will not map. TrimGalore can recognize standard adapters, such as
-          Illumina or Nextera/Tn5 adapters.
-  2. Quality control of trimmed, unmapped sequence data
-  3. (Optional) trimming adapters on 5' or 3' end by the specified number of
-          bases.
-  4. Mapping reads with BowTie. Only uniquely mapped reads with less than 3
-          mismatches are used in the downstream analysis. Results are saved as a
-          .sam file, which is then sorted and indexed. Final outputs are in
-          bam/bai format, which are also used to extrapolate effects of
-          additional sequencing based on library complexity.
-  5.  (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly
-          same location). This step is used to remove reads overamplified in PCR.
-          Unfortunately, it may also remove "good" reads. We usually do not
-          remove duplicates unless the library is heavily duplicated.
-  6.  Call enriched regions using SEACR. Note, there is no native way of
-          specifying a custom calculated read extension length for SEACR as there
-          is for the ChIP-Seq peak calling tool MACS2. The only output of SEACR
-          are the called peaks in a single BED format file.
-  7.  Generation of read, alignment, and peak statistics, as well as BigWig
-          coverage files for display on the browser. The coverage shows the number
-          of fragments at each base in the genome normalized to the number of
-          millions of mapped reads.
+  *Advanced:*
+  - Number of bases to clip from the 3p end - used by bowtie aligner to trim <int> bases from 3' (right) end of reads
+  - Number of bases to clip from the 5p end - used by bowtie aligner to trim <int> bases from 5' (left) end of reads
+  - Call samtools rmdup to remove duplicates from sorted BAM file? - toggle on/off to remove duplicate reads from analysis
+  - Fragment Length Filter will retain fragments between set base pair (bp) ranges for peak analysis - drop down menu
+    - `Default_Range` retains fragments <1000 bp
+    - `Histone_Binding_Library` retains fragments between 130-300 bp
+    - `Transcription_Factor_Binding_Library` retains fragments <130 bp
+  - Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region - default set to `1000`
+  - Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region - default set to `20000`
+  - Number of threads for steps that support multithreading - default set to `2`
 
 
-  ### Additional Processing Details & Notes
-  _Trim Galore_ is a wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and
-  [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality
-  trimming to FASTQ files, with extra functionality for RRBS data. This workflow starts with running
-  fastx_quality_stats (step: fastx_quality_stats_upstream, fastx_quality_stats_downstream) from FASTX-Toolkit
-  to calculate quality statistics for both R1 and R2 input FASTQ files. Bowtie is run in parallel to align reads
-  from input FASTQ files to the selected reference genome (step: bowtie_aligner). The output of this step is an
-  unsorted SAM file that is then sorted and indexed by samtools sort and index (step: samtools_sort_index).
-  Depending on workflow input parameters, indexed and sorted BAM files could be processed by samtools rmdup
-  (step: samtools_rmdup) to remove all detected instances of read duplication. In the case when removing
-  duplicates is not necessary, this step returns the original input BAM and BAI files without any processing. If
-  the duplicates were removed, the following step (step: samtools_sort_index_after_rmdup) reruns samtools sort
-  and index with the BAM and BAI files, if not, the step returns the original unchanged input files.
+  ### __Outputs__
+  Intermediate and final downloadable outputs include:
+  - IGV with gene, BigWig (raw and normalized), and stringent peak tracks
+  - quality statistics and visualizations for both R1/R2 input FASTQ files
+  - coordinate sorted BAM file with associated BAI file for primary alignment
+  - read pileup/coverage in BigWig format (raw and normalized)
+  - cleaned bed files (containing fragment coordinates), and spike-in normalized SEACR peak-called BED files from both "stringent" and "relaxed" mode.
+  - stringent peak call bed file with nearest gene annotations per peak
+
+  ### __Data Analysis Steps__
+  1. Trimming the adapters with TrimGalore.
+      - This step is particularly important when the reads are long and the fragments are short - resulting in sequencing adapters at the ends of reads. If adapter is not removed the read will not map. TrimGalore can recognize standard adapters, such as Illumina or Nextera/Tn5 adapters.
+  2. Generate quality control statistics of trimmed, unmapped sequence data
+  3. (Optional) Clipping of 5' and/or 3' end by the specified number of bases.
+  4. Mapping reads to primary genome index with Bowtie.
+      - Only uniquely mapped reads with less than 3 mismatches are used in the downstream analysis. Results are then sorted and indexed. Final outputs are in bam/bai format, which are also used to extrapolate effects of additional sequencing based on library complexity.
+  5. (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly the same location).
+      - This step is used to remove reads overamplified during amplification of the library. Unfortunately, it may also remove "good" reads. We usually do not remove duplicates unless the library is heavily duplicated.
+  6. Mapping unaligned reads from primary alignment to secondary genome index with Bowtie.
+      - This step is used to obtain the number of reads for normalization, used to scale the pileups from the primary alignment. After normalization, sample pileups/peak may then be appropriately compared to one another assuming an equal use of spike-in material during library preparation. Note the default genome index for this step should be *E. coli* K-12 if no spike-in material was called out in the library protocol. Refer to [Step 16](https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5) of the "CUT&Tag Data Processing and Analysis Tutorial" by Zheng Y et al (2020). Protocol.io.
+  7. Formatting alignment file to account for fragments based on paired-end BAM.
+      - Generates a filtered and normalized bed file to be used as input for SEACR peak calling.
+  8. Call enriched regions using SEACR.
+      - This step used both stringent and relaxed peak calling modes with a FDR (false discovery rate) of 0.01, and no normalization to a control sample. The output of SEACR is the [called peaks BED format file](https://github.com/FredHutch/SEACR#description-of-output-fields).
+  7. Generation and formatting of output files.
+      - This step collects read, alignment, and peak statistics, as well asgenerates BigWig coverage/pileup files for display on the browser using IGV. The coverage shows the number of fragments that cover each base in the genome both normalized and unnormalized to the calculated spike-in scaling factor.
+
+
+  ### __References__
+    - Meers MP, Tenenbaum D, Henikoff S. (2019). Peak calling by Sparse Enrichment Analysis for CUT&RUN chromatin profiling. Epigenetics and Chromatin 12(1):42.
+    - Langmead B, Trapnell C, Pop M, Salzberg SL. Ultrafast and memory-efficient alignment of short DNA sequences to the human genome. Genome Biol 10:R25.
