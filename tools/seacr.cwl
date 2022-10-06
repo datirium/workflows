@@ -92,16 +92,57 @@ stdout: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stdout'
 stderr: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stderr')
 
 
-successCodes: [1]
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
+
+s:name: "seacr"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/seacr.cwl
+s:codeRepository: https://github.com/datirium/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+- class: s:Organization
+  s:legalName: "Datirium LLC"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: ""
+    s:streetAddress: ""
+    s:telephone: ""
+  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
+  s:department:
+  - class: s:Organization
+    s:legalName: "Datirium LLC"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Bioinformatics"
+      s:member:
+      - class: s:Person
+        s:name: Robert Player
+        s:email: mailto:support@datirium.com
+        s:sameAs:
+        - id: https://orcid.org/0000-0001-5872-259X
 
 
 doc: |
-  Tool runs peak calling using SEACR_1.3.sh command. When running in stringent mode (default), if zero peaks are called from
-  your input data
+  Tool runs peak calling using SEACR_1.3.sh command. When running in stringent mode
+  (default), if zero peaks are called from your input data there will be no output
+  bed file, and the tool script will fail.
 
-  SEACR: Sparse Enrichment Analysis for CUT&RUN
+  SEACR: Sparse Enrichment Analysis for CUT&RUN and CUT&TAG sequencing library data.
+          Input bedGraph may be from processed single or paired-end library data
 
-    Usage: bash SEACR_1.3.sh <experimental bedgraph>.bg [<control bedgraph>.bg | <FDR threshold>] [norm | non] [relaxed | stringent] output prefix
+    Usage: bash SEACR_1.3.sh <experimental bedgraph>.bg [<control bedgraph>.bg | <FDRthreshold>] [norm | non] [relaxed | stringent] output prefix
 
     Description of input fields:
 
@@ -124,7 +165,7 @@ doc: |
         Field 5:    Output prefix
 
     Output file:
-    <output prefix>.relaxed.bed (Bed file of enriched regions)
+    <output prefix>.<mode>.bed (Bed file of enriched regions)
 
     Output data structure: 
     <chr>	<start>	<end>	<AUC>	<max signal>	<max signal region>
@@ -135,7 +176,8 @@ doc: |
     Field 3: End coordinate
     Field 4: Total signal contained within denoted coordinates
     Field 5: Maximum bedgraph signal attained at any base pair within denoted coordinates
-    Field 6: Region representing the farthest upstream and farthest downstream bases within the denoted coordinates that are represented by the maximum bedgraph signal
+    Field 6: Region representing the farthest upstream and farthest downstream bases within
+              the denoted coordinates that are represented by the maximum bedgraph signal
 
     Examples:
     bash SEACR_1.3.sh target.bedgraph IgG.bedgraph norm relaxed output

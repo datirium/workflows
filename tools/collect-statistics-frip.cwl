@@ -128,8 +128,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "collect-statistics-frips"
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/tools/collect-statistics-frips.cwl
+s:name: "collect-statistics-frip"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/collect-statistics-frip.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -159,7 +159,7 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Robert Player
-        s:email: mailto:robert.player@datirium.com
+        s:email: mailto:support@datirium.com
         s:sameAs:
         - id: https://orcid.org/0000-0001-5872-259X
 
