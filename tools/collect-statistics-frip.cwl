@@ -159,7 +159,7 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Robert Player
-        s:email: mailto:robert.player@datirium.com
+        s:email: mailto:support@datirium.com
         s:sameAs:
         - id: https://orcid.org/0000-0001-5872-259X
 
