@@ -307,6 +307,24 @@ outputs:
       homoskedastic (have constant variance along the range of mean values)
     outputSource: deseq/plot_pca_pdf
 
+  volcano_plot_html_data:
+    type: Directory
+    outputSource: volcano_plot/html_data
+    label: "Directory with volcano plot html data"
+    doc: |
+      Directory with volcano plot html data.
+
+  volcano_plot_html_file:
+    type: File
+    outputSource: volcano_plot/html_file
+    label: "Volcano Plot"
+    doc: |
+      HTML index file from the directory with volcano plot html data.
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
   deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -370,6 +388,14 @@ steps:
       - phenotypes_file
       - stdout_log
       - stderr_log
+
+  volcano_plot:
+    run: ../tools/volcanot-plot.cwl
+    in:
+      diff_expr_file: deseq/diff_expr_file
+    out:
+      - html_data
+      - html_file
 
 
 $namespaces:

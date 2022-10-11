@@ -1401,6 +1401,12 @@
     plot_pca_pdf:
       location: deseq_pca_plot.pdf
       class: File
+    volcano_plot_html_data:
+      location: html_data
+      class: Directory
+    volcano_plot_html_file:
+      location: index.html
+      class: File
     deseq_stdout_log:
       location: deseq_stdout.log
       class: File
@@ -1437,6 +1443,12 @@
       class: File
     plot_pca_pdf:
       location: deseq_pca_plot.pdf
+      class: File
+    volcano_plot_html_data:
+      location: html_data
+      class: Directory
+    volcano_plot_html_file:
+      location: index.html
       class: File
     deseq_stdout_log:
       location: deseq_stdout.log
@@ -1475,6 +1487,12 @@
     plot_pca_pdf:
       location: deseq_pca_plot.pdf
       class: File
+    volcano_plot_html_data:
+      location: html_data
+      class: Directory
+    volcano_plot_html_file:
+      location: index.html
+      class: File
     deseq_stdout_log:
       location: deseq_stdout.log
       class: File
@@ -1511,6 +1529,12 @@
       class: File
     plot_pca_pdf:
       location: deseq_pca_plot.pdf
+      class: File
+    volcano_plot_html_data:
+      location: html_data
+      class: Directory
+    volcano_plot_html_file:
+      location: index.html
       class: File
     deseq_stdout_log:
       location: deseq_stdout.log
