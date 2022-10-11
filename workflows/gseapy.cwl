@@ -186,6 +186,31 @@ outputs:
     doc: "GSEApy stderr log"
     outputSource: run_gseapy/stderr_log
 
+  summary_report:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Enrichment report"
+    doc: "Enrichment report"
+    outputSource: report_summary/summary_file
+    "sd:visualPlugins":
+    - syncfusiongrid:
+        tab: "GSEA Summary"
+        Title: "GSEA Summary"
+
+  summary_stderr_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stderr log"
+    doc: "stderr log"
+    outputSource: report_summary/log_file_stderr
+
+  summary_stdout_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stdout log"
+    doc: "stdout log"
+    outputSource: report_summary/log_file_stdout
+    
 
 steps:
 
@@ -262,6 +287,17 @@ steps:
         default: "enrichment_heatmaps.tar.gz"
     out: [target_file]
 
+  report_summary:
+    run: ../tools/gseapy-reportsummary.cwl
+    in:
+      read_counts_file: read_counts_file
+      phenotypes_file: phenotypes_file
+      enrichment_report: run_gseapy/enrichment_report
+    out:
+      - summary_file
+      - log_file_stderr
+      - log_file_stdout
+
 
 $namespaces:
   s: http://schema.org/
@@ -330,3 +366,15 @@ doc: |
   that they are comparable to one another across features within a sample and comparable to one another
   across samples. Tools such as DESeq2 can be made to produce properly normalized data (normalized counts)
   which are compatible with GSEA.
+
+  Documents
+  ==============================================
+  - GSEA Home Page: https://www.gsea-msigdb.org/gsea/index.jsp
+  - Results Interpretation: https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideTEXT.htm#_Interpreting_GSEA_Results
+  - GSEA User Guide: https://gseapy.readthedocs.io/en/latest/faq.html
+  - GSEAPY Docs: https://gseapy.readthedocs.io/en/latest/introduction.html
+
+  References
+  ==============================================
+  - Subramanian, Tamayo, et al. (2005, PNAS), https://www.pnas.org/content/102/43/15545
+  - Mootha, Lindgren, et al. (2003, Nature Genetics), http://www.nature.com/ng/journal/v34/n3/abs/ng1180.html
