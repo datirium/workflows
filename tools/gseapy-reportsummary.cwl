@@ -29,16 +29,15 @@ inputs:
       feature_genes=$(cut -f8 $report | tail -n+2 | sed 's/;/\n/g' | sort | uniq | awk 'END{print(NR)}')
       # total unique genes among all leading edge genes of all marker datasets
       ledge_genes=$(cut -f9 $report | tail -n+2 | sed 's/;/\n/g' | sort | uniq | awk 'END{print(NR)}')
-      printf "\tThere are $ledge_genes leading edge genes among all marker sets analyzed"
       # get number of gene sets in file (remove first 1 rows of header info)
       total_gene_sets=$(tail -n+2 $report | awk 'END{print(NR)}')
       #   FORMATTING OUTPUT
-      printf "DATA DETAILS\n" > reportsummary.txt
-      printf "\tThe RNA-Seq sample contained $total_unique_genes total unique genes\n" >> reportsummary.txt
-      printf "\tThere are $total_gene_sets marker gene datasets analyzed\n" >> reportsummary.txt
-      printf "\tThe marker gene datasets have $feature_genes features (genes)\n" >> reportsummary.txt
-      printf "\tThere are $ledge_genes leading edge subset genes among all marker gene datasets analyzed\n" >> reportsummary.txt
-      printf "\n" >> reportsummary.txt
+      printf "> #### DATA DETAILS\n" > reportsummary.md
+      printf "> The RNA-Seq sample contained $total_unique_genes total unique genes\n" >> reportsummary.md
+      printf "> There are $total_gene_sets marker gene datasets analyzed\n" >> reportsummary.md
+      printf "> The marker gene datasets have $feature_genes features (genes)\n" >> reportsummary.md
+      printf "> There are $ledge_genes leading edge subset genes among all marker gene datasets analyzed\n" >> reportsummary.md
+      printf "\n" >> reportsummary.md
       #   PHENOTYPE AND ANALYSIS DETAILS
       # get phenotype names
       p1=$(tail -1 $deseq_phenotypes | cut -f2 -d$' ')
@@ -49,21 +48,23 @@ inputs:
       sigsets_fdr25=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){if($4<0.25){x++}}}END{print(x)}')
       sigsets_pv1=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){if($3<0.01){x++}}}END{print(x)}')
       sigsets_pv5=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){if($3<0.05){x++}}}END{print(x)}')
-      printf "Enrichment in phenotype: $p1\n" >> reportsummary.txt
-      printf "$enriched / $total_gene_sets marker gene sets are enriched in phenotype $p1\n" >> reportsummary.txt
-      printf "%s %s\n" "$sigsets_fdr25" "marker gene sets are significant at FDR <25%" >> reportsummary.txt
-      printf "%s %s\n" "$sigsets_pv1" "marker gene sets are significantly enriched at nominal pvalue <1%" >> reportsummary.txt
-      printf "%s %s\n" "$sigsets_pv5" "marker gene sets are significantly enriched at nominal pvalue <5%" >> reportsummary.txt
+      printf "> #### Enrichment in phenotype: $p1\n" >> reportsummary.md
+      printf "> $enriched / $total_gene_sets marker gene sets are enriched in phenotype $p1\n" >> reportsummary.md
+      printf "> %s %s\n" "$sigsets_fdr25" "marker gene sets are significant at FDR <25%" >> reportsummary.md
+      printf "> %s %s\n" "$sigsets_pv1" "marker gene sets are significantly enriched at nominal pvalue <1%" >> reportsummary.md
+      printf "> %s %s\n" "$sigsets_pv5" "marker gene sets are significantly enriched at nominal pvalue <5%" >> reportsummary.md
+      printf "\n" >> reportsummary.md
       # phenotype 2
       enriched=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){x++}}END{print(x)}')
       sigsets_fdr25=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){if($4<0.25){x++}}}END{print(x)}')
       sigsets_pv1=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){if($3<0.01){x++}}}END{print(x)}')
       sigsets_pv5=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){if($3<0.05){x++}}}END{print(x)}')
-      printf "Enrichment in phenotype: $p2\n" >> reportsummary.txt
-      printf "$enriched / $total_gene_sets marker gene sets are enriched in phenotype $p1\n" >> reportsummary.txt
-      printf "%s %s\n" "$sigsets_fdr25" "marker gene sets are significant at FDR <25%" >> reportsummary.txt
-      printf "%s %s\n" "$sigsets_pv1" "marker gene sets are significantly enriched at nominal pvalue <1%" >> reportsummary.txt
-      printf "%s %s\n" "$sigsets_pv5" "marker gene sets are significantly enriched at nominal pvalue <5%" >> reportsummary.txt
+      printf "> #### Enrichment in phenotype: $p2\n" >> reportsummary.md
+      printf "> $enriched / $total_gene_sets marker gene sets are enriched in phenotype $p2\n" >> reportsummary.md
+      printf "> %s %s\n" "$sigsets_fdr25" "marker gene sets are significant at FDR <25%" >> reportsummary.md
+      printf "> %s %s\n" "$sigsets_pv1" "marker gene sets are significantly enriched at nominal pvalue <1%" >> reportsummary.md
+      printf "> %s %s\n" "$sigsets_pv5" "marker gene sets are significantly enriched at nominal pvalue <5%" >> reportsummary.md
+      printf "\n" >> reportsummary.md
     inputBinding:
         position: 1
 
@@ -94,7 +95,7 @@ outputs:
   summary_file:
     type: File
     outputBinding:
-      glob: "reportsummary.txt"
+      glob: "reportsummary.md"
     doc: |
       Summary report file of GSEAPY results.
 

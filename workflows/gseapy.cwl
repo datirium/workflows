@@ -188,14 +188,13 @@ outputs:
 
   summary_report:
     type: File
-    format: "http://edamontology.org/format_3475"
+    format: "http://edamontology.org/format_3835"
     label: "Enrichment report"
     doc: "Enrichment report"
     outputSource: report_summary/summary_file
-    "sd:visualPlugins":
-    - syncfusiongrid:
-        tab: "GSEA Summary"
-        Title: "GSEA Summary"
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
   summary_stderr_log:
     type: File
@@ -210,7 +209,7 @@ outputs:
     label: "stdout log"
     doc: "stdout log"
     outputSource: report_summary/log_file_stdout
-    
+
 
 steps:
 
