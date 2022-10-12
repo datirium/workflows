@@ -309,14 +309,14 @@ outputs:
 
   volcano_plot_html_data:
     type: Directory
-    outputSource: volcano_plot/html_data
+    outputSource: make_volcano_plot/html_data
     label: "Directory with volcano plot html data"
     doc: |
       Directory with volcano plot html data.
 
   volcano_plot_html_file:
     type: File
-    outputSource: volcano_plot/html_file
+    outputSource: make_volcano_plot/html_file
     label: "Volcano Plot"
     doc: |
       HTML index file from the directory with volcano plot html data.
@@ -389,7 +389,7 @@ steps:
       - stdout_log
       - stderr_log
 
-  volcano_plot:
+  make_volcano_plot:
     run: ../tools/volcanot-plot.cwl
     in:
       diff_expr_file: deseq/diff_expr_file
