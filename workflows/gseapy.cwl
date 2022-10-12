@@ -291,7 +291,7 @@ steps:
     in:
       read_counts_file: read_counts_file
       phenotypes_file: phenotypes_file
-      enrichment_report: run_gseapy/enrichment_report
+      enrichment_report: convert_to_tsv/output_file
     out:
       - summary_file
       - log_file_stderr
