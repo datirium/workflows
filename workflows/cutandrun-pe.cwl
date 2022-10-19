@@ -312,7 +312,7 @@ outputs:
         data: [$1, $2]
         comparable: "preseq"
 
-  bigwig:
+  bigwig_raw:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
@@ -326,11 +326,11 @@ outputs:
         name: "BigWig Track"
         height: 120
 
-  bigwig_scaled:
+  bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "scaled BigWig file"
-    doc: "Generated scaled BigWig file"
+    doc: "Generated SCALED BigWig file, used as input for diffbind"
     outputSource: bam_to_bigwig_scaled/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
