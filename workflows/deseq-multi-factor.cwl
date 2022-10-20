@@ -295,7 +295,7 @@ outputs:
   heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
-    label: "Morpheus heatmap in HTML format"
+    label: "Heatmap of normalized counts"
     doc: |
       Morpheus heatmap in HTML format
     'sd:visualPlugins':
