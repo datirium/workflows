@@ -346,8 +346,12 @@ steps:
       expression_names: expression_names
       metadata_file: metadata_file
       design_formula: design_formula
-      reduced_formula: reduced_formula
-      contrast: contrast
+      reduced_formula:
+        source: reduced_formula
+        valueFrom: $(self==""?null:self)            # safety measure
+      contrast: 
+        source: contrast
+        valueFrom: $(self==""?null:self)            # safety measure
       base:
         source: base
         valueFrom: $(split_by_common_delim(self))
@@ -356,7 +360,9 @@ steps:
         source: excluded_features
         valueFrom: $(split_by_common_delim(self))
       normalization_method: normalization_method
-      remove: remove
+      remove:
+        source: remove
+        valueFrom: $(self==""?null:self)            # safety measure
       cluster_method:
         source: cluster_method
         valueFrom: $(self=="none"?null:self)
