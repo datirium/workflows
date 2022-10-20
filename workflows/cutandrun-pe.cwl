@@ -366,19 +366,33 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  norm_peak_log_stderr:
+  stringent_peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile"
     doc: "stderr from seacr command"
     outputSource: seacr_callpeak_stringent/log_file_stderr
 
-  norm_peak_log_stdout:
+  stringent_peak_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
     outputSource: seacr_callpeak_stringent/log_file_stdout
+
+  relaxed_peak_log_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile"
+    doc: "stderr from seacr command"
+    outputSource: seacr_callpeak_relaxed/log_file_stderr
+
+  relaxed_peak_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile stdout"
+    doc: "stdout from seacr command"
+    outputSource: seacr_callpeak_relaxed/log_file_stdout
 
   stats_for_vis_md:
     type: File?
