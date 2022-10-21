@@ -117,6 +117,7 @@ stdout: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stdout'
 stderr: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stderr')
 
 
+
 $namespaces:
   s: http://schema.org/
 
