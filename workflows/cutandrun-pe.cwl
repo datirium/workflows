@@ -123,6 +123,15 @@ inputs:
     doc: "Fragment Length Filter options: 1) Default_Range retains fragments <1000 bp, 2) Histone_Binding_Library retains fragments
       between 130-300 bp, and 3) Transcription_Factor_Binding_Library retains fragments <130 bp."
 
+  numeric_threshold:    
+    type: float?
+    default: 0.01
+    'sd:layout':
+      advanced: true
+    label: "A numeric threshold (n) to return top n fraction of peaks based on total signal within peaks (default 0.01):"
+    'sd:localLabel': true
+    doc: "A numeric threshold n between 0 and 1 returns the top n fraction of peaks based on total signal within peaks. Default is 0.01"
+
   promoter_dist:    
     type: int?
     default: 1000
@@ -312,7 +321,7 @@ outputs:
         data: [$1, $2]
         comparable: "preseq"
 
-  bigwig:
+  bigwig_raw:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
@@ -326,11 +335,11 @@ outputs:
         name: "BigWig Track"
         height: 120
 
-  bigwig_scaled:
+  bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "scaled BigWig file"
-    doc: "Generated scaled BigWig file"
+    doc: "Generated SCALED BigWig file, used as input for diffbind"
     outputSource: bam_to_bigwig_scaled/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
@@ -366,19 +375,33 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  norm_peak_log_stderr:
+  stringent_peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile"
     doc: "stderr from seacr command"
     outputSource: seacr_callpeak_stringent/log_file_stderr
 
-  norm_peak_log_stdout:
+  stringent_peak_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
     outputSource: seacr_callpeak_stringent/log_file_stdout
+
+  relaxed_peak_log_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile"
+    doc: "stderr from seacr command"
+    outputSource: seacr_callpeak_relaxed/log_file_stderr
+
+  relaxed_peak_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile stdout"
+    doc: "stdout from seacr command"
+    outputSource: seacr_callpeak_relaxed/log_file_stdout
 
   stats_for_vis_md:
     type: File?
@@ -441,6 +464,20 @@ outputs:
     doc: "Bed file of enriched regions called by seacr stringent mode (from normalized bigwig) in macs2's bed format."
     outputSource: seacr_callpeak_stringent/peak_tsv_file
 
+  macs2_called_peaks_relaxed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file of peaks from seacr stringent mode"
+    doc: "Bed file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2's bed format."
+    outputSource: convert_bed_to_xls_relaxed/output_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Relaxed Peaks"
+        height: 120
+
   macs2_called_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
@@ -456,7 +493,7 @@ outputs:
         height: 120
 
   annotated_peaks:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3475"
     label: "gene annotated peaks file"
     doc: "nearest gene annotation per peak"
@@ -791,12 +828,11 @@ steps:
       Output is a filtered and scaled (normalized) bed file to be used as
       input for SEACR peak calling.
 
-  seacr_callpeak_relaxed:
+  seacr_callpeak_relaxed: 
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold:
-        default: 0.01
+      numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
@@ -806,12 +842,25 @@ steps:
         valueFrom: $(get_root(self.basename)+"_scaled")
     out: [peak_tsv_file, log_file_stderr, log_file_stdout]
 
+  convert_bed_to_xls_relaxed:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: seacr_callpeak_relaxed/peak_tsv_file
+      script:
+        default: >
+          cat $0 | awk -F'\t'
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`
+    out:
+    - output_file
+    doc: |
+      formatting seacr bed output into xls for igv browser and input into island_instersect
+
   seacr_callpeak_stringent:
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold:
-        default: 0.01
+      numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
