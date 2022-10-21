@@ -196,6 +196,44 @@ inputs:
     'sd:layout':
       advanced: true
 
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "cosangle"
+    label: "Distance metric for HOPACH row clustering"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is not
+      provided. Default: cosangle
+    'sd:layout':
+      advanced: true
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "euclid"
+    label: "Distance metric for HOPACH column clustering"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is not
+      provided. Default: euclid
+    'sd:layout':
+      advanced: true
+
   selected_features:
     type: string?
     label: "Features of interest to label on the volcano plot"
@@ -366,6 +404,8 @@ steps:
       cluster_method:
         source: cluster_method
         valueFrom: $(self=="none"?null:self)
+      row_distance: row_distance
+      column_distance: column_distance
       center_row: center_row
       selected_features:
         source: selected_features

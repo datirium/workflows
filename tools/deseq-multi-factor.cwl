@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/deseq:v0.0.2
+  dockerPull: biowardrobe2/deseq:v0.0.3
 
 
 inputs:
@@ -152,6 +152,40 @@ inputs:
     doc: |
       Hopach clustering method to be run on normalized read counts for the
       exploratory visualization analysis. Default: do not run clustering
+
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    inputBinding:
+      prefix: "--rowdist"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is not
+      provided. Default: cosangle
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    inputBinding:
+      prefix: "--columndist"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is not
+      provided. Default: euclid
 
   center_row:
     type: boolean?
