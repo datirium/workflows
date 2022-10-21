@@ -819,7 +819,7 @@ steps:
       Output is a filtered and scaled (normalized) bed file to be used as
       input for SEACR peak calling.
 
-  seacr_callpeak_relaxed:
+  seacr_callpeak_relaxed: 
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
