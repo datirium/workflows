@@ -123,6 +123,15 @@ inputs:
     doc: "Fragment Length Filter options: 1) Default_Range retains fragments <1000 bp, 2) Histone_Binding_Library retains fragments
       between 130-300 bp, and 3) Transcription_Factor_Binding_Library retains fragments <130 bp."
 
+  numeric_threshold:    
+    type: float?
+    default: 0.01
+    'sd:layout':
+      advanced: true
+    label: "A numeric threshold (n) to return top n fraction of peaks based on total signal within peaks (default 0.01):"
+    'sd:localLabel': true
+    doc: "A numeric threshold n between 0 and 1 returns the top n fraction of peaks based on total signal within peaks. Default is 0.01"
+
   promoter_dist:    
     type: int?
     default: 1000
@@ -823,8 +832,7 @@ steps:
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold:
-        default: 0.01
+      numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
@@ -852,8 +860,7 @@ steps:
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold:
-        default: 0.01
+      numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
