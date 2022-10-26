@@ -327,13 +327,6 @@ outputs:
     label: "BigWig file"
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "BigWig Track"
-        height: 120
 
   bigwig:
     type: File
@@ -346,7 +339,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "BigWig Track Scaled"
+        name: "Scaled BigWig"
         height: 120
 
   fc_sorted_bed:
@@ -978,7 +971,7 @@ s:creator:
 
 
 doc: |
-  A basic analysis workflow for **paired-read** CUT&RUN and CUT&TAG sequencing experiments.
+  A basic analysis workflow for paired-read CUT&RUN and CUT&TAG sequencing experiments. These sequencing library prep methods are ultra-sensitive chromatin mapping technologies compared to the ChIP-Seq methodology. Its primary benefits include 1) length filtering, 2) a higher signal-to-noise ratio, and 3) built-in normalization for between sample comparisons.
 
   This workflow utilizes the tool [SEACR (Sparse Enrichment Analysis of CUT&RUN data)](https://github.com/FredHutch/SEACR) which calls enriched regions in the target sequence data by identifying the top 1% of regions by area under the curve (of the alignment pileup). This workflow is loosely based on the [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as a CWL template.
 
@@ -998,9 +991,9 @@ doc: |
   - Number of bases to clip from the 5p end - used by bowtie aligner to trim <int> bases from 5' (left) end of reads
   - Call samtools rmdup to remove duplicates from sorted BAM file? - toggle on/off to remove duplicate reads from analysis
   - Fragment Length Filter will retain fragments between set base pair (bp) ranges for peak analysis - drop down menu
-    - `Default_Range` retains fragments <1000 bp
-    - `Histone_Binding_Library` retains fragments between 130-300 bp
-    - `Transcription_Factor_Binding_Library` retains fragments <130 bp
+      - `Default_Range` retains fragments <1000 bp
+      - `Histone_Binding_Library` retains fragments between 130-300 bp
+      - `Transcription_Factor_Binding_Library` retains fragments <130 bp
   - Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region - default set to `1000`
   - Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region - default set to `20000`
   - Number of threads for steps that support multithreading - default set to `2`
