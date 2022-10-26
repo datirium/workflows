@@ -123,6 +123,15 @@ inputs:
     doc: "Fragment Length Filter options: 1) Default_Range retains fragments <1000 bp, 2) Histone_Binding_Library retains fragments
       between 130-300 bp, and 3) Transcription_Factor_Binding_Library retains fragments <130 bp."
 
+  numeric_threshold:    
+    type: float?
+    default: 0.01
+    'sd:layout':
+      advanced: true
+    label: "A numeric threshold (n) to return top n fraction of peaks based on total signal within peaks (default 0.01):"
+    'sd:localLabel': true
+    doc: "A numeric threshold n between 0 and 1 returns the top n fraction of peaks based on total signal within peaks. Default is 0.01"
+
   promoter_dist:    
     type: int?
     default: 1000
@@ -312,32 +321,25 @@ outputs:
         data: [$1, $2]
         comparable: "preseq"
 
-  bigwig:
+  bigwig_raw:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "Generated BigWig file"
     outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "BigWig Track"
-        height: 120
 
-  bigwig_scaled:
+  bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "scaled BigWig file"
-    doc: "Generated scaled BigWig file"
+    doc: "Generated SCALED BigWig file, used as input for diffbind"
     outputSource: bam_to_bigwig_scaled/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "BigWig Track Scaled"
+        name: "Scaled BigWig"
         height: 120
 
   fc_sorted_bed:
@@ -366,19 +368,33 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  norm_peak_log_stderr:
+  stringent_peak_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile"
     doc: "stderr from seacr command"
     outputSource: seacr_callpeak_stringent/log_file_stderr
 
-  norm_peak_log_stdout:
+  stringent_peak_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "seacr logfile stdout"
     doc: "stdout from seacr command"
     outputSource: seacr_callpeak_stringent/log_file_stdout
+
+  relaxed_peak_log_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile"
+    doc: "stderr from seacr command"
+    outputSource: seacr_callpeak_relaxed/log_file_stderr
+
+  relaxed_peak_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "seacr logfile stdout"
+    doc: "stdout from seacr command"
+    outputSource: seacr_callpeak_relaxed/log_file_stdout
 
   stats_for_vis_md:
     type: File?
@@ -441,6 +457,20 @@ outputs:
     doc: "Bed file of enriched regions called by seacr stringent mode (from normalized bigwig) in macs2's bed format."
     outputSource: seacr_callpeak_stringent/peak_tsv_file
 
+  macs2_called_peaks_relaxed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bedgraph file of peaks from seacr stringent mode"
+    doc: "Bed file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2's bed format."
+    outputSource: convert_bed_to_xls_relaxed/output_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Relaxed Peaks"
+        height: 120
+
   macs2_called_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
@@ -456,7 +486,7 @@ outputs:
         height: 120
 
   annotated_peaks:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3475"
     label: "gene annotated peaks file"
     doc: "nearest gene annotation per peak"
@@ -791,12 +821,11 @@ steps:
       Output is a filtered and scaled (normalized) bed file to be used as
       input for SEACR peak calling.
 
-  seacr_callpeak_relaxed:
+  seacr_callpeak_relaxed: 
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold:
-        default: 0.01
+      numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
@@ -806,12 +835,25 @@ steps:
         valueFrom: $(get_root(self.basename)+"_scaled")
     out: [peak_tsv_file, log_file_stderr, log_file_stdout]
 
+  convert_bed_to_xls_relaxed:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: seacr_callpeak_relaxed/peak_tsv_file
+      script:
+        default: >
+          cat $0 | awk -F'\t'
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`
+    out:
+    - output_file
+    doc: |
+      formatting seacr bed output into xls for igv browser and input into island_instersect
+
   seacr_callpeak_stringent:
     run: ../tools/seacr.cwl
     in:
       treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold:
-        default: 0.01
+      numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
@@ -929,7 +971,7 @@ s:creator:
 
 
 doc: |
-  A basic analysis workflow for **paired-read** CUT&RUN and CUT&TAG sequencing experiments.
+  A basic analysis workflow for paired-read CUT&RUN and CUT&TAG sequencing experiments. These sequencing library prep methods are ultra-sensitive chromatin mapping technologies compared to the ChIP-Seq methodology. Its primary benefits include 1) length filtering, 2) a higher signal-to-noise ratio, and 3) built-in normalization for between sample comparisons.
 
   This workflow utilizes the tool [SEACR (Sparse Enrichment Analysis of CUT&RUN data)](https://github.com/FredHutch/SEACR) which calls enriched regions in the target sequence data by identifying the top 1% of regions by area under the curve (of the alignment pileup). This workflow is loosely based on the [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as a CWL template.
 
@@ -949,9 +991,9 @@ doc: |
   - Number of bases to clip from the 5p end - used by bowtie aligner to trim <int> bases from 5' (left) end of reads
   - Call samtools rmdup to remove duplicates from sorted BAM file? - toggle on/off to remove duplicate reads from analysis
   - Fragment Length Filter will retain fragments between set base pair (bp) ranges for peak analysis - drop down menu
-    - `Default_Range` retains fragments <1000 bp
-    - `Histone_Binding_Library` retains fragments between 130-300 bp
-    - `Transcription_Factor_Binding_Library` retains fragments <130 bp
+      - `Default_Range` retains fragments <1000 bp
+      - `Histone_Binding_Library` retains fragments between 130-300 bp
+      - `Transcription_Factor_Binding_Library` retains fragments <130 bp
   - Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region - default set to `1000`
   - Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region - default set to `20000`
   - Number of threads for steps that support multithreading - default set to `2`

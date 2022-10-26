@@ -14,6 +14,31 @@ hints:
 
 inputs:
 
+  script:
+    type: string?
+    default: |
+      #!/bin/bash
+      printf "$(date)\nLog file for seacr.cwl tool:\n\n"
+      printf "INPUTS:\n"
+      echo "\$0 - $0"
+      echo "\$1 - $1"
+      echo "\$2 - $2"
+      echo "\$3 - $3"
+      echo "\$4 - $4"
+      # run seacr
+      SEACR_1.3.sh $0 $1 $2 $3 $4
+      # error handling logic
+      # make empty output file if not created by seacr (i.e. no peaks called)
+      if [[ $? == 1 ]]; then
+        echo "exit code for SEACR is 1, check stderr log"
+        touch $4.$3.bed
+      elif [[ $? == 2 ]]; then
+        echo "exit code for SEACR is 2, check stderr log"
+        touch $4.$3.bed
+      fi
+    inputBinding:
+        position: 1
+
   treatment_bedgraph:
     type: File
     inputBinding:
@@ -87,9 +112,10 @@ outputs:
       log for stderr for seacr call
 
 
-baseCommand: ["SEACR_1.3.sh"]
+baseCommand: ["bash", "-c"]
 stdout: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stdout')
 stderr: $(inputs.output_prefix + '.' + inputs.peakcalling_mode + '.seacr.stderr')
+
 
 
 $namespaces:
