@@ -12,6 +12,7 @@ requirements:
   first_biological_condition:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
+    - "cutandrun-pe.cwl" 
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
@@ -19,6 +20,7 @@ requirements:
   second_biological_condition:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
+    - "cutandrun-pe.cwl" 
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
@@ -26,6 +28,7 @@ requirements:
   blocked_condition:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
+    - "cutandrun-pe.cwl" 
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"

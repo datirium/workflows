@@ -101,7 +101,7 @@ inputs:
 outputs:
 
   log_file:
-    type: File
+    type: File?
     outputBinding:
       glob: |
         ${
@@ -113,7 +113,7 @@ outputs:
         }
 
   result_file:
-    type: File
+    type: File?
     outputBinding:
       glob: |
         ${
