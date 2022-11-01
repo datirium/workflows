@@ -123,7 +123,7 @@ inputs:
 
   maximum_padj:
     type: float?
-    default: 0.1
+    default: 0.05
     label: "Maximum significance level used in the exploratory visualization part of the analysis"
     doc: |
       In the exploratory visualization part of the analysis output only features
