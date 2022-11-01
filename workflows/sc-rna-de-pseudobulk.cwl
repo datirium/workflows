@@ -43,35 +43,39 @@ inputs:
 
   splitby:
     type: string
-    label: "Column from the Seurat object metadata to split cells into two groups"
+    label: "Column from the Seurat object metadata to split datasets into two groups"
     doc: |
-      Column from the Seurat object metadata to split cells into two groups
-      to run --second vs --first pseudobulk DE analysis. May include columns
-      from the extra metadata added with --metadata parameter.
+      Column from the Seurat object metadata to split datasets into two groups
+      to run --second vs --first pseudobulk DE analysis, i.e., calculate log2FC.
+      May be one of the columns from the extra metadata added with --metadata
+      parameter. Provided value should group the datasets, not cells, therefore
+      do not use a column with clustering results.
 
   first_cond:
     type: string
-    label: "Value from the Seurat object metadata column to define the first group of cells"
+    label: "Value from the Seurat object metadata column to define the first group of datasets"
     doc: |
       Value from the Seurat object metadata column set with --splitby to define the
-      first group of cells for pseudobulk DE analysis.
+      first group of datasets for pseudobulk DE analysis.
 
   second_cond:
     type: string
-    label: "Value from the Seurat object metadata column to define the second group of cells"
+    label: "Value from the Seurat object metadata column to define the second group of datasets"
     doc: |
       Value from the Seurat object metadata column set with --splitby to define the
-      second group of cells for pseudobulk DE analysis.
+      second group of datasets for pseudobulk DE analysis.
 
   batchby:
     type: string?
     default: null
-    label: "Column from the Seurat object metadata to define batch effect variable"
+    label: "Column from the Seurat object metadata to group datasets into batches"
     doc: |
-      Column from the Seurat object metadata to define the variable that should
-      be modeled as a batch effect when running pseudobulk DE analysis. May include
-      columns from the extra metadata added with --metadata parameter.
-      Default: do not model batch effect.
+      Column from the Seurat object metadata to group datasets into batches. It will be used
+      as a factor variable to model batch effect when running pseudobulk DE analysis (makes
+      design formula look like ~splitby+batchby). May be one of the columns from the extra
+      metadata added with --metadata parameter. Provided value should batch the datasets, not
+      cells, therefore do not use a column with clustering results. Default: do not model
+      batch effect.
 
   groupby:
     type: string?
@@ -79,9 +83,11 @@ inputs:
     label: "Column from the Seurat object metadata to group cells for optional subsetting"
     doc: |
       Column from the Seurat object metadata to group cells for optional subsetting
-      when combined with --subset parameter. May include columns from the extra metadata
-      added with --metadata parameter. Ignored if --subset is not provided.
-      Default: do not subset, run pseudobulk DE analysis for all cells jointly
+      when combined with --subset parameter. May be one of the columns from the extra
+      metadata added with --metadata parameter. Ignored if --subset is not set. Provided
+      value defines the groups of cells, therefore any metadata column, including the
+      clustering results, may be used. Default: do not subset, run pseudobulk DE analysis
+      for all cells jointly
 
   subset:
     type: string?
@@ -91,8 +97,8 @@ inputs:
       Value(s) from the column set with --groupby parameter to subset cells
       before running pseudobulk DE analysis. If multiple values are provided
       run analysis jointly for selected groups of cells. Ignored if --groupby
-      is not set.
-      Default: do not subset, run pseudobulk DE analysis for all cells jointly
+      is not set. Default: do not subset, run pseudobulk DE analysis for all
+      cells jointly
 
   datasets_metadata:
     type: File?
@@ -102,31 +108,26 @@ inputs:
       categorical values using samples identities. First column - 'library_id'
       should correspond to all unique values from the 'new.ident' column of the
       loaded Seurat object. If any of the provided in this file columns are already
-      present in the Seurat object metadata, they will be overwritten.
-      Default: no extra metadata is added
+      present in the Seurat object metadata, they will be overwritten. Default: no
+      extra metadata is added
 
   lrt:
     type: boolean?
     default: false
     label: "Use LRT instead of the pair-wise Wald test"
     doc: |
-      Use LRT instead of the pair-wise Wald test. Determines if the increased
-      likelihood of the data using the --splitby term is more than expected if
-      that term is truly zero.
-      Default: use Wald test
+      Use LRT instead of the pair-wise Wald test. If --batchby is not provided
+      use ~1 as a reduced formula, otherwise ~batchby. Default: use Wald test
     'sd:layout':
       advanced: true
 
-  alpha:
+  maximum_padj:
     type: float?
     default: 0.1
-    label: "The maximum significance level alpha used by DESeq2 for independent filtering of results"
+    label: "Maximum significance level used in the exploratory visualization part of the analysis"
     doc: |
-      The maximum significance level alpha used by DESeq2 for independent filtering
-      of results. The adjusted p values for the genes which do not pass this filter
-      threshold will be set to NA and removed from the outputs. The same threshold
-      will be used for identifying --topgenes the most DE genes.
-      Default: 0.1
+      In the exploratory visualization part of the analysis output only features
+      with adjusted P-value not bigger than this value. Default: 0.05
     'sd:layout':
       advanced: true
 
@@ -135,9 +136,8 @@ inputs:
     default: null
     label: "Genes of interest to label on the generated plots"
     doc: |
-      Genes of interest to label on the generated plots.
-      Default: --topgenes N genes with the highest and the lowest log2 fold change
-      expression values
+      Genes of interest to label on the generated plots. Default: top 10 genes
+      with the highest and the lowest log2FC expression values.
     'sd:layout':
       advanced: true
 
@@ -149,7 +149,101 @@ inputs:
       Regex pattern to identify and exclude non-coding RNA genes from the pseudobulk
       DE analysis (not case-sensitive). If any of such genes were provided in the --genes
       parameter, they will be excluded from there as well.
-      Default: use all genes
+    'sd:layout':
+      advanced: true
+
+  normalization_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "vst"
+      - "rlog"
+    default: "rlog"
+    label: "Read counts normalization for the exploratory visualization part of the analysis"
+    doc: |
+      Read counts normalization for the exploratory visualization part of the analysis.
+      Use 'vst' for medium-to-large datasets (n > 30) and 'rlog' for small datasets
+      (n < 30), when there is a wide range of sequencing depth across samples.
+      Default: rlog
+    'sd:layout':
+      advanced: true
+
+  remove:
+    type: boolean?
+    default: false
+    label: "Remove batch effect when generating normalized read counts"
+    doc: |
+      Remove batch effect when generating normalized read counts for the exploratory
+      visualization part of the analysis. Ignored if --batchby is not provided.
+      Default: do not remove batch effect from normalized read counts.
+    'sd:layout':
+      advanced: true
+
+  center_row:
+    type: boolean?
+    default: false
+    label: "Apply mean centering for feature expression prior to running clustering by row"
+    doc: |
+      Apply mean centering for gene expression prior to running
+      clustering by row. Ignored if --cluster is set to column or
+      not provided. Default: do not centered
+    'sd:layout':
+      advanced: true
+
+  cluster_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "row"
+      - "column"
+      - "both"
+      - "none"
+    default: "none"
+    label: "Hopach clustering method to be run on normalized read counts"
+    doc: |
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization part of the analysis. Default: do not run
+      clustering
+    'sd:layout':
+      advanced: true
+
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "cosangle"
+    label: "Distance metric for HOPACH row clustering"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is set
+      to column or not provided. Default: cosangle
+    'sd:layout':
+      advanced: true
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "euclid"
+    label: "Distance metric for HOPACH column clustering"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is set
+      to row or not provided. Default: euclid
     'sd:layout':
       advanced: true
 
@@ -263,31 +357,55 @@ outputs:
         tab: 'Overall'
         Caption: 'Cells WNN UMAP split by selected biological condition'
 
-  vst_pca_1_2_plot_png:
+  mds_plot_html:
     type: File?
-    outputSource: de_pseudobulk/vst_pca_1_2_plot_png
-    label: "VST normalized counts PCA (PC1 and PC2)"
+    outputSource: de_pseudobulk/mds_plot_html
+    label: "MDS plot of normalized counts"
     doc: |
-      VST normalized counts PCA (PC1 and PC2) subsetted to all DE genes regardless
+      MDS plot of normalized counts. Optionally batch corrected
+      if --remove was set to True.
+      HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_html:
+    type: File
+    outputSource: morpheus_heatmap/heatmap_html
+    label: "Heatmap of normalized counts"
+    doc: |
+      Morpheus heatmap in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  pca_1_2_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/pca_1_2_plot_png
+    label: "Normalized counts PCA (PC1 and PC2)"
+    doc: |
+      Normalized counts PCA (PC1 and PC2) subsetted to all DE genes regardless
       of Padj, optionally batch corrected by the selected criteria.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Overall'
-        Caption: 'VST normalized counts PCA (PC1 and PC2)'
+        Caption: 'Normalized counts PCA (PC1 and PC2)'
   
-  vst_pca_2_3_plot_png:
+  pca_2_3_plot_png:
     type: File?
-    outputSource: de_pseudobulk/vst_pca_2_3_plot_png
-    label: "VST normalized counts PCA (PC2 and PC3)"
+    outputSource: de_pseudobulk/pca_2_3_plot_png
+    label: "Normalized counts PCA (PC2 and PC3)"
     doc: |
-      VST normalized counts PCA (PC2 and PC3) subsetted to all DE genes regardless
+      Normalized counts PCA (PC2 and PC3) subsetted to all DE genes regardless
       of Padj, optionally batch corrected by the selected criteria.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Overall'
-        Caption: 'VST normalized counts PCA (PC2 and PC3)'
+        Caption: 'Normalized counts PCA (PC2 and PC3)'
 
   dxpr_vlcn_plot_png:
     type: File?
@@ -295,7 +413,7 @@ outputs:
     label: "Volcano plot of differentially expressed genes"
     doc: |
       Volcano plot of differentially expressed genes. Highlighed genes are either
-      provided by user or top N genes with the highest log2FC values. The direction
+      provided by user or top 10 genes with the highest log2FC values. The direction
       of comparison is defined by --second vs --first groups of cells optionally
       subsetted to the specific cluster or cell type and coerced to the pseudobulk
       RNA-Seq samples.
@@ -374,13 +492,13 @@ outputs:
     outputSource: de_pseudobulk/xpr_htmp_plot_png
     label: "Log normalized gene expression heatmap per dataset"
     doc: |
-      Log normalized gene expression heatmap per dataset optionally subsetted
+      Normalized gene expression heatmap optionally subsetted
       to the specific cluster or cell type.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Overall'
-        Caption: 'Log normalized gene expression heatmap per dataset'
+        Caption: 'Normalized gene expression heatmap'
 
   diff_expr_genes:
     type: File
@@ -396,10 +514,10 @@ outputs:
 
   read_counts_file:
     type: File
-    outputSource: de_pseudobulk/vst_counts_gct
-    label: "GSEA compatible VST normalized counts"
+    outputSource: de_pseudobulk/read_counts_gct
+    label: "GSEA compatible normalized counts"
     doc: |
-      GSEA compatible VST normalized counts, optionally, batch corrected.
+      GSEA compatible normalized counts, optionally, batch corrected.
       GCT format
 
   phenotypes_file:
@@ -425,6 +543,18 @@ outputs:
     doc: |
       stderr log generated by de_pseudobulk step
 
+  morpheus_heatmap_stdout_log:
+    type: File
+    outputSource: morpheus_heatmap/stdout_log
+    label: "stdout log generated by morpheus_heatmap step"
+    doc: "stdout log generated by morpheus_heatmap step"
+
+  morpheus_heatmap_stderr_log:
+    type: File
+    outputSource: morpheus_heatmap/stderr_log
+    label: "stderr log generated by morpheus_heatmap step"
+    doc: "stderr log generated by morpheus_heatmap step"
+
 
 steps:
 
@@ -442,13 +572,17 @@ steps:
         source: subset
         valueFrom: $(split_features(self))
       lrt: lrt
-      alpha: alpha
+      maximum_padj: maximum_padj
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
       exclude_pattern: exclude_pattern
-      top_genes_count:
-        default: 10
+      normalization_method: normalization_method
+      remove: remove
+      cluster_method: cluster_method
+      row_distance: row_distance
+      column_distance: column_distance
+      center_row: center_row
       verbose:
         default: true
       color_theme: color_theme
@@ -465,8 +599,9 @@ steps:
       - umap_rd_rnaumap_plot_png
       - umap_rd_atacumap_plot_png
       - umap_rd_wnnumap_plot_png
-      - vst_pca_1_2_plot_png
-      - vst_pca_2_3_plot_png
+      - mds_plot_html
+      - pca_1_2_plot_png
+      - pca_2_3_plot_png
       - dxpr_vlcn_plot_png
       - xpr_dnst_plot_png
       - xpr_per_cell_rd_rnaumap_plot_png
@@ -474,10 +609,19 @@ steps:
       - xpr_per_cell_rd_wnnumap_plot_png
       - xpr_htmp_plot_png
       - diff_expr_genes
-      - vst_counts_gct
+      - read_counts_gct
       - phenotypes_cls
       - stdout_log
       - stderr_log
+
+  morpheus_heatmap:
+    run: ../tools/morpheus-heatmap.cwl
+    in:
+     read_counts_gct: de_pseudobulk/read_counts_gct
+    out:
+    - heatmap_html
+    - stdout_log
+    - stderr_log
 
 
 $namespaces:
@@ -486,8 +630,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Pseudobulk Differential Expression Analysis"
-s:name: "Single-cell Pseudobulk Differential Expression Analysis"
+label: "Single-cell Pseudobulk Differential Expression Analysis Between Datasets"
+s:name: "Single-cell Pseudobulk Differential Expression Analysis Between Datasets"
 s:alternateName: "Identifies differentially expressed genes between groups of cells coerced to pseudobulk datasets"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-de-pseudobulk.cwl
@@ -526,7 +670,7 @@ s:creator:
 
 
 doc: |
-  Single-cell Pseudobulk Differential Expression Analysis
+  Single-cell Pseudobulk Differential Expression Analysis Between Datasets
 
   Identifies differentially expressed genes between groups of cells
   coerced to pseudobulk datasets.

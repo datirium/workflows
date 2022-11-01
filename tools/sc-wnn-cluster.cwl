@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.12
+  dockerPull: biowardrobe2/sc-tools:v0.0.13
 
 
 inputs:
@@ -53,6 +53,21 @@ inputs:
       is provided, use from 2 to N dimensions. If multiple values are provided,
       subset to only selected dimensions.
       Default: from 2 to 10
+
+  cluster_algorithm:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "louvain"
+      - "mult-louvain"
+      - "slm"
+      - "leiden"
+    inputBinding:
+      prefix: "--algorithm"
+    doc: |
+      Algorithm for modularity optimization when running clustering.
+      Default: slm
 
   umap_spread:
     type: float?
@@ -826,32 +841,26 @@ doc: |
 
 
 s:about: |
-  usage: sc_wnn_cluster.R [-h] --query QUERY
-                                        [--rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]]
-                                        [--atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]]
-                                        [--uspread USPREAD]
-                                        [--umindist UMINDIST]
-                                        [--uneighbors UNEIGHBORS]
-                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-                                        [--umethod {uwot,uwot-learn,umap-learn}]
-                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                        [--fragments FRAGMENTS]
-                                        [--genes [GENES [GENES ...]]]
-                                        [--diffgenes] [--diffpeaks]
-                                        [--rnalogfc RNALOGFC]
-                                        [--rnaminpct RNAMINPCT] [--rnaonlypos]
-                                        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                                        [--ataclogfc ATACLOGFC]
-                                        [--atacminpct ATACMINPCT]
-                                        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_wnn_cluster.R
+        [-h] --query QUERY [--rnadimensions [RNADIMENSIONS ...]]
+        [--atacdimensions [ATACDIMENSIONS ...]]
+        [--algorithm {louvain,mult-louvain,slm,leiden}] [--uspread USPREAD]
+        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--umethod {uwot,uwot-learn,umap-learn}]
+        [--resolution [RESOLUTION ...]] [--fragments FRAGMENTS]
+        [--genes [GENES ...]] [--diffgenes] [--diffpeaks] [--rnalogfc RNALOGFC]
+        [--rnaminpct RNAMINPCT] [--rnaonlypos]
+        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
+        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell WNN Cluster Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression and chromatin
@@ -859,20 +868,23 @@ s:about: |
                           assays correspondingly. Additionally, 'pca',
                           'rnaumap', 'atac_lsi' and 'atacumap' dimensionality
                           reductions should be present.
-    --rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]
+    --rnadimensions [RNADIMENSIONS ...]
                           Dimensionality from the 'pca' reduction to use when
                           constructing weighted nearest-neighbor graph before
                           clustering (from 1 to 50). If single value N is
                           provided, use from 1 to N dimensions. If multiple
                           values are provided, subset to only selected
                           dimensions. Default: from 1 to 10
-    --atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]
+    --atacdimensions [ATACDIMENSIONS ...]
                           Dimensionality from the 'atac_lsi' reduction to use
                           when constructing weighted nearest-neighbor graph
                           before clustering (from 1 to 50). If single value N is
                           provided, use from 2 to N dimensions. If multiple
                           values are provided, subset to only selected
                           dimensions. Default: from 2 to 10
+    --algorithm {louvain,mult-louvain,slm,leiden}
+                          Algorithm for modularity optimization when running
+                          clustering. Default: louvain
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -894,7 +906,7 @@ s:about: |
     --umethod {uwot,uwot-learn,umap-learn}
                           UMAP implementation to run. If set to 'umap-learn' use
                           --umetric 'correlation' Default: uwot
-    --resolution [RESOLUTION [RESOLUTION ...]]
+    --resolution [RESOLUTION ...]
                           Clustering resolution applied to the constructed
                           weighted nearest-neighbor graph. Can be set as an
                           array. Default: 0.3, 0.5, 1.0
@@ -902,8 +914,7 @@ s:about: |
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved
                           in TSV format with tbi-index file.
-    --genes [GENES [GENES ...]]
-                          Genes of interest to build gene expression and Tn5
+    --genes [GENES ...]   Genes of interest to build gene expression and Tn5
                           insertion frequency plots for the nearest peaks. If '
                           --fragments' is not provided only gene expression
                           plots will be built. Default: None

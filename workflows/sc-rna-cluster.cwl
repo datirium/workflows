@@ -58,6 +58,21 @@ inputs:
       only selected dimensions.
       Default: from 1 to 10
 
+  cluster_algorithm:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "louvain"
+      - "mult-louvain"
+      - "slm"
+      - "leiden"
+    default: "louvain"
+    label: "Algorithm for modularity optimization when running clustering"
+    doc: |
+      Algorithm for modularity optimization when running clustering.
+      Default: louvain
+
   resolution:
     type: string?
     default: "0.3 0.5 1.0"
@@ -474,6 +489,7 @@ steps:
       dimensions: dimensions
       cluster_metric:
         default: euclidean
+      cluster_algorithm: cluster_algorithm
       resolution:
         source: resolution
         valueFrom: $(split_numbers(self))

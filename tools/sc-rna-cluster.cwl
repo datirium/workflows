@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.12
+  dockerPull: biowardrobe2/sc-tools:v0.0.13
 
 
 inputs:
@@ -54,6 +54,21 @@ inputs:
     doc: |
       Distance metric used when constructing nearest-neighbor graph before clustering.
       Default: euclidean
+
+  cluster_algorithm:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "louvain"
+      - "mult-louvain"
+      - "slm"
+      - "leiden"
+    inputBinding:
+      prefix: "--algorithm"
+    doc: |
+      Algorithm for modularity optimization when running clustering.
+      Default: louvain
 
   resolution:
     type:
@@ -678,29 +693,27 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_cluster.R [-h] --query QUERY
-                                        [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
-                                        [--ametric {euclidean,cosine,manhattan,hamming}]
-                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                        [--genes [GENES [GENES ...]]]
-                                        [--diffgenes] [--logfc LOGFC]
-                                        [--minpct MINPCT] [--onlypos]
-                                        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_cluster.R
+        [-h] --query QUERY [--dimensions [DIMENSIONS ...]]
+        [--ametric {euclidean,cosine,manhattan,hamming}]
+        [--algorithm {louvain,mult-louvain,slm,leiden}]
+        [--resolution [RESOLUTION ...]] [--genes [GENES ...]] [--diffgenes]
+        [--logfc LOGFC] [--minpct MINPCT] [--onlypos]
+        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Cluster Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
                           stored in the RNA assay, as well as 'pca' and
                           'rnaumap' dimensionality reductions applied to that
                           assay.
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+    --dimensions [DIMENSIONS ...]
                           Dimensionality to use when constructing nearest-
                           neighbor graph before clustering (from 1 to 50). If
                           single value N is provided, use from 1 to N
@@ -709,12 +722,14 @@ s:about: |
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used when constructing nearest-
                           neighbor graph before clustering. Default: euclidean
-    --resolution [RESOLUTION [RESOLUTION ...]]
+    --algorithm {louvain,mult-louvain,slm,leiden}
+                          Algorithm for modularity optimization when running
+                          clustering. Default: louvain
+    --resolution [RESOLUTION ...]
                           Clustering resolution applied to the constructed
                           nearest-neighbor graph. Can be set as an array.
                           Default: 0.3, 0.5, 1.0
-    --genes [GENES [GENES ...]]
-                          Genes of interest to build genes expression plots.
+    --genes [GENES ...]   Genes of interest to build genes expression plots.
                           Default: None
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) between each pair of clusters for all

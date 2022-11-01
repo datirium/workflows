@@ -73,6 +73,21 @@ inputs:
       subset to only selected dimensions.
       Default: from 2 to 10
 
+  cluster_algorithm:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "louvain"
+      - "mult-louvain"
+      - "slm"
+      - "leiden"
+    default: "slm"
+    label: "Algorithm for modularity optimization when running clustering"
+    doc: |
+      Algorithm for modularity optimization when running clustering.
+      Default: slm
+
   resolution:
     type: string?
     default: "0.3 0.5 1.0"
@@ -616,6 +631,7 @@ steps:
       query_data_rds: query_data_rds
       rna_dimensions: rna_dimensions
       atac_dimensions: atac_dimensions
+      cluster_algorithm: cluster_algorithm
       resolution:
         source: resolution
         valueFrom: $(split_numbers(self))
