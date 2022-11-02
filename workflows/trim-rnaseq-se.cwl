@@ -451,6 +451,8 @@ steps:
         default: 3
       m:
         default: 1
+      unaligned_prefix:
+        default: "unaligned_reads"
       best:
         default: true
       strata:
