@@ -17,8 +17,7 @@ requirements:
   - "../metadata/rnaseq-header.cwl"
 
 'sd:upstream':
-  genome_indices:      
-    - "genome-indices.cwl"
+  genome_indices: "genome-indices.cwl"
 
 
 inputs:
