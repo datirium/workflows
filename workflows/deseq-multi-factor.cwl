@@ -45,7 +45,7 @@ inputs:
     sd:preview:
       position: 1
 
-  isoforms_expression_file:
+  isoforms_expression_files:
     type:
     - "null"
     - File[]
@@ -372,7 +372,7 @@ steps:
     run: ../tools/deseq-multi-factor.cwl
     in:
       expression_files:
-        source: [feature_type, isoforms_expression_file, genes_expression_files]
+        source: [feature_type, isoforms_expression_files, genes_expression_files]
         valueFrom: |
           ${
               if (self[0] == "transcript") {

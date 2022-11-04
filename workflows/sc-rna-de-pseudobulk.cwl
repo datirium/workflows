@@ -31,7 +31,7 @@ inputs:
     sd:preview:
       position: 1
 
-  query_data:
+  query_data_rds:
     type: File
     label: "Experiment run through any of the Single-cell Cluster or Manual Cell Type Assignment Analysis"
     doc: |
@@ -561,7 +561,7 @@ steps:
   de_pseudobulk:
     run: ../tools/sc-rna-de-pseudobulk.cwl
     in:
-      query_data_rds: query_data
+      query_data_rds: query_data_rds
       datasets_metadata: datasets_metadata
       splitby: splitby
       first_cond: first_cond
