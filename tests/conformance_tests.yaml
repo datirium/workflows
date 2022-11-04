@@ -1380,6 +1380,18 @@
     read_counts_file:
       location: deseq_counts.gct
       class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stdoerr_log:
+      location: morpheus_stderr.log
+      class: File
     phenotypes_file:
       location: deseq_phenotypes.cls
       class: File
@@ -1422,6 +1434,18 @@
       class: File
     read_counts_file:
       location: deseq_counts.gct
+      class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stdoerr_log:
+      location: morpheus_stderr.log
       class: File
     phenotypes_file:
       location: deseq_phenotypes.cls
@@ -1466,6 +1490,18 @@
     read_counts_file:
       location: deseq_counts.gct
       class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stdoerr_log:
+      location: morpheus_stderr.log
+      class: File
     phenotypes_file:
       location: deseq_phenotypes.cls
       class: File
@@ -1508,6 +1544,18 @@
       class: File
     read_counts_file:
       location: deseq_counts.gct
+      class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stdoerr_log:
+      location: morpheus_stderr.log
       class: File
     phenotypes_file:
       location: deseq_phenotypes.cls

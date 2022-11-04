@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.25
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.26
 
 
 inputs:
@@ -71,6 +71,72 @@ inputs:
       prefix: "-cu"
     doc: |
       Minimum threshold for rpkm filtering. Default: 5
+
+  cluster_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "row"
+      - "column"
+      - "both"
+    inputBinding:
+      prefix: "--cluster"
+    doc: |
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization part of the analysis. Default: do not run
+      clustering
+
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    inputBinding:
+      prefix: "--rowdist"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is not
+      provided. Default: cosangle
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    inputBinding:
+      prefix: "--columndist"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is not
+      provided. Default: euclid
+
+  center_row:
+    type: boolean?
+    inputBinding:
+      prefix: "--center"
+    doc: |
+      Apply mean centering for feature expression prior to running
+      clustering by row. Ignored when --cluster is not row or both.
+      Default: do not centered
+
+  maximum_padj:
+    type: float?
+    inputBinding:
+      prefix: "--padj"
+    doc: |
+      In the exploratory visualization part of the analysis output only features
+      with adjusted P-value not bigger than this value. Default: 0.05
 
   batch_file:
     type: File?
@@ -142,6 +208,15 @@ outputs:
     type: File?
     outputBinding:
       glob: "*_pca_plot.pdf"
+
+  mds_plot_html:
+    type: File?
+    outputBinding:
+      glob: "*_mds_plot.html"
+    doc: |
+      MDS plot of normalized counts. Optionally batch corrected
+      based on the --remove value.
+      HTML format
 
   stdout_log:
     type: stdout
@@ -220,31 +295,37 @@ doc: |
 
 
 s:about: |
-  usage: run_deseq.R
+  usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/run_deseq.R
         [-h] -u UNTREATED [UNTREATED ...] -t TREATED [TREATED ...]
-        [-ua [UALIAS [UALIAS ...]]] [-ta [TALIAS [TALIAS ...]]] [-un UNAME]
-        [-tn TNAME] [-bf BATCHFILE] [-cu CUTOFF] [-o OUTPUT] [-d DIGITS]
-        [-p THREADS]
+        [-ua [UALIAS ...]] [-ta [TALIAS ...]] [-un UNAME] [-tn TNAME]
+        [-bf BATCHFILE] [-cu CUTOFF] [--padj PADJ]
+        [--cluster {row,column,both}]
+        [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+        [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+        [--center] [-o OUTPUT] [-d DIGITS] [-p THREADS]
 
-  Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups
+  Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups (condition-1-vs-
+  condition-2)
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     -u UNTREATED [UNTREATED ...], --untreated UNTREATED [UNTREATED ...]
-                          Untreated CSV/TSV isoforms expression files
+                          Untreated (condition 1) CSV/TSV isoforms expression
+                          files
     -t TREATED [TREATED ...], --treated TREATED [TREATED ...]
-                          Treated CSV/TSV isoforms expression files
-    -ua [UALIAS [UALIAS ...]], --ualias [UALIAS [UALIAS ...]]
-                          Unique aliases for untreated expression files.
-                          Default: basenames of -u without extensions
-    -ta [TALIAS [TALIAS ...]], --talias [TALIAS [TALIAS ...]]
-                          Unique aliases for treated expression files. Default:
-                          basenames of -t without extensions
+                          Treated (condition 2) CSV/TSV isoforms expression
+                          files
+    -ua [UALIAS ...], --ualias [UALIAS ...]
+                          Unique aliases for untreated (condition 1) expression
+                          files. Default: basenames of -u without extensions
+    -ta [TALIAS ...], --talias [TALIAS ...]
+                          Unique aliases for treated (condition 2) expression
+                          files. Default: basenames of -t without extensions
     -un UNAME, --uname UNAME
-                          Name for untreated condition, use only letters and
+                          Name for untreated (condition 1), use only letters and
                           numbers
     -tn TNAME, --tname TNAME
-                          Name for treated condition, use only letters and
+                          Name for treated (condition 2), use only letters and
                           numbers
     -bf BATCHFILE, --batchfile BATCHFILE
                           Metadata file for multi-factor analysis. Headerless
@@ -253,6 +334,22 @@ s:about: |
                           None
     -cu CUTOFF, --cutoff CUTOFF
                           Minimum threshold for rpkm filtering. Default: 5
+    --padj PADJ           In the exploratory visualization part of the analysis
+                          output only features with adjusted P-value not bigger
+                          than this value. Default: 0.05
+    --cluster {row,column,both}
+                          Hopach clustering method to be run on normalized read
+                          counts for the exploratory visualization part of the
+                          analysis. Default: do not run clustering
+    --rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+                          Distance metric for HOPACH row clustering. Ignored if
+                          --cluster is not provided. Default: cosangle
+    --columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+                          Distance metric for HOPACH column clustering. Ignored
+                          if --cluster is not provided. Default: euclid
+    --center              Apply mean centering for feature expression prior to
+                          running clustering by row. Ignored when --cluster is
+                          not row or both. Default: do not centered
     -o OUTPUT, --output OUTPUT
                           Output prefix. Default: deseq
     -d DIGITS, --digits DIGITS
