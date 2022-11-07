@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/deseq:v0.0.2
+  dockerPull: biowardrobe2/morpheus:v0.0.1
 
 
 inputs:
