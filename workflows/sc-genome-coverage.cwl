@@ -27,7 +27,7 @@ inputs:
     sd:preview:
       position: 1
 
-  seurat_clst_data_rds:
+  seurat_clst_data:
     type: File
     label: "Seurat WNN Analysis Experiment"
     doc: |
@@ -129,7 +129,7 @@ steps:
   extract_metadata:
     run: ../tools/sc-extract-metadata.cwl
     in:
-      seurat_data_rds: seurat_clst_data_rds
+      seurat_data_rds: seurat_clst_data
       source_column:
         source: resolution
         valueFrom: $(get_source_column(self))
