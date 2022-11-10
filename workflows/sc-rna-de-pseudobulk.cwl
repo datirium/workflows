@@ -579,7 +579,9 @@ steps:
       exclude_pattern: exclude_pattern
       normalization_method: normalization_method
       remove: remove
-      cluster_method: cluster_method
+      cluster_method:
+        source: cluster_method
+        valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
       column_distance: column_distance
       center_row: center_row
