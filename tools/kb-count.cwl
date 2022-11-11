@@ -48,6 +48,7 @@ inputs:
 
   sc_technology:
     type:
+    - "null"
     - type: enum
       name: "sc_technology"
       symbols:
@@ -67,6 +68,16 @@ inputs:
       prefix: "-x"
     doc: "Single-cell technology used"
 
+  whitelist_barcodes:
+    type: File?
+    inputBinding:
+      position: 8
+      prefix: "-w"
+    doc: |
+      Path to file of whitelisted barcodes to correct to. If not provided and bustools
+      supports the technology, a pre-packaged whitelist is used. If not, the bustools
+      whitelist command is used. (`kb --list` to view whitelists)
+
   workflow_type:
     type:
     - "null"
@@ -78,7 +89,7 @@ inputs:
       - nucleus
       - kite
     inputBinding:
-      position: 8
+      position: 9
       prefix: "--workflow"
     doc: |
       Type of workflow. Use lamanno to calculate RNA velocity based
@@ -89,7 +100,7 @@ inputs:
   tx_to_capture_mapping_file:
     type: File?
     inputBinding:
-      position: 9
+      position: 10
       prefix: "-c1"
     doc: |
       Transcripts-to-capture mapping TSV file
@@ -97,7 +108,7 @@ inputs:
   intron_tx_to_capture_mapping_file:
     type: File?
     inputBinding:
-      position: 10
+      position: 11
       prefix: "-c2"
     doc: |
       Intron transcripts-to-capture mapping TSV file
@@ -105,7 +116,7 @@ inputs:
   loom:
     type: boolean?
     inputBinding:
-      position: 11
+      position: 12
       prefix: "--loom"
     doc: |
       Generate loom file from count matrix
@@ -115,7 +126,7 @@ inputs:
   h5ad:
     type: boolean?
     inputBinding:
-      position: 12
+      position: 13
       prefix: "--h5ad"
     doc: |
       Generate h5ad file from count matrix
@@ -125,7 +136,7 @@ inputs:
   threads:
     type: int?
     inputBinding:
-      position: 13
+      position: 14
       prefix: "-t"
     doc: |
       Number of threads to use
@@ -134,7 +145,7 @@ inputs:
   memory_limit:
     type: string?
     inputBinding:
-      position: 14
+      position: 15
       prefix: "-m"
     doc: |
       Maximum memory used
@@ -236,7 +247,6 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-
 s:name: "Kallisto | BUStools Quantify Gene Expression"
 label: "Kallisto | BUStools Quantify Gene Expression"
 s:alternateName: "Uses Kallisto to pseudoalign reads and BUStools to quantify the data"
@@ -292,7 +302,6 @@ doc: |
   -o is used by default, so all outputs go to the current folder
 
   Not implemented parameters:
-  -w
   --tcc
   --dry-run
   --filter

@@ -60,18 +60,27 @@ inputs:
     - type: enum
       name: "sc_technology"
       symbols:
-      - 10XV2       # 2 input files 
-      - 10XV3       # 2 input files 
-      - CELSEQ      # 2 input files
-      - CELSEQ2     # 2 input files
-      - DROPSEQ     # 2 input files
-      - INDROPSV1   # 2 input files
-      - INDROPSV2   # 2 input files
-      - SCRUBSEQ    # 2 input files
-      - SURECELL    # 2 input files
+      - "none"
+      - "10XV2"       # 2 input files
+      - "10XV3"       # 2 input files
+      - "CELSEQ"      # 2 input files
+      - "CELSEQ2"     # 2 input files
+      - "DROPSEQ"     # 2 input files
+      - "INDROPSV1"   # 2 input files
+      - "INDROPSV2"   # 2 input files
+      - "SCRUBSEQ"    # 2 input files
+      - "SURECELL"    # 2 input files
     default: "10XV3"
     label: "Single-cell technology used"
     doc: "Single-cell technology used"
+
+  whitelist_barcodes:
+    type: File?
+    label: "Custom whitelisted barcodes to correct to"
+    doc: |
+      Path to file of whitelisted barcodes to correct to. If not provided and bustools
+      supports the technology, a pre-packaged whitelist is used. If not, the bustools
+      whitelist command is used. (`kb --list` to view whitelists)
 
   workflow_type:
     type:
@@ -242,7 +251,10 @@ steps:
       tx_to_gene_mapping_file: tx_to_gene_mapping_file
       tx_to_capture_mapping_file: tx_to_capture_mapping_file
       intron_tx_to_capture_mapping_file: intron_tx_to_capture_mapping_file
-      sc_technology: sc_technology
+      sc_technology:
+        source: sc_technology
+        valueFrom: $(self=="none"?null:self)
+      whitelist_barcodes: whitelist_barcodes
       workflow_type: workflow_type
       h5ad:
         default: true
