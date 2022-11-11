@@ -56,7 +56,6 @@ inputs:
 
   sc_technology:
     type:
-    - "null"
     - type: enum
       name: "sc_technology"
       symbols:
@@ -251,9 +250,7 @@ steps:
       tx_to_gene_mapping_file: tx_to_gene_mapping_file
       tx_to_capture_mapping_file: tx_to_capture_mapping_file
       intron_tx_to_capture_mapping_file: intron_tx_to_capture_mapping_file
-      sc_technology:
-        source: sc_technology
-        valueFrom: $(self=="none"?null:self)
+      sc_technology: sc_technology
       whitelist_barcodes: whitelist_barcodes
       workflow_type: workflow_type
       h5ad:

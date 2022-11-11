@@ -48,7 +48,6 @@ inputs:
 
   sc_technology:
     type:
-    - "null"
     - type: enum
       name: "sc_technology"
       symbols:
