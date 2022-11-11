@@ -168,7 +168,7 @@ outputs:
       h5ad file generated from unfiltered count matrix
 
   whitelist_file:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_whitelist.txt"
     doc: |

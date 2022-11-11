@@ -149,7 +149,7 @@ outputs:
       h5ad file generated from unfiltered count matrix
 
   whitelist_file:
-    type: File
+    type: File?
     outputSource: kb_count/whitelist_file
     label: "Whitelisted barcodes"
     doc: |
