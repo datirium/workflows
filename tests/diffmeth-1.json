@@ -1,0 +1,31 @@
+{
+  "alias": "diffmeth-test-cli",
+  "c1_name": "group A",
+  "c2_name": "group B",
+  "c1_files": [
+    {
+      "class": "File",
+      "location": "/Users/robertplayer/data/scidap_workflow_testing/tool_rnbeads/test_data_from_bismark/toy_example_1krows_per/ews_l2.bismark.bed.gz",
+      "format": "http://edamontology.org/format_3003"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/tool_rnbeads/test_data_from_bismark/toy_example_1krows_per/ews_l2-copy.bismark.bed.gz",
+        "format": "http://edamontology.org/format_3003"
+    }
+  ],
+  "c2_files": [
+    {
+      "class": "File",
+      "location": "/Users/robertplayer/data/scidap_workflow_testing/tool_rnbeads/test_data_from_bismark/toy_example_1krows_per/ews_t2.bismark.bed.gz",
+      "format": "http://edamontology.org/format_3003"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/tool_rnbeads/test_data_from_bismark/toy_example_1krows_per/ews_t2-copy.bismark.bed.gz",
+        "format": "http://edamontology.org/format_3003"
+    }
+  ],
+  "genome": "hg38",
+  "threads": 3
+}
