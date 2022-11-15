@@ -55,6 +55,13 @@ inputs:
 
 outputs:
 
+  sameplsheet:
+    type: File
+    outputBinding:
+      glob: sample_annotation.csv
+    doc: |
+      Prepared samplesheet from user inputs, used for condition labeling by RnBeads.
+
   reports:
     type: File
     outputBinding:

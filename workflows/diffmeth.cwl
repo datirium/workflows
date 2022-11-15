@@ -79,6 +79,12 @@ inputs:
 
 outputs:
 
+  sameplsheet:
+    type: File
+    label: "Samplesheet with condition labels"
+    doc: "Samplesheet with condition labels"
+    outputSource: run_rnbeads_diff/sameplsheet
+    
   reports:
     type: File
     label: "Compressed TAR with RnBeads reports"
@@ -117,7 +123,7 @@ steps:
       condition2_name: c2_name
       condition1_filepaths: c1_files
       condition2_filepaths: c2_files
-    out: [reports, stdout_log, stderr_log]
+    out: [sameplsheet, reports, stdout_log, stderr_log]
 
 
 $namespaces:

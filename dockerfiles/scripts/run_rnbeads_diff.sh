@@ -107,6 +107,13 @@ cat $workdir/sample_annotation.csv
 # run Rscript wrapper for rnbeads with formatted inputs
 Rscript /usr/local/bin/run_rnbeads_diff.R $workdir/sample_annotation.csv "$OUTDIR" "$workdir" "$GENOME" "$THREADS"
 
-# package report dir for output
+#	OUTPUTS
+#===============================================================================
+# move sample sheet for output
+cp $workdir/sample_annotation.csv ./
+# package report dir
 tar -cf reports.tar ./reports
 gzip reports.tar
+
+# clean up
+rm -r "$workdir"
