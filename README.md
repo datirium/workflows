@@ -11,7 +11,7 @@ All the original BioWardrobe's [pipelines](https://genomebiology.biomedcentral.c
     has been rewritten in CWL and new workflows has been added.  The repository pulls automatically into SciDAP platform.
 
 ## Augmented CWL standard for SciDAP
-There are 4 additional references that can given to a workflow for compatability within SciDAP.
+There are 4 additional references that can be given to a workflow for added compatability within SciDAP.
 1. [Metadata](#metadata)
 2. [Upstreams](#upstreams)
 3. [Visual Plugins](#visualplugins-for-an-output-type-file) 
@@ -19,11 +19,12 @@ There are 4 additional references that can given to a workflow for compatability
 
 ### Metadata
 
-To extend user interface (dynamic form) with extra input fields not required by a workflow ```'sd:metadata'``` field were introduced.
-It defines a list of workflow templates where ```inputs``` object is used for constructing and storing extra fields with an original workflow.
+To extend user interface (dynamic form) with extra input fields not required by a workflow, the ```'sd:metadata'``` field was introduced.
+It defines a list of workflow templates where the ```inputs``` object is used for constructing and storing extra fields with an original workflow.
 
 #### Example of 'metadata' template for user interface: 
 
+> chipseq-header.cwl
 ```yaml
 cwlVersion: v1.0
 class: Workflow
@@ -60,8 +61,9 @@ and include file as ```sd:metadata```
 
 ### Upstreams
 
-To allow selection of already analysed data as input for a workflow, we organize a graph of separate workflows. To link workflows we use ```’sd:upstream’``` which defines a list of upstream workflows.
-This list is what allows you to select samples you've run that utilized any of the workflows listed
+To extend the SciDAP UI to allow for already analysed data the be selectable as inputs, we organize a graph of separate workflows. To link workflows we use ```’sd:upstream’```, which defines a list of upstream workflows who's outputs are accible by this workflow.
+
+
 
 ```yaml
 ...
@@ -105,7 +107,7 @@ inputs:
 
 ### VisualPlugins for an output type file
 
-Usually workflows output results (especially files) are provided as download links in web interfaces. With SciDAP visualization plugins data can be presented as a plot, as a genome browser or as a table. Keyword `'sd:visualPlugins'` enables SciDAP visualization plugins. `line`, `pie`, `chart`, `igvbrowser` and `syncfusiongrid` types are already available in the platform.
+Usually, workflows' output results (especially files) are provided as download links in web interfaces. With SciDAP visualization plugins, data can be presented as a plot, as a genome browser, as a table, or (in the case of html outputs) to be opened in a new tab. The keyword `'sd:visualPlugins'` enables SciDAP visualization plugins. `line`, `pie`, `chart`, `igvbrowser`, `syncfusiongrid`, and `linkList` types are already available in the platform.
 
 
 ```yaml
