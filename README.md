@@ -10,14 +10,18 @@ or in [BioWardrobe](https://biowardrobe.com/) project or standalone with [cwltoo
 All the original BioWardrobe's [pipelines](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0720-3)
     has been rewritten in CWL and new workflows has been added.  The repository pulls automatically into SciDAP platform.
 
-## Augmented CWL standard with
+## Augmented CWL standard for SciDAP
+There are 4 additional references that can given to a workflow for compatability within SciDAP.
+1. [Metadata](#metadata)
+2. [Upstreams](#upstreams)
+3. [Visual Plugins](#visualplugins-for-an-output-type-file) 
 
 ### Metadata
 
 To extend user interface (dynamic form) with extra input fields not required by a workflow ```'sd:metadata'``` field were introduced.
 It defines a list of workflow templates where ```inputs``` object is used for constructing and storing extra fields with an original workflow.
 
-### Example of 'metadata' template for user interface: 
+#### Example of 'metadata' template for user interface: 
 
 ```yaml
 cwlVersion: v1.0
@@ -55,7 +59,8 @@ and include file as ```sd:metadata```
 
 ### Upstreams
 
-To allow selection of already analysed data as input for a workflow we organize a graph of separate workflows. To link workflows we use ```’sd:upstream’``` which defines a list of upstream workflows.
+To allow selection of already analysed data as input for a workflow, we organize a graph of separate workflows. To link workflows we use ```’sd:upstream’``` which defines a list of upstream workflows.
+This list is what allows you to select samples you've run that utilized any of the workflows listed
 
 ```yaml
 ...
@@ -143,3 +148,9 @@ outputs:
             height: 120
     ...
 ```
+
+### Service Tag for the workflow
+The ```'sd:serviceTag'```keyword enables new workflows to be added for the creation of:
+- samples: uses keyword ```'sample'```
+- analyses: uses keyword ```'analysis'```
+- genelist: uses keywork ```'genelist'```
