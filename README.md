@@ -15,6 +15,7 @@ There are 4 additional references that can given to a workflow for compatability
 1. [Metadata](#metadata)
 2. [Upstreams](#upstreams)
 3. [Visual Plugins](#visualplugins-for-an-output-type-file) 
+4. [Service Tags](#service-tags-for-workflows)
 
 ### Metadata
 
@@ -149,7 +150,7 @@ outputs:
     ...
 ```
 
-### Service Tag for the workflow
+### Service Tags for workflows
 The ```'sd:serviceTag'```keyword enables new workflows to be added for the creation of:
 - samples: uses keyword ```'sample'```
 - analyses: uses keyword ```'analysis'```
