@@ -55,19 +55,75 @@ inputs:
 
 outputs:
 
-  sameplsheet:
+  samplesheet:
     type: File
     outputBinding:
       glob: sample_annotation.csv
     doc: |
       Prepared samplesheet from user inputs, used for condition labeling by RnBeads.
 
-  reports:
+  report_tar:
     type: File
     outputBinding:
       glob: reports.tar.gz
     doc: |
       Compressed reports dir tarball containing html summary files and additional files.
+
+  report_data_import:
+    type: Directory
+    outputBinding:
+      glob: reports/data_import_images
+    doc: |
+      image directory for data_import report html
+
+  report_data_import_html:
+    type: File
+    outputBinding:
+      glob: reports/data_import.html
+    doc: |
+      Differential
+
+  report_qc:
+    type: Directory
+    outputBinding:
+      glob: reports/quality_control_images
+    doc: |
+      image directory for quality_control report html
+
+  report_qc_html:
+    type: File
+    outputBinding:
+      glob: reports/quality_control.html
+    doc: |
+      Differential
+
+  report_preprocessing:
+    type: Directory
+    outputBinding:
+      glob: reports/preprocessing_images
+    doc: |
+      image directory for preprocessing report html
+
+  report_preprocessing_html:
+    type: File
+    outputBinding:
+      glob: reports/preprocessing.html
+    doc: |
+      preprocessing report
+
+  report_differential_methylation:
+    type: Directory
+    outputBinding:
+      glob: reports/differential_methylation_images
+    doc: |
+      image directory for differential_methylation report html
+
+  report_differential_methylation_html:
+    type: File
+    outputBinding:
+      glob: reports/differential_methylation.html
+    doc: |
+      Differential methylation HTML report for visualization.  
 
   stdout_log:
     type: stdout

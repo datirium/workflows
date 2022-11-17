@@ -116,4 +116,4 @@ tar -cf reports.tar ./reports
 gzip reports.tar
 
 # clean up
-rm -r "$workdir"
+rm -rf "$workdir"

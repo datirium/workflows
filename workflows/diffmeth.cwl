@@ -5,6 +5,7 @@ class: Workflow
 requirements:
   - class: StepInputExpressionRequirement
 
+'sd:serviceTag': "Analysis"
 
 'sd:upstream':
   biological_condition1:
@@ -79,17 +80,81 @@ inputs:
 
 outputs:
 
-  sameplsheet:
+  samplesheet:
     type: File
     label: "Samplesheet with condition labels"
     doc: "Samplesheet with condition labels"
-    outputSource: run_rnbeads_diff/sameplsheet
+    outputSource: run_rnbeads_diff/samplesheet
     
-  reports:
+  report_tar:
     type: File
     label: "Compressed TAR with RnBeads reports"
     doc: "Compressed TAR with RnBeads reports"
-    outputSource: run_rnbeads_diff/reports
+    outputSource: run_rnbeads_diff/report_tar
+
+  report_data_import:
+    type: Directory
+    label: "Image directory for Data Import HTML"
+    doc: "Image directory for Data Import HTML"
+    outputSource: run_rnbeads_diff/report_data_import
+
+  report_data_import_html:
+    type: File
+    label: "Data Import HTML report"
+    doc: "Data Import HTML report"
+    outputSource: run_rnbeads_diff/report_data_import_html
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Data Import'
+        target: "_blank"
+
+  report_qc:
+    type: Directory
+    label: "Image directory for Quality Control HTML"
+    doc: "Image directory for Quality Control HTML"
+    outputSource: run_rnbeads_diff/report_qc
+
+  report_qc_html:
+    type: File
+    label: "Quality Control HTML report"
+    doc: "Quality Control HTML report"
+    outputSource: run_rnbeads_diff/report_qc_html
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Quality Control'
+        target: "_blank"
+        
+  report_preprocessing:
+    type: Directory
+    label: "Image directory for Preprocessing HTML"
+    doc: "Image directory for Preprocessing HTML"
+    outputSource: run_rnbeads_diff/report_preprocessing
+
+  report_preprocessing_html:
+    type: File
+    label: "Preprocessing HTML report"
+    doc: "Preprocessing HTML report"
+    outputSource: run_rnbeads_diff/report_preprocessing_html
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Preprocessing'
+        target: "_blank"
+        
+  report_differential_methylation:
+    type: Directory
+    label: "Image directory for Differential methylation HTML"
+    doc: "Image directory for Differential methylation HTML"
+    outputSource: run_rnbeads_diff/report_differential_methylation
+
+  report_differential_methylation_html:
+    type: File
+    label: "Differential methylation HTML report"
+    doc: "Differential methylation HTML report"
+    outputSource: run_rnbeads_diff/report_differential_methylation_html
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Differential Methylation'
+        target: "_blank"
 
   stdout_log:
     type: File
@@ -123,7 +188,19 @@ steps:
       condition2_name: c2_name
       condition1_filepaths: c1_files
       condition2_filepaths: c2_files
-    out: [sameplsheet, reports, stdout_log, stderr_log]
+    out:
+      - samplesheet
+      - report_tar
+      - report_data_import
+      - report_data_import_html
+      - report_qc
+      - report_qc_html
+      - report_preprocessing
+      - report_preprocessing_html
+      - report_differential_methylation
+      - report_differential_methylation_html
+      - stdout_log
+      - stderr_log
 
 
 $namespaces:
