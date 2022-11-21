@@ -111,6 +111,10 @@ Rscript /usr/local/bin/run_rnbeads_diff.R $workdir/sample_annotation.csv "$OUTDI
 #===============================================================================
 # move sample sheet for output
 cp $workdir/sample_annotation.csv ./
+# format for Overview tab
+head -1 sample_annotation.csv | awk -F',' '{printf("| %s\t| %s\t|\n",$1,$2)}' > sample_annotation.md
+printf "| --------\t| --------\t|\n" >> sample_annotation.md
+tail -n+2 sample_annotation.csv | awk -F',' '{printf("| %s\t| %s\t|\n",$1,$2)}' >> sample_annotation.md
 # package report dir
 tar -cf reports.tar ./reports
 gzip reports.tar
