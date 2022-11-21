@@ -71,8 +71,6 @@ inputs:
   threads:
     type: int
     default: 2
-    'sd:layout':
-      advanced: true
     label: "Number of threads for parallel processing:"
     'sd:localLabel': true
     doc: "Number of threads for parallel processing"
@@ -85,7 +83,16 @@ outputs:
     label: "Samplesheet with condition labels"
     doc: "Samplesheet with condition labels"
     outputSource: run_rnbeads_diff/samplesheet
-    
+
+  samplesheet_overview:
+    type: File
+    label: "Samplesheet with condition labels"
+    doc: "Samplesheet with condition labels"
+    outputSource: run_rnbeads_diff/samplesheet_overview
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
   report_tar:
     type: File
     label: "Compressed TAR with RnBeads reports"
@@ -105,7 +112,7 @@ outputs:
     outputSource: run_rnbeads_diff/report_data_import_html
     'sd:visualPlugins':
     - linkList:
-        tab: 'Data Import'
+        tab: 'Overview'
         target: "_blank"
 
   report_qc:
@@ -121,7 +128,7 @@ outputs:
     outputSource: run_rnbeads_diff/report_qc_html
     'sd:visualPlugins':
     - linkList:
-        tab: 'Quality Control'
+        tab: 'Overview'
         target: "_blank"
         
   report_preprocessing:
@@ -137,7 +144,7 @@ outputs:
     outputSource: run_rnbeads_diff/report_preprocessing_html
     'sd:visualPlugins':
     - linkList:
-        tab: 'Preprocessing'
+        tab: 'Overview'
         target: "_blank"
         
   report_differential_methylation:
@@ -153,7 +160,7 @@ outputs:
     outputSource: run_rnbeads_diff/report_differential_methylation_html
     'sd:visualPlugins':
     - linkList:
-        tab: 'Differential Methylation'
+        tab: 'Overview'
         target: "_blank"
 
   stdout_log:
@@ -190,6 +197,7 @@ steps:
       condition2_filepaths: c2_files
     out:
       - samplesheet
+      - samplesheet_overview
       - report_tar
       - report_data_import
       - report_data_import_html

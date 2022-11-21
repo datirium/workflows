@@ -62,6 +62,13 @@ outputs:
     doc: |
       Prepared samplesheet from user inputs, used for condition labeling by RnBeads.
 
+  samplesheet_overview:
+    type: File
+    outputBinding:
+      glob: sample_annotation.md
+    doc: |
+      Prepared samplesheet from user inputs, used for display on Overview tab.
+
   report_tar:
     type: File
     outputBinding:
