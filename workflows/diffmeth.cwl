@@ -52,6 +52,16 @@ inputs:
     'sd:localLabel': true
     doc: "Array of input coverage files from Bismark workflow."
 
+  c1_aliases:
+    type: string[]
+    'sd:upstreamSource': "biological_condition1/alias"
+    doc: "Array of input coverage files from Bismark workflow."
+
+  c2_aliases:
+    type: string[]
+    'sd:upstreamSource': "biological_condition2/alias"
+    doc: "Array of input coverage files from Bismark workflow."
+
   genome:
     type:
     - "null"
@@ -127,7 +137,7 @@ outputs:
     label: "stderr log"
     doc: "stderr log"
     outputSource: run_rnbeads_diff/stderr_log
-    
+
   samplesheet_overview:
     type: File
     label: "Samplesheet with condition labels"
@@ -195,6 +205,8 @@ steps:
       condition2_name: c2_name
       condition1_filepaths: c1_files
       condition2_filepaths: c2_files
+      condition1_aliases: c1_aliases
+      condition2_aliases: c2_aliases
     out:
       - samplesheet
       - samplesheet_overview

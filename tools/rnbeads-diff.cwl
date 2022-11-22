@@ -52,6 +52,19 @@ inputs:
       itemSeparator: ","
     doc: "List of absolute filepaths to BismarkCov formatted bed files for group 2"
 
+  condition1_aliases:
+    type: string[]
+    inputBinding:
+      prefix: "-j"
+      itemSeparator: ","
+    doc: "List of alias sample names for group 1"
+
+  condition2_aliases:
+    type: string[]
+    inputBinding:
+      prefix: "-k"
+      itemSeparator: ","
+    doc: "List of alias sample names for group 2"
 
 outputs:
 

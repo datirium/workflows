@@ -6,7 +6,7 @@
 #
 # v0.0.1
 # - format input lists for rnbeads in Rscript
-#
+# - run rnbeads Rscript
 ##########################################################################################
 printf "$(date)\nLog file for run_rnbeads_diff.sh\n\n"
 
@@ -34,8 +34,8 @@ OPTIONS:
  -b  STRING     name of condition2
  -c  LIST	comma separated list of absolute filepaths to all condition1 bed files (BismarkCov format)
  -d  LIST	comma separated list of absolute filepaths to all condition2 bed files (BismarkCov format)
-OPTIONAL:
- -o  DIR        absolute path to output directory for reports, default '/tmp/[reports]'
+ -j  LIST   comma separated list of sample names in condition1
+ -k  LIST   comma separated list of sample names in condition2
 
 BismarkCov formatted bed:
     https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf
@@ -55,7 +55,7 @@ EOF
 #	INPUTS & CHECKS & DEFAULTS
 #===============================================================================
 # parse args
-while getopts "ht:g:a:b:c:d:o:" OPTION
+while getopts "ht:g:a:b:c:d:j:k:" OPTION
 do
 	case $OPTION in
 		h) usage; exit 1 ;;
@@ -65,15 +65,16 @@ do
 		b) CONDITION2_NAME=$OPTARG ;;
 		c) CONDITION1_BED_FILEPATHS=$OPTARG ;;
 		d) CONDITION2_BED_FILEPATHS=$OPTARG ;;
-        o) OUTDIR=$OPTARG ;;
+		j) CONDITION1_ALIASES=$OPTARG ;;
+        k) CONDITION2_ALIASES=$OPTARG ;;
 		?) usage; exit ;;
 	esac
 done
 # defaults
 workdir=$PWD/tmp
 mkdir -p "$workdir"
-# if -o param not specified, use current working dir
-if [[ ! -v "$OUTDIR" ]]; then OUTDIR=$PWD; fi
+# use current working dir as outdir
+OUTDIR=$PWD
 #in dockercontainer, run from:
 printf "List of defaults:\n"
 printf "\tPWD - $PWD\n"
@@ -85,6 +86,8 @@ printf "\tCONDITION1_NAME - $CONDITION1_NAME\n"
 printf "\tCONDITION2_NAME - $CONDITION2_NAME\n"
 printf "\tCONDITION1_BED_FILEPATHS - $CONDITION1_BED_FILEPATHS\n"
 printf "\tCONDITION2_BED_FILEPATHS - $CONDITION2_BED_FILEPATHS\n"
+printf "\tCONDITION1_ALIASES - $CONDITION1_ALIASES\n"
+printf "\tCONDITION2_ALIASES - $CONDITION2_ALIASES\n"
 printf "\tOUTDIR - $OUTDIR\n"
 
 
@@ -114,7 +117,14 @@ cp $workdir/sample_annotation.csv ./
 # format for Overview tab
 head -1 sample_annotation.csv | awk -F',' '{printf("| %s | %s |\n",$1,$2)}' > sample_annotation.md
 printf "| -- | -- |\n" >> sample_annotation.md
-tail -n+2 sample_annotation.csv | awk -F',' '{printf("| %s | %s |\n",$1,$2)}' >> sample_annotation.md
+#tail -n+2 sample_annotation.csv | awk -F',' '{printf("| %s | %s |\n",$1,$2)}' >> sample_annotation.md
+echo "$CONDITION1_ALIASES" | sed 's/,/\n/g' | while read alias; do
+    echo "$alias" | awk -v x="$CONDITION1_NAME" '{printf("| %s | %s |\n",$0,x)}'
+done >> sample_annotation.md
+echo "$CONDITION2_ALIASES" | sed 's/,/\n/g' | while read alias; do
+    echo "$alias" | awk -v x="$CONDITION2_NAME" '{printf("| %s | %s |\n",$0,x)}'
+done >> sample_annotation.md
+
 # package report dir
 tar -cf reports.tar ./reports
 gzip reports.tar
