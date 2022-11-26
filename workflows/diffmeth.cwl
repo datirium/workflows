@@ -100,29 +100,11 @@ outputs:
     doc: "Compressed TAR with RnBeads reports"
     outputSource: run_rnbeads_diff/report_tar
 
-  report_data_import:
+  report_directory:
     type: Directory
-    label: "Image directory for Data Import HTML"
-    doc: "Image directory for Data Import HTML"
-    outputSource: run_rnbeads_diff/report_data_import
-
-  report_qc:
-    type: Directory
-    label: "Image directory for Quality Control HTML"
-    doc: "Image directory for Quality Control HTML"
-    outputSource: run_rnbeads_diff/report_qc
-
-  report_preprocessing:
-    type: Directory
-    label: "Image directory for Preprocessing HTML"
-    doc: "Image directory for Preprocessing HTML"
-    outputSource: run_rnbeads_diff/report_preprocessing
-
-  report_differential_methylation:
-    type: Directory
-    label: "Image directory for Differential methylation HTML"
-    doc: "Image directory for Differential methylation HTML"
-    outputSource: run_rnbeads_diff/report_differential_methylation
+    label: "Output directory for all rnbeads results, preserves structure for html references"
+    doc: "Output directory for all rnbeads results, preserves structure for html references"
+    outputSource: run_rnbeads_diff/report_directory
 
   stdout_log:
     type: File
@@ -187,6 +169,138 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  dm_sites_stats_table:
+    type: File
+    label: "DM sites"
+    doc: "DM sites"
+    outputSource: run_rnbeads_diff/dm_sites_stats
+
+  dm_cpg_stats_table:
+    type: File
+    label: "DM CpGs"
+    doc: "DM CpGs"
+    outputSource: run_rnbeads_diff/dm_cpg_stats
+
+  dm_tiling_stats_table:
+    type: File
+    label: "DM tiling"
+    doc: "DM tiling"
+    outputSource: run_rnbeads_diff/dm_tiling_stats
+
+  dm_genes_stats_table:
+    type: File
+    label: "DM genes"
+    doc: "DM genes"
+    outputSource: run_rnbeads_diff/dm_genes_stats
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Differentially Methylated Genes'
+        Title: 'Table of differentially methylated genes.'
+
+  dm_sites_group1_igv:
+    type: File
+    label: "DM sites"
+    doc: "DM sites fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_sites_group1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm sites grp1"
+        height: 60
+
+  dm_cpg_group1_igv:
+    type: File
+    label: "DM CpGs"
+    doc: "DM CpGs fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_cpg_group1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm CpGs grp1"
+        height: 60
+
+  dm_tiling_group1_igv:
+    type: File
+    label: "DM tiling"
+    doc: "DM tiling fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_tiling_group1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm tiling grp1"
+        height: 60
+
+  dm_genes_group1_igv:
+    type: File
+    label: "DM genes"
+    doc: "DM genes fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_genes_group1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm genes grp1"
+        height: 60
+
+  dm_sites_group2_igv:
+    type: File
+    label: "DM sites"
+    doc: "DM sites fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_sites_group2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm sites grp2"
+        height: 60
+
+  dm_cpg_group2_igv:
+    type: File
+    label: "DM CpGs"
+    doc: "DM CpGs fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_cpg_group2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm CpGs grp2"
+        height: 60
+
+  dm_tiling_group2_igv:
+    type: File
+    label: "DM tiling"
+    doc: "DM tiling fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_tiling_group2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm tiling grp2"
+        height: 60
+
+  dm_genes_group2_igv:
+    type: File
+    label: "DM genes"
+    doc: "DM genes fdr<0.10"
+    outputSource: run_rnbeads_diff/dm_genes_group2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "dm genes grp2"
+        height: 60
+
 
 steps:
 
@@ -211,14 +325,23 @@ steps:
       - samplesheet
       - samplesheet_overview
       - report_tar
-      - report_data_import
+      - report_directory
       - report_data_import_html
-      - report_qc
       - report_qc_html
-      - report_preprocessing
       - report_preprocessing_html
-      - report_differential_methylation
       - report_differential_methylation_html
+      - dm_sites_stats
+      - dm_cpg_stats
+      - dm_tiling_stats
+      - dm_genes_stats
+      - dm_sites_group1
+      - dm_cpg_group1
+      - dm_tiling_group1
+      - dm_genes_group1
+      - dm_sites_group2
+      - dm_cpg_group2
+      - dm_tiling_group2
+      - dm_genes_group2
       - stdout_log
       - stderr_log
 
@@ -279,9 +402,6 @@ doc: |
   - Bismark coverage files* for condition1 - minumum of 2 is required for analysis
   - Bismark coverage files* for condition2 - minumum of 2 is required for analysis
   - Sample genome - available options: hg19, hg38, mm9, mm10, rn5
-  - Number of threads for parallel processing - INT
-
-  *Advanced:*
   - Number of threads for steps that support multithreading - default set to `2`
 
   *BismarkCov formatted bed:
@@ -315,6 +435,26 @@ doc: |
       ├── tracks_and_tables_data
       ├── tracks_and_tables_images
       └── tracks_and_tables_pdfs
+
+  Other outputs include tables and bed files for IGV for DM sites, CpG, tiling, and genes:
+  
+  https://bioc.ism.ac.jp/packages/3.4/bioc/vignettes/RnBeads/inst/doc/RnBeads_Annotations.pdf
+  2.1 Sites ($sites)
+    Currently, every data package examines cytosines in the context of CpG and contains an
+    annnotation table of all CpGs in the respective genome. CpG density and GC content are
+    also computed for the neighborhood of length 100 base pairs centered on each locus. The
+    total number of dinucleotides annotated in HG19 is 28,217,009 represented both on the
+    forward and reverse DNA strands.
+  2.4 Regions ($tiling, $cpg, $genes)
+    Every data package defines the following sets of regions for the dedicated assembly:
+    - GpG islands The CpG island track is downloaded from the dedicated FTP directory of
+      the UCSC Genome Browser.
+    - Tiling regions Tiling regions with a window size of 5 kilobases are defined over the
+      whole genome.
+    - Genes and promoters Ensembl3 gene definitions are downloaded using the biomaRt package.
+      A promoter isdefined as the region spanning 1,500 bases upstream and 500 bases
+      downstream of the transcription start site of the corresponding gene.
+    CpG density and GC content are computed for all region types listed above.
 
   ### __Data Analysis Steps__
   1. generate sample sheet with associated conditions for testing in RnBeads

@@ -26,7 +26,7 @@ Help message for \`run_rnbeads_diff.sh\`:
     ├── quality_control.html
     ├── tracks_and_tables.html
 
-OPTIONS:
+PARAMS:
  -h  help	show this message
  -g  STRING   Sample genome, available options: hg19, hg38, mm9, mm10, rn5
  -t  INT	number of threads
@@ -114,16 +114,57 @@ Rscript /usr/local/bin/run_rnbeads_diff.R $workdir/sample_annotation.csv "$OUTDI
 #===============================================================================
 # move sample sheet for output
 cp $workdir/sample_annotation.csv ./
-# format for Overview tab
+# format for Overview tab (use sample alias instead of filename)
 head -1 sample_annotation.csv | awk -F',' '{printf("| %s | %s |\n",$1,$2)}' > sample_annotation.md
 printf "| -- | -- |\n" >> sample_annotation.md
-#tail -n+2 sample_annotation.csv | awk -F',' '{printf("| %s | %s |\n",$1,$2)}' >> sample_annotation.md
 echo "$CONDITION1_ALIASES" | sed 's/,/\n/g' | while read alias; do
     echo "$alias" | awk -v x="$CONDITION1_NAME" '{printf("| %s | %s |\n",$0,x)}'
 done >> sample_annotation.md
 echo "$CONDITION2_ALIASES" | sed 's/,/\n/g' | while read alias; do
     echo "$alias" | awk -v x="$CONDITION2_NAME" '{printf("| %s | %s |\n",$0,x)}'
 done >> sample_annotation.md
+
+# get annotationed DMs (differential methylation) data (https://bioc.ism.ac.jp/packages/3.4/bioc/vignettes/RnBeads/inst/doc/RnBeads_Annotations.pdf)
+#   2.1 Sites ($sites)
+#Currently, every data package examines cytosines in the context of CpG and contains an
+#annnotation table of all CpGs in the respective genome. CpG density and GC content are
+#also computed for the neighborhood of length 100 base pairs centered on each locus. The
+#total number of dinucleotides annotated in HG19 is 28,217,009 represented both on the
+#forward and reverse DNA strands.
+#   2.4 Regions ($tiling, $cpg, $genes)
+#Every data package defines the following sets of regions for the dedicated assembly:
+# - GpG islands The CpG island track is downloaded from the dedicated FTP directory of the UCSC Genome Browser.
+# - Tiling regions Tiling regions with a window size of 5 kilobases are defined over the whole genome.
+# - Genes and promoters Ensembl3 gene definitions are downloaded using the biomaRt package. A promoter is defined as the region spanning 1,500 bases upstream and 500 bases downstream of the transcription start site of the corresponding gene.
+#CpG density and GC content are computed for all region types listed above.
+dm="./reports/differential_methylation_data"
+sites="$dm/diffMethTable_site_cmp1.csv"
+cpg="$dm/diffMethTable_region_cmp1_cpgislands.csv"
+tiling="$dm/diffMethTable_region_cmp1_tiling.csv"
+genes="$dm/diffMethTable_region_cmp1_genes.csv"
+
+# FOR DOWNLOAD
+#   $sites: id,Chromosome,Start,Strand,diffmeth.p.adj.fdr,mean.covg.condition1,mean.covg.condition2
+sed 's/,/\t/g' $sites | cut -f1-4,17,21,22 > dm_sites.tsv
+#   $cpg, $tiling: id,Chromosome,Start,End,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+sed 's/,/\t/g' $cpg | cut -f1-4,10,12,15,16 > dm_cpg.tsv
+sed 's/,/\t/g' $tiling | cut -f1-4,10,12,15,16 > dm_tiling.tsv
+#   FOR TABLE VIEW (& DOWNLOAD): id,Chromosome,Start,End,symbol,entrezID,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+sed 's/,/\t/g' $genes | cut -f1-6,12,14,17,18 > dm_genes.tsv
+# FOR IGV
+#   filter at fdr<0.10 and generate bed: chr,start,end,meancoverage
+#   condition1
+tail -n+2 $sites | awk -F',' '{if($17<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$3+1,$21)}}' > dm_sites_grp1.bed
+tail -n+2 $cpg | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$15)}}' > dm_cpg_grp1.bed
+tail -n+2 $tiling | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$15)}}' > dm_tiling_grp1.bed
+tail -n+2 $genes | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$17)}}' > dm_genes_grp1.bed
+#   condition2
+tail -n+2 $sites | awk -F',' '{if($17<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$3+1,$22)}}' > dm_sites_grp2.bed
+tail -n+2 $cpg | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$16)}}' > dm_cpg_grp2.bed
+tail -n+2 $tiling | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$16)}}' > dm_tiling_grp2.bed
+tail -n+2 $genes | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$18)}}' > dm_genes_grp2.bed
+
+
 
 # package report dir
 tar -cf reports.tar ./reports

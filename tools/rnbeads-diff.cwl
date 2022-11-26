@@ -89,12 +89,12 @@ outputs:
     doc: |
       Compressed reports dir tarball containing html summary files and additional files.
 
-  report_data_import:
+  report_directory:
     type: Directory
     outputBinding:
-      glob: reports/data_import_images
+      glob: reports
     doc: |
-      image directory for data_import report html
+      output directory for all rnbeads results, preserves structure for html references
 
   report_data_import_html:
     type: File
@@ -103,26 +103,12 @@ outputs:
     doc: |
       Differential
 
-  report_qc:
-    type: Directory
-    outputBinding:
-      glob: reports/quality_control_images
-    doc: |
-      image directory for quality_control report html
-
   report_qc_html:
     type: File
     outputBinding:
       glob: reports/quality_control.html
     doc: |
       Differential
-
-  report_preprocessing:
-    type: Directory
-    outputBinding:
-      glob: reports/preprocessing_images
-    doc: |
-      image directory for preprocessing report html
 
   report_preprocessing_html:
     type: File
@@ -131,19 +117,96 @@ outputs:
     doc: |
       preprocessing report
 
-  report_differential_methylation:
-    type: Directory
-    outputBinding:
-      glob: reports/differential_methylation_images
-    doc: |
-      image directory for differential_methylation report html
-
   report_differential_methylation_html:
     type: File
     outputBinding:
       glob: reports/differential_methylation.html
     doc: |
-      Differential methylation HTML report for visualization.  
+      Differential methylation HTML report for visualization.
+
+  dm_sites_stats:
+    type: File
+    outputBinding:
+      glob: dm_sites.tsv
+    doc: |
+      All differentially methylated Sites statistics: diffmeth.p.adj.fdr,mean.covg.condition1,mean.covg.condition2
+
+  dm_cpg_stats:
+    type: File
+    outputBinding:
+      glob: dm_cpg.tsv
+    doc: |
+      All differentially methylated CpG statistics: p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+
+  dm_tiling_stats:
+    type: File
+    outputBinding:
+      glob: dm_tiling.tsv
+    doc: |
+      All differentially methylated Tiling (5kbp) statistics: p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+
+  dm_genes_stats:
+    type: File
+    outputBinding:
+      glob: dm_genes.tsv
+    doc: |
+      All differentially methylated Genes statistics: symbol,entrezID,p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+
+  dm_sites_group1:
+    type: File
+    outputBinding:
+      glob: dm_sites_grp1.bed
+    doc: |
+      Differentially methylated Sites for IGV having p.adj<0.10
+
+  dm_cpg_group1:
+    type: File
+    outputBinding:
+      glob: dm_cpg_grp1.bed
+    doc: |
+      Differentially methylated CpG for IGV having p.adj<0.10
+
+  dm_tiling_group1:
+    type: File
+    outputBinding:
+      glob: dm_tiling_grp1.bed
+    doc: |
+      Differentially methylated Tiling (5kbp) for IGV having p.adj<0.10
+
+  dm_genes_group1:
+    type: File
+    outputBinding:
+      glob: dm_genes_grp1.bed
+    doc: |
+      Differentially methylated Genes for IGV having p.adj<0.10
+
+  dm_sites_group2:
+    type: File
+    outputBinding:
+      glob: dm_sites_grp2.bed
+    doc: |
+      Differentially methylated Sites for IGV having p.adj<0.10
+
+  dm_cpg_group2:
+    type: File
+    outputBinding:
+      glob: dm_cpg_grp2.bed
+    doc: |
+      Differentially methylated CpG for IGV having p.adj<0.10
+
+  dm_tiling_group2:
+    type: File
+    outputBinding:
+      glob: dm_tiling_grp2.bed
+    doc: |
+      Differentially methylated Tiling (5kbp) for IGV having p.adj<0.10
+
+  dm_genes_group2:
+    type: File
+    outputBinding:
+      glob: dm_genes_grp2.bed
+    doc: |
+      Differentially methylated Genes for IGV having p.adj<0.10
 
   stdout_log:
     type: stdout
@@ -225,16 +288,35 @@ doc: |
     ├── tracks_and_tables_images
     └── tracks_and_tables_pdfs
 
-  OPTIONS:
+  Other outputs include tables and bed files for IGV for DM sites, CpG, tiling, and genes:
+  https://bioc.ism.ac.jp/packages/3.4/bioc/vignettes/RnBeads/inst/doc/RnBeads_Annotations.pdf
+  2.1 Sites ($sites)
+    Currently, every data package examines cytosines in the context of CpG and contains an
+    annnotation table of all CpGs in the respective genome. CpG density and GC content are
+    also computed for the neighborhood of length 100 base pairs centered on each locus. The
+    total number of dinucleotides annotated in HG19 is 28,217,009 represented both on the
+    forward and reverse DNA strands.
+  2.4 Regions ($tiling, $cpg, $genes)
+    Every data package defines the following sets of regions for the dedicated assembly:
+    - GpG islands The CpG island track is downloaded from the dedicated FTP directory of
+      the UCSC Genome Browser.
+    - Tiling regions Tiling regions with a window size of 5 kilobases are defined over the
+      whole genome.
+    - Genes and promoters Ensembl3 gene definitions are downloaded using the biomaRt package.
+      A promoter isdefined as the region spanning 1,500 bases upstream and 500 bases
+      downstream of the transcription start site of the corresponding gene.
+    CpG density and GC content are computed for all region types listed above.
+
+  PARAMS:
   -h  help	show this message
-  -t  INT	number of threads
   -g  STRING   Sample genome, available options: hg19, hg38, mm9, mm10, rn5
+  -t  INT	number of threads
   -a  STRING     name of condition1
   -b  STRING     name of condition2
   -c  LIST	comma separated list of absolute filepaths to all condition1 bed files (BismarkCov format)
   -d  LIST	comma separated list of absolute filepaths to all condition2 bed files (BismarkCov format)
-  OPTIONAL:
-  -o  DIR        absolute path to output directory for reports, default '/tmp/[reports]'
+  -j  LIST   comma separated list of sample names in condition1
+  -k  LIST   comma separated list of sample names in condition2
 
   BismarkCov formatted bed:
       https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf
