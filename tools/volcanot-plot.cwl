@@ -4,17 +4,38 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/visualization:v0.0.3
+  dockerPull: biowardrobe2/visualization:v0.0.4
 
 
 inputs:
 
   diff_expr_file:
-    type: File?
+    type: File
+    inputBinding:
+      position: 5
     doc: |
-      This input is not being used for now, but we need it so we can
-      guarantee the order of workflow steps execution when we use this
-      tool in a workflow.
+      TSV file holding data for the plot
+
+  x_axis_column:
+    type: string
+    inputBinding:
+      position: 6
+    doc: |
+      Name of column in file for the plots x-axis (ex: "log2FoldChange")
+
+  y_axis_column:
+    type: string
+    inputBinding:
+      position: 7
+    doc: |
+      Name of column in file for the plots y-axis (ex: "padj")
+
+  label_column:
+    type: string
+    inputBinding:
+      position: 8
+    doc: |
+      Name of column in file for each data points 'name' (ex: "GeneId")
 
 
 outputs:
@@ -22,21 +43,21 @@ outputs:
   css_file:
     type: File
     outputBinding:
-      glob: "./html_data/index.css"
+      glob: "./volcano_plot/volcano_plot/html_data/index.css"
     doc: |
       CSS file for Volcano Plot
 
   js_file:
     type: File
     outputBinding:
-      glob: "./html_data/index.js"
+      glob: "./volcano_plot/volcano_plot/html_data/index.js"
     doc: |
       Javascript file for Volcano Plot
 
   html_file:
     type: File
     outputBinding:
-      glob: "./html_data/index.html"
+      glob: "./volcano_plot/volcano_plot/html_data/index.html"
     doc: |
       HTML index file for Volcano Plot
 

@@ -36,6 +36,7 @@
     "class": "File",
     "location": "./data/dm3_chr4/main_inputs/geep/metadata_with_sample.csv"
   },
+  "normalization_method": "rlog",
   "minimum_counts": 0,
   "splitby": "condition",
   "groupby": "time"
