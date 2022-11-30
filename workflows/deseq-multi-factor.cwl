@@ -322,6 +322,31 @@ outputs:
         tab: 'Plots'
         Caption: 'PCA plot of normalized counts based on the top 500 features with the highest row variance'
 
+  volcano_plot_html_file:
+    type: File
+    outputSource: make_volcano_plot/html_file
+    label: "Volcano Plot"
+    doc: |
+      HTML index file with volcano plot data.
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  volcano_plot_css_file:
+    type: File
+    outputSource: make_volcano_plot/css_file
+    label: "Volcano Plot CSS"
+    doc: |
+      CSS index file with volcano plot data.
+
+  volcano_plot_js_file:
+    type: File
+    outputSource: make_volcano_plot/js_file
+    label: "Volcano Plot JS"
+    doc: |
+      JS index file with volcano plot data.
+
   heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
@@ -412,6 +437,29 @@ steps:
     - mds_plot_html
     - stdout_log
     - stderr_log
+
+  make_volcano_plot:
+    run: ../tools/volcanot-plot.cwl
+    in:
+      diff_expr_file: deseq_multi_factor/diff_expr_features
+      x_axis_column:
+        default: "log2FoldChange"
+      y_axis_column:
+        default: "padj"
+      label_column:
+        source: feature_type
+        valueFrom: |
+          ${
+              if (self == "transcript") {
+                return "feature";
+              } else {
+                return "GeneId";
+              }
+          }
+    out:
+      - html_file
+      - css_file
+      - js_file
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl

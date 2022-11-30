@@ -494,7 +494,23 @@ steps:
   make_volcano_plot:
     run: ../tools/volcanot-plot.cwl
     in:
-      diff_expr_file: deseq/diff_expr_file   # we need this input only to guarantee workflow steps execution order
+      diff_expr_file: deseq/diff_expr_file
+      x_axis_column:
+        default: "log2FoldChange"
+      y_axis_column:
+        default: "padj"
+      label_column:
+        source: group_by
+        valueFrom: |
+          ${
+              if (self == "isoforms") {
+                return "RefseqId";
+              } else if (self == "genes") {
+                return "GeneId";
+              } else {
+                return "GeneId";
+              }
+          }
     out:
       - html_file
       - css_file
