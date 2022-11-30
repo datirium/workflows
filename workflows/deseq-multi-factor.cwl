@@ -150,7 +150,7 @@ inputs:
       used in other columns. All metadata columns are treated as
       factors (no covariates are supported).
 
-  norm_method:
+  normalization_method:
     type:
     - "null"
     - type: enum
@@ -422,7 +422,7 @@ steps:
       excluded_features:
         source: excluded_features
         valueFrom: $(split_by_common_delim(self))
-      normalization_method: norm_method
+      normalization_method: normalization_method
       remove:
         source: remove
         valueFrom: $(self==""?null:self)            # safety measure
