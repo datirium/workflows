@@ -308,10 +308,10 @@ outputs:
 
   clonotypes_csv:
     type: File
-    outputSource: cellranger_multi/clonotypes_csv
-    label: "CSV file with high-level descriptions of each clonotype"
+    outputSource: convert_clonotypes_csv_to_tsv/output_file
+    label: "TSV file with high-level descriptions of each clonotype"
     doc: |
-      CSV file with high-level descriptions of each clonotype. During the clonotype
+      TSV file with high-level descriptions of each clonotype. During the clonotype
       grouping stage, cell barcodes are placed in groups called clonotypes. Only viable
       cells identified by both V(D)J and GEX algorithms are used. Each clonotype consists
       of all descendants of a single, fully rearranged common ancestor, as approximated
@@ -558,6 +558,16 @@ steps:
       folder_to_compress: cellranger_multi/secondary_analysis_report_folder
     out:
     - compressed_folder
+
+  convert_clonotypes_csv_to_tsv:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: cellranger_multi/clonotypes_csv
+      script:
+        default: |
+          cat "$0" | tr "," "\t" > `basename $0 csv`tsv
+    out:
+    - output_file
 
 
 $namespaces:
