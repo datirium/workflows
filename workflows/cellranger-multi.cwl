@@ -11,9 +11,10 @@ requirements:
 
 'sd:upstream':
   gex_indices:
+  - "cellranger-mkref.cwl"
   - "https://github.com/datirium/workflows/workflows/cellranger-mkref.cwl"
   vdj_indices:
-  - "https://github.com/datirium/workflows/workflows/cellranger-mkvdjref.cwl"
+  - "cellranger-mkvdjref.cwl"
 
 
 inputs:
