@@ -459,7 +459,9 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_gex_fastq_r1/fastq_file
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
     out:
     - html_file
 
@@ -467,7 +469,9 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_gex_fastq_r2/fastq_file
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
     out:
     - html_file
 
@@ -475,7 +479,9 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_vdj_fastq_r1/fastq_file
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
     out:
     - html_file
 
@@ -483,7 +489,9 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_vdj_fastq_r2/fastq_file
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
     out:
     - html_file
 
@@ -497,7 +505,9 @@ steps:
       gex_indices_folder: gex_indices_folder
       vdj_indices_folder: vdj_indices_folder
       vdj_chain_type: vdj_chain_type
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
     out:
