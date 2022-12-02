@@ -188,6 +188,10 @@ outputs:
     label: "Run summary metrics in CSV format"
     doc: |
       Run summary metrics in CSV format
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'QC metrics'
+        Title: 'QC metrics'
 
   possorted_genome_bam_bai:
     type: File
