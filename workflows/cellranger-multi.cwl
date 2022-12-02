@@ -184,10 +184,10 @@ outputs:
 
   metrics_summary_report:
     type: File
-    outputSource: cellranger_multi/metrics_summary_report
-    label: "Run summary metrics in CSV format"
+    outputSource: convert_metrics_summary_report_to_tsv/output_file
+    label: "Run summary metrics in TSV format"
     doc: |
-      Run summary metrics in CSV format
+      Run summary metrics in TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'QC metrics'
@@ -310,7 +310,7 @@ outputs:
       in the AIRR format. It includes only viable cells identified by
       both V(D)J and GEX algorithms.
 
-  clonotypes_csv:
+  clonotypes_tsv:
     type: File
     outputSource: convert_clonotypes_csv_to_tsv/output_file
     label: "TSV file with high-level descriptions of each clonotype"
@@ -567,6 +567,16 @@ steps:
     run: ../tools/custom-bash.cwl
     in:
       input_file: cellranger_multi/clonotypes_csv
+      script:
+        default: |
+          cat "$0" | tr "," "\t" > `basename $0 csv`tsv
+    out:
+    - output_file
+
+  convert_metrics_summary_report_to_tsv:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: cellranger_multi/metrics_summary_report
       script:
         default: |
           cat "$0" | tr "," "\t" > `basename $0 csv`tsv
