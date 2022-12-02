@@ -20,6 +20,7 @@ requirements:
   - "https://github.com/datirium/workflows/workflows/single-cell-preprocess-cellranger.cwl"
   - "cellranger-aggr.cwl"
   - "single-cell-preprocess-cellranger.cwl"
+  - "cellranger-multi.cwl"
 
 
 inputs:
