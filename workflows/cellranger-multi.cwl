@@ -609,7 +609,7 @@ steps:
     - output_file
 
   cellbrowser_build:
-    run: ../tools/cellbrowser-build-cellranger.cwl
+    run: ../tools/cellbrowser-build-cellranger-multi.cwl
     in:
       secondary_analysis_report_folder: cellranger_multi/secondary_analysis_report_folder
       filtered_feature_bc_matrix_folder: cellranger_multi/filtered_feature_bc_matrix_folder
