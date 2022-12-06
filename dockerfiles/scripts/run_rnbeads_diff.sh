@@ -165,10 +165,17 @@ tail -n+2 $tiling | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$
 tail -n+2 $genes | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$18)}}' > dm_genes_grp2.bed
 
 
-
-# package report dir
+# package full report dir
 tar -cf reports.tar ./reports
 gzip reports.tar
+
+# minimize report dir (for CWL output dir fix)
+rm -r ./reports/tracks_and_tables*
+for minimizer in "data_import" "differential_methylation" "preprocessing" "quality_control"; do
+    rm -r ./reports/${minimizer}_data
+    rm -r ./reports/${minimizer}_pdfs
+done
+find ./reports -name "*_high_resolution.png" -exec rm {} +
 
 # clean up
 rm -rf "$workdir"

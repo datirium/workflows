@@ -88,7 +88,7 @@ inputs:
 
 outputs:
 
-  samplesheet:
+  samplesheet_md:
     type: File
     label: "Samplesheet with condition labels"
     doc: "Samplesheet with condition labels"
