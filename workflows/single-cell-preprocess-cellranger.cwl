@@ -35,7 +35,6 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "FASTQ file(s) R1 (optionally compressed)"
     doc: "FASTQ file(s) R1 (optionally compressed)"
 
@@ -44,38 +43,54 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "FASTQ file(s) R2 (optionally compressed)"
     doc: "FASTQ file(s) R2 (optionally compressed)"
 
+  r1_length:
+    type: int?
+    default: null
+    label: "Limit the length of the input R1 sequence"
+    doc: "Limit the length of the input R1 sequence"
+    'sd:layout':
+      advanced: true
+
+  r2_length:
+    type: int?
+    default: null
+    label: "Limit the length of the input R2 sequence"
+    doc: "Limit the length of the input R2 sequence"
+    'sd:layout':
+      advanced: true
+
   expect_cells:
     type: int?
-    default: 3000
-    label: "Expected number of recovered cells"
-    doc: "Expected number of recovered cells"
+    default: null
+    label: "Expected number of recovered cells. If not provided - use auto-estimated"
+    doc: "Expected number of recovered cells. If not provided - use auto-estimated"
     'sd:layout':
       advanced: true
 
-  force_expect_cells:
-    type: boolean?
-    default: false
-    label: "Force pipeline to use the expected number of recovered cells"
-    doc: |
-      Force pipeline to use the expected number of recovered cell.
-      The value provided in expect_cells will be sent to Cell Ranger Count as --force-cells.
-      The latter will bypass the cell detection algorithm. Use this if the number of cells
-      estimated by Cell Ranger is not consistent with the barcode rank plot.
+  force_cells:
+    type: int?
+    default: null
+    label: "Force pipeline to use this number of cells, bypassing the cell detection algorithm"
+    doc: "Force pipeline to use this number of cells, bypassing the cell detection algorithm"
     'sd:layout':
       advanced: true
 
-  include_introns:
+  exclude_introns:
     type: boolean?
     default: false
-    label: "Count reads mapping to intronic regions. For samples with a significant amount of pre-mRNA molecules, such as nuclei"
-    doc: |
-      Add this flag to count reads mapping to intronic regions.
-      This may improve sensitivity for samples with a significant
-      amount of pre-mRNA molecules, such as nuclei.
+    label: "Do not count intronic reads for whole transcriptome gene expression data"
+    doc: "Do not count intronic reads for whole transcriptome gene expression data"
+    'sd:layout':
+      advanced: true
+
+  no_bam:
+    type: boolean?
+    default: true
+    label: "Do not generate the BAM file"
+    doc: "Do not generate the BAM file"
     'sd:layout':
       advanced: true
 
@@ -142,7 +157,7 @@ outputs:
       Run summary metrics in CSV format
 
   possorted_genome_bam_bai:
-    type: File
+    type: File?
     outputSource: generate_counts_matrix/possorted_genome_bam_bai
     label: "Aligned to the genome indexed reads BAM+BAI files"
     doc: |
@@ -310,13 +325,12 @@ steps:
       fastq_file_r1: extract_fastq_r1/fastq_file
       fastq_file_r2: extract_fastq_r2/fastq_file
       indices_folder: indices_folder
-      expect_cells:
-        source: [expect_cells, force_expect_cells]
-        valueFrom: $(self[1]?null:self[0])
-      force_cells:
-        source: [expect_cells, force_expect_cells]
-        valueFrom: $(self[1]?self[0]:null)
-      include_introns: include_introns
+      r1_length: r1_length
+      r2_length: r2_length
+      expect_cells: expect_cells
+      force_cells: force_cells
+      no_bam: no_bam
+      exclude_introns: exclude_introns
       threads: threads
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
@@ -428,4 +442,5 @@ s:creator:
 
 doc: |
   Cell Ranger Count Gene Expression
-  =================================
+
+  Quantifies gene expression from a single-cell RNA-Seq library.

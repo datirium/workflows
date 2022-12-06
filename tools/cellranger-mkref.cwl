@@ -16,7 +16,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: cumulusprod/cellranger:4.0.0
+  dockerPull: cumulusprod/cellranger:7.0.0
 
 
 inputs:
@@ -137,13 +137,17 @@ s:creator:
 
 doc: |
   Cell Ranger Build Reference Indices
-  ======================================================
-  
+
   Builds Cell Ranger compatible reference folder from
   the custom genome FASTA and gene GTF annotation files.
 
 
 s:about: |
+  Build a Cell Ranger-compatible reference folder from user-supplied genome
+  FASTA and gene GTF files. Creates a new folder named after the genome.
+
+  The commands below should be preceded by 'cellranger':
+
   Usage:
       mkref
           --genome=NAME ...

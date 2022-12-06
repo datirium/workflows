@@ -303,7 +303,7 @@ label: "Cell Ranger ARC Aggregate"
 s:name: "Cell Ranger ARC Aggregate"
 s:alternateName: "Aggregates data from multiple Cell Ranger ARC Count Gene Expression + ATAC experiments"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-aggr.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-arc-aggr.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

@@ -57,6 +57,8 @@ inputs:
       mkdir -p ./cellbrowser_input/analysis ./cellbrowser_input/filtered_feature_bc_matrix
       cp -r $0/* ./cellbrowser_input/analysis/
       cp -r $1/* ./cellbrowser_input/filtered_feature_bc_matrix/
+      echo "Removing gene_expression_ part from all of the folder names in analysis"
+      du -a ./cellbrowser_input/analysis | cut -f 2 | grep gene_expression | xargs -I{} bash -c 'mv "$1" "${1//gene_expression_/}"' -- {}
       echo "Run cbImportCellranger"
       cbImportCellranger -i cellbrowser_input -o cellbrowser_output --name cellbrowser
       cd ./cellbrowser_output
