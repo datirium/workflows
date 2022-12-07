@@ -88,11 +88,20 @@ inputs:
 
 outputs:
 
-  samplesheet_md:
+  samplesheet_csv:
     type: File
     label: "Samplesheet with condition labels"
     doc: "Samplesheet with condition labels"
     outputSource: run_rnbeads_diff/samplesheet
+
+  samplesheet_md:
+    type: File
+    label: "Samplesheet with condition labels"
+    doc: "Samplesheet with condition labels"
+    outputSource: run_rnbeads_diff/samplesheet_overview
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
   report_tar:
     type: File
@@ -119,15 +128,6 @@ outputs:
     label: "stderr log"
     doc: "stderr log"
     outputSource: run_rnbeads_diff/stderr_log
-
-  samplesheet_overview:
-    type: File
-    label: "Samplesheet with condition labels"
-    doc: "Samplesheet with condition labels"
-    outputSource: run_rnbeads_diff/samplesheet_overview
-    'sd:visualPlugins':
-    - markdownView:
-        tab: 'Overview'
 
   report_data_import_html:
     type: File
@@ -189,6 +189,7 @@ outputs:
 
   dm_genes_stats_table:
     type: File
+    format: "http://edamontology.org/format_3475"
     label: "DM genes"
     doc: "DM genes"
     outputSource: run_rnbeads_diff/dm_genes_stats
@@ -199,6 +200,7 @@ outputs:
 
   dm_sites_group1_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM sites"
     doc: "DM sites fdr<0.10"
     outputSource: run_rnbeads_diff/dm_sites_group1
@@ -212,6 +214,7 @@ outputs:
 
   dm_cpg_group1_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM CpGs"
     doc: "DM CpGs fdr<0.10"
     outputSource: run_rnbeads_diff/dm_cpg_group1
@@ -225,6 +228,7 @@ outputs:
 
   dm_tiling_group1_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM tiling"
     doc: "DM tiling fdr<0.10"
     outputSource: run_rnbeads_diff/dm_tiling_group1
@@ -238,6 +242,7 @@ outputs:
 
   dm_genes_group1_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM genes"
     doc: "DM genes fdr<0.10"
     outputSource: run_rnbeads_diff/dm_genes_group1
@@ -251,6 +256,7 @@ outputs:
 
   dm_sites_group2_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM sites"
     doc: "DM sites fdr<0.10"
     outputSource: run_rnbeads_diff/dm_sites_group2
@@ -264,6 +270,7 @@ outputs:
 
   dm_cpg_group2_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM CpGs"
     doc: "DM CpGs fdr<0.10"
     outputSource: run_rnbeads_diff/dm_cpg_group2
@@ -277,6 +284,7 @@ outputs:
 
   dm_tiling_group2_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM tiling"
     doc: "DM tiling fdr<0.10"
     outputSource: run_rnbeads_diff/dm_tiling_group2
@@ -290,6 +298,7 @@ outputs:
 
   dm_genes_group2_igv:
     type: File
+    format: "http://edamontology.org/format_3003"
     label: "DM genes"
     doc: "DM genes fdr<0.10"
     outputSource: run_rnbeads_diff/dm_genes_group2
