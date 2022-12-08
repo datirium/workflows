@@ -66,6 +66,13 @@ inputs:
       itemSeparator: ","
     doc: "List of alias sample names for group 2"
 
+  refgene_annotations:
+    type: File
+    inputBinding:
+      prefix: "-m"
+    doc: "refgene annotations text file"
+
+
 outputs:
 
   samplesheet:
@@ -101,14 +108,14 @@ outputs:
     outputBinding:
       glob: reports/data_import.html
     doc: |
-      Differential
+      Import data report
 
   report_qc_html:
     type: File
     outputBinding:
       glob: reports/quality_control.html
     doc: |
-      Differential
+      Data QC report
 
   report_preprocessing_html:
     type: File
@@ -207,6 +214,13 @@ outputs:
       glob: dm_genes_grp2.bed
     doc: |
       Differentially methylated Genes for IGV having p.adj<0.10
+
+  sig_dm_sites_annotated:
+    type: File
+    outputBinding:
+      glob: sig_dm_sites_annotated.tsv
+    doc: |
+      Significantly (FDR<0.10) differentially methylated Sites statistics with closest gene annotations
 
   stdout_log:
     type: stdout
@@ -317,6 +331,7 @@ doc: |
   -d  LIST	comma separated list of absolute filepaths to all condition2 bed files (BismarkCov format)
   -j  LIST   comma separated list of sample names in condition1
   -k  LIST   comma separated list of sample names in condition2
+  -m  FILE   refGene.txt file for annotating DM sites with gene information
 
   BismarkCov formatted bed:
       https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf

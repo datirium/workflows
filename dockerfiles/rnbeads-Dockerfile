@@ -52,6 +52,10 @@ RUN apt-get update && \
     ls -la /usr/local/bin/run_rnbeads_diff.R && \
     chmod +x /usr/local/bin/run_rnbeads_diff.sh && \
     ls -la /usr/local/bin/run_rnbeads_diff.sh && \
+### Installing bedops
+    wget https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    tar jxvf bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    cp bin/* /usr/local/bin/ && \
 ### Cleaning
     apt-get clean && \
     apt-get purge && \

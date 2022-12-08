@@ -14,6 +14,8 @@ requirements:
   biological_condition2:
    - "bismark-methylation-pe.cwl"
    - "bismark-methylation-se.cwl"
+  genome_indices:
+   - "bismark-index.cwl"
 
 
 inputs:
@@ -85,6 +87,12 @@ inputs:
     'sd:localLabel': true
     doc: "Number of threads for parallel processing"
 
+  annotation_file:
+    type: File
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
+    'sd:upstreamSource': "genome_indices/annotation"
 
 outputs:
 
@@ -193,10 +201,6 @@ outputs:
     label: "DM genes"
     doc: "DM genes"
     outputSource: run_rnbeads_diff/dm_genes_stats
-    'sd:visualPlugins':
-    - syncfusiongrid:
-        tab: 'Differentially Methylated Genes'
-        Title: 'Table of differentially methylated genes.'
 
   dm_sites_group1_igv:
     type: File
@@ -310,6 +314,17 @@ outputs:
         name: "dm genes grp2"
         height: 60
 
+  sig_dm_sites_annotated_table:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "DM genes"
+    doc: "DM genes"
+    outputSource: run_rnbeads_diff/sig_dm_sites_annotated
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Differentially Methylated Sites'
+        Title: 'Table of differentially methylated sites with closest gene annotations.'
+
 
 steps:
 
@@ -330,6 +345,7 @@ steps:
       condition2_filepaths: c2_files
       condition1_aliases: c1_aliases
       condition2_aliases: c2_aliases
+      refgene_annotations: annotation_file
     out:
       - samplesheet
       - samplesheet_overview
@@ -351,6 +367,7 @@ steps:
       - dm_cpg_group2
       - dm_tiling_group2
       - dm_genes_group2
+      - sig_dm_sites_annotated
       - stdout_log
       - stderr_log
 
