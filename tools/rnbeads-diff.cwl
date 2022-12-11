@@ -131,96 +131,54 @@ outputs:
     doc: |
       Differential methylation HTML report for visualization.
 
-  dm_sites_stats:
-    type: File
-    outputBinding:
-      glob: dm_sites.tsv
-    doc: |
-      All differentially methylated Sites statistics: diffmeth.p.adj.fdr,mean.covg.condition1,mean.covg.condition2
-
-  dm_cpg_stats:
-    type: File
-    outputBinding:
-      glob: dm_cpg.tsv
-    doc: |
-      All differentially methylated CpG statistics: p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
-
-  dm_tiling_stats:
-    type: File
-    outputBinding:
-      glob: dm_tiling.tsv
-    doc: |
-      All differentially methylated Tiling (5kbp) statistics: p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
-
-  dm_genes_stats:
+  meth_stats_genes:
     type: File
     outputBinding:
       glob: dm_genes.tsv
     doc: |
-      All differentially methylated Genes statistics: symbol,entrezID,p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+      Stats for all differentially methylated Genes: quot.log2,p.adj.fdr,num.sites,mean.covg.condition1,mean.covg.condition2
 
-  dm_sites_group1:
+  meth_stats_promoters:
     type: File
     outputBinding:
-      glob: dm_sites_grp1.bed
+      glob: dm_genes.tsv
     doc: |
-      Differentially methylated Sites for IGV having p.adj<0.10
+      Stats for all differentially methylated Promoters: quot.log2,p.adj.fdr,num.sites,mean.covg.condition1,mean.covg.condition2
 
-  dm_cpg_group1:
+  meth_stats_cpg:
     type: File
     outputBinding:
-      glob: dm_cpg_grp1.bed
+      glob: dm_cpg.tsv
     doc: |
-      Differentially methylated CpG for IGV having p.adj<0.10
+      Stats for all differentially methylated CpG islands: quot.log2,comb.p.adj.fdr,num.sites,mean.covg.condition1,mean.covg.condition2
 
-  dm_tiling_group1:
+  meth_stats_tiling:
     type: File
     outputBinding:
-      glob: dm_tiling_grp1.bed
+      glob: dm_tiling.tsv
     doc: |
-      Differentially methylated Tiling (5kbp) for IGV having p.adj<0.10
+      Stats for all differentially methylated Tilings of 5kbp: quot.log2,comb.p.adj.fdr,num.sites,mean.covg.condition1,mean.covg.condition2
 
-  dm_genes_group1:
+  meth_stats_sites:
     type: File
     outputBinding:
-      glob: dm_genes_grp1.bed
+      glob: dm_sites.tsv
     doc: |
-      Differentially methylated Genes for IGV having p.adj<0.10
+      Stats for all differentially methylated Sites: quot.log2,diffmeth.p.adj.fdr,mean.covg.condition1,mean.covg.condition2
 
-  dm_sites_group2:
+  sig_dm_sites_igvtrack:
     type: File
     outputBinding:
-      glob: dm_sites_grp2.bed
+      glob: sig_dm_sites.bed
     doc: |
-      Differentially methylated Sites for IGV having p.adj<0.10
-
-  dm_cpg_group2:
-    type: File
-    outputBinding:
-      glob: dm_cpg_grp2.bed
-    doc: |
-      Differentially methylated CpG for IGV having p.adj<0.10
-
-  dm_tiling_group2:
-    type: File
-    outputBinding:
-      glob: dm_tiling_grp2.bed
-    doc: |
-      Differentially methylated Tiling (5kbp) for IGV having p.adj<0.10
-
-  dm_genes_group2:
-    type: File
-    outputBinding:
-      glob: dm_genes_grp2.bed
-    doc: |
-      Differentially methylated Genes for IGV having p.adj<0.10
+      Bed file with locationss for significantly (FDR<0.10) differentially methylated Sites with log2 fold change and FDR values
 
   sig_dm_sites_annotated:
     type: File
     outputBinding:
       glob: sig_dm_sites_annotated.tsv
     doc: |
-      Significantly (FDR<0.10) differentially methylated Sites statistics with closest gene annotations
+      Stats for significantly (FDR<0.10) differentially methylated Sites with single closest gene annotation
 
   stdout_log:
     type: stdout
@@ -277,51 +235,44 @@ s:creator:
 
 
 doc: |
-  Wrapper for RnBeads differential methylation pipeline.
-  Output reports directory in container at '/tmp/reports/', includes:
-      reports/
-    ├── configuration
-    ├── data_import.html
-    ├── data_import_data
-    ├── data_import_images
-    ├── data_import_pdfs
-    ├── differential_methylation.html
-    ├── differential_methylation_data
-    ├── differential_methylation_images
-    ├── differential_methylation_pdfs
-    ├── preprocessing.html
-    ├── preprocessing_data
-    ├── preprocessing_images
-    ├── preprocessing_pdfs
-    ├── quality_control.html
-    ├── quality_control_data
-    ├── quality_control_images
-    ├── quality_control_pdfs
-    ├── tracks_and_tables.html
-    ├── tracks_and_tables_data
-    ├── tracks_and_tables_images
-    └── tracks_and_tables_pdfs
+  Wrapper for RnBeads differential methylation pipeline script, with downstream processing for tables and IGV
 
-  Other outputs include tables and bed files for IGV for DM sites, CpG, tiling, and genes:
-  https://bioc.ism.ac.jp/packages/3.4/bioc/vignettes/RnBeads/inst/doc/RnBeads_Annotations.pdf
-  2.1 Sites ($sites)
-    Currently, every data package examines cytosines in the context of CpG and contains an
-    annnotation table of all CpGs in the respective genome. CpG density and GC content are
-    also computed for the neighborhood of length 100 base pairs centered on each locus. The
-    total number of dinucleotides annotated in HG19 is 28,217,009 represented both on the
-    forward and reverse DNA strands.
-  2.4 Regions ($tiling, $cpg, $genes)
-    Every data package defines the following sets of regions for the dedicated assembly:
-    - GpG islands The CpG island track is downloaded from the dedicated FTP directory of
-      the UCSC Genome Browser.
-    - Tiling regions Tiling regions with a window size of 5 kilobases are defined over the
-      whole genome.
-    - Genes and promoters Ensembl3 gene definitions are downloaded using the biomaRt package.
-      A promoter isdefined as the region spanning 1,500 bases upstream and 500 bases
-      downstream of the transcription start site of the corresponding gene.
-    CpG density and GC content are computed for all region types listed above.
+  Primary Output files:
+    - sig_dm_sites.bed (bed for IGV; sig diff meth sites)
+    - sig_dm_sites_annotated.tsv (tsv for TABLE; for each site above, closest single gene annotation)
 
-  PARAMS:
+  Output rnbeads reports directory in container at '/tmp/reports/', includes:
+    reports/
+  ├── configuration
+  ├── data_import.html
+  ├── data_import_data
+  ├── data_import_images
+  ├── data_import_pdfs
+  ├── differential_methylation.html
+  ├── differential_methylation_data
+  ├── differential_methylation_images
+  ├── differential_methylation_pdfs
+  ├── preprocessing.html
+  ├── preprocessing_data
+  ├── preprocessing_images
+  ├── preprocessing_pdfs
+  ├── quality_control.html
+  ├── quality_control_data
+  ├── quality_control_images
+  ├── quality_control_pdfs
+  ├── tracks_and_tables.html
+  ├── tracks_and_tables_data
+  ├── tracks_and_tables_images
+  └── tracks_and_tables_pdfs
+
+  Reported methylation is in the form of regions (genes, promoters, cpg, tiling) and specific sites:
+   - genes - Ensembl gene definitions are downloaded using the biomaRt package.
+   - promoters - A promoter is defined as the region spanning 1,500 bases upstream and 500 bases downstream of the transcription start site of the corresponding gene
+   - cpg - the CpG islands from the UCSC Genome Browser
+   - tiling - a window size of 5 kilobases are defined over the whole genome
+   - sites - all cytosines in the context of CpGs in the respective genome
+
+  SCRIPT PARAMS:
   -h  help	show this message
   -g  STRING   Sample genome, available options: hg19, hg38, mm9, mm10, rn5
   -t  INT	number of threads

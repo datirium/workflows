@@ -82,7 +82,7 @@ inputs:
 
   threads:
     type: int
-    default: 2
+    default: 4
     label: "Number of threads for parallel processing:"
     'sd:localLabel': true
     doc: "Number of threads for parallel processing"
@@ -93,6 +93,21 @@ inputs:
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
+
+  genome_coverage_files_cond_1:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Methylation statuses bigWig coverage file"
+    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    'sd:upstreamSource': "biological_condition1/bigwig_coverage_file"
+
+  genome_coverage_files_cond_2:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Methylation statuses bigWig coverage file"
+    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    'sd:upstreamSource': "biological_condition2/bigwig_coverage_file"
+
 
 outputs:
 
@@ -179,18 +194,21 @@ outputs:
 
   dm_sites_stats_table:
     type: File
+    format: "http://edamontology.org/format_3475"
     label: "DM sites"
     doc: "DM sites"
     outputSource: run_rnbeads_diff/dm_sites_stats
 
   dm_cpg_stats_table:
     type: File
+    format: "http://edamontology.org/format_3475"
     label: "DM CpGs"
     doc: "DM CpGs"
     outputSource: run_rnbeads_diff/dm_cpg_stats
 
   dm_tiling_stats_table:
     type: File
+    format: "http://edamontology.org/format_3475"
     label: "DM tiling"
     doc: "DM tiling"
     outputSource: run_rnbeads_diff/dm_tiling_stats
@@ -201,118 +219,6 @@ outputs:
     label: "DM genes"
     doc: "DM genes"
     outputSource: run_rnbeads_diff/dm_genes_stats
-
-  dm_sites_group1_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM sites"
-    doc: "DM sites fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_sites_group1
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm sites grp1"
-        height: 60
-
-  dm_cpg_group1_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM CpGs"
-    doc: "DM CpGs fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_cpg_group1
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm CpGs grp1"
-        height: 60
-
-  dm_tiling_group1_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM tiling"
-    doc: "DM tiling fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_tiling_group1
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm tiling grp1"
-        height: 60
-
-  dm_genes_group1_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM genes"
-    doc: "DM genes fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_genes_group1
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm genes grp1"
-        height: 60
-
-  dm_sites_group2_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM sites"
-    doc: "DM sites fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_sites_group2
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm sites grp2"
-        height: 60
-
-  dm_cpg_group2_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM CpGs"
-    doc: "DM CpGs fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_cpg_group2
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm CpGs grp2"
-        height: 60
-
-  dm_tiling_group2_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM tiling"
-    doc: "DM tiling fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_tiling_group2
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm tiling grp2"
-        height: 60
-
-  dm_genes_group2_igv:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "DM genes"
-    doc: "DM genes fdr<0.10"
-    outputSource: run_rnbeads_diff/dm_genes_group2
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "dm genes grp2"
-        height: 60
 
   sig_dm_sites_annotated_table:
     type: File
@@ -325,11 +231,84 @@ outputs:
         tab: 'Differentially Methylated Sites'
         Title: 'Table of differentially methylated sites with closest gene annotations.'
 
+  sig_dm_sites_igvtrack:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bed track for sig diffmeth sites"
+    doc: "bed track for sig diffmeth sites, see workflow docs for format details"
+    outputSource: run_rnbeads_diff/sig_dm_sites_annotated
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Differential sites"
+        height: 40
+
+  genome_coverage_cond_1:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 1"
+    doc: "Genome coverage bigWig file(s) for biological condition 1"
+    outputSource: pipe/coverage_files_cond_1
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome coverage 1"
+        height: 120
+
+  genome_coverage_cond_2:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 2"
+    doc: "Genome coverage bigWig file(s) for biological condition 2"
+    outputSource: pipe/coverage_files_cond_2
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome coverage 2"
+        height: 120
+
 
 steps:
 
+  pipe:
+    label: "Redirects inputs as outputs for IGV, in this case"
+    doc: |
+      I think this simply redirects inputs as outputs
+    run:
+      cwlVersion: v1.0
+      class: ExpressionTool
+      inputs:
+        genome_coverage_files_cond_1:
+          type: File[]
+        genome_coverage_files_cond_2:
+          type: File[]
+      outputs:
+        coverage_files_cond_1:
+          type: File[]
+        coverage_files_cond_2:
+          type: File[]
+      expression: |
+        ${
+          return {
+            "coverage_files_cond_1": inputs.genome_coverage_files_cond_1,
+            "coverage_files_cond_2": inputs.genome_coverage_files_cond_2
+          };
+        }
+    in:
+      genome_coverage_files_cond_1: genome_coverage_files_cond_1
+      genome_coverage_files_cond_2: genome_coverage_files_cond_2
+    out:
+      - coverage_files_cond_1
+      - coverage_files_cond_2
+
   run_rnbeads_diff:
-    label: "Run RnBeads wrapper for differential methylation analysis between groups"
+    label: "Run wrapper for RnBeads differential methylation pipeline, with downstream processing for tables and IGV"
     doc: |
       Runs differential methylation analysis using 2 or more BismarkCov formatted bed files per
       condition. Outputs a compressed tar of standard RnBeads reports directory.
@@ -355,18 +334,12 @@ steps:
       - report_qc_html
       - report_preprocessing_html
       - report_differential_methylation_html
-      - dm_sites_stats
-      - dm_cpg_stats
-      - dm_tiling_stats
-      - dm_genes_stats
-      - dm_sites_group1
-      - dm_cpg_group1
-      - dm_tiling_group1
-      - dm_genes_group1
-      - dm_sites_group2
-      - dm_cpg_group2
-      - dm_tiling_group2
-      - dm_genes_group2
+      - meth_stats_genes
+      - meth_stats_promoters
+      - meth_stats_cpg
+      - meth_stats_tiling
+      - meth_stats_sites
+      - sig_dm_sites_igvtrack
       - sig_dm_sites_annotated
       - stdout_log
       - stderr_log
@@ -418,27 +391,46 @@ s:creator:
 
 
 doc: |
-  A basic differential methylation analysis workflow using BismarkCov formatted bed files as input. Analysis is conducted on site and region level according to the sample groups specified by user (limited to 2 conditions in this workflow implementation). See report html files for detailed descriptions of analyses and results interpretation.
+  A basic differential methylation analysis workflow using BismarkCov formatted bed files as input to the RnBeads tool. Analysis is conducted on region and sites levels according to the sample groups specified by user (limited to 2 conditions in this workflow implementation). See report html files for detailed descriptions of analyses and results interpretation.
 
   ### __Inputs__
-  *General Info (required\*):*
+  *General Info:*
   - Experiment short name/Alias* - a unique name for the sample (e.g. what was used on tubes while processing it)
   - Condition 1 name - name defining condition/group 1
   - Condition 2 name - name defining condition/group 2
   - Bismark coverage files* for condition1 - minumum of 2 is required for analysis
   - Bismark coverage files* for condition2 - minumum of 2 is required for analysis
   - Sample genome - available options: hg19, hg38, mm9, mm10, rn5
-  - Number of threads for steps that support multithreading - default set to `2`
+  - Genome type - indicate mismark index used for upstream samples (input for conditions 1 and 2)
 
-  *BismarkCov formatted bed:
-    https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf
+  *Advanced:*
+  - Number of threads for steps that support multithreading - default set to `4`
+
+  *[BismarkCov formatted bed](https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf):
     The genome-wide cytosine report (optional) is tab-delimited in the following format (1-based coords):
     <chromosome> <position> <strand> <count methylated> <count unmethylated> <C-context> <trinucleotide context>
 
   ### __Outputs__
   Intermediate and final downloadable outputs include:
+  - sig_dm_sites.bed ([bed for IGV](https://genome.ucsc.edu/FAQ/FAQformat.html#format1); sig diff meth sites)
+  - sig_dm_sites_annotated.tsv (tsv for TABLE; for each site above, closest single gene annotation)
+    - Site_id, unique indentifer per methylated site
+    - Site_Chr, chromosome of methylated site
+    - Site_position, 1-based position in chr of methylated site
+    - Site_strand, strand of methylated site
+    - Log2_Meth_Quotient, log2 of the quotient in methylation: log2((mean.g1+epsilon)/(mean.g2+epsilon)), where epsilon:=0.01. In case of paired analysis, it is the mean of the pairwise quotients.
+    - FDR, adjusted p-values, all <0.10 assumed to be significant
+    - Coverage_score, value between 0-1000 reflects strength of mean coverage difference between conditions and equals [1000-(1000/(meancov_g1-meancov_g2)^2](https://www.wolframalpha.com/input?i=solve+1000-%281000%2F%28x%5E2%29%29), if meancov_g1-meancov_g2==0, score=0, elif score<1==1, else score
+    - meancov_g1, mean coverage of condition1
+    - meancov_g2, mean coverage of condition2
+    - refSeq_id, RefSeq gene id
+    - Gene_id, gene symbol
+    - Chr, gene chromosome
+    - txStart, gene transcription start position
+    - tsEnd, gene transcription end position
+    - txStrand, gene strand
   - stdout and stderr log files
-  - reports directory containing:
+  - Packaged RnBeads reports directory (reports.tar.gz) contains:
       reports/
       ├── configuration
       ├── data_import.html
@@ -462,30 +454,20 @@ doc: |
       ├── tracks_and_tables_images
       └── tracks_and_tables_pdfs
 
-  Other outputs include tables and bed files for IGV for DM sites, CpG, tiling, and genes:
-  
-  https://bioc.ism.ac.jp/packages/3.4/bioc/vignettes/RnBeads/inst/doc/RnBeads_Annotations.pdf
-  2.1 Sites ($sites)
-    Currently, every data package examines cytosines in the context of CpG and contains an
-    annnotation table of all CpGs in the respective genome. CpG density and GC content are
-    also computed for the neighborhood of length 100 base pairs centered on each locus. The
-    total number of dinucleotides annotated in HG19 is 28,217,009 represented both on the
-    forward and reverse DNA strands.
-  2.4 Regions ($tiling, $cpg, $genes)
-    Every data package defines the following sets of regions for the dedicated assembly:
-    - GpG islands The CpG island track is downloaded from the dedicated FTP directory of
-      the UCSC Genome Browser.
-    - Tiling regions Tiling regions with a window size of 5 kilobases are defined over the
-      whole genome.
-    - Genes and promoters Ensembl3 gene definitions are downloaded using the biomaRt package.
-      A promoter isdefined as the region spanning 1,500 bases upstream and 500 bases
-      downstream of the transcription start site of the corresponding gene.
-    CpG density and GC content are computed for all region types listed above.
+  Reported methylation is in the form of regions (genes, promoters, cpg, tiling) and specific sites:
+   - genes - Ensembl gene definitions are downloaded using the biomaRt package.
+   - promoters - A promoter is defined as the region spanning 1,500 bases upstream and 500 bases downstream of the transcription start site of the corresponding gene
+   - cpg - the CpG islands from the UCSC Genome Browser
+   - tiling - a window size of 5 kilobases are defined over the whole genome
+   - sites - all cytosines in the context of CpGs in the respective genome
 
   ### __Data Analysis Steps__
   1. generate sample sheet with associated conditions for testing in RnBeads
   2. setup rnbeads analyses in R, and run differential methylation analysis
-  3. save outputs
+  3. process output diffmeth files for regions and sites
+  4. find single closest gene annotations for all significantly diffmeth sites
+  5. package and save rnbeads report directory
+  6. clean up report dir for html outputs
 
   ### __References__
     - https://rnbeads.org/materials/example_3/differential_methylation.html

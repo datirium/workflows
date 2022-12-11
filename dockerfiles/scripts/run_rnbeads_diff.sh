@@ -17,14 +17,19 @@ usage()
 {
 cat << EOF
 Help message for \`run_rnbeads_diff.sh\`:
-	Wrapper for RnBeads differential methylation pipeline.
-    Output reports directory in container at '/tmp/reports/', includes:
+	Wrapper for RnBeads differential methylation pipeline, with downstream processing for tables and IGV
+
+    Output rnbeads reports directory in container at '/tmp/reports/', includes:
     reports/
     ├── data_import.html
     ├── differential_methylation.html
     ├── preprocessing.html
     ├── quality_control.html
     ├── tracks_and_tables.html
+
+    Primary Output files:
+     - sig_dm_sites.bed (bed for IGV; sig diff meth sites)
+     - sig_dm_sites_annotated.tsv (tsv for TABLE; for each site above, closest single gene annotation)
 
 PARAMS:
  -h  help	show this message
@@ -141,50 +146,47 @@ done >> sample_annotation.md
 # - Genes and promoters Ensembl3 gene definitions are downloaded using the biomaRt package. A promoter is defined as the region spanning 1,500 bases upstream and 500 bases downstream of the transcription start site of the corresponding gene.
 #CpG density and GC content are computed for all region types listed above.
 dm="./reports/differential_methylation_data"
-sites="$dm/diffMethTable_site_cmp1.csv"
+genes="$dm/diffMethTable_region_cmp1_genes.csv"
+promoters="$dm/diffMethTable_region_cmp1_promoters.csv"
 cpg="$dm/diffMethTable_region_cmp1_cpgislands.csv"
 tiling="$dm/diffMethTable_region_cmp1_tiling.csv"
-genes="$dm/diffMethTable_region_cmp1_genes.csv"
+sites="$dm/diffMethTable_site_cmp1.csv"
 
 # FOR DOWNLOAD
-#   $sites: id,Chromosome,Start,Strand,diffmeth.p.adj.fdr,mean.covg.condition1,mean.covg.condition2
-sed 's/,/\t/g' $sites | cut -f1-4,17,21,22 > dm_sites.tsv &
-#   $cpg, $tiling: id,Chromosome,Start,End,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
-sed 's/,/\t/g' $cpg | cut -f1-4,10,12,15,16 > dm_cpg.tsv &
-sed 's/,/\t/g' $tiling | cut -f1-4,10,12,15,16 > dm_tiling.tsv &
+#   quot.log2 - log2 of the quotient in methylation: log2(mean.g1+ε/mean.g2+ε), where ε = 0.01. In case of paired analysis, it is the mean of the pairwise quotients
 #   FOR TABLE VIEW (& DOWNLOAD): id,Chromosome,Start,End,symbol,entrezID,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
-sed 's/,/\t/g' $genes | cut -f1-6,12,14,17,18 > dm_genes.tsv &
+sed 's/,/\t/g' $genes | cut -f1-6,10,12,14,17,18 > dm_genes.tsv &
+sed 's/,/\t/g' $promoters | cut -f1-6,10,12,14,17,18 > dm_promoters.tsv &
+#   $cpg, $tiling: id,Chromosome,Start,End,mean.quot.log2,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+sed 's/,/\t/g' $cpg | cut -f1-4,8,10,12,15,16 > dm_cpg.tsv &
+sed 's/,/\t/g' $tiling | cut -f1-4,8,10,12,15,16 > dm_tiling.tsv &
+#   $sites: id,Chromosome,Start,Strand,mean.quot.log2,diffmeth.p.adj.fdr,mean.covg.condition1,mean.covg.condition2
+sed 's/,/\t/g' $sites | cut -f1-4,8,17,21,22 > dm_sites.tsv &
 wait
 
-# FOR IGV
-#   filter at fdr<0.10 and generate bed: chr,start,end,meancoverage
-#   condition1
-tail -n+2 $sites | awk -F',' '{if($17<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$3+1,$21)}}' > dm_sites_grp1.bed &
-tail -n+2 $cpg | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$15)}}' > dm_cpg_grp1.bed &
-tail -n+2 $tiling | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$15)}}' > dm_tiling_grp1.bed &
-tail -n+2 $genes | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$17)}}' > dm_genes_grp1.bed &
-#   condition2
-tail -n+2 $sites | awk -F',' '{if($17<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$3+1,$22)}}' > dm_sites_grp2.bed &
-tail -n+2 $cpg | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$16)}}' > dm_cpg_grp2.bed &
-tail -n+2 $tiling | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$16)}}' > dm_tiling_grp2.bed &
-tail -n+2 $genes | awk -F',' '{if($10<0.1){printf("%s\t%s\t%s\t%s\n",$2,$3,$4,$18)}}' > dm_genes_grp2.bed &
-wait
+# FOR IGV (sig diff meth sites with quotient of meth log2, FDR, and score)
+#    reduce 'sites' to those with dm p.adj<0.10, and output as bed format: https://genome.ucsc.edu/FAQ/FAQformat.html#format1
+#       1-3 chr,start,start+1
+#       4   quot.meth.log2=x;FDR=y (semicolon separated)
+#       5   score (transform 0.000-0.1000 to value between 0-1000, a lower padj will be a higher score - closer to 1000)
+#           `score=1000-(1000/($7[cov1]-$8[cov2])^2)`, if diff==0, score=0, elif score<1==1, else score
+#       6   strand
+awk -F'\t' '{if($6<0.10){if(($7-$8)==0){score=0}else{y=1000-(1000/(($7-$8)^2)); if(y<1){score=1}else{score=y}}; printf("%s\t%s\t%s\tquot.meth.log2=%.2f;FDR=%.2f\t%.0f\t%s\n",$2,$3,$3+1,$5,$6,score,$4)}}' dm_sites.tsv > sig_dm_sites.bed &
+
 
 # FOR TABLE (annotated closest gene to each DM SITE)
 #    reformat refGene.tsv into bed
 #    get headers from ucsc: wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refGene.sql
-awk -F'\t' '{printf("%s\t%s\t%s\t%s\n",$3,$5,$6,$2)}' $REFGENETXT > refGene.bed &
-#    reduce 'sites' to those with dm p.adj<0.10, and output as bed
-awk -F'\t' '{if($5<0.10){printf("%s\t%s\t%s\n",$2,$3,$3+1)}}' dm_sites.tsv > sig_dm_sites.bed &
+awk -F'\t' '{printf("%s\t%s\t%s\t%s\n",$3,$5,$6,$2)}' <(tail -n+2 $REFGENETXT) > refGene.bed &
 wait
 # find closest single gene to each DM site (don't forget to sort beds!), NOTE: .cfs extension, closest-feature shortest format
 #    will only output columns 1-4 of second file
 closest-features --shortest <(sort-bed sig_dm_sites.bed) <(sort-bed refGene.bed) > sig_dm_sites.refGene.cfs
 # merge gene annotations with sites for table output
 #    output table headers
-#         dm_sites.tsv - $1,$2,$3,$4,$5,$6,$7 (all columns)
+#         dm_sites.tsv - $1,$2,$3,$4,$5,$6,$7,$8 (all columns)
 #         refGene.txt - $2,$13,$3,$5,$6,$4
-printf "Site_id\tSite_Chr\tSite_position\tSite_strand\tp_adj\tmeancov_${CONDITION1_NAME}\tmeancov_${CONDITION2_NAME}\trefSeq_id\tGene_id\tChr\ttxStart\ttsEnd\tStrand\n" > sig_dm_sites_annotated.tsv
+printf "Site_id\tSite_Chr\tSite_position\tSite_strand\tLog2_Meth_Quotient\tFDR\tCoverage_score\tmeancov_${CONDITION1_NAME}\tmeancov_${CONDITION2_NAME}\trefSeq_id\tGene_id\tChr\ttxStart\ttsEnd\ttxStrand\n" > sig_dm_sites_annotated.tsv
 #    prep gene annotations for matching
 #         reduce refGene.txt to single row per Refseq_id
 #         some ids have more than 1 location (e.g. `grep -P "\tNR_125730\t" refGene.txt | less` shows 9 different chr locations)
@@ -195,10 +197,12 @@ wait
 #         output separate annotation files for single (all) and multi (refSeq_id and Gene_id [symbol] only)
 awk -F'\t' '{if(FNR==NR){gene_id[$2]=$13; chr[$2]=$3; start[$2]=$5; end[$2]=$6; strand[$2]=$4}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$0,gene_id[$0],chr[$0],start[$0],end[$0],strand[$0])}}' $REFGENETXT genes.loc_single > refGene.reduced.txt
 awk -F'\t' '{if(FNR==NR){gene_id[$2]=$13}else{printf("%s\t%s\n",$0,gene_id[$0])}}' $REFGENETXT genes.loc_multi >> refGene.reduced.txt
-#    match all sites with site statistics (file1 match chr and start (col2,3) with same in file 2 (col1,2)), link to refseq_id (file2 $6)
-awk -F'\t' '{if(FNR==NR){sites[$2,$3]=$0}else{printf("%s\t%s\n",sites[$1,$2],$6)}}' dm_sites.tsv sig_dm_sites.refGene.cfs > tmp1
-#    store relevant annotations, match to tmp1 refseq_ids (loc_single)
-awk -F'\t' '{if(FNR==NR){anno[$1]=$0}else{printf("%s\t%s\t%s\t%s\t%.4f\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,anno[$8])}}' refGene.reduced.txt tmp1 >> sig_dm_sites_annotated.tsv
+#    reformat sig dm site file for pretty tabling and annotation matching
+sed -e 's/quot.meth.log2=//' -e 's/;FDR=/\t/' -e 's/|/\t/' sig_dm_sites.refGene.cfs > tmp1
+#    match all sig_dm sites with site statistics (file1 match chr and start (col2,3) with same in file 2 (col1,2)), link to refseq_id (file2 $6), reorder per "table headers" (above)
+awk -F'\t' '{if(FNR==NR){site_id[$2,$3]=$1; cov1[$1]=$7; cov2[$1]=$8}else{id=site_id[$1,$2]; printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",id,$1,$2,$7,$4,$5,$6,cov1[id],cov2[id],$11)}}' dm_sites.tsv tmp1 > tmp2
+#    store reduced annotations, match to sig dm site refseq_ids annotation (single location reported from bedops) with associated dm data
+awk -F'\t' '{if(FNR==NR){anno[$1]=$2"\t"$3"\t"$4"\t"$5"\t"$6}else{printf("%s\t%s\n",$0,anno[$10])}}' refGene.reduced.txt tmp2 >> sig_dm_sites_annotated.tsv
 
 
 # package full report dir
