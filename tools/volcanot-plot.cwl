@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/visualization:v0.0.4
+  dockerPull: biowardrobe2/visualization:v0.0.5
 
 
 inputs:
