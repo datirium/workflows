@@ -55,6 +55,20 @@ inputs:
     'sd:localLabel': true
     doc: "Array of input coverage files from Bismark workflow."
 
+  c1_genome_coverage_files:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Methylation statuses bigWig coverage file"
+    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    'sd:upstreamSource': "biological_condition1/bigwig_coverage_file"
+
+  c2_genome_coverage_files:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Methylation statuses bigWig coverage file"
+    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    'sd:upstreamSource': "biological_condition2/bigwig_coverage_file"
+
   c1_aliases:
     type: string[]
     'sd:upstreamSource': "biological_condition1/alias"
@@ -95,22 +109,36 @@ inputs:
     doc: "Tab-separated annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
 
-  genome_coverage_files_cond_1:
-    type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Methylation statuses bigWig coverage file"
-    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
-    'sd:upstreamSource': "biological_condition1/bigwig_coverage_file"
-
-  genome_coverage_files_cond_2:
-    type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Methylation statuses bigWig coverage file"
-    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
-    'sd:upstreamSource': "biological_condition2/bigwig_coverage_file"
-
 
 outputs:
+
+  c1_bismark_meth:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 1"
+    doc: "Genome coverage bigWig file(s) for biological condition 1"
+    outputSource: pipe/c1_coverage_files
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome coverage 1"
+        height: 120
+
+  c2_bismark_meth:
+    type: File[]
+    format: "http://edamontology.org/format_3006"
+    label: "Genome coverage(s) for biological condition 2"
+    doc: "Genome coverage bigWig file(s) for biological condition 2"
+    outputSource: pipe/c2_coverage_files
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "Genome coverage 2"
+        height: 120
 
   samplesheet_csv:
     type: File
@@ -253,34 +281,6 @@ outputs:
         name: "Differential sites"
         height: 40
 
-  genome_coverage_cond_1:
-    type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Genome coverage(s) for biological condition 1"
-    doc: "Genome coverage bigWig file(s) for biological condition 1"
-    outputSource: pipe/coverage_files_cond_1
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "Genome coverage 1"
-        height: 120
-
-  genome_coverage_cond_2:
-    type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Genome coverage(s) for biological condition 2"
-    doc: "Genome coverage bigWig file(s) for biological condition 2"
-    outputSource: pipe/coverage_files_cond_2
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "Genome coverage 2"
-        height: 120
-
 
 steps:
 
@@ -292,28 +292,28 @@ steps:
       cwlVersion: v1.0
       class: ExpressionTool
       inputs:
-        genome_coverage_files_cond_1:
+        c1_genome_coverage_files:
           type: File[]
-        genome_coverage_files_cond_2:
+        c2_genome_coverage_files:
           type: File[]
       outputs:
-        coverage_files_cond_1:
+        c1_coverage_files:
           type: File[]
-        coverage_files_cond_2:
+        c2_coverage_files:
           type: File[]
       expression: |
         ${
           return {
-            "coverage_files_cond_1": inputs.genome_coverage_files_cond_1,
-            "coverage_files_cond_2": inputs.genome_coverage_files_cond_2
+            "c1_coverage_files": inputs.c1_genome_coverage_files,
+            "c2_coverage_files": inputs.c2_genome_coverage_files
           };
         }
     in:
-      genome_coverage_files_cond_1: genome_coverage_files_cond_1
-      genome_coverage_files_cond_2: genome_coverage_files_cond_2
+      c1_genome_coverage_files: c1_genome_coverage_files
+      c2_genome_coverage_files: c2_genome_coverage_files
     out:
-      - coverage_files_cond_1
-      - coverage_files_cond_2
+      - c1_coverage_files
+      - c2_coverage_files
 
   run_rnbeads_diff:
     label: "Run wrapper for RnBeads differential methylation pipeline, with downstream processing for tables and IGV"
