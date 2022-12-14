@@ -141,7 +141,7 @@ outputs:
   meth_stats_promoters:
     type: File
     outputBinding:
-      glob: dm_genes.tsv
+      glob: dm_promoters.tsv
     doc: |
       Stats for all differentially methylated Promoters: quot.log2,p.adj.fdr,num.sites,mean.covg.condition1,mean.covg.condition2
 

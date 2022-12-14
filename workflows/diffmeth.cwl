@@ -112,7 +112,7 @@ inputs:
 
 outputs:
 
-  c1_bismark_meth:
+  c1_bismark_meth_perc:
     type: File[]
     format: "http://edamontology.org/format_3006"
     label: "Genome coverage(s) for biological condition 1"
@@ -126,7 +126,7 @@ outputs:
         name: "Genome coverage 1"
         height: 120
 
-  c2_bismark_meth:
+  c2_bismark_meth_perc:
     type: File[]
     format: "http://edamontology.org/format_3006"
     label: "Genome coverage(s) for biological condition 2"
@@ -287,7 +287,7 @@ steps:
   pipe:
     label: "Redirects inputs as outputs for IGV, in this case"
     doc: |
-      I think this simply redirects inputs as outputs
+      Redirects input as output
     run:
       cwlVersion: v1.0
       class: ExpressionTool
