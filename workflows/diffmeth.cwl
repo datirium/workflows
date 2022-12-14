@@ -192,33 +192,40 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  dm_sites_stats_table:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM sites"
-    doc: "DM sites"
-    outputSource: run_rnbeads_diff/dm_sites_stats
-
-  dm_cpg_stats_table:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM CpGs"
-    doc: "DM CpGs"
-    outputSource: run_rnbeads_diff/dm_cpg_stats
-
-  dm_tiling_stats_table:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM tiling"
-    doc: "DM tiling"
-    outputSource: run_rnbeads_diff/dm_tiling_stats
-
-  dm_genes_stats_table:
+  meth_stats_genes:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "DM genes"
     doc: "DM genes"
-    outputSource: run_rnbeads_diff/dm_genes_stats
+    outputSource: run_rnbeads_diff/meth_stats_genes
+
+  meth_stats_promoters:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "DM genes"
+    doc: "DM genes"
+    outputSource: run_rnbeads_diff/meth_stats_promoters
+
+  meth_stats_cpg:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "DM CpGs"
+    doc: "DM CpGs"
+    outputSource: run_rnbeads_diff/meth_stats_cpg
+
+  meth_stats_tiling:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "DM tiling"
+    doc: "DM tiling"
+    outputSource: run_rnbeads_diff/meth_stats_tiling
+
+  meth_stats_sites:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "DM sites"
+    doc: "DM sites"
+    outputSource: run_rnbeads_diff/meth_stats_sites
 
   sig_dm_sites_annotated_table:
     type: File
@@ -236,7 +243,7 @@ outputs:
     format: "http://edamontology.org/format_3003"
     label: "bed track for sig diffmeth sites"
     doc: "bed track for sig diffmeth sites, see workflow docs for format details"
-    outputSource: run_rnbeads_diff/sig_dm_sites_annotated
+    outputSource: run_rnbeads_diff/sig_dm_sites_igvtrack
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
