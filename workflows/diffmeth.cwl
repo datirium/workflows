@@ -309,37 +309,6 @@ outputs:
 
 steps:
 
-  pipe:
-    label: "Redirects inputs as outputs for IGV, in this case"
-    doc: |
-      Redirects input as output
-    run:
-      cwlVersion: v1.0
-      class: ExpressionTool
-      inputs:
-        c1_genome_coverage_files:
-          type: File[]
-        c2_genome_coverage_files:
-          type: File[]
-      outputs:
-        c1_coverage_files:
-          type: File[]
-        c2_coverage_files:
-          type: File[]
-      expression: |
-        ${
-          return {
-            "c1_coverage_files": inputs.c1_genome_coverage_files,
-            "c2_coverage_files": inputs.c2_genome_coverage_files
-          };
-        }
-    in:
-      c1_genome_coverage_files: c1_genome_coverage_files
-      c2_genome_coverage_files: c2_genome_coverage_files
-    out:
-      - c1_coverage_files
-      - c2_coverage_files
-
   run_rnbeads_diff:
     label: "Run wrapper for RnBeads differential methylation pipeline, with downstream processing for tables and IGV"
     doc: |
@@ -378,6 +347,8 @@ steps:
       - meth_stats_sites
       - sig_dm_sites_igvtrack
       - sig_dm_sites_annotated
+      - sig_dm_cpg_igvtrack
+      - sig_dm_cpg_annotated
       - stdout_log
       - stderr_log
 
