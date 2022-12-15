@@ -25,9 +25,9 @@
 
 ### Base Image
 #   use for initial image build
-# FROM r-base:4.2.1
-#   use for small script updates etc
-FROM robertplayer/scidap-rnbeads:stable
+FROM r-base:4.2.1
+#   use for small script updates etc (shorter build time from stable)
+#FROM robertplayer/scidap-rnbeads:stable
 LABEL maintainer="robert.player@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
 

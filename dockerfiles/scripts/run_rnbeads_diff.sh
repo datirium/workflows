@@ -122,13 +122,15 @@ done >> $workdir/sample_annotation.csv
 cat $workdir/sample_annotation.csv
 
 # copy and rename (force ".bigWig" file ext) bismark bigwig upstreams for IGV visualization
-echo "$CONDITION1_BIGWIG_FILEPATHS" | sed 's/,/\n/g' | while read filepath; do
+rep=1; echo "$CONDITION1_BIGWIG_FILEPATHS" | sed 's/,/\n/g' | while read filepath; do
     bn=$(basename "$filepath" | sed 's/\.bigWig//')
-    cp "$filepath" "c1_${bn}.bigWig"
+    cp "$filepath" "c1_rep${rep}_${bn}.bigWig"
+    ((rep++))
 done
-echo "$CONDITION2_BIGWIG_FILEPATHS" | sed 's/,/\n/g' | while read filepath; do
+rep=1; echo "$CONDITION2_BIGWIG_FILEPATHS" | sed 's/,/\n/g' | while read filepath; do
     bn=$(basename "$filepath" | sed 's/\.bigWig//')
-    cp "$filepath" "c2_${bn}.bigWig"
+    cp "$filepath" "c2_rep${rep}_${bn}.bigWig"
+    ((rep++))
 done
 
 # run Rscript wrapper for rnbeads with formatted inputs
