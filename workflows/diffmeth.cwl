@@ -55,18 +55,18 @@ inputs:
     'sd:localLabel': true
     doc: "Array of input coverage files from Bismark workflow."
 
-  c1_genome_coverage_files:
+  c1_methperc_bigwigs:
     type: File[]
     format: "http://edamontology.org/format_3006"
     label: "Methylation statuses bigWig coverage file"
-    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    doc: "bigWig file summarising cytosine methylation as a percent in bigWig format"
     'sd:upstreamSource': "biological_condition1/bigwig_coverage_file"
 
-  c2_genome_coverage_files:
+  c2_methperc_bigwigs:
     type: File[]
     format: "http://edamontology.org/format_3006"
     label: "Methylation statuses bigWig coverage file"
-    doc: "Coverage text file summarising cytosine methylation values as a percent in bigWig format (tab-delimited; 0-based start coords, 1-based end coords)"
+    doc: "bigWig file summarising cytosine methylation as a percent in bigWig format"
     'sd:upstreamSource': "biological_condition2/bigwig_coverage_file"
 
   c1_aliases:
@@ -115,29 +115,29 @@ outputs:
   c1_bismark_meth_perc:
     type: File[]
     format: "http://edamontology.org/format_3006"
-    label: "Genome coverage(s) for biological condition 1"
-    doc: "Genome coverage bigWig file(s) for biological condition 1"
-    outputSource: pipe/c1_coverage_files
+    label: "percent methylation per site for biological condition 1"
+    doc: "percent methylation bigWig file(s) for biological condition 1"
+    outputSource: run_rnbeads_diff/c1_bigwigs
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Genome coverage 1"
+        name: "cond1:%meth"
         height: 120
 
   c2_bismark_meth_perc:
     type: File[]
     format: "http://edamontology.org/format_3006"
-    label: "Genome coverage(s) for biological condition 2"
-    doc: "Genome coverage bigWig file(s) for biological condition 2"
-    outputSource: pipe/c2_coverage_files
+    label: "percent methylation per site for biological condition 2"
+    doc: "percent methylation bigWig file(s) for biological condition 2"
+    outputSource: run_rnbeads_diff/c2_bigwigs
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Genome coverage 2"
+        name: "cond2:%meth"
         height: 120
 
   samplesheet_csv:
@@ -259,12 +259,12 @@ outputs:
   sig_dm_sites_annotated_table:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "DM genes"
-    doc: "DM genes"
+    label: "gene annotation for sig diff meth sites"
+    doc: "gene annotation for sig diff meth sites"
     outputSource: run_rnbeads_diff/sig_dm_sites_annotated
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Differentially Methylated Sites'
+        tab: 'Diff Meth Sites'
         Title: 'Table of differentially methylated sites with closest gene annotations.'
 
   sig_dm_sites_igvtrack:
@@ -278,7 +278,32 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "Differential sites"
+        name: "sigDiffMeth Sites"
+        height: 40
+
+  sig_dm_cpg_annotated_table:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "gene annotation for sig diff meth cpgs"
+    doc: "gene annotation for sig diff meth cpgs"
+    outputSource: run_rnbeads_diff/sig_dm_cpg_annotated
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Diff Meth CpG Islands'
+        Title: 'Table of differentially methylated CpG Islands with closest gene annotations.'
+
+  sig_dm_cpg_igvtrack:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "bed track for sig diffmeth CpG Islands"
+    doc: "bed track for sig diffmeth CpG Islands, see workflow docs for format details"
+    outputSource: run_rnbeads_diff/sig_dm_cpg_igvtrack
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "sigDiffMeth CpGs"
         height: 40
 
 
@@ -330,10 +355,14 @@ steps:
       condition2_name: c2_name
       condition1_filepaths: c1_files
       condition2_filepaths: c2_files
+      condition1_methperc_bigwigs: c1_methperc_bigwigs
+      condition2_methperc_bigwigs: c2_methperc_bigwigs
       condition1_aliases: c1_aliases
       condition2_aliases: c2_aliases
       refgene_annotations: annotation_file
     out:
+      - c1_bigwigs
+      - c2_bigwigs
       - samplesheet
       - samplesheet_overview
       - report_tar

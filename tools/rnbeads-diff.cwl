@@ -72,8 +72,36 @@ inputs:
       prefix: "-m"
     doc: "refgene annotations text file"
 
+  condition1_methperc_bigwigs:
+    type: File[]
+    inputBinding:
+      prefix: "-p"
+      itemSeparator: ","
+    doc: "List of absolute filepaths to methylation percent bigWig files for group 1"
+
+  condition2_methperc_bigwigs:
+    type: File[]
+    inputBinding:
+      prefix: "-q"
+      itemSeparator: ","
+    doc: "List of absolute filepaths to methylation percent bigWig files for group 2"
+
 
 outputs:
+
+  c1_bigwigs:
+    type: File[]
+    outputBinding:
+      glob: "c1_*.bigWig"
+    doc: |
+      Comma separated list of absolute filepaths to all condition1 bigWig files (from Bismark upstream).
+
+  c2_bigwigs:
+    type: File[]
+    outputBinding:
+      glob: "c2_*.bigWig"
+    doc: |
+      Comma separated list of absolute filepaths to all condition2 bigWig files (from Bismark upstream).
 
   samplesheet:
     type: File
@@ -171,7 +199,7 @@ outputs:
     outputBinding:
       glob: sig_dm_sites.bed
     doc: |
-      Bed file with locationss for significantly (FDR<0.10) differentially methylated Sites with log2 fold change and FDR values
+      Bed file with locations for significantly (FDR<0.10) differentially methylated Sites with log2 fold change and FDR values
 
   sig_dm_sites_annotated:
     type: File
@@ -179,6 +207,20 @@ outputs:
       glob: sig_dm_sites_annotated.tsv
     doc: |
       Stats for significantly (FDR<0.10) differentially methylated Sites with single closest gene annotation
+
+  sig_dm_cpg_igvtrack:
+    type: File
+    outputBinding:
+      glob: sig_dm_cpg.bed
+    doc: |
+      Bed file with locationss for significantly (FDR<0.10) differentially methylated CpG Islands with log2 fold change and FDR values
+
+  sig_dm_cpg_annotated:
+    type: File
+    outputBinding:
+      glob: sig_dm_cpg_annotated.tsv
+    doc: |
+      Stats for significantly (FDR<0.10) differentially methylated CpG Islands with single closest gene annotation
 
   stdout_log:
     type: stdout
