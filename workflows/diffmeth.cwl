@@ -292,7 +292,7 @@ outputs:
         tab: 'Diff Meth CpG Islands'
         Title: 'Table of differentially methylated CpG Islands with closest gene annotations.'
 
-  sig_dm_cpg_igvtrack:
+  sig_dm_cpg_igvtrack_bed:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bed track for sig diffmeth CpG Islands"
@@ -303,7 +303,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "sigDiffMeth CpGs"
+        name: "sigDiffMeth CpG Islands"
         height: 40
 
 
