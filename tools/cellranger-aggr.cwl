@@ -36,7 +36,8 @@ requirements:
       }
       return [{
         "entry": entry,
-        "entryname": "metadata.csv"
+        "entryname": "metadata.csv",
+        "writable": true
       }];
     }
 
