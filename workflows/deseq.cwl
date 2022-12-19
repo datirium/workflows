@@ -151,6 +151,82 @@ inputs:
     'sd:layout':
       advanced: true
 
+  cluster_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "row"
+      - "column"
+      - "both"
+      - "none"
+    default: "none"
+    label: "Hopach clustering method to be run on normalized read counts"
+    doc: |
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization analysis. Default: do not run clustering
+    'sd:layout':
+      advanced: true
+
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "cosangle"
+    label: "Distance metric for HOPACH row clustering"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is not
+      provided. Default: cosangle
+    'sd:layout':
+      advanced: true
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "euclid"
+    label: "Distance metric for HOPACH column clustering"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is not
+      provided. Default: euclid
+    'sd:layout':
+      advanced: true
+
+  center_row:
+    type: boolean?
+    default: false
+    label: "Apply mean centering for feature expression prior to running clustering by row"
+    doc: |
+      Apply mean centering for feature expression prior to running
+      clustering by row. Ignored when --cluster is not row or both.
+      Default: do not centered
+    'sd:layout':
+      advanced: true
+
+  maximum_padj:
+    type: float?
+    default: 0.05
+    label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
+    doc: |
+      In the exploratory visualization analysis output only features with
+      adjusted P-value not bigger than this value. Default: 0.05
+    'sd:layout':
+      advanced: true
+      
   sample_names_cond_1:
     type:
       - "null"
