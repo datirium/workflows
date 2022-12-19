@@ -1,0 +1,63 @@
+#################################################################
+# Dockerfile
+#
+# Software:         RnBeads 2.0
+# Software Version: v2.16.0
+# Description:      Dockerized version of RnBeads R script
+# Website:          https://github.com/datirium/workflows
+# Provides:         R script to run differential methylation using RnBeads
+# Base Image:       r-base:4.2.1
+# Build Cmd:        docker build --no-cache --rm -t rnbeads-dev -f rnbeads-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti rnbeads-dev /bin/bash
+# Push Cmd1:        docker tag rnbeads-dev robertplayer/scidap-rnbeads:stable
+#      Cmd2:        docker image push robertplayer/scidap-rnbeads:stable
+# Pull Cmd:         docker pull robertplayer/scidap-rnbeads:stable
+# Test Stable:      docker run --rm -ti robertplayer/scidap-rnbeads:stable /bin/bash
+#
+#   NOTES:
+#   the 'source("http://rnbeads.org/data/install.R")' installation for
+#   RnBeads comes with the following assemblies:
+#       rnb.get.assemblies()
+#       [1] "hg19" "hg38" "mm10" "mm9" 
+#   rn5 is installed separately (see below)
+#################################################################
+
+
+### Base Image
+#   use for initial image build
+FROM r-base:4.2.1
+#   use for small script updates etc (shorter build time from stable)
+#FROM robertplayer/scidap-rnbeads:stable
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+COPY ./scripts/run_rnbeads_diff.R /usr/local/bin/
+COPY ./scripts/run_rnbeads_diff.sh /usr/local/bin/
+
+### Installing dependencies
+RUN apt-get update && \
+    apt-get install ghostscript libgcc-10-dev libxml2-dev libcurl4-openssl-dev libssl-dev pandoc -y && \
+### Installing R dependencies
+    R -e 'install.packages("ggplot2", repo = "https://cloud.r-project.org/")' && \
+    R -e 'source("http://rnbeads.org/data/install.R")' && \
+    R -e 'install.packages("BiocManager", repo = "https://cloud.r-project.org/")' && \
+    R -e 'BiocManager::install("RnBeads.rn5")' && \
+### Installing scripts
+    chmod +x /usr/local/bin/run_rnbeads_diff.R && \
+    ls -la /usr/local/bin/run_rnbeads_diff.R && \
+    chmod +x /usr/local/bin/run_rnbeads_diff.sh && \
+    ls -la /usr/local/bin/run_rnbeads_diff.sh && \
+### Installing bedops
+    wget https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    tar jxvf bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    cp bin/* /usr/local/bin/ && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true

@@ -1,0 +1,63 @@
+{
+  "alias": "diffmeth-test",
+  "c1_name": "group A",
+  "c2_name": "group B",
+  "c1_files": [
+    {
+      "class": "File",
+      "location": "./data/diffmeth/ews_t1.bismark.bed.gz",
+      "format": "http://edamontology.org/format_3003"
+    },
+    {
+      "class": "File",
+        "location": "./data/diffmeth/ews_t2.bismark.bed.gz",
+        "format": "http://edamontology.org/format_3003"
+    }
+  ],
+  "c2_files": [
+    {
+      "class": "File",
+      "location": "./data/diffmeth/ews_l2.bismark.bed.gz",
+      "format": "http://edamontology.org/format_3003"
+    },
+    {
+      "class": "File",
+        "location": "./data/diffmeth/ews_l3.bismark.bed.gz",
+        "format": "http://edamontology.org/format_3003"
+    }
+  ],
+  "c1_genome_coverage_files": [
+    {
+      "class": "File",
+      "location": "./data/diffmeth/ews_t1.bigWig",
+      "format": "http://edamontology.org/format_3006"
+    },
+    {
+      "class": "File",
+        "location": "./data/diffmeth/ews_t2.bigWig",
+        "format": "http://edamontology.org/format_3006"
+    }
+  ],
+  "c2_genome_coverage_files": [
+    {
+      "class": "File",
+      "location": "./data/diffmeth/ews_l2.bigWig",
+      "format": "http://edamontology.org/format_3006"
+    },
+    {
+      "class": "File",
+        "location": "./data/diffmeth/ews_l3.bigWig",
+        "format": "http://edamontology.org/format_3006"
+    }
+  ],
+  "c1_aliases": ["T1","T2"],
+  "c2_aliases": ["L2","L3"],
+  "genome": "hg38",
+  "threads": 4,
+  "annotation_file":
+    {
+      "class": "File",
+      "location": "./data/diffmeth/hg38_annotation_refgene.tsv",
+      "format": "http://edamontology.org/format_3475"
+    }
+}
