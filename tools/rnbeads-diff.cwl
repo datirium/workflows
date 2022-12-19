@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-rnbeads:stable
+  dockerPull: robertplayer/scidap-rnbeads:v1.0.0
 
 
 inputs:
