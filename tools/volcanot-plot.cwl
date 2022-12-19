@@ -2,55 +2,67 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
-requirements:
-- class: InlineJavascriptRequirement
-
-
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.26
+  dockerPull: biowardrobe2/visualization:v0.0.5
 
 
 inputs:
 
-  isoforms_file:
+  diff_expr_file:
     type: File
     inputBinding:
       position: 5
-      prefix: "--isoforms"
-    doc: "Isoforms CSV file"
+    doc: |
+      TSV file holding data for the plot
 
-  genes_filename:
-    type: string?
+  x_axis_column:
+    type: string
     inputBinding:
       position: 6
-      prefix: "--gene"
-    doc: "Output TSV gene expression filename"
+    doc: |
+      Name of column in file for the plots x-axis (ex: "log2FoldChange")
 
-  common_tss_filename:
-    type: string?
+  y_axis_column:
+    type: string
     inputBinding:
       position: 7
-      prefix: "--tss"
-    doc: "Output TSV common tss expression filename"
+    doc: |
+      Name of column in file for the plots y-axis (ex: "padj")
+
+  label_column:
+    type: string
+    inputBinding:
+      position: 8
+    doc: |
+      Name of column in file for each data points 'name' (ex: "GeneId")
 
 
 outputs:
 
-  genes_file:
+  css_file:
     type: File
     outputBinding:
-      glob: $(inputs.genes_filename?inputs.genes_filename:"*genes.tsv")
-    doc: "Output TSV gene expression file"
+      glob: "./volcano_plot/volcano_plot/html_data/index.css"
+    doc: |
+      CSS file for Volcano Plot
 
-  common_tss_file:
+  js_file:
     type: File
     outputBinding:
-      glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
-    doc: "Output TSV common tss expression file"
+      glob: "./volcano_plot/volcano_plot/html_data/index.js"
+    doc: |
+      Javascript file for Volcano Plot
+
+  html_file:
+    type: File
+    outputBinding:
+      glob: "./volcano_plot/volcano_plot/html_data/index.html"
+    doc: |
+      HTML index file for Volcano Plot
 
 
-baseCommand: ["get_gene_n_tss.R"]
+baseCommand: ["volcano_plot.sh"]
 
 
 $namespaces:
@@ -59,11 +71,12 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:mainEntity:
-  $import: ./metadata/deseq-metadata.yaml
 
-s:name: "group-isoforms"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/group-isoforms.cwl
+label: "Volcano Plot"
+s:name: "Volcano Plot"
+s:alternateName: "Builds volcano plot from the DESeq output"
+
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/volcanot-plot.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -98,15 +111,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool runs get_gene_n_tss.R script to group isoforms by gene and common TSS
+  Volcano Plot
 
-s:about: |
-  usage: get_gene_n_tss.R [-h] --isoforms ISOFORMS [--gene GENE] [--tss TSS]
-
-  Group isoform expression data by gene and common TSS
-
-  optional arguments:
-    -h, --help           show this help message and exit
-    --isoforms ISOFORMS  Input CSV isoform expression file
-    --gene GENE          Output TSV gene expression file
-    --tss TSS            Output TSV common tss expression file
+  Builds volcano plot from the DESeq output

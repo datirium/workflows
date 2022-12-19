@@ -8,49 +8,45 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.26
+  dockerPull: biowardrobe2/morpheus:v0.0.1
 
 
 inputs:
 
-  isoforms_file:
+  read_counts_gct:
     type: File
     inputBinding:
-      position: 5
-      prefix: "--isoforms"
-    doc: "Isoforms CSV file"
+      prefix: "--gct"
+    doc: |
+      Path to the input GCT file.
 
-  genes_filename:
+  output_prefix:
     type: string?
     inputBinding:
-      position: 6
-      prefix: "--gene"
-    doc: "Output TSV gene expression filename"
-
-  common_tss_filename:
-    type: string?
-    inputBinding:
-      position: 7
-      prefix: "--tss"
-    doc: "Output TSV common tss expression filename"
+      prefix: "--output"
+    doc: |
+      Output prefix for generated files
 
 
 outputs:
 
-  genes_file:
+  heatmap_html:
     type: File
     outputBinding:
-      glob: $(inputs.genes_filename?inputs.genes_filename:"*genes.tsv")
-    doc: "Output TSV gene expression file"
+      glob: "*.html"
+    doc: |
+      Morpheus heatmap in HTML format
 
-  common_tss_file:
-    type: File
-    outputBinding:
-      glob: $(inputs.common_tss_file?inputs.common_tss_file:"*common_tss.tsv")
-    doc: "Output TSV common tss expression file"
+  stdout_log:
+    type: stdout
+
+  stderr_log:
+    type: stderr
 
 
-baseCommand: ["get_gene_n_tss.R"]
+baseCommand: [run_morpheus.R]
+stdout: morpheus_stdout.log
+stderr: morpheus_stderr.log
 
 
 $namespaces:
@@ -59,11 +55,13 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:mainEntity:
-  $import: ./metadata/deseq-metadata.yaml
 
-s:name: "group-isoforms"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/group-isoforms.cwl
+s:name: "Morpheus Heatmap"
+label:  "Morpheus Heatmap"
+s:alternateName: "Generates Morpheus heatmap from input GCT file"
+
+
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/morpheus-heatmap.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -98,15 +96,18 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool runs get_gene_n_tss.R script to group isoforms by gene and common TSS
+  Morpheus Heatmap
+
+  Generates Morpheus heatmap from input GCT file
+
 
 s:about: |
-  usage: get_gene_n_tss.R [-h] --isoforms ISOFORMS [--gene GENE] [--tss TSS]
+  usage: run_morpheus.R
+        [-h] --gct GCT [--cluster {row,column,both}] [--output OUTPUT]
 
-  Group isoform expression data by gene and common TSS
+  Morpheus heatmap from GCT file
 
-  optional arguments:
-    -h, --help           show this help message and exit
-    --isoforms ISOFORMS  Input CSV isoform expression file
-    --gene GENE          Output TSV gene expression file
-    --tss TSS            Output TSV common tss expression file
+  options:
+    -h, --help            show this help message and exit
+    --gct GCT             Path to the input GCT file.
+    --output OUTPUT       Output prefix for generated files

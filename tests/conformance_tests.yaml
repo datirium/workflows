@@ -1383,6 +1383,27 @@
     phenotypes_file:
       location: deseq_phenotypes.cls
       class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    volcano_plot_html_file:
+      location: index.html
+      class: File
+    volcano_plot_css_file:
+      location: index.css
+      class: File
+    volcano_plot_js_file:
+      location: index.js
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stderr_log:
+      location: morpheus_stderr.log
+      class: File
     gene_expr_heatmap:
       location: deseq_expression_heatmap.png
       class: File
@@ -1419,6 +1440,27 @@
       class: File
     phenotypes_file:
       location: deseq_phenotypes.cls
+      class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    volcano_plot_html_file:
+      location: index.html
+      class: File
+    volcano_plot_css_file:
+      location: index.css
+      class: File
+    volcano_plot_js_file:
+      location: index.js
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stderr_log:
+      location: morpheus_stderr.log
       class: File
     gene_expr_heatmap:
       location: deseq_expression_heatmap.png
@@ -1457,6 +1499,27 @@
     phenotypes_file:
       location: deseq_phenotypes.cls
       class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    volcano_plot_html_file:
+      location: index.html
+      class: File
+    volcano_plot_css_file:
+      location: index.css
+      class: File
+    volcano_plot_js_file:
+      location: index.js
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stderr_log:
+      location: morpheus_stderr.log
+      class: File
     gene_expr_heatmap:
       location: deseq_expression_heatmap.png
       class: File
@@ -1493,6 +1556,27 @@
       class: File
     phenotypes_file:
       location: deseq_phenotypes.cls
+      class: File
+    mds_plot_html:
+      location: deseq_mds_plot.html
+      class: File
+    volcano_plot_html_file:
+      location: index.html
+      class: File
+    volcano_plot_css_file:
+      location: index.css
+      class: File
+    volcano_plot_js_file:
+      location: index.js
+      class: File
+    heatmap_html:
+      location: heatmap.html
+      class: File
+    morpheus_stdout_log:
+      location: morpheus_stdout.log
+      class: File
+    morpheus_stderr_log:
+      location: morpheus_stderr.log
       class: File
     gene_expr_heatmap:
       location: deseq_expression_heatmap.png

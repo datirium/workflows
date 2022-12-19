@@ -226,6 +226,82 @@ inputs:
       adjusted P-value not bigger than this value. Default: 0.05
     'sd:layout':
       advanced: true
+
+  cluster_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "row"
+      - "column"
+      - "both"
+      - "none"
+    default: "none"
+    label: "Hopach clustering method to be run on normalized read counts"
+    doc: |
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization analysis. Default: do not run clustering
+    'sd:layout':
+      advanced: true
+
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "cosangle"
+    label: "Distance metric for HOPACH row clustering"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is not
+      provided. Default: cosangle
+    'sd:layout':
+      advanced: true
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "euclid"
+    label: "Distance metric for HOPACH column clustering"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is not
+      provided. Default: euclid
+    'sd:layout':
+      advanced: true
+
+  center_row:
+    type: boolean?
+    default: false
+    label: "Apply mean centering for feature expression prior to running clustering by row"
+    doc: |
+      Apply mean centering for feature expression prior to running
+      clustering by row. Ignored when --cluster is not row or both.
+      Default: do not centered
+    'sd:layout':
+      advanced: true
+
+  maximum_padj:
+    type: float?
+    default: 0.05
+    label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
+    doc: |
+      In the exploratory visualization analysis output only features with
+      adjusted P-value not bigger than this value. Default: 0.05
+    'sd:layout':
+      advanced: true
       
   sample_names_cond_1:
     type:
@@ -293,6 +369,18 @@ outputs:
     doc: "DESeq generated file with phenotypes in CLS format. Compatible with GSEA"
     outputSource: deseq/phenotypes_file
 
+  mds_plot_html:
+    type: File?
+    outputSource: deseq/mds_plot_html
+    label: "MDS plot of normalized counts"
+    doc: |
+      MDS plot of normalized counts
+      HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
   plot_lfc_vs_mean:
     type: File?
     label: "Plot of normalised mean versus log2 fold change"
@@ -359,6 +447,42 @@ outputs:
       homoskedastic (have constant variance along the range of mean values)
     outputSource: deseq/plot_pca_pdf
 
+  volcano_plot_html_file:
+    type: File
+    outputSource: make_volcano_plot/html_file
+    label: "Volcano Plot"
+    doc: |
+      HTML index file with volcano plot data.
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  volcano_plot_css_file:
+    type: File
+    outputSource: make_volcano_plot/css_file
+    label: "Volcano Plot CSS"
+    doc: |
+      CSS index file with volcano plot data.
+
+  volcano_plot_js_file:
+    type: File
+    outputSource: make_volcano_plot/js_file
+    label: "Volcano Plot JS"
+    doc: |
+      JS index file with volcano plot data.
+
+  heatmap_html:
+    type: File
+    outputSource: morpheus_heatmap/heatmap_html
+    label: "Heatmap of normalized counts"
+    doc: |
+      Morpheus heatmap in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
   deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -372,6 +496,18 @@ outputs:
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
     outputSource: deseq/stderr_log
+
+  morpheus_stdout_log:
+    type: File
+    outputSource: morpheus_heatmap/stdout_log
+    label: "Morpheus heatmap stdout log"
+    doc: "Morpheus heatmap stdout log"
+
+  morpheus_stderr_log:
+    type: File
+    outputSource: morpheus_heatmap/stderr_log
+    label: "Morpheus heatmap stderr log"
+    doc: "Morpheus heatmap stderr log"
 
 
 steps:
@@ -409,6 +545,13 @@ steps:
       treated_sample_names: sample_names_cond_2
       rpkm_cutoff: rpkm_cutoff
       batch_file: batch_file
+      cluster_method:
+        source: cluster_method
+        valueFrom: $(self=="none"?null:self)
+      row_distance: row_distance
+      column_distance: column_distance
+      center_row: center_row
+      maximum_padj: maximum_padj
       threads: threads
     out:
       - diff_expr_file
@@ -420,8 +563,43 @@ steps:
       - plot_pca_pdf
       - read_counts_file
       - phenotypes_file
+      - mds_plot_html
       - stdout_log
       - stderr_log
+
+  make_volcano_plot:
+    run: ../tools/volcanot-plot.cwl
+    in:
+      diff_expr_file: deseq/diff_expr_file
+      x_axis_column:
+        default: "log2FoldChange"
+      y_axis_column:
+        default: "padj"
+      label_column:
+        source: group_by
+        valueFrom: |
+          ${
+              if (self == "isoforms") {
+                return "RefseqId";
+              } else if (self == "genes") {
+                return "GeneId";
+              } else {
+                return "GeneId";
+              }
+          }
+    out:
+      - html_file
+      - css_file
+      - js_file
+
+  morpheus_heatmap:
+    run: ../tools/morpheus-heatmap.cwl
+    in:
+     read_counts_gct: deseq/read_counts_file
+    out:
+    - heatmap_html
+    - stdout_log
+    - stderr_log
 
 
 $namespaces:

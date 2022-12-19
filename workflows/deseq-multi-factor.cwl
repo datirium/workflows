@@ -43,8 +43,8 @@ inputs:
     - File[]
     label: "RNA-Seq experiments"
     doc: |
-      TSV/CSV files with expression data grouped by isoforms.
-      The following header is required:
+      Path to the TSV/CSV files with expression data.
+      All files should have the following header:
       RefseqId GeneId Chrom TxStart TxEnd Strand TotalReads Rpkm
     'sd:upstreamSource': "rnaseq_experiment/rpkm_isoforms"
     'sd:localLabel': true
@@ -55,8 +55,8 @@ inputs:
     - File[]
     label: "RNA-Seq experiments"
     doc: |
-      TSV/CSV files with expression data grouped by genes.
-      The following header is required:
+      Path to the TSV/CSV files with expression data.
+      All files should have the following header:
       RefseqId GeneId Chrom TxStart TxEnd Strand TotalReads Rpkm
     'sd:upstreamSource': "rnaseq_experiment/rpkm_genes"
     'sd:localLabel': true
@@ -65,151 +65,201 @@ inputs:
     type: string[]
     label: "RNA-Seq experiments"
     doc: |
-      Unique names for files provided in 'isoforms_expression_files' or
-      'genes_expression_files' inputs. No special characters or spaces are allowed.
-      Number and order of the names should corresponds to order of files.
+      Unique names for files provided in --expression,
+      no special characters or spaces are allowed.
+      Number and order of the names should corresponds
+      to values from --expression.
     'sd:upstreamSource': "rnaseq_experiment/alias"
 
   feature_type:
     type:
       - "null"
       - type: enum
-        symbols: ["transcript", "gene"]
+        symbols:
+        - "transcript"
+        - "gene"
     default: "gene"
     label: "Feature type to use for differential expression"
     doc: |
       Feature type to use for differential expression.
-      If set to 'gene', the 'GeneId' column will be renamed to 'feature' and used
-      for differential expression. If set to 'transcript', the 'RefseqId' column
-      will be used instead.
+      If set to 'gene', use 'GeneId' column from the provided in --expression files.
+      If set to 'transcript', use 'RefseqId' from the provided in --expression files.
+      Default: gene
 
   design_formula:
     type: string
     label: "Design formula"
     doc: |
-      Design formula should start with ~ and include terms from the 'metadata_file'
+      Design formula. Should start with ~ and include terms from
+      the --metadata table.
 
   reduced_formula:
     type: string?
-    label: "Reduced formula"
+    label: "Reduced formula. If provided, use LRT instead of Wald."
     doc: |
-      Reduced formula to compare against with the term(s) of interest removed.
-      Should start with ~. Ignored when 'use_wald' is set to true.
-
-  use_wald:
-    type: boolean?
-    label: "Use pair-wise Wald test instead of LRT"
-    doc: |
-      Use pair-wise Wald test instead of LRT. 'reduced_formula' parameter will be ignored
-      Default: use LRT test
+      Reduced formula with the term(s) of interest removed.
+      Should start with ~. If provided, force DESeq2 to run
+      LRT test instead of the Wald.
 
   contrast:
-    type: string
-    label: "Contrast to be be applied for the output"
+    type: string?
+    label: "Contrast. If not provided, use the last term from the design formula."
     doc: |
-      Contrast to be be applied for the output, formatted as a mathematical formula
-      of values from the 'metadata_file'
+      Contrast to be be applied for the output, formatted as
+      a mathematical formula of values from the --metadata table.
+      If not provided, the last term from the design formula will
+      be used.
+
+  remove:
+    type: string?
+    label: "Column from the metadata file to remove batch effect when exporting feature counts"
+    doc: |
+      Column from the metadata file to remove batch effect when
+      exporting feature counts. All components that include this
+      term will be removed from the design formula when correcting
+      for batch effect. Default: do not remove batch effect from
+      the exported counts
 
   base:
     type: string?
-    label: "Values from each column of the metadata file to be set as base levels"
+    label: "Values from each column of the metadata file to be set as base levels. Order matters."
     doc: |
-      Value from each column of 'metadata_file' to be set as base levels.
-      Number and order of provided values should correspond the order of columns
-      in the 'metadata_file'.
-      Default: define base levels alphabetically for each columns of 'metadata_file'
+      Value(s) from each metadata file column(s) to be set as
+      the base level(s). Number and order of provided values should
+      correspond the order of columns in --metadata file. Default:
+      define base levels alphabetically for each metadata column.
 
   metadata_file:
     type: File
     label: "Metadata file to assign categories to datasets"
     doc: |
-      TSV/CSV file to provide metadata for the samples from 'isoforms_expression_files'
-      or 'genes_expression_files' inputs. First column should have the name 'sample',
-      other columns may have arbitrary names. The values from the 'sample' column should
-      correspond to the values provided in 'expression_names' input. For a proper 'contrast'
-      intepretation, values defined in each column should not be used in others.
+      Path to the TSV/CSV file to provide metadata for the
+      samples from --expression. First column should have
+      the name 'sample', other columns may have arbitrary names.
+      The values from the 'sample' column should correspond to
+      the values provided in --aliases. For a proper --contrast
+      intepretation, values defined in each column should not be
+      used in other columns. All metadata columns are treated as
+      factors (no covariates are supported).
 
-  minimum_counts:
-    type: int?
-    default: 0
-    label: "Minimum number of counts among all samples for feature to be included in the analysis"
+  normalization_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "vst"
+      - "rlog"
+    default: "vst"
+    label: "Read counts normalization for the exploratory visualization analysis"
     doc: |
-      Keep only those features where the total number of counts for all samples
-      is bigger than this value.
+      Read counts normalization for the exploratory visualization analysis.
+      Use 'vst' for medium-to-large datasets (n > 30) and 'rlog' for
+      small datasets (n < 30), when there is a wide range of sequencing
+      depth across samples.
+      Default: vst
     'sd:layout':
       advanced: true
 
-  splitby:
-    type: string?
-    label: "Column from the metadata file to split samples into categories (plots only)"
+  center_row:
+    type: boolean?
+    default: false
+    label: "Apply mean centering for feature expression prior to running clustering by row"
     doc: |
-      Used only in plots. Column from the metadata file to split samples into categories.
-      Default: the first after the 'sample' column from the metadata file
+      Apply mean centering for feature expression prior to running
+      clustering by row. Ignored when --cluster is not row or both.
+      Default: do not centered
     'sd:layout':
       advanced: true
 
-  groupby:
-    type: string?
-    label: "Column from the metadata file to combine samples into groups (plots only)"
+  cluster_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "row"
+      - "column"
+      - "both"
+      - "none"
+    default: "none"
+    label: "Hopach clustering method to be run on normalized read counts"
     doc: |
-      Used only in plots. Column from the metadata file to combine samples into groups.
-      Default: the last column from the metadata file
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization analysis. Default: do not run clustering
+    'sd:layout':
+      advanced: true
+
+  row_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "cosangle"
+    label: "Distance metric for HOPACH row clustering"
+    doc: |
+      Distance metric for HOPACH row clustering. Ignored if --cluster is not
+      provided. Default: cosangle
+    'sd:layout':
+      advanced: true
+
+  column_distance:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "cosangle"
+      - "abscosangle"
+      - "euclid"
+      - "abseuclid"
+      - "cor"
+      - "abscor"
+    default: "euclid"
+    label: "Distance metric for HOPACH column clustering"
+    doc: |
+      Distance metric for HOPACH column clustering. Ignored if --cluster is not
+      provided. Default: euclid
     'sd:layout':
       advanced: true
 
   selected_features:
     type: string?
-    label: "Features of interest to label on the generated plots (plots only)"
+    label: "Features of interest to label on the volcano plot"
     doc: |
-      Used only in plots. Features of interest to label on the generated plots.
-      Default: 'topn_features' features with the highest and the lowest log2 fold change
+      Features of interest to label on the generated volcanot plot. Default:
+      top 10 features with the highest and the lowest log2 fold change
       expression values.
     'sd:layout':
       advanced: true
 
   excluded_features:
     type: string?
-    label: "Features to be excluded from the differential expression analysis (plots only)"
+    label: "Features to be excluded from the differential expression analysis"
     doc: |
-      Used only in plots. Features to be excluded from the differential expression analysis.
+      Features to be excluded from the differential expression analysis.
       Default: include all features
-    'sd:layout':
-      advanced: true
-
-  topn_features:
-    type: int?
-    default: 10
-    label: "Top 2 x N features with the highest absolute log2 fold change values (plots only)"
-    doc: |
-      Used only in plots. Show N features with the highest and N features with the lowest log2 fold
-      change expression values. Ignored with 'selected_features'.
-      Default: 10
     'sd:layout':
       advanced: true
 
   maximum_padj:
     type: float?
     default: 0.05
-    label: "Use only features with the adjusted P-value not bigger than this treshold (plots only)"
+    label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
     doc: |
-      Used only in plots. Output only features with adjusted P-value not bigger than this treshold.
-    'sd:layout':
-      advanced: true
-
-  use_pvalue:
-    type: boolean?
-    label: "Treat 'maximum_padj' as a theshold for P-value (plots only)"
-    doc: |
-      Used only in plots. Treat --padj as a theshold for P-value
-      Default: 'maximum_padj' defines the treshold for adjusted P-value
+      In the exploratory visualization analysis output only features with
+      adjusted P-value not bigger than this value. Default: 0.05
     'sd:layout':
       advanced: true
 
   threads:
     type: int?
-    label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
     default: 1
+    label: "Number of cores/cpus to use"
+    doc: "Number of cores/cpus to use. Default: 1"
     'sd:layout':
       advanced: true
 
@@ -224,8 +274,28 @@ outputs:
       TSV file with not filtered differentially expressed features
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Differential Expression Analysis'
+        tab: 'DE features'
         Title: 'Differentially expressed features'
+
+  read_counts_gct:
+    type: File
+    outputSource: deseq_multi_factor/read_counts_gct
+    label: "GCT file with normalized, optionally batch corrected, read counts"
+    doc: |
+      GCT file with normalized, optionally batch corrected, read counts
+
+  mds_plot_html:
+    type: File?
+    outputSource: deseq_multi_factor/mds_plot_html
+    label: "MDS plot of normalized counts"
+    doc: |
+      MDS plot of normalized counts. Optionally batch corrected
+      based on the --remove value.
+      HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   volcano_plot_png:
     type: File?
@@ -239,55 +309,54 @@ outputs:
         tab: 'Plots'
         Caption: 'Volcano plot of differentially expressed features'
 
-  volcano_plot_pdf:
-    type: File?
-    outputSource: deseq_multi_factor/volcano_plot_pdf
-    label: "Volcano plot of differentially expressed features"
-    doc: |
-      Volcano plot of differentially expressed features.
-      PDF format
-
   pca_plot_png:
     type: File?
     outputSource: deseq_multi_factor/pca_plot_png
-    label: "PCA plot of rlog-normalized counts based on the top 500 features with the highest row variance"
+    label: "PCA plot of normalized counts based on the top 500 features with the highest row variance"
     doc: |
-      PCA plot of rlog-normalized counts based on the top 500
+      PCA plot of normalized counts based on the top 500
       features selected by the highest row variance
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
-        Caption: 'PCA plot of rlog-normalized counts based on the top 500 features with the highest row variance'
+        Caption: 'PCA plot of normalized counts based on the top 500 features with the highest row variance'
 
-  pca_plot_pdf:
-    type: File?
-    outputSource: deseq_multi_factor/pca_plot_pdf
-    label: "PCA plot of rlog-normalized counts based on the top 500 features with the highest row variance"
+  volcano_plot_html_file:
+    type: File
+    outputSource: make_volcano_plot/html_file
+    label: "Volcano Plot"
     doc: |
-      PCA plot of rlog-normalized counts based on the top 500
-      features selected by the highest row variance
-      PDF format
-
-  counts_plot_png:
-    type: File?
-    outputSource: deseq_multi_factor/counts_plot_png
-    label: "rlog-normalized counts plots"
-    doc: |
-      rlog-normalized counts plots
-      PNG format
+      HTML index file with volcano plot data.
     'sd:visualPlugins':
-    - image:
-        tab: 'Plots'
-        Caption: 'rlog-normalized counts plots'
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
-  counts_plot_pdf:
-    type: File?
-    outputSource: deseq_multi_factor/counts_plot_pdf
-    label: "rlog-normalized counts plots"
+  volcano_plot_css_file:
+    type: File
+    outputSource: make_volcano_plot/css_file
+    label: "Volcano Plot CSS"
     doc: |
-      rlog-normalized counts plots
-      PDF format
+      CSS index file with volcano plot data.
+
+  volcano_plot_js_file:
+    type: File
+    outputSource: make_volcano_plot/js_file
+    label: "Volcano Plot JS"
+    doc: |
+      JS index file with volcano plot data.
+
+  heatmap_html:
+    type: File
+    outputSource: morpheus_heatmap/heatmap_html
+    label: "Heatmap of normalized counts"
+    doc: |
+      Morpheus heatmap in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   deseq_stdout_log:
     type: File
@@ -300,6 +369,18 @@ outputs:
     outputSource: deseq_multi_factor/stderr_log
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
+
+  morpheus_stdout_log:
+    type: File
+    outputSource: morpheus_heatmap/stdout_log
+    label: "Morpheus heatmap stdout log"
+    doc: "Morpheus heatmap stdout log"
+
+  morpheus_stderr_log:
+    type: File
+    outputSource: morpheus_heatmap/stderr_log
+    label: "Morpheus heatmap stderr log"
+    doc: "Morpheus heatmap stderr log"
 
 
 steps:
@@ -320,36 +401,72 @@ steps:
       expression_names: expression_names
       metadata_file: metadata_file
       design_formula: design_formula
-      reduced_formula: reduced_formula
-      contrast: contrast
+      reduced_formula:
+        source: reduced_formula
+        valueFrom: $(self==""?null:self)            # safety measure
+      contrast: 
+        source: contrast
+        valueFrom: $(self==""?null:self)            # safety measure
       base:
         source: base
         valueFrom: $(split_by_common_delim(self))
       feature_type: feature_type
-      minimum_counts: minimum_counts
-      use_wald: use_wald
-      splitby: splitby
-      groupby: groupby
-      selected_features:
-        source: selected_features
-        valueFrom: $(split_by_common_delim(self))
       excluded_features:
         source: excluded_features
         valueFrom: $(split_by_common_delim(self))
-      topn_features: topn_features
+      normalization_method: normalization_method
+      remove:
+        source: remove
+        valueFrom: $(self==""?null:self)            # safety measure
+      cluster_method:
+        source: cluster_method
+        valueFrom: $(self=="none"?null:self)
+      row_distance: row_distance
+      column_distance: column_distance
+      center_row: center_row
+      selected_features:
+        source: selected_features
+        valueFrom: $(split_by_common_delim(self))
       maximum_padj: maximum_padj
-      use_pvalue: use_pvalue
-      export_pdf_plots:
-        default:  true
       threads: threads
     out:
     - diff_expr_features
+    - read_counts_gct
     - volcano_plot_png
-    - volcano_plot_pdf
     - pca_plot_png
-    - pca_plot_pdf
-    - counts_plot_png
-    - counts_plot_pdf
+    - mds_plot_html
+    - stdout_log
+    - stderr_log
+
+  make_volcano_plot:
+    run: ../tools/volcanot-plot.cwl
+    in:
+      diff_expr_file: deseq_multi_factor/diff_expr_features
+      x_axis_column:
+        default: "log2FoldChange"
+      y_axis_column:
+        default: "padj"
+      label_column:
+        source: feature_type
+        valueFrom: |
+          ${
+              if (self == "transcript") {
+                return "feature";
+              } else {
+                return "GeneId";
+              }
+          }
+    out:
+      - html_file
+      - css_file
+      - js_file
+
+  morpheus_heatmap:
+    run: ../tools/morpheus-heatmap.cwl
+    in:
+     read_counts_gct: deseq_multi_factor/read_counts_gct
+    out:
+    - heatmap_html
     - stdout_log
     - stderr_log
 
@@ -401,5 +518,5 @@ s:creator:
 
 doc: |
   DESeq2 Multi-factor Analysis
-  ============================
+
   Runs DeSeq2 multi-factor analysis with manual control over major parameters
