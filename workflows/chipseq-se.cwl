@@ -242,7 +242,7 @@ outputs:
         name: "Nucleotide Sequence Alignments"
         displayMode: "SQUISHED"
 
-  macs2_called_peaks:
+  peaks:
     type: File
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"

@@ -457,7 +457,7 @@ outputs:
     doc: "Bed file of enriched regions called by seacr stringent mode (from normalized bigwig) in macs2's bed format."
     outputSource: seacr_callpeak_stringent/peak_tsv_file
 
-  macs2_called_peaks_relaxed:
+  relaxed_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr stringent mode"
@@ -469,9 +469,10 @@ outputs:
         id: 'igvbrowser'
         type: 'bed'
         name: "Relaxed Peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
-  macs2_called_peaks:
+  peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr stringent mode"
@@ -483,7 +484,8 @@ outputs:
         id: 'igvbrowser'
         type: 'bed'
         name: "Stringent Peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   annotated_peaks:
     type: File?
