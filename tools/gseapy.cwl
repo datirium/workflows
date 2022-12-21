@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/gseapy:v0.0.5
+  dockerPull: biowardrobe2/gseapy:v0.0.6
 
 
 inputs:
