@@ -476,7 +476,7 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  peaks:
+  called_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr stringent mode"
