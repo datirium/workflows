@@ -447,14 +447,14 @@ outputs:
     doc: "stderr from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stderr
 
-  relaxed_peaks:
+  seacr_relaxed_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr relaxed mode"
     doc: "Bed file of enriched regions called by seacr relaxed mode (from normalized bigwig) in macs2's bed format."
     outputSource: seacr_callpeak_relaxed/peak_tsv_file
 
-  stringent_peaks:
+  seacr_stringent_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr stringent mode"
