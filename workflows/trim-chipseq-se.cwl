@@ -17,7 +17,9 @@ requirements:
   - "../metadata/chipseq-header.cwl"
 
 'sd:upstream':
-  genome_indices: "genome-indices.cwl"
+  genome_indices:      
+    - "genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   control_file: "trim-chipseq-se.cwl"
 
 inputs:
