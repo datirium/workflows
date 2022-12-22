@@ -329,14 +329,14 @@ outputs:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
-    doc: "Generated BigWig file"
+    doc: "Generated BigWig file from filtered bam"
     outputSource: bam_to_bigwig/bigwig_file
 
   bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "scaled BigWig file"
-    doc: "Generated SCALED BigWig file, used as input for diffbind"
+    doc: "Generated SCALED BigWig file from filtered bam, used as input for diffbind"
     outputSource: bam_to_bigwig_scaled/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
@@ -778,37 +778,6 @@ steps:
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 
-  get_bam_statistics_after_filtering:
-    run: ../tools/samtools-stats.cwl
-    in:
-      bambai_pair: samtools_sort_index_after_rmdup/bam_bai_pair
-      output_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
-        valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
-    out: [log_file, ext_is_section]
-
-  bam_to_bigwig:
-    run: ../tools/bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
-      chrom_length_file: chrom_length
-      pairchip:
-        default: true
-    out: [bigwig_file]
-
-  bam_to_bigwig_scaled:
-    run: ../tools/bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
-      chrom_length_file: chrom_length
-      scale: get_scale_from_spikein/scaling_factor
-      pairchip:
-        default: true
-      bigwig_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
-        valueFrom: $(get_root(self.basename)+"_scaled.bigWig")
-    out: [bigwig_file]
-
   fragment_counts:
     run: ../tools/bedtools-fragmentcounts.cwl
     in:
@@ -874,6 +843,58 @@ steps:
             sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
+  stats_for_vis:
+    run: ../tools/collect-statistics-frip.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      seacr_called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
+      collected_statistics_md: get_stat/collected_statistics_md
+      collected_statistics_tsv: get_stat/collected_statistics_tsv
+      collected_statistics_yaml: get_stat/collected_statistics_yaml
+      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
+      fragment_length_filter:
+        source: fragment_length_filter
+        valueFrom: $(self)
+    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr, filtered_bam]
+
+  samtools_sort_index_filtered:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: stats_for_vis/filtered_bam
+      threads: threads
+    out: [bam_bai_pair]
+
+  bam_to_bigwig:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index_filtered/bam_bai_pair
+      chrom_length_file: chrom_length
+      pairchip:
+        default: true
+    out: [bigwig_file]
+
+  bam_to_bigwig_scaled:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index_filtered/bam_bai_pair
+      chrom_length_file: chrom_length
+      scale: get_scale_from_spikein/scaling_factor
+      pairchip:
+        default: true
+      bigwig_filename:
+        source: samtools_sort_index_filtered/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_scaled.bigWig")
+    out: [bigwig_file]
+    
+  get_bam_statistics_after_filtering:
+    run: ../tools/samtools-stats.cwl
+    in:
+      bambai_pair: samtools_sort_index_filtered/bam_bai_pair
+      output_filename:
+        source: samtools_sort_index_filtered/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
+    out: [log_file, ext_is_section]
+
   get_stat:
     run: ../tools/collect-statistics-cutandrun.cwl
     in:
@@ -891,18 +912,7 @@ steps:
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
       Statistics pulled from alignment reports and other logs, as well as spike-in normalized peak calling.
-
-  stats_for_vis:
-    run: ../tools/collect-statistics-frip.cwl
-    in:
-      bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
-      collected_statistics_md: get_stat/collected_statistics_md
-      collected_statistics_tsv: get_stat/collected_statistics_tsv
-      collected_statistics_yaml: get_stat/collected_statistics_yaml
-      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
-    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
-
+      
   convert_bed_to_xls:
     run: ../tools/custom-bash.cwl
     in:

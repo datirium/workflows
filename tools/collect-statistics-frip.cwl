@@ -19,7 +19,7 @@ inputs:
     default: |
       #!/bin/bash
       printf "$(date)\nLog file for collect-statistics-frip.cwl tool:\n\n"
-      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5
+      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5; filter=$6
       # count of total aligned reads
       tar=$(samtools view -cF0x4 $bam)
       # order bed coordinates of max bedgraph signal (col6)
@@ -48,6 +48,14 @@ inputs:
       printf "  fraction of (aligned) reads in peaks: $frip\n" >> collected_statistics_report.yaml
       printf "  mean maximum signal length: $mmpl\n" >> collected_statistics_report.yaml
       printf "  spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.yaml
+      # filter based on user input fragment length type selection
+      if [[ "$filter" == "Default_Range" ]]; then
+        samtools view -h $bam | awk 'substr($0,1,1)=="@" || ($9>=0 && $9<=1000) || ($9<=0 && $9>=-1000)' | samtools view -b > filtered.bam
+      elif [[ "$filter" == "Histone_Binding_Library" ]]; then
+        samtools view -h $bam | awk 'substr($0,1,1)=="@" || ($9>=130 && $9<=300) || ($9<=-130 && $9>=-300)' | samtools view -b > filtered.bam
+      elif [[ "$filter" == "Transcription_Factor_Binding_Library" ]]; then
+        samtools view -h $bam | awk 'substr($0,1,1)=="@" || ($9>=0 && $9<=130) || ($9<=0 && $9>=-130)' | samtools view -b > filtered.bam
+      fi
     inputBinding:
         position: 4
 
@@ -84,6 +92,16 @@ inputs:
       inputBinding:
           position: 50
 
+  fragment_length_filter:
+    type: string
+    inputBinding:
+      position: 13
+    doc: |
+      Fragment length filter type, retains fragments in ranges.
+        Default_Range <1000 bp
+        Histone_Binding_Library range 130-300 bp
+        Transcription_Factor_Binding_Library range <130 bp
+
 
 outputs:
 
@@ -115,6 +133,11 @@ outputs:
       glob: "collected_stats_for_vis.log.stderr"
     doc: |
       log for stderr
+
+  filtered_bam:
+    type: File
+    outputBinding:
+      glob: "filtered.bam"
 
 
 baseCommand: ["bash", "-c"]
