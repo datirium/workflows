@@ -843,24 +843,19 @@ steps:
             sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
 
-  stats_for_vis:
-    run: ../tools/collect-statistics-frip.cwl
+  filter_fragment_lengths:
+    run: ../tools/samtools-filter-fragmentlengths.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
-      collected_statistics_md: get_stat/collected_statistics_md
-      collected_statistics_tsv: get_stat/collected_statistics_tsv
-      collected_statistics_yaml: get_stat/collected_statistics_yaml
-      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
       fragment_length_filter:
         source: fragment_length_filter
         valueFrom: $(self)
-    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr, filtered_bam]
+    out: [log_file_stdout, log_file_stderr, filtered_bam]
 
   samtools_sort_index_filtered:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: stats_for_vis/filtered_bam
+      sort_input: filter_fragment_lengths/filtered_bam
       threads: threads
     out: [bam_bai_pair]
 
@@ -912,7 +907,18 @@ steps:
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
       Statistics pulled from alignment reports and other logs, as well as spike-in normalized peak calling.
-      
+
+  stats_for_vis:
+    run: ../tools/collect-statistics-frip.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      seacr_called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
+      collected_statistics_md: get_stat/collected_statistics_md
+      collected_statistics_tsv: get_stat/collected_statistics_tsv
+      collected_statistics_yaml: get_stat/collected_statistics_yaml
+      spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
+    out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
+
   convert_bed_to_xls:
     run: ../tools/custom-bash.cwl
     in:
