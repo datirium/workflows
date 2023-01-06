@@ -21,7 +21,7 @@ matplotlib==2.2.5
 networkx==2.2
 nimfa==1.4.0
 numba==0.44.0
-numpy==1.16.6
+numpy==1.22.0
 pandas==0.24.2
 patsy==0.5.1
 Pillow==6.2.2
