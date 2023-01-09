@@ -491,7 +491,7 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  annotated_peaks:
+  annotated_peaks_file:
     type: File?
     format: "http://edamontology.org/format_3475"
     label: "gene annotated peaks file"
