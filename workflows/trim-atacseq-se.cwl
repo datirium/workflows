@@ -19,6 +19,7 @@ requirements:
   genome_indices: "genome-indices.cwl"
   control_file: "trim-atacseq-se.cwl"
 
+
 inputs:
 
   indices_folder:
@@ -271,7 +272,7 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
-  macs2_called_peaks:
+  called_peaks:
     type: File?
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"

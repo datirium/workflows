@@ -20,6 +20,7 @@ requirements:
   genome_indices: "genome-indices.cwl"
   control_file: "chipseq-se.cwl"
 
+
 inputs:
 
   indices_folder:
@@ -242,7 +243,7 @@ outputs:
         name: "Nucleotide Sequence Alignments"
         displayMode: "SQUISHED"
 
-  macs2_called_peaks:
+  called_peaks:
     type: File
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"
@@ -261,7 +262,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Narrow peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_broad_peaks:
     type: File?
@@ -275,7 +277,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Broad peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   workflow_statistics_yaml:
     type: File?
