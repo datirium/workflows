@@ -15,9 +15,9 @@
 # Test dev:         docker run --rm -ti robertplayer/scidap-kraken2:dev /bin/bash
 # re-tag for PR:    docker tag kraken2-dev robertplayer/scidap-kraken2:v1.0.0
 # Push for PR:      docker image push robertplayer/scidap-kraken2:v1.0.0
-#
-#   NOTES:
-#   
+#           
+#   NOTES:  
+#           
 #################################################################
 
 
