@@ -172,7 +172,7 @@ sites="$dm/diffMethTable_site_cmp1.csv"
 
 # FOR DOWNLOAD
 #   quot.log2 - log2 of the quotient in methylation: log2(mean.g1+ε/mean.g2+ε), where ε = 0.01. In case of paired analysis, it is the mean of the pairwise quotients
-#   FOR TABLE VIEW (& DOWNLOAD): id,Chromosome,Start,End,symbol,entrezID,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
+#   FOR TABLE VIEW (& DOWNLOAD): id,Chromosome,Start,End,symbol,entrezID,mean.mean.quot.log2,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
 sed 's/,/\t/g' $genes | cut -f1-6,10,12,14,17,18 > dm_genes.tsv &
 sed 's/,/\t/g' $promoters | cut -f1-6,10,12,14,17,18 > dm_promoters.tsv &
 #   $cpg, $tiling: id,Chromosome,Start,End,mean.quot.log2,comb.p.adj.fdr,num.sites,mean.mean.covg.condition1,mean.mean.covg.condition2
