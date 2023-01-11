@@ -472,11 +472,11 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  called_peaks:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bedgraph file of peaks from seacr stringent mode"
-    doc: "Bed file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2's bed format."
+  macs2_called_peaks:
+    type: File?
+    label: "Called peaks"
+    format: "http://edamontology.org/format_3468"
+    doc: "XLS file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2 output format."
     outputSource: convert_bed_to_xls/output_file
     'sd:visualPlugins':
     - igvbrowser:
