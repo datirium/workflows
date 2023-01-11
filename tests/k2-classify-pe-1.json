@@ -1,0 +1,17 @@
+{
+  "k2db": {
+    "class": "Directory",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/metagenomics/k2db"
+  },
+  "read1file": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/metagenomics/metatest_R1.fq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "read2file": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/metagenomics/metatest_R2.fq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "threads": 4
+}
