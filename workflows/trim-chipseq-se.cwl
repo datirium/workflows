@@ -20,7 +20,6 @@ requirements:
   genome_indices: "genome-indices.cwl"
   control_file: "trim-chipseq-se.cwl"
 
-
 inputs:
 
   indices_folder:

@@ -13,12 +13,10 @@ requirements:
     - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
-    -"cutandrun-pe.cwl"
   second_chipseq_sample:
     - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
-    - "cutandrun-pe.cwl"
     
 
 inputs:

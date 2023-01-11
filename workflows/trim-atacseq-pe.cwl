@@ -20,7 +20,6 @@ requirements:
   genome_indices: "genome-indices.cwl"
   control_file: "trim-atacseq-pe.cwl"
 
-
 inputs:
 
   indices_folder:
