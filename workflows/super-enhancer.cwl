@@ -14,11 +14,13 @@ requirements:
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
+    - "cutandrun-pe.cwl"
   chipseq_control:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
+    - "cutandrun-pe.cwl"
   genome_indices:
     - "genome-indices.cwl"
     

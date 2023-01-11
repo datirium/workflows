@@ -18,7 +18,6 @@
     "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/hg38_star_genome/chrNameLength.txt",
     "format": "http://edamontology.org/format_2330"
   },
-  "broad_peak": false,
   "fastq_file_upstream": {
     "class": "File",
     "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R1.fq",
@@ -29,6 +28,6 @@
     "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R2.fq",
     "format": "http://edamontology.org/format_1930"
   },
-  "exp_fragment_size": 150,
-  "threads": 8
+  "threads": 8,
+  "fragment_length_filter": "Transcription_Factor_Binding_Library"
 }
