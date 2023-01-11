@@ -20,7 +20,7 @@ inputs:
     'sd:localLabel': true
     doc: "Pre-built kraken2 reference genome database for taxonomic classification of sequencing reads."
 
-  fastq_file_upstream:
+  fastq_file_R1:
     type:
       - File
       - type: array
@@ -30,7 +30,7 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Read1 data in a FASTA/Q format, received after paired end sequencing"
 
-  fastq_file_downstream:
+  fastq_file_R1:
     type:
       - File
       - type: array
@@ -89,7 +89,7 @@ outputs:
   classified_reads_R1:
     type:
       - "null"
-      - File[]
+      - File
     format: "http://edamontology.org/format_1930"
     label: "Unaligned FASTQ file(s)"
     doc: "Unaligned FASTQ file(s)"
@@ -98,7 +98,7 @@ outputs:
   classified_reads_R2:
     type:
       - "null"
-      - File[]
+      - File
     format: "http://edamontology.org/format_1930"
     label: "Unaligned FASTQ file(s)"
     doc: "Unaligned FASTQ file(s)"
@@ -191,7 +191,7 @@ outputs:
 
 steps:
 
-  extract_fastq_upstream:
+  extract_fastq_R1:
     label: "Loading unmapped sequence data for read 1"
     doc: |
       Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
@@ -199,12 +199,12 @@ steps:
       the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: fastq_file_upstream
+      compressed_file: fastq_file_R1
       output_prefix:
         default: "merged_R1"
     out: [fastq_file]
 
-  extract_fastq_downstream:
+  extract_fastq_R2:
     label: "Loading unmapped sequence data for read 2"
     doc: |
       Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
@@ -212,7 +212,7 @@ steps:
       the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: fastq_file_downstream
+      compressed_file: fastq_file_R1
       output_prefix:
         default: "merged_R2"
     out: [fastq_file]
@@ -227,8 +227,8 @@ steps:
       all the reads become too short (<30bp), this step will be skipped.
     run: ../tools/trimgalore.cwl
     in:
-      input_file: extract_fastq_upstream/fastq_file
-      input_file_pair: extract_fastq_downstream/fastq_file
+      input_file: extract_fastq_R1/fastq_file
+      input_file_pair: extract_fastq_R2/fastq_file
       dont_gzip:
         default: true
       length:
@@ -250,10 +250,10 @@ steps:
   bypass_trim:
     run: ../tools/bypass-trimgalore-pe.cwl
     in:
-      original_fastq_file_1: extract_fastq_upstream/fastq_file
+      original_fastq_file_1: extract_fastq_R1/fastq_file
       trimmed_fastq_file_1: trim_fastq/trimmed_file
       trimming_report_file_1: trim_fastq/report_file
-      original_fastq_file_2: extract_fastq_downstream/fastq_file
+      original_fastq_file_2: extract_fastq_R2/fastq_file
       trimmed_fastq_file_2: trim_fastq/trimmed_file_pair
       trimming_report_file_2: trim_fastq/report_file_pair
       min_reads_count:
@@ -269,7 +269,7 @@ steps:
     in:
       source_file: bypass_trim/selected_fastq_file_1
       target_filename:
-        source: extract_fastq_upstream/fastq_file
+        source: extract_fastq_R1/fastq_file
         valueFrom: $(self.basename)
     out:
       - target_file
@@ -279,7 +279,7 @@ steps:
     in:
       source_file: bypass_trim/selected_fastq_file_2
       target_filename:
-        source: extract_fastq_downstream/fastq_file
+        source: extract_fastq_R2/fastq_file
         valueFrom: $(self.basename)
     out:
       - target_file

@@ -18,7 +18,7 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      printf "$(date)\nLog file for k2-download-db.cwl tool:\n\nCommands:\n"
+      printf "$(date)\nLog file for k2-classify-pe.cwl tool:\n\nCommands:\n"
       DATABASE=$0; R1=$1; R2=$2; THREADS=$3
       # run classification for PE reads
       kraken2 --db $DATABASE --threads $THREADS --paired  --classified-out classified_reads#.fastq --output k2.output --report k2.report $R1 $R2
