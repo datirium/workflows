@@ -1418,7 +1418,7 @@ doc: |
   sequence read datasets. It is designed to work with multiple peak sets simultaneously,
   representing different ChIP or CUT&RUN/Tag experiments (antibodies, transcription factor
   and/or histone marks, experimental conditions, replicates) as well as managing the results
-  of multiple peak callers. 
+  of multiple peak callers.
 
   For more information please refer to:
   -------------------------------------

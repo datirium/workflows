@@ -17,7 +17,6 @@ requirements:
     - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
-    
 
 inputs:
 
