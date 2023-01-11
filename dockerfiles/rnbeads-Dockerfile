@@ -1,8 +1,8 @@
 #################################################################
 # Dockerfile
 #
-# Software:         RnBeads 2.0
-# Software Version: v2.16.0
+# Software:         RnBeads, bedops
+# Software Version: v2.16.0, v2.4.41
 # Description:      Dockerized version of RnBeads R script
 # Website:          https://github.com/datirium/workflows
 # Provides:         R script to run differential methylation using RnBeads
@@ -13,6 +13,8 @@
 #      Cmd2:        docker image push robertplayer/scidap-rnbeads:stable
 # Pull Cmd:         docker pull robertplayer/scidap-rnbeads:stable
 # Test Stable:      docker run --rm -ti robertplayer/scidap-rnbeads:stable /bin/bash
+# re-tag for PR:    docker tag rnbeads-dev robertplayer/scidap-rnbeads:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-rnbeads:v1.0.0
 #
 #   NOTES:
 #   the 'source("http://rnbeads.org/data/install.R")' installation for
@@ -42,6 +44,9 @@ COPY ./scripts/run_rnbeads_diff.sh /usr/local/bin/
 ### Installing dependencies
 RUN apt-get update && \
     apt-get install ghostscript libgcc-10-dev libxml2-dev libcurl4-openssl-dev libssl-dev pandoc -y && \
+    wget https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    tar jxvf bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    cp bin/* /usr/local/bin/ && \
 ### Installing R dependencies
     R -e 'install.packages("ggplot2", repo = "https://cloud.r-project.org/")' && \
     R -e 'source("http://rnbeads.org/data/install.R")' && \
@@ -52,10 +57,6 @@ RUN apt-get update && \
     ls -la /usr/local/bin/run_rnbeads_diff.R && \
     chmod +x /usr/local/bin/run_rnbeads_diff.sh && \
     ls -la /usr/local/bin/run_rnbeads_diff.sh && \
-### Installing bedops
-    wget https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 && \
-    tar jxvf bedops_linux_x86_64-v2.4.41.tar.bz2 && \
-    cp bin/* /usr/local/bin/ && \
 ### Cleaning
     apt-get clean && \
     apt-get purge && \

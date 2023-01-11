@@ -325,14 +325,14 @@ outputs:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
-    doc: "Generated BigWig file"
+    doc: "Generated BigWig file from filtered bam"
     outputSource: bam_to_bigwig/bigwig_file
 
   bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
     label: "scaled BigWig file"
-    doc: "Generated SCALED BigWig file, used as input for diffbind"
+    doc: "Generated SCALED BigWig file from filtered bam, used as input for diffbind"
     outputSource: bam_to_bigwig_scaled/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
@@ -443,21 +443,21 @@ outputs:
     doc: "stderr from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stderr
 
-  relaxed_peaks:
+  seacr_relaxed_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr relaxed mode"
     doc: "Bed file of enriched regions called by seacr relaxed mode (from normalized bigwig) in macs2's bed format."
     outputSource: seacr_callpeak_relaxed/peak_tsv_file
 
-  stringent_peaks:
+  seacr_stringent_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr stringent mode"
     doc: "Bed file of enriched regions called by seacr stringent mode (from normalized bigwig) in macs2's bed format."
     outputSource: seacr_callpeak_stringent/peak_tsv_file
 
-  macs2_called_peaks_relaxed:
+  relaxed_peaks:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "bedgraph file of peaks from seacr stringent mode"
@@ -469,13 +469,14 @@ outputs:
         id: 'igvbrowser'
         type: 'bed'
         name: "Relaxed Peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_called_peaks:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bedgraph file of peaks from seacr stringent mode"
-    doc: "Bed file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2's bed format."
+    type: File?
+    label: "Called peaks"
+    format: "http://edamontology.org/format_3468"
+    doc: "XLS file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2 output format."
     outputSource: convert_bed_to_xls/output_file
     'sd:visualPlugins':
     - igvbrowser:
@@ -483,9 +484,10 @@ outputs:
         id: 'igvbrowser'
         type: 'bed'
         name: "Stringent Peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
-  annotated_peaks:
+  annotated_peaks_file:
     type: File?
     format: "http://edamontology.org/format_3475"
     label: "gene annotated peaks file"
@@ -772,37 +774,6 @@ steps:
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 
-  get_bam_statistics_after_filtering:
-    run: ../tools/samtools-stats.cwl
-    in:
-      bambai_pair: samtools_sort_index_after_rmdup/bam_bai_pair
-      output_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
-        valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
-    out: [log_file, ext_is_section]
-
-  bam_to_bigwig:
-    run: ../tools/bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
-      chrom_length_file: chrom_length
-      pairchip:
-        default: true
-    out: [bigwig_file]
-
-  bam_to_bigwig_scaled:
-    run: ../tools/bam-bedgraph-bigwig.cwl
-    in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
-      chrom_length_file: chrom_length
-      scale: get_scale_from_spikein/scaling_factor
-      pairchip:
-        default: true
-      bigwig_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
-        valueFrom: $(get_root(self.basename)+"_scaled.bigWig")
-    out: [bigwig_file]
-
   fragment_counts:
     run: ../tools/bedtools-fragmentcounts.cwl
     in:
@@ -867,6 +838,53 @@ steps:
       Scaling factor (sf) for seq library normalization:
             sf=(C/[mapped reads]) where C is a constant (10000 used here)
       Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
+
+  filter_fragment_lengths:
+    run: ../tools/samtools-filter-fragmentlengths.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      fragment_length_filter:
+        source: fragment_length_filter
+        valueFrom: $(self)
+    out: [log_file_stdout, log_file_stderr, filtered_bam]
+
+  samtools_sort_index_filtered:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: filter_fragment_lengths/filtered_bam
+      threads: threads
+    out: [bam_bai_pair]
+
+  bam_to_bigwig:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index_filtered/bam_bai_pair
+      chrom_length_file: chrom_length
+      pairchip:
+        default: true
+    out: [bigwig_file]
+
+  bam_to_bigwig_scaled:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index_filtered/bam_bai_pair
+      chrom_length_file: chrom_length
+      scale: get_scale_from_spikein/scaling_factor
+      pairchip:
+        default: true
+      bigwig_filename:
+        source: samtools_sort_index_filtered/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_scaled.bigWig")
+    out: [bigwig_file]
+    
+  get_bam_statistics_after_filtering:
+    run: ../tools/samtools-stats.cwl
+    in:
+      bambai_pair: samtools_sort_index_filtered/bam_bai_pair
+      output_filename:
+        source: samtools_sort_index_filtered/bam_bai_pair
+        valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
+    out: [log_file, ext_is_section]
 
   get_stat:
     run: ../tools/collect-statistics-cutandrun.cwl
