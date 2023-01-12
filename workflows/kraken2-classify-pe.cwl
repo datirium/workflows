@@ -1,6 +1,10 @@
 cwlVersion: v1.0
 class: Workflow
-  
+
+
+requirements:
+  - class: StepInputExpressionRequirement
+
 
 'sd:metadata':
   - "../metadata/chipseq-header.cwl"
@@ -30,7 +34,7 @@ inputs:
     format: "http://edamontology.org/format_1930"
     doc: "Read1 data in a FASTA/Q format, received after paired end sequencing"
 
-  fastq_file_R1:
+  fastq_file_R2:
     type:
       - File
       - type: array
@@ -46,42 +50,6 @@ inputs:
     label: "threads"
     'sd:localLabel': true
     doc: "Number of threads for steps that support multithreading"
-
-  clip_R1_5p:
-    type: int?
-    default: 0
-    'sd:layout':
-      advanced: true
-    label: "Number of bases to clip from the 5p end of R1:"
-    'sd:localLabel': true
-    doc: "Number of bases to clip from the 5p end of R1"
-
-  clip_R2_5p:
-    type: int?
-    default: 0
-    'sd:layout':
-      advanced: true
-    label: "Number of bases to clip from the 5p end of R2:"
-    'sd:localLabel': true
-    doc: "Number of bases to clip from the 5p end of R2"
-
-  clip_R1_3p:
-    type: int?
-    default: 0
-    'sd:layout':
-      advanced: true
-    label: "Number of bases to clip from the 3p end of R1:"
-    'sd:localLabel': true
-    doc: "Number of bases to clip from the 3p end of R1"
-
-  clip_R2_3p:
-    type: int?
-    default: 0
-    'sd:layout':
-      advanced: true
-    label: "Number of bases to clip from the 3p end of R2:"
-    'sd:localLabel': true
-    doc: "Number of bases to clip from the 3p end of R2"
 
 
 outputs:
@@ -212,7 +180,7 @@ steps:
       the core facility by providing a URL or from GEO by providing SRA accession number.
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: fastq_file_R1
+      compressed_file: fastq_file_R2
       output_prefix:
         default: "merged_R2"
     out: [fastq_file]
@@ -234,13 +202,9 @@ steps:
       length:
         default: 30
       trim1:
-        default: true
+        default: false
       paired:
         default: true
-      clip_R1: clip_R1_5p
-      three_prime_clip_R1: clip_R1_3p
-      clip_R2: clip_R2_5p
-      three_prime_clip_R2: clip_R2_3p
     out:
       - trimmed_file
       - trimmed_file_pair
@@ -328,7 +292,7 @@ $schemas:
 
 s:name: "Taxonomic Classification Workflow with Kraken2"
 label: "Taxonomic Classification Workflow with Kraken2"
-s:alternateName: "CUR&RUN and CUT&TAG basic sparse enrichment analysis workflow for a paired-end experiment with Trim Galore"
+s:alternateName: "Taxonomic Classification Workflow with Kraken2 for a paired-end experiment with Trim Galore"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows

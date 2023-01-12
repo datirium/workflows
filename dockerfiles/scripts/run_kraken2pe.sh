@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#   Shell wrapper for run_rnbeads_diff.R
+#   NOT CURRENTLY IN USE
+#   Shell wrapper for run_kraken2pe.sh
 #
 ##########################################################################################
 #

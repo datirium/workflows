@@ -118,7 +118,7 @@ doc: |
      - [EuPathDB46 (34.1 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20201113.tar.gz), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)
 
   ### __Outputs__
-   - k2db, an upstream database used by kraken2 classifier
+   - k2db, an upstream database used by kraken2 classification tool
 
   ### __Data Analysis Steps__
   1. download selected pre-built kraken2 database.

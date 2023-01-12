@@ -124,5 +124,5 @@ s:creator:
         - id: https://orcid.org/0000-0001-5872-259X
 
 doc: |
-    Tool downloads specified kraken2 database from https://benlangmead.github.io/aws-indexes/k2.
-    Resulting directory is used as upstream input to kraken2 classify tools.
+    Tool downloads user-specified kraken2 database from https://benlangmead.github.io/aws-indexes/k2.
+    Resulting directory is used as upstream input for kraken2 classify tools.

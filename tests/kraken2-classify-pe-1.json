@@ -13,5 +13,5 @@
     "location": "/Users/robertplayer/data/datirium/workflows/tests/data/metagenomics/metatest_R2.fq",
     "format": "http://edamontology.org/format_1930"
   },
-  "threads": 4
+  "threads": 2
 }

@@ -34,19 +34,17 @@ inputs:
 
   read1file:
     type: File
-    label: "R1"
+    label: "R1 fastq"
     inputBinding:
       position: 6
-    format: "http://edamontology.org/format_1930"
-    doc: "File 1 of paired end read data."
+    doc: "FASTQ file 1 of paired end read data."
 
   read2file:
     type: File
-    label: "R2"
+    label: "R2 fastq"
     inputBinding:
       position: 7
-    format: "http://edamontology.org/format_1930"
-    doc: "File 2 of paired end read data."
+    doc: "FASTQ file 2 of paired end read data."
 
   threads:
     type: int
@@ -104,8 +102,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "k2-download-db"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/k2-download-db.cwl
+s:name: "k2-classify-pe"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/k2-classify-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
