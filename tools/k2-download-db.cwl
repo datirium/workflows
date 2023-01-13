@@ -18,8 +18,12 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      printf "$(date)\nLog file for k2-download-db.cwl tool:\n\nCommands:\n"
+      printf "$(date)\nStdout log file for k2-download-db.cwl tool:\n"
       DATABASE=$0;
+      printf "INPUTS:\n"
+      printf "\t\$0\t$DATABASE\n"
+      printf "EXECUTION:\n"
+      # commands start
       if [[ "$DATABASE" == "Viral" ]]; then
         url="https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20221209.tar.gz"
         db="k2_viral_20221209"
@@ -33,17 +37,12 @@ inputs:
         url="https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20201113.tar.gz"
         db="k2_eupathdb48_20201113"
       fi
-      cat << EOF
-        wget $url
-        mkdir ./k2db
-        tar -xf *.tar.gz -C ./k2db
-        rm *.tar.gz
-      EOF
-      printf "Execution:\n"
+      echo "Downloading Kraken2 $DATABASE database from: $url"
       wget $url
       mkdir ./k2db
       tar -xf *.tar.gz -C ./k2db
       rm *.tar.gz
+      printf "END OF SCRIPT\n"
     inputBinding:
         position: 4
 

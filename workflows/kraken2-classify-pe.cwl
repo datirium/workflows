@@ -45,12 +45,13 @@ inputs:
     doc: "Read2 data in a FASTA/Q format, received after paired end sequencing"
 
   threads:
-    type: int
+    type: int?
     default: 4
     label: "threads"
     'sd:localLabel': true
     doc: "Number of threads for steps that support multithreading"
-
+    'sd:layout':
+      advanced: true
 
 outputs:
 
@@ -155,7 +156,10 @@ outputs:
     label: "stderr logfile"
     doc: "captures standard error from k2-classify-pe.cwl"
     outputSource: kraken2_classify/log_file_stderr
-
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+        
 
 steps:
 
@@ -290,9 +294,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Taxonomic Classification Workflow with Kraken2"
-label: "Taxonomic Classification Workflow with Kraken2"
-s:alternateName: "Taxonomic Classification Workflow with Kraken2 for a paired-end experiment with Trim Galore"
+s:name: "Kraken2 Taxonomic Read Classification - PE"
+label: "Kraken2 Taxonomic Read Classification - PE"
+s:alternateName: "Taxonomic Read Classification Workflow with Kraken2 for a paired-end experiment with Trim Galore"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -330,8 +334,8 @@ s:creator:
 
 
 doc: |
-  This workflow taxonomically classifies sequencing reads in FASTA/Q format that have been optionally
-  adapter trimmed and clipped using kraken2 and a user-selected pre-built database from a list of
+  This workflow taxonomically classifies paired-end sequencing reads in FASTQ format, that have been optionally
+  adapter trimmed with trimgalore, using Kraken2 and a user-selected pre-built database from a list of
   [genomic index files](https://benlangmead.github.io/aws-indexes/k2).
 
   ### __Inputs__

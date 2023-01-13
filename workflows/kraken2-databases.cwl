@@ -7,10 +7,16 @@ requirements:
 
 
 'sd:metadata':
-  - "../metadata/chipseq-header.cwl"
+  - "../metadata/indices-header.cwl"
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Sample short name/Alias"
+    sd:preview:
+      position: 1
 
   database_name:
     type:
@@ -22,12 +28,16 @@ inputs:
       - MinusB
       - PlusPFP-16
       - EuPathDB46
-    default: "Viral"
-    'sd:layout':
-      advanced: true
-    label: "Select a pre-built Kraken2 database to download and use for metagenomic classification:"
+    label: "Select a pre-built Kraken2 database to download and use for metagenomic classification:\n
+      The database size is required to be loaded into memory (RAM), so you will need at least as much RAM as the size of the database selected\n
+       - Viral (0.5 GB), all refseq viral genomes\n
+       - MinusB (8.7 GB), standard minus bacteria (archaea, viral, plasmid, human1, UniVec_Core)\n
+       - PlusPFP-16 (15.0 GB), standard (archaea, bacteria, viral, plasmid, human1, UniVec_Core) + (protozoa, fungi & plant) capped at 16 GB (shrunk via random kmer downselect)\n
+       - EuPathDB46 (34.1 GB), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)"
     'sd:localLabel': true
     doc: "name of Kraken2 database to download, see workflow doc for details"
+    sd:preview:
+      position: 2
 
 
 outputs:
@@ -48,6 +58,9 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
     outputSource: download_k2db/log_file_stderr     
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
 
 steps:
