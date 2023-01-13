@@ -6,9 +6,6 @@ requirements:
   - class: StepInputExpressionRequirement
 
 
-'sd:metadata':
-  - "../metadata/chipseq-header.cwl"
-
 'sd:upstream':
   database:      
     - "kraken2-databases.cwl"
@@ -17,12 +14,26 @@ requirements:
 
 inputs:
 
+  alias:
+    type: string
+    label: "Sample short name/Alias:"
+    sd:preview:
+      position: 1
+
+  condition:
+    type: string?
+    label: "Experimental condition:"
+    sd:preview:
+      position: 2
+
   k2db:
     type: Directory
     'sd:upstreamSource': "database/k2db"
     label: "Kraken2 database for taxonomic classification:"
     'sd:localLabel': true
     doc: "Pre-built kraken2 reference genome database for taxonomic classification of sequencing reads."
+    sd:preview:
+      position: 3
 
   fastq_file_R1:
     type:
@@ -33,6 +44,8 @@ inputs:
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
     doc: "Read1 data in a FASTA/Q format, received after paired end sequencing"
+    sd:preview:
+      position: 4
 
   fastq_file_R2:
     type:
@@ -43,6 +56,8 @@ inputs:
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
     doc: "Read2 data in a FASTA/Q format, received after paired end sequencing"
+    sd:preview:
+      position: 5
 
   threads:
     type: int?
@@ -129,37 +144,47 @@ outputs:
     doc: "TrimGalore generated log for FASTQ 2"
     outputSource: trim_fastq/report_file_pair
 
-  kraken2_output:
+  k2_output:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "kraken2 raw output file"
     doc: "raw per read taxonomic classifications from kraken2"
     outputSource: kraken2_classify/k2_output
 
-  kraken2_report:
+  k2_report:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "kraken2 report file"
     doc: "summary of all read taxonomic classifications from kraken2"
     outputSource: kraken2_classify/k2_report
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Kraken Report'
 
-  kraken2_log_stdout:
+  k2_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "parsed k2 stderr"
+    doc: "markdown parsed standard error captured directly from kraken2 classify command in k2-classify-pe.cwl"
+    outputSource: kraken2_classify/k2_stderr
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
+  kraken2_classify_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
     doc: "captures standard output from k2-classify-pe.cwl"
     outputSource: kraken2_classify/log_file_stdout
 
-  kraken2_log_stderr:
+  kraken2_classify_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
     doc: "captures standard error from k2-classify-pe.cwl"
     outputSource: kraken2_classify/log_file_stderr
-    'sd:visualPlugins':
-    - markdownView:
-        tab: 'Overview'
-        
+
 
 steps:
 
@@ -285,7 +310,7 @@ steps:
       read1file: rename_upstream/target_file
       read2file: rename_downstream/target_file
       threads: threads
-    out: [classified_R1, classified_R2, k2_output, k2_report, log_file_stdout, log_file_stderr]
+    out: [classified_R1, classified_R2, k2_output, k2_report, k2_stderr, log_file_stdout, log_file_stderr]
 
 
 $namespaces:

@@ -6,10 +6,6 @@ requirements:
   - class: StepInputExpressionRequirement
 
 
-'sd:metadata':
-  - "../metadata/indices-header.cwl"
-
-
 inputs:
 
   alias:

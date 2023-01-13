@@ -1,4 +1,6 @@
 {
+  "alias": "metatest sample",
+  "condition": "control",
   "k2db": {
     "class": "Directory",
     "location": "/Users/robertplayer/data/datirium/workflows/tests/data/metagenomics/k2db"

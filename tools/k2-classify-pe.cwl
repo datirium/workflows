@@ -28,7 +28,9 @@ inputs:
       printf "EXECUTION:\n"
       #   commands start
       # run classification for PE reads
-      kraken2 --db $DATABASE --threads $THREADS --paired  --classified-out classified_reads#.fastq --output k2.output --report k2.report $R1 $R2
+      kraken2 --db $DATABASE --threads $THREADS --paired  --classified-out classified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
+      head -1 k2.stderr > parsed.stderr
+      tail -n+2 k2.stderr | sed 's/^ *//' | awk '{printf(" - %s\n",$0)}' >> parsed.stderr
       printf "END OF SCRIPT\n"
     inputBinding:
         position: 1
@@ -83,6 +85,11 @@ outputs:
     type: File
     outputBinding:
       glob: "k2.report"
+
+  k2_stderr:
+    type: File
+    outputBinding:
+      glob: "parsed.stderr"
 
   log_file_stdout:
     type: File
