@@ -24,14 +24,17 @@ inputs:
       - MinusB
       - PlusPFP-16
       - EuPathDB46
-    label: "Select a pre-built Kraken2 database to download and use for metagenomic classification:\n
-      The database size is required to be loaded into memory (RAM), so you will need at least as much RAM as the size of the database selected\n
+      - 16S_gg_13_5
+      - 16S_silva_138
+    label: "Reference genome database for download and classification:"
+    'sd:localLabel': true
+    doc: "Database details:\n
        - Viral (0.5 GB), all refseq viral genomes\n
        - MinusB (8.7 GB), standard minus bacteria (archaea, viral, plasmid, human1, UniVec_Core)\n
        - PlusPFP-16 (15.0 GB), standard (archaea, bacteria, viral, plasmid, human1, UniVec_Core) + (protozoa, fungi & plant) capped at 16 GB (shrunk via random kmer downselect)\n
-       - EuPathDB46 (34.1 GB), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)"
-    'sd:localLabel': true
-    doc: "name of Kraken2 database to download, see workflow doc for details"
+       - EuPathDB46 (34.1 GB), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)\n
+       - 16S_gg_13_5 (73 MB), Greengenes 16S rRNA database (release 13.5, 20200326)\n
+       - 16S_silva_138 (112 MB), SILVA 16S rRNA database (release 138, 20200326)"
     sd:preview:
       position: 2
 
@@ -76,8 +79,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Kraken2 Database Download"
-label: "Kraken2 Database Download"
+s:name: "Kraken2 Database installation pipeline"
+label: "Kraken2 Database installation pipeline"
 s:alternateName: "Kraken2 Database Download"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-databases.cwl
@@ -125,6 +128,8 @@ doc: |
      - [MinusB (8.7 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_minusb_20221209.tar.gz), standard minus bacteria (archaea, viral, plasmid, human1, UniVec_Core)
      - [PlusPFP-16 (15.0 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_pluspfp_16gb_20221209.tar.gz), standard (archaea, bacteria, viral, plasmid, human1, UniVec_Core) + (protozoa, fungi & plant) capped at 16 GB (shrunk via random kmer downselect)
      - [EuPathDB46 (34.1 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20201113.tar.gz), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)
+     - [16S_gg_13_5 (73 MB)](https://genome-idx.s3.amazonaws.com/kraken/16S_Greengenes13.5_20200326.tgz), Greengenes 16S rRNA database ([release 13.5](https://greengenes.secondgenome.com/?prefix=downloads/greengenes_database/gg_13_5/), 20200326)\n
+     - [16S_silva_138 (112 MB)](https://genome-idx.s3.amazonaws.com/kraken/16S_Silva138_20200326.tgz), SILVA 16S rRNA database ([release 138.1](https://www.arb-silva.de/documentation/release-1381/), 20200827)
 
   ### __Outputs__
    - k2db, an upstream database used by kraken2 classification tool

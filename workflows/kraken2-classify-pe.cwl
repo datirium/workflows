@@ -29,9 +29,9 @@ inputs:
   k2db:
     type: Directory
     'sd:upstreamSource': "database/k2db"
-    label: "Kraken2 database for taxonomic classification:"
+    label: "Reference genome database for metagenomic sequence classification:"
     'sd:localLabel': true
-    doc: "Pre-built kraken2 reference genome database for taxonomic classification of sequencing reads."
+    doc: "Pre-built kraken2 reference genome database for taxonomic classification of sequencing reads. A 'database' sample needs to be added to your project that will populate this dropdown."
     sd:preview:
       position: 3
 
@@ -43,7 +43,7 @@ inputs:
     label: "Read 1 file:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
-    doc: "Read1 data in a FASTA/Q format, received after paired end sequencing"
+    doc: "Read 1 FASTQ file from a paired-end sequencing run"
     sd:preview:
       position: 4
 
@@ -55,7 +55,7 @@ inputs:
     label: "Read 2 file:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
-    doc: "Read2 data in a FASTA/Q format, received after paired end sequencing"
+    doc: "Read 2 FASTQ file that pairs with the input R1 file"
     sd:preview:
       position: 5
 
@@ -327,8 +327,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Kraken2 Taxonomic Read Classification - PE"
-label: "Kraken2 Taxonomic Read Classification - PE"
+s:name: "Kraken2 Metagenomic pipeline paired-end"
+label: "Kraken2 Metagenomic pipeline paired-end"
 s:alternateName: "Taxonomic Read Classification Workflow with Kraken2 for a paired-end experiment with Trim Galore"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
@@ -377,6 +377,8 @@ doc: |
     - [MinusB (8.7 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_minusb_20221209.tar.gz), standard minus bacteria (archaea, viral, plasmid, human1, UniVec_Core)
     - [PlusPFP-16 (15.0 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_pluspfp_16gb_20221209.tar.gz), standard (archaea, bacteria, viral, plasmid, human1, UniVec_Core) + (protozoa, fungi & plant) capped at 16 GB (shrunk via random kmer downselect)
     - [EuPathDB46 (34.1 GB)](https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20201113.tar.gz), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)
+    - [16S_gg_13_5 (73 MB)](https://genome-idx.s3.amazonaws.com/kraken/16S_Greengenes13.5_20200326.tgz), Greengenes 16S rRNA database ([release 13.5](https://greengenes.secondgenome.com/?prefix=downloads/greengenes_database/gg_13_5/), 20200326)\n
+    - [16S_silva_138 (112 MB)](https://genome-idx.s3.amazonaws.com/kraken/16S_Silva138_20200326.tgz), SILVA 16S rRNA database ([release 138.1](https://www.arb-silva.de/documentation/release-1381/), 20200827)
   Read 1 file:
     - FASTA/Q input R1 from a paired end library
   Read 2 file:

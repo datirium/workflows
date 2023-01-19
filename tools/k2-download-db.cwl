@@ -36,6 +36,12 @@ inputs:
       elif [[ "$DATABASE" == "EuPathDB46" ]]; then
         url="https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20201113.tar.gz"
         db="k2_eupathdb48_20201113"
+      elif [[ "$DATABASE" == "16S_gg_13_5" ]]; then
+        url="https://genome-idx.s3.amazonaws.com/kraken/16S_Greengenes13.5_20200326.tgz"
+        db="k2_16S_gg_13_5_20200326"
+      elif [[ "$DATABASE" == "16S_silva_138" ]]; then
+        url="https://genome-idx.s3.amazonaws.com/kraken/16S_Silva138_20200326.tgz"
+        db="k2_16S_silva_138_20200326"
       fi
       printf "Downloading Kraken2 $DATABASE database from: $url\n\n"
       wget $url
