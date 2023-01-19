@@ -289,7 +289,7 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
-  macs2_called_peaks:
+  called_peaks:
     type: File?
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"
