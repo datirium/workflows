@@ -48,15 +48,15 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
     outputSource: download_k2db/log_file_stdout
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
 
   log_file_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
     outputSource: download_k2db/log_file_stderr     
-    'sd:visualPlugins':
-    - markdownView:
-        tab: 'Overview'
 
 
 steps:

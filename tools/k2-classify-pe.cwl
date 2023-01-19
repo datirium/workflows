@@ -21,16 +21,20 @@ inputs:
       printf "$(date)\nStdout log file for k2-classify-pe.cwl tool:\n"
       DATABASE=$0; R1=$1; R2=$2; THREADS=$3
       printf "INPUTS:\n"
-      printf "\t\$0\t$DATABASE\n"
-      printf "\t\$1\t$R1\n"
-      printf "\t\$2\t$R2\n"
-      printf "\t\$3\t$THREADS\n"
+      printf "\$0 - $DATABASE\n"
+      printf "\$1 - $R1\n"
+      printf "\$2 - $R2\n"
+      printf "\$3 - $THREADS\n\n"
       printf "EXECUTION:\n"
       #   commands start
       # run classification for PE reads
       kraken2 --db $DATABASE --threads $THREADS --paired  --classified-out classified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
+      # make stderr output markdown compatible for overview tab view
       head -1 k2.stderr > parsed.stderr
       tail -n+2 k2.stderr | sed 's/^ *//' | awk '{printf(" - %s\n",$0)}' >> parsed.stderr
+      # format report into tsv for table tab view
+      printf "percent_classified\treads_assigned_at_and_below_taxid\treads_assigned_directly_to_taxid\ttaxonomic_rank\ttaxid\tname\n" > k2_report.tsv
+      sed 's/^ *//' k2.report | sed 's/\t  */\t/' >> k2_report.tsv
       printf "END OF SCRIPT\n"
     inputBinding:
         position: 1
@@ -85,6 +89,11 @@ outputs:
     type: File
     outputBinding:
       glob: "k2.report"
+
+  k2_report_tsv:
+    type: File
+    outputBinding:
+      glob: "k2_report.tsv"
 
   k2_stderr:
     type: File

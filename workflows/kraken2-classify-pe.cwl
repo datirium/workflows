@@ -157,9 +157,17 @@ outputs:
     label: "kraken2 report file"
     doc: "summary of all read taxonomic classifications from kraken2"
     outputSource: kraken2_classify/k2_report
+
+  k2_report_tsv:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "kraken2 report file tsv"
+    doc: "summary of all read taxonomic classifications from kraken2 formatted as a tsv"
+    outputSource: kraken2_classify/k2_report_tsv
     'sd:visualPlugins':
-    - markdownView:
+    - syncfusiongrid:
         tab: 'Kraken Report'
+        Title: 'Summary of Taxonomic Classifications'
 
   k2_stderr:
     type: File
@@ -310,7 +318,7 @@ steps:
       read1file: rename_upstream/target_file
       read2file: rename_downstream/target_file
       threads: threads
-    out: [classified_R1, classified_R2, k2_output, k2_report, k2_stderr, log_file_stdout, log_file_stderr]
+    out: [classified_R1, classified_R2, k2_output, k2_report, k2_report_tsv, k2_stderr, log_file_stdout, log_file_stderr]
 
 
 $namespaces:
