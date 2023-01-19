@@ -7,9 +7,7 @@ requirements:
 
 
 'sd:upstream':
-  database:      
-    - "kraken2-databases.cwl"
-    - "https://github.com/datirium/workflows/workflows/kraken2-databases.cwl"
+  database: "kraken2-databases.cwl"
 
 
 inputs:
