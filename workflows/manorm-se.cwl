@@ -13,13 +13,11 @@ requirements:
     - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
-    -"cutandrun-pe.cwl"
   second_chipseq_sample:
     - "chipseq-se.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-atacseq-se.cwl"
-    - "cutandrun-pe.cwl"
-    
+
 
 inputs:
 
@@ -35,7 +33,7 @@ inputs:
     label: "ChIP-Seq SE sample 1"
     doc: |
       XLS peak file from sample 1, formatted as MACS2 output
-    'sd:upstreamSource': "first_chipseq_sample/called_peaks"
+    'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
   peak_file_second:
@@ -44,7 +42,7 @@ inputs:
     label: "ChIP-Seq SE sample 2"
     doc: |
       XLS peak file from sample 2, formatted as MACS2 output
-    'sd:upstreamSource': "second_chipseq_sample/called_peaks"
+    'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
   broad_peak_file_first:
