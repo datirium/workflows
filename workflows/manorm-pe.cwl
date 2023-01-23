@@ -35,7 +35,7 @@ inputs:
     label: "ChIP-Seq PE sample 1"
     doc: |
       XLS peak file from sample 1, formatted as MACS2 output
-    'sd:upstreamSource': "first_chipseq_sample/called_peaks"
+    'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
   peak_file_second:
@@ -44,7 +44,7 @@ inputs:
     label: "ChIP-Seq PE sample 2"
     doc: |
       XLS peak file from sample 2, formatted as MACS2 output
-    'sd:upstreamSource': "second_chipseq_sample/called_peaks"
+    'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
     'sd:localLabel': true
 
   broad_peak_file_first:

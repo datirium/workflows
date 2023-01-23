@@ -65,14 +65,14 @@ inputs:
     format: "http://edamontology.org/format_3468"
     label: "Biological condition 1 samples. Minimum 2 samples"
     doc: "XLS peak files for condition 1 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_1"
-    'sd:upstreamSource': "first_biological_condition/called_peaks"
+    'sd:upstreamSource': "first_biological_condition/macs2_called_peaks"
 
   peak_files_cond_2:
     type: File[]
     format: "http://edamontology.org/format_3468"
     label: "Biological condition 2 samples. Minimum 2 samples"
     doc: "XLS peak files for condition 2 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_2"
-    'sd:upstreamSource': "second_biological_condition/called_peaks"
+    'sd:upstreamSource': "second_biological_condition/macs2_called_peaks"
 
   genome_coverage_files_cond_1:
     type: File[]
@@ -1418,7 +1418,7 @@ doc: |
   sequence read datasets. It is designed to work with multiple peak sets simultaneously,
   representing different ChIP or CUT&RUN/Tag experiments (antibodies, transcription factor
   and/or histone marks, experimental conditions, replicates) as well as managing the results
-  of multiple peak callers. 
+  of multiple peak callers.
 
   For more information please refer to:
   -------------------------------------
