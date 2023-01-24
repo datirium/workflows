@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.13
+  dockerPull: biowardrobe2/sc-tools:v0.0.14
 
 
 inputs:
@@ -128,7 +128,7 @@ inputs:
       prefix: "--mitopattern"
     doc: |
       Regex pattern to identify mitochondrial genes.
-      Default: '^Mt-'
+      Default: '^mt-|^MT-'
 
   maximum_mito_perc:
     type: float?
@@ -190,6 +190,13 @@ inputs:
     doc: |
       Save Seurat data to h5ad file.
       Default: false
+
+  export_ucsc_cb:
+    type: boolean?
+    inputBinding:
+      prefix: "--cbbuild"
+    doc: |
+      Export results to UCSC Cell Browser. Default: false
 
   output_prefix:
     type: string?
@@ -646,6 +653,27 @@ outputs:
       Split by grouping condition the novelty score per cell density (filtered).
       PDF format
 
+  ucsc_cb_config_data:
+    type: Directory?
+    outputBinding:
+      glob: "*_cellbrowser"
+    doc: |
+      Directory with UCSC Cellbrowser configuration data.
+
+  ucsc_cb_html_data:
+    type: Directory?
+    outputBinding:
+      glob: "*_cellbrowser/html_data"
+    doc: |
+      Directory with UCSC Cellbrowser html data.
+
+  ucsc_cb_html_file:
+    type: File?
+    outputBinding:
+      glob: "*_cellbrowser/html_data/index.html"
+    doc: |
+      HTML index file from the directory with UCSC Cellbrowser html data.
+
   seurat_data_rds:
     type: File
     outputBinding:
@@ -744,23 +772,19 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity
-                                        IDENTITY [--grouping GROUPING]
-                                        [--barcodes BARCODES]
-                                        [--rnamincells RNAMINCELLS]
-                                        [--mingenes [MINGENES [MINGENES ...]]]
-                                        [--maxgenes [MAXGENES [MAXGENES ...]]]
-                                        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
-                                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                                        [--mitopattern MITOPATTERN]
-                                        [--maxmt MAXMT] [--pdf] [--verbose]
-                                        [--h5seurat] [--h5ad] [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_filter.R
+        [-h] --mex MEX [MEX ...] --identity IDENTITY [--grouping GROUPING]
+        [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
+        [--mingenes [MINGENES ...]] [--maxgenes [MAXGENES ...]]
+        [--rnaminumi [RNAMINUMI ...]] [--minnovelty [MINNOVELTY ...]]
+        [--mitopattern MITOPATTERN] [--maxmt MAXMT] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Filtering Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --mex MEX [MEX ...]   Path to the folder with feature-barcode matrix from
                           Cell Ranger Count/Aggregate experiment in MEX format.
@@ -795,26 +819,26 @@ s:about: |
                           cells. Ignored when '--mex' points to the feature-
                           barcode matrices from the multiple Cell Ranger Count
                           experiments. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES [MINGENES ...]]
+    --mingenes [MINGENES ...]
                           Include cells where at least this many genes are
                           detected. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES [MAXGENES ...]]
+    --maxgenes [MAXGENES ...]
                           Include cells with the number of genes not bigger than
                           this value. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
+    --rnaminumi [RNAMINUMI ...]
                           Include cells where at least this many UMI
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the '--mex' input based on
                           the '--identity' file. Default: 500 (applied to all
                           datasets)
-    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
+    --minnovelty [MINNOVELTY ...]
                           Include cells with the novelty score not lower than
                           this value, calculated for as log10(genes)/log10(UMI).
                           If multiple values provided, each of them will be
@@ -823,7 +847,7 @@ s:about: |
                           (applied to all datasets)
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
-                          Default: '^Mt-'
+                          Default: '^mt-|^MT-'
     --maxmt MAXMT         Include cells with the percentage of transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
@@ -831,6 +855,7 @@ s:about: |
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
+    --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic
