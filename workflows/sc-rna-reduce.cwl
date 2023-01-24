@@ -73,8 +73,8 @@ inputs:
     doc: |
       Path to the TSV/CSV file with the information for cell cycle score assignment.
       First column - 'phase', second column 'gene_id'. If loaded Seurat object already
-      includes cell cycle scores in 'S.Score' and 'G2M.Score' metatada columns they will
-      be removed.
+      includes cell cycle scores in 'S.Score', 'G2M.Score', and 'CC.Difference' metatada
+      columns they will be overwritten.
       Default: skip cell cycle score assignment.
 
   dimensions:
@@ -169,13 +169,22 @@ inputs:
       advanced: true
 
   regress_cellcycle:
-    type: boolean?
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "completely"
+      - "partialy"
+      - "none"
     label: "Regress cell cycle scores as a confounding source of variation"
-    default: false
+    default: "none"
     doc: |
-      Regress cell cycle scores as a confounding source of variation.
-      Ignored if --cellcycle is not provided.
-      Default: false
+      "completely" - regress all signals associated with cell cycle phase.
+      "partialy" - regress only differences in cell cycle phase among
+      proliferating cells, signals separating non-cycling and cycling cells
+      will be maintained.
+      "none" - do not regress signals associated with cell cycle phase
+      Default: "none"
     'sd:layout':
       advanced: true
 
@@ -363,6 +372,18 @@ outputs:
         tab: 'Overall'
         Caption: 'Cells UMAP'
 
+  ccpca_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/ccpca_plot_png
+    label: "Cells PCA using only cell cycle genes"
+    doc: |
+      Cells PCA using only cell cycle genes.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Overall'
+        Caption: 'Cells PCA using only cell cycle genes'
+
   umap_spl_ph_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_spl_ph_plot_png
@@ -423,6 +444,18 @@ outputs:
         tab: 'Per dataset'
         Caption: 'Split by dataset cells UMAP'
 
+  ccpca_spl_idnt_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/ccpca_spl_idnt_plot_png
+    label: "Split by dataset cells PCA using only cell cycle genes"
+    doc: |
+      Split by dataset cells PCA using only cell cycle genes.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by dataset cells PCA using only cell cycle genes'
+
   umap_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_spl_cnd_plot_png
@@ -446,6 +479,18 @@ outputs:
     - image:
         tab: 'Per group'
         Caption: 'Grouped by condition split by cell cycle cells UMAP'
+
+  ccpca_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/ccpca_spl_cnd_plot_png
+    label: "Split by grouping condition cells PCA using only cell cycle genes"
+    doc: |
+      Split by grouping condition cells PCA using only cell cycle genes.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'Split by grouping condition cells PCA using only cell cycle genes'
 
   umap_gr_cnd_spl_mito_plot_png:
     type: File?
@@ -527,7 +572,12 @@ steps:
       regress_genes:
         source: regress_genes
         valueFrom: $(split_features(self))
-      regress_cellcycle: regress_cellcycle
+      regress_ccycle_full:
+        source: regress_cellcycle
+        valueFrom: $(self=="completely"?true:null)
+      regress_ccycle_diff: 
+        source: regress_cellcycle
+        valueFrom: $(self=="partialy"?true:null)
       dimensions: dimensions
       umap_spread: umap_spread
       umap_mindist: umap_mindist
@@ -556,12 +606,15 @@ steps:
     - umap_qc_mtrcs_plot_png
     - umap_plot_png
     - umap_spl_ph_plot_png
+    - ccpca_plot_png
     - umap_spl_mito_plot_png
     - umap_spl_umi_plot_png
     - umap_spl_gene_plot_png
     - umap_spl_idnt_plot_png
+    - ccpca_spl_idnt_plot_png
     - umap_spl_cnd_plot_png
     - umap_gr_cnd_spl_ph_plot_png
+    - ccpca_spl_cnd_plot_png
     - umap_gr_cnd_spl_mito_plot_png
     - umap_gr_cnd_spl_umi_plot_png
     - umap_gr_cnd_spl_gene_plot_png

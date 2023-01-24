@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.13
+  dockerPull: biowardrobe2/sc-tools:v0.0.14
 
 
 inputs:
@@ -58,8 +58,8 @@ inputs:
     doc: |
       Path to the TSV/CSV file with the information for cell cycle score assignment.
       First column - 'phase', second column 'gene_id'. If loaded Seurat object already
-      includes cell cycle scores in 'S.Score' and 'G2M.Score' metatada columns they will
-      be removed.
+      includes cell cycle scores in 'S.Score', 'G2M.Score', and 'CC.Difference' metatada
+      columns they will be overwritten.
       Default: skip cell cycle score assignment.
 
   normalization_method:
@@ -136,13 +136,25 @@ inputs:
       Genes which expression should be regressed as a confounding source of variation.
       Default: None
 
-  regress_cellcycle:
+  regress_ccycle_full:
     type: boolean?
     inputBinding:
-      prefix: "--regresscellcycle"
+      prefix: "--regressccfull"
     doc: |
-      Regress cell cycle scores as a confounding source of variation.
-      Ignored if --cellcycle is not provided.
+      Regress all signals associated with cell cycle phase.
+      Ignored if --cellcycle is not provided. Mutually exclusive
+      with --regressccdiff parameter.
+      Default: false
+
+  regress_ccycle_diff:
+    type: boolean?
+    inputBinding:
+      prefix: "--regressccdiff"
+    doc: |
+      Regress only differences in cell cycle phase among proliferating
+      cells. Signals separating non-cycling and cycling cells will be
+      maintained. Ignored if --cellcycle is not provided. Mutually
+      exclusive with --regressccfull
       Default: false
 
   dimensions:
@@ -422,6 +434,22 @@ outputs:
       Split by cell cycle phase cells UMAP.
       PDF format
 
+  ccpca_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ccpca.png"
+    doc: |
+      Cells PCA using only cell cycle genes.
+      PNG format
+
+  ccpca_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ccpca.pdf"
+    doc: |
+      Cells PCA using only cell cycle genes.
+      PDF format
+
   umap_spl_mito_plot_png:
     type: File?
     outputBinding:
@@ -486,6 +514,22 @@ outputs:
       Split by dataset cells UMAP.
       PDF format
 
+  ccpca_spl_idnt_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ccpca_spl_idnt.png"
+    doc: |
+      Split by dataset cells PCA using only cell cycle genes.
+      PNG format
+
+  ccpca_spl_idnt_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ccpca_spl_idnt.pdf"
+    doc: |
+      Split by dataset cells PCA using only cell cycle genes.
+      PDF format
+
   umap_spl_cnd_plot_png:
     type: File?
     outputBinding:
@@ -516,6 +560,22 @@ outputs:
       glob: "*_umap_gr_cnd_spl_ph.pdf"
     doc: |
       Grouped by condition split by cell cycle cells UMAP.
+      PDF format
+
+  ccpca_spl_cnd_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ccpca_spl_cnd.png"
+    doc: |
+      Split by grouping condition cells PCA using only cell cycle genes.
+      PNG format
+
+  ccpca_spl_cnd_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_ccpca_spl_cnd.pdf"
+    doc: |
+      Split by grouping condition cells PCA using only cell cycle genes.
       PDF format
 
   umap_gr_cnd_spl_mito_plot_png:
@@ -674,31 +734,23 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_reduce.R [-h] --query QUERY [--metadata METADATA]
-                                        [--barcodes BARCODES]
-                                        [--cellcycle CELLCYCLE]
-                                        [--norm {sct,log,sctglm}]
-                                        [--ntgr {seurat,harmony,none}]
-                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
-                                        [--highvargenes HIGHVARGENES]
-                                        [--regressmt]
-                                        [--regressgenes [REGRESSGENES [REGRESSGENES ...]]]
-                                        [--regresscellcycle]
-                                        [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
-                                        [--uspread USPREAD]
-                                        [--umindist UMINDIST]
-                                        [--uneighbors UNEIGHBORS]
-                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-                                        [--umethod {uwot,uwot-learn,umap-learn}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--lowmem]
-                                        [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_reduce.R
+        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
+        [--cellcycle CELLCYCLE] [--norm {sct,log,sctglm}]
+        [--ntgr {seurat,harmony,none}] [--ntgrby [NTGRBY ...]]
+        [--highvargenes HIGHVARGENES] [--regressmt]
+        [--regressgenes [REGRESSGENES ...]] [--regressccfull | --regressccdiff]
+        [--dimensions [DIMENSIONS ...]] [--uspread USPREAD]
+        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--cbbuild] [--lowmem] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Dimensionality Reduction Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
@@ -724,9 +776,10 @@ s:about: |
                           Path to the TSV/CSV file with the information for cell
                           cycle score assignment. First column - 'phase', second
                           column 'gene_id'. If loaded Seurat object already
-                          includes cell cycle scores in 'S.Score' and
-                          'G2M.Score' metatada columns they will be removed.
-                          Default: skip cell cycle score assignment.
+                          includes cell cycle scores in 'S.Score', 'G2M.Score',
+                          and 'CC.Difference' metatada columns they will be
+                          overwritten. Default: skip cell cycle score
+                          assignment.
     --norm {sct,log,sctglm}
                           Normalization method applied to genes expression
                           counts. If loaded Seurat object includes multiple
@@ -737,7 +790,7 @@ s:about: |
                           Integration method used for joint analysis of multiple
                           datasets. Automatically set to 'none' if loaded Seurat
                           object includes only one dataset. Default: seurat
-    --ntgrby [NTGRBY [NTGRBY ...]]
+    --ntgrby [NTGRBY ...]
                           Column(s) from the Seurat object metadata to define
                           the variable(s) that should be integrated out when
                           running multiple datasets integration with harmony.
@@ -751,13 +804,19 @@ s:about: |
     --regressmt           Regress the percentage of transcripts mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
-    --regressgenes [REGRESSGENES [REGRESSGENES ...]]
+    --regressgenes [REGRESSGENES ...]
                           Genes which expression should be regressed as a
                           confounding source of variation. Default: None
-    --regresscellcycle    Regress cell cycle scores as a confounding source of
-                          variation. Ignored if --cellcycle is not provided.
-                          Default: false
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+    --regressccfull       Regress all signals associated with cell cycle phase.
+                          Ignored if --cellcycle is not provided. Mutually
+                          exclusive with --regressccdiff parameter. Default:
+                          false
+    --regressccdiff       Regress only differences in cell cycle phase among
+                          proliferating cells. Signals separating non-cycling
+                          and cycling cells will be maintained. Ignored if
+                          --cellcycle is not provided. Mutually exclusive with
+                          --regressccfull Default: false
+    --dimensions [DIMENSIONS ...]
                           Dimensionality to use in UMAP projection (from 1 to
                           50). If single value N is provided, use from 1 to N
                           PCs. If multiple values are provided, subset to only
