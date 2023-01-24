@@ -329,12 +329,9 @@ outputs:
         tab: 'Per dataset'
         Caption: 'Split by cell cycle phase clustered cells UMAP'
 
-  cmp_gr_ph_spl_idnt_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/cmp_gr_ph_spl_idnt_res_plot_png
+  cmp_gr_ph_spl_idnt_plot_png:
+    type: File?
+    outputSource: sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_png
     label: "Grouped by cell cycle phase split by dataset cells composition plot. Downsampled."
     doc: |
       Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
@@ -374,12 +371,12 @@ outputs:
         tab: 'Gene expression'
         Caption: 'Log normalized scaled average gene expression per cluster'
 
-  xpr_per_cell_res_plot_png:
+  xpr_per_cell_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_rna_cluster/xpr_per_cell_res_plot_png
+    outputSource: sc_rna_cluster/xpr_per_cell_plot_png
     label: "Log normalized gene expression on cells UMAP"
     doc: |
       Log normalized gene expression on cells UMAP.
@@ -389,12 +386,12 @@ outputs:
         tab: 'Gene expression'
         Caption: 'Log normalized gene expression on cells UMAP'
 
-  xpr_per_cell_sgnl_res_plot_png:
+  xpr_per_cell_sgnl_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_rna_cluster/xpr_per_cell_sgnl_res_plot_png
+    outputSource: sc_rna_cluster/xpr_per_cell_sgnl_plot_png
     label: "Log normalized gene expression density on cells UMAP"
     doc: |
       Log normalized gene expression density on cells UMAP.
@@ -527,11 +524,11 @@ steps:
     - cmp_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_cnd_spl_clst_res_plot_png
     - umap_spl_ph_res_plot_png
-    - cmp_gr_ph_spl_idnt_res_plot_png
+    - cmp_gr_ph_spl_idnt_plot_png
     - cmp_gr_ph_spl_clst_res_plot_png
     - xpr_avg_res_plot_png
-    - xpr_per_cell_res_plot_png
-    - xpr_per_cell_sgnl_res_plot_png
+    - xpr_per_cell_plot_png
+    - xpr_per_cell_sgnl_plot_png
     - xpr_dnst_res_plot_png
     - gene_markers_tsv
     - ucsc_cb_config_data
