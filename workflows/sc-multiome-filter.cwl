@@ -133,11 +133,11 @@ inputs:
 
   mito_pattern:
     type: string?
-    default: "^Mt-"
+    default: "^mt-|^MT-"
     label: "Regex pattern to identify mitochondrial genes"
     doc: |
       Regex pattern to identify mitochondrial genes.
-      Default: '^Mt-'
+      Default: '^mt-|^MT-'
     'sd:layout':
       advanced: true
 
@@ -1151,6 +1151,31 @@ outputs:
         tab: 'Filtered QC'
         Caption: 'Split by grouping condition the fraction of ATAC fragments within genomic blacklist regions per cell density'
 
+  ucsc_cb_config_data:
+    type: File
+    outputSource: compress_cellbrowser_config_data/compressed_folder
+    label: "Compressed directory with UCSC Cellbrowser configuration data"
+    doc: |
+      Compressed directory with UCSC Cellbrowser configuration data.
+
+  ucsc_cb_html_data:
+    type: Directory
+    outputSource: sc_multiome_filter/ucsc_cb_html_data
+    label: "Directory with UCSC Cellbrowser html data"
+    doc: |
+      Directory with UCSC Cellbrowser html data.
+
+  ucsc_cb_html_file:
+    type: File
+    outputSource: sc_multiome_filter/ucsc_cb_html_file
+    label: "Open in UCSC Cell Browser"
+    doc: |
+      HTML index file from the directory with UCSC Cellbrowser html data.
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
   seurat_data_rds:
     type: File
     outputSource: sc_multiome_filter/seurat_data_rds
@@ -1233,6 +1258,8 @@ steps:
       call_by: call_by
       verbose:
         default: true
+      export_ucsc_cb:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
@@ -1313,9 +1340,19 @@ steps:
     - fltr_atac_umi_dnst_spl_cnd_plot_png
     - fltr_peak_dnst_spl_cnd_plot_png
     - fltr_blck_dnst_spl_cnd_plot_png
+    - ucsc_cb_config_data
+    - ucsc_cb_html_data
+    - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  compress_cellbrowser_config_data:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: sc_multiome_filter/ucsc_cb_config_data
+    out:
+    - compressed_folder
 
 
 $namespaces:

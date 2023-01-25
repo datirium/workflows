@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.13
+  dockerPull: biowardrobe2/sc-tools:v0.0.14
 
 
 inputs:
@@ -139,7 +139,7 @@ inputs:
       prefix: "--mitopattern"
     doc: |
       Regex pattern to identify mitochondrial genes.
-      Default: '^Mt-'
+      Default: '^mt-|^MT-'
 
   maximum_mito_perc:
     type: float?
@@ -309,6 +309,13 @@ inputs:
     doc: |
       Save Seurat data to h5ad file.
       Default: false
+
+  export_ucsc_cb:
+    type: boolean?
+    inputBinding:
+      prefix: "--cbbuild"
+    doc: |
+      Export results to UCSC Cell Browser. Default: false
 
   output_prefix:
     type: string?
@@ -1461,6 +1468,27 @@ outputs:
       blacklist regions per cell density (filtered).
       PDF format
 
+  ucsc_cb_config_data:
+    type: Directory?
+    outputBinding:
+      glob: "*_cellbrowser"
+    doc: |
+      Directory with UCSC Cellbrowser configuration data.
+
+  ucsc_cb_html_data:
+    type: Directory?
+    outputBinding:
+      glob: "*_cellbrowser/html_data"
+    doc: |
+      Directory with UCSC Cellbrowser html data.
+
+  ucsc_cb_html_file:
+    type: File?
+    outputBinding:
+      glob: "*_cellbrowser/html_data/index.html"
+    doc: |
+      HTML index file from the directory with UCSC Cellbrowser html data.
+
   seurat_data_rds:
     type: File
     outputBinding:
@@ -1559,33 +1587,24 @@ doc: |
 
 
 s:about: |
-  usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
-                                            --fragments FRAGMENTS --annotations
-                                            ANNOTATIONS [--grouping GROUPING]
-                                            [--blacklist BLACKLIST]
-                                            [--barcodes BARCODES]
-                                            [--rnamincells RNAMINCELLS]
-                                            [--mingenes [MINGENES [MINGENES ...]]]
-                                            [--maxgenes [MAXGENES [MAXGENES ...]]]
-                                            [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
-                                            [--mitopattern MITOPATTERN]
-                                            [--maxmt MAXMT]
-                                            [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                                            [--atacmincells ATACMINCELLS]
-                                            [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-                                            [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-                                            [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-                                            [--minfrip [MINFRIP [MINFRIP ...]]]
-                                            [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
-                                            [--callby CALLBY] [--pdf]
-                                            [--verbose] [--h5seurat] [--h5ad]
-                                            [--output OUTPUT]
-                                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                            [--cpus CPUS] [--memory MEMORY]
+  usage: sc_multiome_filter.R
+        [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
+        ANNOTATIONS [--grouping GROUPING] [--blacklist BLACKLIST]
+        [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
+        [--mingenes [MINGENES ...]] [--maxgenes [MAXGENES ...]]
+        [--rnaminumi [RNAMINUMI ...]] [--mitopattern MITOPATTERN]
+        [--maxmt MAXMT] [--minnovelty [MINNOVELTY ...]]
+        [--atacmincells ATACMINCELLS] [--atacminumi [ATACMINUMI ...]]
+        [--maxnuclsignal [MAXNUCLSIGNAL ...]]
+        [--mintssenrich [MINTSSENRICH ...]] [--minfrip [MINFRIP ...]]
+        [--maxblacklist [MAXBLACKLIST ...]] [--callby CALLBY] [--pdf]
+        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --mex MEX             Path to the folder with feature-barcode matrix from
                           Cell Ranger ARC Count/Aggregate experiment in MEX
@@ -1623,19 +1642,19 @@ s:about: |
     --rnamincells RNAMINCELLS
                           Include only genes detected in at least this many
                           cells. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES [MINGENES ...]]
+    --mingenes [MINGENES ...]
                           Include cells where at least this many genes are
                           detected. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES [MAXGENES ...]]
+    --maxgenes [MAXGENES ...]
                           Include cells with the number of genes not bigger than
                           this value. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
+    --rnaminumi [RNAMINUMI ...]
                           Include cells where at least this many UMI (RNA
                           transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
@@ -1644,11 +1663,11 @@ s:about: |
                           datasets)
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
-                          Default: '^Mt-'
+                          Default: '^mt-|^MT-'
     --maxmt MAXMT         Include cells with the percentage of transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
-    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
+    --minnovelty [MINNOVELTY ...]
                           Include cells with the novelty score not lower than
                           this value, calculated for as log10(genes)/log10(UMI)
                           for RNA assay. If multiple values provided, each of
@@ -1658,14 +1677,14 @@ s:about: |
     --atacmincells ATACMINCELLS
                           Include only peaks detected in at least this many
                           cells. Default: 5 (applied to all datasets)
-    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
+    --atacminumi [ATACMINUMI ...]
                           Include cells where at least this many UMI (ATAC
                           transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the '--mex' input based on
                           the '--identity' file. Default: 1000 (applied to all
                           datasets)
-    --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
+    --maxnuclsignal [MAXNUCLSIGNAL ...]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
@@ -1673,7 +1692,7 @@ s:about: |
                           them will be applied to the correspondent dataset from
                           the '--mex' input based on the '--identity' file.
                           Default: 4 (applied to all datasets)
-    --mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]
+    --mintssenrich [MINTSSENRICH ...]
                           Include cells with the TSS enrichment score not lower
                           than this value. Score is calculated based on the
                           ratio of fragments centered at the TSS to fragments in
@@ -1681,14 +1700,14 @@ s:about: |
                           each of them will be applied to the correspondent
                           dataset from the '--mex' input based on the '--
                           identity' file. Default: 2 (applied to all datasets)
-    --minfrip [MINFRIP [MINFRIP ...]]
+    --minfrip [MINFRIP ...]
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the '--mex'
                           input based on the '--identity' file. FRiP is
                           calculated for fragments. Default: 0.15 (applied to
                           all datasets)
-    --maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]
+    --maxblacklist [MAXBLACKLIST ...]
                           Include cells with the fraction of fragments in
                           genomic blacklist regions not bigger than this value.
                           If multiple values provided, each of them will be
@@ -1707,6 +1726,7 @@ s:about: |
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
+    --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic
