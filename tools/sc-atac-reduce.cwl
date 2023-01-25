@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.13
+  dockerPull: biowardrobe2/sc-tools:v0.0.14
 
 
 inputs:
@@ -491,23 +491,18 @@ doc: |
 
 
 s:about: |
-  usage: sc_atac_reduce.R [-h] --query QUERY
-                                        [--metadata METADATA]
-                                        [--barcodes BARCODES]
-                                        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
-                                        [--ntgr {signac,harmony,none}]
-                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
-                                        [--minvarpeaks MINVARPEAKS]
-                                        [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
-                                        [--uspread USPREAD]
-                                        [--umindist UMINDIST]
-                                        [--uneighbors UNEIGHBORS]
-                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-                                        [--umethod {uwot,uwot-learn,umap-learn}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_atac_reduce.R
+        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
+        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
+        [--ntgr {signac,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
+        [--minvarpeaks MINVARPEAKS]
+        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
+        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
