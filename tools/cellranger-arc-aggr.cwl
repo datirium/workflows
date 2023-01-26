@@ -26,7 +26,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: cumulusprod/cellranger-arc:2.0.0
+  dockerPull: cumulusprod/cellranger-arc:2.0.2
 
 
 inputs:
