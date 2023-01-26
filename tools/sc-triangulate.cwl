@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.13
+  dockerPull: biowardrobe2/sc-tools:v0.0.14
 
 
 inputs:
@@ -409,7 +409,7 @@ s:about: |
 
   Single-cell Label Integration Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression and/or chromatin
