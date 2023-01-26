@@ -272,11 +272,12 @@ inputs:
     - type: enum
       symbols:
       - "1"
-    default: "1"
+      - "2"
+    default: "2"
     label: "Number of cores/cpus to use"
     doc: |
       Number of cores/cpus to use
-      Forced to 1
+      Forced to 2
     'sd:layout':
       advanced: true
 
