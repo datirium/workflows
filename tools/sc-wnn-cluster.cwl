@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.13
+  dockerPull: biowardrobe2/sc-tools:v0.0.14
 
 
 inputs:
@@ -562,24 +562,18 @@ outputs:
       Split by cell cycle phase clustered cells UMAP.
       PDF format
 
-  cmp_gr_ph_spl_idnt_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
+  cmp_gr_ph_spl_idnt_plot_png:
+    type: File?
     outputBinding:
-      glob: "*_cmp_gr_ph_spl_idnt_res_*.png"
+      glob: "*_cmp_gr_ph_spl_idnt.png"
     doc: |
       Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
       PNG format
 
-  cmp_gr_ph_spl_idnt_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
+  cmp_gr_ph_spl_idnt_plot_pdf:
+    type: File?
     outputBinding:
-      glob: "*_cmp_gr_ph_spl_idnt_res_*.pdf"
+      glob: "*_cmp_gr_ph_spl_idnt.pdf"
     doc: |
       Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
       PDF format
@@ -628,46 +622,46 @@ outputs:
       Log normalized scaled average gene expression per cluster.
       PDF format
 
-  xpr_per_cell_res_plot_png:
+  xpr_per_cell_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_res_*.png"
+      glob: "*_xpr_per_cell_[!sgnl_]*.png"
     doc: |
       Log normalized gene expression on cells UMAP.
       PNG format
 
-  xpr_per_cell_res_plot_pdf:
+  xpr_per_cell_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_res_*.pdf"
+      glob: "*_xpr_per_cell_[!sgnl_]*.pdf"
     doc: |
       Log normalized gene expression on cells UMAP.
       PDF format
 
-  xpr_per_cell_sgnl_res_plot_png:
+  xpr_per_cell_sgnl_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_sgnl_res_*.png"
+      glob: "*_xpr_per_cell_sgnl_*.png"
     doc: |
       Log normalized gene expression density on cells UMAP.
       PNG format
 
-  xpr_per_cell_sgnl_res_plot_pdf:
+  xpr_per_cell_sgnl_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_sgnl_res_*.pdf"
+      glob: "*_xpr_per_cell_sgnl_*.pdf"
     doc: |
       Log normalized gene expression density on cells UMAP.
       PDF format
