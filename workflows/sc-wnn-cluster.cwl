@@ -106,6 +106,7 @@ inputs:
       Count and barcode information for every ATAC fragment used in the loaded Seurat
       object. File should be saved in TSV format with tbi-index file.
     'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
+    'sd:localLabel': true
 
   genes_of_interest:
     type: string?
