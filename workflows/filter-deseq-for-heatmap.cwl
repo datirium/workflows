@@ -36,8 +36,8 @@ inputs:
     doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
-        columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "log2FoldChange", "pvalue", "padj"]
-        types:   ["string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number"]
+        columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "baseMean", "log2FoldChange", "pvalue", "padj"]
+        types:   ["string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number", "number"]
 
   header:
     type: boolean?
