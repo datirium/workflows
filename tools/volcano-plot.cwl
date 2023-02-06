@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/visualization:v0.0.5
+  dockerPull: biowardrobe2/visualization:v0.0.6
 
 
 inputs:
@@ -40,19 +40,12 @@ inputs:
 
 outputs:
 
-  css_file:
-    type: File
+  html_data:
+    type: Directory
     outputBinding:
-      glob: "./volcano_plot/volcano_plot/html_data/index.css"
+      glob: "./volcano_plot/volcano_plot"
     doc: |
-      CSS file for Volcano Plot
-
-  js_file:
-    type: File
-    outputBinding:
-      glob: "./volcano_plot/volcano_plot/html_data/index.js"
-    doc: |
-      Javascript file for Volcano Plot
+      Directory html data for Volcano Plot
 
   html_file:
     type: File
