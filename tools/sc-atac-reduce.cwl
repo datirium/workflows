@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.14
+  dockerPull: biowardrobe2/sc-tools:v0.0.15
 
 
 inputs:
@@ -494,11 +494,13 @@ s:about: |
   usage: sc_atac_reduce.R
         [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
         [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
-        [--ntgr {signac,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
-        [--minvarpeaks MINVARPEAKS]
-        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
-        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--ntgr {signac,harmony,none}] [--ntgrby [NTGRBY ...]]
+        [--minvarpeaks MINVARPEAKS] [--dimensions [DIMENSIONS ...]]
+        [--uspread USPREAD] [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,
+                    mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,
+                    hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,
+                    rogerstanimoto,sokalmichener,sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
         [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
@@ -506,7 +508,7 @@ s:about: |
 
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include chromatin accessibility
@@ -538,7 +540,7 @@ s:about: |
                           Integration method used for joint analysis of multiple
                           datasets. Automatically set to 'none' if loaded Suerat
                           object includes only one dataset. Default: signac
-    --ntgrby [NTGRBY [NTGRBY ...]]
+    --ntgrby [NTGRBY ...]
                           Column(s) from the Seurat object metadata to define
                           the variable(s) that should be integrated out when
                           running multiple datasets integration with harmony.
@@ -552,7 +554,7 @@ s:about: |
                           cells peaks as highly variable. These peaks are used
                           for datasets integration, scaling and dimensionality
                           reduction. Default: 0 (use all available peaks)
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+    --dimensions [DIMENSIONS ...]
                           Dimensionality to use for datasets integration and
                           UMAP projection (from 2 to 50). If single value N is
                           provided, use from 2 to N LSI components. If multiple
@@ -575,7 +577,10 @@ s:about: |
                           structure being preserved at the loss of detailed
                           local structure. In general this parameter should
                           often be in the range 5 to 50. Default: 30
-    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}
+    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,
+               wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,
+               russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,
+               sokalsneath,yule}
                           The metric to use to compute distances in high
                           dimensional space for UMAP. Default: cosine
     --umethod {uwot,uwot-learn,umap-learn}

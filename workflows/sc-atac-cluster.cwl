@@ -23,6 +23,7 @@ requirements:
 
 'sd:upstream':
   sc_tools_sample:
+  - "sc-atac-cluster.cwl"
   - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
@@ -77,12 +78,14 @@ inputs:
       Default: slm
 
   resolution:
-    type: string?
-    default: "0.3 0.5 1.0"
-    label: "Comma or space separated list of clustering resolutions"
+    type: float?
+    default: 0.3
+    label: "Clustering resolution"
     doc: |
       Clustering resolution applied to the constructed nearest-neighbor graph.
-      Can be set as an array.
+      Can be set as an array but only the first item from the list will be used
+      for cluster labels and peak markers in the UCSC Cell Browser when running
+      with --cbbuild and --diffpeaks parameters.
       Default: 0.3, 0.5, 1.0
 
   atac_fragments_file:
@@ -109,7 +112,7 @@ inputs:
   identify_diff_peaks:
     type: boolean?
     default: false
-    label: "Identify differentially accessible peaks between each pair of clusters for all resolutions"
+    label: "Identify differentially accessible peaks between each pair of clusters"
     doc: |
       Identify differentially accessible peaks between each pair of clusters for all resolutions.
       Default: false
@@ -347,14 +350,14 @@ outputs:
   peak_markers_tsv:
     type: File?
     outputSource: sc_atac_cluster/peak_markers_tsv
-    label: "Differentially accessible peaks between each pair of clusters for all resolutions"
+    label: "Differentially accessible peaks between each pair of clusters"
     doc: |
       Differentially accessible peaks between each pair of clusters for all resolutions.
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Diff. peaks'
-        Title: 'Differentially accessible peaks between each pair of clusters for all resolutions'
+        Title: 'Differentially accessible peaks between each pair of clusters'
 
   ucsc_cb_config_data:
     type: File
@@ -416,9 +419,7 @@ steps:
       cluster_metric:
         default: euclidean
       cluster_algorithm: cluster_algorithm
-      resolution:
-        source: resolution
-        valueFrom: $(split_numbers(self))
+      resolution: resolution
       atac_fragments_file: atac_fragments_file
       genes_of_interest:
         source: genes_of_interest

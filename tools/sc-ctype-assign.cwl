@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.14
+  dockerPull: biowardrobe2/sc-tools:v0.0.15
 
 
 inputs:
@@ -47,7 +47,122 @@ inputs:
       prefix: "--target"
     doc: |
       Column from the metadata of the loaded Seurat object to save manually
-      assigned cell types.
+      assigned cell types. Should start with 'custom_', otherwise, it won't
+      be shown in UCSC Cell Browser.
+
+  identify_diff_genes:
+    type: boolean?
+    inputBinding:
+      prefix: "--diffgenes"
+    doc: |
+      Identify differentially expressed genes (putative gene markers) for
+      assigned cell types. Ignored if loaded Seurat object doesn't include
+      genes expression information stored in the RNA assay.
+      Default: false
+
+  identify_diff_peaks:
+    type: boolean?
+    inputBinding:
+      prefix: "--diffpeaks"
+    doc: |
+      Identify differentially accessible peaks for assigned cell types. Ignored
+      if loaded Seurat object doesn't include chromatin accessibility information
+      stored in the ATAC assay.
+      Default: false
+
+  rna_minimum_logfc:
+    type: float?
+    inputBinding:
+      prefix: "--rnalogfc"
+    doc: |
+      For putative gene markers identification include only those genes that
+      on average have log fold change difference in expression between every
+      tested pair of cell types not lower than this value. Ignored if '--diffgenes'
+      is not set or RNA assay is not present.
+      Default: 0.25
+
+  rna_minimum_pct:
+    type: float?
+    inputBinding:
+      prefix: "--rnaminpct"
+    doc: |
+      For putative gene markers identification include only those genes that
+      are detected in not lower than this fraction of cells in either of the
+      two tested cell types. Ignored if '--diffgenes' is not set or RNA assay
+      is not present.
+      Default: 0.1
+
+  only_positive_diff_genes:
+    type: boolean?
+    inputBinding:
+      prefix: "--rnaonlypos"
+    doc: |
+      For putative gene markers identification return only positive markers.
+      Ignored if '--diffgenes' is not set or RNA assay is not present.
+      Default: false
+
+  rna_test_to_use:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "wilcox"
+      - "bimod"
+      - "roc"
+      - "t"
+      - "negbinom"
+      - "poisson"
+      - "LR"
+      - "MAST"
+      - "DESeq2"
+    inputBinding:
+      prefix: "--rnatestuse"
+    doc: |
+      Statistical test to use for putative gene markers identification.
+      Ignored if '--diffgenes' is not set or RNA assay is not present.
+      Default: wilcox
+
+  atac_minimum_logfc:
+    type: float?
+    inputBinding:
+      prefix: "--ataclogfc"
+    doc: |
+      For differentially accessible peaks identification include only those peaks that
+      on average have log fold change difference in the chromatin accessibility between
+      every tested pair of cell types not lower than this value. Ignored if '--diffpeaks'
+      is not set or ATAC assay is not present.
+      Default: 0.25
+
+  atac_minimum_pct:
+    type: float?
+    inputBinding:
+      prefix: "--atacminpct"
+    doc: |
+      For differentially accessible peaks identification include only those peaks that
+      are detected in not lower than this fraction of cells in either of the two tested
+      cell types. Ignored if '--diffpeaks' is not set or ATAC assay is not present.
+      Default: 0.05
+
+  atac_test_to_use:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "wilcox"
+      - "bimod"
+      - "roc"
+      - "t"
+      - "negbinom"
+      - "poisson"
+      - "LR"
+      - "MAST"
+      - "DESeq2"
+    inputBinding:
+      prefix: "--atactestuse"
+    doc: |
+      Statistical test to use for differentially accessible peaks identification.
+      Ignored if '--diffpeaks' is not set or ATAC assay is not present.
+      Default: LR
 
   atac_fragments_file:
     type: File?
@@ -649,6 +764,38 @@ outputs:
       Tn5 insertion frequency plot around gene.
       PDF format
 
+  xpr_htmp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.png"
+    doc: |
+      Normalized gene expression heatmap grouped by cell type.
+      PNG format
+
+  xpr_htmp_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.pdf"
+    doc: |
+      Normalized gene expression heatmap grouped by cell type.
+      PDF format
+
+  gene_markers_tsv:
+    type: File?
+    outputBinding:
+      glob: "*_gene_markers.tsv"
+    doc: |
+      Differentially expressed genes between each pair of cell types.
+      TSV format
+
+  peak_markers_tsv:
+    type: File?
+    outputBinding:
+      glob: "*_peak_markers.tsv"
+    doc: |
+      Differentially accessible peaks between each pair of cell types.
+      TSV format
+
   ucsc_cb_config_data:
     type: Directory?
     outputBinding:
@@ -759,8 +906,13 @@ doc: |
 s:about: |
   usage: sc_ctype_assign.R
         [-h] --query QUERY --celltypes CELLTYPES --source SOURCE --target
-        TARGET [--fragments FRAGMENTS] [--genes [GENES ...]] [--pdf]
-        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        TARGET [--diffgenes] [--diffpeaks] [--rnalogfc RNALOGFC]
+        [--rnaminpct RNAMINPCT] [--rnaonlypos]
+        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
+        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--fragments FRAGMENTS] [--genes [GENES ...]] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
@@ -781,7 +933,53 @@ s:about: |
     --source SOURCE       Column from the metadata of the loaded Seurat object
                           to select clusters from.
     --target TARGET       Column from the metadata of the loaded Seurat object
-                          to save manually assigned cell types.
+                          to save manually assigned cell types. Should start
+                          with 'custom_', otherwise, it won't be shown in UCSC
+                          Cell Browser.
+    --diffgenes           Identify differentially expressed genes (putative gene
+                          markers) for assigned cell types. Ignored if loaded
+                          Seurat object doesn't include genes expression
+                          information stored in the RNA assay. Default: false
+    --diffpeaks           Identify differentially accessible peaks for assigned
+                          cell types. Ignored if loaded Seurat object doesn't
+                          include chromatin accessibility information stored in
+                          the ATAC assay. Default: false
+    --rnalogfc RNALOGFC   For putative gene markers identification include only
+                          those genes that on average have log fold change
+                          difference in expression between every tested pair of
+                          cell types not lower than this value. Ignored if '--
+                          diffgenes' is not set or RNA assay is not present.
+                          Default: 0.25
+    --rnaminpct RNAMINPCT
+                          For putative gene markers identification include only
+                          those genes that are detected in not lower than this
+                          fraction of cells in either of the two tested cell
+                          types. Ignored if '--diffgenes' is not set or RNA
+                          assay is not present. Default: 0.1
+    --rnaonlypos          For putative gene markers identification return only
+                          positive markers. Ignored if '--diffgenes' is not set
+                          or RNA assay is not present. Default: false
+    --rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
+                          Statistical test to use for putative gene markers
+                          identification. Ignored if '--diffgenes' is not set or
+                          RNA assay is not present. Default: wilcox
+    --ataclogfc ATACLOGFC
+                          For differentially accessible peaks identification
+                          include only those peaks that on average have log fold
+                          change difference in the chromatin accessibility
+                          between every tested pair of cell types not lower than
+                          this value. Ignored if '--diffpeaks' is not set or
+                          ATAC assay is not present. Default: 0.25
+    --atacminpct ATACMINPCT
+                          For differentially accessible peaks identification
+                          include only those peaks that are detected in not
+                          lower than this fraction of cells in either of the two
+                          tested cell types. Ignored if '--diffpeaks' is not set
+                          or ATAC assay is not present. Default: 0.05
+    --atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}
+                          Statistical test to use for differentially accessible
+                          peaks identification. Ignored if '--diffpeaks' is not
+                          set or ATAC assay is not present. Default: LR
     --fragments FRAGMENTS
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved

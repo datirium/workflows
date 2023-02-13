@@ -28,6 +28,7 @@ requirements:
 
 'sd:upstream':
   sc_tools_sample:
+  - "sc-ctype-assign.cwl"
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
@@ -109,6 +110,81 @@ inputs:
     doc: |
       Path to the TSV/CSV file for manual cell type assignment for each of the clusters.
       First column - 'cluster', second column may have arbitrary name.
+
+  identify_diff_genes:
+    type: boolean?
+    default: false
+    label: "Identify differentially expressed genes for assigned cell types"
+    doc: |
+      Identify differentially expressed genes (putative gene markers) for
+      assigned cell types. Ignored if loaded Seurat object doesn't include
+      genes expression information stored in the RNA assay.
+      Default: false
+    'sd:layout':
+      advanced: true
+
+  identify_diff_peaks:
+    type: boolean?
+    default: false
+    label: "Identify differentially accessible peaks for assigned cell types"
+    doc: |
+      Identify differentially accessible peaks for assigned cell types. Ignored
+      if loaded Seurat object doesn't include chromatin accessibility information
+      stored in the ATAC assay.
+      Default: false
+    'sd:layout':
+      advanced: true
+
+  rna_minimum_logfc:
+    type: float?
+    default: 0.25
+    label: "Include only those genes that on average have log fold change difference in expression between every tested pair of cell types not lower than this value"
+    doc: |
+      For putative gene markers identification include only those genes that
+      on average have log fold change difference in expression between every
+      tested pair of cell types not lower than this value. Ignored if '--diffgenes'
+      is not set or RNA assay is not present.
+      Default: 0.25
+    'sd:layout':
+      advanced: true
+
+  rna_minimum_pct:
+    type: float?
+    default: 0.1
+    label: "Include only those genes that are detected in not lower than this fraction of cells in either of the two tested cell types"
+    doc: |
+      For putative gene markers identification include only those genes that
+      are detected in not lower than this fraction of cells in either of the
+      two tested cell types. Ignored if '--diffgenes' is not set or RNA assay
+      is not present.
+      Default: 0.1
+    'sd:layout':
+      advanced: true
+
+  atac_minimum_logfc:
+    type: float?
+    default: 0.25
+    label: "Include only those peaks that on average have log fold change difference in the chromatin accessibility between every tested pair of cell types not lower than this value"
+    doc: |
+      For differentially accessible peaks identification include only those peaks that
+      on average have log fold change difference in the chromatin accessibility between
+      every tested pair of cell types not lower than this value. Ignored if '--diffpeaks'
+      is not set or ATAC assay is not present.
+      Default: 0.25
+    'sd:layout':
+      advanced: true
+
+  atac_minimum_pct:
+    type: float?
+    default: 0.05
+    label: "Include only those peaks that are detected in not lower than this fraction of cells in either of the two tested cell types"
+    doc: |
+      For differentially accessible peaks identification include only those peaks that
+      are detected in not lower than this fraction of cells in either of the two tested
+      cell types. Ignored if '--diffpeaks' is not set or ATAC assay is not present.
+      Default: 0.05
+    'sd:layout':
+      advanced: true
 
   color_theme:
     type:
@@ -526,6 +602,42 @@ outputs:
         tab: 'Genome coverage'
         Caption: 'Tn5 insertion frequency plot around gene'
 
+  xpr_htmp_plot_png:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_plot_png
+    label: "Normalized gene expression heatmap grouped by cell type"
+    doc: |
+      Normalized gene expression heatmap grouped by cell type.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Normalized gene expression heatmap grouped by cell type'
+
+  gene_markers_tsv:
+    type: File?
+    outputSource: ctype_assign/gene_markers_tsv
+    label: "Differentially expressed genes between each pair of cell types"
+    doc: |
+      Differentially expressed genes between each pair of cell types.
+      TSV format
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene markers'
+        Title: 'Differentially expressed genes between each pair of cell types'
+
+  peak_markers_tsv:
+    type: File?
+    outputSource: ctype_assign/peak_markers_tsv
+    label: "Differentially accessible peaks between each pair of cell types"
+    doc: |
+      Differentially accessible peaks between each pair of cell types.
+      TSV format
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Diff. peaks'
+        Title: 'Differentially accessible peaks between each pair of cell types'
+
   ucsc_cb_config_data:
     type: File
     outputSource: compress_cellbrowser_config_data/compressed_folder
@@ -585,11 +697,23 @@ steps:
         valueFrom: $(get_query_column("", self[0], self[1]))
       query_target_column:
         source: [query_reduction, query_resolution]
-        valueFrom: $(get_query_column("ctype_", self[0], self[1]))
+        valueFrom: $(get_query_column("custom_", self[0], self[1]))
       atac_fragments_file: atac_fragments_file
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
+      identify_diff_genes: identify_diff_genes
+      identify_diff_peaks: identify_diff_peaks
+      rna_minimum_logfc: rna_minimum_logfc
+      rna_minimum_pct: rna_minimum_pct
+      atac_minimum_logfc: atac_minimum_logfc
+      atac_minimum_pct: atac_minimum_pct
+      only_positive_diff_genes:
+        default: true
+      rna_test_to_use: 
+        default: wilcox
+      atac_test_to_use:
+        default: LR
       verbose:
         default: true
       export_ucsc_cb:
@@ -632,6 +756,9 @@ steps:
     - xpr_per_cell_sgnl_rd_atacumap_plot_png
     - xpr_per_cell_sgnl_rd_wnnumap_plot_png
     - cvrg_plot_png
+    - xpr_htmp_plot_png
+    - gene_markers_tsv
+    - peak_markers_tsv
     - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file

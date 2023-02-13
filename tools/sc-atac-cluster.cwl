@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.14
+  dockerPull: biowardrobe2/sc-tools:v0.0.15
 
 
 inputs:
@@ -77,7 +77,9 @@ inputs:
       prefix: "--resolution"
     doc: |
       Clustering resolution applied to the constructed nearest-neighbor graph.
-      Can be set as an array.
+      Can be set as an array but only the first item from the list will be used
+      for cluster labels and peak markers in the UCSC Cell Browser when running
+      with --cbbuild and --diffpeaks parameters.
       Default: 0.3, 0.5, 1.0
 
   atac_fragments_file:
@@ -597,8 +599,11 @@ s:about: |
                           clustering. Default: slm
     --resolution [RESOLUTION ...]
                           Clustering resolution applied to the constructed
-                          nearest-neighbor graph. Can be set as an array.
-                          Default: 0.3, 0.5, 1.0
+                          nearest-neighbor graph. Can be set as an array but
+                          only the first item from the list will be used for
+                          cluster labels and peak markers in the UCSC Cell
+                          Browser when running with --cbbuild and --diffpeaks
+                          parameters. Default: 0.3, 0.5, 1.0
     --fragments FRAGMENTS
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved

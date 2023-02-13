@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.14
+  dockerPull: biowardrobe2/sc-tools:v0.0.15
 
 
 inputs:
@@ -156,7 +156,9 @@ inputs:
       prefix: "--resolution"
     doc: |
       Clustering resolution applied to the constructed weighted nearest-neighbor
-      graph. Can be set as an array.
+      graph. Can be set as an array but only the first item from the list will
+      be used for cluster labels and gene/peak markers in the UCSC Cell Browser
+      when running with --cbbuild and --diffgenes/--diffpeaks parameters.
       Default: 0.3, 0.5, 1.0
 
   atac_fragments_file:
@@ -710,6 +712,28 @@ outputs:
       Tn5 insertion frequency plot around gene.
       PDF format
 
+  xpr_htmp_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_xpr_htmp_res_*.png"
+    doc: |
+      Normalized gene expression heatmap grouped by cluster.
+      PNG format
+
+  xpr_htmp_res_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_xpr_htmp_res_*.pdf"
+    doc: |
+      Normalized gene expression heatmap grouped by cluster.
+      PDF format
+
   gene_markers_tsv:
     type: File?
     outputBinding:
@@ -903,7 +927,11 @@ s:about: |
     --resolution [RESOLUTION ...]
                           Clustering resolution applied to the constructed
                           weighted nearest-neighbor graph. Can be set as an
-                          array. Default: 0.3, 0.5, 1.0
+                          array but only the first item from the list will be
+                          used for cluster labels and gene/peak markers in the
+                          UCSC Cell Browser when running with --cbbuild and
+                          --diffgenes/--diffpeaks parameters. Default: 0.3, 0.5,
+                          1.0
     --fragments FRAGMENTS
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved

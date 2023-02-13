@@ -23,6 +23,7 @@ requirements:
 
 'sd:upstream':
   sc_tools_sample:
+  - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
@@ -74,12 +75,14 @@ inputs:
       Default: louvain
 
   resolution:
-    type: string?
-    default: "0.3 0.5 1.0"
-    label: "Comma or space separated list of clustering resolutions"
+    type: float?
+    default: 0.3
+    label: "Clustering resolution"
     doc: |
       Clustering resolution applied to the constructed nearest-neighbor graph.
-      Can be set as an array.
+      Can be set as an array but only the first item from the list will be used
+      for cluster labels and gene markers in the UCSC Cell Browser when running
+      with --cbbuild and --diffgenes parameters.
       Default: 0.3, 0.5, 1.0
 
   genes_of_interest:
@@ -93,7 +96,7 @@ inputs:
   identify_diff_genes:
     type: boolean?
     default: false
-    label: "Identify differentially expressed genes (putative gene markers) between each pair of clusters for all resolutions"
+    label: "Identify differentially expressed genes between each pair of clusters"
     doc: |
       Identify differentially expressed genes (putative gene markers) between each
       pair of clusters for all resolutions.
@@ -416,17 +419,32 @@ outputs:
         tab: 'Gene expression'
         Caption: 'Log normalized gene expression density per cluster'
 
+  xpr_htmp_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/xpr_htmp_res_plot_png
+    label: "Normalized gene expression heatmap grouped by cluster"
+    doc: |
+      Normalized gene expression heatmap grouped by cluster.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Normalized gene expression heatmap grouped by cluster'
+
   gene_markers_tsv:
     type: File?
     outputSource: sc_rna_cluster/gene_markers_tsv
-    label: "Differentially expressed genes between each pair of clusters for all resolutions"
+    label: "Differentially expressed genes between each pair of clusters"
     doc: |
       Differentially expressed genes between each pair of clusters for all resolutions.
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Gene markers'
-        Title: 'Differentially expressed genes between each pair of clusters for all resolutions'
+        Title: 'Differentially expressed genes between each pair of clusters'
 
   ucsc_cb_config_data:
     type: File
@@ -487,9 +505,7 @@ steps:
       cluster_metric:
         default: euclidean
       cluster_algorithm: cluster_algorithm
-      resolution:
-        source: resolution
-        valueFrom: $(split_numbers(self))
+      resolution: resolution
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
@@ -530,6 +546,7 @@ steps:
     - xpr_per_cell_plot_png
     - xpr_per_cell_sgnl_plot_png
     - xpr_dnst_res_plot_png
+    - xpr_htmp_res_plot_png
     - gene_markers_tsv
     - ucsc_cb_config_data
     - ucsc_cb_html_data
