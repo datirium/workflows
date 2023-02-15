@@ -20,10 +20,10 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "genome-indices.cwl"
-    - "https://github.com/robert-player/workflows/workflows/genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   genome_indices_spikein:
     - "genome-indices.cwl"
-    - "https://github.com/robert-player/workflows/workflows/genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
