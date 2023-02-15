@@ -30,11 +30,11 @@ inputs:
       # generate paired end (pe) bed from bam
       bedtools bamtobed -i $bam -bedpe 2> /dev/null > mapped_pairs.bed
       # filter based on user input fragment length type selection
-      if [[ "$filter" == "Default_Range" ]]; then
+      if [[ "$filter" == "default_below_1000" ]]; then
         awk '$1==$4 && $6-$2 < 1001 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
-      elif [[ "$filter" == "Histone_Binding_Library" ]]; then
+      elif [[ "$filter" == "histones_130_to_300" ]]; then
         awk '$1==$4 && $6-$2 > 130 && $6-$2 < 301 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
-      elif [[ "$filter" == "Transcription_Factor_Binding_Library" ]]; then
+      elif [[ "$filter" == "TF_below_130" ]]; then
         awk '$1==$4 && $6-$2 < 131 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       fi
       # sort and count per base coverage per genome
