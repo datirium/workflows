@@ -58,7 +58,7 @@ inputs:
       position: 5
     doc: "Input BAM file, does not have to be coordinates sorted"
 
-  seacr_called_peaks_norm:
+  called_peaks_norm:
     type: File
     inputBinding:
       position: 12

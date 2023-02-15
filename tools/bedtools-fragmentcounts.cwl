@@ -31,11 +31,11 @@ inputs:
       bedtools bamtobed -i $bam -bedpe 2> /dev/null > mapped_pairs.bed
       # filter based on user input fragment length type selection
       if [[ "$filter" == "Default_Range" ]]; then
-        awk '$1==$4 && $6-$2 < 1000 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
+        awk '$1==$4 && $6-$2 < 1001 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       elif [[ "$filter" == "Histone_Binding_Library" ]]; then
-        awk '$1==$4 && $6-$2 > 130 && $6-$2 < 300 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
+        awk '$1==$4 && $6-$2 > 130 && $6-$2 < 301 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       elif [[ "$filter" == "Transcription_Factor_Binding_Library" ]]; then
-        awk '$1==$4 && $6-$2 < 130 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
+        awk '$1==$4 && $6-$2 < 131 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
       fi
       # sort and count per base coverage per genome
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed

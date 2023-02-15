@@ -112,18 +112,18 @@ inputs:
     - type: enum
       name: "Fragment Length Filter"
       symbols:
-      - Default_Range
-      - Histone_Binding_Library
-      - Transcription_Factor_Binding_Library
-    default: "Default_Range"
+      - default_below_1000
+      - histones_130_to_300
+      - TF_below_130
+    default: "default_below_1000"
     'sd:layout':
       advanced: true
     label: "Fragment Length Filter will retain fragments between set ranges for peak analysis."
     'sd:localLabel': true
-    doc: "Fragment Length Filter options: 1) Default_Range retains fragments <1000 bp, 2) Histone_Binding_Library retains fragments
-      between 130-300 bp, and 3) Transcription_Factor_Binding_Library retains fragments <130 bp."
+    doc: "Fragment Length Filter options: 1) default_below_1000 retains fragments <1000 bp, 2) histones_130_to_300 retains fragments
+      between 130-300 bp, and 3) TF_below_130 retains fragments <130 bp."
 
-  numeric_threshold:    
+  numeric_threshold:
     type: float?
     default: 0.01
     'sd:layout':
@@ -894,7 +894,7 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      seacr_called_peaks: seacr_callpeak_stringent/peak_tsv_file
+      cutandrun_called_peaks: seacr_callpeak_stringent/peak_tsv_file
       paired_end:
         default: True
       output_prefix:
@@ -908,7 +908,7 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      seacr_called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
+      called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
@@ -949,9 +949,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "CUT&RUN/TAG Paired-end Workflow"
-label: "CUT&RUN/TAG Paired-end Workflow"
-s:alternateName: "CUR&RUN and CUT&TAG basic sparse enrichment analysis workflow for a paired-end experiment with Trim Galore"
+s:name: "CUT&RUN/TAG SEACR pipeline paired-end"
+label: "CUT&RUN/TAG SEACR pipeline paired-end"
+s:alternateName: "CUR&RUN and CUT&TAG basic sparse enrichment analysis workflow for a paired-end experiment with Trim Galore and SEACR"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/cutandrun-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -1040,7 +1040,7 @@ doc: |
   7. Formatting alignment file to account for fragments based on paired-end BAM.
       - Generates a filtered and normalized bed file to be used as input for SEACR peak calling.
   8. Call enriched regions using SEACR.
-      - This step used both stringent and relaxed peak calling modes with a FDR (false discovery rate) of 0.01, and no normalization to a control sample. The output of SEACR is the [called peaks BED format file](https://github.com/FredHutch/SEACR#description-of-output-fields).
+      - This step uses both stringent and relaxed peak calling modes with a FDR (false discovery rate) of 0.01, and no normalization to a control sample. The output of SEACR is the [called peaks BED format file](https://github.com/FredHutch/SEACR#description-of-output-fields).
   9. Generation and formatting of output files.
       - This step collects read, alignment, and peak statistics, as well asgenerates BigWig coverage/pileup files for display on the browser using IGV. The coverage shows the number of fragments that cover each base in the genome both normalized and unnormalized to the calculated spike-in scaling factor.
 
