@@ -18,13 +18,13 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      printf "$(date)\nLog file for bash script in seacr.cwl tool:\n\n"
+      printf "$(date)\nLog file for bash script in bedtools-fragmentcounts.cwl tool:\n\n"
       printf "INPUTS:\n"
-      echo "\$0 - $0"
-      echo "\$1 - $1"
-      echo "\$2 - $2"
-      echo "\$3 - $3"
-      echo "\$4 - $4"
+      echo "\$0 bam - $0"
+      echo "\$1 scale - $1"
+      echo "\$2 prefix - $2"
+      echo "\$3 genome - $3"
+      echo "\$4 filter - $4"
       # inputs
       bam="$0"; scale="$1"; prefix="$2"; genome="$3"; filter="$4"
       # generate paired end (pe) bed from bam
@@ -59,15 +59,15 @@ inputs:
     type: float?
     inputBinding:
       position: 3
-    doc: "Coefficient to scale the genome coverage by a constant factor"
+    doc: |
+      Coefficient to scale the genome coverage by a constant factor
 
   output_prefix:
     type: string
     inputBinding:
       position: 9
     doc: |
-      Basename of input file that SEACR will use to name the
-      output tsv file: <output_prefix>.<peakcalling_mode>.bed
+      Basename of output fragment length filtered bed file.
 
   chrom_length_file:
     type: File?
@@ -95,14 +95,14 @@ outputs:
     outputBinding:
       glob: $(inputs.output_prefix + '.fragmentcounts.bed')
     doc: |
-      SEACR prepped bed file formatted from PE bam file.
+      Length filtered fragment bed file formatted from PE bam file.
 
   sorted_bed_scaled:
     type: File
     outputBinding:
       glob: $(inputs.output_prefix + '.fragmentcounts_scaled.bed')
     doc: |
-      Scaled SEACR prepped bed file formatted from PE bam file.
+      Spike-in scaled, length filtered fragment bed file formatted from PE bam file.
 
   log_file_stderr:
     type: File
@@ -168,9 +168,9 @@ s:creator:
 
 doc: |
   Tool runs bedtools and custom BASH commands to process and 
-  format a paired end bam file into a sorted bed file ready
-  for peak calling by SEACR. Also outputs a spike-in scaled
-  bed file for normalized peak calling by SEACR.
+  format a paired end bam file into a sorted, fragment-length
+  filtered bed file ready for peak calling. Also outputs a
+  spike-in scaled bed file for normalized peak calling.
 
   Reference protocol, STEP 14:
   https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=14
