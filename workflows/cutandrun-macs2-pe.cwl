@@ -18,8 +18,12 @@ requirements:
   - "../metadata/chipseq-header.cwl"
 
 'sd:upstream':
-  genome_indices: "genome-indices.cwl"
-  genome_indices_spikein: "genome-indices.cwl"
+  genome_indices:
+    - "genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+  genome_indices_spikein:
+    - "genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -67,12 +71,12 @@ inputs:
     label: "Use experiment as a control"
     format: "http://edamontology.org/format_2572"
     doc: "Use experiment as a control for MACS2 peak calling"
-    
+
   broad_peak:
     type: boolean?
     default: False
-    label: "Callpeak broad"
-    doc: "Set to call broad peak for MACS2"
+    label: "Select to call broad peaks"
+    doc: "Sets broad peak calling for MACS2 (toggle on for histone binding libraries)"
     
   fastq_file_upstream:
     type:
@@ -1025,6 +1029,7 @@ doc: |
   - FASTQ file for R2* - read 2 file of a pair-end library
 
   *Advanced:*
+  - 
   - Number of bases to clip from the 3p end - used by bowtie aligner to trim <int> bases from 3' (right) end of reads
   - Number of bases to clip from the 5p end - used by bowtie aligner to trim <int> bases from 5' (left) end of reads
   - Call samtools rmdup to remove duplicates from sorted BAM file? - toggle on/off to remove duplicate reads from analysis
