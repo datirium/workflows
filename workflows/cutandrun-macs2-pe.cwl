@@ -24,6 +24,7 @@ requirements:
   genome_indices_spikein:
     - "genome-indices.cwl"
     - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+  control_file: "cutandrun-macs2-pe.cwl"
 
 
 inputs:
