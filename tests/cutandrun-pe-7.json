@@ -12,7 +12,7 @@
     "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/refgene.tsv",
     "format": "http://edamontology.org/format_3475"
   },
-  "genome_size": "2.74e9",
+  "genome_size": "2.7e9",
   "chrom_length": {
     "class": "File",
     "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/hg38_star_genome/chrNameLength.txt",
@@ -20,15 +20,14 @@
   },
   "fastq_file_upstream": {
     "class": "File",
-    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R1.fq",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/test_data_from_scidap/srr10022374_igg_rep1_R1.fastq.bz2",
     "format": "http://edamontology.org/format_1930"
   },
   "fastq_file_downstream": {
     "class": "File",
-    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/cutandrun-pe_TEST04/top10peak_coords_w1M_R2.fq",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_cutandrun-pe/test_data_from_scidap/srr10022374_igg_rep1_R2.fastq.bz2",
     "format": "http://edamontology.org/format_1930"
   },
   "threads": 4,
-  "broad_peak": true,
   "fragment_length_filter": "default_below_1000"
 }
