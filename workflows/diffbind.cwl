@@ -319,7 +319,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Genome coverage 1"
+        name: "Condition 1 genome coverage"
         height: 120
 
   genome_coverage_cond_2:
@@ -333,7 +333,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Genome coverage 2"
+        name: "Condition 2 genome coverage"
         height: 120
 
   narrow_peaks_cond_1:
@@ -349,7 +349,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
-        name: "Called peaks 1"
+        name: "Condition 1 called peaks"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -366,7 +366,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
-        name: "Called peaks 2"
+        name: "Condition 2 called peaks"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -383,7 +383,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
-        name: "Called peaks 1"
+        name: "Condition 1 called peaks"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -400,7 +400,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
-        name: "Called peaks 2"
+        name: "Condition 2 called peaks"
         displayMode: "COLLAPSE"
         height: 40
 
