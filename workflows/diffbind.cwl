@@ -747,14 +747,40 @@ steps:
             - File[]
       expression: |
         ${
-          return {
-            "coverage_files_cond_1": inputs.genome_coverage_files_cond_1,
-            "coverage_files_cond_2": inputs.genome_coverage_files_cond_2,
-            "n_peaks_files_cond_1": inputs.narrow_peaks_files_cond_1,
-            "n_peaks_files_cond_2": inputs.narrow_peaks_files_cond_2,
-            "b_peaks_files_cond_1": inputs.broad_peaks_files_cond_1,
-            "b_peaks_files_cond_2": inputs.broad_peaks_files_cond_2
-          };
+          var results = {};
+          var output_names = [
+            "coverage_files_cond_1",
+            "coverage_files_cond_2",
+            "n_peaks_files_cond_1",
+            "n_peaks_files_cond_2",
+            "b_peaks_files_cond_1",
+            "b_peaks_files_cond_2"
+          ];
+          var sources = [
+            inputs.genome_coverage_files_cond_1,
+            inputs.genome_coverage_files_cond_2,
+            inputs.narrow_peaks_files_cond_1,
+            inputs.narrow_peaks_files_cond_2,
+            inputs.broad_peaks_files_cond_1,
+            inputs.broad_peaks_files_cond_2
+          ];
+          for (var i = 0; i < sources.length; i++){
+            var current_source = sources[i];
+            var current_output_name = output_names[i];
+            results[current_output_name] = null;
+            if (current_source != null && current_source.length > 0){
+              for (var j = 0; j < current_source.length; j++){
+                    var new_item = current_source[j];
+                    new_item["basename"] = "u" + "_" + i + "_" + j+ "_" + new_item.basename;
+                    if (results[current_output_name] == null){
+                      results[current_output_name] = [new_item];
+                    } else {
+                      results[current_output_name].push(new_item);
+                    }
+              }
+            }
+          }
+          return results;
         }
     in:
       genome_coverage_files_cond_1: genome_coverage_files_cond_1
