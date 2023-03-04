@@ -37,7 +37,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name"
     sd:preview:
@@ -824,7 +824,7 @@ steps:
         default: |
           HEADER=`head -n 1 $0`;
           echo -e "label\t${HEADER}" > diff_sts_labeled.tsv;
-          cat "$0" | awk -F "\t" '{print $1":"$2"-"$3"\t"$0}' >> diff_sts_labeled.tsv
+          cat "$0" | grep -v "Start" | awk -F "\t" '{print $1":"$2"-"$3"\t"$0}' >> diff_sts_labeled.tsv
     out:
     - output_file
 
