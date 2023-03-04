@@ -5,6 +5,20 @@ class: CommandLineTool
 requirements:
 - class: DockerRequirement
   dockerPull: biowardrobe2/diffbind:v0.0.14
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      var listing = [];
+      for (var i = 0; i < inputs.alignment_files.length; i++){
+        var alignment_file = inputs.alignment_files[i];
+        if (alignment_file.secondaryFiles && alignment_file.secondaryFiles.length > 0){
+          Array.prototype.push.apply(listing, alignment_file.secondaryFiles);
+          delete alignment_file.secondaryFiles;
+        }
+        listing.push(alignment_file);
+      }
+      return listing;
+    }
 
 
 inputs:
