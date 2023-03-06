@@ -5,14 +5,21 @@ class: CommandLineTool
 requirements:
 - class: DockerRequirement
   dockerPull: biowardrobe2/diffbind:v0.0.14
+- class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
   listing: |
     ${
       var listing = [];
       for (var i = 0; i < inputs.alignment_files.length; i++){
         var alignment_file = inputs.alignment_files[i];
+        var prefix = "u" + i + "_";
+        alignment_file.basename = prefix + alignment_file.basename;
         if (alignment_file.secondaryFiles && alignment_file.secondaryFiles.length > 0){
-          Array.prototype.push.apply(listing, alignment_file.secondaryFiles);
+          for (var j = 0; j < alignment_file.secondaryFiles.length; j++){
+            var secondary_file = alignment_file.secondaryFiles[j];
+            secondary_file.basename = prefix + secondary_file.basename;
+            listing.push(secondary_file);
+          }
           delete alignment_file.secondaryFiles;
         }
         listing.push(alignment_file);
