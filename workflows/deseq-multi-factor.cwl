@@ -466,15 +466,7 @@ steps:
       y_axis_column:
         default: "padj"
       label_column:
-        source: feature_type
-        valueFrom: |
-          ${
-              if (self == "transcript") {
-                return "feature";
-              } else {
-                return "GeneId";
-              }
-          }
+        default: "feature"
     out:
     - html_data
     - html_file
@@ -488,15 +480,7 @@ steps:
       y_axis_column:
         default: "log2FoldChange"
       label_column:
-        source: feature_type
-        valueFrom: |
-          ${
-              if (self == "transcript") {
-                return "feature";
-              } else {
-                return "GeneId";
-              }
-          }
+        default: "feature"
     out:
     - html_data
     - html_file
