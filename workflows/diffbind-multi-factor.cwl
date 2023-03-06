@@ -697,7 +697,7 @@ steps:
   diffbind:
     run: ../tools/diffbind-multi-factor.cwl
     in:
-      alignment_files: alignment_files
+      alignment_file: alignment_file
       peak_files: peak_files
       dataset_names: dataset_names
       metadata_file: metadata_file

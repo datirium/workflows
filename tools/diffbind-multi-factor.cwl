@@ -30,7 +30,7 @@ requirements:
 
 inputs:
 
-  alignment_files:
+  alignment_file:
     type: File[]
     secondaryFiles:
     - .bai
