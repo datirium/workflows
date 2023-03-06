@@ -25,9 +25,7 @@ inputs:
       # commands start
       mkdir ./bwa-index
       cd bwa-index
-      # the 'genome_file' from genome_indices.cwl is gzip compressed
-      cp $FASTA genome.fasta.gz
-      gunzip genome.fasta.gz
+      cp $FASTA genome.fasta
       bwa index genome.fasta
       # ref file need fasta `.fai` index for HaplotypeCaller
       samtools faidx genome.fasta
