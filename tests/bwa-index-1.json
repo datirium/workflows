@@ -1,0 +1,7 @@
+{
+  "ref_genome_fasta": {
+    "class": "File",
+    "location": "./data/bwa/yeast_GCF_000146045.2_R64_genomic_reformatted_for_chrM.fna",
+    "format": "http://edamontology.org/format_1929"
+  }
+}
