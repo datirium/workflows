@@ -6,6 +6,10 @@ requirements:
   - class: StepInputExpressionRequirement
 
 
+'sd:upstream':
+  genome_indices: ["genome-indices.cwl", "https://github.com/datirium/workflows/workflows/genome-indices.cwl"]
+
+
 inputs:
 
   alias:
@@ -16,8 +20,9 @@ inputs:
 
   reference_fasta:
     type: File
-    format: "http://edamontology.org/format_1929"
+    'sd:upstreamSource': "genome_indices/fasta_output"
     label: "Reference genome FASTA file to index:"
+    'sd:localLabel': true
     doc: |
       FASTA file of the reference genome that will be indexed.
     sd:preview:
