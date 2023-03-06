@@ -56,13 +56,13 @@ inputs:
       symbols:
       - hg38
       - mm10
-      - dm6.03
+      - Drosophila_melanogaster
       - Rnor_6.0.86
       - R64-1-1.86
     label: "SNPEFF database:"
     'sd:localLabel': true
     doc: |
-      SNPEFF database to use for predicting effect of detected SNPs (hg38 (human), mm10 (mouse), dm6.03 (fly),
+      SNPEFF database to use for predicting effect of detected SNPs (hg38 (human), mm10 (mouse), Drosophila_melanogaster (fly),
       Rnor_6.0.86 (rat), R64-1-1.86 (yeast), please contact support if you do not see your organism represented in the dropdown).
     sd:preview:
       position: 6
@@ -115,7 +115,7 @@ inputs:
 
   snp_QD:
     type: float?
-    default: 2.0
+    default: 2.01
     label: "SNP - QD <:"
     'sd:localLabel': true
     doc: |
@@ -123,13 +123,13 @@ inputs:
       depth of non-hom-ref samples. This annotation is intended to normalize the
       variant quality in order to avoid inflation caused when there is deep coverage.
       For filtering purposes it is better to use QD than either QUAL or DP directly.
-      Default < 2.0
+      Default < 2.01
     'sd:layout':
       advanced: true
 
   snp_FS:
     type: float?
-    default: 60.0
+    default: 59.99
     label: "SNP - FS >:"
     'sd:localLabel': true
     doc: |
@@ -137,13 +137,13 @@ inputs:
       Strand Bias tells us whether the alternate allele was seen more or less often
       on the forward or reverse strand than the reference allele. When there is
       little to no strand bias at the site, the FS value will be close to 0.
-      Default > 60.0
+      Default > 59.99
     'sd:layout':
       advanced: true
 
   snp_MQ:
     type: float?
-    default: 40.0
+    default: 40.01
     label: "SNP - MQ <:"
     'sd:localLabel': true
     doc: |
@@ -155,13 +155,13 @@ inputs:
       dataset. A low standard deviation means the values are all close to the mean,
       whereas a high standard deviation means the values are all far from the mean.
       When the mapping qualities are good at a site, the MQ will be around 60.
-      Default < 40.0
+      Default < 40.01
     'sd:layout':
       advanced: true
 
   snp_SOR:
     type: float?
-    default: 4.0
+    default: 3.99
     label: "SNP - SOR >:"
     'sd:localLabel': true
     doc: |
@@ -170,25 +170,25 @@ inputs:
       variants that occur at the ends of exons. Reads at the ends of exons tend to
       only be covered by reads in one direction and FS gives those variants a bad
       score. SOR will take into account the ratios of reads that cover both alleles.
-      Default > 4.0
+      Default > 3.99
     'sd:layout':
       advanced: true
 
   snp_MQRankSum:
     type: float?
-    default: -12.5
+    default: -12.50
     label: "SNP - MQRankSum <:"
     'sd:localLabel': true
     doc: |
       Compares the mapping qualities of the reads supporting the reference allele
       and the alternate allele.
-      Default < -12.5
+      Default < -12.50
     'sd:layout':
       advanced: true
 
   snp_ReadPosRankSum:
     type: float?
-    default: -8.0
+    default: -8.01
     label: "SNP - ReadPosRankSum <:"
     'sd:localLabel': true
     doc: |
@@ -196,13 +196,13 @@ inputs:
       different within the reads. Seeing an allele only near the ends of reads is
       indicative of error, because that is where sequencers tend to make the most
       errors.
-      Default < -8.0
+      Default < -8.01
     'sd:layout':
       advanced: true
 
   indel_QD:
     type: float?
-    default: 2.0
+    default: 2.01
     label: "Indel - QD <:"
     'sd:localLabel': true
     doc: |
@@ -210,13 +210,13 @@ inputs:
       depth of non-hom-ref samples. This annotation is intended to normalize the
       variant quality in order to avoid inflation caused when there is deep coverage.
       For filtering purposes it is better to use QD than either QUAL or DP directly.
-      Default < 2.0
+      Default < 2.01
     'sd:layout':
       advanced: true
 
   indel_FS:
     type: float?
-    default: 200.0
+    default: 199.99
     label: "Indel - FS >:"
     'sd:localLabel': true
     doc: |
@@ -224,13 +224,13 @@ inputs:
       Strand Bias tells us whether the alternate allele was seen more or less often
       on the forward or reverse strand than the reference allele. When there is
       little to no strand bias at the site, the FS value will be close to 0.
-      Default > 200.0
+      Default > 199.99
     'sd:layout':
       advanced: true
 
   indel_SOR:
     type: float?
-    default: 10.0
+    default: 9.99
     label: "Indel - SOR >:"
     'sd:localLabel': true
     doc: |
@@ -239,7 +239,7 @@ inputs:
       variants that occur at the ends of exons. Reads at the ends of exons tend to
       only be covered by reads in one direction and FS gives those variants a bad
       score. SOR will take into account the ratios of reads that cover both alleles.
-      Default > 10.0
+      Default > 9.99
     'sd:layout':
       advanced: true
 
@@ -356,7 +356,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'vcf'
+        type: 'variant'
         name: "Final Indel calls"
         height: 40
 
@@ -370,7 +370,7 @@ outputs:
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'vcf'
+        type: 'variant'
         name: "Final SNP calls"
         height: 40
 

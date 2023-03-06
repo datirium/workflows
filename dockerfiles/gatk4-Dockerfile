@@ -44,6 +44,11 @@ RUN wget https://github.com/samtools/samtools/releases/download/1.17/samtools-1.
     ./configure --prefix=/usr/local/bin/samtools-1.17 && \
     make && \
     make install && \
+    java -jar $SNPEFF_JAR download hg38 && \
+    java -jar $SNPEFF_JAR download mm10 && \
+    java -jar $SNPEFF_JAR download Drosophila_melanogaster && \
+    java -jar $SNPEFF_JAR download Rnor_6.0.86 && \
+    java -jar $SNPEFF_JAR download R64-1-1.86 && \
     chmod +x /usr/local/bin/run_vc_germlinepe.sh && \
     ls -la /usr/local/bin/run_vc_germlinepe.sh && \
     chmod +x /usr/local/bin/fasta_rmlinebreaks.awk && \

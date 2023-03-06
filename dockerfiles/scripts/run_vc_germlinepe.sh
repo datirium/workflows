@@ -301,6 +301,7 @@ printf "\n\nStep 17 - Annotate SNPs and Predict Effects\n"
 # download db first
 java -jar $SNPEFF_JAR ann -v \
 	$SNPEFFDB \
+	-nodownload \
 	bqsr2_snps.vcf > bqsr2_snps.ann.vcf
 
 
@@ -324,9 +325,9 @@ read_count_total=$(cut -f2 alignment_metrics.txt | tail -3 | head -1)
 mapped_count_r1=$(cut -f6 alignment_metrics.txt | tail -5 | head -1)
 mapped_count_r2=$(cut -f6 alignment_metrics.txt | tail -4 | head -1)
 mapped_count_total=$(cut -f6 alignment_metrics.txt | tail -3 | head -1)
-mapped_perc_r1=$(cut -f7 alignment_metrics.txt | tail -5 | head -1)
-mapped_perc_r2=$(cut -f7 alignment_metrics.txt | tail -4 | head -1)
-mapped_perc_total=$(cut -f7 alignment_metrics.txt | tail -3 | head -1)
+mapped_perc_r1=$(cut -f7 alignment_metrics.txt | tail -5 | head -1 | awk 'END{printf("%.2f",$0*100)}')
+mapped_perc_r2=$(cut -f7 alignment_metrics.txt | tail -4 | head -1 | awk 'END{printf("%.2f",$0*100)}')
+mapped_perc_total=$(cut -f7 alignment_metrics.txt | tail -3 | head -1 | awk 'END{printf("%.2f",$0*100)}')
 
 perc_coverage=$(cut -f1 coverage_metrics.tsv)
 depth_mean=$(cut -f2 coverage_metrics.tsv)
@@ -399,13 +400,13 @@ printf " R2 mapped reads: $mapped_count_r2\n" >> overview.md
 printf "-" >> overview.md
 printf " Total mapped reads: $mapped_count_total\n" >> overview.md
 printf "-" >> overview.md
-printf " R1 percent mapped reads: $mapped_perc_r1\n" >> overview.md
+printf "%s%s\n" " R1 percent mapped reads: $mapped_perc_r1 " "%" >> overview.md
 printf "-" >> overview.md
-printf " R2 percent mapped reads: $mapped_perc_r2\n" >> overview.md
+printf "%s%s\n" " R2 percent mapped reads: $mapped_perc_r2 " "%" >> overview.md
 printf "-" >> overview.md
-printf " Total percent mapped reads: $mapped_perc_total\n" >> overview.md
+printf "%s%s\n" " Total percent mapped reads: $mapped_perc_total " "%" >> overview.md
 printf "-" >> overview.md
-printf "%s%s\n" "Percent Coverage: $perc_coverage " "%" >> overview.md
+printf "%s%s\n" " Percent Coverage: $perc_coverage " "%" >> overview.md
 printf "-" >> overview.md
 printf " Mean depth: $depth_mean\n" >> overview.md
 printf "-" >> overview.md
@@ -422,13 +423,13 @@ printf " Total raw variants: $variants_raw_total\n" >> overview.md
 printf "-" >> overview.md
 printf " Raw SNPs: $variants_raw_snps\n" >> overview.md
 printf "-" >> overview.md
-printf " Raw Indels: $variants_raw_indels\n" >> overview.md
-printf "-" >> overview.md
 printf " BQSR1 SNPs: $variants_bqsr1_snps\n" >> overview.md
 printf "-" >> overview.md
-printf " BQSR1 Indels: $variants_bqsr1_indels\n" >> overview.md
-printf "-" >> overview.md
 printf " BQSR2 SNPs: $variants_bqsr2_snps\n" >> overview.md
+printf "-" >> overview.md
+printf " Raw Indels: $variants_raw_indels\n" >> overview.md
+printf "-" >> overview.md
+printf " BQSR1 Indels: $variants_bqsr1_indels\n" >> overview.md
 printf "-" >> overview.md
 printf " BQSR2 Indels: $variants_bqsr2_indels\n" >> overview.md
 
