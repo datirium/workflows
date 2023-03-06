@@ -21,11 +21,11 @@ inputs:
       printf "$(date)\nLog file for samtools-filter-fragmentlengths.cwl tool:\n\n"
       bam=$0; filter=$1
       # filter based on user input fragment length type selection
-      if [[ "$filter" == "Default_Range" ]]; then
+      if [[ "$filter" == "default_below_1000" ]]; then
         samtools view -h $bam | awk 'substr($0,1,1)=="@" || ($9>=0 && $9<=1000) || ($9<=0 && $9>=-1000)' | samtools view -b > filtered.bam
-      elif [[ "$filter" == "Histone_Binding_Library" ]]; then
+      elif [[ "$filter" == "histones_130_to_300" ]]; then
         samtools view -h $bam | awk 'substr($0,1,1)=="@" || ($9>=130 && $9<=300) || ($9<=-130 && $9>=-300)' | samtools view -b > filtered.bam
-      elif [[ "$filter" == "Transcription_Factor_Binding_Library" ]]; then
+      elif [[ "$filter" == "TF_below_130" ]]; then
         samtools view -h $bam | awk 'substr($0,1,1)=="@" || ($9>=0 && $9<=130) || ($9<=0 && $9>=-130)' | samtools view -b > filtered.bam
       fi
     inputBinding:
