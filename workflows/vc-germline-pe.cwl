@@ -370,7 +370,7 @@ outputs:
         type: 'variant'
         name: "Final Indel calls"
         height: 40
-        displayMode: 'COLLAPSED'
+        displayMode: 'SQUISHED'
 
   bqsr2_snps:
     type: File
@@ -385,7 +385,7 @@ outputs:
         type: 'variant'
         name: "Final SNP calls"
         height: 40
-        displayMode: 'COLLAPSED'
+        displayMode: 'SQUISHED'
 
   bqsr2_snps_ann:
     type: File?
