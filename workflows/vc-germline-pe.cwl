@@ -9,6 +9,7 @@ requirements:
 
 'sd:upstream':
   alignment_index: "bwa-index.cwl"
+  genome_indices: ["genome-indices.cwl", "https://github.com/datirium/workflows/workflows/genome-indices.cwl"]
 
 
 inputs:
