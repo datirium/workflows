@@ -49,6 +49,16 @@ inputs:
     sd:preview:
       position: 5
 
+  reference_fasta:
+    type: Directory
+    'sd:upstreamSource': "genome_indices/bowtie_indices"
+    label: "IGV Genome:"
+    'sd:localLabel': true
+    doc: |
+      Genome index for IGV to use for visualization.
+    sd:preview:
+      position: 6
+
   snpeffdb:
     type:
     - "null"
@@ -66,7 +76,7 @@ inputs:
       SNPEFF database to use for predicting effect of detected SNPs (hg38 (human), mm10 (mouse), Drosophila_melanogaster (fly),
       Rnor_6.0.86 (rat), R64-1-1.86 (yeast), please contact support if you do not see your organism represented in the dropdown).
     sd:preview:
-      position: 6
+      position: 7
 
   fastq_file_R1:
     type:
@@ -79,7 +89,7 @@ inputs:
     doc: |
       Read 1 FASTQ file from a paired-end sequencing run.
     sd:preview:
-      position: 7
+      position: 11
 
   fastq_file_R2:
     type:
@@ -92,7 +102,7 @@ inputs:
     doc: |
       Read 2 FASTQ file that pairs with the input R1 file.
     sd:preview:
-      position: 8
+      position: 12
 
   ploidy:
     type: int?
