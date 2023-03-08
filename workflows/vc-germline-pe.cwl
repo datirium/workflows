@@ -343,21 +343,19 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  sorted_dedup_bam:
+  bigwig:
     type: File
-    format: "http://edamontology.org/format_2572"
-    label: "depulicated sorted alignments bam file"
-    doc: "depulicated sorted alignments bam file"
-    outputSource: call_germline_variants/sorted_dedup_bam
+    format: "http://edamontology.org/format_3006"
+    label: "BigWig file"
+    doc: "Generated BigWig file"
+    outputSource: bam_to_bigwig/bigwig_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        optional: true
-        type: 'alignment'
-        format: 'bam'
-        name: "Nucleotide Sequence Alignments"
-        displayMode: "SQUISHED"
+        type: 'wig'
+        name: "BigWig Track"
+        height: 120
 
   chrom_length_tsv:
     type: File
@@ -395,6 +393,22 @@ outputs:
         name: "Final SNP calls"
         height: 40
         displayMode: "COLLAPSED"
+
+  sorted_dedup_bam:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "depulicated sorted alignments bam file"
+    doc: "depulicated sorted alignments bam file"
+    outputSource: call_germline_variants/sorted_dedup_bam
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "Nucleotide Sequence Alignments"
+        height: 240
+        displayMode: "SQUISHED"
 
   bqsr2_snps_ann:
     type: File?
@@ -440,20 +454,6 @@ outputs:
     label: "stderr logfile"
     doc: "captures standard error from vc-germline-pe.cwl"
     outputSource: call_germline_variants/log_file_stderr
-
-  bigwig:
-    type: File
-    format: "http://edamontology.org/format_3006"
-    label: "BigWig file"
-    doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "BigWig Track"
-        height: 120
 
 
 steps:
