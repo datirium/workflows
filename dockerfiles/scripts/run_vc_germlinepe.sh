@@ -167,8 +167,7 @@ java -jar $PICARD_JAR \
     CollectInsertSizeMetrics \
     INPUT=sorted_dedup_reads.bam \
     OUTPUT=insert_metrics.txt \
-    HISTOGRAM_FILE=insert_size_histogram.pdf    # VISUALIZATION OPTION!
-#samtools depth -a sorted_dedup_reads.bam > depth_out.txt   # not required downstream... (also, could take out positions with depth=0?)
+    HISTOGRAM_FILE=insert_size_histogram.pdf
 
 printf "\n\nStep 4 - Call Variants\n"
 gatk HaplotypeCaller \
@@ -252,7 +251,7 @@ printf "\n\nStep 12 - Analyze Covariates\n"
 gatk AnalyzeCovariates \
 	-before recal_data.table \
 	-after post_recal_data.table \
-	-plots recalibration_plots.pdf      # VISUALIZATION OPTION!
+	-plots recalibration_plots.pdf
 
 printf "\n\nStep 13-16  - Call Variants from recalibrated bam, extract, filter, and exclude\n"
 gatk HaplotypeCaller \

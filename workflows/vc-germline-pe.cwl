@@ -349,6 +349,14 @@ outputs:
     label: "depulicated sorted alignments bam file"
     doc: "depulicated sorted alignments bam file"
     outputSource: call_germline_variants/sorted_dedup_bam
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "Nucleotide Sequence Alignments"
+        displayMode: "SQUISHED"
 
   chrom_length_tsv:
     type: File
@@ -370,7 +378,7 @@ outputs:
         type: 'variant'
         name: "Final Indel calls"
         height: 40
-        displayMode: 'COLLAPSE'
+        displayMode: "COLLAPSED"
 
   bqsr2_snps:
     type: File
@@ -385,7 +393,7 @@ outputs:
         type: 'variant'
         name: "Final SNP calls"
         height: 40
-        displayMode: 'COLLAPSE'
+        displayMode: "COLLAPSED"
 
   bqsr2_snps_ann:
     type: File?
