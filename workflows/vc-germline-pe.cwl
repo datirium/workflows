@@ -343,20 +343,6 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  bigwig:
-    type: File
-    format: "http://edamontology.org/format_3006"
-    label: "BigWig file"
-    doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "BigWig Track"
-        height: 120
-
   chrom_length_tsv:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -393,22 +379,6 @@ outputs:
         name: "Final SNP calls"
         height: 40
         displayMode: "COLLAPSED"
-
-  sorted_dedup_bam:
-    type: File
-    format: "http://edamontology.org/format_2572"
-    label: "depulicated sorted alignments bam file"
-    doc: "depulicated sorted alignments bam file"
-    outputSource: call_germline_variants/sorted_dedup_bam
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'alignment'
-        format: 'bam'
-        name: "Nucleotide Sequence Alignments"
-        height: 240
-        displayMode: "SQUISHED"
 
   bqsr2_snps_ann:
     type: File?
@@ -454,6 +424,35 @@ outputs:
     label: "stderr logfile"
     doc: "captures standard error from vc-germline-pe.cwl"
     outputSource: call_germline_variants/log_file_stderr
+
+  bigwig:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "BigWig file"
+    doc: "Generated BigWig file"
+    outputSource: bam_to_bigwig/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "BigWig Track"
+        height: 120
+
+  bam_bai_pair:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "depulicated sorted alignments bam file"
+    doc: "depulicated sorted alignments bam file"
+    outputSource: samtools_sort_index/bam_bai_pair
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
 
 
 steps:
@@ -602,6 +601,13 @@ steps:
       pairchip:
         default: true
     out: [bigwig_file]
+
+  samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: call_germline_variants/sorted_dedup_bam
+      threads: threads
+    out: [bam_bai_pair]
 
 
 $namespaces:
