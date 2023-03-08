@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-gatk4:dev
+  dockerPull: robertplayer/scidap-gatk4:v1.0.0
 
 
 inputs:
