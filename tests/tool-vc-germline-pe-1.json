@@ -1,0 +1,28 @@
+{
+  "threads": 4,
+  "genome_folder": {
+    "class": "Directory",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/variantcalling/indices/bwa-index-yeast"
+  },
+  "ploidy": 2,
+  "snpeffdb": "R64-1-1.86",
+  "read1file": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/variantcalling/SRR22893426_R1.fq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "read2file": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/variantcalling/SRR22893426_R2.fq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "snp_QD": 2.0,
+  "snp_FS": 60.0,
+  "snp_MQ": 40.0,
+  "snp_SOR": 4.0,
+  "snp_MQRankSum": -12.5,
+  "snp_ReadPosRankSum": -8.0,
+  "indel_QD": 2.0,
+  "indel_FS": 200.0,
+  "indel_SOR": 10.0
+}
