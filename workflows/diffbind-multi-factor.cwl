@@ -37,7 +37,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name"
     sd:preview:
@@ -49,7 +49,8 @@ inputs:
     - .bai
     label: "ChIP-Seq/ATAC-Seq experiments"
     doc: |
-      Sorted and indexed alignment files in BAM format
+      Sorted and indexed alignment files
+      in BAM format
     'sd:upstreamSource': "dna_experiment/bambai_pair"
     'sd:localLabel': true
 
@@ -123,30 +124,33 @@ inputs:
     default: "pvalue"
     label: "Score metrics to exclude low quality peaks"
     doc: |
-      Score metrics to build peak overlap correlation heatmap
-      and exclude low quality peaks based on the specific
-      threshold value
+      Score metrics to build peak overlap correlation
+      heatmap and exclude low quality peaks based on
+      the specific threshold value
 
   score_threshold:
     type: float?
     default: 0.05
     label: "Maximum allowed peak score (pvalue/qvalue)"
     doc: |
-      Filtering threshold to keep only those peaks where the
-      selected metric is less than or equal to the provided
-      value
+      Filtering threshold to keep only those peaks
+      where the selected metric is less than or equal
+      to the provided value
 
   metadata_file:
     type: File
     label: "Metadata file to describe datasets categories"
     doc: |
-      Metadata file in TSV/CSV format to describe input datasets categories.
-      First column should have the name 'sample', all other columns names
-      should be selected from the following list: Tissue, Factor, Condition,
-      Treatment, Caller, Replicate. The values from the 'sample' column
-      should correspond to the names of the selected ChIP-Seq/ATAC-Seq
-      experiments. Values defined in each metadata column should not be
-      used in any of the other columns. All metadata columns are treated
+      Metadata file in TSV/CSV format to describe
+      input datasets categories. First column should
+      have the name 'sample', all other columns names
+      should be selected from the following list:
+      Tissue, Factor, Condition, Treatment, Caller,
+      Replicate. The values from the 'sample' column
+      should correspond to the names of the selected
+      ChIP-Seq/ATAC-Seq experiments. Values defined in
+      each metadata column should not be used in any of
+      the other columns. All metadata columns are treated
       as factors (no covariates are supported).
 
   overlap_threshold:
@@ -154,59 +158,69 @@ inputs:
     default: 2
     label: "Minimum peakset overlap threshold"
     doc: |
-      Filtering threshold to keep only those peaks that are present in at
-      least this many datasets when generating consensus set of peaks used
-      in differential analysis. If this threshold has a value between zero
-      and one, only those peaks will be included that are present in at least
-      this proportion of datasets. If input datasets are grouped by the certain
-      metadata columns, minimum peakset overlap threshold will be first applied
-      per group, then union of the resulted peaks will be used in the differential
-      analysis.
+      Filtering threshold to keep only those peaks
+      that are present in at least this many datasets
+      when generating consensus set of peaks used in
+      differential analysis. If this threshold has a
+      value between zero and one, only those peaks
+      will be included that are present in at least
+      this proportion of datasets. If input datasets
+      are grouped by the certain metadata columns,
+      minimum peakset overlap threshold will be first
+      applied per group, then union of the resulted
+      peaks will be used in the differential analysis.
 
   groupby:
     type: string?
     default: null
     label: "Metadata column(s) that should be used for datasets grouping"
     doc: |
-      Column(s) from the metadata table to define datasets grouping. Minimum peakset
-      overlap threshold will be applied within each group independently. Union of the
-      resulted peaks from each of the groups will be used in the differential analysis.
-      If not provided, minimum peakset overlap filtering threshold will be applied for
-      all datasets jointly.
+      Column(s) from the metadata table to define
+      datasets grouping. Minimum peakset overlap
+      threshold will be applied within each group
+      independently. Union of the resulted peaks
+      from each of the groups will be used in the
+      differential analysis. If not provided,
+      minimum peakset overlap filtering threshold
+      will be applied for all datasets jointly.
 
   rpkm_threshold:
     type: float?
     default: 1
     label: "Minimum allowed RPKM for consensus peaks"
     doc: |
-      Filtering threshold to keep only those consensus peaks where the
-      maximum RPKM for all datasets is bigger than or equal to the
-      provided value.
+      Filtering threshold to keep only those consensus
+      peaks where the maximum RPKM for all datasets is
+      bigger than or equal to the provided value.
 
   design_formula:
     type: string
     label: "Design formula"
     doc: |
-      Design formula comprised of the metadata columns names.
-      It should start with ~
+      Design formula comprised of the metadata
+      columns names. It should start with ~
 
   base_levels:
     type: string?
     default: null
     label: "Base levels (optional)"
     doc: |
-      Base levels for each of the metadata columns. Number and order of the
-      provided values should correspond to the metadata columns. If not provided,
-      the defauls base levels will be defined alphabetically.
+      Base levels for each of the metadata columns.
+      Number and order of the provided values should
+      correspond to the metadata columns. If not
+      provided, the defauls base levels will be
+      defined alphabetically.
 
   contrast:
     type: string?
     default: null
     label: "Contrast for calculating log2 fold changes"
     doc: |
-      Contrast applied to the analysis results when calculating log2 fold changes.
-      It should be formatted as a mathematical formula of values present in the
-      metadata table. If not provided, the last term from the design formula
+      Contrast applied to the analysis results when
+      calculating log2 fold changes. It should be
+      formatted as a mathematical formula of values
+      present in the metadata table. If not provided,
+      the last term from the design formula
       will be used.
 
   padj_threshold:
@@ -214,16 +228,18 @@ inputs:
     default: 0.05
     label: "Maximum allowed adjusted P-value for differentially bound sites"
     doc: |
-      Filtering threshold to report only differentially bound sites with adjusted
-      P-value less than or equal to the provided value.
+      Filtering threshold to report only differentially
+      bound sites with adjusted P-value less than or
+      equal to the provided value.
 
   promoter_dist:
     type: int?
     default: 1000
     label: "Promoter distance, bp"
     doc: |
-      Maximum distance from gene TSS (in both direction) overlapping which
-      the peak will be assigned to the promoter region.
+      Maximum distance from gene TSS (in both direction)
+      overlapping which the peak will be assigned to the
+      promoter region.
     'sd:layout':
       advanced: true
 
@@ -232,8 +248,9 @@ inputs:
     default: 20000
     label: "Upstream distance, bp"
     doc: |
-      Maximum distance from the promoter (only in upstream direction) overlapping
-      which the peak will be assigned to the upstream region.
+      Maximum distance from the promoter (only in
+      upstream direction) overlapping which the peak
+      will be assigned to the upstream region.
     'sd:layout':
       advanced: true
 
@@ -249,7 +266,8 @@ inputs:
     default: "none"
     label: "Clustering method"
     doc: |
-      Hierarchical clustering method to be run on normalized read counts
+      Hierarchical clustering method to be run
+      on normalized read counts
     'sd:layout':
       advanced: true
 
@@ -285,7 +303,8 @@ inputs:
     default: "euclid"
     label: "Distance metric for column clustering"
     doc: |
-      Distance metric for hierarchical column clustering
+      Distance metric for hierarchical
+      column clustering
     'sd:layout':
       advanced: true
 
@@ -294,9 +313,9 @@ inputs:
     default: false
     label: "Apply row mean centering before clustering"
     doc: |
-      Apply mean centering for normalized read counts prior to running
-      clustering by row. Ignored if clustering method is not set to
-      row or both.
+      Apply mean centering for normalized read counts
+      prior to running clustering by row. Ignored if
+      clustering method is not set to row or both.
     'sd:layout':
       advanced: true
 
