@@ -37,7 +37,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name"
     sd:preview:
@@ -237,9 +237,9 @@ inputs:
     default: 1000
     label: "Promoter distance, bp"
     doc: |
-      Maximum distance from gene TSS (in both direction)
-      overlapping which the peak will be assigned to the
-      promoter region.
+      Maximum distance from gene TSS (in both
+      direction) overlapping which the peak will
+      be assigned to the promoter region.
     'sd:layout':
       advanced: true
 
@@ -332,7 +332,6 @@ inputs:
     label: "Number of cores/cpus to use"
     doc: |
       Number of cores/cpus to use
-      Default: 1
     'sd:layout':
       advanced: true
 
