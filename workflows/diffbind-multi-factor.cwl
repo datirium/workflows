@@ -596,7 +596,7 @@ outputs:
     label: "GCT file with normalized read counts per peak"
     doc: |
       GCT file with normalized read counts per peak
-    outputSource: diffbind/nr_rds_gct
+    outputSource: extend_gct/extended_gct
 
   diffbind_stdout_log:
     type: File
@@ -857,10 +857,64 @@ steps:
     - html_data
     - html_file
 
+  extend_gct:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/morpheus:v0.0.2
+      - class: InitialWorkDirRequirement
+        listing:
+        - entryname: extend.R
+          entry: |
+            options(error=function(){traceback(3); quit(save="no", status=1, runLast=FALSE)})
+            suppressMessages(library("cmapR"))
+            suppressMessages(library("dplyr"))
+            suppressMessages(library("tibble"))
+            suppressMessages(library("morpheus"))
+            suppressMessages(library("argparse"))
+            args = commandArgs(trailingOnly=TRUE)
+            gct_data <- read.gct(args[1])
+            metadata <- read.table(args[2], sep="\t", header=TRUE, check.names=FALSE, stringsAsFactors=FALSE) %>%
+                        mutate(id=paste(Chr, paste(Start, End, sep="-"), sep=":")) %>%
+                        select(id, Gene_id, Region)
+            row_metadata <- gct_data$rowAnnotations %>%
+                            rownames_to_column("id") %>%
+                            left_join(metadata, by="id") %>%
+                            mutate_at("id", as.vector)
+            col_metadata <- gct_data$columnAnnotations %>%
+                            rownames_to_column("id") %>%
+                            mutate_at("id", as.vector)
+            gct_data <- new(
+                "GCT",
+                mat=gct_data$data[row_metadata$id, col_metadata$id],
+                rdesc=row_metadata,
+                cdesc=col_metadata
+            )
+            write_gct(ds=gct_data, ofile="extended.gct", appenddim=FALSE)
+      inputs:
+        input_files:
+          type: File[]
+          inputBinding:
+            position: 5
+      outputs:
+        extended_gct:
+          type: File
+          outputBinding:
+            glob: "extended.gct"
+      baseCommand: ["Rscript", "extend.R"]
+    in:
+      input_files:
+      - diffbind/nr_rds_gct
+      - restore_columns/output_file
+    out:
+    - extended_gct
+
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
     in:
-     read_counts_gct: diffbind/nr_rds_gct
+     read_counts_gct: extend_gct/extended_gct
     out:
     - heatmap_html
     - stdout_log
