@@ -49,7 +49,7 @@ inputs:
     - .bai
     label: "ChIP-Seq/ATAC-Seq experiments"
     doc: |
-      Sorted and indexed alignment files in bam format
+      Sorted and indexed alignment files in BAM format
     'sd:upstreamSource': "dna_experiment/bambai_pair"
     'sd:localLabel': true
 
@@ -57,9 +57,7 @@ inputs:
     type: File[]
     label: "ChIP-Seq/ATAC-Seq experiments"
     doc:
-      Peak files in the MACS2 xls format. Number and order of the
-      files should correspond to the files provided in --alignments
-      parameter.
+      Peak files in the MACS2 xls format
     'sd:upstreamSource': "dna_experiment/macs2_called_peaks"
     'sd:localLabel': true
 
@@ -67,10 +65,7 @@ inputs:
     type: string[]
     label: "ChIP-Seq/ATAC-Seq experiments"
     doc: |
-      Unique names for datasets provided in --alignments and --peaks
-      parameters, no special characters or spaces are allowed. Number
-      and order of the names should correspond to the values provided
-      in --alignments and --peaks parameters.
+      Unique names for datasets
     'sd:upstreamSource': "dna_experiment/alias"
     'sd:localLabel': true
 
@@ -104,78 +99,19 @@ inputs:
 
   annotation_file:
     type: File
-    label: "Genome annotation file in TSV format"
+    label: "Reference genome"
     doc: |
       Genome annotation file in TSV format
     'sd:upstreamSource': "genome_indices/annotation"
+    'sd:localLabel': true
 
   chrom_length_file:
     type: File
-    label: "Chromosome length file"
+    label: "Reference genome"
     doc: |
-      Chromosome length file
+      Chromosome length file in txt format
     'sd:upstreamSource': "genome_indices/chrom_length"
-
-  design_formula:
-    type: string
-    label: "Design formula comprised of the metadata columns names"
-    doc: |
-      Design formula comprised of the metadata columns names.
-      It should start with ~
-
-  contrast:
-    type: string?
-    default: null
-    label: "Contrast applied to the analysis results when calculating log2 fold changes"
-    doc: |
-      Contrast applied to the analysis results when calculating log2 fold changes.
-      It should be formatted as a mathematical formula of values present in the
-      metadata table. It is a required parameter if --method is set to edger. If not
-      provided and --method is set to deseq2, the last term from the design formula
-      will be used.
-
-  base_levels:
-    type: string?
-    default: null
-    label: "Base levels for each of the metadata columns"
-    doc: |
-      Base levels for each of the metadata columns. Number and order of the provided
-      values should correspond to the metadata columns. Default: define base levels
-      alphabetically.
-
-  overlap_threshold:
-    type: int?
-    default: 2
-    label: "Filtering threshold to keep only those peaks that are present in at least this many datasets"
-    doc: |
-      Filtering threshold to keep only those peaks that are present in at
-      least this many datasets when generating consensus set of peaks.
-      Ignored if --groupby is provided.
-      Default: 2
-
-  groupby:
-    type: string?
-    default: null
-    label: "Column(s) from the metadata table to define datasets groups for obtaining the common peaks within each of them"
-    doc: |
-      Column(s) from the metadata table to define datasets groups for obtaining
-      the common peaks within each of them. Union of such common peaks will be
-      used as consensus peaks.
-      Default: do not search for common peaks, use --minoverlap parameter instead
-
-  metadata_file:
-    type: File
-    label: "TSV/CSV metadata file to describe datasets"
-    doc: |
-      TSV/CSV metadata file to describe datasets provided in --alignments
-      and --peaks parameters. First column should have the name 'sample',
-      all other columns names should be selected from the following list:
-      Tissue, Factor, Condition, Treatment, Caller, Replicate. The values
-      from the 'sample' column should correspond to the values provided in
-      --aliases parameter. For a proper --contrast intepretation, values
-      defined in each metadata column should not be used in any of the other
-      columns. All metadata columns are treated as factors (no covariates
-      are supported).
+    'sd:localLabel': true
 
   scoreby:
     type:
@@ -187,44 +123,99 @@ inputs:
     default: "pvalue"
     label: "Score metrics to exclude low quality peaks"
     doc: |
-      Score metrics to build peak overlap correlation heatmap and exclude low
-      quality peaks based on the threshold provided in --score parameter.
-      Default: pvalue
-    'sd:layout':
-      advanced: true
+      Score metrics to build peak overlap correlation heatmap
+      and exclude low quality peaks based on the specific
+      threshold value
 
   score_threshold:
     type: float?
     default: 0.05
-    label: "Filtering threshold for pvalue/qvalue"
+    label: "Maximum allowed peak score (pvalue/qvalue)"
     doc: |
-      Filtering threshold to keep only those peaks where the metric selected
-      in --scoreby parameter is less than or equal to the provided value.
-      Default: 0.05
-    'sd:layout':
-      advanced: true
+      Filtering threshold to keep only those peaks where the
+      selected metric is less than or equal to the provided
+      value
+
+  metadata_file:
+    type: File
+    label: "Metadata file to describe datasets categories"
+    doc: |
+      Metadata file in TSV/CSV format to describe input datasets categories.
+      First column should have the name 'sample', all other columns names
+      should be selected from the following list: Tissue, Factor, Condition,
+      Treatment, Caller, Replicate. The values from the 'sample' column
+      should correspond to the names of the selected ChIP-Seq/ATAC-Seq
+      experiments. Values defined in each metadata column should not be
+      used in any of the other columns. All metadata columns are treated
+      as factors (no covariates are supported).
+
+  overlap_threshold:
+    type: float?
+    default: 2
+    label: "Minimum peakset overlap threshold"
+    doc: |
+      Filtering threshold to keep only those peaks that are present in at
+      least this many datasets when generating consensus set of peaks used
+      in differential analysis. If this threshold has a value between zero
+      and one, only those peaks will be included that are present in at least
+      this proportion of datasets. If input datasets are grouped by the certain
+      metadata columns, minimum peakset overlap threshold will be first applied
+      per group, then union of the resulted peaks will be used in the differential
+      analysis.
+
+  groupby:
+    type: string?
+    default: null
+    label: "Metadata column(s) that should be used for datasets grouping"
+    doc: |
+      Column(s) from the metadata table to define datasets grouping. Minimum peakset
+      overlap threshold will be applied within each group independently. Union of the
+      resulted peaks from each of the groups will be used in the differential analysis.
+      If not provided, minimum peakset overlap filtering threshold will be applied for
+      all datasets jointly.
 
   rpkm_threshold:
     type: float?
     default: 1
-    label: "Filtering threshold for maximum RPKM"
+    label: "Minimum allowed RPKM for consensus peaks"
     doc: |
-      Filtering threshold to keep only those peaks where the max RPKM for
-      all datasets is bigger than or equal to the provided value.
-      Default: 1
-    'sd:layout':
-      advanced: true
+      Filtering threshold to keep only those consensus peaks where the
+      maximum RPKM for all datasets is bigger than or equal to the
+      provided value.
+
+  design_formula:
+    type: string
+    label: "Design formula"
+    doc: |
+      Design formula comprised of the metadata columns names.
+      It should start with ~
+
+  base_levels:
+    type: string?
+    default: null
+    label: "Base levels (optional)"
+    doc: |
+      Base levels for each of the metadata columns. Number and order of the
+      provided values should correspond to the metadata columns. If not provided,
+      the defauls base levels will be defined alphabetically.
+
+  contrast:
+    type: string?
+    default: null
+    label: "Contrast for calculating log2 fold changes"
+    doc: |
+      Contrast applied to the analysis results when calculating log2 fold changes.
+      It should be formatted as a mathematical formula of values present in the
+      metadata table. If not provided, the last term from the design formula
+      will be used.
 
   padj_threshold:
     type: float?
     default: 0.05
-    label: "Filtering threshold to report only significant differentially bound sites"
+    label: "Maximum allowed adjusted P-value for differentially bound sites"
     doc: |
       Filtering threshold to report only differentially bound sites with adjusted
       P-value less than or equal to the provided value.
-      Default: 0.05
-    'sd:layout':
-      advanced: true
 
   promoter_dist:
     type: int?
@@ -233,7 +224,6 @@ inputs:
     doc: |
       Maximum distance from gene TSS (in both direction) overlapping which
       the peak will be assigned to the promoter region.
-      Default: 1000 bp
     'sd:layout':
       advanced: true
 
@@ -243,7 +233,7 @@ inputs:
     label: "Upstream distance, bp"
     doc: |
       Maximum distance from the promoter (only in upstream direction) overlapping
-      which the peak will be assigned to the upstream region. Default: 20,000 bp"
+      which the peak will be assigned to the upstream region.
     'sd:layout':
       advanced: true
 
@@ -257,10 +247,9 @@ inputs:
       - "both"
       - "none"
     default: "none"
-    label: "Hopach clustering method to be run on normalized read counts"
+    label: "Clustering method"
     doc: |
-      Hopach clustering method to be run on normalized read counts.
-      Default: do not run clustering
+      Hierarchical clustering method to be run on normalized read counts
     'sd:layout':
       advanced: true
 
@@ -276,11 +265,9 @@ inputs:
       - "cor"
       - "abscor"
     default: "cosangle"
-    label: "Distance metric for HOPACH row clustering"
+    label: "Distance metric for row clustering"
     doc: |
-      Distance metric for HOPACH row clustering. Ignored if --cluster is not
-      provided.
-      Default: cosangle
+      Distance metric for hierarchical row clustering
     'sd:layout':
       advanced: true
 
@@ -296,22 +283,20 @@ inputs:
       - "cor"
       - "abscor"
     default: "euclid"
-    label: "Distance metric for HOPACH column clustering"
+    label: "Distance metric for column clustering"
     doc: |
-      Distance metric for HOPACH column clustering. Ignored if --cluster is not
-      provided.
-      Default: euclid
+      Distance metric for hierarchical column clustering
     'sd:layout':
       advanced: true
 
   center_row:
     type: boolean?
     default: false
-    label: "Apply mean centering for normalized read counts prior to running clustering by row"
+    label: "Apply row mean centering before clustering"
     doc: |
       Apply mean centering for normalized read counts prior to running
-      clustering by row. Ignored when --cluster is not row or both.
-      Default: do not centered
+      clustering by row. Ignored if clustering method is not set to
+      row or both.
     'sd:layout':
       advanced: true
 
@@ -398,25 +383,16 @@ outputs:
         name: "Differentially bound sites"
         height: 40
 
-  pk_venn_plot_png:
-    type: File?
-    label: "Consensus peaks venn diagram"
-    doc: |
-      Consensus peaks venn diagram
-      PNG format
-    outputSource: diffbind/pk_venn_plot_png
-    'sd:visualPlugins':
-      - image:
-          tab: 'Exploratory plots'
-          Caption: 'Consensus peaks venn diagram'
-
-  pk_vrlp_plot_png:
-    type: File?
+  pk_vrlp_s_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
     label: "Peakset overlap rate"
     doc: |
       Peakset overlap rate
       PNG format
-    outputSource: diffbind/pk_vrlp_plot_png
+    outputSource: diffbind/pk_vrlp_s_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
@@ -730,8 +706,7 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - pk_venn_plot_png
-    - pk_vrlp_plot_png
+    - pk_vrlp_s_plot_png
     - pk_scr_corr_plot_png
     - rw_rds_corr_plot_png
     - nr_rds_corr_plot_png

@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.14
+  dockerPull: biowardrobe2/diffbind:v0.0.15
 - class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
   listing: |
@@ -106,14 +106,17 @@ inputs:
       Default: 1
 
   overlap_threshold:
-    type: int?
+    type: float?
     inputBinding:
       prefix: "--minoverlap"
     doc: |
       Filtering threshold to keep only those peaks that are present in at
-      least this many datasets when generating consensus set of peaks.
-      Ignored if --groupby is provided.
-      Default: 2
+      least this many datasets when generating consensus set of peaks used
+      in differential analysis. If this threshold has a value between zero
+      and one, only those peaks will be included that are present in at least
+      this proportion of datasets. When combined with --groupby parameter,
+      --minoverlap threshold is applied per group, then union of the resulted
+      peaks are used in the differential analysis. Default: 2
 
   groupby:
     type:
@@ -123,10 +126,11 @@ inputs:
     inputBinding:
       prefix: "--groupby"
     doc: |
-      Column(s) from the metadata table to define datasets groups for obtaining
-      the common peaks within each of them. Union of such common peaks will be
-      used as consensus peaks.
-      Default: do not search for common peaks, use --minoverlap parameter instead
+      Column(s) from the metadata table to define datasets grouping. --minoverlap
+      filtering threshold will be applied within each group independently. Union
+      of the resulted peaks from each of the groups will be used in the differential
+      analysis. Default: apply --minoverlap filtering threshold for all datasets
+      jointly
 
   design_formula:
     type: string
@@ -284,34 +288,24 @@ inputs:
 
 outputs:
 
-  pk_venn_plot_png:
-    type: File?
+  pk_vrlp_s_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
-      glob: "*_pk_venn.png"
-    doc: |
-      Consensus peaks venn diagram
-      PNG format
-
-  pk_venn_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_pk_venn.pdf"
-    doc: |
-      Consensus peaks venn diagram
-      PDF format
-
-  pk_vrlp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_pk_vrlp.png"
+      glob: "*_pk_vrlp_s*.png"
     doc: |
       Peakset overlap rate
       PNG format
 
-  pk_vrlp_plot_pdf:
-    type: File?
+  pk_vrlp_s_plot_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
-      glob: "*_pk_vrlp.pdf"
+      glob: "*_pk_vrlp_s*.pdf"
     doc: |
       Peakset overlap rate
       PDF format
@@ -362,22 +356,6 @@ outputs:
       glob: "*_nr_rds_corr.pdf"
     doc: |
       Datasets correlation (normalized reads)
-      PDF format
-
-  pk_prfl_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_pk_prfl.png"
-    doc: |
-      Peak profiles
-      PNG format
-
-  pk_prfl_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_pk_prfl.pdf"
-    doc: |
-      Peak profiles
       PDF format
 
   diff_vlcn_plot_png:
@@ -451,6 +429,22 @@ outputs:
     doc: |
       MDS plot of normalized counts.
       HTML format
+
+  pk_prfl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_pk_prfl.png"
+    doc: |
+      Peak profiles
+      PNG format
+
+  pk_prfl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_pk_prfl.pdf"
+    doc: |
+      Peak profiles
+      PDF format
 
   diff_sts_tsv:
     type: File?
@@ -586,14 +580,20 @@ s:about: |
     --minoverlap MINOVERLAP
                           Filtering threshold to keep only those peaks that are
                           present in at least this many datasets when generating
-                          consensus set of peaks. Ignored if --groupby is
-                          provided. Default: 2
+                          consensus set of peaks used in differential analysis.
+                          If this threshold has a value between zero and one,
+                          only those peaks will be included that are present in
+                          at least this proportion of datasets. When combined
+                          with --groupby parameter, --minoverlap threshold is
+                          applied per group, then union of the resulted peaks
+                          are used in the differential analysis. Default: 2
     --groupby [GROUPBY ...]
                           Column(s) from the metadata table to define datasets
-                          groups for obtaining the common peaks within each of
-                          them. Union of such common peaks will be used as
-                          consensus peaks. Default: do not search for common
-                          peaks, use --minoverlap parameter instead.
+                          grouping. --minoverlap filtering threshold will be
+                          applied within each group independently. Union of the
+                          resulted peaks from each of the groups will be used in
+                          the differential analysis. Default: apply --minoverlap
+                          filtering threshold for all datasets jointly
     --design DESIGN       Design formula comprised of the metadata columns
                           names. It should start with ~.
     --contrast CONTRAST   Contrast applied to the analysis results when
