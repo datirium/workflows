@@ -591,6 +591,13 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  nr_rds_gct:
+    type: File
+    label: "GCT file with normalized read counts per peak"
+    doc: |
+      GCT file with normalized read counts per peak
+    outputSource: diffbind/nr_rds_gct
+
   diffbind_stdout_log:
     type: File
     label: "DiffBind stdout log"
