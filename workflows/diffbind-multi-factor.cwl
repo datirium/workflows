@@ -145,7 +145,10 @@ inputs:
     label: "Diff. analysis. Design formula"
     doc: |
       Design formula comprised of the metadata
-      columns names. It should start with ~
+      columns names. For example, to model the
+      effect of Treatment, Tissue, and their
+      interaction use
+      ~Treatment%2BTissue%2BTreatment%3ATissue
 
   base_levels:
     type: string?
