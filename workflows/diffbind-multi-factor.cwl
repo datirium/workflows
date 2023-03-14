@@ -66,7 +66,7 @@ inputs:
     type: string[]
     label: "ChIP-Seq/ATAC-Seq experiments"
     doc: |
-      Unique names for datasets
+      Unique names for samples
     'sd:upstreamSource': "dna_experiment/alias"
     'sd:localLabel': true
 
@@ -102,7 +102,7 @@ inputs:
     type: File
     label: "Reference genome"
     doc: |
-      Genome annotation file in TSV format
+      Reference genome
     'sd:upstreamSource': "genome_indices/annotation"
     'sd:localLabel': true
 
@@ -110,39 +110,16 @@ inputs:
     type: File
     label: "Reference genome"
     doc: |
-      Chromosome length file in txt format
+      Reference genome
     'sd:upstreamSource': "genome_indices/chrom_length"
     'sd:localLabel': true
 
-  scoreby:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "pvalue"
-      - "qvalue"
-    default: "pvalue"
-    label: "Score metrics to exclude low quality peaks"
-    doc: |
-      Score metrics to build peak overlap correlation
-      heatmap and exclude low quality peaks based on
-      the specific threshold value
-
-  score_threshold:
-    type: float?
-    default: 0.05
-    label: "Maximum allowed peak score (pvalue/qvalue)"
-    doc: |
-      Filtering threshold to keep only those peaks
-      where the selected metric is less than or equal
-      to the provided value
-
   metadata_file:
     type: File
-    label: "Metadata file to describe datasets categories"
+    label: "Diff. analysis. Metadata file to describe samples categories"
     doc: |
       Metadata file in TSV/CSV format to describe
-      input datasets categories. First column should
+      input samples categories. First column should
       have the name 'sample', all other columns names
       should be selected from the following list:
       Tissue, Factor, Condition, Treatment, Caller,
@@ -153,49 +130,26 @@ inputs:
       the other columns. All metadata columns are treated
       as factors (no covariates are supported).
 
-  overlap_threshold:
-    type: float?
-    default: 2
-    label: "Minimum peakset overlap threshold"
-    doc: |
-      Filtering threshold to keep only those peaks
-      that are present in at least this many datasets
-      when generating consensus set of peaks used in
-      differential analysis. If this threshold has a
-      value between zero and one, only those peaks
-      will be included that are present in at least
-      this proportion of datasets. If input datasets
-      are grouped by the certain metadata columns,
-      minimum peakset overlap threshold will be first
-      applied per group, then union of the resulted
-      peaks will be used in the differential analysis.
-
   groupby:
     type: string?
     default: null
-    label: "Metadata column(s) that should be used for datasets grouping"
+    label: "Diff. analysis. Metadata column(s) that should be used for samples grouping"
     doc: |
       Column(s) from the metadata table to define
-      datasets grouping. Minimum peakset overlap
+      samples grouping. Minimum peakset overlap
       threshold will be applied within each group
       independently. Union of the resulted peaks
       from each of the groups will be used in the
       differential analysis. If not provided,
       minimum peakset overlap filtering threshold
-      will be applied for all datasets jointly.
-
-  rpkm_threshold:
-    type: float?
-    default: 1
-    label: "Minimum allowed RPKM for consensus peaks"
-    doc: |
-      Filtering threshold to keep only those consensus
-      peaks where the maximum RPKM for all datasets is
-      bigger than or equal to the provided value.
+      will be applied for all samples jointly.
+      For grouping by multiple columns provide
+      space separated values, for example,
+      'Treatment Tissue'
 
   design_formula:
     type: string
-    label: "Design formula"
+    label: "Diff. analysis. Design formula"
     doc: |
       Design formula comprised of the metadata
       columns names. It should start with ~
@@ -203,7 +157,7 @@ inputs:
   base_levels:
     type: string?
     default: null
-    label: "Base levels (optional)"
+    label: "Diff. analysis. Base levels (optional)"
     doc: |
       Base levels for each of the metadata columns.
       Number and order of the provided values should
@@ -214,7 +168,7 @@ inputs:
   contrast:
     type: string?
     default: null
-    label: "Contrast for calculating log2 fold changes"
+    label: "Diff. analysis. Contrast for calculating log2 fold changes"
     doc: |
       Contrast applied to the analysis results when
       calculating log2 fold changes. It should be
@@ -226,16 +180,65 @@ inputs:
   padj_threshold:
     type: float?
     default: 0.05
-    label: "Maximum allowed adjusted P-value for differentially bound sites"
+    label: "Peak selection. Maximum allowed adjusted P-value for differentially bound sites"
     doc: |
       Filtering threshold to report only differentially
       bound sites with adjusted P-value less than or
       equal to the provided value.
 
+  scoreby:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "pvalue"
+      - "qvalue"
+    default: "pvalue"
+    label: "Peak selection. Score metrics to exclude low quality peaks"
+    doc: |
+      Score metrics to build peak overlap correlation
+      heatmap and exclude low quality peaks based on
+      the specific threshold value
+
+  score_threshold:
+    type: float?
+    default: 0.05
+    label: "Peak selection. Maximum allowed peak score (pvalue/qvalue)"
+    doc: |
+      Filtering threshold to keep only those peaks
+      where the selected metric is less than or equal
+      to the provided value
+
+  overlap_threshold:
+    type: float?
+    default: 2
+    label: "Peak selection. Minimum peakset overlap threshold"
+    doc: |
+      Filtering threshold to keep only those peaks
+      that are present in at least this many samples
+      when generating consensus set of peaks used in
+      differential analysis. If this threshold has a
+      value between zero and one, only those peaks
+      will be included that are present in at least
+      this proportion of samples. If input samples
+      are grouped by the certain metadata columns,
+      minimum peakset overlap threshold will be first
+      applied per group, then union of the resulted
+      peaks will be used in the differential analysis.
+
+  rpkm_threshold:
+    type: float?
+    default: 1
+    label: "Peak selection. Minimum allowed RPKM for consensus peaks"
+    doc: |
+      Filtering threshold to keep only those consensus
+      peaks where the maximum RPKM for all samples is
+      bigger than or equal to the provided value.
+
   promoter_dist:
     type: int?
     default: 1000
-    label: "Promoter distance, bp"
+    label: "Peak annotation. Promoter distance, bp"
     doc: |
       Maximum distance from gene TSS (in both
       direction) overlapping which the peak will
@@ -246,7 +249,7 @@ inputs:
   upstream_dist:
     type: int?
     default: 20000
-    label: "Upstream distance, bp"
+    label: "Peak annotation. Upstream distance, bp"
     doc: |
       Maximum distance from the promoter (only in
       upstream direction) overlapping which the peak
@@ -264,7 +267,7 @@ inputs:
       - "both"
       - "none"
     default: "none"
-    label: "Clustering method"
+    label: "Peak clustering. Clustering method"
     doc: |
       Hierarchical clustering method to be run
       on normalized read counts
@@ -283,7 +286,7 @@ inputs:
       - "cor"
       - "abscor"
     default: "cosangle"
-    label: "Distance metric for row clustering"
+    label: "Peak clustering. Distance metric for row clustering"
     doc: |
       Distance metric for hierarchical row clustering
     'sd:layout':
@@ -301,7 +304,7 @@ inputs:
       - "cor"
       - "abscor"
     default: "euclid"
-    label: "Distance metric for column clustering"
+    label: "Peak clustering. Distance metric for column clustering"
     doc: |
       Distance metric for hierarchical
       column clustering
@@ -311,7 +314,7 @@ inputs:
   center_row:
     type: boolean?
     default: false
-    label: "Apply row mean centering before clustering"
+    label: "Peak clustering. Apply row mean centering before clustering"
     doc: |
       Apply mean centering for normalized read counts
       prior to running clustering by row. Ignored if
@@ -418,39 +421,39 @@ outputs:
 
   pk_scr_corr_plot_png:
     type: File?
-    label: "Datasets correlation (peak score)"
+    label: "Samples correlation (peak score)"
     doc: |
-      Datasets correlation (peak score)
+      Samples correlation (peak score)
       PNG format
     outputSource: diffbind/pk_scr_corr_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
-          Caption: 'Datasets correlation (peak score)'
+          Caption: 'Samples correlation (peak score)'
 
   rw_rds_corr_plot_png:
     type: File?
-    label: "Datasets correlation (raw reads)"
+    label: "Samples correlation (raw reads)"
     doc: |
-      Datasets correlation (raw reads)
+      Samples correlation (raw reads)
       PNG format
     outputSource: diffbind/rw_rds_corr_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
-          Caption: 'Datasets correlation (raw reads)'
+          Caption: 'Samples correlation (raw reads)'
 
   nr_rds_corr_plot_png:
     type: File?
-    label: "Datasets correlation (normalized reads)"
+    label: "Samples correlation (normalized reads)"
     doc: |
-      Datasets correlation (normalized reads)
+      Samples correlation (normalized reads)
       PNG format
     outputSource: diffbind/nr_rds_corr_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
-          Caption: 'Datasets correlation (normalized reads)'
+          Caption: 'Samples correlation (normalized reads)'
 
   pk_prfl_plot_png:
     type: File?
