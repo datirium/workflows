@@ -21,6 +21,7 @@ requirements:
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-wnn-cluster.cwl"
 
 
 inputs:
