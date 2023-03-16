@@ -22,6 +22,7 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-rna-de-pseudobulk.cwl"
 
 
 inputs:

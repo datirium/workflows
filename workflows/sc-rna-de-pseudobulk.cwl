@@ -22,6 +22,7 @@ requirements:
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
   - "sc-wnn-cluster.cwl"
+  - "sc-rna-da-cells.cwl"
 
 
 inputs:
