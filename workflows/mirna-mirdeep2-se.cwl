@@ -140,6 +140,10 @@ outputs:
     label: "standard mirdeep2 results html report"
     doc: "standard mirdeep2 results html report of novel and known mirs in your data"
     outputSource: mirdeep2/mirdeep2_result
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   mirs_known:
     type: File
@@ -167,6 +171,9 @@ outputs:
     label: "known mature miRNA overlapping with ExoCarta exosome miRNA"
     doc: "known mature miRNA overlapping with ExoCarta exosome miRNA"
     outputSource: mirdeep2/mirs_known_exocarta_deepmirs
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Detected Exosome miRNAs'
 
   mirs_known_gene_targets:
     type: File
@@ -317,7 +324,9 @@ s:creator:
 
 
 doc: |
-  A workflow for discovering known or novel miRNAs from deep sequencing data using the miRDeep2 tool, ExoCarta exosome database, and TargetScan for identifying miRNA gene targets.
+  A CWL workflow for discovering known or novel miRNAs from deep sequencing data using the miRDeep2 tool.
+  The ExoCarta exosome database is also used for identifying exosome-related miRNAs, and TargetScan's
+  organism-specific databases are used for identifying miRNA gene targets.
 
   ## __Outputs__
   #### Primary Output files:
@@ -328,11 +337,18 @@ doc: |
     - mirs_known_gene_targets.tsv, pre-computed gene targets of known mature mirs, downloadable
     - known_mirs_mature.fa, known mature mir sequences, downloadable
     - known_mirs_precursor.fa, known precursor mir sequences, downloadable
-    - novel_mirs_mature.fa, novel precursor mir sequences, downloadable
+    - novel_mirs_mature.fa, novel mature mir sequences, downloadable
     - novel_mirs_precursor.fa, novel precursor mir sequences, downloadable
   #### Reports:
     - overview.md (input list, alignment & mir metrics), "Overview" tab
     - mirdeep2_result.html, summary of mirdeep2 results, "miRDeep2 Results" tab
+
+  For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
+  1. miRDeep score > 4 (but also some authors use 1 sometimes)
+  2. not present a match with rfam
+  3. should present a significant RNAfold ("yes")
+  4. a number of mature reads > 10
+  5. (optional) novel mir must be expressed in multiple samples
 
   ## __Inputs__
   #### General Info

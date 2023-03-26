@@ -184,7 +184,10 @@ s:creator:
 
 
 doc: |
-  Shell wrapper for miRDeep2 tool, that discovers known or novel miRNAs from deep sequencing data.
+  A CWL tool for discovering known or novel miRNAs from deep sequencing data using the miRDeep2 tool.
+  Calls the shell wrapper for the SciDAP miRDeep2 pipeline. The ExoCarta exosome database is also used
+  for identifying exosome-related miRNAs, and TargetScan's organism-specific databases are used for
+  identifying miRNA gene targets.
 
   Primary Output files:
   - mirs_known.tsv, known mature miRNAs detected by mirdeep2, "Known miRNAs" tab
@@ -194,11 +197,18 @@ doc: |
   - mirs_known_gene_targets.tsv, pre-computed gene targets of known mature mirs, downloadable
   - known_mirs_mature.fa, known mature mir sequences, downloadable
   - known_mirs_precursor.fa, known precursor mir sequences, downloadable
-  - novel_mirs_mature.fa, novel precursor mir sequences, downloadable
+  - novel_mirs_mature.fa, novel mature mir sequences, downloadable
   - novel_mirs_precursor.fa, novel precursor mir sequences, downloadable
   Reports:
   - overview.md (input list, alignment & mir metrics), "Overview" tab
   - mirdeep2_result.html, summary of mirdeep2 results, "miRDeep2 Results" tab
+
+  For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
+  1. miRDeep score > 4 (but also some authors use 1 sometimes)
+  2. not present a match with rfam
+  3. should present a significant RNAfold ("yes")
+  4. a number of mature reads > 10
+  5. (optional) novel mir must be expressed in multiple samples
 
   PARAMS:
     -h	help	show this message

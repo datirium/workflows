@@ -34,6 +34,13 @@ Reports:
  - overview.md (input list, alignment & mir metrics), "Overview" tab
  - mirdeep2_result.html, summary of mirdeep2 results, "miRDeep2 Results" tab
 
+For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
+1. miRDeep score > 4 (but also some authors use 1 sometimes)
+2. not present a match with rfam
+3. should present a significant RNAfold ("yes")
+4. a number of mature reads > 10
+5. (optional) novel mir must be expressed in multiple samples
+
 PARAMS:
     SECTION 1: general
     -h	help	show this message
@@ -155,9 +162,9 @@ if [[ $organism == "hsa" ]]; then exo_org="Homo sapiens"; taxid="9606"; fi
 if [[ $organism == "mmu" ]]; then exo_org="Mus musculus"; taxid="10090"; fi
 if [[ $organism == "dm3" ]]; then taxid="7227"; fi
 # mirdeep2 list of detected mirs for overlapping with exocarta and targetscan
-grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 > mirs_known.tsv
+grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' > mirs_known.tsv
 # mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
-grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 > mirs_novel.tsv
+grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' > mirs_novel.tsv
 # trim down mir name to the part that will match mirs in other lists
 tail -n+2 mirs_known.tsv | sed 's/^.*\(no\|yes\)\t//' | cut -f1 | sed 's/'"$organism"'-//' | sort | uniq > mirs_known_names_for_overlap.tsv
 
@@ -174,7 +181,7 @@ if [[ "$exo_org" != "" ]]; then
 	awk -F'\t' '{if(FNR==NR){exo[$3]=$0}else{print(exo[$0])}}' exo_$organism.tsv mirs_known_names_for_overlap.tsv | sort | uniq | grep "Clear hit to Entrez gene ID" >> mirs_known_exocarta.tsv
 	# make file with mirdeep2 stats for detected exocarta mirs
 	head -1 mirs_known.tsv > mirs_known_exocarta_deepmirs.tsv
-	cut -f3 mirs_known_exocarta.tsv | while read mir; do grep "$organism-$mir" mirs_known.tsv; done | sort | uniq >> mirs_known_exocarta_deepmirs.tsv
+	cut -f3 mirs_known_exocarta.tsv | while read mir; do grep "$organism-$mir" mirs_known.tsv; done | sort | uniq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' >> mirs_known_exocarta_deepmirs.tsv
 else
 	printf "\tOrganism $organism does not have miRNAs in Exocarta DB for miRNA found in exosomes, skipping step."
 fi
@@ -209,7 +216,17 @@ mirs_total_known=$(tail -n+2 mirs_known.tsv | wc -l)
 
 printf "\tformatting...\n"
 
-printf "## INPUTS\n" > overview.md
+printf "## miRDeep2 Filtering of Novel miRNA\n" > overview.md
+printf "\n" >> overview.md
+printf "####For the identification of novel miRNA candidates, the following may be used as a filtering guideline:\n\n"
+printf "1. miRDeep score > 4 (but also some authors use 1 sometimes)\n"
+printf "2. not present a match with rfam\n"
+printf "3. should present a significant RNAfold ("yes")\n"
+printf "4. a number of mature reads > 10\n"
+printf "5. (optional) novel mir must be expressed in multiple samples\n"
+printf "\n" >> overview.md
+
+printf "## INPUTS\n" >> overview.md
 printf "-" >> overview.md
 printf " \$THREADS, $THREADS\n" >> overview.md
 printf "-" >> overview.md
