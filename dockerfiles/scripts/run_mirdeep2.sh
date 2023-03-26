@@ -166,7 +166,7 @@ grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep
 # mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
 grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' > mirs_novel.tsv
 # trim down mir name to the part that will match mirs in other lists
-tail -n+2 mirs_known.tsv | sed 's/^.*\(no\|yes\)\t//' | cut -f1 | sed 's/'"$organism"'-//' | sort | uniq > mirs_known_names_for_overlap.tsv
+tail -n+2 mirs_known.tsv | cut -f2 | sed 's/'"$organism"'-//' | sort | uniq > mirs_known_names_for_overlap.tsv
 
 printf "\n\nStep 3 - exocarta (find overlap between mirs_known.tsv and exosome associated miRNAs)\n"
 # exosome mir summary (only for hg19, hg38, mm10)
@@ -216,14 +216,14 @@ mirs_total_known=$(tail -n+2 mirs_known.tsv | wc -l)
 
 printf "\tformatting...\n"
 
-printf "## miRDeep2 Filtering of Novel miRNA\n" > overview.md
+printf "## Results Interpretation\n" > overview.md
 printf "\n" >> overview.md
-printf "#### For the identification of novel miRNA candidates, the following may be used as a filtering guideline:\n\n"
-printf "1. miRDeep score > 4 (but also some authors use 1 sometimes)\n"
-printf "2. not present a match with rfam\n"
-printf "3. should present a significant RNAfold ("yes")\n"
-printf "4. a number of mature reads > 10\n"
-printf "5. (optional) novel mir must be expressed in multiple samples\n"
+printf "#### For the identification of miRDeep2 novel miRNA candidates, the following may be used as a filtering guideline:\n\n" >> overview.md
+printf "1. miRDeep score > 4 (but also some authors use 1 sometimes)\n" >> overview.md
+printf "2. not present a match with rfam\n" >> overview.md
+printf "3. should present a significant RNAfold (yes)\n" >> overview.md
+printf "4. a number of mature reads > 10\n" >> overview.md
+printf "5. (optional) novel mir must be expressed in multiple samples\n" >> overview.md
 printf "\n" >> overview.md
 
 printf "## INPUTS\n" >> overview.md

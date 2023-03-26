@@ -137,7 +137,7 @@ outputs:
   mirdeep2_result_html:
     type: File
     format: "http://edamontology.org/format_2331"
-    label: "standard mirdeep2 results html report"
+    label: "Report: miRDeep2 results"
     doc: "standard mirdeep2 results html report of novel and known mirs in your data"
     outputSource: mirdeep2/mirdeep2_result
     'sd:visualPlugins':
