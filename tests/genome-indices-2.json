@@ -24,3 +24,59 @@
   },
   "chromosome_list": ["chr4"]
 }
+
+
+
+
+{
+  "genome": "hg38",
+  "effective_genome_size": "2.74e9",
+  "threads": 4,
+  "genome_file":{
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/genome_indices/hg38/hg38.2bit",
+    "format": "http://edamontology.org/format_3009"
+  },
+  "annotation_tab":{
+    "class": "File",
+    "location":"/Users/robertplayer/data/scidap_workflow_testing/genome_indices/hg38/refGene.txt.gz",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "mitochondrial_annotation_tab":{
+    "class": "File",
+    "location":"/Users/robertplayer/data/scidap_workflow_testing/genome_indices/hg38/wgEncodeGencodeBasicV28.txt.gz",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "cytoband":{
+    "class": "File",
+    "location":"/Users/robertplayer/data/scidap_workflow_testing/genome_indices/hg38/cytoBandIdeo.txt.gz",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "chromosome_list": [
+      "chr1",
+      "chr2",
+      "chr3",
+      "chr4",
+      "chr5",
+      "chr6",
+      "chr7",
+      "chr8",
+      "chr9",
+      "chr10",
+      "chr11",
+      "chr12",
+      "chr13",
+      "chr14",
+      "chr15",
+      "chr16",
+      "chr17",
+      "chr18",
+      "chr19",
+      "chr20",
+      "chr21",
+      "chr22",
+      "chrX",
+      "chrY",
+      "chrM"
+    ]
+}
