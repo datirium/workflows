@@ -203,13 +203,6 @@ doc: |
   - overview.md (input list, alignment & mir metrics), "Overview" tab
   - mirdeep2_result.html, summary of mirdeep2 results, "miRDeep2 Results" tab
 
-  For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
-  1. miRDeep score > 4 (but also some authors use 1 sometimes)
-  2. not present a match with rfam
-  3. should present a significant RNAfold ("yes")
-  4. a number of mature reads > 10
-  5. (optional) novel mir must be expressed in multiple samples
-
   PARAMS:
     -h	help	show this message
     -t  INT		number of threads
@@ -228,6 +221,13 @@ doc: |
     rn7		rno     	RNO     	Rattus norvegicus   	  Metazoa;Bilateria;Deuterostoma;Chordata;Vertebrata;Mammalia;Rodentia;   		    10116
     dm3		dme     	DME     	Drosophila melanogaster Metazoa;Bilateria;Ecdysozoa;Arthropoda;Hexapoda;        						            7227
 
+  NOTES:
+  For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
+  1. miRDeep score > 4 (but also some authors use 1 sometimes)
+  2. not present a match with rfam
+  3. should present a significant RNAfold ("yes")
+  4. a number of mature reads > 10
+  5. (optional) novel mir must be expressed in multiple samples
 
   ____________________________________________________________________________________________________
   References:

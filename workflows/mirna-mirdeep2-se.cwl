@@ -134,7 +134,7 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-  mirdeep2_result:
+  mirdeep2_result_html:
     type: File
     format: "http://edamontology.org/format_2331"
     label: "standard mirdeep2 results html report"
@@ -343,13 +343,6 @@ doc: |
     - overview.md (input list, alignment & mir metrics), "Overview" tab
     - mirdeep2_result.html, summary of mirdeep2 results, "miRDeep2 Results" tab
 
-  For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
-  1. miRDeep score > 4 (but also some authors use 1 sometimes)
-  2. not present a match with rfam
-  3. should present a significant RNAfold ("yes")
-  4. a number of mature reads > 10
-  5. (optional) novel mir must be expressed in multiple samples
-
   ## __Inputs__
   #### General Info
    - Sample short name/Alias: unique name for sample
@@ -360,14 +353,20 @@ doc: |
    - Reference Genome FASTA: Reference genome FASTA file to be used for alignment.
    - Genome short name: Name used for setting organism name, genus, species, and tax ID.
    - Input FASTQ file: FASTQ file from a single-end miRNA sequencing run.
-   - 
   #### Advanced
    - Adapter: Adapter sequence to be trimmed from miRNA sequence reads. (Default: TCGTAT)
    - Threads: Number of threads to use for steps that support multithreading (Default: 4).
 
-  #### Notes:
+  ## Hints & Tips:
   
-   - For filtering mirbase by organism.
+  #### For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
+  1. miRDeep score > 4 (but also some authors use 1 sometimes)
+  2. not present a match with rfam
+  3. should present a significant RNAfold ("yes")
+  4. a number of mature reads > 10
+  5. (optional) novel mir must be expressed in multiple samples
+
+  #### For filtering mirbase by organism.
 
   | genome | organism | division | name | tree | NCBI-taxid |
   | ---- | --- | --- | ----------- | ----------- | ----------- |
@@ -377,13 +376,13 @@ doc: |
   | rn7  | rno | RNO | Rattus norvegicus | Metazoa;Bilateria;Deuterostoma;Chordata;Vertebrata;Mammalia;Rodentia | 10116 |
   | dm3	 | dme | DME | Drosophila melanogaster | Metazoa;Bilateria;Ecdysozoa;Arthropoda;Hexapoda | 7227 |
 
-  ### __Data Analysis Steps__
+  ## __Data Analysis Steps__
   1. The miRDeep2 Mapper module processes Illumina FASTQ output and maps it to the reference genome.
   2. The miRDeep2 miRDeep2 module identifies known and novel (mature and precursor) miRNAs.
   3. The ExoCarta database of miRNA found in exosomes is then used to find overlap between mirs_known.tsv and exosome associated miRNAs.
   4. Finally, TargetScan organism-specific miRNA gene target database is used to find overlap between mirs_known.tsv and gene targets.
 
-  ### __References__
+  ## __References__
   1. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3245920
   2. https://github.com/rajewsky-lab/mirdeep2
   3. https://biocontainers.pro/tools/mirdeep2
