@@ -162,9 +162,11 @@ if [[ $organism == "hsa" ]]; then exo_org="Homo sapiens"; taxid="9606"; fi
 if [[ $organism == "mmu" ]]; then exo_org="Mus musculus"; taxid="10090"; fi
 if [[ $organism == "dm3" ]]; then taxid="7227"; fi
 # mirdeep2 list of detected mirs for overlapping with exocarta and targetscan
-grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_known.tsv
+grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_known.tsv
+# make input file for DESeq
+awk -F'\t' 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{split($1,chr_pos,"_"); printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", $1, $2, chr_pos[1], chr_pos[2], chr_pos[2]+length($3), "Strand", $7, "Rpkm")}' mirs_known.tsv > deseq_input.tsv
 # mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
-grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_novel.tsv
+grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_novel.tsv
 # trim down mir name to the part that will match mirs in other lists
 tail -n+2 mirs_known.tsv | cut -f2 | sed 's/'"$organism"'-//' | sort | uniq > mirs_known_names_for_overlap.tsv
 
@@ -181,7 +183,7 @@ if [[ "$exo_org" != "" ]]; then
 	awk -F'\t' '{if(FNR==NR){exo[$3]=$0}else{print(exo[$0])}}' exo_$organism.tsv mirs_known_names_for_overlap.tsv | sort | uniq | grep "Clear hit to Entrez gene ID" >> mirs_known_exocarta.tsv
 	# make file with mirdeep2 stats for detected exocarta mirs
 	head -1 mirs_known.tsv > mirs_known_exocarta_deepmirs.tsv
-	cut -f3 mirs_known_exocarta.tsv | while read mir; do grep "$organism-$mir" mirs_known.tsv; done | sort | uniq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$2,$4,$9,$6)}' | sed 's/ /_/g' >> mirs_known_exocarta_deepmirs.tsv
+	cut -f3 mirs_known_exocarta.tsv | while read mir; do grep "$organism-$mir" mirs_known.tsv; done | sort | uniq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' >> mirs_known_exocarta_deepmirs.tsv
 else
 	printf "\tOrganism $organism does not have miRNAs in Exocarta DB for miRNA found in exosomes, skipping step."
 fi
@@ -223,7 +225,7 @@ printf "1. miRDeep score >4\n" >> overview.md
 printf "2. not present a match with rfam\n" >> overview.md
 printf "3. should present a significant RNAfold (yes)\n" >> overview.md
 printf "4. a number of mature reads (>10)\n" >> overview.md
-printf "5. if applicable novel mir must be in >1 sample\n" >> overview.md
+printf "5. if applicable, novel mir must be in >1 sample\n" >> overview.md
 printf "\n" >> overview.md
 
 printf "## INPUTS\n" >> overview.md

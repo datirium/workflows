@@ -152,8 +152,15 @@ outputs:
     doc: "known mature miRNAs detected by mirdeep2"
     outputSource: mirdeep2/mirs_known
     'sd:visualPlugins':
-    - markdownView:
+    - syncfusiongrid:
         tab: 'Known miRNAs'
+
+  rpkm_genes:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Input file for DESeq workflow"
+    doc: "This output name is a misnomer, this is the input file for DESeq workflow"
+    outputSource: mirdeep2/deseq_input
 
   mirs_novel:
     type: File
@@ -162,7 +169,7 @@ outputs:
     doc: "known novel miRNAs detected by mirdeep2"
     outputSource: mirdeep2/mirs_novel
     'sd:visualPlugins':
-    - markdownView:
+    - syncfusiongrid:
         tab: 'Novel miRNAs'
 
   mirs_known_exocarta_deepmirs:
@@ -172,7 +179,7 @@ outputs:
     doc: "known mature miRNA overlapping with ExoCarta exosome miRNA"
     outputSource: mirdeep2/mirs_known_exocarta_deepmirs
     'sd:visualPlugins':
-    - markdownView:
+    - syncfusiongrid:
         tab: 'Detected Exosome miRNAs'
 
   mirs_known_gene_targets:
@@ -275,7 +282,7 @@ steps:
         valueFrom: $(self)
       adapter: adapter
       fastq: extract_fastq/fastq_file
-    out: [mirs_known, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, mirdeep2_result, log_file_stdout, log_file_stderr]
+    out: [mirs_known, deseq_input, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, mirdeep2_result, log_file_stdout, log_file_stderr]
 
 
 $namespaces:

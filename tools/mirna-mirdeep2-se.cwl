@@ -73,6 +73,13 @@ outputs:
     doc: |
       known mature miRNAs detected by mirdeep2
 
+  deseq_input:
+    type: File
+    outputBinding:
+      glob: deseq_input.tsv
+    doc: |
+      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+
   mirs_novel:
     type: File
     outputBinding:
@@ -223,11 +230,11 @@ doc: |
 
   NOTES:
   For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
-  1. miRDeep score > 4 (but also some authors use 1 sometimes)
+  1. miRDeep score > 4 (some authors use 1)
   2. not present a match with rfam
   3. should present a significant RNAfold ("yes")
   4. a number of mature reads > 10
-  5. (optional) novel mir must be expressed in multiple samples
+  5. if applicable, novel mir must be expressed in multiple samples
 
   ____________________________________________________________________________________________________
   References:
