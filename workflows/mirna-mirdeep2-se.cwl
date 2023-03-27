@@ -134,7 +134,7 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-  mirdeep2_result_html:
+  mirdeep2_result:
     type: File
     format: "http://edamontology.org/format_2331"
     label: "Report: miRDeep2 results"
@@ -360,11 +360,11 @@ doc: |
   ## Hints & Tips:
   
   #### For the identification of novel miRNA candidates, the following may be used as a filtering guideline:
-  1. miRDeep score > 4 (but also some authors use 1 sometimes)
+  1. miRDeep score > 4 (some authors use 1)
   2. not present a match with rfam
   3. should present a significant RNAfold ("yes")
   4. a number of mature reads > 10
-  5. (optional) novel mir must be expressed in multiple samples
+  5. if applicable, novel mir must be expressed in multiple samples
 
   #### For filtering mirbase by organism.
 
