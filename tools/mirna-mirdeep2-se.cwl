@@ -73,7 +73,21 @@ outputs:
     doc: |
       known mature miRNAs detected by mirdeep2
 
-  deseq_input:
+  deseq_input_isoforms:
+    type: File
+    outputBinding:
+      glob: deseq_input.tsv
+    doc: |
+      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+
+  deseq_input_genes:
+    type: File
+    outputBinding:
+      glob: deseq_input.tsv
+    doc: |
+      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+
+  deseq_input_common_tss:
     type: File
     outputBinding:
       glob: deseq_input.tsv

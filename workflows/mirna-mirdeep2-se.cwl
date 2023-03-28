@@ -155,12 +155,26 @@ outputs:
     - syncfusiongrid:
         tab: 'Known miRNAs'
 
+  rpkm_isoforms:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Input file for DESeq workflow"
+    doc: "This is the input file for DESeq workflow, the output name is a misnomer: isoforms, genes, and common tss are all the same."
+    outputSource: mirdeep2/deseq_input_isoforms
+
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Input file for DESeq workflow"
-    doc: "This output name is a misnomer, this is the input file for DESeq workflow"
-    outputSource: mirdeep2/deseq_input
+    doc: "This is the input file for DESeq workflow, the output name is a misnomer: isoforms, genes, and common tss are all the same."
+    outputSource: mirdeep2/deseq_input_genes
+
+  rpkm_common_tss:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Input file for DESeq workflow"
+    doc: "This is the input file for DESeq workflow, the output name is a misnomer: isoforms, genes, and common tss are all the same."
+    outputSource: mirdeep2/deseq_input_common_tss
 
   mirs_novel:
     type: File
@@ -282,7 +296,7 @@ steps:
         valueFrom: $(self)
       adapter: adapter
       fastq: extract_fastq/fastq_file
-    out: [mirs_known, deseq_input, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, mirdeep2_result, log_file_stdout, log_file_stderr]
+    out: [mirs_known, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, mirdeep2_result, log_file_stdout, log_file_stderr]
 
 
 $namespaces:
