@@ -37,14 +37,27 @@ inputs:
     sd:preview:
       position: 4
 
+  star_indices_folder:
+    type: Directory
+    label: "STAR indices folder"
+    'sd:upstreamSource': "genome_indices/star_indices"
+    doc: |
+      Path to STAR generated indices for alignment and IGV visualization
+
+  chrom_length_file:
+    type: File
+    label: "Chromosome length file"
+    format: "http://edamontology.org/format_2330"
+    'sd:upstreamSource': "genome_indices/chrom_length"
+    doc: "Chromosome length file"
+
   index_directory:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "Bowtie2 index:"
     'sd:localLabel': true
     doc: |
-      Bowtie2 index directory of the reference genome.
-      An 'index' sample needs to be added to your project that will populate this dropdown.
+      Bowtie2 index directory of the reference genome for alignment and IGV visualization.
     sd:preview:
       position: 5
 
@@ -133,6 +146,20 @@ outputs:
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
+
+  bigwig:
+    type: File
+    format: "http://edamontology.org/format_3006"
+    label: "BigWig file"
+    doc: "Generated BigWig file"
+    outputSource: bam_to_bigwig/bigwig_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "BigWig Track"
+        height: 120
 
   mirdeep2_result:
     type: File
@@ -281,6 +308,43 @@ steps:
     in:
       input_file: extract_fastq/fastq_file
     out: [statistics_file]
+
+  star_aligner:
+    run: ../tools/star-alignreads.cwl
+    in:
+      readFilesIn: extract_fastq/fastq_file
+      genomeDir: star_indices_folder
+      outSAMtype:
+        default: [BAM, SortedByCoordinate]
+      outBAMsortingThreadN: threads
+      clip3pAdapterSeq: adapter
+      outFilterMismatchNmax:
+        default: 5
+      alignSJDBoverhangMin:
+        default: 1
+      seedSearchStartLmax:
+        default: 15
+      threads: threads
+    out: [aligned_file, log_final, uniquely_mapped_reads_number, log_out, log_progress, log_std, log_sj]
+
+  samtools_sort_index:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: star_aligner/aligned_file
+      sort_output_filename:
+        source: extract_fastq/fastq_file
+        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
+      threads: threads
+    out: [bam_bai_pair]
+
+  bam_to_bigwig:
+    run: ../tools/bam-bedgraph-bigwig.cwl
+    in:
+      bam_file: samtools_sort_index/bam_bai_pair
+      chrom_length_file: chrom_length_file
+      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
+#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
+    out: [bigwig_file]
 
   mirdeep2:
     label: "Run pipeline for calling germline variants, and read, alignment, and variant stat generation"

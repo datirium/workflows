@@ -164,7 +164,9 @@ if [[ $organism == "dm3" ]]; then taxid="7227"; fi
 # mirdeep2 list of detected mirs for overlapping with exocarta and targetscan
 grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_known.tsv
 # make input file for DESeq
-awk -F'\t' 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{split($1,chr_pos,"_"); printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", $1, $2, chr_pos[1], chr_pos[2], chr_pos[2]+length($3), "Strand", $7, "Rpkm")}' mirs_known.tsv > deseq_input.tsv
+#		get total read count for pseudoRPKM values
+mature_read_total=$(tail -n+2 mirs_known.tsv | awk -F'\t' '{total+=$7}END{print(total)}')
+tail -n+2 mirs_known.tsv | awk -F'\t' -v total="$mature_read_total" 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%.0f\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{split($1,chr_pos,"_"); printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", $1, $2, chr_pos[1], chr_pos[2], chr_pos[2]+length($3), ".", $7, ($7/total)*1000000)}' > deseq_input.tsv
 # mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
 grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_novel.tsv
 # trim down mir name to the part that will match mirs in other lists
@@ -183,7 +185,7 @@ if [[ "$exo_org" != "" ]]; then
 	awk -F'\t' '{if(FNR==NR){exo[$3]=$0}else{print(exo[$0])}}' exo_$organism.tsv mirs_known_names_for_overlap.tsv | sort | uniq | grep "Clear hit to Entrez gene ID" >> mirs_known_exocarta.tsv
 	# make file with mirdeep2 stats for detected exocarta mirs
 	head -1 mirs_known.tsv > mirs_known_exocarta_deepmirs.tsv
-	cut -f3 mirs_known_exocarta.tsv | while read mir; do grep "$organism-$mir" mirs_known.tsv; done | sort | uniq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' >> mirs_known_exocarta_deepmirs.tsv
+	cut -f3 mirs_known_exocarta.tsv | while read mir; do grep "$organism-$mir" mirs_known.tsv; done | sort | uniq >> mirs_known_exocarta_deepmirs.tsv
 else
 	printf "\tOrganism $organism does not have miRNAs in Exocarta DB for miRNA found in exosomes, skipping step."
 fi
@@ -212,7 +214,7 @@ reads_gt0_alignment=$(grep "reads with at least one alignment" bowtie.log | sed 
 printf "\tmiRNA metrics...\n"
 mirs_total_novel=$(tail -n+2 mirs_novel.tsv | wc -l)
 mirs_total_known=$(tail -n+2 mirs_known.tsv | wc -l)
-
+mirs_total_exosome=$(tail -n+2 mirs_known_exocarta_deepmirs.tsv | wc -l)
 
 
 
@@ -246,5 +248,7 @@ printf "-" >> overview.md
 printf " Novel miRNA detected: $mirs_total_novel\n" >> overview.md
 printf "-" >> overview.md
 printf " Known miRNA detected: $mirs_total_known\n" >> overview.md
+printf "-" >> overview.md
+printf " Exosome miRNA detected: $mirs_total_exosome\n" >> overview.md
 
 printf "\n\nWorkflow script run_mirdeep2.sh complete!\n"
