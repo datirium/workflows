@@ -11,7 +11,7 @@ requirements:
 
 'sd:upstream':
   genome_indices:
-    - "genome-indices.cwl"
+  - "genome-indices.cwl"
 
 
 inputs:

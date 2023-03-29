@@ -10,9 +10,9 @@ requirements:
 
 
 'sd:upstream':
-  sc_rnaseq_sample:
+  sc_experiment:
   - "single-cell-preprocess-cellranger.cwl"
-  - "cellranger-aggr.cwl"
+  - "cellranger-multi.cwl"
 
 
 inputs:
@@ -25,14 +25,14 @@ inputs:
 
   filtered_feature_bc_matrix_h5:
     type: File
-    label: "scRNA-Seq Cell Ranger Experiment"
-    doc: "Filtered feature-barcode matrices in HDF5 format from cellranger count or aggr results"
-    'sd:upstreamSource': "sc_rnaseq_sample/filtered_feature_bc_matrix_h5"
+    label: "Single-cell Experiment"
+    doc: "Filtered feature-barcode matrices in HDF5 format from cellranger count/multi"
+    'sd:upstreamSource': "sc_experiment/filtered_feature_bc_matrix_h5"
     'sd:localLabel': true
 
   selected_barcodes:
     type: File?
-    label: "A CSV file containing a list of cell barcodes to use for reanalysis"
+    label: "CSV file containing a list of cell barcodes to use for reanalysis"
     doc: |
       A CSV file containing a list of cell barcodes to use for reanalysis,
       e.g. barcodes exported from Loupe Browser. All barcodes must be present
@@ -40,7 +40,7 @@ inputs:
 
   selected_genes:
     type: File?
-    label: "A CSV file containing a list of gene IDs to use for reanalysis"
+    label: "CSV file containing a list of gene IDs to use for reanalysis"
     doc: |
       A CSV file containing a list of gene IDs to use for reanalysis (corresponding
       to the gene_id field of the reference GTF). All gene IDs must be present in
@@ -49,7 +49,7 @@ inputs:
 
   excluded_genes:
     type: File?
-    label: "A CSV file containing a list of gene IDs to exclude for reanalysis. Applied after setting selected genes"
+    label: "CSV file containing a list of gene IDs to exclude for reanalysis. Applied after setting selected genes"
     doc: |
       A CSV file containing a list of gene IDs to exclude for reanalysis (corresponding
       to the gene_id field of the reference GTF). All gene IDs must be present in
@@ -57,7 +57,7 @@ inputs:
       Note that only gene features are used in secondary analysis. Feature Barcode features
       are ignored.
 
-  force_cells_num:
+  force_cells:
     type: int?
     default: null
     label: "Force pipeline to use this number of cells, bypassing the cell detection algorithm"
@@ -427,6 +427,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  filtered_feature_bc_matrix_folder:
+    type: File
+    outputSource: compress_filtered_feature_bc_matrix_folder/compressed_folder
+    label: "Compressed folder with filtered feature-barcode matrices"
+    doc: |
+      Compressed folder with filtered feature-barcode matrices containing only cellular barcodes in MEX format.
+      When implemented, in Targeted Gene Expression samples, the non-targeted genes won't be present.
+
   reanalyze_params:
     type: File
     outputSource: reanalyze/reanalyze_params
@@ -440,6 +448,31 @@ outputs:
     label: "Loupe Browser visualization and analysis file for reanalyzed results"
     doc: |
       Loupe Browser visualization and analysis file for reanalyzed results
+
+  compressed_html_data_folder:
+    type: File
+    outputSource: compress_html_data_folder/compressed_folder
+    label: "Compressed folder with CellBrowser formatted results"
+    doc: |
+      Compressed folder with CellBrowser formatted results
+
+  html_data_folder:
+    type: Directory
+    outputSource: cellbrowser_build/html_data
+    label: "Folder with not compressed CellBrowser formatted results"
+    doc: |
+      Folder with not compressed CellBrowser formatted results
+
+  cellbrowser_report:
+    type: File
+    outputSource: cellbrowser_build/index_html_file
+    label: "CellBrowser formatted Cellranger report"
+    doc: |
+      CellBrowser formatted Cellranger report
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
   reanalyze_stdout_log:
     type: File
@@ -465,7 +498,7 @@ steps:
       selected_barcodes: selected_barcodes
       selected_genes: selected_genes
       excluded_genes: excluded_genes
-      force_cells_num: force_cells_num
+      force_cells: force_cells
       threads: threads
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
@@ -497,15 +530,39 @@ steps:
     out:
     - secondary_analysis_report_folder
     - web_summary_report
+    - filtered_feature_bc_matrix_folder
     - reanalyze_params
     - loupe_browser_track
     - stdout_log
     - stderr_log
 
+  compress_filtered_feature_bc_matrix_folder:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: reanalyze/filtered_feature_bc_matrix_folder
+    out:
+    - compressed_folder
+
   compress_secondary_analysis_report_folder:
     run: ../tools/tar-compress.cwl
     in:
       folder_to_compress: reanalyze/secondary_analysis_report_folder
+    out:
+    - compressed_folder
+
+  cellbrowser_build:
+    run: ../tools/cellbrowser-build-cellranger.cwl
+    in:
+      secondary_analysis_report_folder: reanalyze/secondary_analysis_report_folder
+      filtered_feature_bc_matrix_folder: reanalyze/filtered_feature_bc_matrix_folder
+    out:
+    - html_data
+    - index_html_file
+
+  compress_html_data_folder:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: cellbrowser_build/html_data
     out:
     - compressed_folder
 
@@ -518,7 +575,7 @@ $schemas:
 
 label: "Cellranger Reanalyze"
 s:name: "Cellranger Reanalyze"
-s:alternateName: "Reruns secondary analysis for Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
+s:alternateName: "Reruns secondary analysis for Cell Ranger Count Gene Expression or Cell Ranger Multi experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-reanalyze.cwl
 s:codeRepository: https://github.com/datirium/workflows
