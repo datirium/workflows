@@ -37,13 +37,6 @@ inputs:
     sd:preview:
       position: 4
 
-  star_indices_folder:
-    type: Directory
-    label: "STAR indices folder"
-    'sd:upstreamSource': "genome_indices/star_indices"
-    doc: |
-      Path to STAR generated indices for alignment and IGV visualization
-
   chrom_length_file:
     type: File
     label: "Chromosome length file"
@@ -147,19 +140,45 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-  bigwig:
+  bambai_pair:
     type: File
-    format: "http://edamontology.org/format_3006"
-    label: "BigWig file"
-    doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/bigwig_file
+    format: "http://edamontology.org/format_2572"
+    label: "Coordinate sorted BAM alignment file (+index BAI)"
+    doc: "Coordinate sorted BAM file and BAI index file"
+    outputSource: samtools_sort_index/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'wig'
-        name: "BigWig Track"
-        height: 120
+        optional: true
+        type: 'alignment'
+        format: 'bam'
+        name: "BAM Track"
+        displayMode: "SQUISHED"
+
+  bowtie_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "Bowtie alignment log"
+    doc: "Bowtie alignment log file"
+    outputSource: bowtie_aligner/log_file
+
+  preseq_estimates:
+    type: File?
+    label: "Preseq estimates"
+    format: "http://edamontology.org/format_3475"
+    doc: "Preseq estimated results"
+    outputSource: preseq/estimates_file
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'QC Plots'
+        Title: 'Preseq Estimates'
+        xAxisTitle: 'Total reads count'
+        yAxisTitle: 'Expected distinct reads count'
+        colors: ["#4b78a3"]
+        height: 500
+        data: [$1, $2]
+        comparable: "preseq"
 
   mirdeep2_result:
     type: File
@@ -309,42 +328,66 @@ steps:
       input_file: extract_fastq/fastq_file
     out: [statistics_file]
 
-  star_aligner:
-    run: ../tools/star-alignreads.cwl
+  trim_fastq:
+    run: ../tools/trimgalore.cwl
     in:
-      readFilesIn: extract_fastq/fastq_file
-      genomeDir: star_indices_folder
-      outSAMtype:
-        default: [BAM, SortedByCoordinate]
-      outBAMsortingThreadN: threads
-      clip3pAdapterSeq: adapter
-      outFilterMismatchNmax:
+      input_file: extract_fastq/fastq_file
+      adapter: adapter
+      dont_gzip:
+        default: true
+      length:
+        default: 30
+    out:
+      - trimmed_file
+      - report_file
+
+# The m param is set to mirdeep mapper.pl default
+  bowtie_aligner:
+    run: ../tools/bowtie-alignreads.cwl
+    in:
+      upstream_filelist: trim_fastq/trimmed_file
+      indices_folder: index_directory
+      v:
+        default: 3
+      m:
         default: 5
-      alignSJDBoverhangMin:
-        default: 1
-      seedSearchStartLmax:
-        default: 15
+      unaligned_prefix:
+        default: "unaligned_reads"
+      best:
+        default: true
+      strata:
+        default: true
+      sam:
+        default: true
       threads: threads
-    out: [aligned_file, log_final, uniquely_mapped_reads_number, log_out, log_progress, log_std, log_sj]
+    out: [sam_file, log_file, unaligned_fastq, multimapped_fastq]
 
   samtools_sort_index:
     run: ../tools/samtools-sort-index.cwl
     in:
-      sort_input: star_aligner/aligned_file
-      sort_output_filename:
-        source: extract_fastq/fastq_file
-        valueFrom: $(self.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+'.bam')
+      sort_input: bowtie_aligner/sam_file
       threads: threads
     out: [bam_bai_pair]
 
-  bam_to_bigwig:
-    run: ../tools/bam-bedgraph-bigwig.cwl
+  clean_sam_headers_for_preseq:
+    run: ../tools/samtools-clean-headers.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      chrom_length_file: chrom_length_file
-      mapped_reads_number: star_aligner/uniquely_mapped_reads_number
-#     fragmentsize is not set (STAR gives only read length). It will be calculated automatically by bedtools genomecov.
-    out: [bigwig_file]
+    out: [preseq_bam]
+
+  preseq:
+    label: "Sequencing depth estimation"
+    doc: |
+      Estimates the complexity of the sequencing library, evaluates how many reads can
+      be expected from the additional sequencing of the same experiment.
+    run: ../tools/preseq-lc-extrap.cwl
+    in:
+      bam_file: clean_sam_headers_for_preseq/preseq_bam
+      pe_mode:
+        default: true
+      extrapolation:
+        default: 1000000000
+    out: [estimates_file]
 
   mirdeep2:
     label: "Run pipeline for calling germline variants, and read, alignment, and variant stat generation"

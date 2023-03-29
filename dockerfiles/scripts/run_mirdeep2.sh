@@ -129,7 +129,7 @@ bt2name=$(basename $BT2DIR)
 bt2index=$BT2DIR/$bt2name
 # mapper
 # 	note: converting fastq to fasta separately takes longer than simply using the FASTQ with the -e and -h params
-time mapper.pl $FASTQ -e -h -i -j -k $ADAPTER -l 18 -m -p $BT2DIR/$bt2name -s collapsed.fasta -t mir.arf
+time mapper.pl $FASTQ -e -h -i -j -k $ADAPTER -l 18 -m -p $BT2DIR/$bt2name -s collapsed.fasta -t mir.arf -o $THREADS
 
 
 printf "\n\nStep 2 - the miRDeep2 module (identifies known and novel miRNAs in high-throughput sequencing data)\n"
@@ -166,7 +166,7 @@ grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep
 # make input file for DESeq
 #		get total read count for pseudoRPKM values
 mature_read_total=$(tail -n+2 mirs_known.tsv | awk -F'\t' '{total+=$7}END{print(total)}')
-tail -n+2 mirs_known.tsv | awk -F'\t' -v total="$mature_read_total" 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%.0f\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{split($1,chr_pos,"_"); printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", $1, $2, chr_pos[1], chr_pos[2], chr_pos[2]+length($3), ".", $7, ($7/total)*1000000)}' > deseq_input.tsv
+tail -n+2 mirs_known.tsv | awk -F'\t' -v total="$mature_read_total" 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{split($1,chr_pos,"_"); printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%.0f\n", $1, $2, chr_pos[1], chr_pos[2], chr_pos[2]+length($3), ".", $7, ($7/total)*1000000)}' > deseq_input.tsv
 # mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
 grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_novel.tsv
 # trim down mir name to the part that will match mirs in other lists
