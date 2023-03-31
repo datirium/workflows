@@ -154,7 +154,7 @@ outputs:
         type: 'alignment'
         format: 'bam'
         name: "BAM Track"
-        displayMode: "SQUISHED"
+        displayMode: "EXPANDED"
 
   bowtie_log:
     type: File
