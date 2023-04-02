@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.16
 
 
 inputs:
@@ -712,11 +712,12 @@ doc: |
 
 s:about: |
   usage: sc_rna_cluster.R
-        [-h] --query QUERY [--dimensions [DIMENSIONS ...]]
+        [-h] --query QUERY [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
         [--ametric {euclidean,cosine,manhattan,hamming}]
         [--algorithm {louvain,mult-louvain,slm,leiden}]
-        [--resolution [RESOLUTION ...]] [--genes [GENES ...]] [--diffgenes]
-        [--logfc LOGFC] [--minpct MINPCT] [--onlypos]
+        [--resolution [RESOLUTION [RESOLUTION ...]]]
+        [--genes [GENES [GENES ...]]] [--diffgenes] [--logfc LOGFC]
+        [--minpct MINPCT] [--onlypos]
         [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
         [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
@@ -724,14 +725,14 @@ s:about: |
 
   Single-cell RNA-Seq Cluster Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
                           stored in the RNA assay, as well as 'pca' and
                           'rnaumap' dimensionality reductions applied to that
                           assay.
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when constructing nearest-
                           neighbor graph before clustering (from 1 to 50). If
                           single value N is provided, use from 1 to N
@@ -743,14 +744,15 @@ s:about: |
     --algorithm {louvain,mult-louvain,slm,leiden}
                           Algorithm for modularity optimization when running
                           clustering. Default: louvain
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution applied to the constructed
                           nearest-neighbor graph. Can be set as an array but
                           only the first item from the list will be used for
                           cluster labels and gene markers in the UCSC Cell
                           Browser when running with --cbbuild and --diffgenes
                           parameters. Default: 0.3, 0.5, 1.0
-    --genes [GENES ...]   Genes of interest to build genes expression plots.
+    --genes [GENES [GENES ...]]
+                          Genes of interest to build genes expression plots.
                           Default: None
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) between each pair of clusters for all

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.16
 
 
 inputs:
@@ -534,16 +534,16 @@ doc: |
 s:about: |
   usage: sc_rna_da_cells.R
         [-h] --query QUERY [--reduction REDUCTION]
-        [--dimensions [DIMENSIONS ...]] [--knn [KNN ...]] [--metadata METADATA]
-        --splitby SPLITBY --first FIRST --second SECOND
-        [--resolution [RESOLUTION ...]] [--ranges RANGES RANGES] [--pdf]
-        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--knn [KNN [KNN ...]]]
+        [--metadata METADATA] --splitby SPLITBY --first FIRST --second SECOND
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--ranges RANGES RANGES]
+        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Differential Abundance Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
@@ -554,12 +554,13 @@ s:about: |
     --reduction REDUCTION
                           Dimensionality reduction to be used for DA analysis.
                           Default: pca
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when running DA analysis (from 1
                           to 50). If single value N is provided, use from 1 to N
                           PCs. If multiple values are provided, subset to only
                           selected PCs. Default: from 1 to 10
-    --knn [KNN ...]       Array of k values for kNN graph construction when
+    --knn [KNN [KNN ...]]
+                          Array of k values for kNN graph construction when
                           calculating the score vector for each cell to
                           represent the DA behavior in the neighborhood.
                           Default: calculated based on the cells number
@@ -581,7 +582,7 @@ s:about: |
     --second SECOND       Value from the Seurat object metadata column set with
                           --splitby to define the second group of cells for DA
                           analysis.
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution applied to DA cells to identify
                           DA cells populations. Can be set as an array. Default:
                           0.01, 0.03, 0.05

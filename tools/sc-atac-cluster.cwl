@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.16
 
 
 inputs:
@@ -566,11 +566,12 @@ doc: |
 
 s:about: |
   usage: sc_atac_cluster.R
-        [-h] --query QUERY [--dimensions [DIMENSIONS ...]]
+        [-h] --query QUERY [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
         [--ametric {euclidean,cosine,manhattan,hamming}]
         [--algorithm {louvain,mult-louvain,slm,leiden}]
-        [--resolution [RESOLUTION ...]] [--fragments FRAGMENTS]
-        [--genes [GENES ...]] [--diffpeaks] [--logfc LOGFC] [--minpct MINPCT]
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--fragments FRAGMENTS]
+        [--genes [GENES [GENES ...]]] [--diffpeaks] [--logfc LOGFC]
+        [--minpct MINPCT]
         [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
         [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
@@ -578,14 +579,14 @@ s:about: |
 
   Single-cell ATAC-Seq Cluster Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include chromatin accessibility
                           information stored in the ATAC assay, as well as
                           'atac_lsi' and 'atacumap' dimensionality reductions
                           applied to that assay.
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when constructing nearest-
                           neighbor graph before clustering (from 1 to 50). If
                           single value N is provided, use from 2 to N
@@ -597,7 +598,7 @@ s:about: |
     --algorithm {louvain,mult-louvain,slm,leiden}
                           Algorithm for modularity optimization when running
                           clustering. Default: slm
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution applied to the constructed
                           nearest-neighbor graph. Can be set as an array but
                           only the first item from the list will be used for
@@ -608,7 +609,8 @@ s:about: |
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved
                           in TSV format with tbi-index file.
-    --genes [GENES ...]   Genes of interest to build Tn5 insertion frequency
+    --genes [GENES [GENES ...]]
+                          Genes of interest to build Tn5 insertion frequency
                           plots for the nearest peaks. If loaded Seurat object
                           includes genes expression information in the RNA assay
                           it will be additionally shown on the right side of the

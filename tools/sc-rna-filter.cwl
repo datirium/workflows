@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.16
 
 
 inputs:
@@ -138,6 +138,34 @@ inputs:
       Include cells with the percentage of transcripts mapped to mitochondrial
       genes not bigger than this value.
       Default: 5 (applied to all datasets)
+
+  remove_doublets:
+    type: boolean?
+    inputBinding:
+      prefix: "--removedoublets"
+    doc: |
+      Remove cells that were identified as doublets. Cells with
+      RNA UMI < 200 will not be evaluated. Default: do not remove
+      doublets
+
+  rna_doublet_rate:
+    type: float?
+    inputBinding:
+      prefix: "--rnadbr"
+    doc: |
+      Expected RNA doublet rate. Default: 1 percent per
+      thousand cells captured with 10x genomics
+
+  rna_doublet_rate_sd:
+    type: float?
+    inputBinding:
+      prefix: "--rnadbrsd"
+    doc: |
+      Uncertainty range in the RNA doublet rate, interpreted as
+      a +/- around the value provided in --rnadbr. Set to 0 to
+      disable. Set to 1 to make the threshold depend entirely
+      on the misclassification rate. Default: 40 percents of the
+      value provided in --rnadbr
 
   export_pdf_plots:
     type: boolean?
@@ -377,6 +405,22 @@ outputs:
       QC metrics per cell density (not filtered).
       PDF format
 
+  raw_rnadbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_rnadbl.png"
+    doc: |
+      Percentage of RNA doublets per dataset (not filtered).
+      PNG format
+
+  raw_rnadbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_rnadbl.pdf"
+    doc: |
+      Percentage of RNA doublets per dataset (not filtered).
+      PDF format
+
   raw_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
@@ -587,6 +631,22 @@ outputs:
       QC metrics per cell density (filtered).
       PDF format
 
+  fltr_rnadbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_rnadbl.png"
+    doc: |
+      Percentage of RNA doublets per dataset (filtered).
+      PNG format
+
+  fltr_rnadbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_rnadbl.pdf"
+    doc: |
+      Percentage of RNA doublets per dataset (filtered).
+      PDF format
+
   fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
@@ -775,16 +835,19 @@ s:about: |
   usage: sc_rna_filter.R
         [-h] --mex MEX [MEX ...] --identity IDENTITY [--grouping GROUPING]
         [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
-        [--mingenes [MINGENES ...]] [--maxgenes [MAXGENES ...]]
-        [--rnaminumi [RNAMINUMI ...]] [--minnovelty [MINNOVELTY ...]]
-        [--mitopattern MITOPATTERN] [--maxmt MAXMT] [--pdf] [--verbose]
+        [--mingenes [MINGENES [MINGENES ...]]]
+        [--maxgenes [MAXGENES [MAXGENES ...]]]
+        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
+        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+        [--mitopattern MITOPATTERN] [--maxmt MAXMT] [--removedoublets]
+        [--rnadbr RNADBR] [--rnadbrsd RNADBRSD] [--pdf] [--verbose]
         [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Filtering Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --mex MEX [MEX ...]   Path to the folder with feature-barcode matrix from
                           Cell Ranger Count/Aggregate experiment in MEX format.
@@ -819,26 +882,26 @@ s:about: |
                           cells. Ignored when '--mex' points to the feature-
                           barcode matrices from the multiple Cell Ranger Count
                           experiments. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES ...]
+    --mingenes [MINGENES [MINGENES ...]]
                           Include cells where at least this many genes are
                           detected. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES ...]
+    --maxgenes [MAXGENES [MAXGENES ...]]
                           Include cells with the number of genes not bigger than
                           this value. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --rnaminumi [RNAMINUMI ...]
+    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
                           Include cells where at least this many UMI
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the '--mex' input based on
                           the '--identity' file. Default: 500 (applied to all
                           datasets)
-    --minnovelty [MINNOVELTY ...]
+    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for as log10(genes)/log10(UMI).
                           If multiple values provided, each of them will be
@@ -851,6 +914,16 @@ s:about: |
     --maxmt MAXMT         Include cells with the percentage of transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
+    --removedoublets      Remove cells that were identified as doublets. Cells
+                          with RNA UMI < 200 will not be evaluated. Default: do
+                          not remove doublets
+    --rnadbr RNADBR       Expected RNA doublet rate. Default: 1 percent per
+                          thousand cells captured with 10x genomics
+    --rnadbrsd RNADBRSD   Uncertainty range in the RNA doublet rate, interpreted
+                          as a +/- around the value provided in --rnadbr. Set to
+                          0 to disable. Set to 1 to make the threshold depend
+                          entirely on the misclassification rate. Default: 40
+                          percents of the value provided in --rnadbr
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false

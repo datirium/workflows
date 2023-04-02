@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.16
 
 
 inputs:
@@ -911,14 +911,14 @@ s:about: |
         [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
         [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
         [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--fragments FRAGMENTS] [--genes [GENES ...]] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--fragments FRAGMENTS] [--genes [GENES [GENES ...]]] [--pdf]
+        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Manual Cell Type Assignment
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression and/or chromatin
@@ -985,7 +985,8 @@ s:about: |
                           used in the loaded Seurat object. File should be saved
                           in TSV format with tbi-index file. Ignored if the
                           loaded Seurat object doesn't include ATAC assay.
-    --genes [GENES ...]   Genes of interest to build gene expression and/or Tn5
+    --genes [GENES [GENES ...]]
+                          Genes of interest to build gene expression and/or Tn5
                           insertion frequency plots for the nearest peaks. To
                           build gene expression plots the loaded Seurat object
                           should include RNA assay. To build Tn5 insertion

@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.16
 
 
 inputs:
@@ -257,6 +257,53 @@ inputs:
       maximum nucleosome signal, and minimum TSS enrichment
       scores filters.
       Default: do not call peaks
+
+  remove_doublets:
+    type: boolean?
+    inputBinding:
+      prefix: "--removedoublets"
+    doc: |
+      Remove cells that were identified as doublets in either
+      RNA or ATAC assays.
+      Default: do not remove doublets
+
+  rna_doublet_rate:
+    type: float?
+    inputBinding:
+      prefix: "--rnadbr"
+    doc: |
+      Expected RNA doublet rate. Default: 1 percent per
+      thousand cells captured with 10x genomics
+
+  rna_doublet_rate_sd:
+    type: float?
+    inputBinding:
+      prefix: "--rnadbrsd"
+    doc: |
+      Uncertainty range in the RNA doublet rate, interpreted as
+      a +/- around the value provided in --rnadbr. Set to 0 to
+      disable. Set to 1 to make the threshold depend entirely
+      on the misclassification rate. Default: 40 percents of the
+      value provided in --rnadbr
+
+  atac_doublet_rate:
+    type: float?
+    inputBinding:
+      prefix: "--atacdbr"
+    doc: |
+      Expected ATAC doublet rate. Default: 1 percent per thousand
+      cells captured with 10x genomics
+
+  atac_doublet_rate_sd:
+    type: float?
+    inputBinding:
+      prefix: "--atacdbrsd"
+    doc: |
+      Uncertainty range in the ATAC doublet rate, interpreted as
+      a +/- around the value provided in --atacdbr. Set to 0 to
+      disable. Set to 1 to make the threshold depend entirely
+      on the misclassification rate. Default: 40 percents of the
+      value provided in --atacdbr
 
   export_pdf_plots:
     type: boolean?
@@ -574,6 +621,54 @@ outputs:
       glob: "*_raw_qc_mtrcs_dnst.pdf"
     doc: |
       QC metrics per cell density (not filtered).
+      PDF format
+
+  raw_rnadbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_rnadbl.png"
+    doc: |
+      Percentage of RNA doublets per dataset (not filtered).
+      PNG format
+
+  raw_rnadbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_rnadbl.pdf"
+    doc: |
+      Percentage of RNA doublets per dataset (not filtered).
+      PDF format
+
+  raw_atacdbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_atacdbl.png"
+    doc: |
+      Percentage of ATAC doublets per dataset (not filtered).
+      PNG format
+
+  raw_atacdbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_atacdbl.pdf"
+    doc: |
+      Percentage of ATAC doublets per dataset (not filtered).
+      PDF format
+
+  raw_vrlpdbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_vrlpdbl.png"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (not filtered).
+      PNG format
+
+  raw_vrlpdbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_vrlpdbl.pdf"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (not filtered).
       PDF format
 
   raw_tss_nrch_plot_png:
@@ -948,6 +1043,54 @@ outputs:
       QC metrics per cell density (intermediate filtered).
       PDF format
 
+  mid_fltr_rnadbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_rnadbl.png"
+    doc: |
+      Percentage of RNA doublets per dataset (intermediate filtered).
+      PNG format
+
+  mid_fltr_rnadbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_rnadbl.pdf"
+    doc: |
+      Percentage of RNA doublets per dataset (intermediate filtered).
+      PDF format
+
+  mid_fltr_atacdbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_atacdbl.png"
+    doc: |
+      Percentage of ATAC doublets per dataset (intermediate filtered).
+      PNG format
+
+  mid_fltr_atacdbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_atacdbl.pdf"
+    doc: |
+      Percentage of ATAC doublets per dataset (intermediate filtered).
+      PDF format
+
+  mid_fltr_vrlpdbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_vrlpdbl.png"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (intermediate filtered).
+      PNG format
+
+  mid_fltr_vrlpdbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_mid_fltr_vrlpdbl.pdf"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (intermediate filtered).
+      PDF format
+
   mid_fltr_tss_nrch_plot_png:
     type: File?
     outputBinding:
@@ -1288,6 +1431,54 @@ outputs:
       UMI per cell correlation for RNA vs ATAC assays (filtered).
       PDF format
 
+  fltr_rnadbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_rnadbl.png"
+    doc: |
+      Percentage of RNA doublets per dataset (filtered).
+      PNG format
+
+  fltr_rnadbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_rnadbl.pdf"
+    doc: |
+      Percentage of RNA doublets per dataset (filtered).
+      PDF format
+
+  fltr_atacdbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_atacdbl.png"
+    doc: |
+      Percentage of ATAC doublets per dataset (filtered).
+      PNG format
+
+  fltr_atacdbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_atacdbl.pdf"
+    doc: |
+      Percentage of ATAC doublets per dataset (filtered).
+      PDF format
+
+  fltr_vrlpdbl_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_vrlpdbl.png"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (filtered).
+      PNG format
+
+  fltr_vrlpdbl_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_vrlpdbl.pdf"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (filtered).
+      PDF format
+
   fltr_tss_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
@@ -1591,20 +1782,25 @@ s:about: |
         [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
         ANNOTATIONS [--grouping GROUPING] [--blacklist BLACKLIST]
         [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
-        [--mingenes [MINGENES ...]] [--maxgenes [MAXGENES ...]]
-        [--rnaminumi [RNAMINUMI ...]] [--mitopattern MITOPATTERN]
-        [--maxmt MAXMT] [--minnovelty [MINNOVELTY ...]]
-        [--atacmincells ATACMINCELLS] [--atacminumi [ATACMINUMI ...]]
-        [--maxnuclsignal [MAXNUCLSIGNAL ...]]
-        [--mintssenrich [MINTSSENRICH ...]] [--minfrip [MINFRIP ...]]
-        [--maxblacklist [MAXBLACKLIST ...]] [--callby CALLBY] [--pdf]
-        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--mingenes [MINGENES [MINGENES ...]]]
+        [--maxgenes [MAXGENES [MAXGENES ...]]]
+        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]] [--mitopattern MITOPATTERN]
+        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+        [--atacmincells ATACMINCELLS]
+        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+        [--minfrip [MINFRIP [MINFRIP ...]]]
+        [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]] [--callby CALLBY]
+        [--removedoublets] [--rnadbr RNADBR] [--rnadbrsd RNADBRSD]
+        [--atacdbr ATACDBR] [--atacdbrsd ATACDBRSD] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --mex MEX             Path to the folder with feature-barcode matrix from
                           Cell Ranger ARC Count/Aggregate experiment in MEX
@@ -1642,19 +1838,19 @@ s:about: |
     --rnamincells RNAMINCELLS
                           Include only genes detected in at least this many
                           cells. Default: 5 (applied to all datasets)
-    --mingenes [MINGENES ...]
+    --mingenes [MINGENES [MINGENES ...]]
                           Include cells where at least this many genes are
                           detected. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           250 (applied to all datasets)
-    --maxgenes [MAXGENES ...]
+    --maxgenes [MAXGENES [MAXGENES ...]]
                           Include cells with the number of genes not bigger than
                           this value. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --rnaminumi [RNAMINUMI ...]
+    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
                           Include cells where at least this many UMI (RNA
                           transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
@@ -1667,7 +1863,7 @@ s:about: |
     --maxmt MAXMT         Include cells with the percentage of transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
-    --minnovelty [MINNOVELTY ...]
+    --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for as log10(genes)/log10(UMI)
                           for RNA assay. If multiple values provided, each of
@@ -1677,14 +1873,14 @@ s:about: |
     --atacmincells ATACMINCELLS
                           Include only peaks detected in at least this many
                           cells. Default: 5 (applied to all datasets)
-    --atacminumi [ATACMINUMI ...]
+    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
                           Include cells where at least this many UMI (ATAC
                           transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the '--mex' input based on
                           the '--identity' file. Default: 1000 (applied to all
                           datasets)
-    --maxnuclsignal [MAXNUCLSIGNAL ...]
+    --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
@@ -1692,7 +1888,7 @@ s:about: |
                           them will be applied to the correspondent dataset from
                           the '--mex' input based on the '--identity' file.
                           Default: 4 (applied to all datasets)
-    --mintssenrich [MINTSSENRICH ...]
+    --mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]
                           Include cells with the TSS enrichment score not lower
                           than this value. Score is calculated based on the
                           ratio of fragments centered at the TSS to fragments in
@@ -1700,14 +1896,14 @@ s:about: |
                           each of them will be applied to the correspondent
                           dataset from the '--mex' input based on the '--
                           identity' file. Default: 2 (applied to all datasets)
-    --minfrip [MINFRIP ...]
+    --minfrip [MINFRIP [MINFRIP ...]]
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the '--mex'
                           input based on the '--identity' file. FRiP is
                           calculated for fragments. Default: 0.15 (applied to
                           all datasets)
-    --maxblacklist [MAXBLACKLIST ...]
+    --maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]
                           Include cells with the fraction of fragments in
                           genomic blacklist regions not bigger than this value.
                           If multiple values provided, each of them will be
@@ -1722,6 +1918,25 @@ s:about: |
                           only after applying all RNA related thresholds,
                           maximum nucleosome signal, and minimum TSS enrichment
                           scores filters. Default: do not call peaks
+    --removedoublets      Remove cells that were identified as doublets in
+                          either RNA or ATAC assays. Default: do not remove
+                          doublets
+    --rnadbr RNADBR       Expected RNA doublet rate. Default: 1 percent per
+                          thousand cells captured with 10x genomics
+    --rnadbrsd RNADBRSD   Uncertainty range in the RNA doublet rate, interpreted
+                          as a +/- around the value provided in --rnadbr. Set to
+                          0 to disable. Set to 1 to make the threshold depend
+                          entirely on the misclassification rate. Default: 40
+                          percents of the value provided in --rnadbr
+    --atacdbr ATACDBR     Expected ATAC doublet rate. Default: 1 percent per
+                          thousand cells captured with 10x genomics
+    --atacdbrsd ATACDBRSD
+                          Uncertainty range in the ATAC doublet rate,
+                          interpreted as a +/- around the value provided in
+                          --atacdbr. Set to 0 to disable. Set to 1 to make the
+                          threshold depend entirely on the misclassification
+                          rate. Default: 40 percents of the value provided in
+                          --atacdbr
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false

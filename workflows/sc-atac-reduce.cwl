@@ -78,8 +78,8 @@ inputs:
       provided, use from 2 to N LSI components. If multiple
       values are provided, subset to only selected LSI
       components. In combination with --ntgr set to harmony,
-      selected principle components will be used in Harmony
-      integration.
+      multiple values will result in using all dimensions
+      starting from 1(!) to the max of the provided values.
       Default: from 2 to 10
 
   normalization_method:
@@ -332,6 +332,78 @@ outputs:
         tab: 'Per dataset'
         Caption: 'Split by dataset cells UMAP'
 
+  umap_spl_umi_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_spl_umi_plot_png
+    label: "Split by the UMI per cell counts cells UMAP"
+    doc: |
+      Split by the UMI per cell counts cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by the UMI per cell counts cells UMAP'
+
+  umap_spl_peak_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_spl_peak_plot_png
+    label: "Split by the peaks per cell counts cells UMAP"
+    doc: |
+      Split by the peaks per cell counts cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by the peaks per cell counts cells UMAP'
+
+  umap_spl_tss_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_spl_tss_plot_png
+    label: "Split by the TSS enrichment score cells UMAP"
+    doc: |
+      Split by the TSS enrichment score cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by the TSS enrichment score cells UMAP'
+
+  umap_spl_ncls_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_spl_ncls_plot_png
+    label: "Split by the nucleosome signal cells UMAP"
+    doc: |
+      Split by the nucleosome signal cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by the nucleosome signal cells UMAP'
+
+  umap_spl_frip_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_spl_frip_plot_png
+    label: "Split by the FRiP cells UMAP"
+    doc: |
+      Split by the FRiP cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by the FRiP cells UMAP'
+
+  umap_spl_blck_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_spl_blck_plot_png
+    label: "Split by the genomic blacklist regions fraction cells UMAP"
+    doc: |
+      Split by the genomic blacklist regions fraction cells UMAP.
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Split by the genomic blacklist regions fraction cells UMAP'
+
   umap_spl_cnd_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_cnd_plot_png
@@ -409,6 +481,12 @@ steps:
     - umap_plot_png
     - umap_spl_idnt_plot_png
     - umap_spl_cnd_plot_png
+    - umap_spl_umi_plot_png
+    - umap_spl_peak_plot_png
+    - umap_spl_tss_plot_png
+    - umap_spl_ncls_plot_png
+    - umap_spl_frip_plot_png
+    - umap_spl_blck_plot_png
     - seurat_data_rds
     - stdout_log
     - stderr_log

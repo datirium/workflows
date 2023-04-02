@@ -248,6 +248,63 @@ inputs:
     'sd:layout':
       advanced: true
 
+  remove_doublets:
+    type: boolean?
+    default: false
+    label: "Remove cells that were identified as doublets in either RNA or ATAC assays"
+    doc: |
+      Remove cells that were identified as doublets in either
+      RNA or ATAC assays.
+      Default: do not remove doublets
+    'sd:layout':
+      advanced: true
+
+  rna_doublet_rate:
+    type: float?
+    default: null
+    label: "Expected RNA doublet rate"
+    doc: |
+      Expected RNA doublet rate. Default: 1 percent per
+      thousand cells captured with 10x genomics
+    'sd:layout':
+      advanced: true
+
+  rna_doublet_rate_sd:
+    type: float?
+    default: null
+    label: "Uncertainty range in the RNA doublet rate"
+    doc: |
+      Uncertainty range in the RNA doublet rate, interpreted as
+      a +/- around the value provided in --rnadbr. Set to 0 to
+      disable. Set to 1 to make the threshold depend entirely
+      on the misclassification rate. Default: 40 percents of the
+      value provided in --rnadbr
+    'sd:layout':
+      advanced: true
+
+  atac_doublet_rate:
+    type: float?
+    default: null
+    label: "Expected ATAC doublet rate"
+    doc: |
+      Expected ATAC doublet rate. Default: 1 percent per thousand
+      cells captured with 10x genomics
+    'sd:layout':
+      advanced: true
+
+  atac_doublet_rate_sd:
+    type: float?
+    default: null
+    label: "Uncertainty range in the ATAC doublet rate"
+    doc: |
+      Uncertainty range in the ATAC doublet rate, interpreted as
+      a +/- around the value provided in --atacdbr. Set to 0 to
+      disable. Set to 1 to make the threshold depend entirely
+      on the misclassification rate. Default: 40 percents of the
+      value provided in --atacdbr
+    'sd:layout':
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -484,6 +541,42 @@ outputs:
     - image:
         tab: 'Not filtered QC'
         Caption: 'QC metrics per cell density'
+
+  raw_rnadbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/raw_rnadbl_plot_png
+    label: "Percentage of RNA doublets per dataset (not filtered)"
+    doc: |
+      Percentage of RNA doublets per dataset (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Not filtered QC'
+        Caption: 'Percentage of RNA doublets per dataset'
+
+  raw_atacdbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/raw_atacdbl_plot_png
+    label: "Percentage of ATAC doublets per dataset (not filtered)"
+    doc: |
+      Percentage of ATAC doublets per dataset (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Not filtered QC'
+        Caption: 'Percentage of ATAC doublets per dataset'
+
+  raw_vrlpdbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/raw_vrlpdbl_plot_png
+    label: "Doublets overlap for RNA and ATAC assays per dataset (not filtered)"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (not filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Not filtered QC'
+        Caption: 'Doublets overlap for RNA and ATAC assays per dataset'
 
   raw_tss_nrch_plot_png:
     type: File?
@@ -763,6 +856,42 @@ outputs:
         tab: 'Mid. filtered QC'
         Caption: 'QC metrics per cell density'
 
+  mid_fltr_rnadbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_rnadbl_plot_png
+    label: "Percentage of RNA doublets per dataset (intermediate filtered)"
+    doc: |
+      Percentage of RNA doublets per dataset (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Percentage of RNA doublets per dataset'
+
+  mid_fltr_atacdbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_atacdbl_plot_png
+    label: "Percentage of ATAC doublets per dataset (intermediate filtered)"
+    doc: |
+      Percentage of ATAC doublets per dataset (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Percentage of ATAC doublets per dataset'
+
+  mid_fltr_vrlpdbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/mid_fltr_vrlpdbl_plot_png
+    label: "Doublets overlap for RNA and ATAC assays per dataset (intermediate filtered)"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (intermediate filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Mid. filtered QC'
+        Caption: 'Doublets overlap for RNA and ATAC assays per dataset'
+
   mid_fltr_tss_nrch_plot_png:
     type: File?
     outputSource: sc_multiome_filter/mid_fltr_tss_nrch_plot_png
@@ -1017,6 +1146,42 @@ outputs:
         tab: 'Filtered QC'
         Caption: 'UMI per cell correlation for RNA vs ATAC assays'
 
+  fltr_rnadbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/fltr_rnadbl_plot_png
+    label: "Percentage of RNA doublets per dataset (filtered)"
+    doc: |
+      Percentage of RNA doublets per dataset (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Filtered QC'
+        Caption: 'Percentage of RNA doublets per dataset'
+
+  fltr_atacdbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/fltr_atacdbl_plot_png
+    label: "Percentage of ATAC doublets per dataset (filtered)"
+    doc: |
+      Percentage of ATAC doublets per dataset (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Filtered QC'
+        Caption: 'Percentage of ATAC doublets per dataset'
+
+  fltr_vrlpdbl_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/fltr_vrlpdbl_plot_png
+    label: "Doublets overlap for RNA and ATAC assays per dataset (filtered)"
+    doc: |
+      Doublets overlap for RNA and ATAC assays per dataset (filtered).
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Filtered QC'
+        Caption: 'Doublets overlap for RNA and ATAC assays per dataset'
+
   fltr_tss_atac_umi_corr_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_tss_atac_umi_corr_plot_png
@@ -1256,6 +1421,19 @@ steps:
         source: maximum_blacklist_fraction
         valueFrom: $(split_numbers(self))
       call_by: call_by
+      remove_doublets: remove_doublets
+      rna_doublet_rate:
+        source: rna_doublet_rate
+        valueFrom: $(self==""?null:self)                 # safety measure
+      rna_doublet_rate_sd:
+        source: rna_doublet_rate_sd
+        valueFrom: $(self==""?null:self)                 # safety measure
+      atac_doublet_rate:
+        source: atac_doublet_rate
+        valueFrom: $(self==""?null:self)                 # safety measure
+      atac_doublet_rate_sd:
+        source: atac_doublet_rate_sd
+        valueFrom: $(self==""?null:self)                 # safety measure
       verbose:
         default: true
       export_ucsc_cb:
@@ -1285,6 +1463,9 @@ steps:
     - raw_rna_atac_umi_corr_plot_png
     - raw_tss_atac_umi_corr_plot_png
     - raw_qc_mtrcs_dnst_plot_png
+    - raw_rnadbl_plot_png
+    - raw_atacdbl_plot_png
+    - raw_vrlpdbl_plot_png
     - raw_tss_nrch_plot_png
     - raw_frgm_hist_png
     - raw_rna_umi_dnst_spl_cnd_plot_png
@@ -1308,6 +1489,9 @@ steps:
     - mid_fltr_rna_atac_umi_corr_plot_png
     - mid_fltr_tss_atac_umi_corr_plot_png
     - mid_fltr_qc_mtrcs_dnst_plot_png
+    - mid_fltr_rnadbl_plot_png
+    - mid_fltr_atacdbl_plot_png
+    - mid_fltr_vrlpdbl_plot_png
     - mid_fltr_tss_nrch_plot_png
     - mid_fltr_frgm_hist_png
     - mid_fltr_rna_umi_dnst_spl_cnd_plot_png
@@ -1329,6 +1513,9 @@ steps:
     - fltr_peak_dnst_plot_png
     - fltr_blck_dnst_plot_png
     - fltr_rna_atac_umi_corr_plot_png
+    - fltr_rnadbl_plot_png
+    - fltr_atacdbl_plot_png
+    - fltr_vrlpdbl_plot_png
     - fltr_tss_atac_umi_corr_plot_png
     - fltr_qc_mtrcs_dnst_plot_png
     - fltr_tss_nrch_plot_png
