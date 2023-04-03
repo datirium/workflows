@@ -5,7 +5,11 @@
 ##########################################################################################
 #
 # v1.0.0
-# - tbd
+# - 20230331, stable version runs mirdeep2 mapper and primary tool
+#		* identifys known/novel mature mirs
+#		* finds overlap with exocarta exosome associated mirs
+#		* finds predicted gene targets for each known mature mir
+#		* mir count/expression table for deseq input
 #
 ##########################################################################################
 printf "$(date)\nLog file for run_mirdeep2.sh\n\n"

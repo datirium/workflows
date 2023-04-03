@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-mirdeep2:dev
+  dockerPull: robertplayer/scidap-mirdeep2:v1.0.0
 
 
 inputs:

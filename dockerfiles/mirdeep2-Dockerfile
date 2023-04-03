@@ -15,6 +15,7 @@
 # Test dev:         docker run --rm -ti robertplayer/scidap-mirdeep2:dev /bin/bash
 # re-tag for PR:    docker tag mirdeep2-dev robertplayer/scidap-mirdeep2:v1.0.0
 # Push for PR:      docker image push robertplayer/scidap-mirdeep2:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-mirdeep2:v1.0.0 /bin/bash
 #           
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future

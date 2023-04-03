@@ -154,6 +154,7 @@ outputs:
         type: 'alignment'
         format: 'bam'
         name: "BAM Track"
+        height: 120
         displayMode: "EXPANDED"
 
   bowtie_log:
