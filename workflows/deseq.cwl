@@ -11,6 +11,7 @@ requirements:
 
 'sd:upstream':
   rnaseq_cond_1:
+    - "mirna-mirdeep2-se.cwl"
     - "rnaseq-se.cwl"
     - "rnaseq-pe.cwl"
     - "rnaseq-se-dutp.cwl"
@@ -24,6 +25,7 @@ requirements:
     - "trim-rnaseq-se-dutp.cwl"
     - "trim-quantseq-mrnaseq-se.cwl"
   rnaseq_cond_2:
+    - "mirna-mirdeep2-se.cwl"
     - "rnaseq-se.cwl"
     - "rnaseq-pe.cwl"
     - "rnaseq-se-dutp.cwl"

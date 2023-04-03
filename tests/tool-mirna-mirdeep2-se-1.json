@@ -1,0 +1,19 @@
+{
+  "threads": 4,
+  "bt2dir": {
+    "class": "Directory",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/genome_indices/hg38-indices/hg38_bowtie_genome/"
+  },
+  "refgenome": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/genome_indices/hg38-indices/hg38.fa",
+    "format": "http://edamontology.org/format_1929"
+  },
+  "genome": "hg38",
+  "adapter": "TCGTAT",
+  "fastq": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_mirna/data/SRR039611.fastq",
+    "format": "http://edamontology.org/format_1930"
+  }
+}
