@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.16
+  dockerPull: biowardrobe2/sc-tools:v0.0.17
 
 
 inputs:
@@ -301,6 +301,14 @@ inputs:
       prefix: "--h5ad"
     doc: |
       Save Seurat data to h5ad file.
+      Default: false
+
+  export_scope_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--scope"
+    doc: |
+      Save Seurat data to SCope compatible loom file.
       Default: false
 
   export_ucsc_cb:
@@ -670,6 +678,13 @@ outputs:
     doc: |
       Reduced Seurat data in h5ad format
 
+  seurat_data_scope:
+    type: File?
+    outputBinding:
+      glob: "*_data.loom"
+    doc: |
+      Reduced Seurat data in SCope compatible loom format
+
   stdout_log:
     type: stdout
 
@@ -747,7 +762,8 @@ s:about: |
         [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
         [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--lowmem] [--output OUTPUT]
+        [--h5seurat] [--h5ad] [--scope] [--cbbuild] [--lowmem]
+        [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
@@ -852,6 +868,8 @@ s:about: |
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
+    --scope               Save Seurat data to SCope compatible loom file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --lowmem              Attempts to minimize RAM usage when integrating
                           multiple datasets with SCTransform algorithm (slows

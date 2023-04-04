@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.16
+  dockerPull: biowardrobe2/sc-tools:v0.0.17
 
 
 inputs:
@@ -345,6 +345,15 @@ inputs:
     doc: |
       Save Seurat data to h5ad file.
       Default: false
+
+  export_scope_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--scope"
+    doc: |
+      Save Seurat data to SCope compatible loom file.
+      Only not normalized raw counts from the RNA assay
+      will be saved. Default: false
 
   export_ucsc_cb:
     type: boolean?
@@ -791,6 +800,13 @@ outputs:
       glob: "*_data.h5ad"
     doc: |
       Reduced Seurat data in h5ad format
+
+  seurat_data_scope:
+    type: File?
+    outputBinding:
+      glob: "*_data.loom"
+    doc: |
+      Reduced Seurat data in SCope compatible loom format
 
   stdout_log:
     type: stdout
