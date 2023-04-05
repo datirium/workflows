@@ -4,21 +4,19 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
-
+- class: DockerRequirement
+  dockerPull: cumulusprod/cellranger:7.0.0
 
 hints:
-- class: DockerRequirement
-  dockerPull: cumulusprod/cellranger:4.0.0
 - class: InitialWorkDirRequirement
   listing: |
     ${
         const skipped_ids = [
           "feature_bc_matrix_h5",
-          "aggregation_metadata",
           "selected_barcodes",
           "selected_genes",
           "excluded_genes",
-          "force_cells_num",
+          "force_cells",
           "threads",
           "memory_limit",
           "virt_memory_limit"
@@ -32,7 +30,7 @@ hints:
         }
         return [{
           "entry": entry,
-          "entryname": runtime.outdir + "/params.csv"
+          "entryname": "params.csv"
         }];
     }
 
@@ -45,22 +43,13 @@ inputs:
       position: 5
       prefix: "--matrix"
     doc: |
-      Filtered or raw feature-barcode matrices in HDF5 format
-
-  aggregation_metadata:
-    type: File?
-    inputBinding:
-      position: 6
-      prefix: "--agg"
-    doc: |
-      Aggregation CSV metadata file obtained from cellranger aggr.
-      This allows you to retain any metadata associated with the
-      samples for display in Loupe Browser.
+      A feature-barcode matrix containing data for one genome.
+      Should be the filtered version, unless using --force-cells
 
   selected_barcodes:
     type: File?
     inputBinding:
-      position: 7
+      position: 6
       prefix: "--barcodes"
     doc: |
       A CSV file containing a list of cell barcodes to use for reanalysis,
@@ -70,30 +59,28 @@ inputs:
   selected_genes:
     type: File?
     inputBinding:
-      position: 8
+      position: 7
       prefix: "--genes"
     doc: |
       A CSV file containing a list of gene IDs to use for reanalysis (corresponding
       to the gene_id field of the reference GTF). All gene IDs must be present in
       the matrix. Note that only gene features are used in secondary analysis.
-      Feature Barcode features are ignored.
 
   excluded_genes:
     type: File?
     inputBinding:
-      position: 9
+      position: 8
       prefix: "--exclude-genes"
     doc: |
       A CSV file containing a list of gene IDs to exclude for reanalysis (corresponding
       to the gene_id field of the reference GTF). All gene IDs must be present in
       the matrix. The exclusion is applied after setting the gene list with --genes.
-      Note that only gene features are used in secondary analysis. Feature Barcode features
-      are ignored.
+      Note that only gene features are used in secondary analysis.
 
-  force_cells_num:
+  force_cells:
     type: int?
     inputBinding:
-      position: 10
+      position: 9
       prefix: "--force-cells"
     doc: |
       Force pipeline to use this number of cells, bypassing the cell detection algorithm.
@@ -104,7 +91,7 @@ inputs:
   threads:
     type: int?
     inputBinding:
-      position: 11
+      position: 10
       prefix: "--localcores"
     doc: |
       Set max cores the pipeline may request at one time.
@@ -113,7 +100,7 @@ inputs:
   memory_limit:
     type: int?
     inputBinding:
-      position: 12
+      position: 11
       prefix: "--localmem"
     doc: |
       Set max GB the pipeline may request at one time
@@ -122,7 +109,7 @@ inputs:
   virt_memory_limit:
     type: int?
     inputBinding:
-      position: 13
+      position: 12
       prefix: "--localvmem"
     doc: |
       Set max virtual address space in GB for the pipeline
@@ -366,6 +353,14 @@ outputs:
     doc: |
       Reanalyzed run summary metrics and charts in HTML format
 
+  filtered_feature_bc_matrix_folder:
+    type: Directory
+    outputBinding:
+      glob: "reanalyzed/outs/filtered_feature_bc_matrix"
+    doc: |
+      Folder with filtered feature-barcode matrices containing only cellular
+      barcodes in MEX format.
+
   reanalyze_params:
     type: File
     outputBinding:
@@ -389,7 +384,7 @@ outputs:
 
 baseCommand: ["cellranger", "reanalyze", "--disable-ui",  "--id", "reanalyzed"]
 arguments:
-- valueFrom: $(runtime.outdir + "/params.csv")    # fails if it's not absolute path
+- valueFrom: "params.csv"
   prefix: "--params"
   position: 15
 
@@ -404,9 +399,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cellranger reanalyze - reruns secondary analysis performed on the feature-barcode matrix"
-s:name: "Cellranger reanalyze - reruns secondary analysis performed on the feature-barcode matrix"
-s:alternateName: "Reruns secondary analysis performed on the feature-barcode matrix (dimensionality reduction, clustering and visualization) using different parameter settings"
+label: "Cell Ranger Reanalyze"
+s:name: "Cell Ranger Reanalyze"
+s:alternateName: |
+  Reruns secondary analysis performed on the GEX feature-barcode matrix (dimensionality reduction,
+  clustering and visualization) using different parameter settings
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-reanalyze.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -444,72 +441,69 @@ s:creator:
 
 
 doc: |
-  Tool runs cellranger reanalyze command to rerun secondary analysis performed on
-  the feature-barcode matrix (dimensionality reduction, clustering and visualization)
+  Cell Ranger Reanalyze
+
+  Runs cellranger reanalyze command to rerun secondary analysis performed on the
+  GEX feature-barcode matrix (dimensionality reduction, clustering and visualization)
   using different parameter settings.
+
+  Rerunning the analysis for aggregated experiments is not currently supported.
 
   Parameters set by default:
   --disable-ui - no need in any UI when running in Docker container
-  --id - hardcoded to `reanalyzed` as we want to return the content of the
-         output folder as separate outputs
-
-  Skipped parameters:
-  --dry
-  --noexit
-  --nopreflight
-  --description
-  --jobmode
-  --mempercore
-  --maxjobs
-  --jobinterval
-  --overrides
-  --uiport
+  --id         - hardcoded to `reanalyzed` as we want to return the content of the
+                 output folder as separate outputs
 
   Skipped outputs as they are identical to inputs:
-  - Filtered feature-barcode matrices MEX
   - Filtered feature-barcode matrices HDF5
-  - Copy of the input aggregation CSV
 
-  Notes:
-  - Passing `aggregation_metadata` might not work as it will require additional inputs for
-    all files from that CSV file. Otherwise cellranger will fail to parse it. Address this
-    question when needed.
+  Not implemented parameters:
+  --description           - not needed for now
+  --agg                   - we don't support reruning secondary analysis from aggregated samples
+  --dry                   - not applicable to our use case
+  --jobmode               - we use default local mode
+  --mempercore            - not used for local mode
+  --maxjobs               - not used for local mode
+  --jobinterval           - not used for local mode
+  --overrides             - not needed for now
+  --uiport                - we disabled UI
+  --noexit                - we disabled UI
+  --nopreflight           - no reason to skip preflight checks
+
 
 s:about: |
   Re-run secondary analysis (dimensionality reduction, clustering, etc)
 
   USAGE:
-      cellranger reanalyze [FLAGS] [OPTIONS] --id <ID> --matrix <MATRIX_H5>
-
-  FLAGS:
-          --dry            Do not execute the pipeline. Generate a pipeline invocation (.mro) file and stop
-          --disable-ui     Do not serve the UI
-          --noexit         Keep web UI running after pipestance completes or fails
-          --nopreflight    Skip preflight checks
-      -h, --help           Prints help information
+      cellranger reanalyze [OPTIONS] --id <ID> --matrix <MATRIX_H5>
 
   OPTIONS:
-          --id <ID>                      A unique run id and output folder name [a-zA-Z0-9_-]+
-          --description <TEXT>           Sample description to embed in output files [default: ]
-          --matrix <MATRIX_H5>           A feature-barcode matrix containing data for one genome. Should be the filtered version, unless using --force-cells
-          --params <PARAMS_CSV>          A CSV file specifying analysis parameters. Optional
-          --barcodes <BARCODES_CSV>      A CSV file containing a list of cell barcodes to use for reanalysis, e.g. barcodes exported from Loupe Browser. Optional
-          --genes <GENES_CSV>            A CSV file containing a list of feature IDs to use for reanalysis. For gene expression, this should correspond to the gene_id field in the
-                                        reference GTF should be \(e.g. ENSG... for ENSEMBL-based references\). Optional
-          --exclude-genes <GENES_CSV>    A CSV file containing a list of feature IDs to exclude from reanalysis. For gene expression, this should correspond to the gene_id field in
-                                        the reference GTF \(e.g., ENSG... for ENSEMBL-based references\). The exclusion is applied after --genes. Optional
-          --agg <AGGREGATION_CSV>        If the input matrix was produced by 'aggr', you may pass the same aggregation CSV in order to retain per-library tag information in the
-                                        resulting .cloupe file.  This argument is required to enable chemistry batch correction. Optional
-          --force-cells <NUM>            Force pipeline to use this number of cells, bypassing the cell detection algorithm. Optional
-          --jobmode <MODE>               Job manager to use. Valid options: local (default), sge, lsf, slurm or a .template file. Search for help on "Cluster Mode" at
-                                        support.10xgenomics.com for more details on configuring the pipeline to use a compute cluster [default: local]
-          --localcores <NUM>             Set max cores the pipeline may request at one time. Only applies to local jobs
-          --localmem <NUM>               Set max GB the pipeline may request at one time. Only applies to local jobs
-          --localvmem <NUM>              Set max virtual address space in GB for the pipeline. Only applies to local jobs
-          --mempercore <NUM>             Reserve enough threads for each job to ensure enough memory will be available, assuming each core on your cluster has at least this much
-                                        memory available. Only applies in cluster jobmodes
-          --maxjobs <NUM>                Set max jobs submitted to cluster at one time. Only applies in cluster jobmodes
-          --jobinterval <NUM>            Set delay between submitting jobs to cluster, in ms. Only applies in cluster jobmodes
-          --overrides <PATH>             The path to a JSON file that specifies stage-level overrides for cores and memory. Finer-grained than --localcores, --mempercore and
-                                        --localmem. Consult the 10x support website for an example override file
-          --uiport <PORT>                Serve web UI at http://localhost:PORT
+      --id <ID>                      A unique run id and output folder name [a-zA-Z0-9_-]+
+      --description <TEXT>           Sample description to embed in output files [default: ]
+      --matrix <MATRIX_H5>           A feature-barcode matrix containing data for one genome. Should be the filtered version, unless using --force-cells
+      --params <PARAMS_CSV>          A CSV file specifying analysis parameters. Optional
+      --barcodes <BARCODES_CSV>      A CSV file containing a list of cell barcodes to use for reanalysis, e.g. barcodes exported from Loupe Browser. Optional
+      --genes <GENES_CSV>            A CSV file containing a list of feature IDs to use for reanalysis. For gene expression, this should correspond to the gene_id field in the
+                                    reference GTF should be \(e.g. ENSG... for ENSEMBL-based references\). Optional
+      --exclude-genes <GENES_CSV>    A CSV file containing a list of feature IDs to exclude from reanalysis. For gene expression, this should correspond to the gene_id field in
+                                    the reference GTF \(e.g., ENSG... for ENSEMBL-based references\). The exclusion is applied after --genes. Optional
+      --agg <AGGREGATION_CSV>        If the input matrix was produced by 'aggr', you may pass the same aggregation CSV in order to retain per-library tag information in the
+                                    resulting .cloupe file.  This argument is required to enable chemistry batch correction. Optional
+      --force-cells <NUM>            Force pipeline to use this number of cells, bypassing cell calling algorithm. [MINIMUM: 10]
+      --dry                          Do not execute the pipeline. Generate a pipeline invocation (.mro) file and stop
+      --jobmode <MODE>               Job manager to use. Valid options: local (default), sge, lsf, slurm or path to a .template file. Search for help on "Cluster Mode" at
+                                    support.10xgenomics.com for more details on configuring the pipeline to use a compute cluster [default: local]
+      --localcores <NUM>             Set max cores the pipeline may request at one time. Only applies to local jobs
+      --localmem <NUM>               Set max GB the pipeline may request at one time. Only applies to local jobs
+      --localvmem <NUM>              Set max virtual address space in GB for the pipeline. Only applies to local jobs
+      --mempercore <NUM>             Reserve enough threads for each job to ensure enough memory will be available, assuming each core on your cluster has at least this much
+                                    memory available. Only applies to cluster jobmodes
+      --maxjobs <NUM>                Set max jobs submitted to cluster at one time. Only applies to cluster jobmodes
+      --jobinterval <NUM>            Set delay between submitting jobs to cluster, in ms. Only applies to cluster jobmodes
+      --overrides <PATH>             The path to a JSON file that specifies stage-level overrides for cores and memory. Finer-grained than --localcores, --mempercore and
+                                    --localmem. Consult https://support.10xgenomics.com/ for an example override file
+      --uiport <PORT>                Serve web UI at http://localhost:PORT
+      --disable-ui                   Do not serve the web UI
+      --noexit                       Keep web UI running after pipestance completes or fails
+      --nopreflight                  Skip preflight checks
+      -h, --help                         Print help information

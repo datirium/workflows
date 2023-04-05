@@ -176,7 +176,7 @@ inputs:
   padj_threshold:
     type: float?
     default: 0.05
-    label: "Peak selection. Maximum allowed adjusted P-value for differentially bound sites"
+    label: "Diff. analysis. Maximum allowed adjusted P-value for differentially bound sites"
     doc: |
       Filtering threshold to report only differentially
       bound sites with adjusted P-value less than or
