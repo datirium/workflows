@@ -2,51 +2,60 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
-requirements:
-- class: InlineJavascriptRequirement
-
-
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/morpheus:v0.0.2
+  dockerPull: biowardrobe2/visualization:v0.0.7
 
 
 inputs:
 
-  read_counts_gct:
+  diff_expr_file:
     type: File
     inputBinding:
-      prefix: "--gct"
+      position: 5
     doc: |
-      Path to the input GCT file.
+      TSV file holding data for the plot
 
-  output_prefix:
-    type: string?
+  x_axis_column:
+    type: string
     inputBinding:
-      prefix: "--output"
+      position: 6
     doc: |
-      Output prefix for generated files
+      Name of column in file for the plots x-axis (ex: "baseMean")
+
+  y_axis_column:
+    type: string
+    inputBinding:
+      position: 7
+    doc: |
+      Name of column in file for the plots y-axis (ex: "log2FoldChange")
+
+  label_column:
+    type: string
+    inputBinding:
+      position: 8
+    doc: |
+      Name of column in file for each data points 'name' (ex: "GeneId")
 
 
 outputs:
 
-  heatmap_html:
+  html_data:
+    type: Directory
+    outputBinding:
+      glob: "./volcano_plot/MD-MA_plot"
+    doc: |
+      Directory html data for MA-plot
+
+  html_file:
     type: File
     outputBinding:
-      glob: "*.html"
+      glob: "./volcano_plot/MD-MA_plot/html_data/index.html"
     doc: |
-      Morpheus heatmap in HTML format
-
-  stdout_log:
-    type: stdout
-
-  stderr_log:
-    type: stderr
+      HTML index file for MA-plot
 
 
-baseCommand: [run_morpheus.R]
-stdout: morpheus_stdout.log
-stderr: morpheus_stderr.log
+baseCommand: ["ma_plot.sh"]
 
 
 $namespaces:
@@ -56,12 +65,11 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-s:name: "Morpheus Heatmap"
-label:  "Morpheus Heatmap"
-s:alternateName: "Generates Morpheus heatmap from input GCT file"
+label: "MA-plot"
+s:name: "MA-plot"
+s:alternateName: "Builds ma-plot from the DESeq output"
 
-
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/morpheus-heatmap.cwl
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/ma-plot.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -96,18 +104,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Morpheus Heatmap
+  MA-plot
 
-  Generates Morpheus heatmap from input GCT file
-
-
-s:about: |
-  usage: run_morpheus.R
-        [-h] --gct GCT [--cluster {row,column,both}] [--output OUTPUT]
-
-  Morpheus heatmap from GCT file
-
-  options:
-    -h, --help            show this help message and exit
-    --gct GCT             Path to the input GCT file.
-    --output OUTPUT       Output prefix for generated files
+  Builds ma-plot from the DESeq output
