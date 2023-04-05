@@ -12,11 +12,7 @@
     "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/refgene.tsv",
     "format": "http://edamontology.org/format_3475"
   },
-<<<<<<< HEAD
-  "genome_size": "2.7e9",
-=======
   "genome_size": "2.74e9",
->>>>>>> main
   "chrom_length": {
     "class": "File",
     "location": "/Users/robertplayer/scidap/projects/WWGGQP7Y5WqRogjqx/DyheKYFxtA6oeE9oG/hg38_star_genome/chrNameLength.txt",
