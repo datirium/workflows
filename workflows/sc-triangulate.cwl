@@ -400,4 +400,5 @@ s:creator:
 doc: |
   Single-cell Label Integration Analysis
 
-  Harmonizes conflicting annotations in single-cell genomics studies.
+  Harmonizes conflicting annotations in single-cell
+  genomics studies.

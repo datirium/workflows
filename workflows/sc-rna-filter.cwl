@@ -708,5 +708,5 @@ s:creator:
 
 doc: |
   Single-cell RNA-Seq Filtering Analysis
-  
+
   Filters single-cell RNA-Seq datasets based on the common QC metrics.

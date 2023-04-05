@@ -462,5 +462,4 @@ s:creator:
 doc: |
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
-  Integrates multiple single-cell ATAC-Seq datasets,
-  reduces dimensionality using LSI.
+  Integrates multiple single-cell ATAC-Seq datasets, reduces dimensionality using LSI.

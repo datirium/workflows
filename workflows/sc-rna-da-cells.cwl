@@ -469,5 +469,4 @@ s:creator:
 doc: |
   Single-cell Differential Abundance Analysis
 
-  Detects cell subpopulations with differential abundance
-  between datasets split by biological condition.
+  Detects cell subpopulations with differential abundance between datasets split by biological condition.

@@ -741,5 +741,4 @@ s:creator:
 doc: |
   Single-cell Pseudobulk Differential Expression Analysis Between Datasets
 
-  Identifies differentially expressed genes between groups of cells
-  coerced to pseudobulk datasets.
+  Identifies differentially expressed genes between groups of cells coerced to pseudobulk datasets.

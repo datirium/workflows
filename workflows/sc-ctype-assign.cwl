@@ -819,5 +819,5 @@ s:creator:
 
 doc: |
   Single-cell Manual Cell Type Assignment
-
+  
   Assigns cell types for clusters based on the provided metadata file.

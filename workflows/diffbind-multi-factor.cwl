@@ -969,7 +969,7 @@ s:creator:
 
 doc: |
   DiffBind Multi-factor Analysis
-  ------------------------------
+
   
   DiffBind processes ChIP-Seq data enriched for genomic loci where specific protein/DNA binding occurs, including peak sets identified by ChIP-Seq peak callers and
   aligned sequence read datasets. It is designed to work with multiple peak sets simultaneously, representing different ChIP experiments (antibodies, transcription

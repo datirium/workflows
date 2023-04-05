@@ -1400,6 +1400,6 @@ s:creator:
 
 doc: |
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
-  
+
   Filters single-cell multiome ATAC and RNA-Seq datasets
   based on the common QC metrics.

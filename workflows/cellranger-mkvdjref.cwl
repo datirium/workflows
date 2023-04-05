@@ -139,6 +139,6 @@ s:creator:
 
 doc: |
   Cell Ranger Build V(D)J Reference Indices
-  
+
   Build a Cell Ranger V(D)J-compatible reference folder from
   a user-supplied genome FASTA and gene GTF files.
