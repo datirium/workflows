@@ -385,25 +385,36 @@ outputs:
     outputSource: make_volcano_plot/html_file
     label: "Volcano Plot"
     doc: |
-      HTML index file with volcano plot data.
+      HTML index file for Volcano Plot
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
         target: "_blank"
 
-  volcano_plot_css_file:
-    type: File
-    outputSource: make_volcano_plot/css_file
-    label: "Volcano Plot CSS"
+  volcano_plot_html_data:
+    type: Directory
+    outputSource: make_volcano_plot/html_data
+    label: "Directory html data for Volcano Plot"
     doc: |
-      CSS index file with volcano plot data.
+      Directory html data for Volcano Plot
 
-  volcano_plot_js_file:
+  ma_plot_html_file:
     type: File
-    outputSource: make_volcano_plot/js_file
-    label: "Volcano Plot JS"
+    outputSource: make_ma_plot/html_file
+    label: "MA-plot"
     doc: |
-      JS index file with volcano plot data.
+      HTML index file for MA-plot
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  ma_plot_html_data:
+    type: Directory
+    outputSource: make_ma_plot/html_data
+    label: "Directory html data for Volcano Plot"
+    doc: |
+      Directory html data for MA-plot
 
   heatmap_html:
     type: File
@@ -502,7 +513,7 @@ steps:
       - stderr_log
 
   make_volcano_plot:
-    run: ../tools/volcanot-plot.cwl
+    run: ../tools/volcano-plot.cwl
     in:
       diff_expr_file: deseq/diff_expr_file
       x_axis_column:
@@ -522,9 +533,32 @@ steps:
               }
           }
     out:
-      - html_file
-      - css_file
-      - js_file
+    - html_data
+    - html_file
+
+  make_ma_plot:
+    run: ../tools/ma-plot.cwl
+    in:
+      diff_expr_file: deseq/diff_expr_file
+      x_axis_column:
+        default: "baseMean"
+      y_axis_column:
+        default: "log2FoldChange"
+      label_column:
+        source: group_by
+        valueFrom: |
+          ${
+              if (self == "isoforms") {
+                return "RefseqId";
+              } else if (self == "genes") {
+                return "GeneId";
+              } else {
+                return "GeneId";
+              }
+          }
+    out:
+    - html_data
+    - html_file
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
