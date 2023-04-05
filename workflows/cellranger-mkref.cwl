@@ -227,4 +227,3 @@ s:creator:
 
 doc: |
   Cell Ranger Build Reference Indices
-  ===================================

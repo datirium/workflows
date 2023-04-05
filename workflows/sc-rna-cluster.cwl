@@ -610,5 +610,5 @@ s:creator:
 
 doc: |
   Single-cell RNA-Seq Cluster Analysis
-  ===============================================================
+
   Clusters single-cell RNA-Seq datasets, identifies gene markers.

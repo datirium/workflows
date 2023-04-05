@@ -766,5 +766,5 @@ s:creator:
 doc: |
   Single-cell WNN Cluster Analysis
 
-  Clusters multiome ATAC and RNA-Seq datasets, identifies gene markers
-  and differentially accessible peaks.
+  Clusters multiome ATAC and RNA-Seq datasets, identifies gene
+  markers and differentially accessible peaks.
