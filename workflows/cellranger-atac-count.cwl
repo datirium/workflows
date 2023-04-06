@@ -197,12 +197,12 @@ outputs:
         name: "ATAC cut sites"
         height: 120
 
-  peak_motif_mapping_bed:
-    type: File
-    outputSource: generate_counts_matrix/peak_motif_mapping_bed
-    label: "File with peak-motif associations in BED format"
-    doc: |
-      File with peak-motif associations in BED format
+  # peak_motif_mapping_bed:
+  #   type: File
+  #   outputSource: generate_counts_matrix/peak_motif_mapping_bed
+  #   label: "File with peak-motif associations in BED format"
+  #   doc: |
+  #     File with peak-motif associations in BED format
 
   filtered_feature_bc_matrix_folder:
     type: File
@@ -405,7 +405,7 @@ steps:
     - peaks_bed_file
     - peak_annotation_file
     - cut_sites_bigwig_file
-    - peak_motif_mapping_bed
+    # - peak_motif_mapping_bed
     - filtered_feature_bc_matrix_folder
     - filtered_feature_bc_matrix_h5
     # - filtered_tf_bc_matrix_folder
