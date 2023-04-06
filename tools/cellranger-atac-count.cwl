@@ -206,14 +206,14 @@ outputs:
       Filtered peak-barcode matrices containing only cellular barcodes in HDF5 format.
 
   filtered_tf_bc_matrix_folder:
-    type: Directory
+    type: Directory?
     outputBinding:
       glob: "sample/outs/filtered_tf_bc_matrix"
     doc: |
       Folder with filtered tf-barcode matrices containing only cellular barcodes in MEX format.
 
   filtered_tf_bc_matrix_h5:
-    type: File
+    type: File?
     outputBinding:
       glob: "sample/outs/filtered_tf_bc_matrix.h5"
     doc: |

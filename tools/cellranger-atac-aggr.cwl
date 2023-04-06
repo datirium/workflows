@@ -186,7 +186,7 @@ outputs:
       only cellular barcodes in HDF5 format.
 
   filtered_tf_bc_matrix_folder:
-    type: Directory
+    type: Directory?
     outputBinding:
       glob: "aggregated/outs/filtered_tf_bc_matrix"
     doc: |
@@ -194,7 +194,7 @@ outputs:
       containing only cellular barcodes in MEX format.
 
   filtered_tf_bc_matrix_h5:
-    type: File
+    type: File?
     outputBinding:
       glob: "aggregated/outs/filtered_tf_bc_matrix.h5"
     doc: |
