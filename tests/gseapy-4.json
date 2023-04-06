@@ -15,9 +15,9 @@
         "location": "./data/dm3_chr4/main_inputs/gsea/enrichr.H_hallmark_gene_sets.gmt",
         "format": "http://edamontology.org/format_2330"
     },
-    "permutation_count": 3,
-    "graphs_count": 2,
-    "seed": 10,
-    "threads": 1,
+    "permutation_count": 1000,
+    "graphs_count": 10,
+    "seed": 123,
+    "threads": 4,
     "alias": "alias"
 }
