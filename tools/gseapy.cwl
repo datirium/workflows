@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  read_counts_file:
+  read_count_file:
     type: File
     inputBinding:
       prefix: "-d"
