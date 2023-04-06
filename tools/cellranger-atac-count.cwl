@@ -185,7 +185,7 @@ outputs:
       Smoothed transposition site track in bigWig format
 
   peak_motif_mapping_bed:
-    type: File
+    type: File?
     outputBinding:
       glob: "sample/outs/peak_motif_mapping.bed"
     doc: |
