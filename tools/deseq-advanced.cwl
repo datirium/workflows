@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-deseq:dev
+  dockerPull: robertplayer/scidap-deseq:v1.0.0
 
 
 inputs:
