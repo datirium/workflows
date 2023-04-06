@@ -171,21 +171,21 @@ outputs:
       Aggregated filtered peak-barcode matrices containing
       only cellular barcodes in HDF5 format.
 
-  filtered_tf_bc_matrix_folder:
-    type: File
-    outputSource: compress_filtered_tf_bc_matrix_folder/compressed_folder
-    label: "Compressed folder with aggregated filtered tf-barcode matrices"
-    doc: |
-      Folder with aggregated filtered tf-barcode matrices
-      containing only cellular barcodes in MEX format.
+  # filtered_tf_bc_matrix_folder:
+  #   type: File
+  #   outputSource: compress_filtered_tf_bc_matrix_folder/compressed_folder
+  #   label: "Compressed folder with aggregated filtered tf-barcode matrices"
+  #   doc: |
+  #     Folder with aggregated filtered tf-barcode matrices
+  #     containing only cellular barcodes in MEX format.
 
-  filtered_tf_bc_matrix_h5:
-    type: File
-    outputSource: aggregate_counts/filtered_tf_bc_matrix_h5
-    label: "Aggregated filtered tf-barcode matrices in HDF5 format"
-    doc: |
-      Aggregated filtered tf-barcode matrices containing
-      only cellular barcodes in HDF5 format.
+  # filtered_tf_bc_matrix_h5:
+  #   type: File
+  #   outputSource: aggregate_counts/filtered_tf_bc_matrix_h5
+  #   label: "Aggregated filtered tf-barcode matrices in HDF5 format"
+  #   doc: |
+  #     Aggregated filtered tf-barcode matrices containing
+  #     only cellular barcodes in HDF5 format.
 
   loupe_browser_track:
     type: File
@@ -265,8 +265,8 @@ steps:
     - secondary_analysis_report_folder
     - filtered_feature_bc_matrix_folder
     - filtered_feature_bc_matrix_h5
-    - filtered_tf_bc_matrix_folder
-    - filtered_tf_bc_matrix_h5
+    # - filtered_tf_bc_matrix_folder
+    # - filtered_tf_bc_matrix_h5
     - aggregation_metadata
     - loupe_browser_track
     - stdout_log
@@ -279,12 +279,12 @@ steps:
     out:
     - compressed_folder
 
-  compress_filtered_tf_bc_matrix_folder:
-    run: ../tools/tar-compress.cwl
-    in:
-      folder_to_compress: aggregate_counts/filtered_tf_bc_matrix_folder
-    out:
-    - compressed_folder
+  # compress_filtered_tf_bc_matrix_folder:
+  #   run: ../tools/tar-compress.cwl
+  #   in:
+  #     folder_to_compress: aggregate_counts/filtered_tf_bc_matrix_folder
+  #   out:
+  #   - compressed_folder
 
   compress_secondary_analysis_report_folder:
     run: ../tools/tar-compress.cwl

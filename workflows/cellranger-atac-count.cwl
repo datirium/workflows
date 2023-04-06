@@ -220,21 +220,21 @@ outputs:
       Filtered peak-barcode matrices containing only cellular
       barcodes in HDF5 format.
 
-  filtered_tf_bc_matrix_folder:
-    type: File
-    outputSource: compress_filtered_tf_bc_matrix_folder/compressed_folder
-    label: "Compressed folder with filtered tf-barcode matrices"
-    doc: |
-      Folder with filtered tf-barcode matrices containing only cellular
-      barcodes in MEX format.
+  # filtered_tf_bc_matrix_folder:
+  #   type: File
+  #   outputSource: compress_filtered_tf_bc_matrix_folder/compressed_folder
+  #   label: "Compressed folder with filtered tf-barcode matrices"
+  #   doc: |
+  #     Folder with filtered tf-barcode matrices containing only cellular
+  #     barcodes in MEX format.
 
-  filtered_tf_bc_matrix_h5:
-    type: File
-    outputSource: generate_counts_matrix/filtered_tf_bc_matrix_h5
-    label: "Filtered tf-barcode matrices in HDF5 format"
-    doc: |
-      Filtered tf-barcode matrices containing only cellular
-      barcodes in HDF5 format.
+  # filtered_tf_bc_matrix_h5:
+  #   type: File
+  #   outputSource: generate_counts_matrix/filtered_tf_bc_matrix_h5
+  #   label: "Filtered tf-barcode matrices in HDF5 format"
+  #   doc: |
+  #     Filtered tf-barcode matrices containing only cellular
+  #     barcodes in HDF5 format.
 
   raw_feature_bc_matrices_folder:
     type: File
@@ -408,8 +408,8 @@ steps:
     - peak_motif_mapping_bed
     - filtered_feature_bc_matrix_folder
     - filtered_feature_bc_matrix_h5
-    - filtered_tf_bc_matrix_folder
-    - filtered_tf_bc_matrix_h5
+    # - filtered_tf_bc_matrix_folder
+    # - filtered_tf_bc_matrix_h5
     - raw_feature_bc_matrices_folder
     - raw_feature_bc_matrices_h5
     - secondary_analysis_report_folder
@@ -424,12 +424,12 @@ steps:
     out:
     - compressed_folder
 
-  compress_filtered_tf_bc_matrix_folder:
-    run: ../tools/tar-compress.cwl
-    in:
-      folder_to_compress: generate_counts_matrix/filtered_tf_bc_matrix_folder
-    out:
-    - compressed_folder
+  # compress_filtered_tf_bc_matrix_folder:
+  #   run: ../tools/tar-compress.cwl
+  #   in:
+  #     folder_to_compress: generate_counts_matrix/filtered_tf_bc_matrix_folder
+  #   out:
+  #   - compressed_folder
 
   compress_raw_feature_bc_matrices_folder:
     run: ../tools/tar-compress.cwl
