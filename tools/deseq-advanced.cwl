@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.27
+  dockerPull: robertplayer/scidap-deseq:dev
 
 
 inputs:
@@ -169,10 +169,15 @@ outputs:
     outputBinding:
       glob: "*report.tsv"
 
-  read_counts_file:
+  read_counts_file_all:
     type: File
     outputBinding:
-      glob: "*counts.gct"
+      glob: "*counts_all.gct"
+
+  read_counts_file_filtered:
+    type: File
+    outputBinding:
+      glob: "*counts_filtered.gct"
 
   phenotypes_file:
     type: File
