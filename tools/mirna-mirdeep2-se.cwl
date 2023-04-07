@@ -59,6 +59,13 @@ inputs:
 
 outputs:
 
+  pdf_directory:
+    type: Directory
+    outputBinding:
+      glob: pdfs_*
+    doc: |
+      output directory for result html references
+
   mirdeep2_result:
     type: File
     outputBinding:

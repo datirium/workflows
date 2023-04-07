@@ -167,6 +167,12 @@ outputs:
         data: [$1, $2]
         comparable: "preseq"
 
+  pdf_directory:
+    type: Directory
+    label: "Output directory for all rnbeads results, preserves structure for html references"
+    doc: "Output directory for all rnbeads results, preserves structure for html references"
+    outputSource: mirdeep2/pdf_directory
+
   mirdeep2_result:
     type: File
     format: "http://edamontology.org/format_2331"
@@ -390,7 +396,7 @@ steps:
         valueFrom: $(self)
       adapter: adapter
       fastq: extract_fastq/fastq_file
-    out: [mirs_known, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, mirdeep2_result, log_file_stdout, log_file_stderr]
+    out: [mirs_known, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, pdf_directory, mirdeep2_result, log_file_stdout, log_file_stderr]
 
 
 $namespaces:
