@@ -4,6 +4,9 @@
 #
 ##########################################################################################
 #
+# v1.0.1
+# - 20230407, miRDeep2 results html report miRBase URL fix
+#
 # v1.0.0
 # - 20230331, stable version runs mirdeep2 mapper and primary tool
 #		* identifys known/novel mature mirs
@@ -152,6 +155,9 @@ precursors="/dockerdata/refs/hairpin.fa"
 extract_miRNAs.pl $mature $organism > mirbase_mature.fasta
 extract_miRNAs.pl $precursors $organism > mirbase_precursors.fasta
 time miRDeep2.pl collapsed.fasta $REFGENOME mir.arf mirbase_mature.fasta none mirbase_precursors.fasta
+# fix miRBase URLs in the results.html report (original URLs give 404 errors)
+mv mirdeep2_result.html mirdeep2_result_original.html
+sed 's|http://www.mirbase.org/cgi-bin/query.pl?terms=|https://mirbase.org/textsearch.shtml?q=|' mirdeep2_result_original.html > mirdeep2_result.html
 # make mir results standardized output filenames for cwl
 cp result_*.html mirdeep2_result.html
 mv mirna_results_* mirna_results

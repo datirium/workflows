@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-mirdeep2:v1.0.0
+  dockerPull: robertplayer/scidap-mirdeep2:v1.0.1
 
 
 inputs:
@@ -47,7 +47,7 @@ inputs:
     inputBinding:
       prefix: "-a"
     doc: |
-      Name of SNPEFF database to use for SNP effect annotation.
+      Adapter sequence to be trimmed from miRNA sequence reads.
 
   fastq:
     type: File

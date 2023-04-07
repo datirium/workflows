@@ -31,12 +31,6 @@ inputs:
     sd:preview:
       position: 3
 
-  catalog:
-    type: string?
-    label: "Catalog No.:"
-    sd:preview:
-      position: 4
-
   chrom_length_file:
     type: File
     label: "Chromosome length file"
@@ -65,16 +59,8 @@ inputs:
       position: 6
 
   genome:
-    type:
-    - "null"
-    - type: enum
-      name: "genome short name"
-      symbols:
-      - hg19
-      - hg38
-      - mm10
-      - rn7
-      - dm3
+    type: string
+    'sd:upstreamSource': "genome_indices/genome"
     label: "Genome short name:"
     'sd:localLabel': true
     doc: |
@@ -342,7 +328,7 @@ steps:
       - trimmed_file
       - report_file
 
-# The m param is set to mirdeep mapper.pl default
+# The m param (suppress all alignments if > <int> exist) is set to mirdeep mapper.pl default
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
