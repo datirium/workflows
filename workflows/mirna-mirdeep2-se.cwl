@@ -129,18 +129,16 @@ outputs:
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
-    label: "Coordinate sorted BAM alignment file (+index BAI)"
-    doc: "Coordinate sorted BAM file and BAI index file"
+    label: "Aligned reads"
+    doc: "Coordinate sorted BAM and BAI index file"
     outputSource: samtools_sort_index/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        optional: true
         type: 'alignment'
         format: 'bam'
-        name: "BAM Track"
-        height: 120
+        name: "Nucleotide Sequence Alignments"
         displayMode: "EXPANDED"
 
   bowtie_log:
