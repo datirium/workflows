@@ -155,16 +155,15 @@ precursors="/dockerdata/refs/hairpin.fa"
 extract_miRNAs.pl $mature $organism > mirbase_mature.fasta
 extract_miRNAs.pl $precursors $organism > mirbase_precursors.fasta
 time miRDeep2.pl collapsed.fasta $REFGENOME mir.arf mirbase_mature.fasta none mirbase_precursors.fasta
-# fix miRBase URLs in the results.html report (original URLs give 404 errors)
-mv mirdeep2_result.html mirdeep2_result_original.html
-sed 's|http://www.mirbase.org/cgi-bin/query.pl?terms=|https://mirbase.org/textsearch.shtml?q=|' mirdeep2_result_original.html > mirdeep2_result.html
 # make mir results standardized output filenames for cwl
-cp result_*.html mirdeep2_result.html
+cp result_*.html mirdeep2_result_original.html
 mv mirna_results_* mirna_results
 cp mirna_results/known_mature_*.fa known_mirs_mature.fa
 cp mirna_results/known_pres_*.fa known_mirs_precursor.fa
 cp mirna_results/novel_mature_*.fa novel_mirs_mature.fa
 cp mirna_results/novel_pres_*.fa novel_mirs_precursor.fa
+# fix miRBase URLs in the results.html report (original URLs give 404 errors)
+sed 's|http://www.mirbase.org/cgi-bin/query.pl?terms=|https://mirbase.org/textsearch.shtml?q=|' mirdeep2_result_original.html > mirdeep2_result.html
 
 
 #	Exocarta and TargetScan setup
