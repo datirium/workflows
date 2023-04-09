@@ -5,7 +5,7 @@
 ##########################################################################################
 #
 # v1.0.1
-# - 20230407, miRDeep2 results html report miRBase URL fix
+# - 20230407, miRDeep2 results html report miRBase URL fix, and compressed pdf dir
 #
 # v1.0.0
 # - 20230331, stable version runs mirdeep2 mapper and primary tool
@@ -164,6 +164,9 @@ cp mirna_results/novel_mature_*.fa novel_mirs_mature.fa
 cp mirna_results/novel_pres_*.fa novel_mirs_precursor.fa
 # fix miRBase URLs in the results.html report (original URLs give 404 errors)
 sed 's|http://www.mirbase.org/cgi-bin/query.pl?terms=|https://mirbase.org/textsearch.shtml?q=|' mirdeep2_result_original.html > mirdeep2_result.html
+# compress pdf dir for output (can't have the unzipped dir, too many files within)
+tar -cf known_novel_mir_pdfs.tar pdfs_*
+gzip known_novel_mir_pdfs.tar
 
 
 #	Exocarta and TargetScan setup

@@ -59,12 +59,12 @@ inputs:
 
 outputs:
 
-  pdf_directory:
-    type: Directory
+  known_novel_mir_pdfs:
+    type: File
     outputBinding:
-      glob: pdfs_*
+      glob: known_novel_mir_pdfs.tar.gz
     doc: |
-      output directory for result html references
+      output directory gzip tarball for result html references
 
   mirdeep2_result:
     type: File

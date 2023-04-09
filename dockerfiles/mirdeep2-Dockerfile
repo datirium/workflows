@@ -15,6 +15,7 @@
 # Test dev:         docker run --rm -ti robertplayer/scidap-mirdeep2:dev /bin/bash
 # re-tag for PR:    docker tag mirdeep2-dev robertplayer/scidap-mirdeep2:v1.0.1
 # Push for PR:      docker image push robertplayer/scidap-mirdeep2:v1.0.1
+# Pull Cmd:         docker pull robertplayer/scidap-mirdeep2:v1.0.1
 # Test vx.x.x:      docker run --rm -ti robertplayer/scidap-mirdeep2:v1.0.1 /bin/bash
 #           
 #   NOTES:
