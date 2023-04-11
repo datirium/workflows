@@ -66,6 +66,13 @@ outputs:
     doc: |
       output directory gzip tarball for result html references
 
+  pdfs_directory:
+    type: Directory
+    outputBinding:
+      glob: pdfs_*
+    doc: |
+      output directory for column 1 hyperlinks in mirdeep2_result html
+
   mirdeep2_result:
     type: File
     outputBinding:
