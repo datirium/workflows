@@ -67,6 +67,14 @@ inputs:
     'sd:upstreamSource': "sc_arc_sample/genome_indices/genome_indices/annotation_gtf"
     'sd:localLabel': true
 
+  chrom_length_file:
+    type: File
+    label: "Cell Ranger ARC Count/Aggregate Experiment"
+    doc: |
+      Chromosome length file in TSV format
+    'sd:upstreamSource': "sc_arc_sample/genome_indices/genome_indices/chrom_length_file"
+    'sd:localLabel': true
+
   grouping_data:
     type: File?
     label: "Optional TSV/CSV file to define datasets grouping with 'library_id' and 'condition' columns. Rows order should correspond to the aggregation metadata."
@@ -1384,6 +1392,7 @@ steps:
       aggregation_metadata: aggregation_metadata
       atac_fragments_file: atac_fragments_file
       annotation_gtf_file: annotation_gtf_file
+      chrom_length_file: chrom_length_file
       grouping_data: grouping_data
       blacklist_regions_file: blacklist_regions_file
       barcodes_data: barcodes_data

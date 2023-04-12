@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.17
+  dockerPull: biowardrobe2/sc-tools:v0.0.18
 
 
 inputs:
@@ -54,6 +54,13 @@ inputs:
       prefix: "--annotations"
     doc: |
       Path to the genome annotation file in GTF format.
+
+  chrom_length_file:
+    type: File
+    inputBinding:
+      prefix: "--seqinfo"
+    doc: |
+      Path to the headerless chromosome length file in TSV format
 
   grouping_data:
     type: File?
@@ -1778,25 +1785,35 @@ doc: |
 
 
 s:about: |
-  usage: sc_multiome_filter.R
-        [-h] --mex MEX --identity IDENTITY --fragments FRAGMENTS --annotations
-        ANNOTATIONS [--grouping GROUPING] [--blacklist BLACKLIST]
-        [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
-        [--mingenes [MINGENES [MINGENES ...]]]
-        [--maxgenes [MAXGENES [MAXGENES ...]]]
-        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]] [--mitopattern MITOPATTERN]
-        [--maxmt MAXMT] [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-        [--atacmincells ATACMINCELLS]
-        [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-        [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-        [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-        [--minfrip [MINFRIP [MINFRIP ...]]]
-        [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]] [--callby CALLBY]
-        [--removedoublets] [--rnadbr RNADBR] [--rnadbrsd RNADBRSD]
-        [--atacdbr ATACDBR] [--atacdbrsd ATACDBRSD] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
+                                            --fragments FRAGMENTS --annotations
+                                            ANNOTATIONS --seqinfo SEQINFO
+                                            [--grouping GROUPING]
+                                            [--blacklist BLACKLIST]
+                                            [--barcodes BARCODES]
+                                            [--rnamincells RNAMINCELLS]
+                                            [--mingenes [MINGENES [MINGENES ...]]]
+                                            [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                            [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
+                                            [--mitopattern MITOPATTERN]
+                                            [--maxmt MAXMT]
+                                            [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                            [--atacmincells ATACMINCELLS]
+                                            [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+                                            [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+                                            [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+                                            [--minfrip [MINFRIP [MINFRIP ...]]]
+                                            [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
+                                            [--callby CALLBY]
+                                            [--removedoublets]
+                                            [--rnadbr RNADBR]
+                                            [--rnadbrsd RNADBRSD]
+                                            [--atacdbr ATACDBR]
+                                            [--atacdbrsd ATACDBRSD] [--pdf]
+                                            [--verbose] [--h5seurat] [--h5ad]
+                                            [--cbbuild] [--output OUTPUT]
+                                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                            [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
@@ -1820,6 +1837,8 @@ s:about: |
                           file is required.
     --annotations ANNOTATIONS
                           Path to the genome annotation file in GTF format
+    --seqinfo SEQINFO     Path to the headerless chromosome length file in TSV
+                          format
     --grouping GROUPING   Path to the TSV/CSV file to define datasets grouping.
                           First column - 'library_id' with the values and order
                           that correspond to the 'library_id' column from the '
