@@ -24,7 +24,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name/alias"
     sd:preview:
@@ -72,7 +72,7 @@ inputs:
     label: "Cell Ranger ARC Count/Aggregate Experiment"
     doc: |
       Chromosome length file in TSV format
-    'sd:upstreamSource': "sc_arc_sample/genome_indices/genome_indices/chrom_length_file"
+    'sd:upstreamSource': "sc_arc_sample/genome_indices/chrom_length_file"
     'sd:localLabel': true
 
   grouping_data:
