@@ -253,6 +253,21 @@ outputs:
     doc: "FASTA of known mature miRNA sequences"
     outputSource: mirdeep2/known_mirs_mature
 
+  mirs_known_bed:
+    type: File?
+    label: "known mature mirs bed"
+    format: "http://edamontology.org/format_3468"
+    doc: "Bed file of known mature miRNA detected in the sample, for IGV annotation"
+    outputSource: mirdeep2/mirs_known_bed
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Mature Known miRNA"
+        displayMode: "COLLAPSE"
+        height: 40
+
   known_mirs_precursor:
     type: File
     format: "http://edamontology.org/format_1929"
@@ -400,7 +415,7 @@ steps:
         valueFrom: $(self)
       adapter: adapter
       fastq: extract_fastq/fastq_file
-    out: [mirs_known, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, known_novel_mir_pdfs, pdfs_directory, mirdeep2_result, log_file_stdout, log_file_stderr]
+    out: [mirs_known, mirs_known_bed, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, known_novel_mir_pdfs, pdfs_directory, mirdeep2_result, log_file_stdout, log_file_stderr]
 
 
 $namespaces:

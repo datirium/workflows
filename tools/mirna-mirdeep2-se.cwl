@@ -87,6 +87,13 @@ outputs:
     doc: |
       known mature miRNAs detected by mirdeep2
 
+  mirs_known_bed:
+    type: File
+    outputBinding:
+      glob: mirs_known.bed
+    doc: |
+      known mature miRNAs detected by mirdeep2 bed file for igv annotation
+
   deseq_input_isoforms:
     type: File
     outputBinding:
