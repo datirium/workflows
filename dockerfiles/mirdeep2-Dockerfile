@@ -13,9 +13,10 @@
 #      Cmd2:        docker image push robertplayer/scidap-mirdeep2:dev
 # Pull Cmd:         docker pull robertplayer/scidap-mirdeep2:dev
 # Test dev:         docker run --rm -ti robertplayer/scidap-mirdeep2:dev /bin/bash
-# re-tag for PR:    docker tag mirdeep2-dev robertplayer/scidap-mirdeep2:v1.0.0
-# Push for PR:      docker image push robertplayer/scidap-mirdeep2:v1.0.0
-# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-mirdeep2:v1.0.0 /bin/bash
+# re-tag for PR:    docker tag mirdeep2-dev robertplayer/scidap-mirdeep2:v1.0.1
+# Push for PR:      docker image push robertplayer/scidap-mirdeep2:v1.0.1
+# Pull Cmd:         docker pull robertplayer/scidap-mirdeep2:v1.0.1
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-mirdeep2:v1.0.1 /bin/bash
 #           
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future
@@ -44,6 +45,13 @@ RUN mkdir -p /dockerdata/refs && \
     wget https://www.mirbase.org/ftp/CURRENT/organisms.txt.gz && \
     wget https://www.mirbase.org/ftp/CURRENT/mature.fa.gz && \
     wget https://www.mirbase.org/ftp/CURRENT/hairpin.fa.gz && \
+<<<<<<< HEAD
+=======
+    wget https://mirbase.org/ftp/CURRENT/genomes/hsa.gff3 && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/mmu.gff3 && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/rno.gff3 && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/dme.gff3 && \
+>>>>>>> SDAP-1070
     gunzip organisms.txt.gz && \
     gunzip mature.fa.gz && \
     gunzip hairpin.fa.gz && \
