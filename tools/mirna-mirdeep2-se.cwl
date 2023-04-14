@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-mirdeep2:v1.0.0
+  dockerPull: robertplayer/scidap-mirdeep2:v1.0.1
 
 
 inputs:
@@ -47,7 +47,7 @@ inputs:
     inputBinding:
       prefix: "-a"
     doc: |
-      Name of SNPEFF database to use for SNP effect annotation.
+      Adapter sequence to be trimmed from miRNA sequence reads.
 
   fastq:
     type: File
@@ -58,6 +58,20 @@ inputs:
 
 
 outputs:
+
+  known_novel_mir_pdfs:
+    type: File
+    outputBinding:
+      glob: known_novel_mir_pdfs.tar.gz
+    doc: |
+      output directory gzip tarball for result html references
+
+  pdfs_directory:
+    type: Directory
+    outputBinding:
+      glob: pdfs_*
+    doc: |
+      output directory for column 1 hyperlinks in mirdeep2_result html
 
   mirdeep2_result:
     type: File
@@ -72,6 +86,13 @@ outputs:
       glob: mirs_known.tsv
     doc: |
       known mature miRNAs detected by mirdeep2
+
+  mirs_known_bed:
+    type: File
+    outputBinding:
+      glob: mirs_known.bed
+    doc: |
+      known mature miRNAs detected by mirdeep2 bed file for igv annotation
 
   deseq_input_isoforms:
     type: File

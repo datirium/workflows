@@ -8,7 +8,7 @@ requirements:
 
 
 'sd:upstream':
-  genome_indices: "genome-indices.cwl"
+  genome_indices: ["genome-indices.cwl", "https://github.com/datirium/workflows/workflows/genome-indices.cwl"]
 
 
 inputs:
@@ -30,12 +30,6 @@ inputs:
     label: "Cells:"
     sd:preview:
       position: 3
-
-  catalog:
-    type: string?
-    label: "Catalog No.:"
-    sd:preview:
-      position: 4
 
   chrom_length_file:
     type: File
@@ -65,16 +59,8 @@ inputs:
       position: 6
 
   genome:
-    type:
-    - "null"
-    - type: enum
-      name: "genome short name"
-      symbols:
-      - hg19
-      - hg38
-      - mm10
-      - rn7
-      - dm3
+    type: string
+    'sd:upstreamSource': "genome_indices/genome"
     label: "Genome short name:"
     'sd:localLabel': true
     doc: |
@@ -143,18 +129,16 @@ outputs:
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
-    label: "Coordinate sorted BAM alignment file (+index BAI)"
-    doc: "Coordinate sorted BAM file and BAI index file"
+    label: "Aligned reads"
+    doc: "Coordinate sorted BAM and BAI index file"
     outputSource: samtools_sort_index/bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        optional: true
         type: 'alignment'
         format: 'bam'
-        name: "BAM Track"
-        height: 120
+        name: "Nucleotide Sequence Alignments"
         displayMode: "EXPANDED"
 
   bowtie_log:
@@ -180,6 +164,18 @@ outputs:
         height: 500
         data: [$1, $2]
         comparable: "preseq"
+
+  known_novel_mir_pdfs:
+    type: File
+    label: "output directory gzip tarball for result html references"
+    doc: "output directory gzip tarball for result html references"
+    outputSource: mirdeep2/known_novel_mir_pdfs
+
+  pdfs_directory:
+    type: Directory
+    label: "output directory for column 1 hyperlinks in mirdeep2_result html"
+    doc: "output directory for column 1 hyperlinks in mirdeep2_result html"
+    outputSource: mirdeep2/pdfs_directory
 
   mirdeep2_result:
     type: File
@@ -256,6 +252,21 @@ outputs:
     label: "FASTA of known mature miRNA sequences"
     doc: "FASTA of known mature miRNA sequences"
     outputSource: mirdeep2/known_mirs_mature
+
+  mirs_known_bed:
+    type: File?
+    label: "known mature mirs bed"
+    format: "http://edamontology.org/format_3468"
+    doc: "Bed file of known mature miRNA detected in the sample, for IGV annotation"
+    outputSource: mirdeep2/mirs_known_bed
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Mature Known miRNA"
+        displayMode: "COLLAPSE"
+        height: 40
 
   known_mirs_precursor:
     type: File
@@ -342,7 +353,7 @@ steps:
       - trimmed_file
       - report_file
 
-# The m param is set to mirdeep mapper.pl default
+# The m param (suppress all alignments if > <int> exist) is set to mirdeep mapper.pl default
   bowtie_aligner:
     run: ../tools/bowtie-alignreads.cwl
     in:
@@ -404,7 +415,7 @@ steps:
         valueFrom: $(self)
       adapter: adapter
       fastq: extract_fastq/fastq_file
-    out: [mirs_known, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, mirdeep2_result, log_file_stdout, log_file_stderr]
+    out: [mirs_known, mirs_known_bed, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, mirs_novel, mirs_known_exocarta_deepmirs, mirs_known_gene_targets, known_mirs_mature, known_mirs_precursor, novel_mirs_mature, novel_mirs_precursor, overview, known_novel_mir_pdfs, pdfs_directory, mirdeep2_result, log_file_stdout, log_file_stderr]
 
 
 $namespaces:

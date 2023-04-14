@@ -42,7 +42,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_name:
     type: string
     label: "Experiment short name/Alias"
     sd:preview:
@@ -283,10 +283,17 @@ outputs:
 
   read_counts_file:
     type: File
-    label: "Normalized read counts in GCT format. Compatible with GSEA"
+    label: "Normalized read counts in GCT format no padj filtering. Compatible with GSEA"
     format: "http://edamontology.org/format_3709"
-    doc: "DESeq generated file of with normalized read counts in GCT format. Compatible with GSEA"
-    outputSource: deseq/read_counts_file
+    doc: "DESeq generated file of all normalized read counts in GCT format. Compatible with GSEA"
+    outputSource: deseq/read_counts_file_all
+
+  read_counts_file_filtered:
+    type: File
+    label: "Normalized read counts in GCT format filtered by padj. Compatible with Morpheus heatmap"
+    format: "http://edamontology.org/format_3709"
+    doc: "DESeq generated file of padjfiltered normalized read counts in GCT format. Compatible with Morpheus heatmap"
+    outputSource: deseq/read_counts_file_filtered
 
   phenotypes_file:
     type: File
@@ -498,7 +505,8 @@ steps:
       - plot_lfc_vs_mean_pdf
       - gene_expr_heatmap_pdf
       - plot_pca_pdf
-      - read_counts_file
+      - read_counts_file_all
+      - read_counts_file_filtered
       - phenotypes_file
       - mds_plot_html
       - stdout_log
@@ -555,7 +563,7 @@ steps:
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
     in:
-     read_counts_gct: deseq/read_counts_file
+     read_counts_gct: deseq/read_counts_file_filtered
     out:
     - heatmap_html
     - stdout_log

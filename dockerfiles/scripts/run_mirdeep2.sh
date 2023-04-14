@@ -4,6 +4,9 @@
 #
 ##########################################################################################
 #
+# v1.0.1
+# - 20230407, miRDeep2 results html report miRBase URL fix, and compressed pdf dir
+#
 # v1.0.0
 # - 20230331, stable version runs mirdeep2 mapper and primary tool
 #		* identifys known/novel mature mirs
@@ -153,29 +156,31 @@ extract_miRNAs.pl $mature $organism > mirbase_mature.fasta
 extract_miRNAs.pl $precursors $organism > mirbase_precursors.fasta
 time miRDeep2.pl collapsed.fasta $REFGENOME mir.arf mirbase_mature.fasta none mirbase_precursors.fasta
 # make mir results standardized output filenames for cwl
-cp result_*.html mirdeep2_result.html
+cp result_*.html mirdeep2_result_original.html
 mv mirna_results_* mirna_results
 cp mirna_results/known_mature_*.fa known_mirs_mature.fa
 cp mirna_results/known_pres_*.fa known_mirs_precursor.fa
 cp mirna_results/novel_mature_*.fa novel_mirs_mature.fa
 cp mirna_results/novel_pres_*.fa novel_mirs_precursor.fa
+# fix miRBase URLs in the results.html report (original URLs give 404 errors)
+sed 's|http://www.mirbase.org/cgi-bin/query.pl?terms=|https://mirbase.org/textsearch.shtml?q=|' mirdeep2_result_original.html > mirdeep2_result.html
+# compress pdf dir for output (can't have the unzipped dir, too many files within)
+tar -cf known_novel_mir_pdfs.tar pdfs_*
+gzip known_novel_mir_pdfs.tar
 
 
-#	Exocarta and TargetScan setup
+#	Exocarta, TargetScan, and DESeq setup
 if [[ $organism == "hsa" ]]; then exo_org="Homo sapiens"; taxid="9606"; fi
 if [[ $organism == "mmu" ]]; then exo_org="Mus musculus"; taxid="10090"; fi
 if [[ $organism == "dm3" ]]; then taxid="7227"; fi
-# mirdeep2 list of detected mirs for overlapping with exocarta and targetscan
+# mirdeep2 list of detected known mirs
 grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_known.tsv
-# make input file for DESeq
-#		get total read count for pseudoRPKM values
-mature_read_total=$(tail -n+2 mirs_known.tsv | awk -F'\t' '{total+=$7}END{print(total)}')
-#		format for unique rows based on mir name ONLY
-tail -n+2 mirs_known.tsv | awk -F'\t' -v total="$mature_read_total" 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{printf("%s\t%s\t%s\t%s\t%s\t%s\t%.0f\t%.0f\n", "x",$2,"chrN","1","1", ".", $7, ($7/total)*1000000)}' > deseq_input.tsv
-# mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
-grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_novel.tsv
+# make known mature mir bed file for igv annotation
+tail -n+2 mirs_known.tsv | cut -f2 | sort | uniq | while read mir; do grep "$mir" "/dockerdata/refs/$organism.gff3" | awk -F'\t' -v m="$mir" '{printf("%s\t%s\t%s\t%s\n",$1,$4,$5,m)}'; done > mirs_known.bed
 # trim down mir name to the part that will match mirs in other lists
 tail -n+2 mirs_known.tsv | cut -f2 | sed 's/'"$organism"'-//' | sort | uniq > mirs_known_names_for_overlap.tsv
+# mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)
+grep -A1000000 "^novel miRNAs predicted by miRDeep2" result_*.csv | grep -B1000000 "^mature miRBase miRNAs detected by miRDeep2" | tail -n+2 | head -n-4 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_novel.tsv
 
 printf "\n\nStep 3 - exocarta (find overlap between mirs_known.tsv and exosome associated miRNAs)\n"
 # exosome mir summary (only for hg19, hg38, mm10)
@@ -207,6 +212,14 @@ else
 	printf "\tOrganism $organism does not have miRNAs in TargetScan DB for miRNA target predictions, skipping step."
 fi
 
+printf "\n\nStep 5 - DESeq input prep\n"
+# make input file for DESeq
+#		get total read count for pseudoRPKM values
+mature_read_total=$(tail -n+2 mirs_known.tsv | awk -F'\t' '{total+=$7}END{print(total)}')
+#		format for unique rows based on mir name ONLY
+tail -n+2 mirs_known.tsv | awk -F'\t' -v total="$mature_read_total" 'BEGIN{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "TotalReads", "Rpkm")};{printf("%s\t%s\t%s\t%s\t%s\t%s\t%.0f\t%.0f\n", "x",$2,"chrN","1","1", ".", $7, ($7/total)*1000000)}' > deseq_input.1
+head -1 deseq_input.1 > deseq_input.tsv
+tail -n+2 deseq_input.1 | sort | uniq | awk -F'\t' '{totalreads[$2]+=$7; rpkm[$2]+=$8; counter[$2]++}END{for(mir in counter){if(counter[mir]==1){printf("%s\t%s\t%s\t%s\t%s\t%s\t%.0f\t%.0f\n", "x",mir,"chrN","1","1", ".", totalreads[mir], rpkm[mir])}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%.0f\t%.0f\n", "x",mir,"chrN","1","1", ".", totalreads[mir]/counter[mir], rpkm[mir]/counter[mir])} }}' >> deseq_input.tsv
 
 
 #	SUMMARY/OUTPUTS

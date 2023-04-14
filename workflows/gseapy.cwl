@@ -10,13 +10,11 @@ requirements:
 
 
 'sd:upstream':
-  deseq_experiment:
-    - "deseq.cwl"
-
+  deseq_experiment: "deseq.cwl"
 
 inputs:
 
-  alias:
+  alias_name:
     type: string
     label: "Experiment short name/Alias"
     sd:preview:

@@ -189,7 +189,7 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  GSEAPY: Gene Set Enrichment Analysis in Python
+  GSEAPY: Gene Set Enrichment Analysis using Python
   ==============================================
 
   Gene Set Enrichment Analysis is a computational method that determines whether an a priori

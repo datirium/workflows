@@ -1,0 +1,23 @@
+{
+    "read_counts_file": {
+        "class": "File",
+        "location": "./data/gsea/deseq_counts_all-v5.gct",
+        "format": "http://edamontology.org/format_3709"
+    },
+    "phenotypes_file": {
+        "class": "File",
+        "location": "./data/gsea/deseq_phenotypes-v5.cls",
+        "format": "http://edamontology.org/format_2330"
+    },
+    "gene_set_database": "H_hallmark_gene_sets",
+    "gene_set_database_file": {
+        "class": "File",
+        "location": "./data/dm3_chr4/main_inputs/gsea/enrichr.H_hallmark_gene_sets.gmt",
+        "format": "http://edamontology.org/format_2330"
+    },
+    "permutation_count": 1000,
+    "graphs_count": 10,
+    "seed": 123,
+    "threads": 4,
+    "alias": "alias"
+}
