@@ -176,7 +176,7 @@ if [[ $organism == "dm3" ]]; then taxid="7227"; fi
 # mirdeep2 list of detected known mirs
 grep -A1000000 "^mature miRBase miRNAs detected by miRDeep2" result_*.csv | grep -B1000000 "^#miRBase miRNAs not detected by miRDeep2" | tail -n+2 | head -n-2 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$10,$14,$2,$4,$9,$6)}' | sed 's/ /_/g' > mirs_known.tsv
 # make known mature mir bed file for igv annotation
-tail -n+2 mirs_known.tsv | awk -F'\t' '{split($1,col1,"_"); printf("%s\t%s\t%s\t%s\n",col1[1], col1[2], col1[2]+length($3), $2)}' > mirs_known.bed
+tail -n+2 mirs_known.tsv | cut -f2 | sort | uniq | while read mir; do grep "$mir" "/dockerdata/refs/$organism.gff3" | awk -F'\t' -v m="$mir" '{printf("%s\t%s\t%s\t%s\n",$1,$4,$5,m)}'; done > mirs_known.bed
 # trim down mir name to the part that will match mirs in other lists
 tail -n+2 mirs_known.tsv | cut -f2 | sed 's/'"$organism"'-//' | sort | uniq > mirs_known_names_for_overlap.tsv
 # mirdeep2 list of novel mirs (POSSIBLE DOWNSTREAM ANALYSIS INPUT - mature sequence used in a sequence-based target prediction tool)

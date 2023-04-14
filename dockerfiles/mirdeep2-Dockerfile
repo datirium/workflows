@@ -45,6 +45,10 @@ RUN mkdir -p /dockerdata/refs && \
     wget https://www.mirbase.org/ftp/CURRENT/organisms.txt.gz && \
     wget https://www.mirbase.org/ftp/CURRENT/mature.fa.gz && \
     wget https://www.mirbase.org/ftp/CURRENT/hairpin.fa.gz && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/hsa.gff3 && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/mmu.gff3 && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/rno.gff3 && \
+    wget https://mirbase.org/ftp/CURRENT/genomes/dme.gff3 && \
     gunzip organisms.txt.gz && \
     gunzip mature.fa.gz && \
     gunzip hairpin.fa.gz && \
