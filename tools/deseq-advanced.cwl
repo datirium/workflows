@@ -8,11 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-<<<<<<< HEAD
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.27
-=======
   dockerPull: robertplayer/scidap-deseq:v1.0.0
->>>>>>> main
 
 
 inputs:
