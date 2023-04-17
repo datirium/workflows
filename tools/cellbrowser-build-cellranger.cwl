@@ -57,6 +57,8 @@ inputs:
       mkdir -p ./cellbrowser_input/analysis ./cellbrowser_input/filtered_feature_bc_matrix
       cp -r $0/* ./cellbrowser_input/analysis/
       cp -r $1/* ./cellbrowser_input/filtered_feature_bc_matrix/
+      echo "Removing gene_expression_ part from all of the folder names in analysis"
+      du -a ./cellbrowser_input/analysis | cut -f 2 | grep gene_expression | xargs -I{} bash -c 'mv "$1" "${1//gene_expression_/}"' -- {}
       echo "Run cbImportCellranger"
       cbImportCellranger -i cellbrowser_input -o cellbrowser_output --name cellbrowser
       cd ./cellbrowser_output
@@ -139,7 +141,12 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "cellbrowser-build-cellranger"
+label: "Cell Ranger Count/Aggregate to UCSC Cell Browser"
+s:name: "Cell Ranger Count/Aggregate to UCSC Cell Browser"
+s:alternateName: |
+  Exports clustering results from Cell Ranger Count Gene Expression or Cell Ranger
+  Aggregate experiments into compatible with UCSC Cell Browser format
+
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellbrowser-build-cellranger.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
@@ -176,7 +183,12 @@ s:creator:
 
 
 doc: |
-  Converts Cellranger outputs into the data structure supported by UCSC CellBrowser
+  Cell Ranger Count/Aggregate to UCSC Cell Browser
+  =================================================================
+  
+  Exports clustering results from Cell Ranger Count Gene Expression
+  and Cell Ranger Aggregate experiments into compatible with UCSC
+  Cell Browser format.
 
 
 s:about: |

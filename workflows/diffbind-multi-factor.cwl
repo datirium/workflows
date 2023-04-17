@@ -176,7 +176,11 @@ inputs:
   padj_threshold:
     type: float?
     default: 0.05
+<<<<<<< HEAD
     label: "Peak selection. Maximum allowed adjusted P-value for differentially bound sites"
+=======
+    label: "Diff. analysis. Maximum allowed adjusted P-value for differentially bound sites"
+>>>>>>> master
     doc: |
       Filtering threshold to report only differentially
       bound sites with adjusted P-value less than or
@@ -969,7 +973,6 @@ s:creator:
 
 doc: |
   DiffBind Multi-factor Analysis
-  ------------------------------
   
   DiffBind processes ChIP-Seq data enriched for genomic loci where specific protein/DNA binding occurs, including peak sets identified by ChIP-Seq peak callers and
   aligned sequence read datasets. It is designed to work with multiple peak sets simultaneously, representing different ChIP experiments (antibodies, transcription

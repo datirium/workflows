@@ -34,47 +34,62 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
-    label: "FASTQ file R1 (optionally compressed)"
-    doc: "FASTQ file R1 (optionally compressed)"
+    label: "FASTQ file(s) R1 (optionally compressed)"
+    doc: "FASTQ file(s) R1 (optionally compressed)"
 
   fastq_file_r2:
     type:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
-    label: "FASTQ file R2 (optionally compressed)"
-    doc: "FASTQ file R2 (optionally compressed)"
+    label: "FASTQ file(s) R2 (optionally compressed)"
+    doc: "FASTQ file(s) R2 (optionally compressed)"
+
+  r1_length:
+    type: int?
+    default: null
+    label: "Limit the length of the input R1 sequence"
+    doc: "Limit the length of the input R1 sequence"
+    'sd:layout':
+      advanced: true
+
+  r2_length:
+    type: int?
+    default: null
+    label: "Limit the length of the input R2 sequence"
+    doc: "Limit the length of the input R2 sequence"
+    'sd:layout':
+      advanced: true
 
   expect_cells:
     type: int?
-    default: 3000
-    label: "Expected number of recovered cells"
-    doc: "Expected number of recovered cells"
+    default: null
+    label: "Expected number of recovered cells. If not provided - use auto-estimated"
+    doc: "Expected number of recovered cells. If not provided - use auto-estimated"
     'sd:layout':
       advanced: true
 
-  force_expect_cells:
-    type: boolean?
-    default: false
-    label: "Force pipeline to use the expected number of recovered cells"
-    doc: |
-      Force pipeline to use the expected number of recovered cell.
-      The value provided in expect_cells will be sent to Cell Ranger Count as --force-cells.
-      The latter will bypass the cell detection algorithm. Use this if the number of cells
-      estimated by Cell Ranger is not consistent with the barcode rank plot.
+  force_cells:
+    type: int?
+    default: null
+    label: "Force pipeline to use this number of cells, bypassing the cell detection algorithm"
+    doc: "Force pipeline to use this number of cells, bypassing the cell detection algorithm"
     'sd:layout':
       advanced: true
 
-  include_introns:
+  exclude_introns:
     type: boolean?
     default: false
-    label: "Count reads mapping to intronic regions. For samples with a significant amount of pre-mRNA molecules, such as nuclei"
-    doc: |
-      Add this flag to count reads mapping to intronic regions.
-      This may improve sensitivity for samples with a significant
-      amount of pre-mRNA molecules, such as nuclei.
+    label: "Do not count intronic reads for whole transcriptome gene expression data"
+    doc: "Do not count intronic reads for whole transcriptome gene expression data"
+    'sd:layout':
+      advanced: true
+
+  no_bam:
+    type: boolean?
+    default: true
+    label: "Do not generate the BAM file"
+    doc: "Do not generate the BAM file"
     'sd:layout':
       advanced: true
 
@@ -141,7 +156,7 @@ outputs:
       Run summary metrics in CSV format
 
   possorted_genome_bam_bai:
-    type: File
+    type: File?
     outputSource: generate_counts_matrix/possorted_genome_bam_bai
     label: "Aligned to the genome indexed reads BAM+BAI files"
     doc: |
@@ -202,13 +217,29 @@ outputs:
     doc: |
       Loupe Browser visualization and analysis file
 
-  collected_statistics:
+  collected_statistics_yaml:
     type: File
-    outputSource: collect_statistics/collected_statistics
+    outputSource: collect_statistics/collected_statistics_yaml
+    label: "Collected statistics in YAML format"
+    doc: "Collected statistics in YAML format"
+
+  collected_statistics_md:
+    type: File
+    outputSource: collect_statistics/collected_statistics_md
     label: "Collected statistics in Markdown format"
     doc: "Collected statistics in Markdown format"
     'sd:visualPlugins':
     - markdownView:
+        tab: 'Overview'
+
+  collected_statistics_tsv:
+    type: File
+    outputSource: collect_statistics/collected_statistics_tsv
+    label: "Collected statistics in TSV format"
+    doc: "Collected statistics in TSV format"
+    'sd:visualPlugins':
+    - tableView:
+        vertical: true
         tab: 'Overview'
 
   generate_counts_matrix_stdout_log:
@@ -256,18 +287,18 @@ steps:
   extract_fastq_r1:
     run: ../tools/extract-fastq.cwl
     in:
-      output_prefix:  
-        default: "read_1"
       compressed_file: fastq_file_r1
+      output_prefix:
+        default: "read_1"
     out:
     - fastq_file
 
   extract_fastq_r2:
     run: ../tools/extract-fastq.cwl
     in:
-      output_prefix:  
-        default: "read_2"
       compressed_file: fastq_file_r2
+      output_prefix:
+        default: "read_2"
     out:
     - fastq_file
 
@@ -293,13 +324,12 @@ steps:
       fastq_file_r1: extract_fastq_r1/fastq_file
       fastq_file_r2: extract_fastq_r2/fastq_file
       indices_folder: indices_folder
-      expect_cells:
-        source: [expect_cells, force_expect_cells]
-        valueFrom: $(self[1]?null:self[0])
-      force_cells:
-        source: [expect_cells, force_expect_cells]
-        valueFrom: $(self[1]?self[0]:null)
-      include_introns: include_introns
+      r1_length: r1_length
+      r2_length: r2_length
+      expect_cells: expect_cells
+      force_cells: force_cells
+      no_bam: no_bam
+      exclude_introns: exclude_introns
       threads: threads
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
@@ -339,45 +369,13 @@ steps:
     - compressed_folder
 
   collect_statistics:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: rackspacedot/python37
-      inputs:
-        script:
-          type: string?
-          default: |
-            #!/usr/bin/env python3
-            import sys, csv
-            with open(sys.argv[1], "r") as input_stream:
-              with open("collected_statistics.md", "w") as output_stream:
-                output_stream.write("### Cell Ranger Statistics\n")
-                keys, values = None, None
-                for i, row in enumerate(csv.reader(input_stream)):
-                  if i==0:
-                    keys = row
-                  else:
-                    values = row
-                for k,v in zip(keys, values):
-                  output_stream.write("- "+k+": "+v+"\n")
-          inputBinding:
-            position: 5
-        metrics_summary_report:
-          type: File
-          inputBinding:
-            position: 6
-      outputs:
-        collected_statistics:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: ["python3", "-c"]
+    run: ../tools/collect-stats-sc-count.cwl
     in:
       metrics_summary_report: generate_counts_matrix/metrics_summary_report
     out:
-    - collected_statistics
+    - collected_statistics_yaml
+    - collected_statistics_tsv
+    - collected_statistics_md
 
   cellbrowser_build:
     run: ../tools/cellbrowser-build-cellranger.cwl
@@ -443,4 +441,5 @@ s:creator:
 
 doc: |
   Cell Ranger Count Gene Expression
-  =================================
+  
+  Quantifies gene expression from a single-cell RNA-Seq library.
