@@ -402,7 +402,7 @@ outputs:
     label: "Preseq estimates"
     format: "http://edamontology.org/format_3475"
     doc: "Preseq estimated results"
-    outputSource: preseq/estimates_file
+    outputSource: preseq_plot_data/estimates_file_plot_data
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
@@ -410,8 +410,8 @@ outputs:
         xAxisTitle: 'Total Reads Count (x1 million)'
         yAxisTitle: 'Expected Distinct Reads Count'
         colors: ["#4b78a3", "#a3514b"]
+        height: 500
         data: [$2, $5]
-
 
   estimated_fragment_size:
     type: int
@@ -546,6 +546,17 @@ steps:
       extrapolation:
         default: 1000000000
     out: [estimates_file]
+
+  preseq_plot_data:
+    label: "Formats sequencing depth estimation data for plotting"
+    doc: |
+      Formats estimates file from preseq standard output for QC plotting. This adds a new
+      column that includes the actual read count point on the plot.
+    run: ../tools/preseq-plot-data.cwl
+    in:
+      trim_fastq_report_file: trim_fastq/report_file
+      estimates_file: preseq/estimates_file
+    out: [estimates_file_plot_data]
 
   samtools_rmdup:
     label: "PCR duplicates removal"
