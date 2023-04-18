@@ -36,14 +36,14 @@ inputs:
         position: 1
 
   trim_fastq_report_file:
-    type: File?
+    type: File
     inputBinding:
       position: 2
     doc: |
       trimming report file to get total read counts from
 
   estimates_file:
-    type: float?
+    type: File
     inputBinding:
       position: 3
     doc: |
