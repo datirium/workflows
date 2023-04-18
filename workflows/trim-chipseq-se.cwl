@@ -404,15 +404,14 @@ outputs:
     doc: "Preseq estimated results"
     outputSource: preseq/estimates_file
     'sd:visualPlugins':
-    - scatter:
+    - line:
         tab: 'QC Plots'
         Title: 'Preseq Estimates'
-        xAxisTitle: 'Total reads count'
-        yAxisTitle: 'Expected distinct reads count'
-        colors: ["#4b78a3"]
-        height: 500
-        data: [$1, $2]
-        comparable: "preseq"
+        xAxisTitle: 'Total Reads Count (x1 million)'
+        yAxisTitle: 'Expected Distinct Reads Count'
+        colors: ["#4b78a3", "#a3514b"]
+        data: [$2, $5]
+
 
   estimated_fragment_size:
     type: int
