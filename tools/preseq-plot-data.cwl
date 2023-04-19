@@ -22,16 +22,17 @@ inputs:
       printf "INPUTS:\n"
       echo "\$0 trim_fastq_report_file - $0"
       echo "\$1 estimates_file - $1"
+      echo "\$2 mapped_reads - $2"
       # get total reads from fastx stats file
       tr=$(grep "sequences processed in total" "$0" | sed 's/ .*//')
       # find index where total reads should be placed along x-axis
       yval_index=$(tail -n+2 "$1" | awk -F'\t' -v tr=$tr '{if($1<tr){x++}}END{print(x)}')
-      # store that y-value
+      # store that y-value (not necessary, we want to use the actual mapped reads counts for the "distinct reads count" here - arg $2)
       yval=$(tail -n+2 "$1" | head -$yval_index | tail -1 | cut -f2)
       # generate new headers for formatted plot file
       head -1 "$1" | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\n",$1,"ACTUAL_READ_COUNT",$3,$4,$2)}' > estimates_file_plot_data.tsv
       # need to switch col2 and 5, first column listed with be the "top" line
-      tail -n+2 "$1" | awk -F'\t' -v yval_index=$yval_index -v yval=$yval '{if(NR==yval_index){printf("%.0f\t%.0f\t%.0f\t%.0f\t%.0f\n",$1,yval,$3,$4,$2)}else{printf("%.0f\t%.0f\t%.0f\t%.0f\t%s\n",$1,"null",$3,$4,$2)}}' >> estimates_file_plot_data.tsv
+      tail -n+2 "$1" | awk -F'\t' -v yval_index=$yval_index -v yval=$2 '{if(NR==yval_index){printf("%.0f\t%.0f\t%.0f\t%.0f\t%.0f\n",$1,yval,$3,$4,$2)}else{printf("%.0f\t%.0f\t%.0f\t%.0f\t%s\n",$1,"null",$3,$4,$2)}}' >> estimates_file_plot_data.tsv
     inputBinding:
         position: 1
 
@@ -48,6 +49,13 @@ inputs:
       position: 3
     doc: |
       preseq standard output estimates file
+
+  mapped_reads:
+    type: int
+    inputBinding:
+      position: 4
+    doc: |
+      mapped read count
 
 
 outputs:
