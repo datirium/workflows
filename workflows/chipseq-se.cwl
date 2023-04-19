@@ -285,14 +285,14 @@ outputs:
     label: "YAML formatted combined log"
     format: "http://edamontology.org/format_3750"
     doc: "YAML formatted combined log"
-    outputSource: get_statistics/collected_statistics_yaml
+    outputSource: get_stat/collected_statistics_yaml
 
   workflow_statistics_markdown:
     type: File?
     label: "Markdown formatted combined log"
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
-    outputSource: get_statistics/collected_statistics_md
+    outputSource: get_stat/collected_statistics_md
     'sd:visualPlugins':
     - markdownView:
         tab: 'Overview'
@@ -302,7 +302,7 @@ outputs:
     label: "Workflow execution statistics"
     format: "http://edamontology.org/format_3475"
     doc: "Overall workflow execution statistics from bowtie_aligner and samtools_rmdup steps"
-    outputSource: get_statistics/collected_statistics_tsv
+    outputSource: get_stat/collected_statistics_tsv
     'sd:visualPlugins':
     - tableView:
         vertical: true
@@ -353,7 +353,7 @@ outputs:
     type: int
     label: "Mapped reads number"
     doc: "Mapped reads number for downstream analyses"
-    outputSource: get_statistics/mapped_reads
+    outputSource: get_stat/mapped_reads
 
 
 steps:
@@ -441,17 +441,6 @@ steps:
         default: 1000000000
     out: [estimates_file]
 
-  preseq_plot_data:
-    label: "Formats sequencing depth estimation data for plotting"
-    doc: |
-      Formats estimates file from preseq standard output for QC plotting. This adds a new
-      column that includes the actual read count point on the plot.
-    run: ../tools/preseq-plot-data.cwl
-    in:
-      trim_fastq_report_file: trim_fastq/report_file
-      estimates_file: preseq/estimates_file
-    out: [estimates_file_plot_data]
-
   samtools_rmdup:
     label: "PCR duplicates removal"
     doc: |
@@ -519,7 +508,7 @@ steps:
     in:
       bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
       chrom_length_file: chrom_length
-      mapped_reads_number: get_statistics/mapped_reads
+      mapped_reads_number: get_stat/mapped_reads
       fragment_size: macs2_callpeak/macs2_fragments_calculated
     out: [bigwig_file]
 
@@ -545,7 +534,7 @@ steps:
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
     out: [log_file]
 
-  get_statistics:
+  get_stat:
     run: ../tools/collect-statistics-chip-seq.cwl
     in:
       bowtie_alignment_report: bowtie_aligner/log_file
@@ -554,6 +543,18 @@ steps:
       macs2_called_peaks: macs2_callpeak/peak_xls_file
       preseq_results: preseq/estimates_file
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
+
+  preseq_plot_data:
+    label: "Formats sequencing depth estimation data for plotting"
+    doc: |
+      Formats estimates file from preseq standard output for QC plotting. This adds a new
+      column that includes the actual read count point on the plot.
+    run: ../tools/preseq-plot-data.cwl
+    in:
+      trim_fastq_report_file: trim_fastq/report_file
+      estimates_file: preseq/estimates_file
+      mapped_reads: get_stat/mapped_reads
+    out: [estimates_file_plot_data]
 
   island_intersect:
     label: "Peak annotation"
@@ -588,7 +589,7 @@ steps:
         default: "chrX chrY"
       avd_heat_window_bp:
         default: 200
-      mapped_reads: get_statistics/mapped_reads
+      mapped_reads: get_stat/mapped_reads
     out: [result_file]
 
 

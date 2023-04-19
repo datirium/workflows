@@ -572,17 +572,6 @@ steps:
         default: 1000000000
     out: [estimates_file]
 
-  preseq_plot_data:
-    label: "Formats sequencing depth estimation data for plotting"
-    doc: |
-      Formats estimates file from preseq standard output for QC plotting. This adds a new
-      column that includes the actual read count point on the plot.
-    run: ../tools/preseq-plot-data.cwl
-    in:
-      trim_fastq_report_file: trim_fastq/report_file
-      estimates_file: preseq/estimates_file
-    out: [estimates_file_plot_data]
-
   samtools_rmdup:
     label: "PCR duplicates removal"
     doc: |
@@ -691,6 +680,18 @@ steps:
       paired_end:
         default: True
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
+
+  preseq_plot_data:
+    label: "Formats sequencing depth estimation data for plotting"
+    doc: |
+      Formats estimates file from preseq standard output for QC plotting. This adds a new
+      column that includes the actual read count point on the plot.
+    run: ../tools/preseq-plot-data.cwl
+    in:
+      trim_fastq_report_file: trim_fastq/report_file
+      estimates_file: preseq/estimates_file
+      mapped_reads: get_stat/mapped_reads
+    out: [estimates_file_plot_data]
 
   island_intersect:
     label: "Peak annotation"
