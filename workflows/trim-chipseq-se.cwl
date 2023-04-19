@@ -406,7 +406,7 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'Preseq Estimates'
+        Title: 'Expected Distinct Read Counts Estimates'
         xAxisTitle: 'Total Reads Count (x1 million)'
         yAxisTitle: 'Expected Distinct Reads Count'
         colors: ["#4b78a3", "#a3514b"]
