@@ -21,6 +21,7 @@ requirements:
   - "cellranger-aggr.cwl"
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
+  - "sc-format-transform.cwl"
 
 
 inputs:
