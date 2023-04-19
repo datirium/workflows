@@ -1,0 +1,33 @@
+#################################################################
+# Dockerfile
+#
+# Software:         Ubuntu22.04
+# Software Version: version 22.04
+# Description:      for running bash and related software in cwl tools
+# Website:          https://github.com/datirium/workflows
+# Provides:         ubuntu22.04 base OS
+# Base Image:       ubuntu:22.04
+# Build Cmd:        docker build --no-cache --rm -t ubuntu22-dev -f ubuntu22-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti ubuntu22-dev /bin/bash
+# Push Cmd1:        docker tag ubuntu22-dev robertplayer/scidap-ubuntu22:dev
+#      Cmd2:        docker image push robertplayer/scidap-ubuntu22:dev
+# Pull Cmd:         docker pull robertplayer/scidap-ubuntu22:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-ubuntu22:dev /bin/bash
+# re-tag for PR:    docker tag ubuntu22-dev robertplayer/scidap-ubuntu22:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-ubuntu22:v1.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-ubuntu22:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-ubuntu22:v1.0.0 /bin/bash
+#           
+#   NOTES:
+#           
+#################################################################
+
+
+### Base Image
+FROM ubuntu:22.04
+#FROM robertplayer/scidap-ubuntu22:dev
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
