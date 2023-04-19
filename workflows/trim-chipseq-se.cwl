@@ -397,7 +397,7 @@ outputs:
     doc: "TrimGalore generated log"
     outputSource: trim_fastq/report_file
 
-  preseq_estimates:
+  preseq_estimates_plot_data:
     type: File?
     label: "Preseq estimates"
     format: "http://edamontology.org/format_3475"
