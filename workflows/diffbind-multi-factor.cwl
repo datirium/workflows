@@ -940,7 +940,7 @@ steps:
           set -- "$0" "$@"
           COUNT=`expr $# / 2`
           echo "| Sample | Index |" > experiment_info.md
-          echo "| -- | -- |" >> experiment_info.md
+          echo "| :-- | --: |" >> experiment_info.md
           j=1
           for i in "${@:$COUNT+1:$#}"; do
             echo "Add $i as $count"
