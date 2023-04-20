@@ -337,7 +337,7 @@ outputs:
     - line:
         tab: 'QC Plots'
         Title: 'Distinct Read Counts Estimates'
-        xAxisTitle: 'Mapped Read Count (x1 million)'
+        xAxisTitle: 'Mapped Reads/Fragments/Tags (millions)'
         yAxisTitle: 'Distinct Reads Count'
         colors: ["#4b78a3", "#a3514b"]
         height: 500
