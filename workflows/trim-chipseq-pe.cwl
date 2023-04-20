@@ -466,6 +466,7 @@ outputs:
         colors: ["#4b78a3", "#a3514b"]
         height: 500
         data: [$2, $5]
+        comparable: "preseq"
 
   estimated_fragment_size:
     type: int
@@ -650,7 +651,7 @@ steps:
         default: true
       extrapolation:
         default: 1000000000
-    out: [estimates_file]
+    out: [estimates_file, log_file_stdout, log_file_stderr]
 
   samtools_rmdup:
     label: "PCR duplicates removal"
@@ -770,7 +771,7 @@ steps:
       column that includes the actual read count point on the plot.
     run: ../tools/preseq-plot-data.cwl
     in:
-      trim_fastq_report_file: trim_fastq/report_file
+      preseq_stderr_log_file: preseq/log_file_stderr
       estimates_file: preseq/estimates_file
       mapped_reads: get_stat/mapped_reads
     out: [estimates_file_plot_data]

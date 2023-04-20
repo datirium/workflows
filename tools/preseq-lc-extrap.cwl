@@ -131,7 +131,7 @@ outputs:
       log for stderr
     
 
-baseCommand: ["preseq", "lc_extrap", "-bam"]
+baseCommand: ["preseq", "lc_extrap", "-v", "-bam"]
 stdout: 'preseq.log.stdout'
 stderr: 'preseq.log.stderr'
 
