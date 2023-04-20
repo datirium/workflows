@@ -469,7 +469,7 @@ outputs:
     - line:
         tab: 'QC Plots'
         Title: 'Distinct Read Counts Estimates'
-        xAxisTitle: 'Mapped Read Count (x1 million)'
+        xAxisTitle: 'Mapped Reads/Fragments/Tags (millions)'
         yAxisTitle: 'Distinct Reads Count'
         colors: ["#4b78a3", "#a3514b"]
         height: 500
@@ -667,17 +667,6 @@ steps:
       extrapolation:
         default: 1000000000
     out: [estimates_file, log_file_stdout, log_file_stderr]
-
-  preseq_plot_data:
-    label: "Formats sequencing depth estimation data for plotting"
-    doc: |
-      Formats estimates file from preseq standard output for QC plotting. This adds a new
-      column that includes the actual read count point on the plot.
-    run: ../tools/preseq-plot-data.cwl
-    in:
-      trim_fastq_report_file: trim_fastq/report_file
-      estimates_file: preseq/estimates_file
-    out: [estimates_file_plot_data]
 
   samtools_rmdup:
     label: "PCR duplicates removal"
