@@ -336,9 +336,9 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'Expected Distinct Read Counts Estimates'
-        xAxisTitle: 'Total Reads Count (x1 million)'
-        yAxisTitle: 'Expected Distinct Reads Count'
+        Title: 'Distinct Read Counts Estimates'
+        xAxisTitle: 'Mapped Read Count (x1 million)'
+        yAxisTitle: 'Distinct Reads Count'
         colors: ["#4b78a3", "#a3514b"]
         height: 500
         data: [$2, $5]

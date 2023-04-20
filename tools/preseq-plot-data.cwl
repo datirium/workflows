@@ -28,7 +28,7 @@ inputs:
       # find index where mapped reads count should be along the x-axis
       yval_index=$(tail -n+2 $1 | awk -F'\t' -v tr=$2 '{if($1<tr){x++}}END{print(x)}')
       # generate new headers for formatted plot file
-      head -1 $1 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\n",$1,"ACTUAL_READ_COUNT",$3,$4,$2)}' > estimates_file_plot_data.tsv
+      head -1 $1 | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\n",$1,"MAPPED_READS",$3,$4,$2)}' > estimates_file_plot_data.tsv
       # need to switch col2 and 5, first column listed with be the "top" line
       tail -n+2 "$1" | awk -F'\t' -v yval_index=$yval_index -v yval=$dr '{if(NR==yval_index){printf("%.0f\t%.0f\t%.0f\t%.0f\t%.0f\n",$1,yval,$3,$4,$2)}else{printf("%.0f\t%.0f\t%.0f\t%.0f\t%s\n",$1,"null",$3,$4,$2)}}' >> estimates_file_plot_data.tsv
     inputBinding:
