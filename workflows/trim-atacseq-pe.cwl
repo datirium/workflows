@@ -474,7 +474,6 @@ outputs:
         colors: ["#4b78a3", "#a3514b"]
         height: 500
         data: [$2, $5]
-        comparable: "preseq"
 
   estimated_fragment_size:
     type: int
