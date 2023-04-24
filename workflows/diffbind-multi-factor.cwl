@@ -597,6 +597,16 @@ outputs:
       GCT file with normalized read counts per peak
     outputSource: extend_gct/extended_gct
 
+  experiment_info:
+    type: File
+    label: "Samples order for IGV"
+    doc: |
+      Markdown file to explain the sample order for IGV
+    outputSource: create_metadata/output_file
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
   diffbind_stdout_log:
     type: File
     label: "DiffBind stdout log"
@@ -918,6 +928,27 @@ steps:
     - heatmap_html
     - stdout_log
     - stderr_log
+
+  create_metadata:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: peak_files
+      param: dataset_names
+      script:
+        default: |
+          #!/bin/bash
+          set -- "$0" "$@"
+          COUNT=`expr $# / 2`
+          echo "| Sample | Index |" > experiment_info.md
+          echo "| :-- | --: |" >> experiment_info.md
+          j=1
+          for i in "${@:$COUNT+1:$#}"; do
+            echo "Add $i as $count"
+            echo "| $i | $j |" >> experiment_info.md
+            (( j++ ))
+          done;
+    out:
+    - output_file
 
 
 $namespaces:
