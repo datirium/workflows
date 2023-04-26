@@ -125,15 +125,15 @@ inputs:
     - "null"
     - type: enum
       symbols:
-      - "wilcoxon"                   # (wilcox) Wilcoxon Rank Sum test
-      - "likelihood-ratio"           # (bimod) Likelihood-ratio test
-      - "t-test"                     # (t) Student's t-test
-      - "negative-binomial"          # (negbinom) Negative Binomial Generalized Linear Model (supports --batchby)
-      - "poisson"                    # (poisson) Poisson Generalized Linear Model (supports --batchby)
-      - "logistic-regression"        # (LR) Logistic Regression (supports --batchby)
-      - "mast"                       # (MAST) MAST package (supports --batchby)
-      - "deseq"                      # DESeq2 Wald test on pseudobulk aggregated gene expression
-      - "deseq-lrt"                  # DESeq2 LRT test on pseudobulk aggregated gene expression
+      - "wilcoxon (by cells, no batches)"                   # (wilcox) Wilcoxon Rank Sum test
+      - "likelihood-ratio (by cells, no batches)"           # (bimod) Likelihood-ratio test
+      - "t-test (by cells, no batches)"                     # (t) Student's t-test
+      - "negative-binomial (by cells, models batches)"      # (negbinom) Negative Binomial Generalized Linear Model (supports --batchby)
+      - "poisson (by cells, models batches)"                # (poisson) Poisson Generalized Linear Model (supports --batchby)
+      - "logistic-regression (by cells, models batches)"    # (LR) Logistic Regression (supports --batchby)
+      - "mast (by cells, models batches)"                   # (MAST) MAST package (supports --batchby)
+      - "deseq (pseudo bulk, models batches)"               # DESeq2 Wald test on pseudobulk aggregated gene expression
+      - "deseq-lrt (pseudo bulk, models batches)"           # DESeq2 LRT test on pseudobulk aggregated gene expression
     default: wilcoxon
     label: "Test type to use in differential expression analysis"
     doc: |
@@ -632,7 +632,9 @@ steps:
       splitby: splitby
       first_cond: first_cond
       second_cond: second_cond
-      analysis_method: analysis_method
+      analysis_method:
+        source: analysis_method
+        valueFrom: $(self.split(" ")[0])
       batchby:
         source: batchby
         valueFrom: $(self==""?null:self)            # safety measure
