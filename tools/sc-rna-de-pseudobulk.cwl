@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.18
+  dockerPull: biowardrobe2/sc-tools:v0.0.19
 
 
 inputs:
@@ -21,72 +21,52 @@ inputs:
     inputBinding:
       prefix: "--query"
     doc: |
-      Path to the RDS file to load Seurat object from. This file should include genes
-      expression information stored in the RNA assay. Additionally, 'rnaumap', and/or
-      'atacumap', and/or 'wnnumap' dimensionality reductions should be present.
+      Path to the RDS file to load Seurat object from. This
+      file should include genes expression information
+      stored in the RNA assay. Additionally, 'rnaumap',
+      and/or 'atacumap', and/or 'wnnumap' dimensionality
+      reductions should be present.
 
   datasets_metadata:
     type: File?
     inputBinding:
       prefix: "--metadata"
     doc: |
-      Path to the TSV/CSV file to optionally extend Seurat object metadata with
-      categorical values using samples identities. First column - 'library_id'
-      should correspond to all unique values from the 'new.ident' column of the
-      loaded Seurat object. If any of the provided in this file columns are already
-      present in the Seurat object metadata, they will be overwritten. Default: no
-      extra metadata is added
+      Path to the TSV/CSV file to optionally extend Seurat
+      object metadata with categorical values using samples
+      identities. First column - 'library_id' should
+      correspond to all unique values from the 'new.ident'
+      column of the loaded Seurat object. If any of the
+      provided in this file columns are already present in
+      the Seurat object metadata, they will be overwritten.
+      When combined with --barcodes parameter, first the
+      metadata will be extended, then barcode filtering will
+      be applied. Default: no extra metadata is added
 
-  splitby:
-    type: string
+  barcodes_data:
+    type: File?
     inputBinding:
-      prefix: "--splitby"
+      prefix: "--barcodes"
     doc: |
-      Column from the Seurat object metadata to split datasets into two groups
-      to run --second vs --first pseudobulk DE analysis, i.e., calculate log2FC.
-      May be one of the columns from the extra metadata added with --metadata
-      parameter. Provided value should group the datasets, not cells, therefore
-      do not use a column with clustering results.
-
-  first_cond:
-    type: string
-    inputBinding:
-      prefix: "--first"
-    doc: |
-      Value from the Seurat object metadata column set with --splitby to define the
-      first group of datasets for pseudobulk DE analysis.
-
-  second_cond:
-    type: string
-    inputBinding:
-      prefix: "--second"
-    doc: |
-      Value from the Seurat object metadata column set with --splitby to define the
-      second group of datasets for pseudobulk DE analysis.
-
-  batchby:
-    type: string?
-    inputBinding:
-      prefix: "--batchby"
-    doc: |
-      Column from the Seurat object metadata to group datasets into batches. It will be used
-      as a factor variable to model batch effect when running pseudobulk DE analysis (makes
-      design formula look like ~splitby+batchby). May be one of the columns from the extra
-      metadata added with --metadata parameter. Provided value should batch the datasets, not
-      cells, therefore do not use a column with clustering results. Default: do not model
-      batch effect.
+      Path to the TSV/CSV file to optionally prefilter and
+      extend Seurat object metadata by selected barcodes.
+      First column should be named as 'barcode'. If file
+      includes any other columns they will be added to the
+      Seurat object metadata ovewriting the existing ones if
+      those are present. Default: all cells used, no extra
+      metadata is added
 
   groupby:
     type: string?
     inputBinding:
       prefix: "--groupby"
     doc: |
-      Column from the Seurat object metadata to group cells for optional subsetting
-      when combined with --subset parameter. May be one of the columns from the extra
-      metadata added with --metadata parameter. Ignored if --subset is not set. Provided
-      value defines the groups of cells, therefore any metadata column, including the
-      clustering results, may be used. Default: do not subset, run pseudobulk DE analysis
-      for all cells jointly
+      Column from the Seurat object metadata to group cells
+      for optional subsetting when combined with --subset
+      parameter. May be one of the extra metadata columns
+      added with --metadata or --barcodes parameters.
+      Ignored if --subset is not set. Default: do not
+      subset, include all cells into analysis.
 
   subset:
     type:
@@ -96,27 +76,97 @@ inputs:
     inputBinding:
       prefix: "--subset"
     doc: |
-      Value(s) from the column set with --groupby parameter to subset cells
-      before running pseudobulk DE analysis. If multiple values are provided
-      run analysis jointly for selected groups of cells. Ignored if --groupby
-      is not set. Default: do not subset, run pseudobulk DE analysis for all
-      cells jointly
+      Values from the column set with --groupby parameter to
+      subset cells before running differential expression
+      analysis. Ignored if --groupby is not provided.
+      Default: do not subset cells, include all of them
 
-  lrt:
-    type: boolean?
+  splitby:
+    type: string
     inputBinding:
-      prefix: "--lrt"
+      prefix: "--splitby"
     doc: |
-      Use LRT instead of the pair-wise Wald test. If --batchby is not provided
-      use ~1 as a reduced formula, otherwise ~batchby. Default: use Wald test
+      Column from the Seurat object metadata to split cells
+      into two groups to run --second vs --first
+      differential expression analysis. May be one of the
+      extra metadata columns added with --metadata or
+      --barcodes parameters.
+
+  first_cond:
+    type: string
+    inputBinding:
+      prefix: "--first"
+    doc: |
+      Value from the Seurat object metadata column set with
+      --splitby parameter to define the first group of cells
+      for differential expression analysis.
+
+  second_cond:
+    type: string
+    inputBinding:
+      prefix: "--second"
+    doc: |
+      Value from the Seurat object metadata column set with
+      --splitby parameter to define the second group of
+      cells for differential expression analysis.
+
+  analysis_method:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "wilcoxon"                   # (wilcox) Wilcoxon Rank Sum test
+      - "likelihood-ratio"           # (bimod) Likelihood-ratio test
+      - "t-test"                     # (t) Student's t-test
+      - "negative-binomial"          # (negbinom) Negative Binomial Generalized Linear Model (supports --batchby)
+      - "poisson"                    # (poisson) Poisson Generalized Linear Model (supports --batchby)
+      - "logistic-regression"        # (LR) Logistic Regression (supports --batchby)
+      - "mast"                       # (MAST) MAST package (supports --batchby)
+      - "deseq"                      # DESeq2 Wald test on pseudobulk aggregated gene expression
+      - "deseq-lrt"                  # DESeq2 LRT test on pseudobulk aggregated gene expression
+    inputBinding:
+      prefix: "--test"
+    doc: |
+      Test type to use in differential expression analysis.
+      If set to deseq or deseq-lrt, gene expression will be
+      aggregated to the pseudobulk level per dataset. For
+      deseq, the pair-wise Wald test will be used. For
+      deseq-lrt, the reduced formula will look like ~1 if
+      --batchby parameter is omitted or will be set to
+      ~batchby to exclude the criteria if interest (defined
+      by --splitby). For all other values of the --test
+      parameter the FindMarkers function will be used (genes
+      will be prefiltered by minimum percentage >= 0.1 and
+      by minimum log2FoldChange >= 0.25 before running
+      differential expression analysis). Default: use
+      FindMarkers with Wilcoxon Rank Sum test.
+
+  batchby:
+    type: string?
+    inputBinding:
+      prefix: "--batchby"
+    doc: |
+      Column from the Seurat object metadata to group cells
+      into batches. If --test is set to deseq or deseq-lrt
+      the --batchby parameter will be used in the design
+      formula in the following way ~splitby+batchby. If
+      --test is set to negative-binomial, poisson, logistic-
+      regression, or mast it will be used as a latent
+      variable in the FindMarkers function. Not supported
+      for --test values equal to wilcoxon, likelihood-ratio,
+      or t-test. May be one of the extra metadata columns
+      added with --metadata or --barcodes parameters.
+      Default: do not model batch effect.
 
   maximum_padj:
     type: float?
     inputBinding:
       prefix: "--padj"
     doc: |
-      In the exploratory visualization part of the analysis output only features
-      with adjusted P-value not bigger than this value. Default: 0.05
+      In the exploratory visualization part of the analysis
+      output only differentially expressed genes with
+      adjusted P-value not bigger than this value.
+      Default: 0.05
 
   genes_of_interest:
     type:
@@ -126,42 +176,20 @@ inputs:
     inputBinding:
       prefix: "--genes"
     doc: |
-      Genes of interest to label on the generated plots. Default: top 10 genes
-      with the highest and the lowest log2FC expression values.
+      Genes of interest to label on the generated plots.
+      Default: top 10 genes with the highest and the lowest
+      log2FoldChange values.
 
   exclude_pattern:
     type: string?
     inputBinding:
       prefix: "--exclude"
     doc: |
-      Regex pattern to identify and exclude non-coding RNA genes from the pseudobulk
-      DE analysis (not case-sensitive). If any of such genes were provided in the --genes
-      parameter, they will be excluded from there as well.
-      Default: use all genes
-
-  normalization_method:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "vst"
-      - "rlog"
-    inputBinding:
-      prefix: "--norm"
-    doc: |
-      Read counts normalization for the exploratory visualization part of the analysis.
-      Use 'vst' for medium-to-large datasets (n > 30) and 'rlog' for small datasets
-      (n < 30), when there is a wide range of sequencing depth across samples.
-      Default: rlog
-
-  remove:
-    type: boolean?
-    inputBinding:
-      prefix: "--remove"
-    doc: |
-      Remove batch effect when generating normalized read counts for the exploratory
-      visualization part of the analysis. Ignored if --batchby is not provided.
-      Default: do not remove batch effect from normalized read counts.
+      Regex pattern to identify and exclude specific genes
+      from the differential expression analysis (not case-
+      sensitive). If any of such genes are provided in the
+      --genes parameter, they will be excluded from there as
+      well. Default: use all genes
 
   cluster_method:
     type:
@@ -174,9 +202,11 @@ inputs:
     inputBinding:
       prefix: "--cluster"
     doc: |
-      Hopach clustering method to be run on normalized read counts for the
-      exploratory visualization part of the analysis. Default: do not run
-      clustering
+      Hopach clustering method to be run on the normalized
+      read counts for the exploratory visualization part of
+      the analysis. Clustering by column is supported only
+      when --test is set to deseq or deseq-lrt. Default: do
+      not run clustering
 
   row_distance:
     type:
@@ -192,8 +222,9 @@ inputs:
     inputBinding:
       prefix: "--rowdist"
     doc: |
-      Distance metric for HOPACH row clustering. Ignored if --cluster is set
-      to column or not provided. Default: cosangle
+      Distance metric for HOPACH row clustering. Ignored if
+      --cluster is set to column or not provided.
+      Default: cosangle
 
   column_distance:
     type:
@@ -209,17 +240,19 @@ inputs:
     inputBinding:
       prefix: "--columndist"
     doc: |
-      Distance metric for HOPACH column clustering. Ignored if --cluster is set
-      to row or not provided. Default: euclid
+      Distance metric for HOPACH column clustering. Ignored
+      if --cluster is set to row or not provided.
+      Default: euclid
 
   center_row:
     type: boolean?
     inputBinding:
       prefix: "--center"
     doc: |
-      Apply mean centering for gene expression prior to running
-      clustering by row. Ignored if --cluster is set to column or
-      not provided. Default: do not centered
+      Apply mean centering for gene expression prior to
+      running clustering by row. Ignored if --cluster is
+      set to column or not provided. Default: do not
+      center
 
   export_pdf_plots:
     type: boolean?
@@ -245,8 +278,8 @@ inputs:
     inputBinding:
       prefix: "--theme"
     doc: |
-      Color theme for all generated plots. One of gray, bw, linedraw, light,
-      dark, minimal, classic, void.
+      Color theme for all generated plots. One of gray, bw,
+      linedraw, light, dark, minimal, classic, void.
       Default: classic
 
   verbose:
@@ -270,8 +303,8 @@ inputs:
     inputBinding:
       prefix: "--memory"
     doc: |
-      Maximum memory in GB allowed to be shared between the workers
-      when using multiple --cpus.
+      Maximum memory in GB allowed to be shared between
+      the workers when using multiple --cpus.
       Default: 32
 
   vector_memory_limit:
@@ -297,9 +330,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.png"
     doc: |
-      Cells UMAP split by selected biological condition, optionally
-      subsetted to the specific cluster or cell type (rnaumap dim.
-      reduction).
+      Cells UMAP split by selected criteria,
+      optionally subsetted to the specific
+      group (rnaumap dim. reduction).
       PNG format
 
   umap_rd_rnaumap_plot_pdf:
@@ -307,9 +340,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.pdf"
     doc: |
-      Cells UMAP split by selected biological condition, optionally
-      subsetted to the specific cluster or cell type (rnaumap dim.
-      reduction).
+      Cells UMAP split by selected criteria,
+      optionally subsetted to the specific
+      group (rnaumap dim. reduction).
       PDF format
 
   umap_rd_atacumap_plot_png:
@@ -317,9 +350,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_atacumap.png"
     doc: |
-      Cells UMAP split by selected biological condition, optionally
-      subsetted to the specific cluster or cell type (atacumap dim.
-      reduction).
+      Cells UMAP split by selected criteria,
+      optionally subsetted to the specific
+      group (atacumap dim. reduction).
       PNG format
 
   umap_rd_atacumap_plot_pdf:
@@ -327,9 +360,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_atacumap.pdf"
     doc: |
-      Cells UMAP split by selected biological condition, optionally
-      subsetted to the specific cluster or cell type (atacumap dim.
-      reduction).
+      Cells UMAP split by selected criteria,
+      optionally subsetted to the specific
+      group (atacumap dim. reduction).
       PDF format
 
   umap_rd_wnnumap_plot_png:
@@ -337,9 +370,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_wnnumap.png"
     doc: |
-      Cells UMAP split by selected biological condition, optionally
-      subsetted to the specific cluster or cell type (wnnumap dim.
-      reduction).
+      Cells UMAP split by selected criteria,
+      optionally subsetted to the specific
+      group (wnnumap dim. reduction).
       PNG format
 
   umap_rd_wnnumap_plot_pdf:
@@ -347,9 +380,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_wnnumap.pdf"
     doc: |
-      Cells UMAP split by selected biological condition, optionally
-      subsetted to the specific cluster or cell type (wnnumap dim.
-      reduction).
+      Cells UMAP split by selected criteria,
+      optionally subsetted to the specific
+      group (wnnumap dim. reduction).
       PDF format
 
   mds_plot_html:
@@ -357,8 +390,8 @@ outputs:
     outputBinding:
       glob: "*_mds_plot.html"
     doc: |
-      MDS plot of normalized counts. Optionally batch corrected
-      if --remove was set to True.
+      MDS plot of pseudobulk aggregated
+      normalized reads counts. All genes.
       HTML format
 
   pca_1_2_plot_png:
@@ -366,8 +399,8 @@ outputs:
     outputBinding:
       glob: "*_pca_1_2.png"
     doc: |
-      Normalized counts PCA (PC1 and PC2) subsetted to all DE genes regardless
-      of Padj, optionally batch corrected by the selected criteria.
+      Normalized reads counts PCA (1, 2).
+      All genes.
       PNG format
 
   pca_1_2_plot_pdf:
@@ -375,8 +408,8 @@ outputs:
     outputBinding:
       glob: "*_pca_1_2.pdf"
     doc: |
-      Normalized counts PCA (PC1 and PC2) subsetted to all DE genes regardless
-      of Padj, optionally batch corrected by the selected criteria.
+      Normalized reads counts PCA (1, 2).
+      All genes.
       PDF format
 
   pca_2_3_plot_png:
@@ -384,8 +417,8 @@ outputs:
     outputBinding:
       glob: "*_pca_2_3.png"
     doc: |
-      Normalized counts PCA (PC2 and PC3) subsetted to all DE genes regardless
-      of Padj, optionally batch corrected by the selected criteria.
+      Normalized reads counts PCA (2, 3).
+      All genes.
       PNG format
 
   pca_2_3_plot_pdf:
@@ -393,8 +426,8 @@ outputs:
     outputBinding:
       glob: "*_pca_2_3.pdf"
     doc: |
-      Normalized counts PCA (PC2 and PC3) subsetted to all DE genes regardless
-      of Padj, optionally batch corrected by the selected criteria.
+      Normalized reads counts PCA (2, 3).
+      All genes.
       PDF format
 
   dxpr_vlcn_plot_png:
@@ -402,11 +435,13 @@ outputs:
     outputBinding:
       glob: "*_dxpr_vlcn.png"
     doc: |
-      Volcano plot of differentially expressed genes. Highlighed genes are either
-      provided by user or top 10 genes with the highest log2FC values. The direction
-      of comparison is defined by --second vs --first groups of cells optionally
-      subsetted to the specific cluster or cell type and coerced to the pseudobulk
-      RNA-Seq samples.
+      Volcano plot of differentially expressed genes.
+      Highlighed genes are either provided by user or
+      top 10 genes with the highest log2FoldChange
+      values. The direction of comparison is defined
+      as --second vs --first. Cells are optionally
+      subsetted to the specific group and optionally
+      coerced to the pseudobulk form.
       PNG format
 
   dxpr_vlcn_plot_pdf:
@@ -414,35 +449,37 @@ outputs:
     outputBinding:
       glob: "*_dxpr_vlcn.pdf"
     doc: |
-      Volcano plot of differentially expressed genes. Highlighed genes are either
-      provided by user or top 10 genes with the highest log2FC values. The direction
-      of comparison is defined by --second vs --first groups of cells optionally
-      subsetted to the specific cluster or cell type and coerced to the pseudobulk
-      RNA-Seq samples.
+      Volcano plot of differentially expressed genes.
+      Highlighed genes are either provided by user or
+      top 10 genes with the highest log2FoldChange
+      values. The direction of comparison is defined
+      as --second vs --first. Cells are optionally
+      subsetted to the specific group and optionally
+      coerced to the pseudobulk form.
       PDF format
 
   xpr_dnst_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
+    type: File?
     outputBinding:
-      glob: "*_xpr_dnst_*.png"
+      glob: "*_xpr_dnst.png"
     doc: |
-      Log normalized gene expression density per dataset optionally subsetted to the
-      specific cluster or cell type.
+      Log normalized gene expression density plots for
+      either user provided or top 10 differentially
+      expressed genes with the highest log2FoldChange
+      values. The direction of comparison is defined
+      as --second vs --first.
       PNG format
 
   xpr_dnst_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
+    type: File?
     outputBinding:
-      glob: "*_xpr_dnst_*.pdf"
+      glob: "*_xpr_dnst.pdf"
     doc: |
-      Log normalized gene expression density per dataset optionally subsetted to the
-      specific cluster or cell type.
+      Log normalized gene expression density plots for
+      either user provided or top 10 differentially
+      expressed genes with the highest log2FoldChange
+      values. The direction of comparison is defined
+      as --second vs --first.
       PDF format
 
   xpr_per_cell_rd_rnaumap_plot_png:
@@ -453,8 +490,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP per dataset optionally subsetted
-      to the specific cluster or cell type (rnaumap dim. reduction).
+      Log normalized gene expression on cells UMAP
+      split by selected criteria, optionally subsetted
+      to the specific group (rnaumap dim. reduction).
       PNG format
 
   xpr_per_cell_rd_rnaumap_plot_pdf:
@@ -465,8 +503,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP per dataset optionally subsetted
-      to the specific cluster or cell type (rnaumap dim. reduction).
+      Log normalized gene expression on cells UMAP
+      split by selected criteria, optionally subsetted
+      to the specific group (rnaumap dim. reduction).
       PDF format
 
   xpr_per_cell_rd_atacumap_plot_png:
@@ -477,8 +516,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP per dataset optionally subsetted
-      to the specific cluster or cell type (atacumap dim. reduction).
+      Log normalized gene expression on cells UMAP
+      split by selected criteria, optionally subsetted
+      to the specific group (atacumap dim. reduction).
       PNG format
 
   xpr_per_cell_rd_atacumap_plot_pdf:
@@ -489,8 +529,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP per dataset optionally subsetted
-      to the specific cluster or cell type (atacumap dim. reduction).
+      Log normalized gene expression on cells UMAP
+      split by selected criteria, optionally subsetted
+      to the specific group (atacumap dim. reduction).
       PDF format
 
   xpr_per_cell_rd_wnnumap_plot_png:
@@ -501,8 +542,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP per dataset optionally subsetted
-      to the specific cluster or cell type (wnnumap dim. reduction).
+      Log normalized gene expression on cells UMAP
+      split by selected criteria, optionally subsetted
+      to the specific group (wnnumap dim. reduction).
       PNG format
 
   xpr_per_cell_rd_wnnumap_plot_pdf:
@@ -513,8 +555,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP per dataset optionally subsetted
-      to the specific cluster or cell type (wnnumap dim. reduction).
+      Log normalized gene expression on cells UMAP
+      split by selected criteria, optionally subsetted
+      to the specific group (wnnumap dim. reduction).
       PDF format
 
   xpr_htmp_plot_png:
@@ -522,8 +565,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.png"
     doc: |
-      Normalized gene expression heatmap optionally subsetted
-      to the specific cluster or cell type.
+      Filtered by adjusted P-value normalized gene
+      expression heatmap per cell optionally subsetted
+      to the specific group.
       PNG format
 
   xpr_htmp_plot_pdf:
@@ -531,8 +575,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.pdf"
     doc: |
-      Normalized gene expression heatmap optionally subsetted
-      to the specific cluster or cell type.
+      Filtered by adjusted P-value normalized gene
+      expression heatmap per cell optionally subsetted
+      to the specific group.
       PDF format
 
   diff_expr_genes:
@@ -540,25 +585,35 @@ outputs:
     outputBinding:
       glob: "*_de_genes.tsv"
     doc: |
-      Differentially expressed genes.
+      Differentially expressed genes. Not filtered
+      by adjusted P-value.
       TSV format
 
-  read_counts_gct:
+  bulk_read_counts_gct:
     type: File?
     outputBinding:
-      glob: "*_norm_read_counts.gct"
+      glob: "*_bulk_counts.gct"
     doc: |
-      GSEA compatible normalized counts, optionally, batch corrected.
+      GSEA compatible not filtered normalized reads
+      counts aggregated to pseudobulk form.
       GCT format
 
-  phenotypes_cls:
+  bulk_phenotypes_cls:
     type: File?
     outputBinding:
-      glob: "*_phenotypes.cls"
+      glob: "*_bulk_phntps.cls"
     doc: |
-      GSEA compatible phenotypes file defined based on --splitby, --first,
-      and --second parameters.
+      GSEA compatible phenotypes file defined based
+      on --splitby, --first, and --second parameters.
       CLS format
+
+  cell_read_counts_gct:
+    type: File?
+    outputBinding:
+      glob: "*_cell_counts.gct"
+    doc: |
+      Filtered normalized reads counts per cell.
+      GCT format
 
   stdout_log:
     type: stdout
@@ -580,9 +635,9 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell Pseudobulk Differential Expression Analysis Between Datasets"
-s:name: "Single-cell Pseudobulk Differential Expression Analysis Between Datasets"
-s:alternateName: "Identifies differentially expressed genes between groups of cells coerced to pseudobulk datasets"
+label: "Single-cell Differential Expression Analysis"
+s:name: "Single-cell Differential Expression Analysis"
+s:alternateName: "Identifies differentially expressed genes between two groups of cells optionally coerced to pseudobulk form"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-de-pseudobulk.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -620,26 +675,27 @@ s:creator:
 
 
 doc: |
-  Single-cell Pseudobulk Differential Expression Analysis Between Datasets
+  Single-cell Differential Expression Analysis
 
-  Identifies differentially expressed genes between groups
-  of cells coerced to pseudobulk datasets.
+  Identifies differentially expressed genes between two
+  groups of cells optionally coerced to pseudobulk form
 
 
 s:about: |
   usage: sc_rna_de_pseudobulk.R
-        [-h] --query QUERY [--metadata METADATA] --splitby SPLITBY --first
-        FIRST --second SECOND [--batchby BATCHBY] [--groupby GROUPBY]
-        [--subset [SUBSET ...]] [--lrt] [--padj PADJ] [--genes [GENES ...]]
-        [--exclude EXCLUDE] [--norm {vst,rlog}] [--remove]
-        [--cluster {row,column,both}]
+        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
+        [--groupby GROUPBY] [--subset [SUBSET ...]] --splitby SPLITBY --first
+        FIRST --second SECOND
+        [--test {wilcoxon,likelihood-ratio,t-test,negative-binomial,poisson,logistic-regression,mast,deseq,deseq-lrt}]
+        [--batchby BATCHBY] [--padj PADJ] [--genes [GENES ...]]
+        [--exclude EXCLUDE] [--cluster {row,column,both}]
         [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
         [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
         [--center] [--pdf] [--verbose] [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
-  Single-cell Pseudobulk Differential Expression Analysis Between Datasets
+  Single-cell Differential Expression Analysis
 
   options:
     -h, --help            show this help message and exit
@@ -655,73 +711,81 @@ s:about: |
                           column of the loaded Seurat object. If any of the
                           provided in this file columns are already present in
                           the Seurat object metadata, they will be overwritten.
-                          Default: no extra metadata is added
-    --splitby SPLITBY     Column from the Seurat object metadata to split
-                          datasets into two groups to run --second vs --first
-                          pseudobulk DE analysis, i.e., calculate log2FC. May be
-                          one of the columns from the extra metadata added with
-                          --metadata parameter. Provided value should group the
-                          datasets, not cells, therefore do not use a column
-                          with clustering results.
-    --first FIRST         Value from the Seurat object metadata column set with
-                          --splitby to define the first group of datasets for
-                          pseudobulk DE analysis.
-    --second SECOND       Value from the Seurat object metadata column set with
-                          --splitby to define the second group of datasets for
-                          pseudobulk DE analysis.
-    --batchby BATCHBY     Column from the Seurat object metadata to group
-                          datasets into batches. It will be used as a factor
-                          variable to model batch effect when running pseudobulk
-                          DE analysis (makes design formula look like
-                          ~splitby+batchby). May be one of the columns from the
-                          extra metadata added with --metadata parameter.
-                          Provided value should batch the datasets, not cells,
-                          therefore do not use a column with clustering results.
-                          Default: do not model batch effect.
+                          When combined with --barcodes parameter, first the
+                          metadata will be extended, then barcode filtering will
+                          be applied. Default: no extra metadata is added
+    --barcodes BARCODES   Path to the TSV/CSV file to optionally prefilter and
+                          extend Seurat object metadata by selected barcodes.
+                          First column should be named as 'barcode'. If file
+                          includes any other columns they will be added to the
+                          Seurat object metadata ovewriting the existing ones if
+                          those are present. Default: all cells used, no extra
+                          metadata is added
     --groupby GROUPBY     Column from the Seurat object metadata to group cells
                           for optional subsetting when combined with --subset
-                          parameter. May be one of the columns from the extra
-                          metadata added with --metadata parameter. Ignored if
-                          --subset is not set. Provided value defines the groups
-                          of cells, therefore any metadata column, including the
-                          clustering results, may be used. Default: do not
-                          subset, run pseudobulk DE analysis for all cells
-                          jointly
+                          parameter. May be one of the extra metadata columns
+                          added with --metadata or --barcodes parameters.
+                          Ignored if --subset is not set. Default: do not
+                          subset, include all cells into analysis.
     --subset [SUBSET ...]
-                          Value(s) from the column set with --groupby parameter
-                          to subset cells before running pseudobulk DE analysis.
-                          If multiple values are provided run analysis jointly
-                          for selected groups of cells. Ignored if --groupby is
-                          not set. Default: do not subset, run pseudobulk DE
-                          analysis for all cells jointly
-    --lrt                 Use LRT instead of the pair-wise Wald test. If
-                          --batchby is not provided use ~1 as a reduced formula,
-                          otherwise ~batchby. Default: use Wald test
+                          Values from the column set with --groupby parameter to
+                          subset cells before running differential expression
+                          analysis. Ignored if --groupby is not provided.
+                          Default: do not subset cells, include all of them.
+    --splitby SPLITBY     Column from the Seurat object metadata to split cells
+                          into two groups to run --second vs --first
+                          differential expression analysis. May be one of the
+                          extra metadata columns added with --metadata or
+                          --barcodes parameters.
+    --first FIRST         Value from the Seurat object metadata column set with
+                          --splitby parameter to define the first group of cells
+                          for differential expression analysis.
+    --second SECOND       Value from the Seurat object metadata column set with
+                          --splitby parameter to define the second group of
+                          cells for differential expression analysis.
+    --test {wilcoxon,likelihood-ratio,t-test,negative-binomial,poisson,logistic-regression,mast,deseq,deseq-lrt}
+                          Test type to use in differential expression analysis.
+                          If set to deseq or deseq-lrt, gene expression will be
+                          aggregated to the pseudobulk level per dataset. For
+                          deseq, the pair-wise Wald test will be used. For
+                          deseq-lrt, the reduced formula will look like ~1 if
+                          --batchby parameter is omitted or will be set to
+                          ~batchby to exclude the criteria if interest (defined
+                          by --splitby). For all other values of the --test
+                          parameter the FindMarkers function will be used (genes
+                          will be prefiltered by minimum percentage >= 0.1 and
+                          by minimum log2FoldChange >= 0.25 before running
+                          differential expression analysis). Default: use
+                          FindMarkers with Wilcoxon Rank Sum test.
+    --batchby BATCHBY     Column from the Seurat object metadata to group cells
+                          into batches. If --test is set to deseq or deseq-lrt
+                          the --batchby parameter will be used in the design
+                          formula in the following way ~splitby+batchby. If
+                          --test is set to negative-binomial, poisson, logistic-
+                          regression, or mast it will be used as a latent
+                          variable in the FindMarkers function. Not supported
+                          for --test values equal to wilcoxon, likelihood-ratio,
+                          or t-test. May be one of the extra metadata columns
+                          added with --metadata or --barcodes parameters.
+                          Default: do not model batch effect.
     --padj PADJ           In the exploratory visualization part of the analysis
-                          output only features with adjusted P-value not bigger
-                          than this value. Default: 0.05
+                          output only differentially expressed genes with
+                          adjusted P-value not bigger than this value. Default:
+                          0.05
     --genes [GENES ...]   Genes of interest to label on the generated plots.
                           Default: top 10 genes with the highest and the lowest
-                          log2FC expression values.
-    --exclude EXCLUDE     Regex pattern to identify and exclude non-coding RNA
-                          genes from the pseudobulk DE analysis (not case-
-                          sensitive). If any of such genes were provided in the
+                          log2FoldChange values.
+    --exclude EXCLUDE     Regex pattern to identify and exclude specific genes
+                          from the differential expression analysis (not case-
+                          sensitive). If any of such genes are provided in the
                           --genes parameter, they will be excluded from there as
                           well. Default: use all genes
-    --norm {vst,rlog}     Read counts normalization for the exploratory
-                          visualization part of the analysis. Use 'vst' for
-                          medium-to-large datasets (n > 30) and 'rlog' for small
-                          datasets (n < 30), when there is a wide range of
-                          sequencing depth across samples. Default: rlog
-    --remove              Remove batch effect when generating normalized read
-                          counts for the exploratory visualization part of the
-                          analysis. Ignored if --batchby is not provided.
-                          Default: do not remove batch effect from normalized
-                          read counts.
     --cluster {row,column,both}
-                          Hopach clustering method to be run on normalized read
-                          counts for the exploratory visualization part of the
-                          analysis. Default: do not run clustering
+                          Hopach clustering method to be run on the normalized
+                          read counts for the exploratory visualization part of
+                          the analysis. Clustering by column is supported only
+                          when --test is set to deseq or deseq-lrt. Default: do
+                          not run clustering
     --rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
                           Distance metric for HOPACH row clustering. Ignored if
                           --cluster is set to column or not provided. Default:
