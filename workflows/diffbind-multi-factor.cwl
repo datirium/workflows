@@ -950,7 +950,6 @@ steps:
           echo "| :-- | --: |" >> experiment_info.md
           j=1
           for i in "${@:$COUNT+1:$#}"; do
-            echo "Add $i as $count"
             echo "| $i | $j |" >> experiment_info.md
             (( j++ ))
           done;

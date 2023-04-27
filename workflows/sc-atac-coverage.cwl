@@ -210,6 +210,16 @@ outputs:
         name: "Fragments coverage"
         height: 120
 
+  experiment_info:
+    type: File
+    label: "IGV tracks order"
+    doc: |
+      Markdown file to explain the tracks order for IGV
+    outputSource: create_metadata/output_file
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Overview'
+
   sc_atac_coverage_stdout_log:
     type: File
     outputSource: sc_atac_coverage/stdout_log
@@ -255,6 +265,24 @@ steps:
     - fragments_bigwig_file
     - stdout_log
     - stderr_log
+
+  create_metadata:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: sc_atac_coverage/fragments_bigwig_file
+      script:
+        default: |
+          #!/bin/bash
+          set -- "$0" "$@"
+          echo "| Name | Index |" > experiment_info.md
+          echo "| :-- | --: |" >> experiment_info.md
+          j=1
+          for i in "${@}"; do
+            echo "| `basename $i` | $j |" >> experiment_info.md
+            (( j++ ))
+          done;
+    out:
+    - output_file
 
 
 $namespaces:
