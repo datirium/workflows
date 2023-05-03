@@ -158,8 +158,7 @@ steps:
             j=1
             for i in "${@}"; do
               echo "#### `basename $i`" >> report.md
-              echo "**`zcat $i | wc -l`** lines, **`stat -c%s $i`** bytes" >> report.md
-              echo "Top 5 reads" >> report.md
+              echo "**`zcat $i | wc -l`** lines, **`stat -c%s $i`** bytes, top **5** reads" >> report.md
               echo "\`\`\`" >> report.md
               echo "`zcat $i | head -n 20`" >> report.md
               echo "\`\`\`" >> report.md
