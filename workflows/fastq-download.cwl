@@ -154,10 +154,10 @@ steps:
                 echo "Failed to download FASTQ files. Check logs for errors." > report.md
                 exit 0
             fi
-            echo "## Collected Report" > report.md
+            echo "### Collected Report" > report.md
             j=1
             for i in "${@}"; do
-              echo "### `basename $i`" >> report.md
+              echo "#### `basename $i`" >> report.md
               echo "**`zcat $i | wc -l`** lines, **`stat -c%s $i`** bytes" >> report.md
               echo "Top 5 reads" >> report.md
               echo "\`\`\`" >> report.md
