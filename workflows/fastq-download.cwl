@@ -23,39 +23,50 @@ inputs:
     doc: |
       Single SRR Identifier
 
-  split_files:
-    type: boolean?
-    default: false
-    label: "Split and extract all reads"
-    doc: |
-      Write reads into separate files. Read 
-      number will be suffixed to the file name.  
-      NOTE! The `--split-3` option is recommended. 
-      In cases where not all spots have the same 
-      number of reads, this option will produce 
-      files that WILL CAUSE ERRORS in most programs 
-      which process split pair fastq files. 
+  splitby:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "Split into all available files"
+      - "3-way splitting for mate-pairs"
+      - "Do not split"
+    default: "3-way splitting for mate-pairs"
+    label: "Split reads by"
+    doc:
+      Split into all available files.
+      Write reads into separate files.
+      Read number will be suffixed to
+      the file name. In cases where not
+      all spots have the same number of
+      reads, this option will produce 
+      files that WILL CAUSE ERRORS in
+      most programs which process split
+      pair fastq files.
 
-  split_3:
-    type: boolean?
-    default: false
-    label: "3-way splitting for mate-pairs"
-    doc: |
-      3-way splitting for mate-pairs. For each 
-      spot, if there are two biological reads 
-      satisfying filter conditions, the first is 
-      placed in the `*_1.fastq` file, and the 
-      second is placed in the `*_2.fastq` file. If 
-      there is only one biological read 
-      satisfying the filter conditions, it is 
-      placed in the `*.fastq` file.All other 
-      reads in the spot are ignored.
+      3-way splitting for mate-pairs.
+      For each spot, if there are two
+      biological reads satisfying filter
+      conditions, the first is placed in
+      the `*_1.fastq` file, and the second
+      is placed in the `*_2.fastq` file.
+      If there is only one biological read
+      satisfying the filter conditions, it
+      is placed in the `*.fastq` file. All
+      other reads in the spot are ignored.
+
+      Do not split.
+      Output all reads into as a single
+      FASTQ file
 
 
 outputs:
 
   fastq_files:
-    type: File[]
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: fastq_dump/fastq_files
     label: "Gzip-compressed FASTQ files"
     doc: |
@@ -93,8 +104,12 @@ steps:
     run: ../tools/fastq-dump.cwl
     in:
       srr_id: srr_id
-      split_files: split_files
-      split_3: split_3
+      split_files:
+        source: splitby
+        valueFrom: $(self=="Split into all available files"?true:null)
+      split_3:
+        source: splitby
+        valueFrom: $(self=="3-way splitting for mate-pairs"?true:null)
     out:
     - fastq_files
     - stdout_log

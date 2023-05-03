@@ -52,7 +52,10 @@ inputs:
 outputs:
 
   fastq_files:
-    type: File[]
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*.gz"
 
@@ -68,6 +71,7 @@ baseCommand: ["fastq-dump", "--gzip", "--log-level", "info"]
 stdout: fastq_dump_stdout.log
 stderr: fastq_dump_stderr.log
 
+successCodes: [1]
 
 $namespaces:
   s: http://schema.org/
