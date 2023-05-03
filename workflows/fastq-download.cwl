@@ -116,24 +116,50 @@ steps:
     - stderr_log
 
   collect_report:
-    run: ../tools/custom-bash.cwl
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        script:
+          type: string?
+          default: |
+            #!/bin/bash
+            set -- "$0" "$@"
+            if [ "$#" -eq 1 ] && [ "$0" = "/bin/bash" ]; then
+                echo "Failed to download FASTQ files. Check logs for errors." > report.md
+                exit 0
+            fi
+            echo "## Collected Report" > report.md
+            j=1
+            for i in "${@}"; do
+              echo "### `basename $i`" >> report.md
+              echo "**`zcat $i | wc -l`** lines, **`stat -c%s $i`** bytes" >> report.md
+              echo "Top 5 reads" >> report.md
+              echo "\`\`\`" >> report.md
+              echo "`zcat $i | head -n 20`" >> report.md
+              echo "\`\`\`" >> report.md
+              (( j++ ))
+            done;
+          inputBinding:
+            position: 1
+        input_file:
+          type:
+          - "null"
+          - type: array
+            items: File
+          inputBinding:
+            position: 2
+      outputs:
+        output_file:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: [bash, '-c']
     in:
       input_file: fastq_dump/fastq_files
-      script:
-        default: |
-          #!/bin/bash
-          set -- "$0" "$@"
-          echo "## Collected Report" > report.md
-          j=1
-          for i in "${@}"; do
-            echo "### `basename $i`" >> report.md
-            echo "**`zcat $i | wc -l`** lines, **`stat -c%s $i`** bytes" >> report.md
-            echo "Top 5 reads" >> report.md
-            echo "\`\`\`" >> report.md
-            echo "`zcat $i | head -n 20`" >> report.md
-            echo "\`\`\`" >> report.md
-            (( j++ ))
-          done;
     out:
     - output_file
 

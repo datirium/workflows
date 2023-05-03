@@ -71,7 +71,7 @@ baseCommand: ["fastq-dump", "--gzip", "--log-level", "info"]
 stdout: fastq_dump_stdout.log
 stderr: fastq_dump_stderr.log
 
-successCodes: [1]
+successCodes: [1, 3]
 
 $namespaces:
   s: http://schema.org/
