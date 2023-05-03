@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.19
+  dockerPull: biowardrobe2/sc-tools:v0.0.20
 
 
 inputs:
@@ -266,12 +266,19 @@ inputs:
       Default: do not call peaks
 
   remove_doublets:
-    type: boolean?
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "union"
+      - "onlyrna"
+      - "onlyatac"
+      - "intersect"
     inputBinding:
       prefix: "--removedoublets"
     doc: |
-      Remove cells that were identified as doublets in either
-      RNA or ATAC assays.
+      Remove cells that were identified as doublets. For
+      RNA assay cells with UMI < 200 will not be evaluated.
       Default: do not remove doublets
 
   rna_doublet_rate:
@@ -1786,34 +1793,34 @@ doc: |
 
 s:about: |
   usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
-                                            --fragments FRAGMENTS --annotations
-                                            ANNOTATIONS --seqinfo SEQINFO
-                                            [--grouping GROUPING]
-                                            [--blacklist BLACKLIST]
-                                            [--barcodes BARCODES]
-                                            [--rnamincells RNAMINCELLS]
-                                            [--mingenes [MINGENES [MINGENES ...]]]
-                                            [--maxgenes [MAXGENES [MAXGENES ...]]]
-                                            [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
-                                            [--mitopattern MITOPATTERN]
-                                            [--maxmt MAXMT]
-                                            [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                                            [--atacmincells ATACMINCELLS]
-                                            [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
-                                            [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-                                            [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-                                            [--minfrip [MINFRIP [MINFRIP ...]]]
-                                            [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
-                                            [--callby CALLBY]
-                                            [--removedoublets]
-                                            [--rnadbr RNADBR]
-                                            [--rnadbrsd RNADBRSD]
-                                            [--atacdbr ATACDBR]
-                                            [--atacdbrsd ATACDBRSD] [--pdf]
-                                            [--verbose] [--h5seurat] [--h5ad]
-                                            [--cbbuild] [--output OUTPUT]
-                                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                            [--cpus CPUS] [--memory MEMORY]
+                                          --fragments FRAGMENTS --annotations
+                                          ANNOTATIONS --seqinfo SEQINFO
+                                          [--grouping GROUPING]
+                                          [--blacklist BLACKLIST]
+                                          [--barcodes BARCODES]
+                                          [--rnamincells RNAMINCELLS]
+                                          [--mingenes [MINGENES [MINGENES ...]]]
+                                          [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                          [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
+                                          [--mitopattern MITOPATTERN]
+                                          [--maxmt MAXMT]
+                                          [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                          [--atacmincells ATACMINCELLS]
+                                          [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+                                          [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+                                          [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+                                          [--minfrip [MINFRIP [MINFRIP ...]]]
+                                          [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
+                                          [--callby CALLBY]
+                                          [--removedoublets {union,onlyrna,onlyatac,intersect}]
+                                          [--rnadbr RNADBR]
+                                          [--rnadbrsd RNADBRSD]
+                                          [--atacdbr ATACDBR]
+                                          [--atacdbrsd ATACDBRSD] [--pdf]
+                                          [--verbose] [--h5seurat] [--h5ad]
+                                          [--cbbuild] [--output OUTPUT]
+                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                          [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
@@ -1937,9 +1944,10 @@ s:about: |
                           only after applying all RNA related thresholds,
                           maximum nucleosome signal, and minimum TSS enrichment
                           scores filters. Default: do not call peaks
-    --removedoublets      Remove cells that were identified as doublets in
-                          either RNA or ATAC assays. Default: do not remove
-                          doublets
+    --removedoublets {union,onlyrna,onlyatac,intersect}
+                          Remove cells that were identified as doublets. For RNA
+                          assay cells with UMI < 200 will not be evaluated.
+                          Default: do not remove doublets
     --rnadbr RNADBR       Expected RNA doublet rate. Default: 1 percent per
                           thousand cells captured with 10x genomics
     --rnadbrsd RNADBRSD   Uncertainty range in the RNA doublet rate, interpreted

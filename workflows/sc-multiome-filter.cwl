@@ -257,12 +257,19 @@ inputs:
       advanced: true
 
   remove_doublets:
-    type: boolean?
-    default: false
-    label: "Remove cells that were identified as doublets in either RNA or ATAC assays"
+    type:
+    - type: enum
+      symbols:
+      - "union"
+      - "onlyrna"
+      - "onlyatac"
+      - "intersect"
+      - "none"
+    default: "none"
+    label: "Remove cells that were identified as doublets"
     doc: |
-      Remove cells that were identified as doublets in either
-      RNA or ATAC assays.
+      Remove cells that were identified as doublets. For
+      RNA assay cells with UMI < 200 will not be evaluated.
       Default: do not remove doublets
     'sd:layout':
       advanced: true
@@ -1430,7 +1437,9 @@ steps:
         source: maximum_blacklist_fraction
         valueFrom: $(split_numbers(self))
       call_by: call_by
-      remove_doublets: remove_doublets
+      remove_doublets:
+        source: remove_doublets
+        valueFrom: $(self=="none"?null:self)
       rna_doublet_rate:
         source: rna_doublet_rate
         valueFrom: $(self==""?null:self)                 # safety measure
