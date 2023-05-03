@@ -59,6 +59,22 @@ inputs:
       Output all reads into as a single
       FASTQ file
 
+  http_proxy:
+    type: string?
+    label: "Optional HTTP proxy settings"
+    doc: |
+      Optional HTTP proxy settings
+    'sd:layout':
+      advanced: true
+
+  https_proxy:
+    type: string?
+    label: "Optional HTTPS proxy settings"
+    doc: |
+      Optional HTTPS proxy settings
+    'sd:layout':
+      advanced: true
+
 
 outputs:
 
@@ -110,6 +126,12 @@ steps:
       split_3:
         source: splitby
         valueFrom: $(self=="3-way splitting for mate-pairs"?true:null)
+      http_proxy:
+        source: http_proxy
+        valueFrom: $(self==""?null:self)                 # safety measure
+      https_proxy:
+        source: https_proxy
+        valueFrom: $(self==""?null:self)                 # safety measure
     out:
     - fastq_files
     - stdout_log
