@@ -3,6 +3,10 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
+- class: EnvVarRequirement
+  envDef:
+    http_proxy: $(inputs.http_proxy)
+
 
 hints:
 - class: DockerRequirement
@@ -47,6 +51,11 @@ inputs:
       satisfying the filter conditions, it is 
       placed in the `*.fastq` file.All other 
       reads in the spot are ignored.
+
+  http_proxy:
+    type: string?
+    doc: |
+      Optional HTTP proxy settings
 
 
 outputs:
