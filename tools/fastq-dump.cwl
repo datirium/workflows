@@ -6,6 +6,7 @@ requirements:
 - class: EnvVarRequirement
   envDef:
     http_proxy: $(inputs.http_proxy)
+    https_proxy: $(inputs.https_proxy)
 
 
 hints:
@@ -57,6 +58,10 @@ inputs:
     doc: |
       Optional HTTP proxy settings
 
+  https_proxy:
+    type: string?
+    doc: |
+      Optional HTTPS proxy settings
 
 outputs:
 

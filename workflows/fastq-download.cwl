@@ -67,6 +67,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  https_proxy:
+    type: string?
+    label: "Optional HTTPS proxy settings"
+    doc: |
+      Optional HTTPS proxy settings
+    'sd:layout':
+      advanced: true
+
 
 outputs:
 
@@ -120,6 +128,9 @@ steps:
         valueFrom: $(self=="3-way splitting for mate-pairs"?true:null)
       http_proxy:
         source: http_proxy
+        valueFrom: $(self==""?null:self)                 # safety measure
+      https_proxy:
+        source: https_proxy
         valueFrom: $(self==""?null:self)                 # safety measure
     out:
     - fastq_files
