@@ -56,7 +56,7 @@ inputs:
         
         for MERGED in read*.gz; do
             echo "#### `basename $MERGED`" >> merged.md
-            echo "**`zcat $MERGED | wc -l`** lines, **`stat -c%s $MERGED`** bytes, top **5** reads" >> merged.md
+            echo "**`zcat $MERGED | wc -l`** lines, **`stat -c%s $MERGED`** bytes" >> merged.md
         done;
 
         cat merged.md single.md > report.md
