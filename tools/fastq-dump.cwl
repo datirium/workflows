@@ -5,9 +5,8 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: EnvVarRequirement
   envDef:
-    http_proxy: $(inputs.http_proxy)
-    https_proxy: $(inputs.https_proxy)
-
+    http_proxy: $(inputs.http_proxy?inputs.http_proxy:"")
+    https_proxy: $(inputs.https_proxy?inputs.https_proxy:"")
 
 hints:
 - class: DockerRequirement
@@ -16,12 +15,67 @@ hints:
 
 inputs:
 
+  script:
+    type: string?
+    default: |
+        #!/bin/bash
+        set -- "$0" "$@"
+
+        SRA_IDS=()
+        PARAMS=()
+
+        for i in "$@"; do
+            if [[ "$i" = "--split-files" ]] || [[ "$i" = "--split-3" ]]; then
+                echo "Adding param $i"
+                PARAMS+=($i)
+            else
+                echo "Adding SRR $i"
+                SRA_IDS+=($i)
+            fi
+        done;
+
+        echo "### Single files statistics" > single.md
+        echo "### Merged files statistics" > merged.md
+
+        for SRA in ${SRA_IDS[@]}; do
+            echo "Downloading $SRA with ${PARAMS[@]}"
+            fastq-dump --gzip --log-level info ${PARAMS[@]} $SRA
+            j=1
+            for FASTQ in $SRA*.gz; do
+              echo "#### `basename $FASTQ`" >> single.md
+              echo "**`zcat $FASTQ | wc -l`** lines, **`stat -c%s $FASTQ`** bytes, top **5** reads" >> single.md
+              echo "\`\`\`" >> single.md
+              echo "`zcat $FASTQ | head -n 20`" >> single.md
+              echo "\`\`\`" >> single.md
+              echo "Adding $FASTQ to read_$j.fastq.gz"
+              cat $FASTQ >> read_$j.fastq.gz
+              rm -f $FASTQ
+              (( j++ ))
+            done;
+        done;
+        
+        for MERGED in read*.gz; do
+            echo "#### `basename $MERGED`" >> merged.md
+            echo "**`zcat $MERGED | wc -l`** lines, **`stat -c%s $MERGED`** bytes, top **5** reads" >> merged.md
+        done;
+
+        cat merged.md single.md > report.md
+        rm -f merged.md single.md
+
+    inputBinding:
+      position: 1
+    doc: |
+      Bash function to run refgene-sort and atdp
+
   srr_id:
-    type: string
+    type:
+    - string
+    - type: array
+      items: string
     inputBinding:
       position: 60
     doc: |
-      SRR identifier
+      SRR identifiers
 
   split_files:
     type: boolean?
@@ -73,6 +127,11 @@ outputs:
     outputBinding:
       glob: "*.gz"
 
+  report_md:
+    type: File
+    outputBinding:
+      glob: "report.md"
+
   stdout_log:
     type: stdout
 
@@ -80,12 +139,13 @@ outputs:
     type: stderr
 
 
-baseCommand: ["fastq-dump", "--gzip", "--log-level", "info"]
+baseCommand: ["bash", "-c"]
 
 stdout: fastq_dump_stdout.log
 stderr: fastq_dump_stderr.log
 
 successCodes: [1, 3]
+
 
 $namespaces:
   s: http://schema.org/
