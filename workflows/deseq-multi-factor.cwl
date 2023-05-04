@@ -95,11 +95,13 @@ inputs:
 
   reduced_formula:
     type: string?
-    label: "Reduced formula. If provided, use LRT instead of Wald."
+    default: "~ 1"
+    label: "Reduced formula. If removed, force to use Wald instead of LRT."
     doc: |
       Reduced formula with the term(s) of interest removed.
-      Should start with ~. If provided, force DESeq2 to run
-      LRT test instead of the Wald.
+      Should start with ~. If design formula includes only
+      one criteria, use ~ 1. If removed, forces DESeq2 to run
+      Wald test instead of the LRT.
 
   contrast:
     type: string?
