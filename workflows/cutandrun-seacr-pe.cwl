@@ -925,7 +925,21 @@ steps:
     out:
     - output_file
     doc: |
-      formatting seacr bed output into xls for igv browser and input into island_instersect
+      formatting seacr bed output into bed for igv browser
+
+  convert_bed_to_xls_for_iaintersect:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: seacr_callpeak_stringent/peak_tsv_file
+      script:
+        default: >
+          cat $0 | awk -F'\t'
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`"headers.bed"
+    out:
+    - output_file
+    doc: |
+      formatting seacr bed output into xls for input into island_instersect
 
   island_intersect:
     label: "Peak annotation"
@@ -934,7 +948,7 @@ steps:
       chromatin binding sites.
     run: ../tools/iaintersect.cwl
     in:
-      input_filename: convert_bed_to_xls/output_file
+      input_filename: convert_bed_to_xls_for_iaintersect/output_file
       annotation_filename: annotation_file
       promoter_bp: promoter_dist
       upstream_bp: upstream_dist
