@@ -5,8 +5,16 @@ class: Workflow
 requirements:
 - class: SubworkflowFeatureRequirement
 - class: StepInputExpressionRequirement
-- class: InlineJavascriptRequirement
 - class: MultipleInputFeatureRequirement
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var split_features = function(line) {
+        function get_unique(value, index, self) {
+          return self.indexOf(value) === index && value != "";
+        }
+        var splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
+        return (splitted_line && !!splitted_line.length)?splitted_line:null;
+    };
 
 
 inputs:
@@ -19,9 +27,9 @@ inputs:
 
   srr_id:
     type: string
-    label: "SRR Identifier"
+    label: "Comma or space separated list of SRR Identifiers"
     doc: |
-      Single SRR Identifier
+      Comma or space separated list of SRR Identifiers
 
   splitby:
     type:
@@ -90,7 +98,7 @@ outputs:
 
   report_md:
     type: File
-    outputSource: collect_report/output_file
+    outputSource: fastq_dump/report_md
     label: "Collected report for downloaded FASTQ files"
     doc: |
       Collected report for downloaded FASTQ files
@@ -119,7 +127,9 @@ steps:
   fastq_dump:
     run: ../tools/fastq-dump.cwl
     in:
-      srr_id: srr_id
+      srr_id:
+        source: srr_id
+        valueFrom: $(split_features(self))
       split_files:
         source: splitby
         valueFrom: $(self=="Split into all available files"?true:null)
@@ -134,55 +144,9 @@ steps:
         valueFrom: $(self==""?null:self)                 # safety measure
     out:
     - fastq_files
+    - report_md
     - stdout_log
     - stderr_log
-
-  collect_report:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      inputs:
-        script:
-          type: string?
-          default: |
-            #!/bin/bash
-            set -- "$0" "$@"
-            if [ "$#" -eq 1 ] && [ "$0" = "/bin/bash" ]; then
-                echo "Failed to download FASTQ files. Check logs for errors." > report.md
-                exit 0
-            fi
-            echo "### Collected Report" > report.md
-            j=1
-            for i in "${@}"; do
-              echo "#### `basename $i`" >> report.md
-              echo "**`zcat $i | wc -l`** lines, **`stat -c%s $i`** bytes, top **5** reads" >> report.md
-              echo "\`\`\`" >> report.md
-              echo "`zcat $i | head -n 20`" >> report.md
-              echo "\`\`\`" >> report.md
-              (( j++ ))
-            done;
-          inputBinding:
-            position: 1
-        input_file:
-          type:
-          - "null"
-          - type: array
-            items: File
-          inputBinding:
-            position: 2
-      outputs:
-        output_file:
-          type: File
-          outputBinding:
-            glob: "*"
-      baseCommand: [bash, '-c']
-    in:
-      input_file: fastq_dump/fastq_files
-    out:
-    - output_file
 
 
 $namespaces:
