@@ -42,11 +42,13 @@ inputs:
       preseq stderr verbose log file containing actual distinct read count
 
   estimates_file:
-    type: File
+    type: File?
     inputBinding:
       position: 3
     doc: |
-      preseq standard output estimates file
+      preseq standard output estimates file. If this tool fails the step, it's possibly because the 'estimates_file' was not produced due to preseq lc_extrap:
+        ERROR:  max count before zero is les than min required count (4), sample not sufficiently deep or duplicates removed
+      therefore this input file is optional
 
   mapped_reads:
     type: int
@@ -59,11 +61,12 @@ inputs:
 outputs:
 
   estimates_file_plot_data:
-    type: File
+    type: File?
     outputBinding:
       glob: estimates_file_plot_data.tsv
     doc: |
-      formatted estimates file for preseq plotting
+      Formatted estimates file for preseq plotting.
+      If estimates_file is not provided, this file cannot be produced, therefore it is optional so the entire workflow does not fail.
 
   stdout_log:
     type: stdout

@@ -39,7 +39,7 @@ inputs:
 outputs:
 
   preseq_bam:
-    type: File
+    type: File?
     outputBinding:
       glob: "clean.bam"
 
