@@ -35,90 +35,91 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Experiment run through any of the Single-cell Cluster or Manual Cell Type Assignment Analysis"
+    label: "Single-cell Cluster or Manual Cell Type Assignment Analysis"
     doc: |
-      Path to the RDS file to load Seurat object from. This
-      file should include genes expression information
-      stored in the RNA assay. Additionally, 'rnaumap',
-      and/or 'atacumap', and/or 'wnnumap' dimensionality
-      reductions should be present.
+      Single-cell analysis run through the
+      clustering or cell type assignment
+      pipelines.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
   datasets_metadata:
     type: File?
-    label: "Path to the TSV/CSV file to optionally extend Seurat object metadata"
+    label: "TSV/CSV file to assign categories per sample"
     doc: |
-      Path to the TSV/CSV file to optionally extend Seurat
-      object metadata with categorical values using samples
-      identities. First column - 'library_id' should
-      correspond to all unique values from the 'new.ident'
-      column of the loaded Seurat object. If any of the
-      provided in this file columns are already present in
-      the Seurat object metadata, they will be overwritten.
-      When combined with --barcodes parameter, first the
-      metadata will be extended, then barcode filtering will
-      be applied. Default: no extra metadata is added
+      If selected single-cell analysis was run
+      with the data aggregated from multiple
+      samples, you can optionally provide tab-
+      delimited or comma-separated file to
+      assign additional categories per sample.
+      First column should be named 'library_id'
+      and include all sample names from the
+      selected single-cell analysis regardless
+      whether filtering by barcodes was applied
+      or not. All other columns may have
+      arbitrary names.
 
   barcodes_data:
     type: File?
-    label: "Optional TSV/CSV file to prefilter and extend metadata by barcodes. First column should be named as 'barcode'"
+    label: "TSV/CSV file to filter cells by barcodes"
     doc: |
-      Path to the TSV/CSV file to optionally prefilter and
-      extend Seurat object metadata by selected barcodes.
-      First column should be named as 'barcode'. If file
-      includes any other columns they will be added to the
-      Seurat object metadata ovewriting the existing ones if
-      those are present. Default: all cells used, no extra
-      metadata is added
+      Loaded single-cell data can be optionally
+      prefiltered by selected cell barcodes.
+      Provided tab-delimited or comma-separated
+      file should have the first column named
+      'barcode'. If this file includes any other
+      columns, they will be used to assign
+      additional categories per cell.
 
   groupby:
     type: string?
     default: null
-    label: "Column from the Seurat object metadata to group cells for optional subsetting"
+    label: "Category to group cells for optional subsetting"
     doc: |
-      Column from the Seurat object metadata to group cells
-      for optional subsetting when combined with --subset
-      parameter. May be one of the extra metadata columns
-      added with --metadata or --barcodes parameters.
-      Ignored if --subset is not set. Default: do not
-      subset, include all cells into analysis.
+      Before running differential expression
+      analysis input data can be optionally
+      prefiltered to include only certain
+      values from the specific category.
+      Here we define the name of that
+      category.
 
   subset:
     type: string?
     default: null
-    label: "Value(s) to subset cells before running analysis"
+    label: "List of values to subset cells from the selected category"
     doc: |
-      Values from the column set with --groupby parameter to
-      subset cells before running differential expression
-      analysis. Ignored if --groupby is not provided.
-      Default: do not subset cells, include all of them
+      If the category to group cells for
+      optional subsetting was provided,
+      here we define which values should
+      be included into analysis.
 
   splitby:
     type: string
-    label: "Column from the Seurat object metadata to split cell into two groups"
+    label: "Category to split cell into two groups"
     doc: |
-      Column from the Seurat object metadata to split cells
-      into two groups to run --second vs --first
-      differential expression analysis. May be one of the
-      extra metadata columns added with --metadata or
-      --barcodes parameters.
+      All remaining after optional prefiltering
+      steps cells will be split into two groups
+      for gene expression comparison.
 
   first_cond:
     type: string
-    label: "Value from the Seurat object metadata column to define the first group of cells"
+    label: "Value from the selected category to define the first group of cells"
     doc: |
-      Value from the Seurat object metadata column set with
-      --splitby parameter to define the first group of cells
-      for differential expression analysis.
+      Cells for which the selected category
+      includes provided value will be used
+      as the first group for differential
+      expression comparison. Direction of
+      comparison is second vs first groups.
 
   second_cond:
     type: string
-    label: "Value from the Seurat object metadata column to define the second group of cells"
+    label: "Value from the selected category to define the second group of cells"
     doc: |
-      Value from the Seurat object metadata column set with
-      --splitby parameter to define the second group of
-      cells for differential expression analysis.
+      Cells for which the selected category
+      includes provided value will be used
+      as the second group for differential
+      expression comparison. Direction of
+      comparison is second vs first groups.
 
   analysis_method:
     type:
@@ -137,55 +138,54 @@ inputs:
     default: wilcoxon
     label: "Test type to use in differential expression analysis"
     doc: |
-      Test type to use in differential expression analysis.
-      If set to deseq or deseq-lrt, gene expression will be
-      aggregated to the pseudobulk level per dataset. For
-      deseq, the pair-wise Wald test will be used. For
-      deseq-lrt, the reduced formula will look like ~1 if
-      --batchby parameter is omitted or will be set to
-      ~batchby to exclude the criteria if interest (defined
-      by --splitby). For all other values of the --test
-      parameter the FindMarkers function will be used (genes
-      will be prefiltered by minimum percentage >= 0.1 and
-      by minimum log2FoldChange >= 0.25 before running
-      differential expression analysis). Default: use
-      FindMarkers with Wilcoxon Rank Sum test.
+      Test type to use in the differential
+      expression analysis. If set to deseq
+      or deseq-lrt, gene expression will be
+      aggregated to the pseudobulk form per
+      sample. Othwerwise, analysis will be
+      run on the cells level. If deseq is
+      selected, the pair-wise Wald test will
+      be used. For deseq-lrt, the Likelihood
+      Ratio Test will be applied between
+      design and reduced formulas. The
+      reduced formula will look like ~1 if
+      grouping by batches is omitted or will
+      be set to the category defined as
+      batches.
 
   batchby:
     type: string?
     default: null
-    label: "Column from the Seurat object metadata to group cells into batches"
+    label: "Category to model batch effect"
     doc: |
-      Column from the Seurat object metadata to group cells
-      into batches. If --test is set to deseq or deseq-lrt
-      the --batchby parameter will be used in the design
-      formula in the following way ~splitby+batchby. If
-      --test is set to negative-binomial, poisson, logistic-
-      regression, or mast it will be used as a latent
-      variable in the FindMarkers function. Not supported
-      for --test values equal to wilcoxon, likelihood-ratio,
-      or t-test. May be one of the extra metadata columns
-      added with --metadata or --barcodes parameters.
-      Default: do not model batch effect.
+      If selected test type supports batch
+      effect modeling, the provided category
+      will be used to group cells into
+      batches. For deseq and deseq-lrt tests
+      batch modeling will result in adding it
+      into the design formula. For negative-
+      binomial, poisson, logistic-regression,
+      or mast tests grouping by batches will
+      be used as a latent variable in the
+      FindMarkers function.
 
   maximum_padj:
     type: float?
     default: 0.05
-    label: "Maximum adjusted P-value used in the exploratory visualization part of the analysis"
+    label: "Maximum adjusted P-value for genes displayed on the heatmap"
     doc: |
-      In the exploratory visualization part of the analysis
-      output only differentially expressed genes with
-      adjusted P-value not bigger than this value.
-      Default: 0.05
+      When generating gene expression heatmap
+      per cell output only differentially
+      expressed genes with the adjusted P-value
+      not bigger than this value.
 
   genes_of_interest:
     type: string?
     default: null
-    label: "Genes of interest to label on the generated plots"
+    label: "Genes of interest to be shown on the plots"
     doc: |
-      Genes of interest to label on the generated plots.
-      Default: top 10 genes with the highest and the lowest
-      log2FoldChange values.
+      Genes of interest to be shown on the
+      volcano, violin, and UMAP plots.
     'sd:layout':
       advanced: true
 
@@ -194,11 +194,12 @@ inputs:
     default: null
     label: "Regex pattern to identify and exclude specific genes from the analysis"
     doc: |
-      Regex pattern to identify and exclude specific genes
-      from the differential expression analysis (not case-
-      sensitive). If any of such genes are provided in the
-      --genes parameter, they will be excluded from there as
-      well. Default: use all genes
+      Regex pattern to identify and exclude
+      specific genes from the differential
+      expression analysis (not case-sensitive).
+      If any of such genes were selected as
+      genes of interest to be shown on the plots,
+      they will be excluded from there as well.
     'sd:layout':
       advanced: true
 
@@ -211,14 +212,16 @@ inputs:
       - "column"
       - "both"
       - "none"
-    default: "none"
-    label: "Hopach clustering method to be run on normalized read counts"
+    default: "row"
+    label: "Clustering method for gene expression data"
     doc: |
-      Hopach clustering method to be run on the normalized
-      read counts for the exploratory visualization part of
-      the analysis. Clustering by column is supported only
-      when --test is set to deseq or deseq-lrt. Default: do
-      not run clustering
+      Clustering method to be run on
+      the normalized read counts data.
+      "column" and "both" options are
+      supported only when using deseq
+      or desey-lrt tests for which gene
+      expression data aggregated to the
+      pseudobulk form.
     'sd:layout':
       advanced: true
 
@@ -234,11 +237,11 @@ inputs:
       - "cor"
       - "abscor"
     default: "cosangle"
-    label: "Distance metric for HOPACH row clustering"
+    label: "Distance metric for row clustering"
     doc: |
-      Distance metric for HOPACH row clustering. Ignored if
-      --cluster is set to column or not provided.
-      Default: cosangle
+      Distance metric for row clustering.
+      Ignored if clustering method is set
+      to "column" or "none".
     'sd:layout':
       advanced: true
 
@@ -254,23 +257,24 @@ inputs:
       - "cor"
       - "abscor"
     default: "euclid"
-    label: "Distance metric for HOPACH column clustering"
+    label: "Distance metric for column clustering"
     doc: |
-      Distance metric for HOPACH column clustering. Ignored
-      if --cluster is set to row or not provided.
-      Default: euclid
+      Distance metric for column clustering.
+      Ignored if clustering method is set
+      to "row" or "none".
     'sd:layout':
       advanced: true
 
   center_row:
     type: boolean?
-    default: false
-    label: "Apply mean centering for feature expression prior to running clustering by row"
+    default: true
+    label: "Gene expression mean centering for clustering by row"
     doc: |
-      Apply mean centering for gene expression prior to
-      running clustering by row. Ignored if --cluster is
-      set to column or not provided. Default: do not
-      center
+      Apply mean centering for gene
+      expression prior to running
+      clustering by row. Ignored if
+      clustering method is set to
+      "column" or "none".
     'sd:layout':
       advanced: true
 
@@ -288,11 +292,9 @@ inputs:
       - "classic"
       - "void"
     default: "classic"
-    label: "Color theme for all generated plots"
+    label: "Color theme"
     doc: |
-      Color theme for all generated plots. One of gray, bw,
-      linedraw, light, dark, minimal, classic, void.
-      Default: classic
+      Color theme for all generated plots.
     'sd:layout':
       advanced: true
 
@@ -303,11 +305,11 @@ inputs:
       symbols:
       - "32"
     default: "32"
-    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    label: "Maximum shared memory in GB"
     doc: |
-      Maximum memory in GB allowed to be shared between
-      the workers when using multiple --cpus.
-      Default: 32
+      Maximum memory in GB allowed to
+      be shared between the workers
+      when using multiple CPUs.
     'sd:layout':
       advanced: true
 
@@ -318,10 +320,10 @@ inputs:
       symbols:
       - "64"
     default: "64"
-    label: "Maximum vector memory in GB allowed to be used by R"
+    label: "Maximum vector memory in GB"
     doc: |
-      Maximum vector memory in GB allowed to be used by R.
-      Forced to 64 GB
+      Maximum vector memory in GB
+      allowed to be used by R.
     'sd:layout':
       advanced: true
 
@@ -332,10 +334,9 @@ inputs:
       symbols:
       - "1"
     default: "1"
-    label: "Number of cores/cpus to use"
+    label: "Number of cores/cpus"
     doc: |
       Number of cores/cpus to use
-      Forced to 1
     'sd:layout':
       advanced: true
 
