@@ -171,7 +171,7 @@ outputs:
     doc: "Unaligned FASTQ file(s)"
     outputSource: bowtie_aligner/unaligned_fastq
 
-  multimapped_fastq:
+  multimapped_fastq_files:
     type:
       - "null"
       - File[]
