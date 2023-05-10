@@ -75,14 +75,6 @@ outputs:
     outputBinding:
       glob: "*.gz"
 
-  metadata_json:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*.json"
-
   metadata_xml:
     type:
     - "null"
@@ -95,6 +87,86 @@ outputs:
     type: File
     outputBinding:
       glob: "report.md"
+
+  collected_metadata:
+    type: File
+    outputBinding:
+      glob: "collected_metadata.tsv"
+
+  run_acc:
+    type:
+      - "null"
+      - type: array
+        items: string
+    outputBinding:
+      loadContents: true
+      glob: "collected_metadata.tsv"
+      outputEval: |
+        ${
+          var pattern = /run_acc\:.*/;
+          var splitted_line = self[0].contents.match(pattern)[0].trim().split(" ").slice(1);
+          return (!!splitted_line.length)?splitted_line:null;
+        }
+
+  experiment_acc:
+    type:
+      - "null"
+      - type: array
+        items: string
+    outputBinding:
+      loadContents: true
+      glob: "collected_metadata.tsv"
+      outputEval: |
+        ${
+          var pattern = /experiment_acc\:.*/;
+          var splitted_line = self[0].contents.match(pattern)[0].trim().split(" ").slice(1);
+          return (!!splitted_line.length)?splitted_line:null;
+        }
+
+  study_acc:
+    type:
+      - "null"
+      - type: array
+        items: string
+    outputBinding:
+      loadContents: true
+      glob: "collected_metadata.tsv"
+      outputEval: |
+        ${
+          var pattern = /study_acc\:.*/;
+          var splitted_line = self[0].contents.match(pattern)[0].trim().split(" ").slice(1);
+          return (!!splitted_line.length)?splitted_line:null;
+        }
+
+  biosample:
+    type:
+      - "null"
+      - type: array
+        items: string
+    outputBinding:
+      loadContents: true
+      glob: "collected_metadata.tsv"
+      outputEval: |
+        ${
+          var pattern = /biosample\:.*/;
+          var splitted_line = self[0].contents.match(pattern)[0].trim().split(" ").slice(1);
+          return (!!splitted_line.length)?splitted_line:null;
+        }
+
+  bioproject:
+    type:
+      - "null"
+      - type: array
+        items: string
+    outputBinding:
+      loadContents: true
+      glob: "collected_metadata.tsv"
+      outputEval: |
+        ${
+          var pattern = /bioproject\:.*/;
+          var splitted_line = self[0].contents.match(pattern)[0].trim().split(" ").slice(1);
+          return (!!splitted_line.length)?splitted_line:null;
+        }
 
   stdout_log:
     type: stdout

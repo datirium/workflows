@@ -107,16 +107,6 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  metadata_json:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: fastq_dump/metadata_json
-    label: "SRR metadata files in JSON format"
-    doc: |
-      SRR metadata files in JSON format
-
   metadata_xml:
     type:
     - "null"
@@ -126,6 +116,63 @@ outputs:
     label: "SRR metadata files in XML format"
     doc: |
       SRR metadata files in XML format
+
+  collected_metadata:
+    type: File
+    outputSource: fastq_dump/collected_metadata
+    label: "Collected metadata in TSV format"
+    doc: |
+      Collected metadata in TSV format
+
+  run_acc:
+    type:
+    - "null"
+    - type: array
+      items: string
+    outputSource: fastq_dump/run_acc
+    label: "Collected Run identifiers"
+    doc: |
+      Collected Run identifiers
+
+  experiment_acc:
+    type:
+    - "null"
+    - type: array
+      items: string
+    outputSource: fastq_dump/experiment_acc
+    label: "Collected Experiment identifiers"
+    doc: |
+      Collected Experiment identifiers
+
+  study_acc:
+    type:
+    - "null"
+    - type: array
+      items: string
+    outputSource: fastq_dump/study_acc
+    label: "Collected SRA Study identifiers"
+    doc: |
+      Collected SRA Study identifiers
+
+  biosample:
+    type:
+    - "null"
+    - type: array
+      items: string
+    outputSource: fastq_dump/biosample
+    label: "Collected BioSample identifiers"
+    doc: |
+      Collected BioSample identifiers
+
+  bioproject:
+    type:
+    - "null"
+    - type: array
+      items: string
+    outputSource: fastq_dump/bioproject
+    label: "Collected BioProject identifiers"
+    doc: |
+      Collected BioProject identifiers
 
   fastq_dump_stdout_log:
     type: File
@@ -164,8 +211,13 @@ steps:
         valueFrom: $(self==""?null:self)                 # safety measure
     out:
     - fastq_files
-    - metadata_json
     - metadata_xml
+    - collected_metadata
+    - run_acc
+    - experiment_acc
+    - study_acc
+    - biosample
+    - bioproject
     - report_md
     - stdout_log
     - stderr_log
