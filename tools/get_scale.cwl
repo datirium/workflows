@@ -35,7 +35,7 @@ outputs:
             outputEval: |
                 ${
                     var s = self[0].contents;
-                    return parseInt(s);
+                    return parseFloat(s);
                 }
         doc: |
             Scaling factor (sf) for seq library normalization.
