@@ -456,6 +456,14 @@ outputs:
       from the Tn5 cut sites of the cells that
       belong to the group defined by the --first
       and --groupby parameters.
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Called peaks (first)"
+        displayMode: "COLLAPSE"
+        height: 40
 
   second_peaks_bed_file:
     type: File?
@@ -466,6 +474,14 @@ outputs:
       from the Tn5 cut sites of the cells that
       belong to the group defined by the --second
       and --groupby parameters.
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Called peaks (second)"
+        displayMode: "COLLAPSE"
+        height: 40
 
   first_summits_bed_file:
     type: File?
