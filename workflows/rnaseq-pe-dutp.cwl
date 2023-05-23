@@ -529,8 +529,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "RNA-Seq pipeline paired-end strand specific"
-label: "RNA-Seq pipeline paired-end strand specific"
+s:name: "Deprecated. RNA-Seq pipeline paired-end strand specific"
+label: "Deprecated. RNA-Seq pipeline paired-end strand specific"
 s:alternateName: "RNA-Seq basic analysis workflow for strand specific paired-end experiment"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-pe-dutp.cwl

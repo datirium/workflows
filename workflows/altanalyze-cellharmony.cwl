@@ -181,8 +181,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "AltAnalyze CellHarmony"
-label: "AltAnalyze CellHarmony"
+s:name: "Deprecated. AltAnalyze CellHarmony"
+label: "Deprecated. AltAnalyze CellHarmony"
 s:alternateName: "Runs cell-level matching and comparison of single-cell transcriptomes for AltAnalyze ICGS, Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/altanalyze-cellharmony.cwl
@@ -221,5 +221,4 @@ s:creator:
 
 
 doc: |
-  AltAnalyze CellHarmony
-  ======================
+  Deprecated. AltAnalyze CellHarmony

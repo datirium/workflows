@@ -464,8 +464,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "RNA-Seq pipeline single-read strand specific"
-label: "RNA-Seq pipeline single-read strand specific"
+s:name: "Deprecated. RNA-Seq pipeline single-read strand specific"
+label: "Deprecated. RNA-Seq pipeline single-read strand specific"
 s:alternateName: "RNA-Seq basic analysis workflow for strand specific single-read experiment"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/rnaseq-se-dutp.cwl

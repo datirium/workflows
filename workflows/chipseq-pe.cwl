@@ -736,8 +736,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "ChIP-Seq pipeline paired-end"
-s:name: "ChIP-Seq pipeline paired-end"
+label: "Deprecated. ChIP-Seq pipeline paired-end"
+s:name: "Deprecated. ChIP-Seq pipeline paired-end"
 s:alternateName: "ChIP-Seq basic analysis workflow for a paired-end experiment"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl
