@@ -515,6 +515,14 @@ outputs:
         tab: 'Diff bound sites'
         Title: 'Differentially bound sites. Not filtered'
 
+  diff_bound_sites_with_labels:
+    type: File
+    outputSource: add_label_column/output_file
+    label: "Differentially bound sites with labels"
+    doc: |
+      Not filtered differentially bound sites
+      with labels in TSV format
+
   first_enrch_bigbed_file:
     type: File?
     outputSource: sc_atac_dbinding/first_enrch_bigbed_file
