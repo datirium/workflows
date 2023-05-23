@@ -76,6 +76,13 @@ outputs:
       Cellranger-compatible reference folder that includes
       STAR indices and some additional files
 
+  chrom_length_file:
+    type: File
+    outputBinding:
+      glob: $(get_output_folder_name() + "/star/chrNameLength.txt")
+    doc: |
+      Chromosome length file in TSV format
+
   stdout_log:
     type: stdout
 
