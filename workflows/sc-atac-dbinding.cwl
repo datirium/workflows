@@ -709,7 +709,7 @@ steps:
         default: |
           HEADER=`head -n 1 $0`;
           echo -e "label\t${HEADER}" > diff_sts_labeled.tsv;
-          cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"\t"$0}' >> diff_sts_labeled.tsv
+          cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"("$NF")\t"$0}' >> diff_sts_labeled.tsv
     out:
     - output_file
 
