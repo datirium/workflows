@@ -377,6 +377,9 @@ inputs:
     - type: enum
       symbols:
       - "1"
+      - "2"
+      - "3"
+      - "4"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
