@@ -599,8 +599,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "ChIP-Seq pipeline single-read"
-s:name: "ChIP-Seq pipeline single-read"
+label: "Deprecated. ChIP-Seq pipeline single-read"
+s:name: "Deprecated. ChIP-Seq pipeline single-read"
 s:alternateName: "ChIP-Seq basic analysis workflow for single-read data"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl

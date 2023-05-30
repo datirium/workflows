@@ -375,8 +375,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Differential Expression"
-s:name: "Single-cell Differential Expression"
+label: "Deprecated. Single-cell Differential Expression"
+s:name: "Deprecated. Single-cell Differential Expression"
 s:alternateName: "Runs differential expression analysis for a subset of cells between two selected conditions"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/sc_diff_expr.cwl
@@ -415,7 +415,7 @@ s:creator:
 
 
 doc: |
-  Single-cell Differential Expression
-  ===================================
+  Deprecated. Single-cell Differential Expression
+  ===============================================
 
   Runs differential expression analysis for a subset of cells between two selected conditions.

@@ -56,7 +56,7 @@ outputs:
       glob: $(get_output_prefix()+".md")
 
 
-baseCommand: ["cell_ranger_count_stats.py"]
+baseCommand: ["cell_ranger_atac_count_stats.py"]
 
 
 $namespaces:
@@ -66,11 +66,11 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-s:name: "Cell Ranger Count Statistics"
-label: "Cell Ranger Count Statistics"
-s:alternateName: "Collects statistics from Cell Ranger Count experiment"
+s:name: "Cell Ranger ATAC Count Statistics"
+label: "Cell Ranger ATAC Count Statistics"
+s:alternateName: "Collects statistics from Cell Ranger ATAC Count experiment"
 
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/collect-stats-sc-count.cwl
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/collect-stats-sc-atac-count.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -106,11 +106,11 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Count Statistics
+  Cell Ranger ATAC Count Statistics
   ================================
   
-  Collects statistics from Cell Ranger Count experiment
+  Collects statistics from Cell Ranger ATAC Count experiment
 
 
 s:about: |
-  Collects statistics from Cell Ranger Count experiment
+  Collects statistics from Cell Ranger ATAC Count experiment

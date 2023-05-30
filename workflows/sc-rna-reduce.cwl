@@ -313,11 +313,11 @@ inputs:
     - type: enum
       symbols:
       - "1"
+      - "2"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
       Number of cores/cpus to use
-      Forced to 1
     'sd:layout':
       advanced: true
 
@@ -671,5 +671,4 @@ s:creator:
 doc: |
   Single-cell RNA-Seq Dimensionality Reduction Analysis
 
-  Integrates multiple single-cell RNA-Seq datasets, reduces
-  dimensionality using PCA.
+  Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA.

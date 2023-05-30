@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -165,11 +165,13 @@ inputs:
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use in UMAP projection (from 1 to 50). If single value N
-      is provided, use from 1 to N PCs. If multiple values are provided, subset to
-      only selected PCs. In combination with --ntgr set to harmony, selected principle
-      components will be used in Harmony integration.
-      Default: from 1 to 10
+      Dimensionality to use in UMAP projection (from 1 to
+      50). If single value N is provided, use from 1 to N
+      PCs. If multiple values are provided, subset to only
+      specified PCs. In combination with --ntgr set to
+      harmony, multiple values will result in using all
+      principal components starting from 1 to the max of the
+      provided values. Default: from 1 to 10
 
   umap_spread:
     type: float?
@@ -299,6 +301,14 @@ inputs:
       prefix: "--h5ad"
     doc: |
       Save Seurat data to h5ad file.
+      Default: false
+
+  export_scope_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--scope"
+    doc: |
+      Save Seurat data to SCope compatible loom file.
       Default: false
 
   export_ucsc_cb:
@@ -668,6 +678,13 @@ outputs:
     doc: |
       Reduced Seurat data in h5ad format
 
+  seurat_data_scope:
+    type: File?
+    outputBinding:
+      glob: "*_data.loom"
+    doc: |
+      Reduced Seurat data in SCope compatible loom format
+
   stdout_log:
     type: stdout
 
@@ -737,20 +754,22 @@ s:about: |
   usage: sc_rna_reduce.R
         [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
         [--cellcycle CELLCYCLE] [--norm {sct,log,sctglm}]
-        [--ntgr {seurat,harmony,none}] [--ntgrby [NTGRBY ...]]
+        [--ntgr {seurat,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
         [--highvargenes HIGHVARGENES] [--regressmt]
-        [--regressgenes [REGRESSGENES ...]] [--regressccfull | --regressccdiff]
-        [--dimensions [DIMENSIONS ...]] [--uspread USPREAD]
+        [--regressgenes [REGRESSGENES [REGRESSGENES ...]]]
+        [--regressccfull | --regressccdiff]
+        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
         [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
         [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--lowmem] [--output OUTPUT]
+        [--h5seurat] [--h5ad] [--scope] [--cbbuild] [--lowmem]
+        [--output OUTPUT]
         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
         [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Dimensionality Reduction Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
@@ -790,7 +809,7 @@ s:about: |
                           Integration method used for joint analysis of multiple
                           datasets. Automatically set to 'none' if loaded Seurat
                           object includes only one dataset. Default: seurat
-    --ntgrby [NTGRBY ...]
+    --ntgrby [NTGRBY [NTGRBY ...]]
                           Column(s) from the Seurat object metadata to define
                           the variable(s) that should be integrated out when
                           running multiple datasets integration with harmony.
@@ -804,7 +823,7 @@ s:about: |
     --regressmt           Regress the percentage of transcripts mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
-    --regressgenes [REGRESSGENES ...]
+    --regressgenes [REGRESSGENES [REGRESSGENES ...]]
                           Genes which expression should be regressed as a
                           confounding source of variation. Default: None
     --regressccfull       Regress all signals associated with cell cycle phase.
@@ -816,13 +835,14 @@ s:about: |
                           and cycling cells will be maintained. Ignored if
                           --cellcycle is not provided. Mutually exclusive with
                           --regressccfull Default: false
-    --dimensions [DIMENSIONS ...]
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use in UMAP projection (from 1 to
                           50). If single value N is provided, use from 1 to N
                           PCs. If multiple values are provided, subset to only
-                          selected PCs. In combination with --ntgr set to
-                          harmony, selected principle components will be used in
-                          Harmony integration. Default: from 1 to 10
+                          specified PCs. In combination with --ntgr set to
+                          harmony, multiple values will result in using all
+                          principal components starting from 1 to the max of the
+                          provided values. Default: from 1 to 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -848,6 +868,8 @@ s:about: |
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
+    --scope               Save Seurat data to SCope compatible loom file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --lowmem              Attempts to minimize RAM usage when integrating
                           multiple datasets with SCTransform algorithm (slows
