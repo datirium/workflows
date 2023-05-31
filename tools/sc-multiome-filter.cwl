@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.21
+  dockerPull: biowardrobe2/sc-tools:v0.0.22
 
 
 inputs:
@@ -74,11 +74,34 @@ inputs:
       Default: each dataset is assigned to its own group.
 
   blacklist_regions_file:
-    type: File?
+    type:
+    - "null"
+    - File
+    - type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
     inputBinding:
       prefix: "--blacklist"
+      valueFrom: |
+        ${
+          if (self.class && self.class == "File"){
+            return self;
+          } else if (self == "hg19") {
+            return "/opt/sc_tools/hg19-blacklist.v2.bed";
+          } else if (self == "hg38") {
+            return "/opt/sc_tools/hg38-blacklist.v2.bed";
+          } else if (self == "mm10") {
+            return "/opt/sc_tools/mm10-blacklist.v2.bed";
+          } else {
+            return null;
+          }
+        }
     doc: |
       Path to the optional BED file with the genomic blacklist regions.
+      If a string value provided, it should be one of the hg19, hg38,
+      or mm10 as we replace it with the file location from docker image
 
   barcodes_data:
     type: File?

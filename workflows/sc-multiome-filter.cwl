@@ -86,10 +86,22 @@ inputs:
       Default: each dataset is assigned to its own group.
 
   blacklist_regions_file:
-    type: File?
-    label: "Optional BED file with the genomic blacklist regions"
+    type:
+    - "null"           # although, we allow it to be optional, all our upstreams should have "genome" input
+    - type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
+    label: "Genome type for genomic blacklist regions selection"
     doc: |
-      Path to the optional BED file with the genomic blacklist regions.
+      One of the hg19/hg38/mm10 values to automatically
+      select file with blacklisted genomic regions. If
+      not provided, filtering by the maximum fraction of
+      fragments in genomic blacklist regions won't be
+      applied.
+    'sd:upstreamSource': "sc_arc_sample/genome_indices/genome_indices/genome"
+    'sd:localLabel': true
 
   barcodes_data:
     type: File?
