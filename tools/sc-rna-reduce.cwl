@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.21
+  dockerPull: biowardrobe2/sc-tools:v0.0.22
 
 
 inputs:
@@ -52,14 +52,36 @@ inputs:
       Default: all cells used, no extra metadata is added
 
   cell_cycle_data:
-    type: File?
+    type:
+    - "null"
+    - File
+    - type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
     inputBinding:
       prefix: "--cellcycle"
+      valueFrom: |
+        ${
+          if (self.class && self.class == "File"){
+            return self;
+          } else if (self == "hg19") {
+            return "/opt/sc_tools/human_cc_genes.csv";
+          } else if (self == "hg38") {
+            return "/opt/sc_tools/human_cc_genes.csv";
+          } else if (self == "mm10") {
+            return "/opt/sc_tools/mouse_cc_genes.csv";
+          } else {
+            return null;
+          }
+        }
     doc: |
       Path to the TSV/CSV file with the information for cell cycle score assignment.
       First column - 'phase', second column 'gene_id'. If loaded Seurat object already
       includes cell cycle scores in 'S.Score', 'G2M.Score', and 'CC.Difference' metatada
-      columns they will be overwritten.
+      columns they will be overwritten. If a string value provided, it should be one of
+      the hg19, hg38, or mm10 as we replace it with the file location from docker image.
       Default: skip cell cycle score assignment.
 
   normalization_method:

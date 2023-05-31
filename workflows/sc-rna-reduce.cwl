@@ -42,6 +42,20 @@ inputs:
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
+  cell_cycle_data:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
+    label: "Genome type for cell cycle genes selection"
+    doc: |
+      Genome type to use for cell cycle score
+      assignment. If not provided, cell cycle
+      scores won't be assigned.
+
   datasets_metadata:
     type: File?
     label: "Path to the TSV/CSV file to optionally extend Seurat object metadata with categorical values"
@@ -66,16 +80,6 @@ inputs:
       Seurat object metadata ovewriting the existing ones if
       those are present.
       Default: all cells used, no extra metadata is added
-
-  cell_cycle_data:
-    type: File?
-    label: "Optional TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'"
-    doc: |
-      Path to the TSV/CSV file with the information for cell cycle score assignment.
-      First column - 'phase', second column 'gene_id'. If loaded Seurat object already
-      includes cell cycle scores in 'S.Score', 'G2M.Score', and 'CC.Difference' metatada
-      columns they will be overwritten.
-      Default: skip cell cycle score assignment.
 
   dimensions:
     type: int?
