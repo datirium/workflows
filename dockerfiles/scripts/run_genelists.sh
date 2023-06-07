@@ -17,28 +17,40 @@ usage()
 {
 cat << EOF
 Help message for \`run_genelists.sh\`:
-Shell wrapper for producing data file for gene list(s) heatmap. Uses both ATAC/ChIP/CRT and RNA-Seq data.
+Shell wrapper for producing a GCT data file for the morpheus heatmap.
+Uses both ATAC/ChIP/CRT (NA [nucleic acid] binding) and RNA-Seq data to derive visualization data.
+NA binding data in the form of BAM files per sample is processed to output an average read depth per window +/-5Kbp of each gene's TSS (transcription start site).
+RNA-Seq data in the form of gene expression count matrices are processed to output TotalReads and Rpkm values per gene.
+These data are then integrated into a single count matrix, a row, and a column metadata file as input to an Rscript that will format the 3 files into GCT format for morpheus heatmap viewer.
+
 
 Primary Output files:
- - 
+ - heatmap.gct, GCT formatted peak and expression data for morpheus viewer
+
+Secondary Output files:
+ - master_samplesheet.tsv, contains formatted information of the input data and files
+ - output_row_metadata.tsv, row metadata for GCT formatter
+ - output_col_metadata.tsv, column metadata for GCT formatter
+ - output_counts.tsv, peak average read depth per TSS window and gene expression counts matrix
 
 PARAMS:
     SECTION 1: general
-    -h	help		show this message
-    -t  INT			number of threads
+	-h	help		show this message
+	-t  INT			number of threads
 	-a	ARRAY		array of genelist sample names (no commas in names)
 	-b  FILE ARRAY	array of associated annotation files for each gene list from (-c), with header
-    -c  FILE ARRAY	array of filtered gene list TSVs (must be headerless, columns are: chr, txStart, txEnd, geneID, L2FC, Strand)
+	-c  FILE ARRAY	array of filtered gene list TSVs (must be headerless, columns are: chr, txStart, txEnd, geneID, L2FC, Strand)
 	-d	ARRAY		array of sample names from NA binding experiments (no commas in names)
 	-e	ARARY		array of sample names from RNA-Seq experiments (no commas in names)
 	-f	FILE ARRAY	array of BAM files from NA binding experiments
 	-g	FILE ARARY	array of expression table files from RNA-Seq experiments	
 
-
+NOTE:
+	All arrays need to be comma separated.
 
 ____________________________________________________________________________________________________
 References:
- - 
+ - Tange, O. (2023, May 22). GNU Parallel 20230522 ('Charles'). Zenodo. https://doi.org/10.5281/zenodo.7958356
     
 EOF
 }
@@ -157,12 +169,13 @@ get_data()
 			if [[ "$strand" == "+" ]]; then
 				from=$(echo "$txStart" | awk -v w=$window '{print($0-w)}')
 				to=$(echo "$txStart" | awk -v w=$window '{print($0+w)}')
-				samtools depth -a -r $chr:$from-$to $bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
 			else
 				from=$(echo "$txEnd" | awk -v w=$window '{print($0-w)}')
 				to=$(echo "$txEnd" | awk -v w=$window '{print($0+w)}')
-				samtools depth -a -r $chr:$from-$to $bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
 			fi
+			cp $bam copy.bam
+			samtools index copy.bam
+			samtools depth -a -r $chr:$from-$to copy.bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
 			#   reduce to 50 windows
 			#    - 100 bp per window frame in steps of 50 bp to cover the 10,000 bp +/-5Kbp of TSS
 			#    - i.e. there will be a 50 bp overlap between 100 bp windows to smoothed depth average values, and total of 99 windows
@@ -260,50 +273,12 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"Rpkm",$
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"avg_depth",$3,$4,$10,"avg_depth")}}' output_na-binding.tsv >> output_col_metadata.tmp
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
+# run r script to generate gct data file and morpheus heatmap
+run_genelists_heatmap.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 
 
+# clean up
+rm copy.bam*
 
 
-
-
-
-
-
-
-exit
-
-#	SUMMARY/OUTPUTS
-#===============================================================================
-printf "\n\nGenerating metrics and formatting overview.md file\n"
-printf "\tRead metrics...\n"
-reads_processed=$(grep "reads processed" bowtie.log | grep -o "[0-9]\+")
-reads_gt0_alignment=$(grep "reads with at least one alignment" bowtie.log | sed -e 's/.*: //')
-
-printf "\tmiRNA metrics...\n"
-mirs_total_novel=$(tail -n+2 mirs_novel.tsv | wc -l)
-mirs_total_known=$(tail -n+2 mirs_known.tsv | wc -l)
-mirs_total_exosome=$(tail -n+2 mirs_known_exocarta_deepmirs.tsv | wc -l)
-
-
-
-printf "\tformatting...\n"
-
-printf "## Results Interpretation\n" > overview.md
-printf "\n" >> overview.md
-printf "#### For the identification of miRDeep2 novel miRNA candidates, the following may be used as a filtering guideline:\n\n" >> overview.md
-printf "1. miRDeep score >4\n" >> overview.md
-printf "\n" >> overview.md
-
-printf "## ALIGNMENT & miRNA METRICS\n" >> overview.md
-printf "-" >> overview.md
-printf " Total reads processed: $reads_processed\n" >> overview.md
-printf "-" >> overview.md
-printf " %s\n" "Reads with at least one alignment: $reads_gt0_alignment" >> overview.md
-printf "-" >> overview.md
-printf " Novel miRNA detected: $mirs_total_novel\n" >> overview.md
-printf "-" >> overview.md
-printf " Known miRNA detected: $mirs_total_known\n" >> overview.md
-printf "-" >> overview.md
-printf " Exosome miRNA detected: $mirs_total_exosome\n" >> overview.md
-
-printf "\n\nWorkflow script run_mirdeep2.sh complete!\n"
+printf "\n\nWorkflow script run_genelists.sh complete!\n"

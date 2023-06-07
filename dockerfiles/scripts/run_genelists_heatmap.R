@@ -8,7 +8,8 @@ suppressMessages(library(cmapR))
 suppressMessages(library(dplyr))
 suppressMessages(library(tibble))
 suppressMessages(library(reshape2))
-
+suppressMessages(library(morpheus))
+suppressMessages(library(htmlwidgets))
 
 
 ##########################################################################################
@@ -20,19 +21,19 @@ suppressMessages(library(reshape2))
 
 # character vector of positional arguments
 args <- commandArgs(trailingOnly = TRUE)
-anno_file <- args[1]
-outdir <- args[2]
-datadir <- args[3]
-genome <- args[4]
-threads <- args[5]
+output_row_metadata <- args[1]  # ex. 'output_row_metadata.tsv'
+output_col_metadata <- args[2]  # ex. 'output_col_metadata.tsv'
+output_counts <- args[3]        # ex. 'output_counts.tsv'
+output_location <- args[4]      # ex. './'
+
+# read in files to data frames (counts need to be in matrix)
+row_metadata <- read.table(output_row_metadata,header=T,sep='\t')
+column_metadata <- read.table(output_col_metadata,header=T,sep='\t')
+df <- read.table(output_counts,header=T,sep='\t')
+counts_mat <- acast(df, rid~cid, value.var="value")
 
 
-
-
-
-
-
-
+# export to GCT format function
 export_gct <- function(row_metadata=NULL, col_metadata=NULL, counts_mat, location){
     base::tryCatch(
         expr = {
@@ -68,10 +69,29 @@ export_gct <- function(row_metadata=NULL, col_metadata=NULL, counts_mat, locatio
 }
 
 
-print("Exporting filtered normalized cell read counts to GCT format")
+print("Exporting to GCT format")
 export_gct(                                    # will be used by Morpheus
     row_metadata = row_metadata,    # includes gene list, gene name, and location as row names
     col_metadata = column_metadata, # includes experiment type, sample name, tss window, and data type as row names
     counts_mat = counts_mat,
-    location = paste(args$output, "_heatmap.gct", sep = "")
+    location = paste(output_location, "/heatmap.gct", sep = "")
 )
+
+print("Generating morpheus heatmap")
+is_all_numeric <- function(x) {
+  !any(is.na(suppressWarnings(as.numeric(na.omit(x))))) & is.character(x)
+}
+morpheus_html <- morpheus(
+    x=gct_data$data,
+    rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
+    columnAnnotations=if(nrow(gct_data$columnAnnotations) == 0) NULL else gct_data$columnAnnotations
+)
+
+html_location <- paste(output_location, "/heatmap.html", sep = "")
+print(paste("Saving heatmap to", html_location))
+htmlwidgets::saveWidget(
+    morpheus_html,
+    file=html_location
+)
+
+
