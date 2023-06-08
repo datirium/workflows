@@ -317,13 +317,6 @@ outputs:
         tab: 'Per dataset'
         Caption: 'Split by dataset cells WNN UMAP with DA scores'
 
-  ucsc_cb_config_data:
-    type: File
-    outputSource: compress_cellbrowser_config_data/compressed_folder
-    label: "Compressed directory with UCSC Cellbrowser configuration data"
-    doc: |
-      Compressed directory with UCSC Cellbrowser configuration data.
-
   ucsc_cb_html_data:
     type: Directory
     outputSource: da_cells/ucsc_cb_html_data
@@ -412,13 +405,6 @@ steps:
     - seurat_data_rds
     - stdout_log
     - stderr_log
-
-  compress_cellbrowser_config_data:
-    run: ../tools/tar-compress.cwl
-    in:
-      folder_to_compress: da_cells/ucsc_cb_config_data
-    out:
-    - compressed_folder
 
 
 $namespaces:
