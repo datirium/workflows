@@ -67,8 +67,6 @@ export_gct <- function(row_metadata=NULL, col_metadata=NULL, counts_mat, locatio
         }
     )
 }
-
-
 print("Exporting to GCT format")
 export_gct(                                    # will be used by Morpheus
     row_metadata = row_metadata,    # includes gene list, gene name, and location as row names
@@ -77,21 +75,31 @@ export_gct(                                    # will be used by Morpheus
     location = paste(output_location, "/heatmap.gct", sep = "")
 )
 
+
 print("Generating morpheus heatmap")
+gct_data <- read.gct(paste(output_location, "/heatmap.gct", sep = ""))
 is_all_numeric <- function(x) {
   !any(is.na(suppressWarnings(as.numeric(na.omit(x))))) & is.character(x)
 }
 morpheus_html <- morpheus(
     x=gct_data$data,
-    rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
-    columnAnnotations=if(nrow(gct_data$columnAnnotations) == 0) NULL else gct_data$columnAnnotations
+    rowAnnotations=gct_data$rowAnnotations,
+    columnAnnotations=gct_data$columnAnnotations,
+    rowSortBy=list(list(field="genelist_name", order=0)),
+    columnSortBy=list(
+        list(field="data_type", order=0),
+        list(field="sample_name", order=0),
+        list(field="tss_window", order=0)),
+    tools=list(list(
+        name="Sort/Group", 
+        params=list(group_cols_by="sample_name")
+    )),
+    rowGroupBy=list(list(field="genelist_name")),
+    columnGroupBy=list(list(field="sample_name"))
 )
-
 html_location <- paste(output_location, "/heatmap.html", sep = "")
 print(paste("Saving heatmap to", html_location))
 htmlwidgets::saveWidget(
     morpheus_html,
     file=html_location
 )
-
-
