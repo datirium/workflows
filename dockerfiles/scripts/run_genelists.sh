@@ -366,5 +366,14 @@ sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 # run r script to generate gct data file and morpheus heatmap
 run_genelists_heatmap.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 
+# inject javascript to configure the heatmap
+ed heatmap.html <<EOF
+/^<script>(function(global){"use strict";var morpheus=typeof morpheus!=="undefined"?morpheus:{}
+-2
+a
+setTimeout( function() { let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); }, 3000);
+.
+wq
+EOF
 
 printf "\n\nWorkflow script run_genelists.sh complete!\n"
