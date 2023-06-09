@@ -171,16 +171,6 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  overview:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "combined sample and log files"
-    doc: "combined sample and log files"
-    outputSource: aggregate_logs_for_overview/overview
-    'sd:visualPlugins':
-    - markdownView:
-        tab: 'Overview'
-
 
 steps:
 
@@ -212,79 +202,6 @@ steps:
     - heatmap_html
     - stdout_log
     - stderr_log
-
-  aggregate_logs_for_overview:
-    in:
-      master_samplesheet: data_integration/master_samplesheet
-      genelists_stdout: data_integration/log_file_stdout
-      genelists_stderr: data_integration/log_file_stderr
-      heatmap_stdout: morpheus_heatmap/stdout_log
-      heatmap_stderr: morpheus_heatmap/stderr_log
-    out:
-      - overview
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      requirements:
-      - class: DockerRequirement
-        dockerPull: robertplayer/scidap-genelists:dev
-      - class: InitialWorkDirRequirement
-        listing:
-          - entryname: aggregate.sh
-            entry: |
-              #!/bin/bash
-              printf "# $1\n" > overview.txt
-              while read x; do
-                printf "\n"
-                printf "$x\n"
-              done < $1 >> overview.txt
-              printf "# $2\n" >> overview.txt
-              while read x; do
-                printf "\n"
-                printf "$x\n"
-              done < $2 >> overview.txt
-              printf "# $3\n" >> overview.txt
-              while read x; do
-                printf "\n"
-                printf "$x\n"
-              done < $3 >> overview.txt
-              printf "# $4\n" >> overview.txt
-              while read x; do
-                printf "\n"
-                printf "$x\n"
-              done < $4 >> overview.txt
-              printf "# $5\n" >> overview.txt
-              while read x; do
-                printf "\n"
-                printf "$x\n"
-              done < $5 >> overview.txt
-      inputs:
-        master_samplesheet:
-          type: File
-          inputBinding:
-            position: 1
-        genelists_stdout:
-          type: File
-          inputBinding:
-            position: 2
-        genelists_stderr:
-          type: File
-          inputBinding:
-            position: 3
-        heatmap_stdout:
-          type: File
-          inputBinding:
-            position: 4
-        heatmap_stderr:
-          type: File
-          inputBinding:
-            position: 5
-      outputs:
-        overview:
-          type: File
-          outputBinding:
-            glob: "overview.txt"
-      baseCommand: ["bash", "-c", "aggregate.sh"]     
 
 
 $namespaces:
