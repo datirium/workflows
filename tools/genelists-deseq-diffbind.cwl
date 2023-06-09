@@ -80,13 +80,6 @@ inputs:
 
 outputs:
 
-  overview:
-    type: File
-    outputBinding:
-      glob: overview.md
-    doc: |
-      concatenation of the master samplesheet, stdout, and stderr log files for this script
-
   master_samplesheet:
     type: File
     outputBinding:
