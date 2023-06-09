@@ -84,6 +84,7 @@ inputs:
     label: "Sample names for ChIP/ATAC/CRT-Seq experiments"
     doc: "Array of aliases for ChIP/ATAC/CRT-Seq experiments for row metadata, param (-d)"
     'sd:upstreamSource': "samples_nabinding/alias"
+    'sd:localLabel': true
 
   sample_names_rnaseq:
     type:
@@ -93,6 +94,7 @@ inputs:
     label: "Sample names for RNA-Seq experiments"
     doc: "Array of aliases for RNA-Seq experiments for column metadata, param (-e)"
     'sd:upstreamSource': "samples_rnaseq/alias"
+    'sd:localLabel': trues
 
   datafiles_nabinding:
     type:
