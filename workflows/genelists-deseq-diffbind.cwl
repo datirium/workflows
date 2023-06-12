@@ -116,7 +116,7 @@ inputs:
     doc: "Array of sample TSV files containing gene annotations with associated TotalReads and Rpkm counts, param (-g)"
     'sd:upstreamSource': "samples_rnaseq/rpkm_genes"
 
-  threads:
+  threads_no:
     type: int?
     default: 1
     label: "Number of threads"
@@ -179,7 +179,7 @@ steps:
   data_integration:
     run: ../tools/genelists-deseq-diffbind.cwl
     in:
-      threads: threads
+      threads: threads_no
       genelist_names: genelist_names
       feature_files: genelist_feature_files
       filtered_files: genelist_filtered_files
