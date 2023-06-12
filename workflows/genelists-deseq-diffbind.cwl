@@ -164,7 +164,7 @@ outputs:
 
   heatmap_html:
     type: File
-    outputSource: morpheus_heatmap/heatmap_html
+    outputSource: data_integration/heatmap_html
     label: "Heatmap of peak and expression data"
     doc: |
       Morpheus heatmap in HTML format
@@ -193,17 +193,9 @@ steps:
       - output_col_metadata
       - output_counts
       - heatmap_gct
+      - heatmap_html
       - log_file_stdout
       - log_file_stderr
-
-  morpheus_heatmap:
-    run: ../tools/morpheus-heatmap.cwl
-    in:
-     read_counts_gct: data_integration/heatmap_gct
-    out:
-    - heatmap_html
-    - stdout_log
-    - stderr_log
 
 
 $namespaces:

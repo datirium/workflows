@@ -83,8 +83,8 @@ is_all_numeric <- function(x) {
 }
 morpheus_html <- morpheus(
     x=gct_data$data,
-    rowAnnotations=gct_data$rowAnnotations,
-    columnAnnotations=gct_data$columnAnnotations,
+    rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations,
+    columnAnnotations=if(nrow(gct_data$columnAnnotations) == 0) NULL else gct_data$columnAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
     rowSortBy=list(list(field="genelist_name", order=0)),
     columnSortBy=list(
         list(field="data_type", order=0),

@@ -115,6 +115,13 @@ outputs:
     doc: |
       GCT formatted peak and expression data for morpheus viewer
 
+  heatmap_html:
+    type: File
+    outputBinding:
+      glob: heatmap.html
+    doc: |
+      HTML preconfigured morpheus heatmap
+
   log_file_stdout:
     type: stdout
 
@@ -170,15 +177,17 @@ s:creator:
 
 
 doc: |
-  A CWL tool for producing a GCT data file for the morpheus heatmap.
+  A CWL tool for producing a GCT data file for the morpheus heatmap, and an html heatmap.
   Uses both ATAC/ChIP/CRT (NA [nucleic acid] binding) and RNA-Seq data to derive visualization data.
   NA binding data in the form of BAM files per sample is processed to output an average read depth per window +/-5Kbp of each gene's TSS (transcription start site).
   RNA-Seq data in the form of gene expression count matrices are processed to output TotalReads and Rpkm values per gene.
   These data are then integrated into a single count matrix, a row, and a column metadata file as input to an Rscript that will format the 3 files into GCT format for morpheus heatmap viewer.
+  The HTML heatmap is then produced with preconfigured sorting and grouping settings.
 
 
   Primary Output files:
   - heatmap.gct, GCT formatted peak and expression data for morpheus viewer
+  - heatmap.html, html of morpheus heatmap with preconfigured settings
 
   Secondary Output files:
   - master_samplesheet.tsv, contains formatted information of the input data and files
@@ -201,5 +210,5 @@ doc: |
 
   ____________________________________________________________________________________________________
   References:
-  - Tange, O. (2023, May 22). GNU Parallel 20230522 ('Charles'). Zenodo. https://doi.org/10.5281/zenodo.7958356
+  - Morpheus, https://software.broadinstitute.org/morpheus
       
