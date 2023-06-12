@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  threads:
+  threads_no:
     type: int
     inputBinding:
       prefix: "-t"
