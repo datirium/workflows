@@ -117,7 +117,9 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 	bam_array=($(echo "$FILES_NABIND_BAM" | sed 's/,/\n/g'))
 	for n in $(echo "$NAMES_NABIND" | sed 's/,/\n/g'); do
 		# print formatted samplesheet row
-		printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "na-binding" $n ${bam_array[name_counter]}
+		if [[ ${bam_array[name_counter]} != "" ]]; then
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "na-binding" $n ${bam_array[name_counter]}
+		fi
 		((name_counter++))
 	done
 
@@ -128,7 +130,9 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 	exp_array=($(echo "$FILES_RNASEQ_EXP" | sed 's/,/\n/g'))
 	for n in $(echo "$NAMES_RNASEQ" | sed 's/,/\n/g'); do
 		# print formatted samplesheet row
-		printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" $n ${exp_array[name_counter]}
+		if [[ ${exp_array[name_counter]} != "" ]]; then
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" $n ${exp_array[name_counter]}
+		fi
 		((name_counter++))
 	done
 
@@ -233,13 +237,16 @@ while read master; do
 	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("no-binding" or "rna-seq")
 	sample_name=$(printf "$master" | cut -f6)
 	sample_data=$(printf "$master" | cut -f7)			# either bam or expression table
+	window=5000   # this is +/- $window of the TSS (for +strand TSS=$txStart, for -strand TSS=$txEnd), total seq length of plotted area is 2*$window
+	total_window_size=$(printf $window | awk '{print($0*2)}')
+	window_size=500
+	step_size=250
 	if [[ $experiment_type == "na-binding" ]]; then
 		# user input variables
 		bam=$sample_data
 		bn=$(basename $bam | sed 's/\..*//')
 		samtools sort $bam > $bn.sorted.bam
 		samtools index $bn.sorted.bam
-		window="5000"   # this is +/- $window of the TSS (for +strand TSS=$from, for -strand TSS=$to)
 		# for each gene in filtered genelist file, get tag denisty (average read depth) per window step
 		cat $genelist_file | while read filtered_gene; do
 			timestamp=$(date +%s)
@@ -258,12 +265,10 @@ while read master; do
 				to=$(echo "$txEnd" | awk -v w=$window '{print($0+w)}')
 			fi
 			samtools depth -a -r $chr:$from-$to $bn.sorted.bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
-			#   reduce to 50 windows
-			#    - 100 bp per window frame in steps of 50 bp to cover the 10,000 bp +/-5Kbp of TSS
-			#    - i.e. there will be a 50 bp overlap between 100 bp windows to smoothed depth average values, and total of 99 windows
-			seq 100 50 5000 | while read step; do
+			#   reduce to x windows
+			seq $window_size $step_size $total_window_size | while read step; do
 				# calculate average depth for window
-				avg_depth=$(head -$step $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth | tail -100 | awk -F'\t' '{x+=$3}END{printf("%.2f",x/NR)}')
+				avg_depth=$(head -$step $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth | tail -$window_size | awk -F'\t' '{x+=$3}END{printf("%.2f",x/NR)}')
 				# print formatted output for na-binding experiments
 				printf "$genelist_number\t$genelist_name\t$experiment_type\t$sample_name\t$geneid\t$chr\t$txStart\t$txEnd\t$strand\t$step\t$avg_depth\n"
 			done >> output_na-binding.tmp
@@ -288,7 +293,7 @@ while read master; do
 				printf "\t\t\tWARNING, gene does not exist in expression data file: $geneid,$chr,$txStart,$txEnd,$strand"
 			else
 				# still include the steps (tss_window) to pad for heatmap
-				seq 100 50 5000 | while read step; do
+				seq $window_size $step_size $total_window_size | while read step; do
 					TotalReads=$(printf "$g" | cut -f7)
 					Rpkm=$(printf "$g" | cut -f8)
 					# print formatted output for rna-seq experiments
@@ -371,7 +376,7 @@ ed heatmap.html <<EOF
 /^<script>(function(global){"use strict";var morpheus=typeof morpheus!=="undefined"?morpheus:{}
 -2
 a
-setTimeout( function() { let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); }, 3000);
+setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.bootstrap-select.show-tick.form-control button[data-toggle="dropdown"]'); groupByBtn.click(); let groupRowSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let geneListOption = groupRowSelectionOptions.filter(function (el) { return el.textContent === 'genelist_name' })[0]; geneListOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { let toolsBtn = document.getElementById("morpheus4"); toolsBtn.click(); let sortGroupBtn = document.querySelector('[data-action="Sort/Group"]'); sortGroupBtn.click(); document.querySelector('input[name="rowsOrColumns"][value="columns"]').click(); groupByBtn.click(); let groupColSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let samplenameOption = groupColSelectionOptions.filter(function (el) { return el.textContent === 'sample_name' })[0]; samplenameOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { document.querySelector('button.btn.btn-default.btn-xxs span.fa.fa-search-plus').click(); document.querySelector('a[data-action="Fit To Window"]').click(); }, 1000); }, 1000); }, 3000);
 .
 wq
 EOF
