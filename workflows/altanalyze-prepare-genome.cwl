@@ -70,8 +70,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "AltAnalyze Build Reference Indices"
-label: "AltAnalyze Build Reference Indices"
+s:name: "Deprecated. AltAnalyze Build Reference Indices"
+label: "Deprecated. AltAnalyze Build Reference Indices"
 s:alternateName: "Builds reference genome indices for AltAnalyze ICGS and AltAnalyze CellHarmony experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/altanalyze-prepare-genome.cwl
@@ -110,5 +110,4 @@ s:creator:
 
 
 doc: |
-  AltAnalyze Build Reference Indices
-  ==================================
+  Deprecated. AltAnalyze Build Reference Indices

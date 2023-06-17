@@ -247,8 +247,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "AltAnalyze ICGS"
-label: "AltAnalyze ICGS"
+s:name: "Deprecated. AltAnalyze ICGS"
+label: "Deprecated. AltAnalyze ICGS"
 s:alternateName: "Runs iterative clustering and guide-gene selection for Cell Ranger Count Gene Expression or Cell Ranger Aggregate experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/altanalyze-icgs.cwl
@@ -287,5 +287,4 @@ s:creator:
 
 
 doc: |
-  AltAnalyze ICGS
-  ===============
+  Deprecated. AltAnalyze ICGS

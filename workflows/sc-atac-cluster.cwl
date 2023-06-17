@@ -515,4 +515,5 @@ s:creator:
 doc: |
   Single-cell ATAC-Seq Cluster Analysis
 
-  Clusters single-cell ATAC-Seq datasets, identifies differentially accessible peaks.
+  Clusters single-cell ATAC-Seq datasets, identifies differentially
+  accessible peaks.
