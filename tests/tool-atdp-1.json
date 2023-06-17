@@ -1,0 +1,24 @@
+{
+  "input_file": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/naive_atac-merged.bam",
+    "secondaryFiles":[
+      {
+        "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/naive_atac-merged.bam.bai"
+      }
+    ],
+  },
+  "annotation_filename": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/refgene.tsv",
+  },
+
+  "fragmentsize_bp": 70,
+  "avd_window_bp": 5000,
+  "avd_smooth_bp": 50,
+  "ignore_chr": "chrM",
+  "double_chr": "chrX chrY",
+  "avd_heat_window_bp": 200,
+  "mapped_reads": 11776322
+  }
