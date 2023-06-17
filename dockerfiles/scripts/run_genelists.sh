@@ -1,11 +1,11 @@
 #!/bin/bash
 
-#   Shell wrapper for genelists from atac/chip/crt and rna data
+#   Shell wrapper for producing morpheus heatmap from genelists from atac/chip/crt (peak) and rna (expression) data
 #
 ##########################################################################################
 #
 # v1.0.0
-# - 2023
+# - 20230612, initial release
 #
 ##########################################################################################
 printf "$(date)\nLog file for run_genelists.sh\n\n"
@@ -144,89 +144,10 @@ done > master_samplesheet.tsv
 printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tavg_depth\n" > output_na-binding.tmp
 printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\n" > output_rna-seq.tmp
 # function for building tag density window data and heatmap expression data for each experiment type
-get_data()
-{
-	printf "\tget_data(), processing $1\n"
-	genelist_number=$(printf "$1" | cut -f1)
-	genelist_name=$(printf "$1" | cut -f2)
-	genelist_file=$(printf "$1" | cut -f3)
-	genelist_annotation_file=$(printf "$1" | cut -f4)
-	experiment_type=$(printf "$1" | cut -f5)	# determines data extraction method of file at $6 ("no-binding" or "rna-seq")
-	sample_name=$(printf "$1" | cut -f6)
-	sample_data=$(printf "$1" | cut -f7)			# either bam or expression table
 
-	if [[ $experiment_type == "na-binding" ]]; then
-		# user input variables
-		bam=$sample_data
-		bn=$(basename $bam | sed 's/\..*//')
-		samtools sort $bam > $bn.sorted.bam
-		samtools index $bn.sorted.bam
-		window="5000"   # this is +/- $window of the TSS (for +strand TSS=$from, for -strand TSS=$to)
-		# for each gene in filtered genelist file, get tag denisty (average read depth) per window step
-		cat $genelist_file | while read filtered_gene; do
-			timestamp=$(date +%s)
-			printf "\t\tna-binding, processing gene:\t$filtered_gene\n"
-			chr=$(printf "$filtered_gene" | cut -f1)  # genelist col1
-			txStart=$(printf "$filtered_gene" | cut -f2)  # genelist col2
-			txEnd=$(printf "$filtered_gene" | cut -f3)  # genelist col3
-			geneid=$(printf "$filtered_gene" | cut -f4)  # genelist col4
-			strand=$(printf "$filtered_gene" | cut -f6)  # genelist col6
-			#   generate 3 column tsv of chr, position, depth that is +/-5Kbp of TSS
-			if [[ "$strand" == "+" ]]; then
-				from=$(echo "$txStart" | awk -v w=$window '{print($0-w)}')
-				to=$(echo "$txStart" | awk -v w=$window '{print($0+w)}')
-			else
-				from=$(echo "$txEnd" | awk -v w=$window '{print($0-w)}')
-				to=$(echo "$txEnd" | awk -v w=$window '{print($0+w)}')
-			fi
-			samtools depth -a -r $chr:$from-$to $bn.sorted.bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
-			#   reduce to 50 windows
-			#    - 100 bp per window frame in steps of 50 bp to cover the 10,000 bp +/-5Kbp of TSS
-			#    - i.e. there will be a 50 bp overlap between 100 bp windows to smoothed depth average values, and total of 99 windows
-			seq 100 50 5000 | while read step; do
-				# calculate average depth for window
-				avg_depth=$(head -$step $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth | tail -100 | awk -F'\t' '{x+=$3}END{printf("%.2f",x/NR)}')
-				# print formatted output for na-binding experiments
-				printf "$genelist_number\t$genelist_name\t$experiment_type\t$sample_name\t$geneid\t$chr\t$txStart\t$txEnd\t$strand\t$step\t$avg_depth\n"
-			done >> output_na-binding.tmp
-			rm $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
-		done
-		rm $bn.sorted.bam*
-	elif [[ $experiment_type == "rna-seq" ]]; then
-		# user input variables
-		exp=$sample_data
-		bn=$(basename $exp | sed 's/\..*//')
-		# for each gene in filtered genelist file, get TotalReads and Rpkm values
-		cat $genelist_file | while read filtered_gene; do
-			printf "\t\trna-seq, processing gene:\t $filtered_gene\n"
-			chr=$(printf "$filtered_gene" | cut -f1)  # genelist col1
-			txStart=$(printf "$filtered_gene" | cut -f2)  # genelist col2
-			txEnd=$(printf "$filtered_gene" | cut -f3)  # genelist col3
-			geneid=$(printf "$filtered_gene" | cut -f4)  # genelist col4
-			strand=$(printf "$filtered_gene" | cut -f6)  # genelist col6
-			# search for each gene
-			g=$(grep -P -m 1 "\t$geneid\t$chr\t$txStart\t$txEnd\t$strand" $exp)
-			if [[ $g == "" ]]; then
-				printf "\t\t\tWARNING, gene does not exist in expression data file: $geneid,$chr,$txStart,$txEnd,$strand"
-			else
-				# still include the steps (tss_window) to pad for heatmap
-				seq 100 50 5000 | while read step; do
-					TotalReads=$(printf "$g" | cut -f7)
-					Rpkm=$(printf "$g" | cut -f8)
-					# print formatted output for rna-seq experiments
-					printf "$genelist_number\t$genelist_name\t$experiment_type\t$sample_name\t$geneid\t$chr\t$txStart\t$txEnd\t$strand\t$step\t$TotalReads\t$Rpkm\n"
-				done >> output_rna-seq.tmp
-			fi
-		done
-	fi
-}
-export -f get_data
 
 
 printf "\n\n"
-#printf "running master_samplesheet.tsv through parallel\n"
-#parallel --arg-file master_samplesheet.tsv --jobs="$THREADS" get_data
-#	PARALLEL MAYBE DOESN'T WORK...
 printf "running master_samplesheet.tsv through simple loop...\n"
 while read master; do
 	printf "\tget_data(), processing $master\n"
@@ -292,13 +213,10 @@ while read master; do
 			if [[ $g == "" ]]; then
 				printf "\t\t\tWARNING, gene does not exist in expression data file: $geneid,$chr,$txStart,$txEnd,$strand"
 			else
-				# still include the steps (tss_window) to pad for heatmap
-				seq $window_size $step_size $total_window_size | while read step; do
-					TotalReads=$(printf "$g" | cut -f7)
-					Rpkm=$(printf "$g" | cut -f8)
-					# print formatted output for rna-seq experiments
-					printf "$genelist_number\t$genelist_name\t$experiment_type\t$sample_name\t$geneid\t$chr\t$txStart\t$txEnd\t$strand\t$step\t$TotalReads\t$Rpkm\n"
-				done >> output_rna-seq.tmp
+				TotalReads=$(printf "$g" | cut -f7)
+				Rpkm=$(printf "$g" | cut -f8)
+				# print formatted output for rna-seq experiments
+				printf "$genelist_number\t$genelist_name\t$experiment_type\t$sample_name\t$geneid\t$chr\t$txStart\t$txEnd\t$strand\tNA\t$TotalReads\t$Rpkm\n" >> output_rna-seq.tmp
 			fi
 		done
 	fi

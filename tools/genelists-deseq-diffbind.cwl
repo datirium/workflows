@@ -9,12 +9,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:dev
+  dockerPull: robertplayer/scidap-genelists:v1.0.0
 
 
 inputs:
 
-  threads_no:
+  threads:
     type: int
     inputBinding:
       prefix: "-t"

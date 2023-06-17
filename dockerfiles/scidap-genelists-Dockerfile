@@ -50,7 +50,8 @@ RUN apt-get update && \
     ./configure --prefix=/usr/local/bin/samtools-1.17 && \
     make && \
     make install && \
-    # parallel
+    # bash/core utils
+    apt-get install ed && \
     wget http://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2 && \
     tar xjf parallel-latest.tar.bz2 && \
     rm parallel-latest.tar.bz2 && \

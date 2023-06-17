@@ -179,7 +179,7 @@ steps:
   data_integration:
     run: ../tools/genelists-deseq-diffbind.cwl
     in:
-      threads_no: threads_no
+      threads: threads_no
       genelist_names: genelist_names
       feature_files: genelist_feature_files
       filtered_files: genelist_filtered_files
