@@ -120,7 +120,7 @@ inputs:
     type: int?
     default: 1
     label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
+    doc: "Number of threads for those steps that support multithreading."
     'sd:layout':
       advanced: true
 

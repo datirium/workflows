@@ -19,7 +19,7 @@ inputs:
     inputBinding:
       prefix: "-t"
     doc: |
-      Number of threads for parallel processing.
+      Number of threads for parallel processing
 
   genelist_names:
     type: string[]
