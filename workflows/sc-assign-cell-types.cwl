@@ -291,8 +291,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Assign Cell Types"
-s:name: "Single-cell Assign Cell Types"
+label: "Deprecated. Single-cell Assign Cell Types"
+s:name: "Deprecated. Single-cell Assign Cell Types"
 s:alternateName: "Assigns cell types to Seurat clusters"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/sc-assign-cell-types.cwl
@@ -331,7 +331,7 @@ s:creator:
 
 
 doc: |
-  Single-cell Assign Cell Types
-  =============================
+  Deprecated. Single-cell Assign Cell Types
+  =========================================
 
   Assigns cell types to Seurat clusters.

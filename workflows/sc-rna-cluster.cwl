@@ -478,6 +478,13 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  seurat_data_scope:
+    type: File?
+    outputSource: sc_rna_cluster/seurat_data_scope
+    label: "Processed Seurat data in SCope compatible loom format"
+    doc: |
+      Processed Seurat data in SCope compatible loom format
+
   sc_rna_cluster_stdout_log:
     type: File
     outputSource: sc_rna_cluster/stdout_log
@@ -520,6 +527,8 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_scope_data:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
@@ -552,6 +561,7 @@ steps:
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
+    - seurat_data_scope
     - stdout_log
     - stderr_log
 
@@ -610,5 +620,5 @@ s:creator:
 
 doc: |
   Single-cell RNA-Seq Cluster Analysis
-
+  ===============================================================
   Clusters single-cell RNA-Seq datasets, identifies gene markers.

@@ -64,6 +64,13 @@ outputs:
     doc: |
       Cell Ranger generated genome indices folder
 
+  chrom_length_file:
+    type: File
+    outputSource: cellranger_mkref/chrom_length_file
+    label: "Chromosome length file"
+    doc: |
+      Chromosome length file in TSV format
+
   stdout_log:
     type: File
     outputSource: cellranger_mkref/stdout_log
@@ -113,6 +120,7 @@ steps:
         default: "cellranger_ref"
     out:
     - indices_folder
+    - chrom_length_file
     - stdout_log
     - stderr_log
 
@@ -227,3 +235,4 @@ s:creator:
 
 doc: |
   Cell Ranger Build Reference Indices
+  ===================================

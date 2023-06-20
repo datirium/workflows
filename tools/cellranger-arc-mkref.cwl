@@ -96,6 +96,13 @@ outputs:
       Compatible with Cell Ranger ARC reference folder that includes
       STAR and BWA indices
 
+  chrom_length_file:
+    type: File
+    outputBinding:
+      glob: $(get_output_folder_name() + "/star/chrNameLength.txt")
+    doc: |
+      Chromosome length file in TSV format
+
   stdout_log:
     type: stdout
 

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.15
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -345,6 +345,15 @@ inputs:
     doc: |
       Save Seurat data to h5ad file.
       Default: false
+
+  export_scope_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--scope"
+    doc: |
+      Save Seurat data to SCope compatible loom file.
+      Only not normalized raw counts from the RNA assay
+      will be saved. Default: false
 
   export_ucsc_cb:
     type: boolean?
@@ -792,6 +801,13 @@ outputs:
     doc: |
       Reduced Seurat data in h5ad format
 
+  seurat_data_scope:
+    type: File?
+    outputBinding:
+      glob: "*_data.loom"
+    doc: |
+      Reduced Seurat data in SCope compatible loom format
+
   stdout_log:
     type: stdout
 
@@ -860,15 +876,16 @@ doc: |
 
 s:about: |
   usage: sc_wnn_cluster.R
-        [-h] --query QUERY [--rnadimensions [RNADIMENSIONS ...]]
-        [--atacdimensions [ATACDIMENSIONS ...]]
+        [-h] --query QUERY
+        [--rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]]
+        [--atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]]
         [--algorithm {louvain,mult-louvain,slm,leiden}] [--uspread USPREAD]
         [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
         [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
         [--umethod {uwot,uwot-learn,umap-learn}]
-        [--resolution [RESOLUTION ...]] [--fragments FRAGMENTS]
-        [--genes [GENES ...]] [--diffgenes] [--diffpeaks] [--rnalogfc RNALOGFC]
-        [--rnaminpct RNAMINPCT] [--rnaonlypos]
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--fragments FRAGMENTS]
+        [--genes [GENES [GENES ...]]] [--diffgenes] [--diffpeaks]
+        [--rnalogfc RNALOGFC] [--rnaminpct RNAMINPCT] [--rnaonlypos]
         [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
         [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
         [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
@@ -878,7 +895,7 @@ s:about: |
 
   Single-cell WNN Cluster Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression and chromatin
@@ -886,14 +903,14 @@ s:about: |
                           assays correspondingly. Additionally, 'pca',
                           'rnaumap', 'atac_lsi' and 'atacumap' dimensionality
                           reductions should be present.
-    --rnadimensions [RNADIMENSIONS ...]
+    --rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]
                           Dimensionality from the 'pca' reduction to use when
                           constructing weighted nearest-neighbor graph before
                           clustering (from 1 to 50). If single value N is
                           provided, use from 1 to N dimensions. If multiple
                           values are provided, subset to only selected
                           dimensions. Default: from 1 to 10
-    --atacdimensions [ATACDIMENSIONS ...]
+    --atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]
                           Dimensionality from the 'atac_lsi' reduction to use
                           when constructing weighted nearest-neighbor graph
                           before clustering (from 1 to 50). If single value N is
@@ -924,7 +941,7 @@ s:about: |
     --umethod {uwot,uwot-learn,umap-learn}
                           UMAP implementation to run. If set to 'umap-learn' use
                           --umetric 'correlation' Default: uwot
-    --resolution [RESOLUTION ...]
+    --resolution [RESOLUTION [RESOLUTION ...]]
                           Clustering resolution applied to the constructed
                           weighted nearest-neighbor graph. Can be set as an
                           array but only the first item from the list will be
@@ -936,7 +953,8 @@ s:about: |
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved
                           in TSV format with tbi-index file.
-    --genes [GENES ...]   Genes of interest to build gene expression and Tn5
+    --genes [GENES [GENES ...]]
+                          Genes of interest to build gene expression and Tn5
                           insertion frequency plots for the nearest peaks. If '
                           --fragments' is not provided only gene expression
                           plots will be built. Default: None

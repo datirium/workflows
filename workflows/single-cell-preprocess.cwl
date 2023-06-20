@@ -370,8 +370,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Single-Cell Preprocessing Pipeline"
-label: "Single-Cell Preprocessing Pipeline"
+s:name: "Deprecated. Single-Cell Preprocessing Pipeline"
+label: "Deprecated. Single-Cell Preprocessing Pipeline"
 s:alternateName: "Single-Cell Preprocessing Pipeline"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/single-cell-preprocess.cwl
