@@ -120,7 +120,7 @@ inputs:
     type: int?
     default: 1
     label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
+    doc: "Number of threads for those steps that support multithreading."
     'sd:layout':
       advanced: true
 
@@ -167,7 +167,18 @@ outputs:
     outputSource: data_integration/heatmap_html
     label: "Heatmap of peak and expression data"
     doc: |
-      Morpheus heatmap in HTML format
+      Morpheus heatmap in HTML format, peak data scaled among all samples
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_peaknorm_html:
+    type: File
+    outputSource: data_integration/heatmap_peaknorm_html
+    label: "Heatmap of peak and expression data (scaled peak data)"
+    doc: |
+      Morpheus heatmap in HTML format, peak data scaled per individual sample
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -194,6 +205,7 @@ steps:
       - output_counts
       - heatmap_gct
       - heatmap_html
+      - heatmap_peaknorm_html
       - log_file_stdout
       - log_file_stderr
 

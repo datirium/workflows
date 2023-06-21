@@ -85,7 +85,7 @@ morpheus_html <- morpheus(
     x=gct_data$data,
     rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations,
     columnAnnotations=if(nrow(gct_data$columnAnnotations) == 0) NULL else gct_data$columnAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
-    colorScheme=list(scalingMode="fixed", stepped=FALSE, values=list(0, 100,199), colors=list("black", "white", "red")),
+    colorScheme=list(scalingMode="fixed", stepped=FALSE, values=list(0, 99, 100,199), colors=list("white", "black", "white", "red")),
     rowSortBy=list(list(field="genelist_name", order=0)),
     columnSortBy=list(
         list(field="data_type", order=0),
@@ -97,8 +97,8 @@ morpheus_html <- morpheus(
     )),
     rowGroupBy=list(list(field="genelist_name")),
     columnGroupBy=list(list(field="sample_name")),
-    rowSize=4,
-    columnSize=4
+    rowSize=3,
+    columnSize=3
 )
 html_location <- paste(output_location, "/heatmap.html", sep = "")
 print(paste("Saving heatmap to", html_location))

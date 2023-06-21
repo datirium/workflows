@@ -226,25 +226,46 @@ done < master_samplesheet.tsv
 
 
 # ensure rows are unique
-head -1 output_na-binding.tmp > output_na-binding.tsv
+head -1 output_na-binding.tmp > output_na-binding_raw.tsv
 head -1 output_rna-seq.tmp > output_rna-seq.tsv
-tail -n+2 output_na-binding.tmp | sort | uniq >> output_na-binding.tsv
+tail -n+2 output_na-binding.tmp | sort | uniq >> output_na-binding_raw.tsv
 tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq.tsv
-rm output_na-binding.tmp
-rm output_rna-seq.tmp
+#rm output_na-binding.tmp
+#rm output_rna-seq.tmp
 
-# normalize/scale peak data between 0-99
-#	get max peak value
-max=$(tail -n+2 output_na-binding.tsv | cut -f11 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
-head -1 output_na-binding.tsv > output_na-binding-forheatmap.tsv
-tail -n+2 output_na-binding.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,99*($11/max))}' >> output_na-binding-forheatmap.tsv
 
-# normalize/scale RPKM data between 100-199
+
+
+
+
+
+
+# normalize peak data within each sample and scale from 0-99 per sample
+#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
+#		values >= pad to pad value
+#		values < 0-pad remain unchanged
+printf "\n\n"
+printf "running each na-binding data sample through normalization to 95th percentile...\n"
+# loop for each sample, grep sample rows, calc percentile, and apply normalization
+head -1 output_na-binding_raw.tsv > output_na-binding.tsv
+tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_name; do
+	grep "$sample_name" output_na-binding_raw.tsv > peak_norm.tmp
+	#	awk explanation:
+	#		Sort the file numerically
+	#		drop the top 5%
+	#		pick the next value
+	pad=$(cut -f11 peak_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*5); p=p%1?int(p)+1:p; print a[c-p-1]}')
+	#	apply pad normalization and scale from 0-99
+	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\n",99)}else{printf("%s\n",99*($11/pad))}}' peak_norm.tmp
+done >> output_na-binding.tsv
+
+# scale peak data between 0-99 for better visualization (already done in previous step)
+cp output_na-binding.tsv output_na-binding-forheatmap.tsv
+
+# scale RPKM data between 100-199 for better visualization
 max=$(tail -n+2 output_rna-seq.tsv | cut -f12 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
 head -1 output_rna-seq.tsv | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12)}' > output_rna-seq-forheatmap.tsv
 tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(99*($12/max))+100)}' >> output_rna-seq-forheatmap.tsv
-
-
 
 # merge na-binding and rna-seq outputs into GCT formatted file for morpheus heatmap compatibility
 #	needs 3 files: counts matrix, row metadata, column metadata
@@ -294,7 +315,100 @@ ed heatmap.html <<EOF
 /^<script>(function(global){"use strict";var morpheus=typeof morpheus!=="undefined"?morpheus:{}
 -2
 a
-setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.bootstrap-select.show-tick.form-control button[data-toggle="dropdown"]'); groupByBtn.click(); let groupRowSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let geneListOption = groupRowSelectionOptions.filter(function (el) { return el.textContent === 'genelist_name' })[0]; geneListOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { let toolsBtn = document.getElementById("morpheus4"); toolsBtn.click(); let sortGroupBtn = document.querySelector('[data-action="Sort/Group"]'); sortGroupBtn.click(); document.querySelector('input[name="rowsOrColumns"][value="columns"]').click(); groupByBtn.click(); let groupColSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let samplenameOption = groupColSelectionOptions.filter(function (el) { return el.textContent === 'sample_name' })[0]; samplenameOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { document.querySelector('button.btn.btn-default.btn-xxs span.fa.fa-search-plus').click(); document.querySelector('a[data-action="Fit To Window"]').click(); }, 1000); }, 1000); }, 3000);
+setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.bootstrap-select.show-tick.form-control button[data-toggle="dropdown"]'); groupByBtn.click(); let groupRowSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let geneListOption = groupRowSelectionOptions.filter(function (el) { return el.textContent === 'genelist_name' })[0]; geneListOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { let toolsBtn = document.getElementById("morpheus4"); toolsBtn.click(); let sortGroupBtn = document.querySelector('[data-action="Sort/Group"]'); sortGroupBtn.click(); document.querySelector('input[name="rowsOrColumns"][value="columns"]').click(); groupByBtn.click(); let groupColSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let samplenameOption = groupColSelectionOptions.filter(function (el) { return el.textContent === 'sample_name' })[0]; samplenameOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { document.querySelector('button[data-action="Options"]').click(); document.querySelector('select[name="size_by"]').click(); document.querySelector('select[name="size_by"] option[value="x"]').click(); }, 250); }, 250); }, 1000);
+.
+wq
+EOF
+
+mv heatmap.html heatmap_peaknorm.html
+
+
+
+
+
+
+
+
+
+# normalize peak data within each sample before scaling among ALL samples
+#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
+#		values >= pad to pad value
+#		values < 0-pad remain unchanged
+printf "\n\n"
+printf "running each na-binding data sample through normalization to 95th percentile...\n"
+# loop for each sample, grep sample rows, calc percentile, and apply normalization
+head -1 output_na-binding_raw.tsv > output_na-binding.tsv
+tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_name; do
+	grep "$sample_name" output_na-binding_raw.tsv > peak_norm.tmp
+	#	awk explanation:
+	#		Sort the file numerically
+	#		drop the top 5%
+	#		pick the next value
+	pad=$(cut -f11 peak_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*5); p=p%1?int(p)+1:p; print a[c-p-1]}')
+	#	apply pad normalization
+	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\n",pad)}else{printf("%s\n",$11)}}' peak_norm.tmp
+done >> output_na-binding.tsv
+
+# scale peak data between 0-99 for better visualization
+#	get max peak value
+max=$(tail -n+2 output_na-binding.tsv | cut -f11 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
+head -1 output_na-binding.tsv > output_na-binding-forheatmap.tsv
+tail -n+2 output_na-binding.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,99*($11/max))}' >> output_na-binding-forheatmap.tsv
+
+# scale RPKM data between 100-199 for better visualization
+max=$(tail -n+2 output_rna-seq.tsv | cut -f12 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
+head -1 output_rna-seq.tsv | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12)}' > output_rna-seq-forheatmap.tsv
+tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(99*($12/max))+100)}' >> output_rna-seq-forheatmap.tsv
+
+# merge na-binding and rna-seq outputs into GCT formatted file for morpheus heatmap compatibility
+#	needs 3 files: counts matrix, row metadata, column metadata
+
+# GCT format:
+# line 1, version string "#1.3"
+# line 2, col1 (# rows in matrix), col2 (# cols in matrix), col3 (# columns of row metadata), col4 (# rows of col metadata)
+# col metadata (row4-a), sample metadata
+#		row4 - genelist_number
+#		row5 - genelist_name
+#		row6 - experiment_type
+#		row7 - sample_name
+#		row8 - tss_window
+#		row9 - data_type (avg_depth, TotalReads, or Rpkm)
+# row metadata (col2-b), gene metadata
+#		col2 - chr (chr[n+])
+#		col3 - txStart (int)
+#		col4 - txEnd (int)
+#		col5 - strand (+ or -)
+
+# make unique row and column names with "value" as (avg_depth, TotalReads, Rpkm)
+
+# count matrix data (rows (a+1)-x, cols (b+1)-y)
+#	merge rna-seq and na-binding data (13 total columns)
+printf "rid\tcid\tvalue\n" > output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
+
+# row metadata file
+printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv >> output_row_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
+sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
+
+# col metadata file
+printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"Rpkm",$3,$4,$10,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"avg_depth",$3,$4,$10,"avg_depth")}}' output_na-binding-forheatmap.tsv >> output_col_metadata.tmp
+sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
+
+# run r script to generate gct data file and morpheus heatmap
+run_genelists_heatmap.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+
+# inject javascript to configure the heatmap
+ed heatmap.html <<EOF
+/^<script>(function(global){"use strict";var morpheus=typeof morpheus!=="undefined"?morpheus:{}
+-2
+a
+setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.bootstrap-select.show-tick.form-control button[data-toggle="dropdown"]'); groupByBtn.click(); let groupRowSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let geneListOption = groupRowSelectionOptions.filter(function (el) { return el.textContent === 'genelist_name' })[0]; geneListOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { let toolsBtn = document.getElementById("morpheus4"); toolsBtn.click(); let sortGroupBtn = document.querySelector('[data-action="Sort/Group"]'); sortGroupBtn.click(); document.querySelector('input[name="rowsOrColumns"][value="columns"]').click(); groupByBtn.click(); let groupColSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let samplenameOption = groupColSelectionOptions.filter(function (el) { return el.textContent === 'sample_name' })[0]; samplenameOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { document.querySelector('button[data-action="Options"]').click(); document.querySelector('select[name="size_by"]').click(); document.querySelector('select[name="size_by"] option[value="x"]').click(); }, 250); }, 250); }, 1000);
 .
 wq
 EOF
