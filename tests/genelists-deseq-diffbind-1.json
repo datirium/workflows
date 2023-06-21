@@ -1,0 +1,65 @@
+{
+  "alias": "genelists-test",
+  "genelist_names": ["deseq_genelist","diffbind_genelist"],
+  "genelist_feature_files": [
+    {
+      "class": "File",
+      "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/genelist1-deseq_feature_file",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/genelist2-diffbind_feature_file",
+        "format": "http://edamontology.org/format_3475"
+    }
+  ],
+  "genelist_filtered_files": [
+    {
+      "class": "File",
+      "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/genelist1-deseq_filtered-10.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/genelist2-diffbind_filtered-10.tsv",
+        "format": "http://edamontology.org/format_3475"
+    }
+  ],
+  "sample_names_nabinding": ["chip_sample1","chip_sample2","chip_sample3","chip_sample4"],
+  "sample_names_rnaseq": ["rna_sample1","rna_sample2"],
+  "datafiles_nabinding": [
+    {
+      "class": "File",
+      "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/chip1-SRR24226225.bam",
+      "format": "http://edamontology.org/format_2572"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/chip2-SRR24226226.bam",
+        "format": "http://edamontology.org/format_2572"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/chip3-SRR24226227.bam",
+        "format": "http://edamontology.org/format_2572"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/chip4-SRR24226228.bam",
+        "format": "http://edamontology.org/format_2572"
+    }
+  ],
+  "datafiles_rnaseq": [
+    {
+      "class": "File",
+      "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/rna1-SRR23300937.genes.tsv",
+      "format": "http://edamontology.org/format_3475"
+    },
+    {
+      "class": "File",
+        "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_genelists/example_inputs/rna2-SRR23300940.genes.tsv",
+        "format": "http://edamontology.org/format_3475"
+    }
+  ],
+  "threads": 4
+}
