@@ -173,12 +173,23 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  heatmap_peaknorm_html:
+  heatmap_peaknorm95_html:
     type: File
-    outputSource: data_integration/heatmap_peaknorm_html
-    label: "Heatmap of peak and expression data (scaled peak data)"
+    outputSource: data_integration/heatmap_peaknorm95_html
+    label: "Heatmap of peak and expression data (scaled peak data to 95th percentile)"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled per individual sample
+      Morpheus heatmap in HTML format, peak data scaled per individual sample to 95th percentile
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_peaknorm99_html:
+    type: File
+    outputSource: data_integration/heatmap_peaknorm99_html
+    label: "Heatmap of peak and expression data (scaled peak data to 99th percentile)"
+    doc: |
+      Morpheus heatmap in HTML format, peak data scaled per individual sample to 99th percentile
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -205,7 +216,8 @@ steps:
       - output_counts
       - heatmap_gct
       - heatmap_html
-      - heatmap_peaknorm_html
+      - heatmap_peaknorm95_html
+      - heatmap_peaknorm99_html
       - log_file_stdout
       - log_file_stderr
 

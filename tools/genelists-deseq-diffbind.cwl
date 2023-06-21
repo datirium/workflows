@@ -122,12 +122,19 @@ outputs:
     doc: |
       HTML preconfigured morpheus heatmap
 
-  heatmap_peaknorm_html:
+  heatmap_peaknorm95_html:
     type: File
     outputBinding:
-      glob: heatmap_peaknorm.html
+      glob: heatmap_peaknorm95.html
     doc: |
-      HTML preconfigured morpheus heatmap
+      HTML preconfigured morpheus heatmap scaled to 95th percentile
+
+  heatmap_peaknorm99_html:
+    type: File
+    outputBinding:
+      glob: heatmap_peaknorm99.html
+    doc: |
+      HTML preconfigured morpheus heatmap scaled to 99th percentile
 
   log_file_stdout:
     type: stdout
@@ -195,7 +202,8 @@ doc: |
   Primary Output files:
   - heatmap.gct, GCT formatted peak and expression data for morpheus viewer
   - heatmap.html, html of morpheus heatmap with preconfigured settings, peak data scaled among all samples
-  - heatmap_peaknorm.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample
+  - heatmap_peaknorm95.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample to 95th percentile
+  - heatmap_peaknorm99.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample to 99th percentile
 
   Secondary Output files:
   - master_samplesheet.tsv, contains formatted information of the input data and files
