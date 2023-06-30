@@ -350,12 +350,12 @@ outputs:
     doc: "Tab delimited chromosome length file: <chromName><TAB><chromSize>"
     outputSource: call_germline_variants/chrom_length_tsv
 
-  bqsr2_indels:
+  bqsr2_indels_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "indels called after filtering and recalibration"
     doc: "indels called after filtering and recalibration"
-    outputSource: call_germline_variants/bqsr2_indels
+    outputSource: call_germline_variants/bqsr2_indels_vcf
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -365,12 +365,12 @@ outputs:
         height: 40
         displayMode: "COLLAPSED"
 
-  bqsr2_snps:
+  bqsr2_snps_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "snps called after filtering and recalibration"
     doc: "snps called after filtering and recalibration"
-    outputSource: call_germline_variants/bqsr2_snps
+    outputSource: call_germline_variants/bqsr2_snps_vcf
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -380,26 +380,26 @@ outputs:
         height: 40
         displayMode: "COLLAPSED"
 
-  bqsr2_snps_ann:
+  bqsr2_snps_ann_vcf:
     type: File?
     format: "http://edamontology.org/format_3016"
     label: "snps called after filtering and recalibration with effect annotations"
     doc: "snps called after filtering and recalibration with effect annotations"
-    outputSource: call_germline_variants/bqsr2_snps_ann
+    outputSource: call_germline_variants/bqsr2_snps_ann_vcf
 
-  raw_indels:
+  raw_indels_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "indels called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
     doc: "indels called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
-    outputSource: call_germline_variants/raw_indels
+    outputSource: call_germline_variants/raw_indels_vcf
 
-  raw_snps:
+  raw_snps_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "snps called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
     doc: "snps called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
-    outputSource: call_germline_variants/raw_snps
+    outputSource: call_germline_variants/raw_snps_vcf
 
   overview:
     type: File
@@ -591,7 +591,7 @@ steps:
       indel_QD: indel_QD
       indel_FS: indel_FS
       indel_SOR: indel_SOR
-    out: [sorted_dedup_bam, chrom_length_tsv, bqsr2_indels, bqsr2_snps, bqsr2_snps_ann, raw_indels, raw_snps, overview, log_file_stdout, log_file_stderr, insert_size_histogram, recalibration_plots, snpEff_summary]
+    out: [sorted_dedup_bam, chrom_length_tsv, bqsr2_indels_vcf, bqsr2_snps_vcf, bqsr2_snps_ann_vcf, raw_indels_vcf, raw_snps_vcf, overview, log_file_stdout, log_file_stderr, insert_size_histogram, recalibration_plots, snpEff_summary]
 
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
