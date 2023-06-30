@@ -415,14 +415,14 @@ outputs:
   umap_spl_umi_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_spl_umi_plot_png
-    label: "Split by the UMI per cell counts cells UMAP"
+    label: "Split by the transcripts per cell counts cells UMAP"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
+      Split by the transcripts per cell counts cells UMAP.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the UMI per cell counts cells UMAP'
+        Caption: 'Split by the transcripts per cell counts cells UMAP'
 
   umap_spl_gene_plot_png:
     type: File?
@@ -511,14 +511,14 @@ outputs:
   umap_gr_cnd_spl_umi_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_gr_cnd_spl_umi_plot_png
-    label: "Grouped by condition split by the UMI per cell counts cells UMAP"
+    label: "Grouped by condition split by the transcripts per cell counts cells UMAP"
     doc: |
-      Grouped by condition split by the UMI per cell counts cells UMAP.
+      Grouped by condition split by the transcripts per cell counts cells UMAP.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'Grouped by condition split by the UMI per cell counts cells UMAP'
+        Caption: 'Grouped by condition split by the transcripts per cell counts cells UMAP'
 
   umap_gr_cnd_spl_gene_plot_png:
     type: File?

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.22
+  dockerPull: biowardrobe2/sc-tools:v0.0.23
 
 
 inputs:
@@ -503,7 +503,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_umi.png"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
+      Split by the transcripts per cell counts cells UMAP.
       PNG format
 
   umap_spl_umi_plot_pdf:
@@ -511,7 +511,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_umi.pdf"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
+      Split by the transcripts per cell counts cells UMAP.
       PDF format
 
   umap_spl_gene_plot_png:
@@ -631,7 +631,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_umi.png"
     doc: |
-      Grouped by condition split by the UMI per cell counts cells UMAP.
+      Grouped by condition split by the transcripts per cell counts cells UMAP.
       PNG format
 
   umap_gr_cnd_spl_umi_plot_pdf:
@@ -639,7 +639,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_umi.pdf"
     doc: |
-      Grouped by condition split by the UMI per cell counts cells UMAP.
+      Grouped by condition split by the transcripts per cell counts cells UMAP.
       PDF format
 
   umap_gr_cnd_spl_gene_plot_png:

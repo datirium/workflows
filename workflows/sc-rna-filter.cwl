@@ -97,7 +97,7 @@ inputs:
     'sd:layout':
       advanced: true
 
-  rna_minimum_umi:
+  minimum_umis:
     type: string?
     default: "500"
     label: "Include cells where at least this many UMI (transcripts) are detected"
@@ -284,14 +284,14 @@ outputs:
   raw_umi_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_dnst_plot_png
-    label: "UMI per cell density (not filtered)"
+    label: "Transcripts per cell density (not filtered)"
     doc: |
-      UMI per cell density (not filtered).
+      Transcripts per cell density (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'UMI per cell density'
+        Caption: 'Transcripts per cell density'
 
   raw_gene_dnst_plot_png:
     type: File?
@@ -305,17 +305,17 @@ outputs:
         tab: 'Not filtered QC'
         Caption: 'Genes per cell density'
 
-  raw_gene_umi_corr_plot_png:
+  raw_gene_umi_plot_png:
     type: File?
-    outputSource: sc_rna_filter/raw_gene_umi_corr_plot_png
-    label: "Genes vs UMI per cell correlation (not filtered)"
+    outputSource: sc_rna_filter/raw_gene_umi_plot_png
+    label: "Genes vs transcripts per cell correlation (not filtered)"
     doc: |
-      Genes vs UMI per cell correlation (not filtered).
+      Genes vs transcripts per cell correlation (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Genes vs UMI per cell correlation'
+        Caption: 'Genes vs transcripts per cell correlation'
 
   raw_mito_dnst_plot_png:
     type: File?
@@ -368,14 +368,14 @@ outputs:
   raw_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_dnst_spl_cnd_plot_png
-    label: "Split by grouping condition UMI per cell density (not filtered)"
+    label: "Split by grouping condition transcripts per cell density (not filtered)"
     doc: |
-      Split by grouping condition UMI per cell density (not filtered).
+      Split by grouping condition transcripts per cell density (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Split by grouping condition UMI per cell density'
+        Caption: 'Split by grouping condition transcripts per cell density'
 
   raw_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -453,14 +453,14 @@ outputs:
   fltr_umi_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_dnst_plot_png
-    label: "UMI per cell density (filtered)"
+    label: "Transcripts per cell density (filtered)"
     doc: |
-      UMI per cell density (filtered).
+      Transcripts per cell density (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'UMI per cell density'
+        Caption: 'Transcripts per cell density'
 
   fltr_gene_dnst_plot_png:
     type: File?
@@ -474,17 +474,17 @@ outputs:
         tab: 'Filtered QC'
         Caption: 'Genes per cell density'
 
-  fltr_gene_umi_corr_plot_png:
+  fltr_gene_umi_plot_png:
     type: File?
-    outputSource: sc_rna_filter/fltr_gene_umi_corr_plot_png
-    label: "Genes vs UMI per cell correlation (filtered)"
+    outputSource: sc_rna_filter/fltr_gene_umi_plot_png
+    label: "Genes vs transcripts per cell correlation (filtered)"
     doc: |
-      Genes vs UMI per cell correlation (filtered).
+      Genes vs transcripts per cell correlation (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Genes vs UMI per cell correlation'
+        Caption: 'Genes vs transcripts per cell correlation'
 
   fltr_mito_dnst_plot_png:
     type: File?
@@ -537,14 +537,14 @@ outputs:
   fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_dnst_spl_cnd_plot_png
-    label: "Split by grouping condition UMI per cell density (filtered)"
+    label: "Split by grouping condition transcripts per cell density (filtered)"
     doc: |
-      Split by grouping condition UMI per cell density (filtered).
+      Split by grouping condition transcripts per cell density (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Split by grouping condition UMI per cell density'
+        Caption: 'Split by grouping condition transcripts per cell density'
 
   fltr_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -651,8 +651,8 @@ steps:
       maximum_genes: 
         source: maximum_genes
         valueFrom: $(split_numbers(self))
-      rna_minimum_umi:
-        source: rna_minimum_umi
+      minimum_umis:
+        source: minimum_umis
         valueFrom: $(split_numbers(self))
       minimum_novelty_score:
         source: minimum_novelty_score
@@ -686,7 +686,7 @@ steps:
     - raw_cells_count_plot_png
     - raw_umi_dnst_plot_png
     - raw_gene_dnst_plot_png
-    - raw_gene_umi_corr_plot_png
+    - raw_gene_umi_plot_png
     - raw_mito_dnst_plot_png
     - raw_nvlt_dnst_plot_png
     - raw_qc_mtrcs_dnst_plot_png
@@ -700,7 +700,7 @@ steps:
     - fltr_cells_count_plot_png
     - fltr_umi_dnst_plot_png
     - fltr_gene_dnst_plot_png
-    - fltr_gene_umi_corr_plot_png
+    - fltr_gene_umi_plot_png
     - fltr_mito_dnst_plot_png
     - fltr_nvlt_dnst_plot_png
     - fltr_qc_mtrcs_dnst_plot_png

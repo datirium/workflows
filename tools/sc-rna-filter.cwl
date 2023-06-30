@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.22
+  dockerPull: biowardrobe2/sc-tools:v0.0.23
 
 
 inputs:
@@ -95,13 +95,13 @@ inputs:
       the '--mex' input based on the '--identity' file.
       Default: 5000 (applied to all datasets)
 
-  rna_minimum_umi:
+  minimum_umis:
     type:
     - "null"
     - int
     - int[]
     inputBinding:
-      prefix: "--rnaminumi"
+      prefix: "--minumis"
     doc: |
       Include cells where at least this many UMI (transcripts) are detected.
       If multiple values provided, each of them will be applied to the correspondent
@@ -314,7 +314,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst.png"
     doc: |
-      UMI per cell density (not filtered).
+      Transcripts per cell density (not filtered).
       PNG format
 
   raw_umi_dnst_plot_pdf:
@@ -322,7 +322,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst.pdf"
     doc: |
-      UMI per cell density (not filtered).
+      Transcripts per cell density (not filtered).
       PDF format
 
   raw_gene_dnst_plot_png:
@@ -341,20 +341,20 @@ outputs:
       Genes per cell density (not filtered).
       PDF format
 
-  raw_gene_umi_corr_plot_png:
+  raw_gene_umi_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi_corr.png"
+      glob: "*_raw_gene_umi.png"
     doc: |
-      Genes vs UMI per cell correlation (not filtered).
+      Genes vs transcripts per cell correlation (not filtered).
       PNG format
 
-  raw_gene_umi_corr_plot_pdf:
+  raw_gene_umi_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi_corr.pdf"
+      glob: "*_raw_gene_umi.pdf"
     doc: |
-      Genes vs UMI per cell correlation (not filtered).
+      Genes vs transcripts per cell correlation (not filtered).
       PDF format
 
   raw_mito_dnst_plot_png:
@@ -426,7 +426,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition UMI per cell density (not filtered).
+      Split by grouping condition transcripts per cell density (not filtered).
       PNG format
 
   raw_umi_dnst_spl_cnd_plot_pdf:
@@ -434,7 +434,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition UMI per cell density (not filtered).
+      Split by grouping condition transcripts per cell density (not filtered).
       PDF format
 
   raw_gene_dnst_spl_cnd_plot_png:
@@ -540,7 +540,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst.png"
     doc: |
-      UMI per cell density (filtered).
+      Transcripts per cell density (filtered).
       PNG format
 
   fltr_umi_dnst_plot_pdf:
@@ -548,7 +548,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst.pdf"
     doc: |
-      UMI per cell density (filtered).
+      Transcripts per cell density (filtered).
       PDF format
 
   fltr_gene_dnst_plot_png:
@@ -567,20 +567,20 @@ outputs:
       Genes per cell density (filtered).
       PDF format
 
-  fltr_gene_umi_corr_plot_png:
+  fltr_gene_umi_plot_png:
     type: File?
     outputBinding:
-      glob: "*_fltr_gene_umi_corr.png"
+      glob: "*_fltr_gene_umi.png"
     doc: |
-      Genes vs UMI per cell correlation (filtered).
+      Genes vs transcripts per cell correlation (filtered).
       PNG format
 
-  fltr_gene_umi_corr_plot_pdf:
+  fltr_gene_umi_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_fltr_gene_umi_corr.pdf"
+      glob: "*_fltr_gene_umi.pdf"
     doc: |
-      Genes vs UMI per cell correlation (filtered).
+      Genes vs transcripts per cell correlation (filtered).
       PDF format
 
   fltr_mito_dnst_plot_png:
@@ -652,7 +652,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition UMI per cell density (filtered).
+      Split by grouping condition transcripts per cell density (filtered).
       PNG format
 
   fltr_umi_dnst_spl_cnd_plot_pdf:
@@ -660,7 +660,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition UMI per cell density (filtered).
+      Split by grouping condition transcripts per cell density (filtered).
       PDF format
 
   fltr_gene_dnst_spl_cnd_plot_png:
@@ -832,18 +832,19 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_filter.R
-        [-h] --mex MEX [MEX ...] --identity IDENTITY [--grouping GROUPING]
-        [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
-        [--mingenes [MINGENES [MINGENES ...]]]
-        [--maxgenes [MAXGENES [MAXGENES ...]]]
-        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
-        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-        [--mitopattern MITOPATTERN] [--maxmt MAXMT] [--removedoublets]
-        [--rnadbr RNADBR] [--rnadbrsd RNADBRSD] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity IDENTITY
+                        [--grouping GROUPING] [--barcodes BARCODES]
+                        [--rnamincells RNAMINCELLS]
+                        [--mingenes [MINGENES [MINGENES ...]]]
+                        [--maxgenes [MAXGENES [MAXGENES ...]]]
+                        [--minumis [MINUMIS [MINUMIS ...]]]
+                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                        [--mitopattern MITOPATTERN] [--maxmt MAXMT]
+                        [--removedoublets] [--rnadbr RNADBR]
+                        [--rnadbrsd RNADBRSD] [--pdf] [--verbose] [--h5seurat]
+                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Filtering Analysis
 
@@ -894,7 +895,7 @@ s:about: |
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
+    --minumis [MINUMIS [MINUMIS ...]]
                           Include cells where at least this many UMI
                           (transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
