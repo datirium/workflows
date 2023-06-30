@@ -330,7 +330,6 @@ steps:
     - umap_tric_rd_rnaumap_plot_png
     - umap_tric_rd_atacumap_plot_png
     - umap_tric_rd_wnnumap_plot_png
-    - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds

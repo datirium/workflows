@@ -707,7 +707,6 @@ steps:
     - fltr_gene_dnst_spl_cnd_plot_png
     - fltr_mito_dnst_spl_cnd_plot_png
     - fltr_nvlt_dnst_spl_cnd_plot_png
-    - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
