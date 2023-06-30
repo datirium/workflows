@@ -125,15 +125,15 @@ inputs:
     "sd:layout":
       advanced: true
 
-  rna_minimum_umi:
+  minimum_umis:
     type: string?
     default: "500"
-    label: "Minimum number of RNA UMI counts per cell"
+    label: "Minimum number of transcripts per cell"
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
-      cells with the number of RNA UMI
-      counts smaller than the provided value.
+      cells with the number of transcripts
+      smaller than the provided value.
       If the selected "Cell Ranger ARC
       Sample" includes multiple aggregated
       datasets, each of them can be filtered
@@ -250,17 +250,17 @@ inputs:
     "sd:layout":
       advanced: true
 
-  atac_minimum_umi:
+  minimum_fragments:
     type: string?
     default: "1000"
-    label: "Minimum number of ATAC UMI counts per cell"
+    label: "Minimum number of fragments in peaks per cell"
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
-      cells with the number of ATAC UMI
-      counts smaller than the provided value.
-      If the selected "Cell Ranger ARC
-      Sample" includes multiple aggregated
+      cells with the number of fragments
+      in peaks smaller than the provided
+      value. If the selected "Cell Ranger
+      ARC Sample" includes multiple aggregated
       datasets, each of them can be filtered
       independently by providing comma or
       space-separated list of filtering
@@ -460,17 +460,17 @@ outputs:
         tab: "Raw"
         Caption: "Cells per dataset"
 
-  raw_rna_umi_dnst_plot_png:
+  raw_umi_dnst_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_rna_umi_dnst_plot_png
-    label: "RNA UMI per cell, raw"
+    outputSource: sc_multiome_filter/raw_umi_dnst_plot_png
+    label: "Transcripts per cell, raw"
     doc: |
-      RNA UMI per cell density
+      Transcripts per cell density
       for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "RNA UMI per cell"
+        Caption: "Transcripts per cell"
 
   raw_gene_dnst_plot_png:
     type: File?
@@ -484,17 +484,17 @@ outputs:
         tab: "Raw"
         Caption: "Genes per cell"
 
-  raw_gene_umi_corr_plot_png:
+  raw_gene_umi_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_gene_umi_corr_plot_png
-    label: "Genes vs RNA UMI, raw"
+    outputSource: sc_multiome_filter/raw_gene_umi_plot_png
+    label: "Genes vs transcripts, raw"
     doc: |
-      Genes vs RNA UMI per cell
+      Genes vs transcripts per cell
       for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "Genes vs RNA UMI"
+        Caption: "Genes vs transcripts"
 
   raw_mito_dnst_plot_png:
     type: File?
@@ -521,17 +521,17 @@ outputs:
         tab: "Raw"
         Caption: "Novelty score"
 
-  raw_atac_umi_dnst_plot_png:
+  raw_frgm_dnst_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_atac_umi_dnst_plot_png
-    label: "ATAC UMI per cell, raw"
+    outputSource: sc_multiome_filter/raw_frgm_dnst_plot_png
+    label: "Fragments in peaks per cell, raw"
     doc: |
-      ATAC UMI per cell density
+      Fragments in peaks per cell density
       for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "ATAC UMI per cell"
+        Caption: "Fragments in peaks per cell"
 
   raw_peak_dnst_plot_png:
     type: File?
@@ -558,29 +558,29 @@ outputs:
         tab: "Raw"
         Caption: "Blacklist regions fraction"
 
-  raw_rna_atac_umi_corr_plot_png:
+  raw_rna_atac_cnts_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_rna_atac_umi_corr_plot_png
-    label: "RNA UMI vs ATAC UMI, raw"
+    outputSource: sc_multiome_filter/raw_rna_atac_cnts_plot_png
+    label: "Transcripts vs fragments in peaks, raw"
     doc: |
-      RNA UMI per cell vs ATAC UMI
+      Transcripts vs fragments in peaks
       per cell for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "RNA UMI vs ATAC UMI"
+        Caption: "Transcripts vs fragments in peaks"
 
-  raw_tss_atac_umi_corr_plot_png:
+  raw_tss_frgm_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_tss_atac_umi_corr_plot_png
-    label: "TSS enrichment vs ATAC UMI, raw"
+    outputSource: sc_multiome_filter/raw_tss_frgm_plot_png
+    label: "TSS enrichment score vs fragments in peaks, raw"
     doc: |
-      TSS enrichment score vs ATAC UMI
+      TSS enrichment score vs fragments in peaks
       per cell for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "TSS enrichment vs ATAC UMI"
+        Caption: "TSS enrichment score vs fragments in peaks"
 
   raw_qc_mtrcs_dnst_plot_png:
     type: File?
@@ -654,17 +654,17 @@ outputs:
         tab: "Raw"
         Caption: "Fragments length"
 
-  raw_rna_umi_dnst_spl_cnd_plot_png:
+  raw_umi_dnst_spl_cnd_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_rna_umi_dnst_spl_cnd_plot_png
-    label: "RNA UMI per cell, raw, split by condition"
+    outputSource: sc_multiome_filter/raw_umi_dnst_spl_cnd_plot_png
+    label: "Transcripts per cell, raw, split by condition"
     doc: |
-      Split by grouping condition RNA UMI
-      per cell for raw data
+      Split by grouping condition transcripts
+      per cell density for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw, by condition"
-        Caption: "RNA UMI per cell"
+        Caption: "Transcripts per cell"
 
   raw_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -705,17 +705,17 @@ outputs:
         tab: "Raw, by condition"
         Caption: "Novelty score"
 
-  raw_atac_umi_dnst_spl_cnd_plot_png:
+  raw_frgm_dnst_spl_cnd_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/raw_atac_umi_dnst_spl_cnd_plot_png
-    label: "ATAC UMI per cell, raw, split by condition"
+    outputSource: sc_multiome_filter/raw_frgm_dnst_spl_cnd_plot_png
+    label: "Fragments in peaks per cell, raw, split by condition"
     doc: |
-      Split by grouping condition ATAC
-      UMI per cell density for raw data
+      Split by grouping condition fragments
+      in peaks per cell density for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw, by condition"
-        Caption: "ATAC UMI per cell"
+        Caption: "Fragments in peaks per cell"
 
   raw_peak_dnst_spl_cnd_plot_png:
     type: File?
@@ -779,17 +779,17 @@ outputs:
         tab: "Filtered"
         Caption: "Cells per dataset"
 
-  fltr_rna_umi_dnst_plot_png:
+  fltr_umi_dnst_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_rna_umi_dnst_plot_png
-    label: "RNA UMI per cell, filtered"
+    outputSource: sc_multiome_filter/fltr_umi_dnst_plot_png
+    label: "Transcripts per cell, filtered"
     doc: |
-      RNA UMI per cell density
+      Transcripts per cell density
       for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "RNA UMI per cell"
+        Caption: "Transcripts per cell"
 
   fltr_gene_dnst_plot_png:
     type: File?
@@ -803,17 +803,17 @@ outputs:
         tab: "Filtered"
         Caption: "Genes per cell"
 
-  fltr_gene_umi_corr_plot_png:
+  fltr_gene_umi_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_gene_umi_corr_plot_png
-    label: "Genes vs RNA UMI, filtered"
+    outputSource: sc_multiome_filter/fltr_gene_umi_plot_png
+    label: "Genes vs transcripts, filtered"
     doc: |
-      Genes vs RNA UMI per cell
+      Genes vs transcripts per cell
       for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "Genes vs RNA UMI"
+        Caption: "Genes vs transcripts"
 
   fltr_mito_dnst_plot_png:
     type: File?
@@ -840,17 +840,17 @@ outputs:
         tab: "Filtered"
         Caption: "Novelty score"
 
-  fltr_atac_umi_dnst_plot_png:
+  fltr_frgm_dnst_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_atac_umi_dnst_plot_png
-    label: "ATAC UMI per cell, filtered"
+    outputSource: sc_multiome_filter/fltr_frgm_dnst_plot_png
+    label: "Fragments in peaks per cell, filtered"
     doc: |
-      ATAC UMI per cell density
+      Fragments in peaks per cell density
       for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "ATAC UMI per cell"
+        Caption: "Fragments in peaks per cell"
 
   fltr_peak_dnst_plot_png:
     type: File?
@@ -877,29 +877,29 @@ outputs:
         tab: "Filtered"
         Caption: "Blacklist regions fraction"
 
-  fltr_rna_atac_umi_corr_plot_png:
+  fltr_rna_atac_cnts_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_rna_atac_umi_corr_plot_png
-    label: "RNA UMI vs ATAC UMI, filtered"
+    outputSource: sc_multiome_filter/fltr_rna_atac_cnts_plot_png
+    label: "Transcripts vs fragments in peaks, filtered"
     doc: |
-      RNA UMI per cell vs ATAC UMI
+      Transcripts vs fragments in peaks
       per cell for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "RNA UMI vs ATAC UMI"
+        Caption: "Transcripts vs fragments in peaks"
 
-  fltr_tss_atac_umi_corr_plot_png:
+  fltr_tss_frgm_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_tss_atac_umi_corr_plot_png
-    label: "TSS enrichment vs ATAC UMI, filtered"
+    outputSource: sc_multiome_filter/fltr_tss_frgm_plot_png
+    label: "TSS enrichment score vs fragments in peaks, filtered"
     doc: |
-      TSS enrichment score vs ATAC UMI
-      per cell for filtered data
+      TSS enrichment score vs fragments in
+      peaks per cell for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "TSS enrichment vs ATAC UMI"
+        Caption: "TSS enrichment score vs fragments in peaks"
 
   fltr_qc_mtrcs_dnst_plot_png:
     type: File?
@@ -973,17 +973,17 @@ outputs:
         tab: "Filtered"
         Caption: "Fragments length"
 
-  fltr_rna_umi_dnst_spl_cnd_plot_png:
+  fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_rna_umi_dnst_spl_cnd_plot_png
-    label: "RNA UMI per cell, filtered, split by condition"
+    outputSource: sc_multiome_filter/fltr_umi_dnst_spl_cnd_plot_png
+    label: "Transcripts per cell, filtered, split by condition"
     doc: |
-      Split by grouping condition RNA UMI
-      per cell for filtered data
+      Split by grouping condition transcripts
+      per cell density for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered, by condition"
-        Caption: "RNA UMI per cell"
+        Caption: "Transcripts per cell"
 
   fltr_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -1024,18 +1024,18 @@ outputs:
         tab: "Filtered, by condition"
         Caption: "Novelty score"
 
-  fltr_atac_umi_dnst_spl_cnd_plot_png:
+  fltr_frgm_dnst_spl_cnd_plot_png:
     type: File?
-    outputSource: sc_multiome_filter/fltr_atac_umi_dnst_spl_cnd_plot_png
-    label: "ATAC UMI per cell, filtered, split by condition"
+    outputSource: sc_multiome_filter/fltr_frgm_dnst_spl_cnd_plot_png
+    label: "Fragments in peaks per cell, filtered, split by condition"
     doc: |
-      Split by grouping condition ATAC
-      UMI per cell density for filtered
+      Split by grouping condition fragments
+      in peaks per cell density for filtered
       data
     "sd:visualPlugins":
     - image:
         tab: "Filtered, by condition"
-        Caption: "ATAC UMI per cell"
+        Caption: "Fragments in peaks per cell"
 
   fltr_peak_dnst_spl_cnd_plot_png:
     type: File?
@@ -1137,8 +1137,8 @@ steps:
       maximum_genes:
         source: maximum_genes
         valueFrom: $(split_numbers(self))
-      rna_minimum_umi:
-        source: rna_minimum_umi
+      minimum_umis:
+        source: minimum_umis
         valueFrom: $(split_numbers(self))
       mito_pattern: mito_pattern
       maximum_mito_perc: maximum_mito_perc
@@ -1147,8 +1147,8 @@ steps:
         valueFrom: $(split_numbers(self))
       atac_minimum_cells:
         default: 1                          # will remove peaks that are not present in any of the cells
-      atac_minimum_umi:
-        source: atac_minimum_umi
+      minimum_fragments:
+        source: minimum_fragments
         valueFrom: $(split_numbers(self))
       maximum_nucl_signal:
         source: maximum_nucl_signal
@@ -1194,53 +1194,53 @@ steps:
     - raw_1_2_qc_mtrcs_pca_plot_png
     - raw_2_3_qc_mtrcs_pca_plot_png
     - raw_cells_count_plot_png
-    - raw_rna_umi_dnst_plot_png
+    - raw_umi_dnst_plot_png
     - raw_gene_dnst_plot_png
-    - raw_gene_umi_corr_plot_png
+    - raw_gene_umi_plot_png
     - raw_mito_dnst_plot_png
     - raw_nvlt_dnst_plot_png
-    - raw_atac_umi_dnst_plot_png
+    - raw_frgm_dnst_plot_png
     - raw_peak_dnst_plot_png
     - raw_blck_dnst_plot_png
-    - raw_rna_atac_umi_corr_plot_png
-    - raw_tss_atac_umi_corr_plot_png
+    - raw_rna_atac_cnts_plot_png
+    - raw_tss_frgm_plot_png
     - raw_qc_mtrcs_dnst_plot_png
     - raw_rnadbl_plot_png
     - raw_atacdbl_plot_png
     - raw_vrlpdbl_plot_png
     - raw_tss_nrch_plot_png
     - raw_frgm_hist_png
-    - raw_rna_umi_dnst_spl_cnd_plot_png
+    - raw_umi_dnst_spl_cnd_plot_png
     - raw_gene_dnst_spl_cnd_plot_png
     - raw_mito_dnst_spl_cnd_plot_png
     - raw_nvlt_dnst_spl_cnd_plot_png
-    - raw_atac_umi_dnst_spl_cnd_plot_png
+    - raw_frgm_dnst_spl_cnd_plot_png
     - raw_peak_dnst_spl_cnd_plot_png
     - raw_blck_dnst_spl_cnd_plot_png
     - fltr_1_2_qc_mtrcs_pca_plot_png
     - fltr_2_3_qc_mtrcs_pca_plot_png
     - fltr_cells_count_plot_png
-    - fltr_rna_umi_dnst_plot_png
+    - fltr_umi_dnst_plot_png
     - fltr_gene_dnst_plot_png
-    - fltr_gene_umi_corr_plot_png
+    - fltr_gene_umi_plot_png
     - fltr_mito_dnst_plot_png
     - fltr_nvlt_dnst_plot_png
-    - fltr_atac_umi_dnst_plot_png
+    - fltr_frgm_dnst_plot_png
     - fltr_peak_dnst_plot_png
     - fltr_blck_dnst_plot_png
-    - fltr_rna_atac_umi_corr_plot_png
+    - fltr_rna_atac_cnts_plot_png
     - fltr_rnadbl_plot_png
     - fltr_atacdbl_plot_png
     - fltr_vrlpdbl_plot_png
-    - fltr_tss_atac_umi_corr_plot_png
+    - fltr_tss_frgm_plot_png
     - fltr_qc_mtrcs_dnst_plot_png
     - fltr_tss_nrch_plot_png
     - fltr_frgm_hist_png
-    - fltr_rna_umi_dnst_spl_cnd_plot_png
+    - fltr_umi_dnst_spl_cnd_plot_png
     - fltr_gene_dnst_spl_cnd_plot_png
     - fltr_mito_dnst_spl_cnd_plot_png
     - fltr_nvlt_dnst_spl_cnd_plot_png
-    - fltr_atac_umi_dnst_spl_cnd_plot_png
+    - fltr_frgm_dnst_spl_cnd_plot_png
     - fltr_peak_dnst_spl_cnd_plot_png
     - fltr_blck_dnst_spl_cnd_plot_png
     - ucsc_cb_html_data

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.22
+  dockerPull: biowardrobe2/sc-tools:v0.0.23
 
 
 inputs:
@@ -383,20 +383,20 @@ outputs:
       Split by grouping condition cells UMAP.
       PDF format
 
-  umap_spl_umi_plot_png:
+  umap_spl_frgm_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_umi.png"
+      glob: "*_umap_spl_frgm.png"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
+      Split by the fragments in peaks per cell counts cells UMAP.
       PNG format
 
-  umap_spl_umi_plot_pdf:
+  umap_spl_frgm_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_umi.pdf"
+      glob: "*_umap_spl_frgm.pdf"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
+      Split by the fragments in peaks per cell counts cells UMAP.
       PDF format
 
   umap_spl_peak_plot_png:

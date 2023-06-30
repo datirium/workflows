@@ -332,17 +332,17 @@ outputs:
         tab: 'Per dataset'
         Caption: 'Split by dataset cells UMAP'
 
-  umap_spl_umi_plot_png:
+  umap_spl_frgm_plot_png:
     type: File?
-    outputSource: sc_atac_reduce/umap_spl_umi_plot_png
-    label: "Split by the UMI per cell counts cells UMAP"
+    outputSource: sc_atac_reduce/umap_spl_frgm_plot_png
+    label: "Split by the fragments in peaks per cell counts cells UMAP"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
+      Split by the fragments in peaks per cell counts cells UMAP.
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the UMI per cell counts cells UMAP'
+        Caption: 'Split by the fragments in peaks per cell counts cells UMAP'
 
   umap_spl_peak_plot_png:
     type: File?
@@ -481,7 +481,7 @@ steps:
     - umap_plot_png
     - umap_spl_idnt_plot_png
     - umap_spl_cnd_plot_png
-    - umap_spl_umi_plot_png
+    - umap_spl_frgm_plot_png
     - umap_spl_peak_plot_png
     - umap_spl_tss_plot_png
     - umap_spl_ncls_plot_png
