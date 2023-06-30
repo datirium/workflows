@@ -399,7 +399,6 @@ steps:
     - umap_spl_idnt_rd_rnaumap_da_scr_plot_png
     - umap_spl_idnt_rd_atacumap_da_scr_plot_png
     - umap_spl_idnt_rd_wnnumap_da_scr_plot_png
-    - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds

@@ -215,6 +215,16 @@ inputs:
     'sd:layout':
       advanced: true
 
+  export_ucsc_cb:
+    type: boolean?
+    default: false
+    label: "Show results in UCSC Cell Browser"
+    doc: |
+      Export results into UCSC Cell Browser
+      Default: false
+    'sd:layout':
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -416,6 +426,25 @@ outputs:
         tab: 'Per group'
         Caption: 'Split by grouping condition cells UMAP'
 
+  ucsc_cb_html_data:
+    type: Directory?
+    outputSource: sc_rna_reduce/ucsc_cb_html_data
+    label: "UCSC Cell Browser data"
+    doc: |
+      Directory with UCSC Cell Browser
+      data
+
+  ucsc_cb_html_file:
+    type: File?
+    outputSource: sc_rna_reduce/ucsc_cb_html_file
+    label: "UCSC Cell Browser"
+    doc: |
+      UCSC Cell Browser HTML index file
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   seurat_data_rds:
     type: File
     outputSource: sc_atac_reduce/seurat_data_rds
@@ -463,8 +492,7 @@ steps:
       umap_method: umap_method
       verbose:
         default: true
-      export_ucsc_cb:
-        default: false
+      export_ucsc_cb: export_ucsc_cb
       color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
@@ -487,6 +515,8 @@ steps:
     - umap_spl_ncls_plot_png
     - umap_spl_frip_plot_png
     - umap_spl_blck_plot_png
+    - ucsc_cb_html_data
+    - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log

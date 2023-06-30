@@ -447,7 +447,6 @@ steps:
     - cmp_gr_cnd_spl_clst_res_plot_png
     - cvrg_res_plot_png
     - peak_markers_tsv
-    - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds

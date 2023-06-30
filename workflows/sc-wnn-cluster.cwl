@@ -707,7 +707,6 @@ steps:
     - xpr_htmp_res_plot_png
     - gene_markers_tsv
     - peak_markers_tsv
-    - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
