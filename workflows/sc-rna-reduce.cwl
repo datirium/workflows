@@ -145,7 +145,7 @@ inputs:
     - type: enum
       symbols:
       - "completely"
-      - "partialy"
+      - "partially"
       - "do not remove"
     label: "Remove cell cycle"
     default: "do not remove"
@@ -155,7 +155,7 @@ inputs:
       reduction results. When selected
       "completely", regress all signals
       associated with the cell cycle phase.
-      For "partialy" - regress only the
+      For "partially" - regress only the
       differences in cell cycle phase
       among proliferating cells, signals
       separating non-cycling and cycling
@@ -559,7 +559,7 @@ steps:
         valueFrom: $(self.includes("completely")?true:null)
       regress_ccycle_diff:
         source: regress_cellcycle
-        valueFrom: $(self.includes("partialy")?true:null)
+        valueFrom: $(self.includes("partially")?true:null)
       datasets_metadata: datasets_metadata
       normalization_method: normalization_method
       integration_method: integration_method
