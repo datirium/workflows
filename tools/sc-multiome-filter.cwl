@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.23
+  dockerPull: biowardrobe2/sc-tools:v0.0.24
 
 
 inputs:
@@ -1724,6 +1724,14 @@ outputs:
       glob: "*_data.rds"
     doc: |
       Filtered Seurat data in RDS format
+
+  datasets_metadata:
+    type: File
+    outputBinding:
+      glob: "*_meta.tsv"
+    doc: |
+      Example of datasets metadata file
+      in TSV format
 
   seurat_data_h5seurat:
     type: File?

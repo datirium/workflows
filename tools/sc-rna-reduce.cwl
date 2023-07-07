@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.23
+  dockerPull: biowardrobe2/sc-tools:v0.0.24
 
 
 inputs:
@@ -391,7 +391,7 @@ outputs:
     outputBinding:
       glob: "*_elbow.png"
     doc: |
-      Elbow plot (from cells PCA).
+      Elbow plot.
       PNG format
 
   elbow_plot_pdf:
@@ -399,7 +399,7 @@ outputs:
     outputBinding:
       glob: "*_elbow.pdf"
     doc: |
-      Elbow plot (from cells PCA).
+      Elbow plot.
       PDF format
 
   qc_dim_corr_plot_png:
@@ -407,7 +407,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.png"
     doc: |
-      Correlation plots between QC metrics and cells PCA components.
+      Correlation between QC metrics and principal components.
       PNG format
 
   qc_dim_corr_plot_pdf:
@@ -415,7 +415,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.pdf"
     doc: |
-      Correlation plots between QC metrics and cells PCA components.
+      Correlation between QC metrics and principal components.
       PDF format
 
   umap_qc_mtrcs_plot_png:
@@ -423,7 +423,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.png"
     doc: |
-      QC metrics on cells UMAP.
+      UMAP, QC metrics.
       PNG format
 
   umap_qc_mtrcs_plot_pdf:
@@ -431,7 +431,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.pdf"
     doc: |
-      QC metrics on cells UMAP.
+      UMAP, QC metrics.
       PDF format
 
   umap_plot_png:
@@ -439,7 +439,7 @@ outputs:
     outputBinding:
       glob: "*_umap.png"
     doc: |
-      Cells UMAP.
+      UMAP, colored by dataset.
       PNG format
 
   umap_plot_pdf:
@@ -447,7 +447,7 @@ outputs:
     outputBinding:
       glob: "*_umap.pdf"
     doc: |
-      Cells UMAP.
+      UMAP, colored by dataset.
       PDF format
 
   umap_spl_ph_plot_png:
@@ -455,7 +455,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph.png"
     doc: |
-      Split by cell cycle phase cells UMAP.
+      UMAP, colored by dataset, split by
+      cell cycle phase.
       PNG format
 
   umap_spl_ph_plot_pdf:
@@ -463,7 +464,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph.pdf"
     doc: |
-      Split by cell cycle phase cells UMAP.
+      UMAP, colored by dataset, split by
+      cell cycle phase.
       PDF format
 
   ccpca_plot_png:
@@ -471,7 +473,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca.png"
     doc: |
-      Cells PCA using only cell cycle genes.
+      PCA, colored by cell cycle phase.
       PNG format
 
   ccpca_plot_pdf:
@@ -479,7 +481,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca.pdf"
     doc: |
-      Cells PCA using only cell cycle genes.
+      PCA, colored by cell cycle phase.
       PDF format
 
   umap_spl_mito_plot_png:
@@ -487,7 +489,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_mito.png"
     doc: |
-      Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
+      UMAP, colored by dataset, split by
+      mitochondrial percentage.
       PNG format
 
   umap_spl_mito_plot_pdf:
@@ -495,7 +498,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_mito.pdf"
     doc: |
-      Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
+      UMAP, colored by dataset, split by
+      mitochondrial percentage.
       PDF format
 
   umap_spl_umi_plot_png:
@@ -503,7 +507,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_umi.png"
     doc: |
-      Split by the transcripts per cell counts cells UMAP.
+      UMAP, colored by dataset, split by
+      transcripts per cell.
       PNG format
 
   umap_spl_umi_plot_pdf:
@@ -511,7 +516,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_umi.pdf"
     doc: |
-      Split by the transcripts per cell counts cells UMAP.
+      UMAP, colored by dataset, split by
+      transcripts per cell.
       PDF format
 
   umap_spl_gene_plot_png:
@@ -519,7 +525,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_gene.png"
     doc: |
-      Split by the genes per cell counts cells UMAP.
+      UMAP, colored by dataset, split by
+      genes per cell.
       PNG format
 
   umap_spl_gene_plot_pdf:
@@ -527,7 +534,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_gene.pdf"
     doc: |
-      Split by the genes per cell counts cells UMAP.
+      UMAP, colored by dataset, split by
+      genes per cell.
       PDF format
 
   umap_spl_idnt_plot_png:
@@ -535,7 +543,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.png"
     doc: |
-      Split by dataset cells UMAP.
+      UMAP, split by dataset.
       PNG format
 
   umap_spl_idnt_plot_pdf:
@@ -543,7 +551,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.pdf"
     doc: |
-      Split by dataset cells UMAP.
+      UMAP, split by dataset.
       PDF format
 
   ccpca_spl_idnt_plot_png:
@@ -551,7 +559,8 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_idnt.png"
     doc: |
-      Split by dataset cells PCA using only cell cycle genes.
+      PCA, colored by cell cycle phase,
+      split by dataset.
       PNG format
 
   ccpca_spl_idnt_plot_pdf:
@@ -559,7 +568,8 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_idnt.pdf"
     doc: |
-      Split by dataset cells PCA using only cell cycle genes.
+      PCA, colored by cell cycle phase,
+      split by dataset.
       PDF format
 
   umap_spl_cnd_plot_png:
@@ -567,7 +577,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.png"
     doc: |
-      Split by grouping condition cells UMAP.
+      UMAP, colored by dataset, split by
+      grouping condition.
       PNG format
 
   umap_spl_cnd_plot_pdf:
@@ -575,7 +586,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.pdf"
     doc: |
-      Split by grouping condition cells UMAP.
+      UMAP, colored by dataset, split by
+      grouping condition.
       PDF format
 
   umap_gr_cnd_spl_ph_plot_png:
@@ -583,7 +595,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_ph.png"
     doc: |
-      Grouped by condition split by cell cycle cells UMAP.
+      UMAP, colored by grouping condition,
+      split by cell cycle phase.
       PNG format
 
   umap_gr_cnd_spl_ph_plot_pdf:
@@ -591,7 +604,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_ph.pdf"
     doc: |
-      Grouped by condition split by cell cycle cells UMAP.
+      UMAP, colored by grouping condition,
+      split by cell cycle phase.
       PDF format
 
   ccpca_spl_cnd_plot_png:
@@ -599,7 +613,8 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_cnd.png"
     doc: |
-      Split by grouping condition cells PCA using only cell cycle genes.
+      PCA, colored by cell cycle phase,
+      split by grouping condition.
       PNG format
 
   ccpca_spl_cnd_plot_pdf:
@@ -607,7 +622,8 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_cnd.pdf"
     doc: |
-      Split by grouping condition cells PCA using only cell cycle genes.
+      PCA, colored by cell cycle phase,
+      split by grouping condition.
       PDF format
 
   umap_gr_cnd_spl_mito_plot_png:
@@ -615,7 +631,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_mito.png"
     doc: |
-      Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
+      UMAP, colored by grouping condition,
+      split by mitochondrial percentage.
       PNG format
 
   umap_gr_cnd_spl_mito_plot_pdf:
@@ -623,7 +640,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_mito.pdf"
     doc: |
-      Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
+      UMAP, colored by grouping condition,
+      split by mitochondrial percentage.
       PDF format
 
   umap_gr_cnd_spl_umi_plot_png:
@@ -631,7 +649,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_umi.png"
     doc: |
-      Grouped by condition split by the transcripts per cell counts cells UMAP.
+      UMAP, colored by grouping condition,
+      split by transcripts per cell.
       PNG format
 
   umap_gr_cnd_spl_umi_plot_pdf:
@@ -639,7 +658,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_umi.pdf"
     doc: |
-      Grouped by condition split by the transcripts per cell counts cells UMAP.
+      UMAP, colored by grouping condition,
+      split by transcripts per cell.
       PDF format
 
   umap_gr_cnd_spl_gene_plot_png:
@@ -647,7 +667,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_gene.png"
     doc: |
-      Grouped by condition split by the genes per cell counts cells UMAP.
+      UMAP, colored by grouping condition,
+      split by genes per cell.
       PNG format
 
   umap_gr_cnd_spl_gene_plot_pdf:
@@ -655,7 +676,8 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_gene.pdf"
     doc: |
-      Grouped by condition split by the genes per cell counts cells UMAP.
+      UMAP, colored by grouping condition,
+      split by genes per cell.
       PDF format
 
   ucsc_cb_config_data:

@@ -608,6 +608,14 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  datasets_metadata:
+    type: File
+    outputSource: sc_rna_filter/datasets_metadata
+    label: "Example of datasets metadata"
+    doc: |
+      Example of datasets metadata file
+      in TSV format
+
   sc_rna_filter_stdout_log:
     type: File
     outputSource: sc_rna_filter/stdout_log
@@ -712,6 +720,7 @@ steps:
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
+    - datasets_metadata
     - stdout_log
     - stderr_log
 
