@@ -428,7 +428,7 @@ outputs:
 
   ucsc_cb_html_data:
     type: Directory?
-    outputSource: sc_rna_reduce/ucsc_cb_html_data
+    outputSource: sc_atac_reduce/ucsc_cb_html_data
     label: "UCSC Cell Browser data"
     doc: |
       Directory with UCSC Cell Browser
@@ -436,7 +436,7 @@ outputs:
 
   ucsc_cb_html_file:
     type: File?
-    outputSource: sc_rna_reduce/ucsc_cb_html_file
+    outputSource: sc_atac_reduce/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
       UCSC Cell Browser HTML index file
