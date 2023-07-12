@@ -55,7 +55,7 @@ inputs:
       symbols:
       - "none"
       - "mapped"
-    default: "mapped"
+    default: "none"
     label: "Library depth normalization mode"
     doc: "Library depth normalization mode"
     'sd:layout':
