@@ -202,6 +202,17 @@ inputs:
       RNA-Seq Datasets" and can be utilized in
       the current or future steps of analysis.
 
+  custom_cell_cycle_data:
+    type: File?
+    label: "Custom cell cycle gene set (optional)"
+    doc: |
+      A TSV/CSV file with the gene list
+      for cell cycle score assignment.
+      The file should have two columns
+      named 'phase' and 'gene_id'. If
+      this input is provided, the "Cell
+      cycle gene set" will be ignored.
+
   highly_var_genes_count:
     type: int?
     label: "Number of highly variable genes"
@@ -543,12 +554,14 @@ steps:
       query_data_rds: query_data_rds
       barcodes_data: barcodes_data
       cell_cycle_data:
-        source: cell_cycle_data
+        source: [cell_cycle_data, custom_cell_cycle_data]
         valueFrom: |
           ${
-            if (self.includes("human")) {
+            if (self[1] != null && self[1].class == "File"){
+              return self[1];
+            } else if (self[0].includes("human")) {
               return "hg38";
-            } else if (self.includes("mouse")) {
+            } else if (self[0].includes("mouse")) {
               return "mm10";
             } else {
               return null;
