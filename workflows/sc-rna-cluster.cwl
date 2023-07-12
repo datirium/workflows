@@ -54,7 +54,7 @@ inputs:
     default: 40
     label: "Target dimensionality"
     doc: |
-      Number of princinpal components to be
+      Number of principal components to be
       used in constructing nearest-neighbor
       graph as part of the clustering
       algorithm. Accepted values range from

@@ -116,7 +116,7 @@ inputs:
     label: "Target dimensionality"
     default: 40
     doc: |
-      Number of princinpal components to be used
+      Number of principal components to be used
       in PCA and UMAP projection. Accepted values
       range from 1 to 50.
       Default: 40
