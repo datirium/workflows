@@ -245,6 +245,13 @@ outputs:
     doc: |
       summary of SNPEFF annotations
 
+  snpEff_genes:
+    type: File?
+    outputBinding:
+      glob: snpEff_genes.txt
+    doc: |
+      text file containing gene details, required for link in html summary
+
   log_file_stdout:
     type: stdout
 

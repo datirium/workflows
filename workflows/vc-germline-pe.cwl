@@ -533,8 +533,7 @@ steps:
       target_filename:
         source: extract_fastq_R1/fastq_file
         valueFrom: $(self.basename)
-    out:
-      - target_file
+    out: [target_file]
 
   rename_R2:
     run: ../tools/rename.cwl
@@ -543,8 +542,7 @@ steps:
       target_filename:
         source: extract_fastq_R2/fastq_file
         valueFrom: $(self.basename)
-    out:
-      - target_file
+    out: [target_file]
 
   fastx_quality_stats_R1:
     label: "Quality control of unmapped sequence data for read 1"
@@ -591,7 +589,21 @@ steps:
       indel_QD: indel_QD
       indel_FS: indel_FS
       indel_SOR: indel_SOR
-    out: [sorted_dedup_bam, chrom_length_tsv, bqsr2_indels_vcf, bqsr2_snps_vcf, bqsr2_snps_ann_vcf, raw_indels_vcf, raw_snps_vcf, overview, log_file_stdout, log_file_stderr, insert_size_histogram, recalibration_plots, snpEff_summary]
+    out:
+      - sorted_dedup_bam
+      - chrom_length_tsv
+      - bqsr2_indels_vcf
+      - bqsr2_snps_vcf
+      - bqsr2_snps_ann_vcf
+      - raw_indels_vcf
+      - raw_snps_vcf
+      - overview
+      - log_file_stdout
+      - log_file_stderr
+      - insert_size_histogram
+      - recalibration_plots
+      - snpEff_summary
+      - snpEff_genes
 
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
