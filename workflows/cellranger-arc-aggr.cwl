@@ -345,8 +345,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Cell Ranger ARC Aggregate"
-s:name: "Cell Ranger ARC Aggregate"
+label: "Cell Ranger ARC Aggregate Gene Expression and Chromatin Accessibility"
+s:name: "Cell Ranger ARC Aggregate Gene Expression and Chromatin Accessibility"
 s:alternateName: "Aggregates data from multiple Cell Ranger ARC Count Gene Expression and Chromatin Accessibility experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-arc-aggr.cwl
@@ -385,7 +385,7 @@ s:creator:
 
 
 doc: |
-  Cell Ranger ARC Aggregate
+  Cell Ranger ARC Aggregate Gene Expression and Chromatin Accessibility
   
   Aggregates data from multiple Cell Ranger ARC Count Gene
   Expression and Chromatin Accessibility experiments.
