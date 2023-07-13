@@ -258,7 +258,7 @@ outputs:
     outputBinding:
       glob: "*_umap_res_*.png"
     doc: |
-      Clustered cells UMAP.
+      UMAP, colored by cluster.
       PNG format
 
   umap_res_plot_pdf:
@@ -269,7 +269,7 @@ outputs:
     outputBinding:
       glob: "*_umap_res_*.pdf"
     doc: |
-      Clustered cells UMAP.
+      UMAP, colored by cluster.
       PDF format
 
   slh_res_plot_png:
@@ -280,7 +280,7 @@ outputs:
     outputBinding:
       glob: "*_slh_res_*.png"
     doc: |
-      Silhouette scores. Downsampled to max 500 cells per cluster.
+      Silhouette scores.
       PNG format
 
   slh_res_plot_pdf:
@@ -291,7 +291,7 @@ outputs:
     outputBinding:
       glob: "*_slh_res_*.pdf"
     doc: |
-      Silhouette scores. Downsampled to max 500 cells per cluster.
+      Silhouette scores.
       PDF format
 
   umap_spl_idnt_res_plot_png:
@@ -302,7 +302,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_res_*.png"
     doc: |
-      Split by dataset clustered cells UMAP.
+      UMAP, colored by cluster,
+      split by dataset.
       PNG format
 
   umap_spl_idnt_res_plot_pdf:
@@ -313,7 +314,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_res_*.pdf"
     doc: |
-      Split by dataset clustered cells UMAP.
+      UMAP, colored by cluster,
+      split by dataset.
       PDF format
 
   cmp_gr_clst_spl_idnt_res_plot_png:
@@ -324,7 +326,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_idnt_res_*.png"
     doc: |
-      Grouped by cluster split by dataset cells composition plot. Downsampled.
+      Composition plot, colored by
+      cluster, split by dataset,
+      downsampled.
       PNG format
 
   cmp_gr_clst_spl_idnt_res_plot_pdf:
@@ -335,7 +339,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_idnt_res_*.pdf"
     doc: |
-      Grouped by cluster split by dataset cells composition plot. Downsampled.
+      Composition plot, colored by
+      cluster, split by dataset,
+      downsampled.
       PDF format
 
   cmp_gr_idnt_spl_clst_res_plot_png:
@@ -346,7 +352,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_clst_res_*.png"
     doc: |
-      Grouped by dataset split by cluster cells composition plot. Downsampled.
+      Composition plot, colored by
+      dataset, split by cluster,
+      downsampled.
       PNG format
 
   cmp_gr_idnt_spl_clst_res_plot_pdf:
@@ -357,7 +365,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_clst_res_*.pdf"
     doc: |
-      Grouped by dataset split by cluster cells composition plot. Downsampled.
+      Composition plot, colored by
+      dataset, split by cluster,
+      downsampled.
       PDF format
 
   umap_spl_cnd_res_plot_png:
@@ -368,7 +378,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_res_*.png"
     doc: |
-      Split by grouping condition clustered cells UMAP.
+      UMAP, colored by cluster, split
+      by grouping condition.
       PNG format
 
   umap_spl_cnd_res_plot_pdf:
@@ -379,7 +390,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_res_*.pdf"
     doc: |
-      Split by grouping condition clustered cells UMAP.
+      UMAP, colored by cluster, split
+      by grouping condition.
       PDF format
 
   cmp_gr_clst_spl_cnd_res_plot_png:
@@ -390,7 +402,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_cnd_res_*.png"
     doc: |
-      Grouped by cluster split by condition cells composition plot. Downsampled.
+      Composition plot, colored by
+      cluster, split by grouping
+      condition, downsampled.
       PNG format
 
   cmp_gr_clst_spl_cnd_res_plot_pdf:
@@ -401,7 +415,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_cnd_res_*.pdf"
     doc: |
-      Grouped by cluster split by condition cells composition plot. Downsampled.
+      Composition plot, colored by
+      cluster, split by grouping
+      condition, downsampled.
       PDF format
 
   cmp_gr_cnd_spl_clst_res_plot_png:
@@ -412,7 +428,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_clst_res_*.png"
     doc: |
-      Grouped by condition split by cluster cells composition plot. Downsampled.
+      Composition plot, colored by
+      grouping condition, split by
+      cluster, downsampled.
       PNG format
 
   cmp_gr_cnd_spl_clst_res_plot_pdf:
@@ -423,7 +441,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_clst_res_*.pdf"
     doc: |
-      Grouped by condition split by cluster cells composition plot. Downsampled.
+      Composition plot, colored by
+      grouping condition, split by
+      cluster, downsampled.
       PDF format
 
   cvrg_res_plot_png:
@@ -434,7 +454,7 @@ outputs:
     outputBinding:
       glob: "*_cvrg_res_*.png"
     doc: |
-      Tn5 insertion frequency plot around gene.
+      Fragments coverage.
       PNG format
 
   cvrg_res_plot_pdf:
@@ -445,7 +465,7 @@ outputs:
     outputBinding:
       glob: "*_cvrg_res_*.pdf"
     doc: |
-      Tn5 insertion frequency plot around gene.
+      Fragments coverage.
       PDF format
 
   peak_markers_tsv:
@@ -453,7 +473,7 @@ outputs:
     outputBinding:
       glob: "*_peak_markers.tsv"
     doc: |
-      Differentially accessible peaks between each pair of clusters for all resolutions.
+      Peak markers per cluster for all resolutions.
       TSV format
 
   ucsc_cb_config_data:
