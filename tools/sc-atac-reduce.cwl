@@ -308,7 +308,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.png"
     doc: |
-      Correlation plots between QC metrics and cells LSI dimensions.
+      Correlation between QC metrics and LSI components.
       PNG format
 
   qc_dim_corr_plot_pdf:
@@ -316,7 +316,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.pdf"
     doc: |
-      Correlation plots between QC metrics and cells LSI dimensions.
+      Correlation between QC metrics and LSI components.
       PDF format
 
   umap_qc_mtrcs_plot_png:
@@ -324,7 +324,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.png"
     doc: |
-      QC metrics on cells UMAP.
+      UMAP, QC metrics.
       PNG format
 
   umap_qc_mtrcs_plot_pdf:
@@ -332,7 +332,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.pdf"
     doc: |
-      QC metrics on cells UMAP.
+      UMAP, QC metrics.
       PDF format
 
   umap_plot_png:
@@ -340,7 +340,7 @@ outputs:
     outputBinding:
       glob: "*_umap.png"
     doc: |
-      Cells UMAP.
+      UMAP, colored by dataset.
       PNG format
 
   umap_plot_pdf:
@@ -348,7 +348,7 @@ outputs:
     outputBinding:
       glob: "*_umap.pdf"
     doc: |
-      Cells UMAP.
+      UMAP, colored by dataset.
       PDF format
 
   umap_spl_idnt_plot_png:
@@ -356,7 +356,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.png"
     doc: |
-      Split by dataset cells UMAP.
+      UMAP, split by dataset.
       PNG format
 
   umap_spl_idnt_plot_pdf:
@@ -364,7 +364,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.pdf"
     doc: |
-      Split by dataset cells UMAP.
+      UMAP, split by dataset.
       PDF format
 
   umap_spl_cnd_plot_png:
@@ -372,7 +372,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.png"
     doc: |
-      Split by grouping condition cells UMAP.
+      UMAP, colored by dataset, split
+      by grouping condition.
       PNG format
 
   umap_spl_cnd_plot_pdf:
@@ -380,7 +381,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.pdf"
     doc: |
-      Split by grouping condition cells UMAP.
+      UMAP, colored by dataset, split
+      by grouping condition.
       PDF format
 
   umap_spl_frgm_plot_png:
@@ -388,7 +390,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_frgm.png"
     doc: |
-      Split by the fragments in peaks per cell counts cells UMAP.
+      UMAP, colored by dataset, split
+      by fragments in peaks per cell.
       PNG format
 
   umap_spl_frgm_plot_pdf:
@@ -396,7 +399,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_frgm.pdf"
     doc: |
-      Split by the fragments in peaks per cell counts cells UMAP.
+      UMAP, colored by dataset, split
+      by fragments in peaks per cell.
       PDF format
 
   umap_spl_peak_plot_png:
@@ -404,7 +408,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_peak.png"
     doc: |
-      Split by the peaks per cell counts cells UMAP.
+      UMAP, colored by dataset, split
+      by peaks per cell.
       PNG format
 
   umap_spl_peak_plot_pdf:
@@ -412,7 +417,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_peak.pdf"
     doc: |
-      Split by the peaks per cell counts cells UMAP.
+      UMAP, colored by dataset, split
+      by peaks per cell.
       PDF format
 
   umap_spl_tss_plot_png:
@@ -420,7 +426,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_tss.png"
     doc: |
-      Split by the TSS enrichment score cells UMAP.
+      UMAP, colored by dataset, split
+      by TSS enrichment score.
       PNG format
 
   umap_spl_tss_plot_pdf:
@@ -428,7 +435,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_tss.pdf"
     doc: |
-      Split by the TSS enrichment score cells UMAP.
+      UMAP, colored by dataset, split
+      by TSS enrichment score.
       PDF format
 
   umap_spl_ncls_plot_png:
@@ -436,7 +444,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ncls.png"
     doc: |
-      Split by the nucleosome signal cells UMAP.
+      UMAP, colored by dataset, split
+      by nucleosome signal.
       PNG format
 
   umap_spl_ncls_plot_pdf:
@@ -444,7 +453,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ncls.pdf"
     doc: |
-      Split by the nucleosome signal cells UMAP.
+      UMAP, colored by dataset, split
+      by nucleosome signal.
       PDF format
 
   umap_spl_frip_plot_png:
@@ -452,7 +462,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_frip.png"
     doc: |
-      Split by the FRiP cells UMAP.
+      UMAP, colored by dataset,
+      split by FRiP.
       PNG format
 
   umap_spl_frip_plot_pdf:
@@ -460,7 +471,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_frip.pdf"
     doc: |
-      Split by the FRiP cells UMAP.
+      UMAP, colored by dataset,
+      split by FRiP.
       PDF format
 
   umap_spl_blck_plot_png:
@@ -468,7 +480,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_blck.png"
     doc: |
-      Split by the genomic blacklist regions fraction cells UMAP.
+      UMAP, colored by dataset, split
+      by blacklist fraction.
       PNG format
 
   umap_spl_blck_plot_pdf:
@@ -476,7 +489,116 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_blck.pdf"
     doc: |
-      Split by the genomic blacklist regions fraction cells UMAP.
+      UMAP, colored by dataset, split
+      by blacklist fraction.
+      PDF format
+
+  umap_gr_cnd_spl_frgm_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_frgm.png"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by fragments in peaks per cell.
+      PNG format
+
+  umap_gr_cnd_spl_frgm_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_frgm.pdf"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by fragments in peaks per cell.
+      PDF format
+
+  umap_gr_cnd_spl_peak_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_peak.png"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by peaks per cell.
+      PNG format
+
+  umap_gr_cnd_spl_peak_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_peak.pdf"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by peaks per cell.
+      PDF format
+
+  umap_gr_cnd_spl_tss_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_tss.png"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by TSS enrichment score.
+      PNG format
+
+  umap_gr_cnd_spl_tss_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_tss.pdf"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by TSS enrichment score.
+      PDF format
+
+  umap_gr_cnd_spl_ncls_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_ncls.png"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by nucleosome signal.
+      PNG format
+
+  umap_gr_cnd_spl_ncls_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_ncls.pdf"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by nucleosome signal.
+      PDF format
+
+  umap_gr_cnd_spl_frip_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_frip.png"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by FRiP.
+      PNG format
+
+  umap_gr_cnd_spl_frip_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_frip.pdf"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by FRiP.
+      PDF format
+
+  umap_gr_cnd_spl_blck_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_blck.png"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by blacklist fraction.
+      PNG format
+
+  umap_gr_cnd_spl_blck_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_umap_gr_cnd_spl_blck.pdf"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by blacklist fraction.
       PDF format
 
   ucsc_cb_config_data:
@@ -484,21 +606,24 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser configuration data.
+      Directory with UCSC Cellbrowser
+      configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      Directory with UCSC Cellbrowser
+      html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
+      HTML index file from the directory
+      with UCSC Cellbrowser html data.
 
   seurat_data_rds:
     type: File
