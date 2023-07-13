@@ -45,10 +45,11 @@ inputs:
     label: "Single-cell Analysis with LSI Transformed ATAC-Seq Datasets"
     doc: |
       Analysis that includes single-cell
-      multiome ATAC and RNA-Seq or just
-      ATAC-Seq datasets run through "Single-cell
-      ATAC-Seq Dimensionality Reduction Analysis"
-      at any of the processing stages.
+      multiome RNA and ATAC-Seq or just
+      ATAC-Seq datasets run through
+      "Single-cell ATAC-Seq Dimensionality
+      Reduction Analysis" at any of the
+      processing stages.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
