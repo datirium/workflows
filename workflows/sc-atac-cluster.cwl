@@ -164,7 +164,10 @@ inputs:
 outputs:
 
   umap_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/umap_res_plot_png
     label: "UMAP, colored by cluster"
     doc: |
@@ -175,7 +178,10 @@ outputs:
         Caption: 'UMAP, colored by cluster'
 
   slh_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/slh_res_plot_png
     label: "Silhouette scores"
     doc: |
@@ -186,7 +192,10 @@ outputs:
         Caption: 'Silhouette scores'
 
   umap_spl_idnt_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/umap_spl_idnt_res_plot_png
     label: "UMAP, colored by cluster, split by dataset"
     doc: |
@@ -198,7 +207,10 @@ outputs:
         Caption: 'UMAP, colored by cluster, split by dataset'
 
   cmp_gr_clst_spl_idnt_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/cmp_gr_clst_spl_idnt_res_plot_png
     label: "Composition plot, colored by cluster, split by dataset, downsampled"
     doc: |
@@ -211,7 +223,10 @@ outputs:
         Caption: 'Composition plot, colored by cluster, split by dataset, downsampled'
 
   cmp_gr_idnt_spl_clst_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/cmp_gr_idnt_spl_clst_res_plot_png
     label: "Composition plot, colored by dataset, split by cluster, downsampled"
     doc: |
@@ -224,7 +239,10 @@ outputs:
         Caption: 'Composition plot, colored by dataset, split by cluster, downsampled'
 
   umap_spl_cnd_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/umap_spl_cnd_res_plot_png
     label: "UMAP, colored by cluster, split by grouping condition"
     doc: |
@@ -236,7 +254,10 @@ outputs:
         Caption: 'UMAP, colored by cluster, split by grouping condition'
 
   cmp_gr_clst_spl_cnd_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/cmp_gr_clst_spl_cnd_res_plot_png
     label: "Composition plot, colored by cluster, split by grouping condition, downsampled"
     doc: |
@@ -249,7 +270,10 @@ outputs:
         Caption: 'Composition plot, colored by cluster, split by grouping condition, downsampled'
 
   cmp_gr_cnd_spl_clst_res_plot_png:
-    type: File?
+    type:
+    - "null"
+    - type: array
+      items: File
     outputSource: sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_png
     label: "Composition plot, colored by grouping condition, split by cluster, downsampled"
     doc: |
