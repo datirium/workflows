@@ -131,7 +131,7 @@ inputs:
       - "3"
       - "4"
     default: "4"
-    label: "Cores/CPUs number"
+    label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
