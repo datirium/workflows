@@ -242,6 +242,18 @@ inputs:
       Save Seurat data to h5ad file.
       Default: false
 
+  export_scope_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--scope"
+    doc: |
+      Save Seurat data to SCope compatible
+      loom file. Only not normalized raw
+      counts from the RNA assay will be
+      saved. If loaded Seurat object doesn't
+      have RNA assay this parameter will be
+      ignored. Default: false
+
   export_ucsc_cb:
     type: boolean?
     inputBinding:
@@ -289,7 +301,7 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.png"
     doc: |
-      Cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type, RNA.
       PNG format
 
   umap_rd_rnaumap_plot_pdf:
@@ -297,7 +309,7 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.pdf"
     doc: |
-      Cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type, RNA.
       PDF format
 
   umap_rd_atacumap_plot_png:
@@ -305,7 +317,7 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_atacumap.png"
     doc: |
-      Cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type, ATAC.
       PNG format
 
   umap_rd_atacumap_plot_pdf:
@@ -313,7 +325,7 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_atacumap.pdf"
     doc: |
-      Cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type, ATAC.
       PDF format
 
   umap_rd_wnnumap_plot_png:
@@ -321,7 +333,7 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_wnnumap.png"
     doc: |
-      Cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type, WNN.
       PNG format
 
   umap_rd_wnnumap_plot_pdf:
@@ -329,7 +341,7 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_wnnumap.pdf"
     doc: |
-      Cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type, WNN.
       PDF format
 
   umap_spl_idnt_rd_rnaumap_plot_png:
@@ -337,7 +349,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_rd_rnaumap.png"
     doc: |
-      Split by dataset cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type,
+      split by dataset, RNA.
       PNG format
 
   umap_spl_idnt_rd_rnaumap_plot_pdf:
@@ -345,7 +358,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_rd_rnaumap.pdf"
     doc: |
-      Split by dataset cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type,
+      split by dataset, RNA.
       PDF format
 
   umap_spl_idnt_rd_atacumap_plot_png:
@@ -353,7 +367,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_rd_atacumap.png"
     doc: |
-      Split by dataset cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type,
+      split by dataset, ATAC.
       PNG format
 
   umap_spl_idnt_rd_atacumap_plot_pdf:
@@ -361,7 +376,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_rd_atacumap.pdf"
     doc: |
-      Split by dataset cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type,
+      split by dataset, ATAC.
       PDF format
 
   umap_spl_idnt_rd_wnnumap_plot_png:
@@ -369,7 +385,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_rd_wnnumap.png"
     doc: |
-      Split by dataset cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type,
+      split by dataset, WNN.
       PNG format
 
   umap_spl_idnt_rd_wnnumap_plot_pdf:
@@ -377,7 +394,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_rd_wnnumap.pdf"
     doc: |
-      Split by dataset cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type,
+      split by dataset, WNN.
       PDF format
 
   umap_spl_cnd_rd_rnaumap_plot_png:
@@ -385,7 +403,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_rd_rnaumap.png"
     doc: |
-      Split by grouping condition cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type, split
+      by grouping condition, RNA.
       PNG format
 
   umap_spl_cnd_rd_rnaumap_plot_pdf:
@@ -393,7 +412,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_rd_rnaumap.pdf"
     doc: |
-      Split by grouping condition cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type, split
+      by grouping condition, RNA.
       PDF format
 
   umap_spl_cnd_rd_atacumap_plot_png:
@@ -401,7 +421,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_rd_atacumap.png"
     doc: |
-      Split by grouping condition cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type, split
+      by grouping condition, ATAC.
       PNG format
 
   umap_spl_cnd_rd_atacumap_plot_pdf:
@@ -409,7 +430,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_rd_atacumap.pdf"
     doc: |
-      Split by grouping condition cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type, split
+      by grouping condition, ATAC.
       PDF format
 
   umap_spl_cnd_rd_wnnumap_plot_png:
@@ -417,7 +439,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_rd_wnnumap.png"
     doc: |
-      Split by grouping condition cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type, split
+      by grouping condition, WNN.
       PNG format
 
   umap_spl_cnd_rd_wnnumap_plot_pdf:
@@ -425,7 +448,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_rd_wnnumap.pdf"
     doc: |
-      Split by grouping condition cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type, split
+      by grouping condition, WNN.
       PDF format
 
   umap_spl_ph_rd_rnaumap_plot_png:
@@ -433,7 +457,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_rd_rnaumap.png"
     doc: |
-      Split by cell cycle phase cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type, split
+      by cell cycle phase, RNA.
       PNG format
 
   umap_spl_ph_rd_rnaumap_plot_pdf:
@@ -441,7 +466,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_rd_rnaumap.pdf"
     doc: |
-      Split by cell cycle phase cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, colored by cell type, split
+      by cell cycle phase, RNA.
       PDF format
 
   umap_spl_ph_rd_atacumap_plot_png:
@@ -449,7 +475,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_rd_atacumap.png"
     doc: |
-      Split by cell cycle phase cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type, split
+      by cell cycle phase, ATAC.
       PNG format
 
   umap_spl_ph_rd_atacumap_plot_pdf:
@@ -457,7 +484,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_rd_atacumap.pdf"
     doc: |
-      Split by cell cycle phase cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, colored by cell type, split
+      by cell cycle phase, ATAC.
       PDF format
 
   umap_spl_ph_rd_wnnumap_plot_png:
@@ -465,7 +493,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_rd_wnnumap.png"
     doc: |
-      Split by cell cycle phase cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type, split
+      by cell cycle phase, WNN.
       PNG format
 
   umap_spl_ph_rd_wnnumap_plot_pdf:
@@ -473,7 +502,8 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_rd_wnnumap.pdf"
     doc: |
-      Split by cell cycle phase cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, colored by cell type, split
+      by cell cycle phase, WNN.
       PDF format
 
   cmp_gr_ctyp_spl_idnt_plot_png:
@@ -481,7 +511,8 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ctyp_spl_idnt.png"
     doc: |
-      Grouped by cell type split by dataset cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      type, split by dataset, downsampled.
       PNG format
 
   cmp_gr_ctyp_spl_idnt_plot_pdf:
@@ -489,7 +520,8 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ctyp_spl_idnt.pdf"
     doc: |
-      Grouped by cell type split by dataset cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      type, split by dataset, downsampled.
       PDF format
 
   cmp_gr_idnt_spl_ctyp_plot_png:
@@ -497,7 +529,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_ctyp.png"
     doc: |
-      Grouped by dataset split by cell type cells composition plot. Downsampled.
+      Composition plot, colored by
+      dataset, split by cell type,
+      downsampled.
       PNG format
 
   cmp_gr_idnt_spl_ctyp_plot_pdf:
@@ -505,7 +539,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_ctyp.pdf"
     doc: |
-      Grouped by dataset split by cell type cells composition plot. Downsampled.
+      Composition plot, colored by
+      dataset, split by cell type,
+      downsampled.
       PDF format
 
   cmp_gr_ph_spl_idnt_plot_png:
@@ -513,7 +549,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_idnt.png"
     doc: |
-      Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      cycle phase, split by dataset,
+      downsampled.
       PNG format
 
   cmp_gr_ph_spl_idnt_plot_pdf:
@@ -521,7 +559,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_idnt.pdf"
     doc: |
-      Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      cycle phase, split by dataset,
+      downsampled.
       PDF format
 
   cmp_gr_ctyp_spl_cnd_plot_png:
@@ -529,7 +569,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ctyp_spl_cnd.png"
     doc: |
-      Grouped by cell type split by condition cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      type, split by grouping condition,
+      downsampled.
       PNG format
 
   cmp_gr_ctyp_spl_cnd_plot_pdf:
@@ -537,7 +579,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ctyp_spl_cnd.pdf"
     doc: |
-      Grouped by cell type split by condition cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      type, split by grouping condition,
+      downsampled.
       PDF format
 
   cmp_gr_cnd_spl_ctyp_plot_png:
@@ -545,7 +589,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_ctyp.png"
     doc: |
-      Grouped by condition split by cell type cells composition plot. Downsampled.
+      Composition plot, colored by
+      grouping condition, split by
+      cell type, downsampled.
       PNG format
 
   cmp_gr_cnd_spl_ctyp_plot_pdf:
@@ -553,7 +599,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_ctyp.pdf"
     doc: |
-      Grouped by condition split by cell type cells composition plot. Downsampled.
+      Composition plot, colored by
+      grouping condition, split by
+      cell type, downsampled.
       PDF format
 
   cmp_gr_ph_spl_ctyp_plot_png:
@@ -561,7 +609,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_ctyp.png"
     doc: |
-      Grouped by cell cycle phase split by cell type cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      cycle phase, split by cell type,
+      downsampled.
       PNG format
 
   cmp_gr_ph_spl_ctyp_plot_pdf:
@@ -569,7 +619,9 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_ctyp.pdf"
     doc: |
-      Grouped by cell cycle phase split by cell type cells composition plot. Downsampled.
+      Composition plot, colored by cell
+      cycle phase, split by cell type,
+      downsampled.
       PDF format
 
   xpr_avg_plot_png:
@@ -577,7 +629,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_avg.png"
     doc: |
-      Log normalized scaled average gene expression per cell type.
+      Gene expression dot plot.
       PNG format
 
   xpr_avg_plot_pdf:
@@ -585,7 +637,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_avg.pdf"
     doc: |
-      Log normalized scaled average gene expression per cell type.
+      Gene expression dot plot.
       PDF format
 
   xpr_dnst_plot_png:
@@ -596,7 +648,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_dnst_*.png"
     doc: |
-      Log normalized gene expression density per cell type.
+      Gene expression violin plot.
       PNG format
 
   xpr_dnst_plot_pdf:
@@ -607,7 +659,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_dnst_*.pdf"
     doc: |
-      Log normalized gene expression density per cell type.
+      Gene expression violin plot.
       PDF format
 
   xpr_per_cell_rd_rnaumap_plot_png:
@@ -618,7 +670,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, gene expression, RNA.
       PNG format
 
   xpr_per_cell_rd_rnaumap_plot_pdf:
@@ -629,7 +681,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, gene expression, RNA.
       PDF format
 
   xpr_per_cell_rd_atacumap_plot_png:
@@ -640,7 +692,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, gene expression, ATAC.
       PNG format
 
   xpr_per_cell_rd_atacumap_plot_pdf:
@@ -651,7 +703,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, gene expression, ATAC.
       PDF format
 
   xpr_per_cell_rd_wnnumap_plot_png:
@@ -662,7 +714,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, gene expression, WNN.
       PNG format
 
   xpr_per_cell_rd_wnnumap_plot_pdf:
@@ -673,7 +725,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, gene expression, WNN.
       PDF format
 
   xpr_per_cell_sgnl_rd_rnaumap_plot_png:
@@ -684,7 +736,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_rd_rnaumap_*.png"
     doc: |
-      Log normalized gene expression density on cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, gene expression density, RNA.
       PNG format
 
   xpr_per_cell_sgnl_rd_rnaumap_plot_pdf:
@@ -695,7 +747,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_rd_rnaumap_*.pdf"
     doc: |
-      Log normalized gene expression density on cells UMAP with assigned cell types (rnaumap dim. reduction).
+      UMAP, gene expression density, RNA.
       PDF format
 
   xpr_per_cell_sgnl_rd_atacumap_plot_png:
@@ -706,7 +758,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_rd_atacumap_*.png"
     doc: |
-      Log normalized gene expression density on cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, gene expression density, ATAC.
       PNG format
 
   xpr_per_cell_sgnl_rd_atacumap_plot_pdf:
@@ -717,7 +769,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_rd_atacumap_*.pdf"
     doc: |
-      Log normalized gene expression density on cells UMAP with assigned cell types (atacumap dim. reduction).
+      UMAP, gene expression density, ATAC.
       PDF format
 
   xpr_per_cell_sgnl_rd_wnnumap_plot_png:
@@ -728,7 +780,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_rd_wnnumap_*.png"
     doc: |
-      Log normalized gene expression density on cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, gene expression density, WNN.
       PNG format
 
   xpr_per_cell_sgnl_rd_wnnumap_plot_pdf:
@@ -739,7 +791,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_rd_wnnumap_*.pdf"
     doc: |
-      Log normalized gene expression density on cells UMAP with assigned cell types (wnnumap dim. reduction).
+      UMAP, gene expression density, WNN.
       PDF format
 
   cvrg_plot_png:
@@ -750,7 +802,7 @@ outputs:
     outputBinding:
       glob: "*_cvrg_*.png"
     doc: |
-      Tn5 insertion frequency plot around gene.
+      Fragments coverage.
       PNG format
 
   cvrg_plot_pdf:
@@ -761,7 +813,7 @@ outputs:
     outputBinding:
       glob: "*_cvrg_*.pdf"
     doc: |
-      Tn5 insertion frequency plot around gene.
+      Fragments coverage.
       PDF format
 
   xpr_htmp_plot_png:
@@ -769,7 +821,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.png"
     doc: |
-      Normalized gene expression heatmap grouped by cell type.
+      Gene expression heatmap.
       PNG format
 
   xpr_htmp_plot_pdf:
@@ -777,7 +829,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.pdf"
     doc: |
-      Normalized gene expression heatmap grouped by cell type.
+      Gene expression heatmap.
       PDF format
 
   gene_markers_tsv:
@@ -785,7 +837,8 @@ outputs:
     outputBinding:
       glob: "*_gene_markers.tsv"
     doc: |
-      Differentially expressed genes between each pair of cell types.
+      Differentially expressed genes
+      between each pair of cell types.
       TSV format
 
   peak_markers_tsv:
@@ -793,7 +846,8 @@ outputs:
     outputBinding:
       glob: "*_peak_markers.tsv"
     doc: |
-      Differentially accessible peaks between each pair of cell types.
+      Differentially accessible peaks
+      between each pair of cell types.
       TSV format
 
   ucsc_cb_config_data:
@@ -801,21 +855,24 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser configuration data.
+      Directory with UCSC Cellbrowser
+      configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      Directory with UCSC Cellbrowser
+      html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
+      HTML index file from the directory
+      with UCSC Cellbrowser html data.
 
   seurat_data_rds:
     type: File
@@ -837,6 +894,14 @@ outputs:
       glob: "*_data.h5ad"
     doc: |
       Reduced Seurat data in h5ad format
+
+  seurat_data_scope:
+    type: File?
+    outputBinding:
+      glob: "*_data.loom"
+    doc: |
+      Reduced Seurat data in SCope
+      compatible loom format
 
   stdout_log:
     type: stdout
@@ -900,21 +965,27 @@ s:creator:
 doc: |
   Single-cell Manual Cell Type Assignment
 
-  Assigns cell types for clusters based on the provided metadata file.
+  Assigns cell types for clusters based on
+  the provided metadata file.
 
 
 s:about: |
-  usage: sc_ctype_assign.R
-        [-h] --query QUERY --celltypes CELLTYPES --source SOURCE --target
-        TARGET [--diffgenes] [--diffpeaks] [--rnalogfc RNALOGFC]
-        [--rnaminpct RNAMINPCT] [--rnaonlypos]
-        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
-        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--fragments FRAGMENTS] [--genes [GENES [GENES ...]]] [--pdf]
-        [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_ctype_assign.R [-h] --query QUERY --celltypes
+                                          CELLTYPES --source SOURCE --target
+                                          TARGET [--diffgenes] [--diffpeaks]
+                                          [--rnalogfc RNALOGFC]
+                                          [--rnaminpct RNAMINPCT] [--rnaonlypos]
+                                          [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                          [--ataclogfc ATACLOGFC]
+                                          [--atacminpct ATACMINPCT]
+                                          [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                          [--fragments FRAGMENTS]
+                                          [--genes [GENES [GENES ...]]] [--pdf]
+                                          [--verbose] [--h5seurat] [--h5ad]
+                                          [--cbbuild] [--scope]
+                                          [--output OUTPUT]
+                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                          [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Manual Cell Type Assignment
 
@@ -998,6 +1069,10 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
+    --scope               Save Seurat data to SCope compatible loom file. Only
+                          not normalized raw counts from the RNA assay will be
+                          saved. If loaded Seurat object doesn't have RNA assay
+                          this parameter will be ignored. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic
