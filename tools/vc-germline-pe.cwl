@@ -193,11 +193,11 @@ outputs:
     doc: |
       snps called after filtering and recalibration
 
-  bqsr2_snps_ann_vcf:
+  bqsr2_all_ann_vcf:
     type: File?
     outputBinding:
-      glob: bqsr2_snps.ann.vcf.gz
-    secondaryFiles: bqsr2_snps.ann.vcf.idx
+      glob: bqsr_all.ann.vcf.gz
+    secondaryFiles: bqsr_all.ann.vcf.idx
     doc: |
       snps called after filtering and recalibration with effect annotations
 
