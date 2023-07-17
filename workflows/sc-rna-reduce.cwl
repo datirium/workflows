@@ -166,6 +166,25 @@ inputs:
       cycle gene set is not provided.
       Default: "do not remove"
 
+  regress_genes:
+    type: string?
+    label: "Regress genes"
+    default: null
+    doc: |
+      Regress expression of the selected genes
+      as a confounding source of variation.
+      Default: None
+
+  regress_mito_perc:
+    type: boolean?
+    label: "Regress mitochondrial percentage"
+    default: false
+    doc: |
+      Regress the percentage of transcripts
+      mapped to mitochondrial genes as a
+      confounding source of variation.
+      Default: false
+
   datasets_metadata:
     type: File?
     label: "Datasets metadata (optional)"
@@ -223,29 +242,6 @@ inputs:
       datasets integration, and dimensionality
       reduction.
       Default: 3000
-    'sd:layout':
-      advanced: true
-
-  regress_mito_perc:
-    type: boolean?
-    label: "Regress mitochondrial percentage"
-    default: false
-    doc: |
-      Regress the percentage of transcripts
-      mapped to mitochondrial genes as a
-      confounding source of variation.
-      Default: false
-    'sd:layout':
-      advanced: true
-
-  regress_genes:
-    type: string?
-    label: "Regress genes"
-    default: null
-    doc: |
-      Regress expression of the selected genes
-      as a confounding source of variation.
-      Default: None
     'sd:layout':
       advanced: true
 
