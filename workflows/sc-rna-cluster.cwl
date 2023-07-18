@@ -428,6 +428,14 @@ outputs:
     doc: |
       Processed Seurat data in SCope compatible loom format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   sc_rna_cluster_stdout_log:
     type: File
     outputSource: sc_rna_cluster/stdout_log
@@ -475,6 +483,8 @@ steps:
         default: true
       export_scope_data:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         default: 32
@@ -500,6 +510,22 @@ steps:
     - xpr_per_cell_sgnl_plot_png
     - xpr_dnst_res_plot_png
     - xpr_htmp_res_plot_png
+    - umap_res_plot_pdf
+    - slh_res_plot_pdf
+    - umap_spl_idnt_res_plot_pdf
+    - cmp_gr_clst_spl_idnt_res_plot_pdf
+    - cmp_gr_idnt_spl_clst_res_plot_pdf
+    - umap_spl_cnd_res_plot_pdf
+    - cmp_gr_clst_spl_cnd_res_plot_pdf
+    - cmp_gr_cnd_spl_clst_res_plot_pdf
+    - umap_spl_ph_res_plot_pdf
+    - cmp_gr_ph_spl_idnt_plot_pdf
+    - cmp_gr_ph_spl_clst_res_plot_pdf
+    - xpr_avg_res_plot_pdf
+    - xpr_per_cell_plot_pdf
+    - xpr_per_cell_sgnl_plot_pdf
+    - xpr_dnst_res_plot_pdf
+    - xpr_htmp_res_plot_pdf
     - gene_markers_tsv
     - ucsc_cb_html_data
     - ucsc_cb_html_file
@@ -507,6 +533,38 @@ steps:
     - seurat_data_scope
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_rna_cluster/umap_res_plot_pdf
+        - sc_rna_cluster/slh_res_plot_pdf
+        - sc_rna_cluster/umap_spl_idnt_res_plot_pdf
+        - sc_rna_cluster/cmp_gr_clst_spl_idnt_res_plot_pdf
+        - sc_rna_cluster/cmp_gr_idnt_spl_clst_res_plot_pdf
+        - sc_rna_cluster/umap_spl_cnd_res_plot_pdf
+        - sc_rna_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
+        - sc_rna_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
+        - sc_rna_cluster/umap_spl_ph_res_plot_pdf
+        - sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_pdf
+        - sc_rna_cluster/cmp_gr_ph_spl_clst_res_plot_pdf
+        - sc_rna_cluster/xpr_avg_res_plot_pdf
+        - sc_rna_cluster/xpr_per_cell_plot_pdf
+        - sc_rna_cluster/xpr_per_cell_sgnl_plot_pdf
+        - sc_rna_cluster/xpr_dnst_res_plot_pdf
+        - sc_rna_cluster/xpr_htmp_res_plot_pdf
+        valueFrom: $(self.flat())
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:

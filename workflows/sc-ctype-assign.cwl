@@ -604,6 +604,14 @@ outputs:
     doc: |
       Processed Seurat data in SCope compatible loom format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   ctype_assign_stdout_log:
     type: File
     outputSource: ctype_assign/stdout_log
@@ -658,6 +666,8 @@ steps:
         default: true
       export_scope_data:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         default: 32
@@ -695,6 +705,34 @@ steps:
     - xpr_per_cell_sgnl_rd_wnnumap_plot_png
     - cvrg_plot_png
     - xpr_htmp_plot_png
+    - umap_rd_rnaumap_plot_pdf
+    - umap_rd_atacumap_plot_pdf
+    - umap_rd_wnnumap_plot_pdf
+    - umap_spl_idnt_rd_rnaumap_plot_pdf
+    - umap_spl_idnt_rd_atacumap_plot_pdf
+    - umap_spl_idnt_rd_wnnumap_plot_pdf
+    - umap_spl_cnd_rd_rnaumap_plot_pdf
+    - umap_spl_cnd_rd_atacumap_plot_pdf
+    - umap_spl_cnd_rd_wnnumap_plot_pdf
+    - umap_spl_ph_rd_rnaumap_plot_pdf
+    - umap_spl_ph_rd_atacumap_plot_pdf
+    - umap_spl_ph_rd_wnnumap_plot_pdf
+    - cmp_gr_ctyp_spl_idnt_plot_pdf
+    - cmp_gr_idnt_spl_ctyp_plot_pdf
+    - cmp_gr_ph_spl_idnt_plot_pdf
+    - cmp_gr_ctyp_spl_cnd_plot_pdf
+    - cmp_gr_cnd_spl_ctyp_plot_pdf
+    - cmp_gr_ph_spl_ctyp_plot_pdf
+    - xpr_avg_plot_pdf
+    - xpr_dnst_plot_pdf
+    - xpr_per_cell_rd_rnaumap_plot_pdf
+    - xpr_per_cell_rd_atacumap_plot_pdf
+    - xpr_per_cell_rd_wnnumap_plot_pdf
+    - xpr_per_cell_sgnl_rd_rnaumap_plot_pdf
+    - xpr_per_cell_sgnl_rd_atacumap_plot_pdf
+    - xpr_per_cell_sgnl_rd_wnnumap_plot_pdf
+    - cvrg_plot_pdf
+    - xpr_htmp_plot_pdf
     - gene_markers_tsv
     - peak_markers_tsv
     - ucsc_cb_html_data
@@ -703,6 +741,50 @@ steps:
     - seurat_data_scope
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - ctype_assign/umap_rd_rnaumap_plot_pdf
+        - ctype_assign/umap_rd_atacumap_plot_pdf
+        - ctype_assign/umap_rd_wnnumap_plot_pdf
+        - ctype_assign/umap_spl_idnt_rd_rnaumap_plot_pdf
+        - ctype_assign/umap_spl_idnt_rd_atacumap_plot_pdf
+        - ctype_assign/umap_spl_idnt_rd_wnnumap_plot_pdf
+        - ctype_assign/umap_spl_cnd_rd_rnaumap_plot_pdf
+        - ctype_assign/umap_spl_cnd_rd_atacumap_plot_pdf
+        - ctype_assign/umap_spl_cnd_rd_wnnumap_plot_pdf
+        - ctype_assign/umap_spl_ph_rd_rnaumap_plot_pdf
+        - ctype_assign/umap_spl_ph_rd_atacumap_plot_pdf
+        - ctype_assign/umap_spl_ph_rd_wnnumap_plot_pdf
+        - ctype_assign/cmp_gr_ctyp_spl_idnt_plot_pdf
+        - ctype_assign/cmp_gr_idnt_spl_ctyp_plot_pdf
+        - ctype_assign/cmp_gr_ph_spl_idnt_plot_pdf
+        - ctype_assign/cmp_gr_ctyp_spl_cnd_plot_pdf
+        - ctype_assign/cmp_gr_cnd_spl_ctyp_plot_pdf
+        - ctype_assign/cmp_gr_ph_spl_ctyp_plot_pdf
+        - ctype_assign/xpr_avg_plot_pdf
+        - ctype_assign/xpr_dnst_plot_pdf
+        - ctype_assign/xpr_per_cell_rd_rnaumap_plot_pdf
+        - ctype_assign/xpr_per_cell_rd_atacumap_plot_pdf
+        - ctype_assign/xpr_per_cell_rd_wnnumap_plot_pdf
+        - ctype_assign/xpr_per_cell_sgnl_rd_rnaumap_plot_pdf
+        - ctype_assign/xpr_per_cell_sgnl_rd_atacumap_plot_pdf
+        - ctype_assign/xpr_per_cell_sgnl_rd_wnnumap_plot_pdf
+        - ctype_assign/cvrg_plot_pdf
+        - ctype_assign/xpr_htmp_plot_pdf
+        valueFrom: $(self.flat())
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:
