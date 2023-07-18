@@ -212,6 +212,8 @@ inputs:
       symbols:
       - "1"
       - "2"
+      - "3"
+      - "4"
     default: "1"
     label: "Cores/CPUs"
     doc: |
