@@ -1099,7 +1099,7 @@ outputs:
 
   pdf_plots:
     type: File
-    outputSource: compress_pdf_plots/datasets_metadata
+    outputSource: compress_pdf_plots/compressed_folder
     label: "Plots in PDF format"
     doc: |
       Compressed folder with plots
