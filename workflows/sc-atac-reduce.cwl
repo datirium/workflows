@@ -454,6 +454,14 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   sc_atac_reduce_stdout_log:
     type: File
     outputSource: sc_atac_reduce/stdout_log
@@ -501,6 +509,8 @@ steps:
       verbose:
         default: true
       export_ucsc_cb: export_ucsc_cb
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         default: 32
@@ -527,11 +537,61 @@ steps:
     - umap_gr_cnd_spl_ncls_plot_png
     - umap_gr_cnd_spl_frip_plot_png
     - umap_gr_cnd_spl_blck_plot_png
+    - qc_dim_corr_plot_pdf
+    - umap_qc_mtrcs_plot_pdf
+    - umap_plot_pdf
+    - umap_spl_idnt_plot_pdf
+    - umap_spl_cnd_plot_pdf
+    - umap_spl_frgm_plot_pdf
+    - umap_spl_peak_plot_pdf
+    - umap_spl_tss_plot_pdf
+    - umap_spl_ncls_plot_pdf
+    - umap_spl_frip_plot_pdf
+    - umap_spl_blck_plot_pdf
+    - umap_gr_cnd_spl_frgm_plot_pdf
+    - umap_gr_cnd_spl_peak_plot_pdf
+    - umap_gr_cnd_spl_tss_plot_pdf
+    - umap_gr_cnd_spl_ncls_plot_pdf
+    - umap_gr_cnd_spl_frip_plot_pdf
+    - umap_gr_cnd_spl_blck_plot_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_atac_reduce/qc_dim_corr_plot_pdf
+        - sc_atac_reduce/umap_qc_mtrcs_plot_pdf
+        - sc_atac_reduce/umap_plot_pdf
+        - sc_atac_reduce/umap_spl_idnt_plot_pdf
+        - sc_atac_reduce/umap_spl_cnd_plot_pdf
+        - sc_atac_reduce/umap_spl_frgm_plot_pdf
+        - sc_atac_reduce/umap_spl_peak_plot_pdf
+        - sc_atac_reduce/umap_spl_tss_plot_pdf
+        - sc_atac_reduce/umap_spl_ncls_plot_pdf
+        - sc_atac_reduce/umap_spl_frip_plot_pdf
+        - sc_atac_reduce/umap_spl_blck_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_frgm_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_peak_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_tss_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_ncls_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_frip_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_blck_plot_pdf
+        valueFrom: $(self.flat())
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:

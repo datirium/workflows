@@ -524,6 +524,14 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   sc_rna_reduce_stdout_log:
     type: File
     outputSource: sc_rna_reduce/stdout_log
@@ -597,6 +605,8 @@ steps:
       export_ucsc_cb: export_ucsc_cb
       low_memory:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         default: 32
@@ -623,11 +633,61 @@ steps:
     - umap_gr_cnd_spl_mito_plot_png
     - umap_gr_cnd_spl_umi_plot_png
     - umap_gr_cnd_spl_gene_plot_png
+    - elbow_plot_pdf
+    - qc_dim_corr_plot_pdf
+    - umap_qc_mtrcs_plot_pdf
+    - umap_plot_pdf
+    - umap_spl_ph_plot_pdf
+    - ccpca_plot_pdf
+    - umap_spl_mito_plot_pdf
+    - umap_spl_umi_plot_pdf
+    - umap_spl_gene_plot_pdf
+    - umap_spl_idnt_plot_pdf
+    - ccpca_spl_idnt_plot_pdf
+    - umap_spl_cnd_plot_pdf
+    - umap_gr_cnd_spl_ph_plot_pdf
+    - ccpca_spl_cnd_plot_pdf
+    - umap_gr_cnd_spl_mito_plot_pdf
+    - umap_gr_cnd_spl_umi_plot_pdf
+    - umap_gr_cnd_spl_gene_plot_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_rna_reduce/elbow_plot_pdf
+        - sc_rna_reduce/qc_dim_corr_plot_pdf
+        - sc_rna_reduce/umap_qc_mtrcs_plot_pdf
+        - sc_rna_reduce/umap_plot_pdf
+        - sc_rna_reduce/umap_spl_ph_plot_pdf
+        - sc_rna_reduce/ccpca_plot_pdf
+        - sc_rna_reduce/umap_spl_mito_plot_pdf
+        - sc_rna_reduce/umap_spl_umi_plot_pdf
+        - sc_rna_reduce/umap_spl_gene_plot_pdf
+        - sc_rna_reduce/umap_spl_idnt_plot_pdf
+        - sc_rna_reduce/ccpca_spl_idnt_plot_pdf
+        - sc_rna_reduce/umap_spl_cnd_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_ph_plot_pdf
+        - sc_rna_reduce/ccpca_spl_cnd_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_mito_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_umi_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_gene_plot_pdf
+        valueFrom: $(self.flat())
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:

@@ -335,6 +335,14 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   sc_atac_cluster_stdout_log:
     type: File
     outputSource: sc_atac_cluster/stdout_log
@@ -380,6 +388,8 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         default: 32
@@ -398,12 +408,46 @@ steps:
     - cmp_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_cnd_spl_clst_res_plot_png
     - cvrg_res_plot_png
+    - umap_res_plot_pdf
+    - slh_res_plot_pdf
+    - umap_spl_idnt_res_plot_pdf
+    - cmp_gr_clst_spl_idnt_res_plot_pdf
+    - cmp_gr_idnt_spl_clst_res_plot_pdf
+    - umap_spl_cnd_res_plot_pdf
+    - cmp_gr_clst_spl_cnd_res_plot_pdf
+    - cmp_gr_cnd_spl_clst_res_plot_pdf
+    - cvrg_res_plot_pdf
     - peak_markers_tsv
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_atac_cluster/umap_res_plot_pdf
+        - sc_atac_cluster/slh_res_plot_pdf
+        - sc_atac_cluster/umap_spl_idnt_res_plot_pdf
+        - sc_atac_cluster/cmp_gr_clst_spl_idnt_res_plot_pdf
+        - sc_atac_cluster/cmp_gr_idnt_spl_clst_res_plot_pdf
+        - sc_atac_cluster/umap_spl_cnd_res_plot_pdf
+        - sc_atac_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
+        - sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
+        - sc_atac_cluster/cvrg_res_plot_pdf
+        valueFrom: $(self.flat())
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:
