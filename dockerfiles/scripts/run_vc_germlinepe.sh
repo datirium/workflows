@@ -20,8 +20,7 @@ Help message for \`run_vc_germline.sh\`:
 Shell wrapper for the Broad Institute's best practices gatk4 germline variant calling pipeline.
 
     Primary Output files:
-    - bqsr2_indels.vcf, filtered and recalibrated indels
-    - bqsr2_snps.ann.vcf, filtered and recalibrated snps with effect annotations
+    - bqsr_all.ann.vcf, filtered and recalibrated snps and indels with effect annotations
     Secondary Output files:
     - raw_indels.vcf, first pass indel calls
     - raw_snps.vcf, first pass snp calls
@@ -30,6 +29,7 @@ Shell wrapper for the Broad Institute's best practices gatk4 germline variant ca
     - insert_size_histogram.pdf
     - recalibration_plots.pdf
     - snpEff_summary.html
+	- snpEff_genes.txt
 
 PARAMS:
     SECTION 1: general
@@ -296,13 +296,16 @@ gatk SelectVariants \
 	-V filtered_indels_final.vcf \
 	--output bqsr2_indels.vcf
 
-printf "\n\nStep 17 - Annotate SNPs and Predict Effects\n"
+printf "\n\nStep 17 - Annotate SNPs (and indels) and Predict Effects\n"
+# concatentate SNPs and indels into single vcf for summarizing
+cp bqsr_snps.vcf bqsr_all.vcf
+grep -v "^#" bqsr_indels.vcf >> bqsr_all.vcf
 # check available databases: java -jar $SNPEFF_JAR databases | grep -i <genus|species>
 # download db first
 java -jar $SNPEFF_JAR ann -v \
 	$SNPEFFDB \
 	-nodownload \
-	bqsr2_snps.vcf > bqsr2_snps.ann.vcf
+	bqsr_all.vcf > bqsr_all.ann.vcf
 
 
 
@@ -440,6 +443,6 @@ gzip raw_indels.vcf
 gzip raw_snps.vcf
 gzip bqsr2_indels.vcf
 gzip bqsr2_snps.vcf
-gzip bqsr2_snps.ann.vcf
+gzip bqsr_all.ann.vcf
 
 printf "\n\nWorkflow script run_vc_germline.sh complete!\n"
