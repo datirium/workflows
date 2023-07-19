@@ -1377,7 +1377,7 @@ steps:
         - sc_multiome_filter/fltr_frgm_dnst_spl_cnd_plot_pdf
         - sc_multiome_filter/fltr_peak_dnst_spl_cnd_plot_pdf
         - sc_multiome_filter/fltr_blck_dnst_spl_cnd_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 

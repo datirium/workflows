@@ -438,7 +438,7 @@ steps:
         - sc_atac_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
         - sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
         - sc_atac_cluster/cvrg_res_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 
