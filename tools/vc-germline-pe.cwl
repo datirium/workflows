@@ -193,11 +193,11 @@ outputs:
     doc: |
       snps called after filtering and recalibration
 
-  bqsr2_snps_ann_vcf:
+  bqsr2_all_ann_vcf:
     type: File?
     outputBinding:
-      glob: bqsr2_snps.ann.vcf.gz
-    secondaryFiles: bqsr2_snps.ann.vcf.idx
+      glob: bqsr_all.ann.vcf.gz
+    secondaryFiles: bqsr_all.ann.vcf.idx
     doc: |
       snps called after filtering and recalibration with effect annotations
 
@@ -244,6 +244,13 @@ outputs:
       glob: snpEff_summary.html
     doc: |
       summary of SNPEFF annotations
+
+  snpEff_genes:
+    type: File?
+    outputBinding:
+      glob: snpEff_genes.txt
+    doc: |
+      text file containing gene details, required for link in html summary
 
   log_file_stdout:
     type: stdout
