@@ -775,7 +775,7 @@ steps:
         - ctype_assign/xpr_per_cell_sgnl_rd_wnnumap_plot_pdf
         - ctype_assign/cvrg_plot_pdf
         - ctype_assign/xpr_htmp_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 

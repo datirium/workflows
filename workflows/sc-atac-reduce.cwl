@@ -582,7 +582,7 @@ steps:
         - sc_atac_reduce/umap_gr_cnd_spl_ncls_plot_pdf
         - sc_atac_reduce/umap_gr_cnd_spl_frip_plot_pdf
         - sc_atac_reduce/umap_gr_cnd_spl_blck_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 

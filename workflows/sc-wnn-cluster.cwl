@@ -626,7 +626,7 @@ steps:
         - sc_wnn_cluster/xpr_dnst_res_plot_pdf
         - sc_wnn_cluster/cvrg_res_plot_pdf
         - sc_wnn_cluster/xpr_htmp_res_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 

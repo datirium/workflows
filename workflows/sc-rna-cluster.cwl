@@ -555,7 +555,7 @@ steps:
         - sc_rna_cluster/xpr_per_cell_sgnl_plot_pdf
         - sc_rna_cluster/xpr_dnst_res_plot_pdf
         - sc_rna_cluster/xpr_htmp_res_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 

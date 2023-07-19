@@ -678,7 +678,7 @@ steps:
         - sc_rna_reduce/umap_gr_cnd_spl_mito_plot_pdf
         - sc_rna_reduce/umap_gr_cnd_spl_umi_plot_pdf
         - sc_rna_reduce/umap_gr_cnd_spl_gene_plot_pdf
-        valueFrom: $(self.flat())
+        valueFrom: $(self.flat().filter(n => n))
     out:
     - folder
 
