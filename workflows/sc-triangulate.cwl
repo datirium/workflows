@@ -281,6 +281,14 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   triangulate_stdout_log:
     type: File
     outputSource: triangulate/stdout_log
@@ -310,6 +318,8 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
@@ -330,11 +340,47 @@ steps:
     - umap_tric_rd_rnaumap_plot_png
     - umap_tric_rd_atacumap_plot_png
     - umap_tric_rd_wnnumap_plot_png
+    - umap_tril_rd_rnaumap_plot_pdf
+    - umap_tril_rd_atacumap_plot_pdf
+    - umap_tril_rd_wnnumap_plot_pdf
+    - umap_tria_rd_rnaumap_plot_pdf
+    - umap_tria_rd_atacumap_plot_pdf
+    - umap_tria_rd_wnnumap_plot_pdf
+    - umap_tric_rd_rnaumap_plot_pdf
+    - umap_tric_rd_atacumap_plot_pdf
+    - umap_tric_rd_wnnumap_plot_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - triangulate/umap_tril_rd_rnaumap_plot_pdf
+        - triangulate/umap_tril_rd_atacumap_plot_pdf
+        - triangulate/umap_tril_rd_wnnumap_plot_pdf
+        - triangulate/umap_tria_rd_rnaumap_plot_pdf
+        - triangulate/umap_tria_rd_atacumap_plot_pdf
+        - triangulate/umap_tria_rd_wnnumap_plot_pdf
+        - triangulate/umap_tric_rd_rnaumap_plot_pdf
+        - triangulate/umap_tric_rd_atacumap_plot_pdf
+        - triangulate/umap_tric_rd_wnnumap_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:

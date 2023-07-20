@@ -10,13 +10,17 @@ inputs:
     type:
     - File[]
     - File
+  folder_basename:
+    type: string?
+    default: ""
 outputs:
   folder: Directory
 expression: |
   ${
+    var folder_basename = inputs.folder_basename.split('/').slice(-1).join('');
     var folder = {
       "class": "Directory",
-      "basename": "",
+      "basename": folder_basename,
       "listing": []
     }
     var files = [];

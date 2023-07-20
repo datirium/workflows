@@ -589,6 +589,14 @@ outputs:
       Filtered normalized reads counts per cell.
       GCT format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   de_pseudobulk_stdout_log:
     type: File
     outputSource: de_pseudobulk/stdout_log
@@ -652,6 +660,8 @@ steps:
       row_distance: row_distance
       column_distance: column_distance
       center_row: center_row
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       verbose:
         default: true
@@ -677,12 +687,54 @@ steps:
       - xpr_per_cell_rd_atacumap_plot_png
       - xpr_per_cell_rd_wnnumap_plot_png
       - xpr_htmp_plot_png
+      - umap_rd_rnaumap_plot_pdf
+      - umap_rd_atacumap_plot_pdf
+      - umap_rd_wnnumap_plot_pdf
+      - mds_plot_html
+      - pca_1_2_plot_pdf
+      - pca_2_3_plot_pdf
+      - dxpr_vlcn_plot_pdf
+      - xpr_dnst_plot_pdf
+      - xpr_per_cell_rd_rnaumap_plot_pdf
+      - xpr_per_cell_rd_atacumap_plot_pdf
+      - xpr_per_cell_rd_wnnumap_plot_pdf
+      - xpr_htmp_plot_pdf
       - diff_expr_genes
       - bulk_read_counts_gct
       - bulk_phenotypes_cls
       - cell_read_counts_gct
       - stdout_log
       - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - de_pseudobulk/umap_rd_rnaumap_plot_pdf
+        - de_pseudobulk/umap_rd_atacumap_plot_pdf
+        - de_pseudobulk/umap_rd_wnnumap_plot_pdf
+        - de_pseudobulk/mds_plot_html
+        - de_pseudobulk/pca_1_2_plot_pdf
+        - de_pseudobulk/pca_2_3_plot_pdf
+        - de_pseudobulk/dxpr_vlcn_plot_pdf
+        - de_pseudobulk/xpr_dnst_plot_pdf
+        - de_pseudobulk/xpr_per_cell_rd_rnaumap_plot_pdf
+        - de_pseudobulk/xpr_per_cell_rd_atacumap_plot_pdf
+        - de_pseudobulk/xpr_per_cell_rd_wnnumap_plot_pdf
+        - de_pseudobulk/xpr_htmp_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl

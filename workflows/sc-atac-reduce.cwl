@@ -583,6 +583,8 @@ steps:
         - sc_atac_reduce/umap_gr_cnd_spl_frip_plot_pdf
         - sc_atac_reduce/umap_gr_cnd_spl_blck_plot_pdf
         valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
     out:
     - folder
 

@@ -441,6 +441,8 @@ steps:
         - sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
         - sc_atac_cluster/cvrg_res_plot_pdf
         valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
     out:
     - folder
 
