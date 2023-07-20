@@ -614,6 +614,14 @@ outputs:
       Example of datasets metadata file
       in TSV format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   sc_rna_filter_stdout_log:
     type: File
     outputSource: sc_rna_filter/stdout_log
@@ -676,6 +684,8 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
@@ -715,12 +725,86 @@ steps:
     - fltr_gene_dnst_spl_cnd_plot_png
     - fltr_mito_dnst_spl_cnd_plot_png
     - fltr_nvlt_dnst_spl_cnd_plot_png
+    - raw_1_2_qc_mtrcs_pca_plot_pdf
+    - raw_2_3_qc_mtrcs_pca_plot_pdf
+    - raw_cells_count_plot_pdf
+    - raw_umi_dnst_plot_pdf
+    - raw_gene_dnst_plot_pdf
+    - raw_gene_umi_plot_pdf
+    - raw_mito_dnst_plot_pdf
+    - raw_nvlt_dnst_plot_pdf
+    - raw_qc_mtrcs_dnst_plot_pdf
+    - raw_rnadbl_plot_pdf
+    - raw_umi_dnst_spl_cnd_plot_pdf
+    - raw_gene_dnst_spl_cnd_plot_pdf
+    - raw_mito_dnst_spl_cnd_plot_pdf
+    - raw_nvlt_dnst_spl_cnd_plot_pdf
+    - fltr_1_2_qc_mtrcs_pca_plot_pdf
+    - fltr_2_3_qc_mtrcs_pca_plot_pdf
+    - fltr_cells_count_plot_pdf
+    - fltr_umi_dnst_plot_pdf
+    - fltr_gene_dnst_plot_pdf
+    - fltr_gene_umi_plot_pdf
+    - fltr_mito_dnst_plot_pdf
+    - fltr_nvlt_dnst_plot_pdf
+    - fltr_qc_mtrcs_dnst_plot_pdf
+    - fltr_rnadbl_plot_pdf
+    - fltr_umi_dnst_spl_cnd_plot_pdf
+    - fltr_gene_dnst_spl_cnd_plot_pdf
+    - fltr_mito_dnst_spl_cnd_plot_pdf
+    - fltr_nvlt_dnst_spl_cnd_plot_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - datasets_metadata
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_rna_filter/raw_1_2_qc_mtrcs_pca_plot_pdf
+        - sc_rna_filter/raw_2_3_qc_mtrcs_pca_plot_pdf
+        - sc_rna_filter/raw_cells_count_plot_pdf
+        - sc_rna_filter/raw_umi_dnst_plot_pdf
+        - sc_rna_filter/raw_gene_dnst_plot_pdf
+        - sc_rna_filter/raw_gene_umi_plot_pdf
+        - sc_rna_filter/raw_mito_dnst_plot_pdf
+        - sc_rna_filter/raw_nvlt_dnst_plot_pdf
+        - sc_rna_filter/raw_qc_mtrcs_dnst_plot_pdf
+        - sc_rna_filter/raw_rnadbl_plot_pdf
+        - sc_rna_filter/raw_umi_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/raw_gene_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/raw_mito_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/raw_nvlt_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/fltr_1_2_qc_mtrcs_pca_plot_pdf
+        - sc_rna_filter/fltr_2_3_qc_mtrcs_pca_plot_pdf
+        - sc_rna_filter/fltr_cells_count_plot_pdf
+        - sc_rna_filter/fltr_umi_dnst_plot_pdf
+        - sc_rna_filter/fltr_gene_dnst_plot_pdf
+        - sc_rna_filter/fltr_gene_umi_plot_pdf
+        - sc_rna_filter/fltr_mito_dnst_plot_pdf
+        - sc_rna_filter/fltr_nvlt_dnst_plot_pdf
+        - sc_rna_filter/fltr_qc_mtrcs_dnst_plot_pdf
+        - sc_rna_filter/fltr_rnadbl_plot_pdf
+        - sc_rna_filter/fltr_umi_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/fltr_gene_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/fltr_mito_dnst_spl_cnd_plot_pdf
+        - sc_rna_filter/fltr_nvlt_dnst_spl_cnd_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:

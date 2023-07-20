@@ -679,6 +679,8 @@ steps:
         - sc_rna_reduce/umap_gr_cnd_spl_umi_plot_pdf
         - sc_rna_reduce/umap_gr_cnd_spl_gene_plot_pdf
         valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
     out:
     - folder
 

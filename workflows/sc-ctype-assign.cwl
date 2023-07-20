@@ -774,6 +774,8 @@ steps:
         - ctype_assign/cvrg_plot_pdf
         - ctype_assign/xpr_htmp_plot_pdf
         valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
     out:
     - folder
 

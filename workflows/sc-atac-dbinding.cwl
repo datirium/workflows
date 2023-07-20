@@ -619,6 +619,14 @@ outputs:
         tab: 'Overall'
         Caption: 'Tag density heatmap around centers of diff. bound sites'
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   sc_atac_dbinding_stdout_log:
     type: File
     outputSource: sc_atac_dbinding/stdout_log
@@ -667,6 +675,8 @@ steps:
       minimum_logfc: minimum_logfc
       verbose:
         default: true
+      export_pdf_plots:
+        default: true
       parallel_memory_limit:
         source: parallel_memory_limit
         valueFrom: $(parseInt(self))
@@ -697,8 +707,34 @@ steps:
     - second_enrch_bigbed_file
     - first_enrch_bed_file
     - second_enrch_bed_file
+    - umap_rd_rnaumap_plot_pdf
+    - umap_rd_atacumap_plot_pdf
+    - umap_rd_wnnumap_plot_pdf
+    - dbnd_vlcn_plot_pdf
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_atac_dbinding/umap_rd_rnaumap_plot_pdf
+        - sc_atac_dbinding/umap_rd_atacumap_plot_pdf
+        - sc_atac_dbinding/umap_rd_wnnumap_plot_pdf
+        - sc_atac_dbinding/dbnd_vlcn_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
   add_label_column:
     run: ../tools/custom-bash.cwl

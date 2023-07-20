@@ -627,6 +627,8 @@ steps:
         - sc_wnn_cluster/cvrg_res_plot_pdf
         - sc_wnn_cluster/xpr_htmp_res_plot_pdf
         valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
     out:
     - folder
 

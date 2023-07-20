@@ -342,6 +342,14 @@ outputs:
     doc: |
       Processed Seurat data in RDS format
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   da_cells_stdout_log:
     type: File
     outputSource: da_cells/stdout_log
@@ -378,6 +386,8 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
         source: parallel_memory_limit
@@ -399,11 +409,49 @@ steps:
     - umap_spl_idnt_rd_rnaumap_da_scr_plot_png
     - umap_spl_idnt_rd_atacumap_da_scr_plot_png
     - umap_spl_idnt_rd_wnnumap_da_scr_plot_png
+    - da_perm_plot_pdf
+    - umap_rd_rnaumap_res_plot_pdf
+    - umap_rd_atacumap_res_plot_pdf
+    - umap_rd_wnnumap_res_plot_pdf
+    - umap_spl_cnd_rd_rnaumap_res_plot_pdf
+    - umap_spl_cnd_rd_atacumap_res_plot_pdf
+    - umap_spl_cnd_rd_wnnumap_res_plot_pdf
+    - umap_spl_idnt_rd_rnaumap_da_scr_plot_pdf
+    - umap_spl_idnt_rd_atacumap_da_scr_plot_pdf
+    - umap_spl_idnt_rd_wnnumap_da_scr_plot_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - da_cells/da_perm_plot_pdf
+        - da_cells/umap_rd_rnaumap_res_plot_pdf
+        - da_cells/umap_rd_atacumap_res_plot_pdf
+        - da_cells/umap_rd_wnnumap_res_plot_pdf
+        - da_cells/umap_spl_cnd_rd_rnaumap_res_plot_pdf
+        - da_cells/umap_spl_cnd_rd_atacumap_res_plot_pdf
+        - da_cells/umap_spl_cnd_rd_wnnumap_res_plot_pdf
+        - da_cells/umap_spl_idnt_rd_rnaumap_da_scr_plot_pdf
+        - da_cells/umap_spl_idnt_rd_atacumap_da_scr_plot_pdf
+        - da_cells/umap_spl_idnt_rd_wnnumap_da_scr_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:
