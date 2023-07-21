@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.25
+  dockerPull: biowardrobe2/sc-tools:v0.0.26
 
 
 inputs:
@@ -288,6 +288,14 @@ inputs:
       maximum nucleosome signal, and minimum TSS enrichment
       scores filters.
       Default: do not call peaks
+
+  minimum_qvalue:
+    type: float?
+    inputBinding:
+      prefix: "--qvalue"
+    doc: |
+      Minimum FDR (q-value) cutoff for MACS2 peak detection.
+      Ignored if --callby is not provided. Default: 0.05
 
   remove_doublets:
     type:
@@ -1824,30 +1832,36 @@ doc: |
 
 
 s:about: |
-  usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY --fragments
-                              FRAGMENTS --annotations ANNOTATIONS --seqinfo
-                              SEQINFO [--grouping GROUPING]
-                              [--blacklist BLACKLIST] [--barcodes BARCODES]
-                              [--rnamincells RNAMINCELLS]
-                              [--mingenes [MINGENES [MINGENES ...]]]
-                              [--maxgenes [MAXGENES [MAXGENES ...]]]
-                              [--minumis [MINUMIS [MINUMIS ...]]]
-                              [--mitopattern MITOPATTERN] [--maxmt MAXMT]
-                              [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                              [--atacmincells ATACMINCELLS]
-                              [--minfragments [MINFRAGMENTS [MINFRAGMENTS ...]]]
-                              [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-                              [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-                              [--minfrip [MINFRIP [MINFRIP ...]]]
-                              [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
-                              [--callby CALLBY]
-                              [--removedoublets {union,onlyrna,onlyatac,intersect}]
-                              [--rnadbr RNADBR] [--rnadbrsd RNADBRSD]
-                              [--atacdbr ATACDBR] [--atacdbrsd ATACDBRSD]
-                              [--pdf] [--verbose] [--h5seurat] [--h5ad]
-                              [--cbbuild] [--output OUTPUT]
-                              [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                              [--cpus CPUS] [--memory MEMORY]
+  usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
+                                            --fragments FRAGMENTS --annotations
+                                            ANNOTATIONS --seqinfo SEQINFO
+                                            [--grouping GROUPING]
+                                            [--blacklist BLACKLIST]
+                                            [--barcodes BARCODES]
+                                            [--rnamincells RNAMINCELLS]
+                                            [--mingenes [MINGENES [MINGENES ...]]]
+                                            [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                            [--minumis [MINUMIS [MINUMIS ...]]]
+                                            [--mitopattern MITOPATTERN]
+                                            [--maxmt MAXMT]
+                                            [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                            [--atacmincells ATACMINCELLS]
+                                            [--minfragments [MINFRAGMENTS [MINFRAGMENTS ...]]]
+                                            [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+                                            [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+                                            [--minfrip [MINFRIP [MINFRIP ...]]]
+                                            [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
+                                            [--callby CALLBY] [--qvalue QVALUE]
+                                            [--removedoublets {union,onlyrna,onlyatac,intersect}]
+                                            [--rnadbr RNADBR]
+                                            [--rnadbrsd RNADBRSD]
+                                            [--atacdbr ATACDBR]
+                                            [--atacdbrsd ATACDBRSD] [--pdf]
+                                            [--verbose] [--h5seurat] [--h5ad]
+                                            [--cbbuild] [--tmpdir TMPDIR]
+                                            [--output OUTPUT]
+                                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                            [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
@@ -1970,6 +1984,8 @@ s:about: |
                           only after applying all RNA related thresholds,
                           maximum nucleosome signal, and minimum TSS enrichment
                           scores filters. Default: do not call peaks
+    --qvalue QVALUE       Minimum FDR (q-value) cutoff for MACS2 peak detection.
+                          Ignored if --callby is not provided. Default: 0.05
     --removedoublets {union,onlyrna,onlyatac,intersect}
                           Remove cells that were identified as doublets. For RNA
                           assay cells with UMI < 200 will not be evaluated.
@@ -1995,6 +2011,9 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
+    --tmpdir TMPDIR       Directory to keep temporary files. Default: either
+                          /tmp or defined by environment variables TMPDIR, TMP,
+                          TEMP.
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic
