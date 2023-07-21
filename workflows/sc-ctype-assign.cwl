@@ -31,6 +31,9 @@ requirements:
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
+  - "https://github.com/datirium/workflows/workflows/sc-rna-cluster.cwl"
+  - "https://github.com/datirium/workflows/workflows/sc-atac-cluster.cwl"
+  - "https://github.com/datirium/workflows/workflows/sc-wnn-cluster.cwl"
   sc_arc_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
