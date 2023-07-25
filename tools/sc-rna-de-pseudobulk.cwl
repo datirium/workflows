@@ -330,9 +330,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.png"
     doc: |
-      Cells UMAP split by selected criteria,
+      UMAP, split by selected criteria,
       optionally subsetted to the specific
-      group (rnaumap dim. reduction).
+      group, RNA.
       PNG format
 
   umap_rd_rnaumap_plot_pdf:
@@ -340,9 +340,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.pdf"
     doc: |
-      Cells UMAP split by selected criteria,
+      UMAP, split by selected criteria,
       optionally subsetted to the specific
-      group (rnaumap dim. reduction).
+      group, RNA.
       PDF format
 
   umap_rd_atacumap_plot_png:
@@ -350,9 +350,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_atacumap.png"
     doc: |
-      Cells UMAP split by selected criteria,
+      UMAP, split by selected criteria,
       optionally subsetted to the specific
-      group (atacumap dim. reduction).
+      group, ATAC.
       PNG format
 
   umap_rd_atacumap_plot_pdf:
@@ -360,9 +360,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_atacumap.pdf"
     doc: |
-      Cells UMAP split by selected criteria,
+      UMAP, split by selected criteria,
       optionally subsetted to the specific
-      group (atacumap dim. reduction).
+      group, ATAC.
       PDF format
 
   umap_rd_wnnumap_plot_png:
@@ -370,9 +370,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_wnnumap.png"
     doc: |
-      Cells UMAP split by selected criteria,
+      UMAP, split by selected criteria,
       optionally subsetted to the specific
-      group (wnnumap dim. reduction).
+      group, WNN.
       PNG format
 
   umap_rd_wnnumap_plot_pdf:
@@ -380,9 +380,9 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_wnnumap.pdf"
     doc: |
-      Cells UMAP split by selected criteria,
+      UMAP, split by selected criteria,
       optionally subsetted to the specific
-      group (wnnumap dim. reduction).
+      group, WNN.
       PDF format
 
   mds_plot_html:
@@ -391,7 +391,7 @@ outputs:
       glob: "*_mds_plot.html"
     doc: |
       MDS plot of pseudobulk aggregated
-      normalized reads counts. All genes.
+      normalized reads counts.
       HTML format
 
   pca_1_2_plot_png:
@@ -399,8 +399,7 @@ outputs:
     outputBinding:
       glob: "*_pca_1_2.png"
     doc: |
-      Normalized reads counts PCA (1, 2).
-      All genes.
+      Gene expression PCA (1,2).
       PNG format
 
   pca_1_2_plot_pdf:
@@ -408,8 +407,7 @@ outputs:
     outputBinding:
       glob: "*_pca_1_2.pdf"
     doc: |
-      Normalized reads counts PCA (1, 2).
-      All genes.
+      Gene expression PCA (1,2).
       PDF format
 
   pca_2_3_plot_png:
@@ -417,8 +415,7 @@ outputs:
     outputBinding:
       glob: "*_pca_2_3.png"
     doc: |
-      Normalized reads counts PCA (2, 3).
-      All genes.
+      Gene expression PCA (2,3).
       PNG format
 
   pca_2_3_plot_pdf:
@@ -426,8 +423,7 @@ outputs:
     outputBinding:
       glob: "*_pca_2_3.pdf"
     doc: |
-      Normalized reads counts PCA (2, 3).
-      All genes.
+      Gene expression PCA (2,3).
       PDF format
 
   dxpr_vlcn_plot_png:
@@ -463,11 +459,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_dnst.png"
     doc: |
-      Log normalized gene expression density plots for
-      either user provided or top 10 differentially
-      expressed genes with the highest log2FoldChange
-      values. The direction of comparison is defined
-      as --second vs --first.
+      Gene expression violin plots for either user
+      provided or top 10 differentially expressed
+      genes with the highest log2FoldChange values.
+      The direction of comparison is defined as
+      --second vs --first.
       PNG format
 
   xpr_dnst_plot_pdf:
@@ -475,11 +471,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_dnst.pdf"
     doc: |
-      Log normalized gene expression density plots for
-      either user provided or top 10 differentially
-      expressed genes with the highest log2FoldChange
-      values. The direction of comparison is defined
-      as --second vs --first.
+      Gene expression violin plots for either user
+      provided or top 10 differentially expressed
+      genes with the highest log2FoldChange values.
+      The direction of comparison is defined as
+      --second vs --first.
       PDF format
 
   xpr_per_cell_rd_rnaumap_plot_png:
@@ -490,9 +486,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (rnaumap dim. reduction).
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, RNA.
       PNG format
 
   xpr_per_cell_rd_rnaumap_plot_pdf:
@@ -503,9 +499,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (rnaumap dim. reduction).
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, RNA.
       PDF format
 
   xpr_per_cell_rd_atacumap_plot_png:
@@ -516,9 +512,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (atacumap dim. reduction).
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, ATAC.
       PNG format
 
   xpr_per_cell_rd_atacumap_plot_pdf:
@@ -529,9 +525,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (atacumap dim. reduction).
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, ATAC.
       PDF format
 
   xpr_per_cell_rd_wnnumap_plot_png:
@@ -542,9 +538,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.png"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (wnnumap dim. reduction).
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, WNN.
       PNG format
 
   xpr_per_cell_rd_wnnumap_plot_pdf:
@@ -555,9 +551,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.pdf"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (wnnumap dim. reduction).
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, WNN.
       PDF format
 
   xpr_htmp_plot_png:
@@ -565,9 +561,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.png"
     doc: |
-      Filtered by adjusted P-value normalized gene
-      expression heatmap per cell optionally subsetted
-      to the specific group.
+      Gene expression heatmap, filtered by adjusted
+      P-value, optionally subsetted to the specific
+      groups of cells.
       PNG format
 
   xpr_htmp_plot_pdf:
@@ -575,9 +571,9 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.pdf"
     doc: |
-      Filtered by adjusted P-value normalized gene
-      expression heatmap per cell optionally subsetted
-      to the specific group.
+      Gene expression heatmap, filtered by adjusted
+      P-value, optionally subsetted to the specific
+      groups of cells.
       PDF format
 
   diff_expr_genes:
@@ -585,8 +581,8 @@ outputs:
     outputBinding:
       glob: "*_de_genes.tsv"
     doc: |
-      Differentially expressed genes. Not filtered
-      by adjusted P-value.
+      Differentially expressed genes.
+      Not filtered by adjusted P-value.
       TSV format
 
   bulk_read_counts_gct:
@@ -594,8 +590,8 @@ outputs:
     outputBinding:
       glob: "*_bulk_counts.gct"
     doc: |
-      GSEA compatible not filtered normalized reads
-      counts aggregated to pseudobulk form.
+      GSEA compatible not filtered normalized
+      reads counts aggregated to pseudobulk form.
       GCT format
 
   bulk_phenotypes_cls:
