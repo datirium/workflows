@@ -638,7 +638,7 @@ s:name: "Variant calling germline paired-end"
 label: "Variant calling germline paired-end"
 s:alternateName: "Variant calling pipeline for germline paired-end samples"
 
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
+s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/vc-germline-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
