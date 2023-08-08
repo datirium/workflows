@@ -54,14 +54,14 @@ inputs:
     inputBinding:
       prefix: "-m"
     doc: |
-      truncates each forward sequence at position M from the 3'
+      clips the forward read starting M bases from the 5' end (before trimming)
 
   trimLeftR:
     type: int
     inputBinding:
       prefix: "-n"
     doc: |
-      truncates each reverse sequence at position N from the 3'
+      clips the reverse read starting N bases from the 5' end (before trimming)
 
   threads:
     type: int
@@ -175,8 +175,8 @@ doc: |
       -b  FILE   path to read2 fastq file
       -j  J      trims the first J bases from the 5' end of each forward read
       -k  K      trims the first K bases from the 5' end of each reverse read
-      -m  M      clips the remaining bases starting a M from the 5' end of the forward read
-      -n  N      clips the remaining bases starting a N from the 5' end of the reverse read
+      -m  M      clips the forward read starting M bases from the 5' end (before trimming)
+      -n  N      clips the reverse read starting N bases from the 5' end (before trimming)
 
   ____________________________________________________________________________________________________
   References:

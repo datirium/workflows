@@ -21,7 +21,7 @@ inputs:
     type: string?
     label: "Environment:"
     doc: |
-      Optional input.
+      Where the sample was collected. Optional input.
     sd:preview:
       position: 2
 
@@ -29,7 +29,7 @@ inputs:
     type: string?
     label: "Catalog No.:"
     doc: |
-      Optional input.
+      If available. Optional input.
     sd:preview:
       position: 3
 
@@ -38,7 +38,7 @@ inputs:
       - File
       - type: array
         items: File
-    label: "Read 1 file:"
+    label: "Read 1 FASTQ file:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
     doc: |
@@ -51,7 +51,7 @@ inputs:
       - File
       - type: array
         items: File
-    label: "Read 2 file:"
+    label: "Read 2 FASTQ file:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
     doc: |
@@ -81,7 +81,7 @@ inputs:
     label: "Truncate 3' of R1:"
     'sd:localLabel': true
     doc: |
-      Recommended if quality drops off along the length of the read. Clips the remaining bases starting a INT from the 5' end of the forward read.
+      Recommended if quality drops off along the length of the read. Clips the forward read starting M bases from the 5' end (before trimming).
 
   truncLenR:
     type: float?
@@ -89,7 +89,7 @@ inputs:
     label: "Truncate 3' of R2:"
     'sd:localLabel': true
     doc: |
-      Recommended if quality drops off along the length of the read. Clips the remaining bases starting a INT from the 5' end of the reverse read.
+      Recommended if quality drops off along the length of the read. Clips the reverse read starting N bases from the 5' end (before trimming).
 
   threads:
     type: int?
@@ -365,54 +365,34 @@ s:creator:
 
 
 doc: |
-  A workflow for the Broad Institute's best practices gatk4 germline variant calling pipeline.
+  A workflow for processing a single 16S sample via a QIIME2 pipeline.
 
   ## __Outputs__
-  #### Primary Output files:
-    - bqsr2_indels.vcf, filtered and recalibrated indels (IGV browser)
-    - bqsr2_snps.vcf, filtered and recalibrated snps (IGV browser)
-    - bqsr2_snps.ann.vcf, filtered and recalibrated snps with effect annotations
-  #### Secondary Output files:
-    - sorted_dedup_reads.bam, sorted deduplicated alignments (IGV browser)
-    - raw_indels.vcf, first pass indel calls
-    - raw_snps.vcf, first pass snp calls
-  #### Reports:
-    - overview.md (input list, alignment metrics, variant counts)
-    - insert_size_histogram.pdf
-    - recalibration_plots.pdf
-    - snpEff_summary.html
+  #### Output files:
+    - overview.md, list of inputs
+    - demux.qzv, summary visualizations of imported data
+    - alpha-rarefaction.qzv, plot of OTU rarefaction
+    - taxa-bar-plots.qzv, relative frequency of taxomonies barplot
 
   ## __Inputs__
   #### General Info
-   - Sample short name/Alias: unique name for sample
-   - Experimental condition: condition, variable, etc name (e.g. "control" or "20C 60min")
-   - Cells: name of cells used for the sample
-   - Catalog No.: vender catalog number if available
-   - BWA index: BWA index sample that contains reference genome FASTA with associated indices.
-   - SNPEFF database: Name of SNPEFF database to use for SNP effect annotation.
-   - Read 1 file: First FASTQ file (generally contains "R1" in the filename)
-   - Read 2 file: Paired FASTQ file (generally contains "R2" in the filename)
-  #### Advanced
-   - Ploidy: number of copies per chromosome (default should be 2)
-   - SNP filters: see Step 6 Notes: https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/
-   - Indel filters: see Step 7 Notes: https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/
-
-  #### SNPEFF notes:
-    Get snpeff databases using `docker run --rm -ti gatk4-dev /bin/bash` then running `java -jar $SNPEFF_JAR databases`.
-    Then, use the first column as SNPEFF input (e.g. "hg38").
-     - hg38, Homo_sapiens (USCS), http://downloads.sourceforge.net/project/snpeff/databases/v4_3/snpEff_v4_3_hg38.zip
-     - mm10, Mus_musculus, http://downloads.sourceforge.net/project/snpeff/databases/v4_3/snpEff_v4_3_mm10.zip
-     - dm6.03, Drosophila_melanogaster, http://downloads.sourceforge.net/project/snpeff/databases/v4_3/snpEff_v4_3_dm6.03.zip
-     - Rnor_6.0.86, Rattus_norvegicus, http://downloads.sourceforge.net/project/snpeff/databases/v4_3/snpEff_v4_3_Rnor_6.0.86.zip
-     - R64-1-1.86, Saccharomyces_cerevisiae, http://downloads.sourceforge.net/project/snpeff/databases/v4_3/snpEff_v4_3_R64-1-1.86.zip
+   - Sample short name/Alias: Used for samplename in downstream analyses. Ensure this is the same name used in the metadata samplesheet.
+   - Environment: where the sample was collected
+   - Catalog No.: catalog number if available (optional)
+   - Read 1 FASTQ file: Read 1 FASTQ file from a paired-end sequencing run.
+   - Read 2 FASTQ file: Read 2 FASTQ file that pairs with the input R1 file.
+   - Trim 5' of R1: Recommended if adapters are still on the input sequences. Trims the first J bases from the 5' end of each forward read.
+   - Trim 5' of R2: Recommended if adapters are still on the input sequences. Trims the first K bases from the 5' end of each reverse read.
+   - Truncate 3' of R1: Recommended if quality drops off along the length of the read. Clips the forward read starting M bases from the 5' end (before trimming).
+   - Truncate 3' of R2: Recommended if quality drops off along the length of the read. Clips the reverse read starting N bases from the 5' end (before trimming).
+   - Threads: Number of threads to use for steps that support multithreading.
 
   ### __Data Analysis Steps__
-  1. Trimming the adapters with TrimGalore.
-     - This step is particularly important when the reads are long and the fragments are short - resulting in sequencing adapters at the ends of reads. If adapter is not removed the read will not map. TrimGalore can recognize standard adapters, such as Illumina or Nextera/Tn5 adapters.
-  2. Generate quality control statistics of trimmed, unmapped sequence data
-  3. Run germline variant calling pipeline, custom wrapper script implementing Steps 1 - 17 of the Broad Institute's best practices gatk4 germline variant calling pipeline (https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/)
+  1. Generate FASTX quality statistics for visualization of unmapped, raw FASTQ reads.
+  2. Import the data, make a qiime artifact (demux.qza), and summary visualization process will additionally filter any phiX reads (commonly present in marker gene Illumina sequence data) that are identified in the sequencing data, and will filter chimeric sequences.
+  4. Generate a phylogenetic tree for diversity analyses and rarefaction processing and plotting.
+  5. Taxonomy classification of amplicons. Performed using a Naive Bayes classifier trained on the Greengenes2 database "gg_2022_10_backbone_full_length.nb.qza".
 
   ### __References__
-  1. https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/
-  2. https://gatk.broadinstitute.org/hc/en-us/articles/360035535932-Germline-short-variant-discovery-SNPs-Indels-
-  3. https://software.broadinstitute.org/software/igv/VCF
+  1. Bolyen E, Rideout JR, Dillon MR, Bokulich NA, Abnet CC, Al-Ghalith GA, Alexander H, Alm EJ, Arumugam M, Asnicar F, Bai Y, Bisanz JE, Bittinger K, Brejnrod A, Brislawn CJ, Brown CT, Callahan BJ, Caraballo-Rodríguez AM, Chase J, Cope EK, Da Silva R, Diener C, Dorrestein PC, Douglas GM, Durall DM, Duvallet C, Edwardson CF, Ernst M, Estaki M, Fouquier J, Gauglitz JM, Gibbons SM, Gibson DL, Gonzalez A, Gorlick K, Guo J, Hillmann B, Holmes S, Holste H, Huttenhower C, Huttley GA, Janssen S, Jarmusch AK, Jiang L, Kaehler BD, Kang KB, Keefe CR, Keim P, Kelley ST, Knights D, Koester I, Kosciolek T, Kreps J, Langille MGI, Lee J, Ley R, Liu YX, Loftfield E, Lozupone C, Maher M, Marotz C, Martin BD, McDonald D, McIver LJ, Melnik AV, Metcalf JL, Morgan SC, Morton JT, Naimey AT, Navas-Molina JA, Nothias LF, Orchanian SB, Pearson T, Peoples SL, Petras D, Preuss ML, Pruesse E, Rasmussen LB, Rivers A, Robeson MS, Rosenthal P, Segata N, Shaffer M, Shiffer A, Sinha R, Song SJ, Spear JR, Swafford AD, Thompson LR, Torres PJ, Trinh P, Tripathi A, Turnbaugh PJ, Ul-Hasan S, van der Hooft JJJ, Vargas F, Vázquez-Baeza Y, Vogtmann E, von Hippel M, Walters W, Wan Y, Wang M, Warren J, Weber KC, Williamson CHD, Willis AD, Xu ZZ, Zaneveld JR, Zhang Y, Zhu Q, Knight R, and Caporaso JG. 2019. Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857. https://doi.org/10.1038/s41587-019-0209-9
+    

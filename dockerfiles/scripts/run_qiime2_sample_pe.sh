@@ -35,10 +35,10 @@ PARAMS:
     -s  STR    sample name
     -a  FILE   path to read1 fastq file
     -b  FILE   path to read2 fastq file
-    -j  J      trims the first J bases from the 5' end of each forward sequence
-    -k  K      trims the first K bases from the 5' end of each reverse sequence
-    -m  M      truncates each forward sequence at position M from the 3'
-    -n  N      truncates each reverse sequence at position N from the 3'
+    -j  J      trims the first J bases from the 5' end of each forward read
+    -k  K      trims the first K bases from the 5' end of each reverse read
+    -m  M      clips the forward read starting M bases from the 5' end (before trimming)
+    -n  N      clips the reverse read starting N bases from the 5' end (before trimming)
 
 ____________________________________________________________________________________________________
 References:
