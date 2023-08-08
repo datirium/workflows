@@ -151,7 +151,7 @@ outputs:
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
     doc: "summary of inputs"
-    outputSource: qiime_pipeline/fastq_summary
+    outputSource: qiime_pipeline/overview
     'sd:visualPlugins':
     - markdownView:
         tab: 'Overview'
@@ -160,7 +160,7 @@ outputs:
     type: File?
     label: "summary of input read data"
     doc: "summary of input read data"
-    outputSource: qiime_pipeline/alpha_rarefaction
+    outputSource: qiime_pipeline/fastq_summary
     'sd:visualPlugins':
     - qiime2:
         tab: 'Overview'
