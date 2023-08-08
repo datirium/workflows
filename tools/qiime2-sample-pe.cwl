@@ -54,14 +54,14 @@ inputs:
     inputBinding:
       prefix: "-m"
     doc: |
-      clips the forward read starting M bases from the 5' end (before trimming)
+      Clips the forward read starting M bases from the 5' end (before trimming). If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R1.
 
   truncLenR:
     type: int
     inputBinding:
       prefix: "-n"
     doc: |
-      clips the reverse read starting N bases from the 5' end (before trimming)
+      Clips the reverse read starting N bases from the 5' end (before trimming).  If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R2.
 
   threads:
     type: int

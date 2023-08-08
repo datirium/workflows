@@ -76,20 +76,20 @@ inputs:
       Recommended if adapters are still on the input sequences. Trims the first K bases from the 5' end of each reverse read.
 
   truncLenF:
-    type: int?
-    default: 1000
+    type: int
+    default: 250
     label: "Truncate 3' of R1:"
     'sd:localLabel': true
     doc: |
-      Recommended if quality drops off along the length of the read. Clips the forward read starting M bases from the 5' end (before trimming).
+      Clips the forward read starting M bases from the 5' end (before trimming). If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R1.
 
   truncLenR:
-    type: int?
-    default: 1000
+    type: int
+    default: 250
     label: "Truncate 3' of R2:"
     'sd:localLabel': true
     doc: |
-      Recommended if quality drops off along the length of the read. Clips the reverse read starting N bases from the 5' end (before trimming).
+      Clips the reverse read starting N bases from the 5' end (before trimming).  If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R2.
 
   threads:
     type: int?
@@ -158,7 +158,7 @@ outputs:
 
   fastq_summary:
     type: File?
-    label: "summary of input read data"
+    label: "Summary of input FASTQ reads"
     doc: "summary of input read data"
     outputSource: qiime_pipeline/fastq_summary
     'sd:visualPlugins':
@@ -168,6 +168,7 @@ outputs:
 
   alpha_rarefaction:
     type: File?
+    label: "Alpha rarefaction curve"
     doc: "plot of OTU rarefaction"
     outputSource: qiime_pipeline/alpha_rarefaction
     'sd:visualPlugins':
@@ -177,6 +178,7 @@ outputs:
 
   taxa_bar_plots:
     type: File?
+    label: "Taxonomic classifications bar plot"
     doc: "bar plot for exploring the taxonomic composition of the sample"
     outputSource: qiime_pipeline/taxa_bar_plots
     'sd:visualPlugins':
