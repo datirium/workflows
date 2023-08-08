@@ -56,7 +56,7 @@ inputs:
     doc: |
       clips the forward read starting M bases from the 5' end (before trimming)
 
-  trimLeftR:
+  truncLenR:
     type: int
     inputBinding:
       prefix: "-n"

@@ -60,7 +60,7 @@ inputs:
       position: 12
 
   trimLeftF:
-    type: float?
+    type: int?
     default: 0
     label: "Trim 5' of R1:"
     'sd:localLabel': true
@@ -68,7 +68,7 @@ inputs:
       Recommended if adapters are still on the input sequences. Trims the first J bases from the 5' end of each forward read.
 
   trimLeftR:
-    type: float?
+    type: int?
     default: 0
     label: "Trim 5' of R2:"
     'sd:localLabel': true
@@ -76,7 +76,7 @@ inputs:
       Recommended if adapters are still on the input sequences. Trims the first K bases from the 5' end of each reverse read.
 
   truncLenF:
-    type: float?
+    type: int?
     default: 1000
     label: "Truncate 3' of R1:"
     'sd:localLabel': true
@@ -84,7 +84,7 @@ inputs:
       Recommended if quality drops off along the length of the read. Clips the forward read starting M bases from the 5' end (before trimming).
 
   truncLenR:
-    type: float?
+    type: int?
     default: 1000
     label: "Truncate 3' of R2:"
     'sd:localLabel': true
@@ -308,7 +308,7 @@ steps:
       trimLeftF: trimLeftF
       trimLeftR: trimLeftR
       truncLenF: truncLenF
-      trimLeftR: trimLeftR
+      truncLenR: truncLenR
       threads: threads
     out:
       - overview
