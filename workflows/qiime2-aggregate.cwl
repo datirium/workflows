@@ -80,13 +80,13 @@ inputs:
     sd:preview:
       position: 6
 
-  sample_names:
+  sample_pe_names:
     type:
       - "null"
       - string[]?
     label: "16S samples for combined analysis:"
     'sd:localLabel': true
-    'sd:upstreamSource': "qiime2_sample_pe"
+    'sd:upstreamSource': "qiime2_sample_pe/alias"
     doc: |
       Upstream 16S samples for combined analysis. R1 and R2 fastq are used for generating the manifest file for data import to qiime2.
     sd:preview:
