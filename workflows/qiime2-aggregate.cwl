@@ -80,11 +80,10 @@ inputs:
     sd:preview:
       position: 6
 
-  upstream_samples:
+  sample_names:
     type:
-      - File
-      - type: array
-        items: File
+      - "null"
+      - string[]?
     label: "16S samples for combined analysis:"
     'sd:localLabel': true
     'sd:upstreamSource': "qiime2_sample_pe"
@@ -99,7 +98,7 @@ inputs:
       - type: array
         items: File
     format: "http://edamontology.org/format_1930"
-    'sd:upstreamSource': "upstream_samples/fastq_file_R1"
+    'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R1"
     doc: |
       Array of forward read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
@@ -109,7 +108,7 @@ inputs:
       - type: array
         items: File
     format: "http://edamontology.org/format_1930"
-    'sd:upstreamSource': "upstream_samples/fastq_file_R2"
+    'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
     doc: |
       Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
