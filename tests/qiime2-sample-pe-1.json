@@ -1,0 +1,18 @@
+{
+  "alias": "qiime2-sample-pe-test",
+  "fastq_file_R1":
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508255_1.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+  "fastq_file_R2":
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508255_2.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+  "truncLenF": 250,
+  "truncLenR": 250,
+  "threads": 4
+}
