@@ -82,9 +82,9 @@ inputs:
 
   fastq_r1_array:
     type:
-    - File
-    - type: array
-    - items: File
+      - File
+      - type: array
+      - items: File
     label: "Read 1 FASTQ files:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
@@ -96,9 +96,9 @@ inputs:
 
   fastq_r2_array:
     type:
-    - File
-    - type: array
-    - items: File
+      - File
+      - type: array
+      - items: File
     label: "Read 2 FASTQ files:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
