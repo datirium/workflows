@@ -80,7 +80,7 @@ inputs:
     sd:preview:
       position: 6
 
-  fastq_r1_array:
+  fastq_r1_files:
     type:
       - File
       - type: array
@@ -94,7 +94,7 @@ inputs:
     sd:preview:
       position: 11
 
-  fastq_r2_array:
+  fastq_r2_files:
     type:
       - File
       - type: array
@@ -257,8 +257,8 @@ steps:
       taxonomic_level:
         source: taxonomic_level
         valueFrom: $(self)
-      fastq_r1_array: fastq_r1_array
-      fastq_r2_array: fastq_r2_array
+      fastq_r1_array: fastq_r1_files
+      fastq_r2_array: fastq_r2_files
       trimLeftF: trimLeftF
       trimLeftR: trimLeftR
       truncLenF: truncLenF
