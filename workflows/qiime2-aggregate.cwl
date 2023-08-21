@@ -88,6 +88,7 @@ inputs:
     label: "Read 1 FASTQ files:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
+    'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R1"
     doc: |
       Read 1 FASTQ file from a paired-end sequencing run.
     sd:preview:
@@ -101,6 +102,7 @@ inputs:
     label: "Read 2 FASTQ files:"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
+    'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
     doc: |
       Read 2 FASTQ file that pairs with the input R1 file.
     sd:preview:
