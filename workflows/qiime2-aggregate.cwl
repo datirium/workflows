@@ -80,33 +80,38 @@ inputs:
     sd:preview:
       position: 6
 
+  upstream_samples:
+    type:
+      - File
+      - type: array
+        items: File
+    label: "16S samples for combined analysis:"
+    'sd:localLabel': true
+    'sd:upstreamSource': "qiime2_sample_pe"
+    doc: |
+      Upstream 16S samples for combined analysis. R1 and R2 fastq are used for generating the manifest file for data import to qiime2.
+    sd:preview:
+      position: 11
+
   fastq_r1_array:
     type:
       - File
       - type: array
         items: File
-    label: "Read 1 FASTQ files:"
-    'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
-    'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R1"
+    'sd:upstreamSource': "upstream_samples/fastq_file_R1"
     doc: |
-      Read 1 FASTQ file from a paired-end sequencing run.
-    sd:preview:
-      position: 11
+      Array of forward read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
   fastq_r2_array:
     type:
       - File
       - type: array
         items: File
-    label: "Read 2 FASTQ files:"
-    'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
-    'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
+    'sd:upstreamSource': "upstream_samples/fastq_file_R2"
     doc: |
-      Read 2 FASTQ file that pairs with the input R1 file.
-    sd:preview:
-      position: 12
+      Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
   trimLeftF:
     type: int?
@@ -258,7 +263,7 @@ steps:
         source: taxonomic_level
         valueFrom: $(self)
       fastq_r1_array: fastq_r1_array
-      fastq_r2_array: fastq_r1_array
+      fastq_r2_array: fastq_r2_array
       trimLeftF: trimLeftF
       trimLeftR: trimLeftR
       truncLenF: truncLenF
@@ -284,9 +289,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "16S metagenomic paired-end QIIME2 Analysis"
-label: "16S metagenomic paired-end QIIME2 Analysis"
-s:alternateName: "16S metagenomic paired-end pipeline using QIIME2 for experimental-level (multi-sample) analysis"
+s:name: "16S metagenomic paired-end QIIME2 Analysis (differential abundance)"
+label: "16S metagenomic paired-end QIIME2 Analysis (differential abundance)"
+s:alternateName: "16S metagenomic paired-end pipeline using QIIME2 for experiment-level (multi-sample) analysis"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/qiime2-aggregate.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -328,18 +333,29 @@ doc: |
 
   ## __Outputs__
   #### Output files:
+
+    Primary output files:
     - overview.md, list of inputs
-    - demux.qzv, summary visualizations of imported multi-sample data
-    - alpha-rarefaction.qzv, plot of multi-sample OTU rarefaction
+    - demux.qzv, summary visualizations of imported data
+    - alpha-rarefaction.qzv, plot of OTU rarefaction
     - taxa-bar-plots.qzv, relative frequency of taxomonies barplot
+
+    Optional output files:
+    - pcoa-unweighted-unifrac-emperor.qzv, PCoA using unweighted unifrac method
+    - pcoa-bray-curtis-emperor.qzv, PCoA using bray curtis method
+    - heatmap.qzv, output from gneiss differential abundance analysis using unsupervised correlation-clustering method (this will define the partitions of microbes that commonly co-occur with each other using Ward hierarchical clustering)
+    - ancom.qzv, output from ANCOM differential abundance analysis at user-specified taxonomic level (includes volcano plot)
+
 
   ## __Inputs__
   #### General Info
    - Sample short name/Alias: Used for samplename in downstream analyses. Ensure this is the same name used in the metadata samplesheet.
-   - Environment: where the sample was collected
-   - Catalog No.: catalog number if available (optional)
-   - Read 1 FASTQ file: Read 1 FASTQ file from a paired-end sequencing run.
-   - Read 2 FASTQ file: Read 2 FASTQ file that pairs with the input R1 file.
+   - metadata_file: Path to the TSV file containing experiment metadata. The first column must have the header "sample-id" with sample names exactly as they have been input into your SciDAP project. The remaining column headers are experiment-specific. NOTE: Custom Label parameter metadata must be INT data type.
+   - pcoa_label: Must be identical to one of the headers of the metadata file. Values under this metadata header must be INT. Required for PCoA analysis.
+   - sampling_depth: Required for differential abundance analyses (along with group and taxonomic level). This step will subsample the counts in each sample without replacement so that each sample in the resulting table has a total count of INT. If the total count for any sample(s) are smaller than this value, those samples will be dropped from further analysis. It's recommend making your choice by reviewing the rarefaction plot. Choose a value that is as high as possible (so you retain more sequences per sample) while excluding as few samples as possible.
+   - diff_group: Required for differential abundance analyses (along with sampling depth and taxonomic level). Group/experimental condition column name from sample metadata file. Must be identical to one of the headers of the sample-metadata file. The corresponding column should only have two groups/conditions.
+   - taxonomic_level: Required for differential abundance analyses (along with sampling depth and group). Collapses the OTU table at the taxonomic level of interest for differential abundance analysis with ANCOM. Default: Genus
+   - 16S samples for combined analysis: Upstream 16S samples for combined analysis. R1 and R2 fastq are used for generating the manifest file for data import to qiime2.
    - Trim 5' of R1: Recommended if adapters are still on the input sequences. Trims the first J bases from the 5' end of each forward read.
    - Trim 5' of R2: Recommended if adapters are still on the input sequences. Trims the first K bases from the 5' end of each reverse read.
    - Truncate 3' of R1: Recommended if quality drops off along the length of the read. Clips the forward read starting M bases from the 5' end (before trimming).
