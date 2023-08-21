@@ -80,37 +80,38 @@ inputs:
     sd:preview:
       position: 6
 
-  sample_pe_names:
+  sample_names:
     type:
       - "null"
-      - string[]?
+      - string[]
+    default: null
     label: "16S samples for combined analysis:"
-    'sd:localLabel': true
-    'sd:upstreamSource': "qiime2_sample_pe/alias"
     doc: |
       Upstream 16S samples for combined analysis. R1 and R2 fastq are used for generating the manifest file for data import to qiime2.
     sd:preview:
       position: 11
+    'sd:upstreamSource': "qiime2_sample_pe/alias"
+    'sd:localLabel': true
 
   fastq_r1_array:
     type:
-      - File
-      - type: array
-        items: File
+    - "null"
+    - File[]
+    default: null
     format: "http://edamontology.org/format_1930"
+    label: "Array of R1 fastq files from upstream samples"
+    doc: "Array of forward read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow."
     'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R1"
-    doc: |
-      Array of forward read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
   fastq_r2_array:
     type:
-      - File
-      - type: array
-        items: File
+    - "null"
+    - File[]
+    default: null
     format: "http://edamontology.org/format_1930"
+    label: "Array of R1 fastq files from upstream samples"
+    doc: "Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow."
     'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
-    doc: |
-      Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
   trimLeftF:
     type: int?
