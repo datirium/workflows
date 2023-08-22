@@ -126,12 +126,24 @@ printf "\t-l, \$LEVEL, $LEVEL\n"
 #	MAIN
 #===============================================================================
 printf "\n\nStep 1 - Create sample manifest\n"
+# cannot import fastq in bz2 compressed format, need to change to gz
+printf "$READ1ARRAY\n" | sed 's/,/\n/g' | while read f; do
+  bn=$(printf "$f" | sed -e 's/\/.*\///' -e 's/\..*//') # get basename for each file
+  bunzip2 --stdout $f | gzip > $bn.fastq.gz             # decompress from bz2, recompress with gz
+  printf "$PWD/$bn.fastq.gz," >> read1path.array.csv    # store absolute file paths in csv file
+done
+printf "$READ2ARRAY\n" | sed 's/,/\n/g' | while read f; do
+  bn=$(printf "$f" | sed -e 's/\/.*\///' -e 's/\..*//') # get basename for each file
+  bunzip2 --stdout $f | gzip > $bn.fastq.gz             # decompress from bz2, recompress with gz
+  printf "$PWD/$bn.fastq.gz," >> read2path.array.csv    # store absolute file paths in csv file
+done
+# make manifest using gz files
 printf "%s\t" "sample-id" > pe-manifest.transpose
 cut -f1 "$METADATAFILE" | tail -n+2 | awk '{printf("%s\t",$0)}END{printf("\n")}' >> pe-manifest.transpose
 printf "%s\t" "forward-absolute-filepath" >> pe-manifest.transpose
-printf "$READ1ARRAY\n" | sed 's/,/\t/g' >> pe-manifest.transpose
+sed 's/,$/\n/' read1path.array.csv | sed 's/,/\t/g' >> pe-manifest.transpose
 printf "%s\t" "reverse-absolute-filepath" >> pe-manifest.transpose
-printf "$READ2ARRAY\n" | sed 's/,/\t/g' >> pe-manifest.transpose
+sed 's/,$/\n/' read2path.array.csv | sed 's/,/\t/g' >> pe-manifest.transpose
 # transpose into expected manifest format
 transpose_tsv.awk pe-manifest.transpose > pe-manifest.tsv
 
