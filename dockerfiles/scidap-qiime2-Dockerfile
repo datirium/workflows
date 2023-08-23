@@ -1,0 +1,54 @@
+#################################################################
+# Dockerfile
+#
+# Software:         QIIME2
+# Software Version: v2023.5
+# Description:      Dockerized version of QIIME2 workflow
+# Website:          https://github.com/datirium/workflows
+# Provides:         R script to run QIIME2 platform
+# Base Image:       quay.io/qiime2/core:2023.5
+# Build Cmd:        docker build --no-cache --rm -t qiime2-dev -f scidap-qiime2-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti qiime2-dev /bin/bash
+# Push Cmd1:        docker tag qiime2-dev robertplayer/scidap-qiime2:stable
+#      Cmd2:        docker image push robertplayer/scidap-qiime2:stable
+# Pull Cmd:         docker pull robertplayer/scidap-qiime2:stable
+# Test Stable:      docker run --rm -ti robertplayer/scidap-qiime2:stable /bin/bash
+# re-tag for PR:    docker tag qiime2-dev robertplayer/scidap-qiime2:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-qiime2:v1.0.0
+#
+#   NOTES:
+#   
+#################################################################
+
+
+### Base Image
+#   use for initial image build
+FROM quay.io/qiime2/core:2023.5
+#   use for small script updates etc (shorter build time from stable)
+#FROM robertplayer/scidap-qiime2:stable
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+COPY ./scripts/run_qiime2_sample_pe.sh /usr/local/bin/
+
+### Installing dependencies
+RUN apt-get update && \
+### Installing R dependencies
+#    R -e 'install.packages("ggplot2", repo = "https://cloud.r-project.org/")' && \
+#    R -e 'install.packages("BiocManager", repo = "https://cloud.r-project.org/")' && \
+#    R -e 'BiocManager::install("RnBeads.rn5")' && \
+### Installing scripts/data
+    mkdir -p /dockerdata && \
+    wget -O "/dockerdata/gg_2022_10_backbone_full_length.nb.qza" "https://data.qiime2.org/classifiers/greengenes/gg_2022_10_backbone_full_length.nb.qza" && \
+    chmod +x /usr/local/bin/run_qiime2_sample_pe.sh && \
+    ls -la /usr/local/bin/run_qiime2_sample_pe.sh && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true

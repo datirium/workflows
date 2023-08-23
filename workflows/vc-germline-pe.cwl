@@ -50,7 +50,7 @@ inputs:
       position: 5
 
   reference_fasta:
-    type: Directory
+    type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
     'sd:localLabel': true
@@ -323,6 +323,12 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  snpEff_genes:
+    type: File?
+    label: "snpEff genes table"
+    doc: "text file containing gene details from snpeff, required for link in html summary"
+    outputSource: call_germline_variants/snpEff_genes
+
   insert_size_histogram:
     type: File
     label: "insert size histogram PDF"
@@ -350,12 +356,12 @@ outputs:
     doc: "Tab delimited chromosome length file: <chromName><TAB><chromSize>"
     outputSource: call_germline_variants/chrom_length_tsv
 
-  bqsr2_indels:
+  bqsr2_indels_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "indels called after filtering and recalibration"
     doc: "indels called after filtering and recalibration"
-    outputSource: call_germline_variants/bqsr2_indels
+    outputSource: call_germline_variants/bqsr2_indels_vcf
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -365,12 +371,12 @@ outputs:
         height: 40
         displayMode: "COLLAPSED"
 
-  bqsr2_snps:
+  bqsr2_snps_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "snps called after filtering and recalibration"
     doc: "snps called after filtering and recalibration"
-    outputSource: call_germline_variants/bqsr2_snps
+    outputSource: call_germline_variants/bqsr2_snps_vcf
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -380,26 +386,26 @@ outputs:
         height: 40
         displayMode: "COLLAPSED"
 
-  bqsr2_snps_ann:
+  bqsr2_all_ann_vcf:
     type: File?
     format: "http://edamontology.org/format_3016"
     label: "snps called after filtering and recalibration with effect annotations"
     doc: "snps called after filtering and recalibration with effect annotations"
-    outputSource: call_germline_variants/bqsr2_snps_ann
+    outputSource: call_germline_variants/bqsr2_all_ann_vcf
 
-  raw_indels:
+  raw_indels_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "indels called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
     doc: "indels called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
-    outputSource: call_germline_variants/raw_indels
+    outputSource: call_germline_variants/raw_indels_vcf
 
-  raw_snps:
+  raw_snps_vcf:
     type: File
     format: "http://edamontology.org/format_3016"
     label: "snps called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
     doc: "snps called from gatk HaplotypeCaller using sorted_dedup_reads.bam"
-    outputSource: call_germline_variants/raw_snps
+    outputSource: call_germline_variants/raw_snps_vcf
 
   overview:
     type: File
@@ -533,8 +539,7 @@ steps:
       target_filename:
         source: extract_fastq_R1/fastq_file
         valueFrom: $(self.basename)
-    out:
-      - target_file
+    out: [target_file]
 
   rename_R2:
     run: ../tools/rename.cwl
@@ -543,8 +548,7 @@ steps:
       target_filename:
         source: extract_fastq_R2/fastq_file
         valueFrom: $(self.basename)
-    out:
-      - target_file
+    out: [target_file]
 
   fastx_quality_stats_R1:
     label: "Quality control of unmapped sequence data for read 1"
@@ -591,7 +595,21 @@ steps:
       indel_QD: indel_QD
       indel_FS: indel_FS
       indel_SOR: indel_SOR
-    out: [sorted_dedup_bam, chrom_length_tsv, bqsr2_indels, bqsr2_snps, bqsr2_snps_ann, raw_indels, raw_snps, overview, log_file_stdout, log_file_stderr, insert_size_histogram, recalibration_plots, snpEff_summary]
+    out:
+      - sorted_dedup_bam
+      - chrom_length_tsv
+      - bqsr2_indels_vcf
+      - bqsr2_snps_vcf
+      - bqsr2_all_ann_vcf
+      - raw_indels_vcf
+      - raw_snps_vcf
+      - overview
+      - log_file_stdout
+      - log_file_stderr
+      - insert_size_histogram
+      - recalibration_plots
+      - snpEff_summary
+      - snpEff_genes
 
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
@@ -620,7 +638,7 @@ s:name: "Variant calling germline paired-end"
 label: "Variant calling germline paired-end"
 s:alternateName: "Variant calling pipeline for germline paired-end samples"
 
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
+s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/vc-germline-pe.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

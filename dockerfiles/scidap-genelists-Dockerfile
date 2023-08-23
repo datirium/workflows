@@ -1,0 +1,75 @@
+#################################################################
+# Dockerfile
+#
+# Software:         supporting tools for generating underlying data for genelist chip/atac/rna-seq heatmap visualization comparisons
+# Software Version: R v4.0.2, samtools v1.17
+# Description:      samtools, R
+# Website:          https://github.com/datirium/workflows
+# Provides:         samtools, R
+# Base Image:       biowardrobe2/sc-tools:v0.0.19
+# Build Cmd:        docker build --no-cache --rm -t genelists-dev -f scidap-genelists-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti genelists-dev /bin/bash
+# Push Cmd1:        docker tag genelists-dev robertplayer/scidap-genelists:dev
+#      Cmd2:        docker image push robertplayer/scidap-genelists:dev
+# Pull Cmd:         docker pull robertplayer/scidap-genelists:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-genelists:dev /bin/bash
+# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-genelists:v1.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-genelists:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v1.0.0 /bin/bash
+#           
+#   NOTES:
+#           This dockerfile may be updated to include a run_* script for se fastq input in the future
+#################################################################
+
+
+### Base Image
+FROM biowardrobe2/sc-tools:v0.0.19
+#FROM robertplayer/scidap-genelists:dev
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+COPY ./scripts/run_genelists.sh /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap.R /usr/local/bin/
+COPY ./scripts/fasta_rmlinebreaks.awk /usr/local/bin/
+COPY ./scripts/fasta_2col.sh /usr/local/bin/
+
+### Installing dependencies etc
+RUN apt-get update && \
+    # R libraries
+    R -e 'devtools::install_github("cmap/morpheus.R")' && \
+    # samtools
+    wget https://github.com/samtools/samtools/releases/download/1.17/samtools-1.17.tar.bz2 && \
+    tar -xf samtools-1.17.tar.bz2 && \
+    cd samtools-1.17 && \
+    ./configure --prefix=/usr/local/bin/samtools-1.17 && \
+    make && \
+    make install && \
+    # bash/core utils
+    apt-get install ed && \
+    wget http://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2 && \
+    tar xjf parallel-latest.tar.bz2 && \
+    rm parallel-latest.tar.bz2 && \
+    cd parallel-* && \
+    ./configure && make && \
+    make install && \
+    # adding reference data
+    mkdir -p /dockerdata/refs && \
+    cd /dockerdata/refs && \
+    # permitting and symlinking scripts
+    chmod +x /usr/local/bin/run_genelists.sh && \
+    chmod +x /usr/local/bin/run_genelists_heatmap.R && \
+    chmod +x /usr/local/bin/fasta_rmlinebreaks.awk && \
+    chmod +x /usr/local/bin/fasta_2col.sh && \
+    chmod +x /usr/local/bin/samtools-1.17/bin/samtools && \
+    ln -s /usr/local/bin/samtools-1.17/bin/samtools /usr/local/bin/ && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
