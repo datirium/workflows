@@ -14,31 +14,23 @@ requirements:
 - class: InitialWorkDirRequirement
   listing: |
     ${
-      return  [
-                {
-                  "entry": inputs.bam_file,
-                  "entryname": inputs.bam_file.basename,
-                  "writable": true
-                }
-              ]
-    }
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
       var listing = [
-                {
-                  "entry": inputs.bam_file,
-                  "entryname": inputs.bam_file.basename,
-                  "writable": true
-                },
-                {
-
-                  "entry": inputs.bam_file.secondaryFiles,
-                  "entryname": "",
-                  "writable": true
-                }
-        ]
-        return listing;
+        {
+          "entry": inputs.bam_file,
+          "entryname": inputs.bam_file.basename,
+          "writable": true
+        }
+      ]
+      for(var i =0; i<inputs.bam_file.secondaryFiles.length; i++){
+        listing.push( 
+          {
+            "entry": inputs.bam_file.secondaryFiles[i],
+            "entryname": inputs.bam_file.secondaryFiles[i].basename,
+            "writable": true
+          }
+        );
+      }
+      return listing;
     }
 
 
