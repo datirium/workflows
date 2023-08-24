@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.28
+  dockerPull: biowardrobe2/sc-tools:v0.0.29
 
 
 inputs:
@@ -831,6 +831,15 @@ outputs:
     doc: |
       Gene expression heatmap.
       PDF format
+
+  xpr_htmp_tsv:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.tsv"
+    doc: |
+      Gene markers used for gene
+      expression heatmap.
+      TSV format
 
   gene_markers_tsv:
     type: File?
