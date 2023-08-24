@@ -547,6 +547,14 @@ outputs:
         tab: 'Genome coverage'
         Caption: 'Fragments coverage'
 
+  xpr_htmp_tsv:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_tsv
+    label: "Markers from gene expression heatmap"
+    doc: |
+      Gene markers used for gene
+      expression heatmap
+
   gene_markers_tsv:
     type: File?
     outputSource: ctype_assign/gene_markers_tsv
@@ -731,6 +739,7 @@ steps:
     - xpr_per_cell_sgnl_rd_wnnumap_plot_pdf
     - cvrg_plot_pdf
     - xpr_htmp_plot_pdf
+    - xpr_htmp_tsv
     - gene_markers_tsv
     - peak_markers_tsv
     - ucsc_cb_html_data

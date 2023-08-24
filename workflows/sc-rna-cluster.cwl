@@ -383,6 +383,17 @@ outputs:
         tab: 'Heatmap'
         Caption: 'Gene expression heatmap'
 
+  xpr_htmp_res_tsv:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/xpr_htmp_res_tsv
+    label: "Markers from gene expression heatmap"
+    doc: |
+      Gene markers used for gene
+      expression heatmap
+
   gene_markers_tsv:
     type: File?
     outputSource: sc_rna_cluster/gene_markers_tsv
@@ -526,6 +537,7 @@ steps:
     - xpr_per_cell_sgnl_plot_pdf
     - xpr_dnst_res_plot_pdf
     - xpr_htmp_res_plot_pdf
+    - xpr_htmp_res_tsv
     - gene_markers_tsv
     - ucsc_cb_html_data
     - ucsc_cb_html_file
