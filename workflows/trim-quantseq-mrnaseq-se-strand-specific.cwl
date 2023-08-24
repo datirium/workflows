@@ -362,13 +362,13 @@ outputs:
     doc: "cutadapt: stderr log"
     outputSource: trim_adapters/stderr_log
 
-  umi_tools_dedup_stdout_log:
+  umi_tools_dedup_stdout_log_file:
     type: File
     label: "umi_tools dedup: stdout log"
     doc: "umi_tools dedup: stdout log"
     outputSource: umi_tools_dedup/stdout_log
 
-  umi_tools_dedup_stderr_log:
+  umi_tools_dedup_stderr_log_file:
     type: File
     label: "umi_tools dedup: stderr log"
     doc: "umi_tools dedup: stderr log"
