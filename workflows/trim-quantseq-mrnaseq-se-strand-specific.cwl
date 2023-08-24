@@ -856,8 +856,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
-label: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
+s:name: "QuantSeq 3' mRNA-Seq single-read"
+label: "QuantSeq 3' mRNA-Seq single-read"
 s:alternateName: "Runs QuantSeq 3' FWD, FWD-UMI or REV analysis for single-read mRNA-Seq data"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-quantseq-mrnaseq-se-strand-specific.cwl
@@ -889,4 +889,4 @@ s:creator:
 
 
 doc: |
-  ### Devel version of QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data 
+  ### QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data 
