@@ -21,8 +21,6 @@ requirements:
                 }
               ]
     }
-
-hints:
 - class: DockerRequirement
   dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
 
