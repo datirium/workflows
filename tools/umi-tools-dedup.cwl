@@ -10,6 +10,7 @@ requirements:
         var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
         return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
     };
+
 - class: InitialWorkDirRequirement
   listing: |
     ${
@@ -24,23 +25,22 @@ requirements:
 - class: InitialWorkDirRequirement
   listing: |
     ${
-      var listing = [];
-      for (var i = 0; i < inputs.alignment_files.length; i++){
-        var alignment_file = inputs.alignment_files[i];
-        var prefix = "u" + i + "_";
-        alignment_file.basename = prefix + alignment_file.basename;
-        if (alignment_file.secondaryFiles && alignment_file.secondaryFiles.length > 0){
-          for (var j = 0; j < alignment_file.secondaryFiles.length; j++){
-            var secondary_file = alignment_file.secondaryFiles[j];
-            secondary_file.basename = prefix + secondary_file.basename;
-            listing.push(secondary_file);
-          }
-          delete alignment_file.secondaryFiles;
-        }
-        listing.push(alignment_file);
-      }
-      return listing;
+      var listing = [
+                {
+                  "entry": inputs.bam_file,
+                  "entryname": inputs.bam_file.basename,
+                  "writable": true
+                },
+                {
+
+                  "entry": inputs.bam_file.secondaryFiles,
+                  "entryname": "",
+                  "writable": true
+                }
+        ]
+        return listing;
     }
+
 
 hints:
 - class: DockerRequirement
