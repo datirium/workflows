@@ -554,8 +554,7 @@ steps:
         valueFrom: $(get_root(self.basename)+".bam")
       threads: threads
       trigger: use_umi
-    out:
-    - bam_bai_pair
+    out: [bam_bai_pair]
 
   htseq_count_transcript_expression:
     run: ../tools/htseq-count.cwl
