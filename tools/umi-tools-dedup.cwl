@@ -21,6 +21,28 @@ requirements:
                 }
               ]
     }
+- class: InitialWorkDirRequirement
+  listing: |
+    ${
+      var listing = [];
+      for (var i = 0; i < inputs.alignment_files.length; i++){
+        var alignment_file = inputs.alignment_files[i];
+        var prefix = "u" + i + "_";
+        alignment_file.basename = prefix + alignment_file.basename;
+        if (alignment_file.secondaryFiles && alignment_file.secondaryFiles.length > 0){
+          for (var j = 0; j < alignment_file.secondaryFiles.length; j++){
+            var secondary_file = alignment_file.secondaryFiles[j];
+            secondary_file.basename = prefix + secondary_file.basename;
+            listing.push(secondary_file);
+          }
+          delete alignment_file.secondaryFiles;
+        }
+        listing.push(alignment_file);
+      }
+      return listing;
+    }
+
+hints:
 - class: DockerRequirement
   dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
 
