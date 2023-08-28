@@ -129,8 +129,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Filter DiffBind results for deepTools heatmap analysis"
-label: "Filter DiffBind results for deepTools heatmap analysis"
+s:name: "Filter differentially bound sites for heatmap analysis"
+label: "Filter differentially bound sites for heatmap analysis"
 s:alternateName: "Filter differentially bound sites from DiffBind analysis to be used with deepTools heatmap analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/filter-diffbind-for-heatmap.cwl
