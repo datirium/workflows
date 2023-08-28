@@ -148,15 +148,12 @@ inputs:
       Default: false
 
   regress_genes:
-    type:
-    - "null"
-    - string
-    - string[]
+    type: string?
     inputBinding:
       prefix: "--regressgenes"
     doc: |
-      Genes which expression should be regressed as a confounding source of variation.
-      Default: None
+      Regex pattern to identify genes which expression should be
+      regressed as a confounding source of variation. Default: none
 
   regress_ccycle_full:
     type: boolean?
@@ -867,9 +864,10 @@ s:about: |
     --regressmt           Regress the percentage of transcripts mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
-    --regressgenes [REGRESSGENES [REGRESSGENES ...]]
-                          Genes which expression should be regressed as a
-                          confounding source of variation. Default: None
+    --regressgenes REGRESSGENES
+                          Regex pattern to identify genes which expression
+                          should be regressed as a confounding source of variation.
+                          Default: none
     --regressccfull       Regress all signals associated with cell cycle phase.
                           Ignored if --cellcycle is not provided. Mutually
                           exclusive with --regressccdiff parameter. Default:
