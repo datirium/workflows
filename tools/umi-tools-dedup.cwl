@@ -10,17 +10,7 @@ requirements:
         var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
         return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
     };
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return  [
-                {
-                  "entry": inputs.bam_file,
-                  "entryname": inputs.bam_file.basename,
-                  "writable": true
-                }
-              ]
-    }
+
 
 hints:
 - class: DockerRequirement
@@ -133,8 +123,8 @@ outputs:
 
 
 baseCommand: [bash, '-c']
-stdout: umi_tools_dedup_stdout.log
-stderr: umi_tools_dedup_stderr.log
+stdout: umi_tools_dedup_stdout_file.log
+stderr: umi_tools_dedup_stderr_file.log
 
 
 $namespaces:
