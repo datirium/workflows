@@ -178,7 +178,7 @@ outputs:
     doc: "STAR Log.progress.out"
     outputSource: star_aligner/log_progress
 
-  star_stdout_log_file:
+  star_stdout_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR stdout log"
