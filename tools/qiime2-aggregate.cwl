@@ -22,28 +22,28 @@ inputs:
       sample metadata file, sample-id [col1] should be identical to sample names being aggregated
 
   pcoa_label:
-    type: string
+    type: string?
     inputBinding:
       prefix: "-c"
     doc: |
       Must be identical to one of the headers of the metadata file. Values under this metadata header must be INT. Required for PCoA analysis.
 
   sampling_depth:
-    type: int
+    type: int?
     inputBinding:
       prefix: "-d"
     doc: |
       Required for differential abundance analyses (along with group and taxonomic level). This step will subsample the counts in each sample without replacement so that each sample in the resulting table has a total count of INT. If the total count for any sample(s) are smaller than this value, those samples will be dropped from further analysis. It's recommend making your choice by reviewing the rarefaction plot. Choose a value that is as high as possible (so you retain more sequences per sample) while excluding as few samples as possible.
 
   diff_group:
-    type: string
+    type: string?
     inputBinding:
       prefix: "-g"
     doc: |
       Required for differential abundance analyses (along with sampling depth and taxonomic level). Group/experimental condition column name from sample metadata file. Must be identical to one of the headers of the sample-metadata file. The corresponding column should only have two groups/conditions.
 
   taxonomic_level:
-    type: string
+    type: string?
     inputBinding:
       prefix: "-l"
     doc: |

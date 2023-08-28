@@ -35,7 +35,7 @@ inputs:
       position: 2
 
   pcoa_label:
-    type: string
+    type: string?
     label: "Metadata header name for PCoA axis label:"
     'sd:localLabel': true
     doc: |
@@ -44,7 +44,7 @@ inputs:
       position: 3
 
   sampling_depth:
-    type: int
+    type: int?
     label: "Rarefaction normalization sampling depth:"
     'sd:localLabel': true
     doc: |
@@ -53,8 +53,8 @@ inputs:
       position: 4
 
   diff_group:
-    type: string
-    label: "Metadata header name for differential abundance analyses:"
+    type: string?
+    label: "Metadata header name for differential abundance analyses (group):"
     'sd:localLabel': true
     doc: |
       Required for differential abundance analyses (along with sampling depth and taxonomic level). Group/experimental condition column name from sample metadata file. Must be identical to one of the headers of the sample-metadata file. The corresponding column should only have two groups/conditions.
