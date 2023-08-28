@@ -3,6 +3,8 @@ class: CommandLineTool
 
 
 requirements:
+- class: DockerRequirement
+  dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
 - class: InlineJavascriptRequirement
   expressionLib:
   - var default_output_filename = function() {
@@ -10,7 +12,6 @@ requirements:
         var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
         return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
     };
-
 - class: InitialWorkDirRequirement
   listing: |
     ${
@@ -32,11 +33,6 @@ requirements:
       }
       return listing;
     }
-
-
-hints:
-- class: DockerRequirement
-  dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
 
 
 inputs:
