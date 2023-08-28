@@ -171,8 +171,9 @@ inputs:
     label: "Regress genes"
     default: null
     doc: |
-      Regress expression of the selected genes
-      as a confounding source of variation.
+      Regex pattern to identify genes which
+      expression should be regressed as a
+      confounding source of variation.
       Default: None
 
   regress_mito_perc:
@@ -598,7 +599,7 @@ steps:
       regress_mito_perc: regress_mito_perc
       regress_genes:
         source: regress_genes
-        valueFrom: $(split_features(self))
+        valueFrom: $(self==""?null:self)            # safety measure
       dimensions: dimensions
       verbose:
         default: true
