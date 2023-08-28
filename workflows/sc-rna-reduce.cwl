@@ -23,6 +23,7 @@ requirements:
   - "sc-atac-reduce.cwl"
   - "sc-rna-filter.cwl"
   - "sc-multiome-filter.cwl"
+  - "https://github.com/datirium/workflows/workflows/sc-rna-filter.cwl"
 
 
 inputs:
