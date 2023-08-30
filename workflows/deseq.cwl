@@ -23,7 +23,7 @@ requirements:
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
   rnaseq_cond_2:
     - "mirna-mirdeep2-se.cwl"
     - "rnaseq-se.cwl"
@@ -37,7 +37,7 @@ requirements:
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
 
 
 inputs:
@@ -427,14 +427,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_stdout_log:
+  deseq_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
     outputSource: deseq/stdout_log
 
-  deseq_stderr_log:
+  deseq_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
