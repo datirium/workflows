@@ -434,7 +434,7 @@ outputs:
     doc: "DESeq stdout log"
     outputSource: deseq/stdout_log
 
-  deseq_stderr_log_file:
+  deseq_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"

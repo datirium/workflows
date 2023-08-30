@@ -57,7 +57,7 @@ outputs:
   log_file_stdout:
     type: stdout
 
-  log_file_stderr_file:
+  log_file_stderr:
     type: stderr
 
 
