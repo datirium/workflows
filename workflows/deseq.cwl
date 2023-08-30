@@ -268,18 +268,6 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "DESeq generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
     outputSource: deseq/diff_expr_file
-    'sd:visualPlugins':
-    - syncfusiongrid:
-        tab: 'Differential Expression Analysis'
-        Title: 'Combined DESeq results'
-    - scatter:
-        tab: 'Volcano Plot'
-        Title: 'Volcano'
-        xAxisTitle: 'log fold change'
-        yAxisTitle: '-log10(pAdj)'
-        colors: ["#b3de69"]
-        height: 600
-        data: [$2, $9, $13]
 
   read_counts_file:
     type: File
