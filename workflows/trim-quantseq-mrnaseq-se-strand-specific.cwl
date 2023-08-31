@@ -237,23 +237,30 @@ outputs:
     doc: "Bowtie alignment log file"
     outputSource: bowtie_aligner/log_file
 
-  gene_expression_file:
+  rpkm_isoforms:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Transcript expression"
+    doc: "Transcript expression (not actually RPKM, name needed for deseq input)"
+    outputSource: group_transcript_expression/transcript_expression_file
+
+  rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Gene expression"
-    doc: "Gene expression"
+    doc: "Gene expression (not actually RPKM, name needed for deseq input)"
     outputSource: group_transcript_expression/gene_expression_file
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Gene Expression'
         Title: 'Read counts grouped by gene'
 
-  # common_tss_expression_file:
-  #   type: File
-  #   format: "http://edamontology.org/format_3475"
-  #   label: "Common TSS expression"
-  #   doc: "Common TSS expression"
-  #   outputSource: group_transcript_expression/common_tss_expression_file
+  rpkm_common_tss:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Common TSS expression"
+    doc: "Common TSS expression (not actually RPKM, name needed for deseq input)"
+    outputSource: group_transcript_expression/common_tss_expression_file
 
   geep_gene_expression_file:
     type: File

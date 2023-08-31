@@ -54,8 +54,16 @@ outputs:
     doc: |
       HTML index file for Volcano Plot
 
+  log_file_stdout:
+    type: stdout
+
+  log_file_stderr:
+    type: stderr
+
 
 baseCommand: ["volcano_plot.sh"]
+stdout: volcano_plot-stdout.log
+stderr: volcano_plot-stderr.log
 
 
 $namespaces:
