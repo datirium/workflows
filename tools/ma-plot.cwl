@@ -54,8 +54,16 @@ outputs:
     doc: |
       HTML index file for MA-plot
 
+  log_file_stdout:
+    type: stdout
+
+  log_file_stderr:
+    type: stderr
+
 
 baseCommand: ["ma_plot.sh"]
+stdout: ma_plot-stdout.log
+stderr: ma_plot-stderr.log
 
 
 $namespaces:

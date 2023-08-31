@@ -23,7 +23,7 @@ requirements:
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
   rnaseq_cond_2:
     - "mirna-mirdeep2-se.cwl"
     - "rnaseq-se.cwl"
@@ -37,7 +37,7 @@ requirements:
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
 
 
 inputs:
@@ -272,14 +272,6 @@ outputs:
     - syncfusiongrid:
         tab: 'Differential Expression Analysis'
         Title: 'Combined DESeq results'
-    - scatter:
-        tab: 'Volcano Plot'
-        Title: 'Volcano'
-        xAxisTitle: 'log fold change'
-        yAxisTitle: '-log10(pAdj)'
-        colors: ["#b3de69"]
-        height: 600
-        data: [$2, $9, $13]
 
   read_counts_file:
     type: File
