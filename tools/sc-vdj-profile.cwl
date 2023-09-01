@@ -72,20 +72,6 @@ inputs:
       Column from the metadata of the loaded Seurat
       object to select clusters from.
 
-  analysis_mode:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "tcr"
-      - "bcr"
-    inputBinding:
-      prefix: "--mode"
-    doc: |
-      Analysis mode. tcr: T-cell receptor with alpha, beta,
-      delta, and gamma chains. bcr: B-cell receptor with
-      heavy and light immunoglobulin chains. Default: tcr
-
   cloneby:
     type:
     - "null"
@@ -751,8 +737,8 @@ doc: |
 
 s:about: |
   usage: sc_vdj_profile.R [-h] --query QUERY --contigs CONTIGS
-                          [--metadata METADATA] [--barcodes BARCODES] --source
-                          SOURCE [--mode {tcr,bcr}]
+                          [--metadata METADATA] [--barcodes BARCODES]
+                          --source SOURCE
                           [--cloneby {gene,nt,aa,strict}] [--groupby GROUPBY]
                           [--strictness {removemulti,filtermulti}] [--pdf]
                           [--verbose] [--h5seurat] [--h5ad] [--cbbuild]
@@ -791,9 +777,6 @@ s:about: |
                           metadata is added
     --source SOURCE       Column from the metadata of the loaded Seurat object
                           to select clusters from.
-    --mode {tcr,bcr}      Analysis mode. tcr: T-cell receptor with alpha, beta,
-                          delta, and gamma chains. bcr: B-cell receptor with
-                          heavy and light immunoglobulin chains. Default: tcr
     --cloneby {gene,nt,aa,strict}
                           Defines how to call the clonotype. gene: based on VDJC
                           gene sequence. nt: based on the nucleotide sequence.

@@ -66,22 +66,6 @@ inputs:
       are available, add "custom_" prefix to
       the column name.
 
-  analysis_mode:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "tcr"
-      - "bcr"
-    default: "tcr"
-    label: "Analysis mode"
-    doc: |
-      Analysis mode. tcr: T-cell receptor with
-      alpha, beta, delta, and gamma chains.
-      bcr: B-cell receptor with heavy and light
-      immunoglobulin chains.
-      Default: tcr
-
   cloneby:
     type:
     - "null"
@@ -529,7 +513,6 @@ steps:
       datasets_metadata: datasets_metadata
       barcodes_data: barcodes_data
       query_source_column: query_source_column
-      analysis_mode: analysis_mode
       cloneby: cloneby
       groupby:
         default: "new.ident"
