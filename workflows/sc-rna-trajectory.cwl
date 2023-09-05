@@ -45,6 +45,20 @@ inputs:
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
 
+  dimensions:
+    type: int?
+    label: "Target dimensionality"
+    default: 0
+    doc: |
+      Number of principal components to be used
+      in the trajectory analysis. Accepted values
+      range from 1 to 50. Will fail if used more
+      dimensions than it was available in the
+      selected "Single-cell Analysis with
+      Clustered RNA-Seq Datasets". If set to 0,
+      use all available dimensions
+      Default: 0
+
   query_source_column:
     type: string
     label: "Cells grouping"
@@ -384,6 +398,9 @@ steps:
       barcodes_data: barcodes_data
       reduction:
         default: "pca"
+      dimensions:
+        source: dimensions
+        valueFrom: $(self==0?null:self)             # to use all available dimensions
       query_source_column: query_source_column
       trajectory_start:
         source: trajectory_start
