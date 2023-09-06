@@ -805,7 +805,7 @@ steps:
       script:
         default: >
           cat $0 | awk -F'\t'
-          '{if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`".bed"
+          '{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),$4,"peak_"NR)}}' > `basename $0`".bed"
     out:
     - output_file
     doc: |
@@ -913,7 +913,7 @@ steps:
       script:
         default: >
           cat $0 | awk -F'\t'
-          '{if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`".bed"
+          '{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),$4,"peak_"NR)}}' > `basename $0`".bed"
     out:
     - output_file
     doc: |
@@ -927,7 +927,7 @@ steps:
         default: >
           cat $0 | awk -F'\t'
           'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
-          {if($3>$2){print $1"\t"$2"\t"$3"\t"$3-$2+1"\t"$5"\t"$4"\t0\t0\t0\tpeak_"NR}}' > `basename $0`"headers.bed"
+          {if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),$4,"peak_"NR)}}' > `basename $0`"headers.bed"
     out:
     - output_file
     doc: |
