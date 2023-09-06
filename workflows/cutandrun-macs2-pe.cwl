@@ -535,6 +535,30 @@ outputs:
         tab: 'Annotated Peaks'
         Title: 'Peak list with nearest gene annotation'
 
+  atdp_log:
+    type: File
+    label: "ATDP log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated log"
+    outputSource: average_tag_density/log_file
+
+  atdp_result:
+    type: File
+    label: "ATDP results"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated results"
+    outputSource: average_tag_density/result_file
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'QC Plots'
+        Title: 'Average Tag Density'
+        xAxisTitle: 'Distance From TSS (bases)'
+        yAxisTitle: 'Average Tag Density (per bp)'
+        colors: ["#b3de69"]
+        height: 500
+        data: [$1, $2]
+        comparable: "atdp"
+
 
 steps:
 
@@ -961,6 +985,29 @@ steps:
       annotation_filename: annotation_file
       promoter_bp: promoter_dist
       upstream_bp: upstream_dist
+    out: [result_file, log_file]
+
+  average_tag_density:
+    label: "Read enrichment around genes TSS"
+    doc: |
+      Generates average tag density plot around genes TSS as a lot of cis-regulatory
+      elements are close to the TSS of their targets.
+    run: ../tools/atdp.cwl
+    in:
+      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      annotation_filename: annotation_file
+      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      avd_window_bp:
+        default: 5000
+      avd_smooth_bp:
+        default: 50
+      ignore_chr:
+        default: chrM
+      double_chr:
+        default: "chrX chrY"
+      avd_heat_window_bp:
+        default: 200
+      mapped_reads: get_stat/mapped_reads
     out: [result_file, log_file]
 
 
