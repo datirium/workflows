@@ -7,7 +7,7 @@
 # Website:          https://github.com/datirium/workflows
 # Provides:         R script to run QIIME2 platform
 # Base Image:       quay.io/qiime2/core:2023.5
-# Build Cmd:        docker build --no-cache --rm -t qiime2-dev -f scidap-qiime2-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Build Cmd:        docker build --platform linux/amd64 --no-cache --rm -t qiime2-dev -f scidap-qiime2-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
 # Run Cmd:          docker run --rm -ti qiime2-dev /bin/bash
 # Push Cmd1:        docker tag qiime2-dev robertplayer/scidap-qiime2:stable
 #      Cmd2:        docker image push robertplayer/scidap-qiime2:stable
@@ -15,7 +15,7 @@
 # Test Stable:      docker run --rm -ti robertplayer/scidap-qiime2:stable /bin/bash
 # re-tag for PR:    docker tag qiime2-dev robertplayer/scidap-qiime2:v1.0.0
 # Push for PR:      docker image push robertplayer/scidap-qiime2:v1.0.0
-#
+#   
 #   NOTES:
 #   
 #################################################################

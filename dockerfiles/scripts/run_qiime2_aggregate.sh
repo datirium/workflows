@@ -21,17 +21,20 @@ Shell wrapper for import and quantitation of 2+ paired-end 16S sequencing sample
 Alpha rarefaction and taxonomic classification plots are also output for the aggregated samples.
 Taxonomy classification is performed using a Naive Bayes classifier trained on the Greengenes2 database "gg_2022_10_backbone_full_length.nb.qza".
 Generally, this workflow follows the "moving-pictures" turorial: https://docs.qiime2.org/2023.5/tutorials/moving-pictures/
+If "Metadata header name for PCoA axis label" is provided, principle coordinates analysis (PCoA) will be performed using the unweighted unifrac and bray curtis methods. 3D plots are produced with PCo1, PCo2, and the provided axis label on the x, y, and z axes.
+If the sampling depth and metadata header for differential analysis are provided, differential abundance analysis will be performed using Gneiss and ANCOM methods at the family, genus, and species taxonomic levels. A unsupervised hierarchical clustering heatmap (Gneiss) and volcano plot (ANCOM) are produced at the taxonomic level between the specified group.
 
     Primary output files:
     - overview.md, list of inputs
     - demux.qzv, summary visualizations of imported data
     - alpha-rarefaction.qzv, plot of OTU rarefaction
     - taxa-bar-plots.qzv, relative frequency of taxomonies barplot
+    - table.qza, table containing how many sequences are associated with each sample and with each feature (OTU)
     Optional output files:
     - pcoa-unweighted-unifrac-emperor.qzv, PCoA using unweighted unifrac method
     - pcoa-bray-curtis-emperor.qzv, PCoA using bray curtis method
     - heatmap.qzv, output from gneiss differential abundance analysis using unsupervised correlation-clustering method (this will define the partitions of microbes that commonly co-occur with each other using Ward hierarchical clustering)
-    - ancom.qzv, output from ANCOM differential abundance analysis at user-specified taxonomic level (includes volcano plot)
+    - ancom-\$LEVEL.qzv, output from ANCOM differential abundance analysis at family, genus, and species taxonomic levels (includes volcano plot)
 
 PARAMS:
     SECTION 1: general
@@ -50,8 +53,6 @@ Must be identical to one of the headers of the sample-metadata file. The corresp
 This step will subsample the counts in each sample without replacement so that each sample in the resulting table has a total count of INT. If the total count for any sample(s) are smaller than this value, those samples will be dropped from the diversity analysis. It's recommend making your choice by reviewing the rarefaction plot. Choose a value that is as high as possible (so you retain more sequences per sample) while excluding as few samples as possible.
     -g  STR          group or experimental condition column name from sample metadata file (required for differential abundance execution)
 Must be identical to one of the headers of the sample-metadata file. The corresponding column should only have two groups/conditions.
-    -l  STR          taxonomic level for differential abundance analysis with ANCOM
-Collapses the OTU table at the taxonomic level of interest for differential abundance analysis
 
 NOTES:
   Example sample metadata file (-r):
@@ -74,7 +75,7 @@ EOF
 #	INPUTS & CHECKS & DEFAULTS
 #===============================================================================
 # parse args
-while getopts "ht:r:a:b:j:k:m:n:c:d:g:l:" OPTION
+while getopts "ht:r:a:b:j:k:m:n:c:d:g:" OPTION
 do
 	case $OPTION in
 		h) usage; exit 1 ;;
@@ -89,7 +90,6 @@ do
 		c) CUSTOMLABEL=$OPTARG ;;
 		d) SAMPLINGDEPTH=$OPTARG ;;
 		g) GROUP=$OPTARG ;;
-		l) LEVEL=$OPTARG ;;
 		?) usage; exit ;;
 	esac
 done
@@ -120,7 +120,6 @@ printf "\t-n, \$truncLenR, $truncLenR\n"
 printf "\t-c, \$CUSTOMLABEL, $CUSTOMLABEL\n"
 printf "\t-d, \$SAMPLINGDEPTH, $SAMPLINGDEPTH\n"
 printf "\t-g, \$GROUP, $GROUP\n"
-printf "\t-l, \$LEVEL, $LEVEL\n"
 
 
 #	MAIN
@@ -216,7 +215,7 @@ qiime taxa barplot \
 
 # if a sampling depth is provided, run these
 printf "\n\nStep 7 - Checking input params for execution of diversity, pcoa, and differential abundance analysis\n"
-if [[ "$SAMPLINGDEPTH" != "" && "$GROUP" != "" && "$LEVEL" != "" ]]; then
+if [[ "$SAMPLINGDEPTH" != "" && "$GROUP" != "" ]]; then
   printf "\n\nStep 7 - Input params SAMPLINGDEPTH (-d) and GROUP (-g) are not empty. Proceeding...\n"
   printf "\n\nStep 7a - Diversity analysis\n"
   qiime diversity core-metrics-phylogenetic \
@@ -255,30 +254,32 @@ if [[ "$SAMPLINGDEPTH" != "" && "$GROUP" != "" && "$LEVEL" != "" ]]; then
     --p-color-map seismic \
     --o-visualization heatmap.qzv
 
-  printf "\n\nStep 7c2 - Differential abundance analysis with ANCOM at $LEVEL level between $GROUP groups/conditions\n"
-  if [[ "$LEVEL" == "Kingdom" ]]; then LEVELNUMBER=1; fi
-  if [[ "$LEVEL" == "Phylum" ]]; then LEVELNUMBER=2; fi
-  if [[ "$LEVEL" == "Class" ]]; then LEVELNUMBER=3; fi
-  if [[ "$LEVEL" == "Order" ]]; then LEVELNUMBER=4; fi
-  if [[ "$LEVEL" == "Family" ]]; then LEVELNUMBER=5; fi
-  if [[ "$LEVEL" == "Genus" ]]; then LEVELNUMBER=6; fi
-  if [[ "$LEVEL" == "Species" ]]; then LEVELNUMBER=7; fi
-  # collapse table to user-specified taxa level
-  qiime taxa collapse \
-    --i-table table.qza \
-    --i-taxonomy taxonomy.qza \
-    --p-level $LEVELNUMBER \
-    --o-collapsed-table collapsed-table.qza
-  # add pseudocounts of 1 where value == 0
-  qiime composition add-pseudocount \
-    --i-table collapsed-table.qza \
-    --o-composition-table comp-collapsed-table.qza
-  # run ancom
-  qiime composition ancom \
-    --i-table comp-collapsed-table.qza \
-    --m-metadata-file sample-metadata.tsv \
-    --m-metadata-column $GROUP \
-    --o-visualization ancom.qzv
+  printf "\n\nStep 7c2 - Differential abundance analysis with ANCOM at family, genus, and species levels between $GROUP groups/conditions\n"
+  for LEVEL in "Family" "Genus" "Species"; do
+    if [[ "$LEVEL" == "Kingdom" ]]; then LEVELNUMBER=1; fi
+    if [[ "$LEVEL" == "Phylum" ]]; then LEVELNUMBER=2; fi
+    if [[ "$LEVEL" == "Class" ]]; then LEVELNUMBER=3; fi
+    if [[ "$LEVEL" == "Order" ]]; then LEVELNUMBER=4; fi
+    if [[ "$LEVEL" == "Family" ]]; then LEVELNUMBER=5; fi
+    if [[ "$LEVEL" == "Genus" ]]; then LEVELNUMBER=6; fi
+    if [[ "$LEVEL" == "Species" ]]; then LEVELNUMBER=7; fi
+    # collapse table to user-specified taxa level
+    qiime taxa collapse \
+      --i-table table.qza \
+      --i-taxonomy taxonomy.qza \
+      --p-level $LEVELNUMBER \
+      --o-collapsed-table collapsed-table-$LEVEL.qza
+    # add pseudocounts of 1 where value == 0
+    qiime composition add-pseudocount \
+      --i-table collapsed-table.qza \
+      --o-composition-table comp-collapsed-table-$LEVEL.qza
+    # run ancom
+    qiime composition ancom \
+      --i-table comp-collapsed-table-$LEVEL.qza \
+      --m-metadata-file sample-metadata.tsv \
+      --m-metadata-column $GROUP \
+      --o-visualization ancom-$LEVEL.qzv
+  done
 
 fi
 

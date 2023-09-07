@@ -158,12 +158,26 @@ outputs:
     doc: |
       Gneiss differential abundance analysis hierarchical clustering and heatmap
 
-  ancom:
+  ancom_family:
     type: File?
     outputBinding:
-      glob: ancom.qzv
+      glob: ancom-Family.qzv
     doc: |
-      ANCOM differential abundance analysis with volcano plot
+      ANCOM family taxonomic level differential abundance analysis with volcano plot
+
+  ancom_genus:
+    type: File?
+    outputBinding:
+      glob: ancom-Genus.qzv
+    doc: |
+      ANCOM genus taxonomic level differential abundance analysis with volcano plot
+
+  ancom_species:
+    type: File?
+    outputBinding:
+      glob: ancom-Species.qzv
+    doc: |
+      ANCOM species taxonomic level differential abundance analysis with volcano plot
 
   log_file_stdout:
     type: stdout
@@ -224,17 +238,20 @@ doc: |
   Alpha rarefaction and taxonomic classification plots are also output for the aggregated samples.
   Taxonomy classification is performed using a Naive Bayes classifier trained on the Greengenes2 database "gg_2022_10_backbone_full_length.nb.qza".
   Generally, this workflow follows the "moving-pictures" turorial: https://docs.qiime2.org/2023.5/tutorials/moving-pictures/
+  If "Metadata header name for PCoA axis label" is provided, principle coordinates analysis (PCoA) will be performed using the unweighted unifrac and bray curtis methods. 3D plots are produced with PCo1, PCo2, and the provided axis label on the x, y, and z axes.
+  If the sampling depth and metadata header for differential analysis are provided, differential abundance analysis will be performed using Gneiss and ANCOM methods at the family, genus, and species taxonomic levels. A unsupervised hierarchical clustering heatmap (Gneiss) and volcano plot (ANCOM) are produced at the taxonomic level between the specified group.
 
       Primary output files:
       - overview.md, list of inputs
       - demux.qzv, summary visualizations of imported data
       - alpha-rarefaction.qzv, plot of OTU rarefaction
       - taxa-bar-plots.qzv, relative frequency of taxomonies barplot
+      - table.qza, table containing how many sequences are associated with each sample and with each feature (OTU)
       Optional output files:
       - pcoa-unweighted-unifrac-emperor.qzv, PCoA using unweighted unifrac method
       - pcoa-bray-curtis-emperor.qzv, PCoA using bray curtis method
       - heatmap.qzv, output from gneiss differential abundance analysis using unsupervised correlation-clustering method (this will define the partitions of microbes that commonly co-occur with each other using Ward hierarchical clustering)
-      - ancom.qzv, output from ANCOM differential abundance analysis at user-specified taxonomic level (includes volcano plot)
+      - ancom-\$LEVEL.qzv, output from ANCOM differential abundance analysis at family, genus, and species taxonomic levels (includes volcano plot)
 
   PARAMS:
       SECTION 1: general
@@ -253,8 +270,6 @@ doc: |
   This step will subsample the counts in each sample without replacement so that each sample in the resulting table has a total count of INT. If the total count for any sample(s) are smaller than this value, those samples will be dropped from the diversity analysis. It's recommend making your choice by reviewing the rarefaction plot. Choose a value that is as high as possible (so you retain more sequences per sample) while excluding as few samples as possible.
       -g  STR          group or experimental condition column name from sample metadata file (required for differential abundance execution)
   Must be identical to one of the headers of the sample-metadata file. The corresponding column should only have two groups/conditions.
-      -l  STR          taxonomic level for differential abundance analysis with ANCOM
-  Collapses the OTU table at the taxonomic level of interest for differential abundance analysis
 
   NOTES:
     Example sample metadata file (-r):
