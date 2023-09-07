@@ -271,7 +271,7 @@ if [[ "$SAMPLINGDEPTH" != "" && "$GROUP" != "" ]]; then
       --o-collapsed-table collapsed-table-$LEVEL.qza
     # add pseudocounts of 1 where value == 0
     qiime composition add-pseudocount \
-      --i-table collapsed-table.qza \
+      --i-table collapsed-table-$LEVEL.qza \
       --o-composition-table comp-collapsed-table-$LEVEL.qza
     # run ancom
     qiime composition ancom \

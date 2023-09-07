@@ -220,7 +220,7 @@ outputs:
   ancom_family:
     type: File?
     label: "ANCOM differential abundance analysis - Family level"
-    doc: "Output from ANCOM differential abundance analysis at user-specified taxonomic level (includes volcano plot)."
+    doc: "Output from ANCOM differential abundance analysis at family taxonomic level (includes volcano plot)."
     outputSource: qiime_pipeline/ancom_family
     'sd:visualPlugins':
     - qiime2:
@@ -230,7 +230,7 @@ outputs:
   ancom_genus:
     type: File?
     label: "ANCOM differential abundance analysis - Genus level"
-    doc: "Output from ANCOM differential abundance analysis at user-specified taxonomic level (includes volcano plot)."
+    doc: "Output from ANCOM differential abundance analysis at genus taxonomic level (includes volcano plot)."
     outputSource: qiime_pipeline/ancom_genus
     'sd:visualPlugins':
     - qiime2:
@@ -240,7 +240,7 @@ outputs:
   ancom_species:
     type: File?
     label: "ANCOM differential abundance analysis - Species level"
-    doc: "Output from ANCOM differential abundance analysis at user-specified taxonomic level (includes volcano plot)."
+    doc: "Output from ANCOM differential abundance analysis at species taxonomic level (includes volcano plot)."
     outputSource: qiime_pipeline/ancom_species
     'sd:visualPlugins':
     - qiime2:
