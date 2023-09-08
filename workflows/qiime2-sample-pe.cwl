@@ -77,7 +77,7 @@ inputs:
 
   truncLenF:
     type: int
-    default: 250
+    default: 0
     label: "Truncate 3' of R1:"
     'sd:localLabel': true
     doc: |
@@ -85,7 +85,7 @@ inputs:
 
   truncLenR:
     type: int
-    default: 250
+    default: 0
     label: "Truncate 3' of R2:"
     'sd:localLabel': true
     doc: |
@@ -327,8 +327,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "16S metagenomic paired-end with QIIME2"
-label: "16S metagenomic paired-end with QIIME2"
+s:name: "16S metagenomic paired-end QIIME2 Sample (preprocessing)"
+label: "16S metagenomic paired-end QIIME2 Sample (preprocessing)"
 s:alternateName: "16S metagenomic paired-end pipeline using QIIME2 for single sample analysis"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/qiime2-sample-pe.cwl
@@ -391,7 +391,8 @@ doc: |
 
   ### __Data Analysis Steps__
   1. Generate FASTX quality statistics for visualization of unmapped, raw FASTQ reads.
-  2. Import the data, make a qiime artifact (demux.qza), and summary visualization process will additionally filter any phiX reads (commonly present in marker gene Illumina sequence data) that are identified in the sequencing data, and will filter chimeric sequences.
+  2. Import the data, make a qiime artifact (demux.qza), and summary visualization
+  3. Denoising will detect and correct (where possible) Illumina amplicon sequence data. This process will additionally filter any phiX reads (commonly present in marker gene Illumina sequence data) that are identified in the sequencing data, and will filter chimeric sequences.
   4. Generate a phylogenetic tree for diversity analyses and rarefaction processing and plotting.
   5. Taxonomy classification of amplicons. Performed using a Naive Bayes classifier trained on the Greengenes2 database "gg_2022_10_backbone_full_length.nb.qza".
 

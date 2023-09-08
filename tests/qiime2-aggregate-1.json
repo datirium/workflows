@@ -1,0 +1,59 @@
+{
+  "alias": "qiime2-aggregate-test",
+  "metadata_file":
+    {
+      "class": "File",
+      "location": "./data/qiime2/sample-metadata-example.tsv"
+    },
+  "pcoa_label": "time",
+  "sampling_depth": 2000,
+  "diff_group": "condition",
+  "taxonomic_level": "Family",
+  "fastq_r1_array": [
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508255_1.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508256_1.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508257_1.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508258_1.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    }
+  ],
+  "fastq_r2_array": [
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508255_2.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508256_2.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508257_2.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    },
+    {
+      "class": "File",
+      "location": "./data/qiime2/SRR25508258_2.fastq.gz",
+      "format": "http://edamontology.org/format_1930"
+    }
+  ],
+  "truncLenF": 250,
+  "truncLenR": 250,
+  "threads": 4
+}
