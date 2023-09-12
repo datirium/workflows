@@ -95,32 +95,36 @@ inputs:
     'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
 
   trimLeftF:
-    type: int?
-    default: 0
+    type:
+    - "null"
+    - int?
     label: "Trim 5' of R1:"
     doc: |
       Should be the same value used for the samples being used as input. Recommended if adapters are still on the input sequences. Trims the first J bases from the 5' end of each forward read.
     'sd:upstreamSource': "qiime2_sample_pe/trimLeftF"
 
   trimLeftR:
-    type: int?
-    default: 0
+    type:
+    - "null"
+    - int?
     label: "Trim 5' of R2:"
     doc: |
       Should be the same value used for the samples being used as input. Recommended if adapters are still on the input sequences. Trims the first K bases from the 5' end of each reverse read.
     'sd:upstreamSource': "qiime2_sample_pe/trimLeftR"
 
   truncLenF:
-    type: int
-    default: 0
+    type:
+    - "null"
+    - int
     label: "Truncate 3' of R1:"
     doc: |
       Should be the same value used for the samples being used as input. Clips the forward read starting M bases from the 5' end (before trimming). If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R1.
     'sd:upstreamSource': "qiime2_sample_pe/truncLenF"
 
   truncLenR:
-    type: int
-    default: 0
+    type:
+    - "null"
+    - int
     label: "Truncate 3' of R2:"
     doc: |
       Should be the same value used for the samples being used as input. Clips the reverse read starting N bases from the 5' end (before trimming).  If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R2.
@@ -147,7 +151,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  fastq_summary:
+  fastq_summary_file:
     type: File
     label: "Summary of input FASTQ reads"
     doc: "summary of input read data"
@@ -364,13 +368,12 @@ doc: |
    - Threads: Number of threads to use for steps that support multithreading.
 
   ### __Data Analysis Steps__
-  1. Generate FASTX quality statistics for visualization of unmapped, raw FASTQ reads for all input samples.
-  2. Import all sample read data, make a qiime artifact (demux.qza), and summary visualization
-  3. Denoising will detect and correct (where possible) Illumina amplicon sequence data. This process will additionally filter any phiX reads (commonly present in marker gene Illumina sequence data) that are identified in the sequencing data, and will filter chimeric sequences.
-  4. Generate a phylogenetic tree for diversity analyses and rarefaction processing and plotting.
-  5. Taxonomy classification of amplicons. Performed using a Naive Bayes classifier trained on the Greengenes2 database "gg_2022_10_backbone_full_length.nb.qza".
-  6. If "Metadata header name for PCoA axis label" is provided, principle coordinates analysis (PCoA) will be performed using the unweighted unifrac and bray curtis methods. 3D plots are produced with PCo1, PCo2, and the provided axis label on the x, y, and z axes.
-  7. If the sampling depth and metadata header for differential analysis are provided, differential abundance analysis will be performed using Gneiss and ANCOM methods at the family, genus, and species taxonomic levels. A unsupervised hierarchical clustering heatmap (Gneiss) and volcano plot (ANCOM) are produced at the taxonomic level between the specified group.
+  1. Import all sample read data, make a qiime artifact (demux.qza), and summary visualization
+  2. Denoising will detect and correct (where possible) Illumina amplicon sequence data. This process will additionally filter any phiX reads (commonly present in marker gene Illumina sequence data) that are identified in the sequencing data, and will filter chimeric sequences.
+  3. Generate a phylogenetic tree for diversity analyses and rarefaction processing and plotting.
+  4. Taxonomy classification of amplicons. Performed using a Naive Bayes classifier trained on the Greengenes2 database "gg_2022_10_backbone_full_length.nb.qza".
+  5. If "Metadata header name for PCoA axis label" is provided, principle coordinates analysis (PCoA) will be performed using the unweighted unifrac and bray curtis methods. 3D plots are produced with PCo1, PCo2, and the provided axis label on the x, y, and z axes.
+  6. If the sampling depth and metadata header for differential analysis are provided, differential abundance analysis will be performed using Gneiss and ANCOM methods at the family, genus, and species taxonomic levels. A unsupervised hierarchical clustering heatmap (Gneiss) and volcano plot (ANCOM) are produced at the taxonomic level between the specified group.
 
   ### __References__
   1. Bolyen E, Rideout JR, Dillon MR, Bokulich NA, Abnet CC, Al-Ghalith GA, Alexander H, Alm EJ, Arumugam M, Asnicar F, Bai Y, Bisanz JE, Bittinger K, Brejnrod A, Brislawn CJ, Brown CT, Callahan BJ, Caraballo-Rodríguez AM, Chase J, Cope EK, Da Silva R, Diener C, Dorrestein PC, Douglas GM, Durall DM, Duvallet C, Edwardson CF, Ernst M, Estaki M, Fouquier J, Gauglitz JM, Gibbons SM, Gibson DL, Gonzalez A, Gorlick K, Guo J, Hillmann B, Holmes S, Holste H, Huttenhower C, Huttley GA, Janssen S, Jarmusch AK, Jiang L, Kaehler BD, Kang KB, Keefe CR, Keim P, Kelley ST, Knights D, Koester I, Kosciolek T, Kreps J, Langille MGI, Lee J, Ley R, Liu YX, Loftfield E, Lozupone C, Maher M, Marotz C, Martin BD, McDonald D, McIver LJ, Melnik AV, Metcalf JL, Morgan SC, Morton JT, Naimey AT, Navas-Molina JA, Nothias LF, Orchanian SB, Pearson T, Peoples SL, Petras D, Preuss ML, Pruesse E, Rasmussen LB, Rivers A, Robeson MS, Rosenthal P, Segata N, Shaffer M, Shiffer A, Sinha R, Song SJ, Spear JR, Swafford AD, Thompson LR, Torres PJ, Trinh P, Tripathi A, Turnbaugh PJ, Ul-Hasan S, van der Hooft JJJ, Vargas F, Vázquez-Baeza Y, Vogtmann E, von Hippel M, Walters W, Wan Y, Wang M, Warren J, Weber KC, Williamson CHD, Willis AD, Xu ZZ, Zaneveld JR, Zhang Y, Zhu Q, Knight R, and Caporaso JG. 2019. Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857. https://doi.org/10.1038/s41587-019-0209-9
