@@ -11,7 +11,8 @@ requirements:
 
 'sd:upstream':
   sample_to_filter:
-    - "deseq.cwl"
+  - "deseq.cwl"
+  - "deseq-multi-factor.cwl"
 
 
 inputs:
@@ -36,8 +37,8 @@ inputs:
     doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
-        columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "baseMean", "log2FoldChange", "pvalue", "padj"]
-        types:   ["string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number", "number"]
+        columns: ["feature", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "baseMean", "log2FoldChange", "pvalue", "padj", "HCL", "HCL.1", "HCL.2", "HCL.3"]
+        types:   ["string", "string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number", "number", "string", "string", "string", "string"]
 
   header:
     type: boolean?
