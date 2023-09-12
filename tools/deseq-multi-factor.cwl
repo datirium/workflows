@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/deseq:v0.0.4
+  dockerPull: biowardrobe2/deseq:v0.0.5
 
 
 inputs:
@@ -133,11 +133,11 @@ inputs:
     inputBinding:
       prefix: "--remove"
     doc: |
-      Column from the metadata file to remove batch effect when
-      exporting feature counts. All components that include this
-      term will be removed from the design formula when correcting
-      for batch effect. Default: do not remove batch effect from
-      the exported counts
+      Column from the metadata file to remove batch effect
+      before running differential expression analysis. If
+      present, all components that include this term will be
+      removed from the design and reduced formulas.
+      Default: do not remove batch effect
 
   cluster_method:
     type:
@@ -276,8 +276,9 @@ outputs:
     outputBinding:
       glob: "*_pca_plot.png"
     doc: |
-      PCA plot of normalized counts based on the top 500
-      features selected by the highest row variance
+      PCA plot of normalized, optionally batch corrected,
+      read counts based on the top 500 features selected
+      by the highest row variance
       PNG format
 
   pca_plot_pdf:
@@ -285,8 +286,9 @@ outputs:
     outputBinding:
       glob: "*_pca_plot.pdf"
     doc: |
-      PCA plot of normalized counts based on the top 500
-      features selected by the highest row variance
+      PCA plot of normalized, optionally batch corrected,
+      read counts based on the top 500 features selected
+      by the highest row variance
       PDF format
 
   mds_plot_html:
@@ -294,8 +296,8 @@ outputs:
     outputBinding:
       glob: "*_mds_plot.html"
     doc: |
-      MDS plot of normalized counts. Optionally batch corrected
-      based on the --remove value.
+      MDS plot of normalized, optionally batch corrected,
+      read counts
       HTML format
 
   stdout_log:
@@ -422,10 +424,10 @@ s:about: |
                           30), when there is a wide range of sequencing depth
                           across samples. Default: vst
     --remove REMOVE       Column from the metadata file to remove batch effect
-                          when exporting feature counts. All components that
-                          include this term will be removed from the design
-                          formula when correcting for batch effect. Default: do
-                          not remove batch effect from the exported counts
+                          before running differential expression analysis. If
+                          present, all components that include this term will be
+                          removed from the design and reduced formulas.
+                          Default: do not remove batch effect
     --cluster {row,column,both}
                           Hopach clustering method to be run on normalized read
                           counts for the exploratory visualization analysis.
