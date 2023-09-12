@@ -95,19 +95,14 @@ inputs:
     'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
 
   trimLeftF:
-    type:
-    - "null"
-    - int?
-    default: 0
+    type: int[]?
     label: "Trim 5' of R1:"
     doc: |
       Should be the same value used for the samples being used as input. Recommended if adapters are still on the input sequences. Trims the first J bases from the 5' end of each forward read.
     'sd:upstreamSource': "qiime2_sample_pe/trimLeftF"
 
   trimLeftR:
-    type:
-    - "null"
-    - int?
+    type: int[]?
     default: 0
     label: "Trim 5' of R2:"
     doc: |
@@ -115,22 +110,18 @@ inputs:
     'sd:upstreamSource': "qiime2_sample_pe/trimLeftR"
 
   truncLenF:
-    type:
-    - "null"
-    - int
+    type: int[]
     label: "Truncate 3' of R1:"
     doc: |
       Should be the same value used for the samples being used as input. Clips the forward read starting M bases from the 5' end (before trimming). If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R1.
     'sd:upstreamSource': "qiime2_sample_pe/truncLenF"
 
   truncLenR:
-    type:
-    - "null"
-    - int
+    type: int[]
     label: "Truncate 3' of R2:"
     doc: |
       Should be the same value used for the samples being used as input. Clips the reverse read starting N bases from the 5' end (before trimming).  If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R2.
-    'sd:upstreamSource': "qiime2_sample_pe/truncLenR:"
+    'sd:upstreamSource': "qiime2_sample_pe/truncLenR"
 
   threads:
     type: int?
@@ -153,7 +144,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  fastq_summary:
+  fastq_summary_file:
     type: File
     label: "Summary of input FASTQ reads"
     doc: "summary of input read data"

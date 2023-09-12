@@ -66,30 +66,34 @@ inputs:
       Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
   trimLeftF:
-    type: int
+    type: int[]
     inputBinding:
       prefix: "-j"
+      itemSeparator: ","
     doc: |
       trims the first J bases from the 5' end of each forward sequence
 
   trimLeftR:
-    type: int
+    type: int[]
     inputBinding:
       prefix: "-k"
+      itemSeparator: ","
     doc: |
       trims the first K bases from the 5' end of each reverse sequence
 
   truncLenF:
-    type: int
+    type: int[]
     inputBinding:
       prefix: "-m"
+      itemSeparator: ","
     doc: |
       Clips the forward read starting M bases from the 5' end (before trimming). If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R1.
 
   truncLenR:
-    type: int
+    type: int[]
     inputBinding:
       prefix: "-n"
+      itemSeparator: ","
     doc: |
       Clips the reverse read starting N bases from the 5' end (before trimming).  If base quality is OK for entire read, value should be set to the expected number of Illumina cycles for R2.
 
