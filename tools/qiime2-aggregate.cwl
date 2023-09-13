@@ -66,7 +66,7 @@ inputs:
       Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
 
   trimLeftF:
-    type: int[]
+    type: int
     inputBinding:
       prefix: "-j"
       itemSeparator: ","
@@ -74,7 +74,7 @@ inputs:
       trims the first J bases from the 5' end of each forward sequence
 
   trimLeftR:
-    type: int[]
+    type: int
     inputBinding:
       prefix: "-k"
       itemSeparator: ","
@@ -113,7 +113,7 @@ outputs:
     doc: |
       overview of inputs
 
-  fastq_summary:
+  fastq_summary_file:
     type: File
     outputBinding:
       glob: demux.qzv
