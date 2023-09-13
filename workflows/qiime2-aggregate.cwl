@@ -9,9 +9,7 @@ requirements:
 'sd:serviceTag': "Analysis"
 
 'sd:upstream':
-  qiime2_sample_pe:
-   - "qiime2-sample-pe.cwl"
-   - "https://github.com/datirium/workflows/workflows/qiime2-sample-pe.cwl"
+  qiime2_sample_pe: "qiime2-sample-pe.cwl"
 
 
 inputs:

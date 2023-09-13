@@ -268,6 +268,13 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "DESeq generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
     outputSource: deseq/diff_expr_file
+<<<<<<< HEAD
+=======
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Differential Expression Analysis'
+        Title: 'Combined DESeq results'
+>>>>>>> master
 
   read_counts_file:
     type: File
