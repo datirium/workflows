@@ -14,8 +14,6 @@ requirements:
                 }
               ]
     }
-
-hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.11
 
