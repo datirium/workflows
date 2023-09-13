@@ -35,11 +35,11 @@ inputs:
         import math
 
         def cut_int(s):
-            return int(s.strip().split()[0])
+            return int(str(s).strip().split()[0])
 
 
         def cut_float(s):
-            return float(s.strip().split()[0])
+            return float(str(s).strip().split()[0])
 
 
         TRIMGALORE = {
@@ -305,7 +305,7 @@ inputs:
                     res_key, res_function, pair_end_specific = get_correspondent_key(key_dict, key)
                     if not collected_results[header].get(res_key, None):
                         if pair_end_specific and pair_end:
-                            collected_results[header][res_key] = res_function(res_function(value)/2)
+                            collected_results[header][res_key] = res_function(int(res_function(value)/2))
                         else:
                             collected_results[header][res_key] = res_function(value)
                 except Exception:
