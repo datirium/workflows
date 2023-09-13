@@ -157,11 +157,11 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  fastq_summary:
+  fastq_summary_file:
     type: File
     label: "Summary of input FASTQ reads"
     doc: "summary of input read data"
-    outputSource: qiime_pipeline/fastq_summary
+    outputSource: qiime_pipeline/fastq_summary_file
     'sd:visualPlugins':
     - qiime2:
         tab: 'Overview'
@@ -279,7 +279,7 @@ steps:
       threads: threads
     out:
       - overview
-      - fastq_summary
+      - fastq_summary_file
       - denoising_stats
       - alpha_rarefaction
       - taxa_bar_plots
