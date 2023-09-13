@@ -81,7 +81,8 @@ inputs:
     default: null
     format: "http://edamontology.org/format_1930"
     label: "Array of R1 fastq files from upstream samples"
-    doc: "Array of forward read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow."
+    doc: |
+      Array of forward read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
     'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R1"
 
   fastq_r2_array:
@@ -91,14 +92,15 @@ inputs:
     default: null
     format: "http://edamontology.org/format_1930"
     label: "Array of R1 fastq files from upstream samples"
-    doc: "Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow."
+    doc: |
+      Array of reverse read data in FASTQ format from SciDAP upstream qiime2-sample-pe workflow.
     'sd:upstreamSource': "qiime2_sample_pe/fastq_file_R2"
 
   trimLeftF:
     type:
     - "null"
     - int[]?
-    default: null
+    default: 0
     label: "Trim 5' of R1:"
     doc: |
       Should be the same value used for the samples being used as input. Recommended if adapters are still on the input sequences. Trims the first J bases from the 5' end of each forward read.
@@ -108,7 +110,7 @@ inputs:
     type:
     - "null"
     - int[]?
-    default: null
+    default: 0
     label: "Trim 5' of R2:"
     doc: |
       Should be the same value used for the samples being used as input. Recommended if adapters are still on the input sequences. Trims the first K bases from the 5' end of each reverse read.
@@ -155,7 +157,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  fastq_summary:
+  fastq_summary_file:
     type: File
     label: "Summary of input FASTQ reads"
     doc: "summary of input read data"
