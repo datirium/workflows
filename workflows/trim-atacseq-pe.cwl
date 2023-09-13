@@ -792,6 +792,7 @@ steps:
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
       macs2_called_peaks: macs2_callpeak/peak_xls_file
+      atdp_results: average_tag_density/result_file
       preseq_results: preseq/estimates_file
       paired_end:
         default: True

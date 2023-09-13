@@ -18,7 +18,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: rackspacedot/python37
+  dockerPull: pandas/pandas:mamba-all
 
 
 inputs:
@@ -30,6 +30,7 @@ inputs:
         import os
         import sys
         import argparse
+        import pandas
         import yaml
         import math
 
@@ -228,6 +229,7 @@ inputs:
             general_parser.add_argument("--bamstats",        help="Path to bam statistics report file",                   required=True)
             general_parser.add_argument("--bamstatsfilter",  help="Path to bam statistics report file after filtering",   required=True)
             general_parser.add_argument("--macs2",           help="Path to MACS2 called peaks xls file",                  required=True)
+            general_parser.add_argument("--atdp",            help="Path to ATDP output TSV file",                         required=True)
             general_parser.add_argument("--preseq",          help="Path to Preseq output file",                           required=False)
             general_parser.add_argument("--paired",          help="Process as paired-end. Default: False",                action="store_true")
             general_parser.add_argument("--output",          help="Output filename prefix",                               required=True)
@@ -331,6 +333,12 @@ inputs:
                 collected_results[header] = {k: collected_results[header][k] for k in MACS2["order"] if k in collected_results[header]}
 
 
+        def process_atdp_results(filepath, collected_results, header):
+            if not collected_results.get(header, None):
+                collected_results[header] = {}
+            collected_results[header]["maximum"] = str(pandas.read_csv(filepath, sep="\t")["Y"].max())
+
+
         def process_preseq_results(filepath, collected_results, header, threashold=0.001):
             px, py = 0, 0
             for line in open_file(filepath):
@@ -357,6 +365,7 @@ inputs:
             process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.paired))
             process_custom_report(args.macs2, collected_results, "peak calling statistics", MACS2)
             process_macs2_xls(args.macs2, collected_results, "peak calling statistics")
+            process_atdp_results(args.atdp, collected_results, "average tag density")
             if args.preseq:
                 process_preseq_results(args.preseq, collected_results, "library preparation")
             return (collected_results)
@@ -428,7 +437,10 @@ inputs:
                             "total reads/pairs in treatment",
                             "reads/pairs after filtering in treatment",
                             "redundant rate in treatment",
-                            "fraction of reads in peaks"]
+                            "fraction of reads in peaks",
+
+                            "average tag density",
+                            "maximum"]
 
                 if collected_data.get("adapter trimming statistics", None):
                     header.extend(["adapter trimming statistics",
@@ -486,7 +498,10 @@ inputs:
                         collected_data["peak calling statistics"]["total reads/pairs in treatment"],
                         collected_data["peak calling statistics"]["reads/pairs after filtering in treatment"],
                         collected_data["peak calling statistics"]["redundant rate in treatment"],
-                        collected_data["peak calling statistics"]["fraction of reads in peaks"]]
+                        collected_data["peak calling statistics"]["fraction of reads in peaks"],
+
+                        "",
+                        collected_data["average tag density"]["maximum"]]
 
                 if collected_data.get("adapter trimming statistics", None):
                     data.extend(["",
@@ -559,22 +574,28 @@ inputs:
       position: 11
       prefix: "--macs2"
 
+  atdp_results:
+    type: File
+    inputBinding:
+      position: 12
+      prefix: "--atdp"
+
   preseq_results:
     type: File?
     inputBinding:
-      position: 12
+      position: 13
       prefix: "--preseq"
 
   paired_end:
     type: boolean?
     inputBinding:
-      position: 13
+      position: 14
       prefix: "--paired"
 
   output_prefix:
     type: string?
     inputBinding:
-      position: 14
+      position: 15
       prefix: "--output"
       valueFrom: $(get_output_prefix())
     default: ""
