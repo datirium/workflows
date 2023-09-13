@@ -99,8 +99,7 @@ inputs:
   trimLeftF:
     type:
     - "null"
-    - int
-    - int[]?
+    - int?
     default: 0
     label: "Trim 5' of R1:"
     doc: |
@@ -110,8 +109,7 @@ inputs:
   trimLeftR:
     type:
     - "null"
-    - int
-    - int[]?
+    - int?
     default: 0
     label: "Trim 5' of R2:"
     doc: |
@@ -159,7 +157,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  fastq_summary:
+  fastq_summary_file:
     type: File
     label: "Summary of input FASTQ reads"
     doc: "summary of input read data"
