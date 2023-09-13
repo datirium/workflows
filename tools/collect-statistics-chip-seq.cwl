@@ -152,7 +152,7 @@ inputs:
             },
             "reads duplicated": {
                 "alias": "reads/pairs duplicated",
-                "function": int,
+                "function": cut_int,
                 "pair_end_specific": True
             },
             "average length": {
@@ -183,6 +183,7 @@ inputs:
             "order": ["total reads/pairs",
                     "reads/pairs mapped",
                     "reads/pairs unmapped",
+                    "reads/pairs duplicated",
                     "reads average length",
                     "reads maximum length",
                     "reads average quality",
@@ -420,6 +421,7 @@ inputs:
                             "total reads/pairs",
                             "reads/pairs mapped",
                             "reads/pairs unmapped",
+                            "reads/pairs duplicated",
                             "insert size average",
                             "insert size standard deviation",
                             "reads average length",
@@ -430,6 +432,7 @@ inputs:
                             "total reads/pairs",
                             "reads/pairs mapped",
                             "reads/pairs unmapped",
+                            "reads/pairs duplicated",
                             "insert size average",
                             "insert size standard deviation",
                             "reads average length",
@@ -481,6 +484,7 @@ inputs:
                         collected_data["BAM statistics"]["total reads/pairs"],
                         collected_data["BAM statistics"]["reads/pairs mapped"],
                         collected_data["BAM statistics"]["reads/pairs unmapped"],
+                        collected_data["BAM statistics"]["reads/pairs duplicated"],
                         collected_data["BAM statistics"]["insert size average"],
                         collected_data["BAM statistics"]["insert size standard deviation"],
                         collected_data["BAM statistics"]["reads average length"],
@@ -491,6 +495,7 @@ inputs:
                         collected_data["BAM statistics after filtering"]["total reads/pairs"],
                         collected_data["BAM statistics after filtering"]["reads/pairs mapped"],
                         collected_data["BAM statistics after filtering"]["reads/pairs unmapped"],
+                        collected_data["BAM statistics after filtering"]["reads/pairs duplicated"],
                         collected_data["BAM statistics after filtering"]["insert size average"],
                         collected_data["BAM statistics after filtering"]["insert size standard deviation"],
                         collected_data["BAM statistics after filtering"]["reads average length"],
