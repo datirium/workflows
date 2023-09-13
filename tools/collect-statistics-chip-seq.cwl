@@ -18,7 +18,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: pandas/pandas:mamba-all
+  dockerPull: biowardrobe2/sc-tools:v0.0.29
 
 
 inputs:
@@ -26,7 +26,7 @@ inputs:
   script:
     type: string?
     default: |
-        #!/usr/bin/env python
+        #!/usr/bin/env python3
         import os
         import sys
         import argparse
@@ -631,7 +631,7 @@ outputs:
       outputEval: $(parseInt(self[0].contents.split('\n')[1].split('\t')[1]))
 
 
-baseCommand: [python, '-c']
+baseCommand: [python3, '-c']
 
 
 $namespaces:
