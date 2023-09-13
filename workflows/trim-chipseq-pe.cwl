@@ -757,7 +757,7 @@ steps:
       output_filename:
         source: samtools_sort_index_after_rmdup/bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
-    out: [log_file, ext_is_section]
+    out: [log_file, ext_is_section, reads_mapped]
 
   get_stat:
     run: ../tools/collect-statistics-chip-seq.cwl
@@ -807,7 +807,9 @@ steps:
         default: "chrX chrY"
       avd_heat_window_bp:
         default: 200
-      mapped_reads: get_stat/mapped_reads
+      mapped_reads:
+        source: get_bam_statistics_after_filtering/reads_mapped
+        valueFrom: $(parseInt(self/2))
     out: [result_file, log_file]
 
 
