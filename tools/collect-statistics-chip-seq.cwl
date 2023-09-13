@@ -150,6 +150,11 @@ inputs:
                 "function": int,
                 "pair_end_specific": True
             },
+            "reads duplicated": {
+                "alias": "reads/pairs duplicated",
+                "function": int,
+                "pair_end_specific": True
+            },
             "average length": {
                 "alias": "reads average length",
                 "function": float,

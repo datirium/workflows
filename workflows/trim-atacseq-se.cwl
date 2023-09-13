@@ -564,10 +564,19 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  samtools_mark_duplicates:
+    run: ../tools/samtools-markdup.cwl
+    in:
+      bam_bai_pair: samtools_sort_index/bam_bai_pair
+      keep_duplicates:
+        default: true
+      threads: threads
+    out: [deduplicated_bam_bai_pair]
+
   filter_bam:
     run: ../tools/samtools-filter.cwl
     in:
-      bam_bai_pair: samtools_sort_index/bam_bai_pair
+      bam_bai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
       exclude_chromosome: exclude_chromosome
     out: [filtered_bam_bai_pair]
 
@@ -668,9 +677,9 @@ steps:
       read length and quality score, etc.  
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index/bam_bai_pair
+      bambai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index/bam_bai_pair
+        source: samtools_mark_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 

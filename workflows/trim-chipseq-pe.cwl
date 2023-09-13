@@ -649,6 +649,15 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  samtools_mark_duplicates:
+    run: ../tools/samtools-markdup.cwl
+    in:
+      bam_bai_pair: samtools_sort_index/bam_bai_pair
+      keep_duplicates:
+        default: true
+      threads: threads
+    out: [deduplicated_bam_bai_pair]
+
   preseq:
     label: "Sequencing depth estimation"
     doc: |
@@ -656,7 +665,7 @@ steps:
       be expected from the additional sequencing of the same experiment.
     run: ../tools/preseq-lc-extrap.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
       pe_mode:
         default: true
       extrapolation:
@@ -672,7 +681,7 @@ steps:
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
@@ -744,9 +753,9 @@ steps:
       read length and quality score, etc.
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index/bam_bai_pair
+      bambai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index/bam_bai_pair
+        source: samtools_mark_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 
