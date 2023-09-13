@@ -157,7 +157,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  fastq_summary_file:
+  fastq_summary:
     type: File
     label: "Summary of input FASTQ reads"
     doc: "summary of input read data"
