@@ -43,10 +43,10 @@ PARAMS:
     -r  FILE         sample metadata file (sample-id [col1] should be identical to sample names being aggregated)
     -a  FILE ARRAY   array (csv) of paths to read1 fastq files
     -b  FILE ARRAY   array (csv) of paths to read2 fastq files
-    -j  INT          trims the first J bases from the 5' end of each forward read
-    -k  INT          trims the first K bases from the 5' end of each reverse read
-    -m  INT          clips the forward read starting M bases from the 5' end (before trimming)
-    -n  INT          clips the reverse read starting N bases from the 5' end (before trimming)
+    -j  INT ARRAY    trims the first J bases from the 5' end of each forward read (first int in csv array)
+    -k  INT ARRAY    trims the first K bases from the 5' end of each reverse read (first int in csv array)
+    -m  INT ARRAY    clips the forward read starting M bases from the 5' end (before trimming) (first int in csv array)
+    -n  INT ARRAY    clips the reverse read starting N bases from the 5' end (before trimming) (first int in csv array)
     -c  STR          custom axis label
 Must be identical to one of the headers of the sample-metadata file. The corresponding column may only contain INT data.
     -d  INT          rarefaction sampling depth (required for differential abundance execution)
@@ -83,10 +83,10 @@ do
 		r) METADATAFILE=$OPTARG ;;
 		a) READ1ARRAY=$OPTARG ;;
 		b) READ2ARRAY=$OPTARG ;;
-		j) trimLeftF=$OPTARG ;;
-		k) trimLeftR=$OPTARG ;;
-		m) truncLenF=$OPTARG ;;
-		n) truncLenR=$OPTARG ;;
+		j) trimLeftFarr=$OPTARG ;;
+		k) trimLeftRarr=$OPTARG ;;
+		m) truncLenFarr=$OPTARG ;;
+		n) truncLenRarr=$OPTARG ;;
 		c) CUSTOMLABEL=$OPTARG ;;
 		d) SAMPLINGDEPTH=$OPTARG ;;
 		g) GROUP=$OPTARG ;;
@@ -99,10 +99,10 @@ if [[ "$METADATAFILE" == "" ]]; then echo "error: required param missing (-r)"; 
 if [[ ! -f "$METADATAFILE" ]]; then echo "error: file does not exist (-r)"; exit; fi
 if [[ "$READ1ARRAY" == "" ]]; then echo "error: required param missing (-a)"; exit; fi
 if [[ "$READ2ARRAY" == "" ]]; then echo "error: required param missing (-b)"; exit; fi
-if [[ "$trimLeftF" == "" ]]; then trimLeftF=0; fi
-if [[ "$trimLeftR" == "" ]]; then trimLeftR=0; fi
-if [[ "$truncLenF" == "" ]]; then truncLenF=100; fi
-if [[ "$truncLenR" == "" ]]; then truncLenR=100; fi
+if [[ "$trimLeftFarr" == "" ]]; then echo "error: required param missing (-j)"; exit; fi
+if [[ "$trimLeftRarr" == "" ]]; then echo "error: required param missing (-k)"; exit;  fi
+if [[ "$truncLenFarr" == "" ]]; then echo "error: required param missing (-m)"; exit;  fi
+if [[ "$truncLenRarr" == "" ]]; then echo "error: required param missing (-n)"; exit;  fi
 
 # defaults
 printf "List of defaults:\n"
@@ -113,10 +113,10 @@ printf "\t-t, \$THREADS, $THREADS\n"
 printf "\t-r, \$METADATAFILE, $METADATAFILE\n"
 printf "\t-a, \$READ1ARRAY, $READ1ARRAY\n"
 printf "\t-b, \$READ2ARRAY, $READ2ARRAY\n"
-printf "\t-j, \$trimLeftF, $trimLeftF\n"
-printf "\t-k, \$trimLeftR, $trimLeftR\n"
-printf "\t-m, \$truncLenF, $truncLenF\n"
-printf "\t-n, \$truncLenR, $truncLenR\n"
+printf "\t-j, \$trimLeftF, $trimLeftFarr\n"
+printf "\t-k, \$trimLeftR, $trimLeftRarr\n"
+printf "\t-m, \$truncLenF, $truncLenFarr\n"
+printf "\t-n, \$truncLenR, $truncLenRarr\n"
 printf "\t-c, \$CUSTOMLABEL, $CUSTOMLABEL\n"
 printf "\t-d, \$SAMPLINGDEPTH, $SAMPLINGDEPTH\n"
 printf "\t-g, \$GROUP, $GROUP\n"
@@ -158,13 +158,18 @@ qiime demux summarize \
   --o-visualization demux.qzv
 
 printf "\n\nStep 3 - Denoise with DADA2\n"
+# get the first int in each trim/trunc array to use for parameters
+trimLeftF=$(printf "$trimLeftFarr\n" | sed 's/,.*//')
+trimLeftR=$(printf "$trimLeftRarr\n" | sed 's/,.*//')
+truncLenF=$(printf "$truncLenFarr\n" | sed 's/,.*//')
+truncLenR=$(printf "$truncLenRarr\n" | sed 's/,.*//')
 # detect and correct (where possible) Illumina amplicon sequence data. This quality control process will additionally filter any phiX reads (commonly present in marker gene Illumina sequence data) that are identified in the sequencing data, and will filter chimeric sequences.
 qiime dada2 denoise-paired \
   --i-demultiplexed-seqs demux.qza \
   --p-max-ee-f 5 \
   --p-max-ee-r 5 \
   --p-trim-left-f $trimLeftF \
-  --p-trim-left-r $trimLeftF \
+  --p-trim-left-r $trimLeftR \
   --p-trunc-len-f $truncLenF \
   --p-trunc-len-r $truncLenR \
   --o-representative-sequences rep-seqs.qza \
