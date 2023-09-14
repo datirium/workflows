@@ -47,12 +47,12 @@ inputs:
       if [ "$1" = "true" ]
       then
         echo "Only marking PCR duplicates"
-        echo "samtools markdup -s -@ $3 positionsorted.bam markduped.bam"
-        samtools markdup -s -@ $3 positionsorted.bam markduped.bam 2> markdup_report.tsv
+        echo "samtools markdup -c -s -@ $3 positionsorted.bam markduped.bam"
+        samtools markdup -c -s -@ $3 positionsorted.bam markduped.bam 2> markdup_report.tsv
       else
         echo "Removing PCR duplicates"
-        echo "samtools markdup -r -s -@ $3 positionsorted.bam markduped.bam"
-        samtools markdup -r -s -@ $3 positionsorted.bam markduped.bam 2> markdup_report.tsv
+        echo "samtools markdup -c -r -s -@ $3 positionsorted.bam markduped.bam"
+        samtools markdup -c -r -s -@ $3 positionsorted.bam markduped.bam 2> markdup_report.tsv
       fi
 
       echo "Sorting BAM file"

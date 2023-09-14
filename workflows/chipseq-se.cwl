@@ -251,7 +251,7 @@ outputs:
     format: "http://edamontology.org/format_2572"
     label: "Aligned reads"
     doc: "Coordinate sorted BAM alignment and index BAI files"
-    outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
+    outputSource: samtools_remove_duplicates/deduplicated_bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -402,8 +402,11 @@ steps:
   bowtie_aligner:
     label: "Alignment to reference genome"
     doc: |
-      Aligns reads to the reference genome keeping only uniquely mapped reads with
-      less than 3 mismatches.
+      Aligns reads to the reference genome.
+      Reads are assumed to be mapped if they
+      have less than 3 mismatches.
+      sam_file output includes both mapped
+      and unmapped reads.
     run: ../tools/bowtie-alignreads.cwl
     in:
       upstream_filelist: extract_fastq/fastq_file
@@ -463,29 +466,15 @@ steps:
         default: 1000000000
     out: [estimates_file]
 
-  samtools_rmdup:
-    label: "PCR duplicates removal"
-    doc: |
-      Removes potential PCR duplicates. This step is used to remove reads overamplified
-      in PCR. Unfortunately, it may also remove "good" reads. We do not recommend to
-      remove duplicates unless the library is heavily duplicated.
-    run: ../tools/samtools-rmdup.cwl
+  samtools_remove_duplicates:
+    run: ../tools/samtools-markdup.cwl
     in:
-      trigger: remove_duplicates
-      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
-      single_end:
-        default: true
-    out:
-      - rmdup_output
-      - rmdup_log
-
-  samtools_sort_index_after_rmdup:
-    run: ../tools/samtools-sort-index.cwl
-    in:
-      trigger: remove_duplicates
-      sort_input: samtools_rmdup/rmdup_output
+      bam_bai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
+      keep_duplicates:
+        source: remove_duplicates
+        valueFrom: $(!self)
       threads: threads
-    out: [bam_bai_pair]
+    out: [deduplicated_bam_bai_pair]
 
   macs2_callpeak:
     label: "Peak detection"
@@ -494,7 +483,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      treatment_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       control_file: control_file
       nolambda:
         source: control_file
@@ -527,7 +516,7 @@ steps:
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      bam_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: get_statistics/mapped_reads
       fragment_size: macs2_callpeak/macs2_fragments_calculated
@@ -549,9 +538,9 @@ steps:
   get_bam_statistics_after_filtering:
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index_after_rmdup/bam_bai_pair
+      bambai_pair: samtools_remove_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        source: samtools_remove_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
     out: [log_file, reads_mapped]
 
@@ -586,7 +575,7 @@ steps:
       elements are close to the TSS of their targets.
     run: ../tools/atdp.cwl
     in:
-      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      input_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       annotation_filename: annotation_file
       fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
       avd_window_bp:
