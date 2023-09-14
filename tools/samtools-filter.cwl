@@ -3,11 +3,8 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
-
-
-hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/samtools:v1.4
+  dockerPull: biowardrobe2/samtools:v1.11
 
 
 inputs:
@@ -16,19 +13,20 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      echo "Copy $0 to temp.bam and create new index"
+      echo "Copy $0 to temp.bam"
       cp $0 temp.bam
-      samtools index temp.bam
+      samtools sort temp.bam -o temp_sorted.bam
+      samtools index temp_sorted.bam
       echo "Filtering BAM file"
-      echo "samtools idxstats temp.bam | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -F $3 -o $4 temp.bam"
-      samtools idxstats temp.bam | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -F $3 -o $4 temp.bam
+      echo "samtools idxstats temp_sorted.bam | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -F $3 -o temp_filtered.bam temp_sorted.bam"
+      samtools idxstats temp_sorted.bam | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -F $3 -o temp_filtered.bam temp_sorted.bam
       echo "Sorting BAM file"
-      echo "samtools sort $4 -o $4"
-      samtools sort $4 -o $4
+      echo "samtools sort temp_filtered.bam -o $4"
+      samtools sort temp_filtered.bam -o $4
       echo "Indexing BAM file"
       echo "samtools index $4"
       samtools index $4
-      rm -f temp.bam temp.bam.bai
+      rm -f temp*
     inputBinding:
       position: 5
     doc: "Script to exclude chromosomes from the BAM file and filter reads by quality"
@@ -132,8 +130,9 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Excludes chromosomes from the input BAM file. Filters reads by quality.
-  If there is only one chromosome present, you cannot exclude it
+  Excludes chromosomes from the input BAM file.
+  Optionally filters reads by quality and flags
 
 s:about: |
-  Excludes chromosomes from the input BAM file
+  Excludes chromosomes from the input BAM file.
+  Optionally filters reads by quality and flags

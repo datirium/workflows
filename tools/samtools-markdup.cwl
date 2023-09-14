@@ -170,10 +170,15 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Removes or only marks PCR duplicates from coordinate sorted and indexed BAM files.
-  Returns coordinate sorted and indexed BAM files.
-  Stages input bam_bai_pair to workdir. Otherwise samtools sort fails.
+  Removes or only marks PCR duplicates from
+  coordinate sorted and indexed BAM file.
+  Returns coordinate sorted and indexed BAM
+  files. Stages input bam_bai_pair to workdir.
+  Otherwise samtools sort fails.
 
 s:about: |
-  Removes or only marks PCR duplicates from coordinate sorted and indexed BAM files.
-  Returns coordinate sorted and indexed BAM files.
+  Removes or only marks PCR duplicates from
+  coordinate sorted and indexed BAM file.
+  Returns coordinate sorted and indexed BAM
+  files. Stages input bam_bai_pair to workdir.
+  Otherwise samtools sort fails.
