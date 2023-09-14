@@ -18,7 +18,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: rackspacedot/python37
+  dockerPull: biowardrobe2/sc-tools:v0.0.29
 
 
 inputs:
@@ -26,19 +26,20 @@ inputs:
   script:
     type: string?
     default: |
-        #!/usr/bin/env python
+        #!/usr/bin/env python3
         import os
         import sys
         import argparse
+        import pandas
         import yaml
         import math
 
         def cut_int(s):
-            return int(s.strip().split()[0])
+            return int(str(s).strip().split()[0])
 
 
         def cut_float(s):
-            return float(s.strip().split()[0])
+            return float(str(s).strip().split()[0])
 
 
         TRIMGALORE = {
@@ -149,6 +150,11 @@ inputs:
                 "function": int,
                 "pair_end_specific": True
             },
+            "reads duplicated": {
+                "alias": "reads/pairs duplicated",
+                "function": cut_int,
+                "pair_end_specific": True
+            },
             "average length": {
                 "alias": "reads average length",
                 "function": float,
@@ -177,6 +183,7 @@ inputs:
             "order": ["total reads/pairs",
                     "reads/pairs mapped",
                     "reads/pairs unmapped",
+                    "reads/pairs duplicated",
                     "reads average length",
                     "reads maximum length",
                     "reads average quality",
@@ -228,6 +235,7 @@ inputs:
             general_parser.add_argument("--bamstats",        help="Path to bam statistics report file",                   required=True)
             general_parser.add_argument("--bamstatsfilter",  help="Path to bam statistics report file after filtering",   required=True)
             general_parser.add_argument("--macs2",           help="Path to MACS2 called peaks xls file",                  required=True)
+            general_parser.add_argument("--atdp",            help="Path to ATDP output TSV file",                         required=True)
             general_parser.add_argument("--preseq",          help="Path to Preseq output file",                           required=False)
             general_parser.add_argument("--paired",          help="Process as paired-end. Default: False",                action="store_true")
             general_parser.add_argument("--output",          help="Output filename prefix",                               required=True)
@@ -297,7 +305,7 @@ inputs:
                     res_key, res_function, pair_end_specific = get_correspondent_key(key_dict, key)
                     if not collected_results[header].get(res_key, None):
                         if pair_end_specific and pair_end:
-                            collected_results[header][res_key] = res_function(res_function(value)/2)
+                            collected_results[header][res_key] = res_function(int(res_function(value)/2))
                         else:
                             collected_results[header][res_key] = res_function(value)
                 except Exception:
@@ -331,6 +339,12 @@ inputs:
                 collected_results[header] = {k: collected_results[header][k] for k in MACS2["order"] if k in collected_results[header]}
 
 
+        def process_atdp_results(filepath, collected_results, header):
+            if not collected_results.get(header, None):
+                collected_results[header] = {}
+            collected_results[header]["maximum"] = str(pandas.read_csv(filepath, sep="\t")["Y"].max())
+
+
         def process_preseq_results(filepath, collected_results, header, threashold=0.001):
             px, py = 0, 0
             for line in open_file(filepath):
@@ -357,6 +371,7 @@ inputs:
             process_custom_report(args.bamstatsfilter, collected_results, "BAM statistics after filtering", BAMSTATS, bool(args.paired))
             process_custom_report(args.macs2, collected_results, "peak calling statistics", MACS2)
             process_macs2_xls(args.macs2, collected_results, "peak calling statistics")
+            process_atdp_results(args.atdp, collected_results, "average tag density")
             if args.preseq:
                 process_preseq_results(args.preseq, collected_results, "library preparation")
             return (collected_results)
@@ -406,6 +421,7 @@ inputs:
                             "total reads/pairs",
                             "reads/pairs mapped",
                             "reads/pairs unmapped",
+                            "reads/pairs duplicated",
                             "insert size average",
                             "insert size standard deviation",
                             "reads average length",
@@ -416,6 +432,7 @@ inputs:
                             "total reads/pairs",
                             "reads/pairs mapped",
                             "reads/pairs unmapped",
+                            "reads/pairs duplicated",
                             "insert size average",
                             "insert size standard deviation",
                             "reads average length",
@@ -428,7 +445,10 @@ inputs:
                             "total reads/pairs in treatment",
                             "reads/pairs after filtering in treatment",
                             "redundant rate in treatment",
-                            "fraction of reads in peaks"]
+                            "fraction of reads in peaks",
+
+                            "average tag density",
+                            "maximum"]
 
                 if collected_data.get("adapter trimming statistics", None):
                     header.extend(["adapter trimming statistics",
@@ -464,6 +484,7 @@ inputs:
                         collected_data["BAM statistics"]["total reads/pairs"],
                         collected_data["BAM statistics"]["reads/pairs mapped"],
                         collected_data["BAM statistics"]["reads/pairs unmapped"],
+                        collected_data["BAM statistics"]["reads/pairs duplicated"],
                         collected_data["BAM statistics"]["insert size average"],
                         collected_data["BAM statistics"]["insert size standard deviation"],
                         collected_data["BAM statistics"]["reads average length"],
@@ -474,6 +495,7 @@ inputs:
                         collected_data["BAM statistics after filtering"]["total reads/pairs"],
                         collected_data["BAM statistics after filtering"]["reads/pairs mapped"],
                         collected_data["BAM statistics after filtering"]["reads/pairs unmapped"],
+                        collected_data["BAM statistics after filtering"]["reads/pairs duplicated"],
                         collected_data["BAM statistics after filtering"]["insert size average"],
                         collected_data["BAM statistics after filtering"]["insert size standard deviation"],
                         collected_data["BAM statistics after filtering"]["reads average length"],
@@ -486,7 +508,10 @@ inputs:
                         collected_data["peak calling statistics"]["total reads/pairs in treatment"],
                         collected_data["peak calling statistics"]["reads/pairs after filtering in treatment"],
                         collected_data["peak calling statistics"]["redundant rate in treatment"],
-                        collected_data["peak calling statistics"]["fraction of reads in peaks"]]
+                        collected_data["peak calling statistics"]["fraction of reads in peaks"],
+
+                        "",
+                        collected_data["average tag density"]["maximum"]]
 
                 if collected_data.get("adapter trimming statistics", None):
                     data.extend(["",
@@ -559,22 +584,28 @@ inputs:
       position: 11
       prefix: "--macs2"
 
+  atdp_results:
+    type: File
+    inputBinding:
+      position: 12
+      prefix: "--atdp"
+
   preseq_results:
     type: File?
     inputBinding:
-      position: 12
+      position: 13
       prefix: "--preseq"
 
   paired_end:
     type: boolean?
     inputBinding:
-      position: 13
+      position: 14
       prefix: "--paired"
 
   output_prefix:
     type: string?
     inputBinding:
-      position: 14
+      position: 15
       prefix: "--output"
       valueFrom: $(get_output_prefix())
     default: ""
@@ -605,7 +636,7 @@ outputs:
       outputEval: $(parseInt(self[0].contents.split('\n')[1].split('\t')[1]))
 
 
-baseCommand: [python, '-c']
+baseCommand: [python3, '-c']
 
 
 $namespaces:
