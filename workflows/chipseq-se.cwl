@@ -66,8 +66,11 @@ inputs:
     doc: "Make MACS2 call broad peaks by linking nearby highly enriched regions"
 
   fastq_file:
-    type: File
-    label: "FASTQ file"
+    type:
+    - File
+    - type: array
+      items: File
+    label: "FASTQ file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Single-read sequencing data in FASTQ format (fastq, fq, bzip2, gzip, zip)"
 
@@ -110,6 +113,16 @@ inputs:
       advanced: true
     label: "Remove PCR duplicates"
     doc: "Remove PCR duplicates from sorted BAM file"
+
+  peak_calling_fdr:
+    type: float?
+    default: 0.05
+    'sd:layout':
+      advanced: true
+    label: "Minimum FDR (q-value) cutoff for peak detection"
+    doc: |
+      Minimum FDR (q-value) cutoff for peak detection. -q, and
+      -p are mutually exclusive.
 
   promoter_dist:
     type: int?
@@ -233,7 +246,7 @@ outputs:
     format: "http://edamontology.org/format_2572"
     label: "Aligned reads"
     doc: "Coordinate sorted BAM alignment and index BAI files"
-    outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
+    outputSource: samtools_remove_duplicates/deduplicated_bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -262,8 +275,7 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Narrow peaks"
-        displayMode: "COLLAPSE"
-        height: 40
+        height: 120
 
   macs2_broad_peaks:
     type: File?
@@ -277,22 +289,21 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Broad peaks"
-        displayMode: "COLLAPSE"
-        height: 40
+        height: 120
 
   workflow_statistics_yaml:
     type: File?
     label: "YAML formatted combined log"
     format: "http://edamontology.org/format_3750"
     doc: "YAML formatted combined log"
-    outputSource: get_stat/collected_statistics_yaml
+    outputSource: get_statistics/collected_statistics_yaml
 
   workflow_statistics_markdown:
     type: File?
     label: "Markdown formatted combined log"
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
-    outputSource: get_stat/collected_statistics_md
+    outputSource: get_statistics/collected_statistics_md
     'sd:visualPlugins':
     - markdownView:
         tab: 'Overview'
@@ -302,7 +313,7 @@ outputs:
     label: "Workflow execution statistics"
     format: "http://edamontology.org/format_3475"
     doc: "Overall workflow execution statistics from bowtie_aligner and samtools_rmdup steps"
-    outputSource: get_stat/collected_statistics_tsv
+    outputSource: get_statistics/collected_statistics_tsv
     'sd:visualPlugins':
     - tableView:
         vertical: true
@@ -327,21 +338,22 @@ outputs:
     doc: "BAM statistics report (after all filters applied)"
     outputSource: get_bam_statistics_after_filtering/log_file
 
-  preseq_estimates_plot_data:
+  preseq_estimates:
     type: File?
-    label: "Preseq estimates"
+    label: "Expected Distinct Reads Count Plot"
     format: "http://edamontology.org/format_3475"
-    doc: "Preseq estimated results"
-    outputSource: preseq_plot_data/estimates_file_plot_data
+    doc: "Expected distinct reads count file from Preseq in TSV format"
+    outputSource: preseq/estimates_file
     'sd:visualPlugins':
-    - line:
+    - scatter:
         tab: 'QC Plots'
-        Title: 'Distinct Read Counts Estimates'
-        xAxisTitle: 'Mapped Reads/Fragments/Tags (millions)'
-        yAxisTitle: 'Distinct Reads Count'
-        colors: ["#4b78a3", "#a3514b"]
+        Title: 'Expected Distinct Reads Count Plot'
+        xAxisTitle: 'Total reads count'
+        yAxisTitle: 'Expected distinct reads count'
+        colors: ["#4b78a3"]
         height: 500
-        data: [$2, $5]
+        data: [$1, $2]
+        comparable: "preseq"
 
   estimated_fragment_size:
     type: int
@@ -353,7 +365,7 @@ outputs:
     type: int
     label: "Mapped reads number"
     doc: "Mapped reads number for downstream analyses"
-    outputSource: get_stat/mapped_reads
+    outputSource: get_statistics/mapped_reads
 
 
 steps:
@@ -367,6 +379,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   fastx_quality_stats:
@@ -383,8 +397,11 @@ steps:
   bowtie_aligner:
     label: "Alignment to reference genome"
     doc: |
-      Aligns reads to the reference genome keeping only uniquely mapped reads with
-      less than 3 mismatches.
+      Aligns reads to the reference genome.
+      Reads are assumed to be mapped if they
+      have less than 3 mismatches.
+      sam_file output includes both mapped
+      and unmapped reads.
     run: ../tools/bowtie-alignreads.cwl
     in:
       upstream_filelist: extract_fastq/fastq_file
@@ -423,11 +440,14 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
-  clean_sam_headers_for_preseq:
-    run: ../tools/samtools-clean-headers.cwl
+  samtools_mark_duplicates:
+    run: ../tools/samtools-markdup.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
-    out: [preseq_bam]
+      bam_bai_pair: samtools_sort_index/bam_bai_pair
+      keep_duplicates:
+        default: true
+      threads: threads
+    out: [deduplicated_bam_bai_pair]
 
   preseq:
     label: "Sequencing depth estimation"
@@ -436,34 +456,20 @@ steps:
       be expected from the additional sequencing of the same experiment.
     run: ../tools/preseq-lc-extrap.cwl
     in:
-      bam_file: clean_sam_headers_for_preseq/preseq_bam
+      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
       extrapolation:
         default: 1000000000
-    out: [estimates_file, log_file_stdout, log_file_stderr]
+    out: [estimates_file]
 
-  samtools_rmdup:
-    label: "PCR duplicates removal"
-    doc: |
-      Removes potential PCR duplicates. This step is used to remove reads overamplified
-      in PCR. Unfortunately, it may also remove "good" reads. We do not recommend to
-      remove duplicates unless the library is heavily duplicated.
-    run: ../tools/samtools-rmdup.cwl
+  samtools_remove_duplicates:
+    run: ../tools/samtools-markdup.cwl
     in:
-      trigger: remove_duplicates
-      bam_file: samtools_sort_index/bam_bai_pair
-      single_end:
-        default: true
-    out:
-      - rmdup_output
-      - rmdup_log
-
-  samtools_sort_index_after_rmdup:
-    run: ../tools/samtools-sort-index.cwl
-    in:
-      trigger: remove_duplicates
-      sort_input: samtools_rmdup/rmdup_output
+      bam_bai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
+      keep_duplicates:
+        source: remove_duplicates
+        valueFrom: $(!self)
       threads: threads
-    out: [bam_bai_pair]
+    out: [deduplicated_bam_bai_pair]
 
   macs2_callpeak:
     label: "Peak detection"
@@ -472,7 +478,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      treatment_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       control_file: control_file
       nolambda:
         source: control_file
@@ -491,8 +497,7 @@ steps:
         valueFrom: $(!self)
       keep_dup:
         default: auto
-      q_value:
-        default: 0.05
+      q_value: peak_calling_fdr
       format_mode:
         default: BAM
       buffer_size:
@@ -506,9 +511,9 @@ steps:
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      bam_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       chrom_length_file: chrom_length
-      mapped_reads_number: get_stat/mapped_reads
+      mapped_reads_number: get_statistics/mapped_reads
       fragment_size: macs2_callpeak/macs2_fragments_calculated
     out: [bigwig_file]
 
@@ -519,42 +524,31 @@ steps:
       read length and quality score, etc.
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index/bam_bai_pair
+      bambai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index/bam_bai_pair
+        source: samtools_mark_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 
   get_bam_statistics_after_filtering:
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index_after_rmdup/bam_bai_pair
+      bambai_pair: samtools_remove_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        source: samtools_remove_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
-    out: [log_file]
+    out: [log_file, reads_mapped]
 
-  get_stat:
+  get_statistics:
     run: ../tools/collect-statistics-chip-seq.cwl
     in:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
       macs2_called_peaks: macs2_callpeak/peak_xls_file
+      atdp_results: average_tag_density/result_file
       preseq_results: preseq/estimates_file
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
-
-  preseq_plot_data:
-    label: "Formats sequencing depth estimation data for plotting"
-    doc: |
-      Formats estimates file from preseq standard output for QC plotting. This adds a new
-      column that includes the actual read count point on the plot.
-    run: ../tools/preseq-plot-data.cwl
-    in:
-      preseq_stderr_log_file: preseq/log_file_stderr
-      estimates_file: preseq/estimates_file
-      mapped_reads: get_stat/mapped_reads
-    out: [estimates_file_plot_data]
 
   island_intersect:
     label: "Peak annotation"
@@ -576,7 +570,7 @@ steps:
       elements are close to the TSS of their targets.
     run: ../tools/atdp.cwl
     in:
-      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      input_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       annotation_filename: annotation_file
       fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
       avd_window_bp:
@@ -589,7 +583,9 @@ steps:
         default: "chrX chrY"
       avd_heat_window_bp:
         default: 200
-      mapped_reads: get_stat/mapped_reads
+      mapped_reads:
+        source: get_bam_statistics_after_filtering/reads_mapped
+        valueFrom: $(parseInt(self))
     out: [result_file]
 
 
@@ -599,8 +595,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Deprecated. ChIP-Seq pipeline single-read"
-s:name: "Deprecated. ChIP-Seq pipeline single-read"
+label: "ChIP-Seq pipeline single-read"
+s:name: "ChIP-Seq pipeline single-read"
 s:alternateName: "ChIP-Seq basic analysis workflow for single-read data"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-se.cwl
