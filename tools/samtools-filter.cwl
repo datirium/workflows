@@ -16,15 +16,19 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
+      echo "Copy $0 to temp.bam and create new index"
+      cp $0 temp.bam
+      samtools index temp.bam
       echo "Filtering BAM file"
-      echo "samtools idxstats $0 | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -F $3 -o $4 $0"
-      samtools idxstats $0 | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -F $3 -o $4 $0
+      echo "samtools idxstats temp.bam | cut -f 1 | grep -v -E \"`echo $1 | sed -e 's/ /$|/g'`$|\*\" | xargs samtools view -q $2 -F $3 -o $4 temp.bam"
+      samtools idxstats temp.bam | cut -f 1 | grep -v -E "`echo $1 | sed -e 's/ /$|/g'`$|\*" | xargs samtools view -q $2 -F $3 -o $4 temp.bam
       echo "Sorting BAM file"
       echo "samtools sort $4 -o $4"
       samtools sort $4 -o $4
       echo "Indexing BAM file"
       echo "samtools index $4"
       samtools index $4
+      rm -f temp.bam temp.bam.bai
     inputBinding:
       position: 5
     doc: "Script to exclude chromosomes from the BAM file and filter reads by quality"
