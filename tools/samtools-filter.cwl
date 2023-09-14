@@ -9,7 +9,7 @@ requirements:
 
 inputs:
 
-  script:
+  script_:
     type: string?
     default: |
       #!/bin/bash
