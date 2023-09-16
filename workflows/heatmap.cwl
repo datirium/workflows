@@ -50,9 +50,7 @@ inputs:
     'sd:localLabel': true
 
   alignment_name:
-    type:
-      - "null"
-      - string[]
+    type: string[]
     label: "ChIP-Seq experiment(s)"
     doc: "Names for input alignment files. Order corresponds to the alignment_file"
     'sd:upstreamSource': "chipseq_sample/alias"
@@ -164,6 +162,7 @@ steps:
     run: ../tools/heatmap-prepare.cwl
     in:
       bam_file: alignment_file
+      alignment_name: alignment_name
       fragment_size: fragment_size
       total_reads: mapped_reads_number
     out: [tag_folder]

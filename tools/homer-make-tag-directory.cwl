@@ -27,6 +27,10 @@ inputs:
     type: File
     doc: "Alignment file, BAM"
 
+  output_folder:
+    type: string
+    doc: "Name of the directory to save outputs"
+
   fragment_size:
     type:
       - "null"
@@ -80,14 +84,14 @@ outputs:
   output_tag_folder:
     type: Directory
     outputBinding:
-      glob: $(inputs.bam_file.basename.split('.')[0])
+      glob: $(inputs.output_folder.replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"))
     doc: "Tag directory"
 
 
 
 baseCommand: ["makeTagDirectory"]
 arguments:
-  - valueFrom: $(inputs.bam_file.basename.split('.')[0])
+  - valueFrom: $(inputs.output_folder.replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"))
   - valueFrom: $("default/" + inputs.bam_file.basename)
 
 
