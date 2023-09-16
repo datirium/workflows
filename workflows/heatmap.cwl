@@ -66,10 +66,11 @@ inputs:
     'sd:localLabel': true
 
   recentering:
-    type:
-      - "null"
-      - type: enum
-        symbols: ["Gene TSS", "Peak Center"]
+    # type:
+    #   - "null"
+    #   - type: enum
+    #     symbols: ["Gene TSS", "Peak Center"]
+    type: string?
     default: "Gene TSS"
     label: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
     doc: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
