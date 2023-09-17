@@ -28,7 +28,7 @@ requirements:
 
 inputs:
 
-  indices_folder_:
+  indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "Indexed genome folder (bowtie)"
@@ -529,7 +529,7 @@ steps:
     run: ../tools/bowtie-alignreads.cwl
     in:
       upstream_filelist: rename/target_file
-      indices_folder: indices_folder_
+      indices_folder: indices_folder
       clip_3p_end: clip_3p_end
       clip_5p_end: clip_5p_end
       v:
