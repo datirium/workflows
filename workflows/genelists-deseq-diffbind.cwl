@@ -94,7 +94,7 @@ inputs:
     label: "Sample names for RNA-Seq experiments"
     doc: "Array of aliases for RNA-Seq experiments for column metadata, param (-e)"
     'sd:upstreamSource': "samples_rnaseq/alias"
-    'sd:localLabel': trues
+    'sd:localLabel': true
 
   datafiles_nabinding:
     type:

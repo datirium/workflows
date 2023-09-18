@@ -1,0 +1,20 @@
+{
+  "alias": "workflow-test",
+  "cells": "testcell",
+  "index_directory": {
+    "class": "Directory",
+    "location": "/Users/robertplayer/data/scidap_workflow_testing/workflow_variantcalling/refs/bwa-index-hg38"
+  },
+  "ploidy": 2,
+  "snpeffdb": "hg38",
+  "fastq_file_R1": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/variantcalling/srr098401_R1.fastq",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "fastq_file_R2": {
+    "class": "File",
+    "location": "/Users/robertplayer/data/datirium/workflows/tests/data/variantcalling/srr098401_R2.fastq",
+    "format": "http://edamontology.org/format_1930"
+  }
+}

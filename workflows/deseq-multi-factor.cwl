@@ -27,6 +27,7 @@ requirements:
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
 
 
 inputs:

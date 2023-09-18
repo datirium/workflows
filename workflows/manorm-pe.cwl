@@ -13,17 +13,19 @@ requirements:
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
-    - "cutandrun-pe.cwl"
+    - "cutandrun-macs2-pe.cwl"
+    - "cutandrun-seacr-pe.cwl"
   second_chipseq_sample:
     - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
-    - "cutandrun-pe.cwl"
+    - "cutandrun-macs2-pe.cwl"
+    - "cutandrun-seacr-pe.cwl"
 
 
 inputs:
 
-  alias:
+  alias_name:
     type: string
     label: "Experiment short name/Alias"
     sd:preview:

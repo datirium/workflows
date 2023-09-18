@@ -177,7 +177,7 @@ outputs:
     doc: |
       Tab delimited chromosome length file: <chromName><TAB><chromSize>
 
-  bqsr2_indels:
+  bqsr2_indels_vcf:
     type: File
     outputBinding:
       glob: bqsr2_indels.vcf.gz
@@ -185,7 +185,7 @@ outputs:
     doc: |
       indels called after filtering and recalibration
 
-  bqsr2_snps:
+  bqsr2_snps_vcf:
     type: File
     outputBinding:
       glob: bqsr2_snps.vcf.gz
@@ -193,15 +193,15 @@ outputs:
     doc: |
       snps called after filtering and recalibration
 
-  bqsr2_snps_ann:
+  bqsr2_all_ann_vcf:
     type: File?
     outputBinding:
-      glob: bqsr2_snps.ann.vcf.gz
-    secondaryFiles: bqsr2_snps.ann.vcf.idx
+      glob: bqsr_all.ann.vcf.gz
+    secondaryFiles: bqsr_all.ann.vcf.idx
     doc: |
       snps called after filtering and recalibration with effect annotations
 
-  raw_indels:
+  raw_indels_vcf:
     type: File
     outputBinding:
       glob: raw_indels.vcf.gz
@@ -209,7 +209,7 @@ outputs:
     doc: |
       indels called from gatk HaplotypeCaller using sorted_dedup_reads.bam
 
-  raw_snps:
+  raw_snps_vcf:
     type: File
     outputBinding:
       glob: raw_snps.vcf.gz
@@ -244,6 +244,13 @@ outputs:
       glob: snpEff_summary.html
     doc: |
       summary of SNPEFF annotations
+
+  snpEff_genes:
+    type: File?
+    outputBinding:
+      glob: snpEff_genes.txt
+    doc: |
+      text file containing gene details, required for link in html summary
 
   log_file_stdout:
     type: stdout
