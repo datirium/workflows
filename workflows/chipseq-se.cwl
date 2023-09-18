@@ -466,7 +466,7 @@ steps:
       bam_file: clean_sam_headers_for_preseq/preseq_bam
       extrapolation:
         default: 1000000000
-    out: [estimates_file]
+    out: [estimates_file, log_file_stdout, log_file_stderr]
 
   samtools_remove_duplicates:
     run: ../tools/samtools-markdup.cwl
