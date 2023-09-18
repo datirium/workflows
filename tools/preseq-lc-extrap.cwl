@@ -108,6 +108,7 @@ inputs:
       position: 16
     doc: "Coordinate sorted BAM file"
 
+
 outputs:
 
   estimates_file:
@@ -115,11 +116,19 @@ outputs:
     outputBinding:
       glob: $(get_output_filename(inputs.bam_file))
 
+  log_file_stdout:
+    type: stdout
 
-baseCommand: ["preseq", "lc_extrap", "-bam"]
+  log_file_stderr:
+    type: stderr
+    
+
+baseCommand: ["preseq", "lc_extrap", "-v", "-bam"]
+stdout: preseq_lc_extrap_stdout.log
+stderr: preseq_lc_extrap_stdout.log
 
 
-successCodes: [1, 139]
+successCodes: [1]
 
 
 $namespaces:
