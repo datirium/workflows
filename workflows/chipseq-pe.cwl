@@ -573,6 +573,12 @@ steps:
       threads: threads
     out: [deduplicated_bam_bai_pair]
 
+  clean_sam_headers_for_preseq:
+    run: ../tools/samtools-clean-headers.cwl
+    in:
+      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
+    out: [preseq_bam]
+
   preseq:
     label: "Sequencing depth estimation"
     doc: |
@@ -580,7 +586,7 @@ steps:
       be expected from the additional sequencing of the same experiment.
     run: ../tools/preseq-lc-extrap.cwl
     in:
-      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
+      bam_file: clean_sam_headers_for_preseq/preseq_bam
       pe_mode:
         default: true
       extrapolation:
