@@ -701,6 +701,13 @@ steps:
       upstream_bp: upstream_dist
     out: [result_file, log_file]
 
+  samtools_sort_index_for_atdp:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: samtools_remove_duplicates/deduplicated_bam_bai_pair
+      threads: threads
+    out: [bam_bai_pair]
+
   average_tag_density:
     label: "Read enrichment around genes TSS"
     doc: |
@@ -708,7 +715,7 @@ steps:
       elements are close to the TSS of their targets.
     run: ../tools/atdp.cwl
     in:
-      input_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
+      input_file: samtools_sort_index_for_atdp/bam_bai_pair
       annotation_filename: annotation_file
       fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
       avd_window_bp:
