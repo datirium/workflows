@@ -121,7 +121,7 @@ outputs:
 
   log_file_stderr:
     type: stderr
-    
+
 
 baseCommand: ["preseq", "lc_extrap", "-v", "-bam"]
 stdout: preseq_lc_extrap_stdout.log
