@@ -298,14 +298,14 @@ outputs:
     label: "YAML formatted combined log"
     format: "http://edamontology.org/format_3750"
     doc: "YAML formatted combined log"
-    outputSource: get_statistics/collected_statistics_yaml
+    outputSource: get_stat/collected_statistics_yaml
 
   workflow_statistics_markdown:
     type: File?
     label: "Markdown formatted combined log"
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
-    outputSource: get_statistics/collected_statistics_md
+    outputSource: get_stat/collected_statistics_md
     'sd:visualPlugins':
     - markdownView:
         tab: 'Overview'
@@ -315,7 +315,7 @@ outputs:
     label: "Workflow execution statistics"
     format: "http://edamontology.org/format_3475"
     doc: "Overall workflow execution statistics from bowtie_aligner and samtools_rmdup steps"
-    outputSource: get_statistics/collected_statistics_tsv
+    outputSource: get_stat/collected_statistics_tsv
     'sd:visualPlugins':
     - tableView:
         vertical: true
@@ -366,7 +366,7 @@ outputs:
     type: int
     label: "Mapped reads number"
     doc: "Mapped reads number for downstream analyses"
-    outputSource: get_statistics/mapped_reads
+    outputSource: get_stat/mapped_reads
 
 
 steps:
@@ -520,7 +520,7 @@ steps:
     in:
       bam_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       chrom_length_file: chrom_length
-      mapped_reads_number: get_statistics/mapped_reads
+      mapped_reads_number: get_stat/mapped_reads
       fragment_size: macs2_callpeak/macs2_fragments_calculated
     out: [bigwig_file]
 
@@ -546,7 +546,7 @@ steps:
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
     out: [log_file, reads_mapped]
 
-  get_statistics:
+  get_stat:
     run: ../tools/collect-statistics-chip-seq.cwl
     in:
       bowtie_alignment_report: bowtie_aligner/log_file
