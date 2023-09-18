@@ -360,6 +360,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
+        name: "Gapped peaks"
         displayMode: "COLLAPSE"
         height: 40
 
