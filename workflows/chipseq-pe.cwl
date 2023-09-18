@@ -360,8 +360,8 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'annotation'
-        name: "Gapped peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_log:
     type: File?
