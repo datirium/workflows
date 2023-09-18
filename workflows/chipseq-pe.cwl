@@ -317,7 +317,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Narrow peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_broad_peaks:
     type: File?
@@ -331,7 +332,8 @@ outputs:
         id: 'igvbrowser'
         type: 'annotation'
         name: "Broad peaks"
-        height: 120
+        displayMode: "COLLAPSE"
+        height: 40
 
   macs2_peak_summits:
     type: File?
@@ -439,22 +441,21 @@ outputs:
     doc: "fragment, calculated fragment, islands count from MACS2 results"
     outputSource: macs2_callpeak/macs2_stat_file
 
-  preseq_estimates:
+  preseq_estimates_plot_data:
     type: File?
     label: "Preseq estimates"
     format: "http://edamontology.org/format_3475"
     doc: "Preseq estimated results"
-    outputSource: preseq/estimates_file
+    outputSource: preseq_plot_data/estimates_file_plot_data
     'sd:visualPlugins':
-    - scatter:
+    - line:
         tab: 'QC Plots'
-        Title: 'Preseq Estimates'
-        xAxisTitle: 'Total reads count'
-        yAxisTitle: 'Expected distinct reads count'
-        colors: ["#4b78a3"]
+        Title: 'Distinct Read Counts Estimates'
+        xAxisTitle: 'Mapped Reads/Fragments/Tags (millions)'
+        yAxisTitle: 'Distinct Reads Count'
+        colors: ["#4b78a3", "#a3514b"]
         height: 500
-        data: [$1, $2]
-        comparable: "preseq"
+        data: [$2, $5]
   
   estimated_fragment_size:
     type: int
@@ -684,6 +685,18 @@ steps:
         default: True
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
+  preseq_plot_data:
+    label: "Formats sequencing depth estimation data for plotting"
+    doc: |
+      Formats estimates file from preseq standard output for QC plotting. This adds a new
+      column that includes the actual read count point on the plot.
+    run: ../tools/preseq-plot-data.cwl
+    in:
+      preseq_stderr_log_file: preseq/log_file_stderr
+      estimates_file: preseq/estimates_file
+      mapped_reads: get_stat/mapped_reads
+    out: [estimates_file_plot_data]
+
   island_intersect:
     label: "Peak annotation"
     doc: |
@@ -736,8 +749,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "ChIP-Seq pipeline paired-end"
-s:name: "ChIP-Seq pipeline paired-end"
+label: "Deprecated. ChIP-Seq pipeline paired-end"
+s:name: "Deprecated. ChIP-Seq pipeline paired-end"
 s:alternateName: "ChIP-Seq basic analysis workflow for a paired-end experiment"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/chipseq-pe.cwl
