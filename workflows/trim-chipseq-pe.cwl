@@ -650,7 +650,7 @@ steps:
   clean_sam_headers_for_preseq:
     run: ../tools/samtools-clean-headers.cwl
     in:
-      bam_file: filter_bam/filtered_bam_bai_pair
+      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
     out: [preseq_bam]
 
   preseq:
