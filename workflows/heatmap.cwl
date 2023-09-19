@@ -162,7 +162,7 @@ steps:
     run: ../tools/heatmap-prepare.cwl
     in:
       bam_file: alignment_file
-      alignment_name: alignment_name
+      output_folder: alignment_name
       fragment_size: fragment_size
       total_reads: mapped_reads_number
     out: [tag_folder]

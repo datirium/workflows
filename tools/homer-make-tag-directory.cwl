@@ -3,7 +3,6 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
   listing: |
     ${
@@ -14,7 +13,15 @@ requirements:
          "writable": true}
       ]
     }
-
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var default_output_folder = function() {
+      if (inputs.output_folder){
+        return inputs.output_folder.replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_");
+      } else {
+        return inputs.bam_file.basename.split('.')[0];
+      }
+    };
 
 hints:
 - class: DockerRequirement
@@ -28,7 +35,7 @@ inputs:
     doc: "Alignment file, BAM"
 
   output_folder:
-    type: string
+    type: string?
     doc: "Name of the directory to save outputs"
 
   fragment_size:
@@ -84,14 +91,14 @@ outputs:
   output_tag_folder:
     type: Directory
     outputBinding:
-      glob: $(inputs.output_folder.replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"))
+      glob: $(default_output_folder())
     doc: "Tag directory"
 
 
 
 baseCommand: ["makeTagDirectory"]
 arguments:
-  - valueFrom: $(inputs.output_folder.replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"))
+  - valueFrom: $(default_output_folder())
   - valueFrom: $("default/" + inputs.bam_file.basename)
 
 

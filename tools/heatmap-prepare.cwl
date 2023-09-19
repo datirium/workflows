@@ -15,10 +15,10 @@ inputs:
     label: "BAM files"
     doc: "Array of input BAM files"
 
-  alignment_name:
+  output_folder:
     type: string[]
     label: "BAM file names"
-    doc: "Array of labels for BAM files"
+    doc: "Array of names for output folders"
 
   fragment_size:
     type: int[]
@@ -46,7 +46,7 @@ steps:
     run: ../tools/homer-make-tag-directory.cwl
     in:
       bam_file: bam_file
-      output_folder: alignment_name
+      output_folder: output_folder
       fragment_size: fragment_size
       total_reads: total_reads
     scatter:
