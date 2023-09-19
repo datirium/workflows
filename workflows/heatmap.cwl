@@ -14,12 +14,15 @@ requirements:
 
 'sd:upstream':
   chipseq_sample:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
-    - "trim-chipseq-se.cwl"
-    - "trim-chipseq-pe.cwl"
-    - "trim-atacseq-se.cwl"
-    - "trim-atacseq-pe.cwl"
+  - "chipseq-se.cwl"
+  - "chipseq-pe.cwl"
+  - "trim-chipseq-se.cwl"
+  - "trim-chipseq-pe.cwl"
+  - "trim-atacseq-se.cwl"
+  - "trim-atacseq-pe.cwl"
+  filtered_experiment:
+  - "filter-peaks-for-heatmap.cwl"
+  - "filter-deseq-for-heatmap.cwl"
 
 
 inputs:
@@ -39,9 +42,7 @@ inputs:
     'sd:localLabel': true
 
   alignment_name:
-    type:
-      - "null"
-      - string[]
+    type: string[]
     label: "ChIP-Seq experiment(s)"
     doc: "Names for input alignment files. Order corresponds to the alignment_file"
     'sd:upstreamSource': "chipseq_sample/alias"
@@ -49,12 +50,12 @@ inputs:
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: |
-      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
-       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    label: "Filter ChIP/ATAC peaks or filter DESeq genes experiment"
     doc: |
       "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
        [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+    'sd:upstreamSource': "filtered_experiment/filtered_file"
+    'sd:localLabel': true
 
   recentering:
     type:
@@ -153,6 +154,7 @@ steps:
     run: ../tools/heatmap-prepare.cwl
     in:
       bam_file: alignment_file
+      output_folder: alignment_name
       fragment_size: fragment_size
       total_reads: mapped_reads_number
     out: [tag_folder]
