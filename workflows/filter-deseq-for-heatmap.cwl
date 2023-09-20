@@ -37,8 +37,8 @@ inputs:
     doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
-        columns: ["feature", "RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "baseMean", "log2FoldChange", "pvalue", "padj", "HCL", "HCL.1", "HCL.2", "HCL.3"]
-        types:   ["string", "string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number", "number", "string", "string", "string", "string"]
+        columns: ["RefseqId", "GeneId", "Chrom", "TxStart", "TxEnd", "Strand", "RpkmCondition1", "RpkmCondition2", "baseMean", "log2FoldChange", "pvalue", "padj", "HCL", "[HCL.1]", "[HCL.2]", "[HCL.3]"]
+        types:   ["string", "string", "string", "number", "number", "string", "number", "number", "number", "number", "number", "number", "string", "string", "string", "string"]
 
   header:
     type: boolean?
@@ -93,10 +93,27 @@ outputs:
 
 steps:
 
+  rename_column:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: feature_file
+      script:
+        default: |
+          cat $0 | grep -v "log2FoldChange" > wo_header.tsv
+          HEADER=`head -n 1 $0`;
+          if [[ "$HEADER" != *"GeneId"* ]];
+          then
+            HEADER="${HEADER//feature/GeneId}"
+          fi
+          echo -e "${HEADER}" > `basename $0`
+          cat wo_header.tsv >> `basename $0`
+          rm -f wo_header.tsv
+    out: [output_file]
+
   feature_select:
     run: ../tools/feature-select-sql.cwl
     in:
-      feature_file: feature_file
+      feature_file: rename_column/output_file
       sql_query: sql_query
       columns:
         source: columns
