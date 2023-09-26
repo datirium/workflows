@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.29
+  dockerPull: biowardrobe2/sc-tools:v0.0.30
 
 
 inputs:
@@ -82,6 +82,17 @@ inputs:
     doc: |
       Number of the most predictive genes to be shows
       on the gene expression heatmap. Default: 50
+
+  genes_of_interest:
+    type:
+    - "null"
+    - string
+    - string[]
+    inputBinding:
+      prefix: "--genes"
+    doc: |
+      Genes of interest to build genes expression plots.
+      Default: None
 
   export_pdf_plots:
     type: boolean?
@@ -303,6 +314,94 @@ outputs:
       glob: "*_xpr_htmp.pdf"
     doc: |
       Gene expression heatmap.
+      PDF format
+
+  xpr_pstm_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_pstm.png"
+    doc: |
+      Gene expression along pseudotime.
+      PNG format
+
+  xpr_pstm_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_pstm.pdf"
+    doc: |
+      Gene expression along pseudotime.
+      PDF format
+
+  pstm_dnst_spl_idnt_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_dnst_spl_idnt.png"
+    doc: |
+      Pseudotime density, split by dataset
+      PNG format
+
+  pstm_dnst_spl_idnt_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_dnst_spl_idnt.pdf"
+    doc: |
+      Pseudotime density, split by dataset
+      PDF format
+
+  pstm_dnst_spl_cnd_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_dnst_spl_cnd.png"
+    doc: |
+      Pseudotime density, split by
+      grouping condition
+      PNG format
+
+  pstm_dnst_spl_cnd_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_dnst_spl_cnd.pdf"
+    doc: |
+      Pseudotime density, split by
+      grouping condition
+      PDF format
+
+  pstm_hist_gr_clst_spl_idnt_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_hist_gr_clst_spl_idnt.png"
+    doc: |
+      Pseudotime histogram,
+      colored by cluster,
+      split by dataset
+      PNG format
+
+  pstm_hist_gr_clst_spl_idnt_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_hist_gr_clst_spl_idnt.pdf"
+    doc: |
+      Pseudotime histogram,
+      colored by cluster,
+      split by dataset
+      PDF format
+
+  pstm_hist_gr_clst_spl_cnd_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_hist_gr_clst_spl_cnd.png"
+    doc: |
+      Pseudotime histogram, colored by
+      cluster, split by grouping condition
+      PNG format
+
+  pstm_hist_gr_clst_spl_cnd_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_pstm_hist_gr_clst_spl_cnd.pdf"
+    doc: |
+      Pseudotime histogram, colored by
+      cluster, split by grouping condition
       PDF format
 
   umap_rd_rnaumap_plot_png:
@@ -617,6 +716,8 @@ s:about: |
                           trajectory. Default: defined automatically
     --ngenes NGENES       Number of the most predictive genes to be shows on the
                           gene expression heatmap. Default: 50
+    --genes               Genes of interest to build genes expression plots.
+                          Default: None
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false

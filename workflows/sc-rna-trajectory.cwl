@@ -7,6 +7,14 @@ requirements:
   - class: StepInputExpressionRequirement
   - class: MultipleInputFeatureRequirement
   - class: InlineJavascriptRequirement
+    expressionLib:
+    - var split_features = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 
 'sd:upstream':
@@ -78,6 +86,16 @@ inputs:
       column used for grouping cells into
       the clusters. This value will define
       the trajectory starting point.
+
+  genes_of_interest:
+    type: string?
+    default: null
+    label: "Genes of interest"
+    doc: |
+      Comma or space separated list of
+      genes of interest to visualize
+      expression.
+      Default: None
 
   barcodes_data:
     type: File?
@@ -232,8 +250,19 @@ outputs:
       Gene expression heatmap
     'sd:visualPlugins':
     - image:
-        tab: 'Heatmap'
+        tab: 'Gene expression'
         Caption: 'Gene expression heatmap'
+
+  xpr_pstm_plot_png:
+    type: File?
+    outputSource: rna_trajectory/xpr_pstm_plot_png
+    label: "Gene expression along pseudotime"
+    doc: |
+      Gene expression along pseudotime
+    'sd:visualPlugins':
+    - image:
+        tab: 'Gene expression'
+        Caption: 'Gene expression along pseudotime'
 
   umap_rd_rnaumap_plot_png:
     type: File?
@@ -267,6 +296,30 @@ outputs:
     - image:
         tab: 'Pseudotime'
         Caption: 'UMAP, colored by pseudotime, WNN'
+
+  pstm_dnst_spl_idnt_plot_png:
+    type: File?
+    outputSource: rna_trajectory/pstm_dnst_spl_idnt_plot_png
+    label: "Pseudotime density, split by dataset"
+    doc: |
+      Pseudotime density, split by dataset
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Pseudotime density, split by dataset'
+
+  pstm_hist_gr_clst_spl_idnt_plot_png:
+    type: File?
+    outputSource: rna_trajectory/pstm_hist_gr_clst_spl_idnt_plot_png
+    label: "Pseudotime histogram, colored by cluster, split by dataset"
+    doc: |
+      Pseudotime histogram,
+      colored by cluster,
+      split by dataset
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'Pseudotime histogram, colored by cluster, split by dataset'
 
   umap_spl_idnt_rd_rnaumap_plot_png:
     type: File?
@@ -303,6 +356,30 @@ outputs:
     - image:
         tab: 'Per dataset'
         Caption: 'UMAP, colored by pseudotime, split by dataset, WNN'
+
+  pstm_dnst_spl_cnd_plot_png:
+    type: File?
+    outputSource: rna_trajectory/pstm_dnst_spl_cnd_plot_png
+    label: "Pseudotime density, split by grouping condition"
+    doc: |
+      Pseudotime density, split by
+      grouping condition
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'Pseudotime density, split by grouping condition'
+
+  pstm_hist_gr_clst_spl_cnd_plot_png:
+    type: File?
+    outputSource: rna_trajectory/pstm_hist_gr_clst_spl_cnd_plot_png
+    label: "Pseudotime histogram, colored by cluster, split by grouping condition"
+    doc: |
+      Pseudotime histogram, colored by
+      cluster, split by grouping condition
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'Pseudotime histogram, colored by cluster, split by grouping condition'
 
   umap_spl_cnd_rd_rnaumap_plot_png:
     type: File?
@@ -405,6 +482,9 @@ steps:
       trajectory_start:
         source: trajectory_start
         valueFrom: $(self==""?null:self)            # safety measure
+      genes_of_interest:
+        source: genes_of_interest
+        valueFrom: $(split_features(self))
       predictive_genes:
         default: 100
       verbose:
@@ -437,6 +517,16 @@ steps:
     - tplg_plot_pdf
     - xpr_htmp_plot_png
     - xpr_htmp_plot_pdf
+    - xpr_pstm_plot_png
+    - xpr_pstm_plot_pdf
+    - pstm_dnst_spl_idnt_plot_png
+    - pstm_dnst_spl_idnt_plot_pdf
+    - pstm_dnst_spl_cnd_plot_png
+    - pstm_dnst_spl_cnd_plot_pdf
+    - pstm_hist_gr_clst_spl_idnt_plot_png
+    - pstm_hist_gr_clst_spl_idnt_plot_pdf
+    - pstm_hist_gr_clst_spl_cnd_plot_png
+    - pstm_hist_gr_clst_spl_cnd_plot_pdf
     - umap_rd_rnaumap_plot_png
     - umap_rd_rnaumap_plot_pdf
     - umap_rd_atacumap_plot_png
@@ -474,6 +564,11 @@ steps:
         - rna_trajectory/dndr_pstm_plot_pdf
         - rna_trajectory/tplg_plot_pdf
         - rna_trajectory/xpr_htmp_plot_pdf
+        - rna_trajectory/xpr_pstm_plot_pdf
+        - rna_trajectory/pstm_dnst_spl_idnt_plot_pdf
+        - rna_trajectory/pstm_dnst_spl_cnd_plot_pdf
+        - rna_trajectory/pstm_hist_gr_clst_spl_idnt_plot_pdf
+        - rna_trajectory/pstm_hist_gr_clst_spl_cnd_plot_pdf
         - rna_trajectory/umap_rd_rnaumap_plot_pdf
         - rna_trajectory/umap_rd_atacumap_plot_pdf
         - rna_trajectory/umap_rd_wnnumap_plot_pdf
