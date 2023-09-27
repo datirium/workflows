@@ -27,7 +27,7 @@ inputs:
     sd:preview:
       position: 2
 
-  annotation_file:
+  input_annotation_file:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Annotation file (gff, gtf, tsv):"
@@ -54,11 +54,6 @@ outputs:
     label: "Kallisto index file."
     outputSource: index_reference/kallisto_index
 
-  annotation_tsv:
-    type: File
-    label: "Annotation TSV file."
-    outputSource: index_reference/annotation_file
-
   log_file_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
@@ -81,9 +76,9 @@ steps:
     run: ../tools/kallisto-index.cwl
     in:
       ref_genome_fasta: reference_fasta
-      annotation_tsv: annotation_file
+      annotation_tsv: input_annotation_file
       threads: threads
-    out: [kallisto_index, annotation_file, log_file_stdout, log_file_stderr]
+    out: [kallisto_index, log_file_stdout, log_file_stderr]
 
 
 $namespaces:

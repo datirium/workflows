@@ -13,19 +13,17 @@ hints:
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
       printf "$(date)\n\nStdout log file for kallisto-index.cwl tool:\n\n"
-      FASTA=$0; THREADS=$1; ANNO=$2;
+      FASTA=$0; THREADS=$1;
       printf "INPUTS:\n\n"
       printf "\$0 - $FASTA\n\n"
       printf "\$1 - $THREADS\n\n"
       # commands start
-      cp $FASTA genome.fasta
-      cp $ANNO refgene.tsv
-      kallisto index -t $THREADS -i kallisto-index.kdx $FASTA
+      kallisto index -t $THREADS -i kallisto-index.kdx $FASTA   # ref fasta can be compressed with gzip or not
     inputBinding:
       position: 1
 
@@ -43,13 +41,6 @@ inputs:
       position: 3
     doc: "Number of threads for steps that support multithreading."
 
-  annotation_tsv:
-    type: File
-    inputBinding:
-      position: 4
-    doc: |
-      Annotation file included here for use as an upstream.
-
 
 outputs:
 
@@ -57,11 +48,6 @@ outputs:
     type: File
     outputBinding:
       glob: kallisto-index.kdx
-
-  annotation_file:
-    type: File
-    outputBinding:
-      glob: refgene.tsv
 
   log_file_stdout:
     type: File
