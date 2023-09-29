@@ -69,23 +69,23 @@ inputs:
 
       printf "#### METRICS\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Total transcripts in transcriptome: $transcriptome_count\n" >> overview.md
+      printf " Total transcripts in transcriptome: $transcriptome_count\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Total transcripts with at least 1 read aligned: $transcriptome_gt0\n" >> overview.md
+      printf " Total transcripts with at least 1 read aligned: $transcriptome_gt0\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Total annotated transcripts with at least 1 read aligned: $annotated_gt0\n" >> overview.md
+      printf " Total annotated transcripts with at least 1 read aligned: $annotated_gt0\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Total unannotated transcripts with at least 1 read aligned: $unannotated_gt0\n" >> overview.md
+      printf " Total unannotated transcripts with at least 1 read aligned: $unannotated_gt0\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$R1 read count: $read_count_r1\n" >> overview.md
+      printf " R1 read count: $read_count_r1\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$R2 read count: read_count_r2\n" >> overview.md
+      printf " R2 read count: $read_count_r2\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Estimated aligned read count, transcriptome: $total_aligned\n" >> overview.md
+      printf " Estimated aligned read count, transcriptome: $total_aligned\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Estimated aligned read count, annotated transcriptome: $annotated_aligned\n" >> overview.md
+      printf " Estimated aligned read count, annotated transcriptome: $annotated_aligned\n" >> overview.md
       printf "-" >> overview.md
-      printf " \$Estimated aligned read count, unannotated transcriptome: $unannotated_aligned\n" >> overview.md
+      printf " Estimated aligned read count, unannotated transcriptome: $unannotated_aligned\n" >> overview.md
 
       printf "\n\nWorkflow script complete!\n"
     inputBinding:
@@ -106,7 +106,7 @@ inputs:
       TSV file containing gene annotations for the reference genome. From kallisto index upstream.
       Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
 
-  fastq_R1:
+  fastq_R1_file:
     type: File
     label: "R1 fastq"
     inputBinding:
@@ -114,7 +114,7 @@ inputs:
     doc: |
       FASTQ file 1 of paired end read data.
 
-  fastq_R2:
+  fastq_R2_file:
     type: File
     label: "R2 fastq"
     inputBinding:

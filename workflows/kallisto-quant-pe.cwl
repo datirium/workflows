@@ -37,7 +37,7 @@ inputs:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Annotation file (gff, gtf, tsv):"
-    'sd:upstreamSource': "kallisto_index/index_file"
+    'sd:upstreamSource': "kallisto_index/input_annotation_file"
     doc: |
       TSV file containing gene annotations for the reference genome. From kallisto index upstream.
       Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
@@ -149,7 +149,7 @@ outputs:
     doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript"
     outputSource: kallisto_quant/transcript_counts
 
-  overview:
+  overview_file:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
