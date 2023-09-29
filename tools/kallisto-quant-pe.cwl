@@ -106,7 +106,7 @@ inputs:
       TSV file containing gene annotations for the reference genome. From kallisto index upstream.
       Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
 
-  fastq_R1_file:
+  fastq_file_R1:
     type: File
     label: "R1 fastq"
     inputBinding:
@@ -114,7 +114,7 @@ inputs:
     doc: |
       FASTQ file 1 of paired end read data.
 
-  fastq_R2_file:
+  fastq_file_R2:
     type: File
     label: "R2 fastq"
     inputBinding:

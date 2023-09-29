@@ -290,8 +290,8 @@ steps:
     in:
       kallisto_index: kallisto_index
       annotation_tsv: input_annotation_file
-      fastq_R1: rename_R1/target_file
-      fastq_R2: rename_R2/target_file
+      fastq_file_R1: rename_R1/target_file
+      fastq_file_R2: rename_R2/target_file
       threads: threads
     out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, log_file_stdout, log_file_stderr]
 
