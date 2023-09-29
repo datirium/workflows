@@ -34,7 +34,7 @@ inputs:
     'sd:localLabel': true
     doc: |
       TSV file containing gene annotations for the reference genome.
-      Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (+ if unknown).
+      Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
     sd:preview:
       position: 3
 
