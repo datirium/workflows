@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -23,7 +23,12 @@ inputs:
       printf "\$0 - $FASTA\n\n"
       printf "\$1 - $THREADS\n\n"
       # commands start
-      kallisto index -t $THREADS -i kallisto-index.kdx $FASTA   # ref fasta can be compressed with gzip or not
+      #   detect and decompress
+      if [[ $(basename $FASTA | sed 's/.*\.//') == "gz" || $(basename $FASTA | sed 's/.*\.//') == "fasta" || $(basename $FASTA | sed 's/.*\.//') == "fa" || $(basename $FASTA | sed 's/.*\.//') == "fna" ]]; then
+        kallisto index -t $THREADS -i kallisto-index.kdx $FASTA   # ref fasta can be compressed with gzip or not
+      else
+        echo "reference file must end in '.gz', '.fasta', '.fa', or '.fna'"; exit
+      fi
     inputBinding:
       position: 1
 
