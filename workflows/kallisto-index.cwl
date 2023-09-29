@@ -52,13 +52,13 @@ outputs:
   index_file:
     type: File
     label: "Kallisto index file."
-    outputSource: index_reference/kallisto_index
+    outputSource: kallisto_index_reference/kallisto_index
 
   log_file_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
-    outputSource: index_reference/log_file_stdout
+    outputSource: kallisto_index_reference/log_file_stdout
     'sd:visualPlugins':
     - markdownView:
         tab: 'Overview'
@@ -67,12 +67,12 @@ outputs:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
-    outputSource: index_reference/log_file_stderr     
+    outputSource: kallisto_index_reference/log_file_stderr     
 
 
 steps:
 
-  index_reference:
+  kallisto_index_reference:
     run: ../tools/kallisto-index.cwl
     in:
       ref_genome_fasta: reference_fasta
