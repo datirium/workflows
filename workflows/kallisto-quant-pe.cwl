@@ -81,7 +81,7 @@ inputs:
 
 outputs:
 
-  fastx_stats_R1:
+  fastx_statistics_R1:
     type: File
     label: "FASTQ R1 statistics"
     format: "http://edamontology.org/format_2330"
@@ -103,7 +103,7 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-  fastx_stats_R2:
+  fastx_statistics_R2:
     type: File
     label: "FASTQ R2 statistics"
     format: "http://edamontology.org/format_2330"
