@@ -159,7 +159,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  pie_chart:
+  pie_chart_data:
     type: File?
     label: "aligned transcript metrics"
     format: "http://edamontology.org/format_2330"
@@ -184,7 +184,7 @@ steps:
     in:
       compressed_file: fastq_file_R1
       output_prefix:
-        default: "merged_R1"
+        default: "extracted_R1"
     out: [fastq_file]
 
   extract_fastq_R2:
@@ -197,7 +197,7 @@ steps:
     in:
       compressed_file: fastq_file_R2
       output_prefix:
-        default: "merged_R2"
+        default: "extracted_R2"
     out: [fastq_file]
 
   trim_fastq:
