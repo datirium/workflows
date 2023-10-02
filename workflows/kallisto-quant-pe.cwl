@@ -125,13 +125,6 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-  rpkm_isoforms:
-    type: File
-    format: "http://edamontology.org/format_3752"
-    label: "kallisto estimated counts per transcript (same as rpkm_genes and rpkm_common_tss)"
-    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript"
-    outputSource: kallisto_quant/transcript_counts
-
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -141,13 +134,6 @@ outputs:
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Transcript Counts'
-
-  rpkm_common_tss:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_genes)"
-    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript"
-    outputSource: kallisto_quant/transcript_counts
 
   overview_file:
     type: File
