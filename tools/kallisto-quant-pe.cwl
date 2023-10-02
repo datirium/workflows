@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -31,6 +31,8 @@ inputs:
       # all three files will be the same, using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
       awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%s\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
+      cp transcript_counts.tsv deseq_input.tsv
+
       # print for overview.md
       #   read metrics
       total_aligned=$(tail -n+2 transcript_counts.tsv | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
@@ -167,21 +169,21 @@ outputs:
     outputBinding:
       glob: deseq_input.tsv
     doc: |
-      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+      Gene expression table formatted for input into DESeq
 
   deseq_input_genes:
     type: File
     outputBinding:
       glob: deseq_input.tsv
     doc: |
-      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+      Gene expression table formatted for input into DESeq
 
   deseq_input_common_tss:
     type: File
     outputBinding:
       glob: deseq_input.tsv
     doc: |
-      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+      Gene expression table formatted for input into DESeq
 
   log_file_stdout:
     type: File
