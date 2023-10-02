@@ -162,6 +162,27 @@ outputs:
     outputBinding:
       glob: transcript_counts.tsv
 
+  deseq_input_isoforms:
+    type: File
+    outputBinding:
+      glob: deseq_input.tsv
+    doc: |
+      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+
+  deseq_input_genes:
+    type: File
+    outputBinding:
+      glob: deseq_input.tsv
+    doc: |
+      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+
+  deseq_input_common_tss:
+    type: File
+    outputBinding:
+      glob: deseq_input.tsv
+    doc: |
+      novel mature miRNAs detected by mirdeep2 formatted for input into DESeq
+
   log_file_stdout:
     type: File
     outputBinding:
