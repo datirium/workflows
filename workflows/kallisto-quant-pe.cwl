@@ -125,36 +125,15 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
-  transcript_counts:
+  rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "kallisto estimated counts per transcript"
-    doc: "kallisto estimated counts per transcript"
+    label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_common_tss)"
+    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript"
     outputSource: kallisto_quant/transcript_counts
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Transcript Counts'
-
-  rpkm_isoforms:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Input file for DESeq workflow"
-    doc: "This is the input file for DESeq workflow, the output name is a misnomer: isoforms, genes, and common tss are all the same."
-    outputSource: kallisto_quant/deseq_input_isoforms
-
-  rpkm_genes:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Input file for DESeq workflow"
-    doc: "This is the input file for DESeq workflow, the output name is a misnomer: isoforms, genes, and common tss are all the same."
-    outputSource: kallisto_quant/deseq_input_genes
-
-  rpkm_common_tss:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Input file for DESeq workflow"
-    doc: "This is the input file for DESeq workflow, the output name is a misnomer: isoforms, genes, and common tss are all the same."
-    outputSource: kallisto_quant/deseq_input_common_tss
 
   overview_file:
     type: File
@@ -300,7 +279,7 @@ steps:
       fastq_R1: fastq_file_R1
       fastq_R2: fastq_file_R2
       threads: threads
-    out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, deseq_input_isoforms, deseq_input_genes, deseq_input_common_tss, log_file_stdout, log_file_stderr]
+    out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, log_file_stdout, log_file_stderr]
 
 
 $namespaces:
