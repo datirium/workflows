@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -27,10 +27,11 @@ inputs:
       printf "\$4 - $THREADS\n\n"
       # commands start
       kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
-      # format output for as deseq upstreams (rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1)
-      # all three files will be the same, using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
+      # format output for as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
+      # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
-      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%s\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
+      #   force "est_counts" to integers
+      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
 
       # print for overview.md
       #   read metrics
