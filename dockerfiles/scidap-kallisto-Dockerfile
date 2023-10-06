@@ -1,0 +1,72 @@
+#################################################################
+# Dockerfile
+#
+# Software:         Kallisto
+# Software Version: v2023.5
+# Description:      Dockerized version of Kallisto tool for transcript-level quantification of RNA-Seq data
+# Website:          https://github.com/datirium/workflows
+# Provides:         base image for running kallisto
+# Base Image:       quay.io/biocontainers/kallisto:0.44.0--h7d86c95_2
+# Build Cmd:        docker build --platform linux/amd64 --no-cache --rm -t kallisto-dev -f scidap-kallisto-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti kallisto-dev /bin/bash
+# Push Cmd1:        docker tag kallisto-dev robertplayer/scidap-kallisto:stable
+#      Cmd2:        docker image push robertplayer/scidap-kallisto:stable
+# Pull Cmd:         docker pull robertplayer/scidap-kallisto:stable
+# Test Stable:      docker run --rm -ti robertplayer/scidap-kallisto:stable /bin/bash
+# re-tag for PR:    docker tag kallisto-dev robertplayer/scidap-kallisto:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-kallisto:v1.0.0
+#   
+#   NOTES:
+#   
+#################################################################
+
+
+### Base Image
+#   use for initial image build
+#FROM quay.io/biocontainers/kallisto:0.44.0--h7d86c95_2         # way too stripped down
+FROM ubuntu:22.04
+#   use for small script updates etc (shorter build time from stable)
+#FROM robertplayer/scidap-kallisto:stable
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+#COPY ./scripts/run_qiime2_sample_pe.sh /usr/local/bin/
+#COPY ./scripts/run_qiime2_aggregate.sh /usr/local/bin/
+#COPY ./scripts/transpose_tsv.awk /usr/local/bin/
+
+### Installing dependencies
+RUN apt update && \
+### Installing R dependencies
+    apt install -y git && \
+    apt install -y cmake && \
+    apt install -y clang && \
+    apt install -y zlib1g-dev && \
+    mkdir -p /apps/src/ && \
+    cd /apps/src/ && \
+    git clone https://github.com/pachterlab/kallisto.git && \
+    cd kallisto/ && \
+    mkdir build && \
+    cd build/ && \
+    cmake .. && \
+    make && \
+    ln -s $PWD/src/kallisto /usr/local/bin/ && \
+
+#    R -e 'install.packages("ggplot2", repo = "https://cloud.r-project.org/")' && \
+#    R -e 'install.packages("BiocManager", repo = "https://cloud.r-project.org/")' && \
+#    R -e 'BiocManager::install("RnBeads.rn5")' && \
+### Installing scripts/data
+    mkdir -p /dockerdata && \
+#    wget -O "/dockerdata/gg_2022_10_backbone_full_length.nb.qza" "https://data.qiime2.org/classifiers/greengenes/gg_2022_10_backbone_full_length.nb.qza" && \
+
+#    chmod +x /usr/local/bin/transpose_tsv.awk && \
+#    ls -la /usr/local/bin/transpose_tsv.awk && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
