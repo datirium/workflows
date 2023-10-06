@@ -6,9 +6,7 @@ requirements:
   - class: StepInputExpressionRequirement
 
 'sd:upstream':
-  kallisto_index:
-  - "kallisto-index.cwl"
-  - "https://github.com/datirium/workflows/workflows/kallisto-index.cwl"
+  kallisto_index: "kallisto-index.cwl"
 
 
 inputs:

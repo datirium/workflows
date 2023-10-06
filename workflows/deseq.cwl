@@ -25,7 +25,6 @@ requirements:
     - "trim-rnaseq-se-dutp.cwl"
     - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
     - "kallisto-quant-pe.cwl"
-    - "https://github.com/datirium/workflows/workflows/kallisto-quant-pe.cwl"
   rnaseq_cond_2:
     - "mirna-mirdeep2-se.cwl"
     - "rnaseq-se.cwl"
@@ -41,7 +40,6 @@ requirements:
     - "trim-rnaseq-se-dutp.cwl"
     - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
     - "kallisto-quant-pe.cwl"
-    - "https://github.com/datirium/workflows/workflows/kallisto-quant-pe.cwl"
 
 
 inputs:
