@@ -24,6 +24,7 @@ requirements:
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
     - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+    - "kallisto-quant-pe.cwl"
   rnaseq_cond_2:
     - "mirna-mirdeep2-se.cwl"
     - "rnaseq-se.cwl"
@@ -38,6 +39,7 @@ requirements:
     - "trim-rnaseq-pe-smarter-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
     - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+    - "kallisto-quant-pe.cwl"
 
 
 inputs:
