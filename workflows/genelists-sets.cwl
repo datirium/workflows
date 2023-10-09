@@ -10,10 +10,12 @@ requirements:
 
 
 'sd:upstream':
-  genelists:
+  genelists_for_A:
     - "filter-deseq-for-heatmap.cwl"
     - "filter-diffbind-for-heatmap.cwl"
-
+  genelists_for_B:
+    - "filter-deseq-for-heatmap.cwl"
+    - "filter-diffbind-for-heatmap.cwl"
 
 inputs:
 
@@ -31,7 +33,7 @@ inputs:
     format: "http://edamontology.org/format_3475"
     label: "Filtered genelist A:"
     doc: "filtered differential genelists from DESeq or diffbind pipelines"
-    'sd:upstreamSource': "genelists/filtered_file"
+    'sd:upstreamSource': "genelists_for_A/filtered_file"
     'sd:localLabel': true
 
   filtered_list_B:
@@ -42,7 +44,7 @@ inputs:
     format: "http://edamontology.org/format_3475"
     label: "Filtered geneslist B:"
     doc: "filtered differential genelists from DESeq or diffbind pipelines"
-    'sd:upstreamSource': "genelists/filtered_file"
+    'sd:upstreamSource': "genelists_for_B/filtered_file"
     'sd:localLabel': true
 
   set_operation:
@@ -73,7 +75,7 @@ outputs:
     format: "http://edamontology.org/format_3003"
     label: "Filtered differentially expressed genes"
     doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
-    outputSource: set_operator/genelist_filtered_set
+    outputSource: set_operation/genelist_filtered_set
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Set results'
@@ -84,19 +86,19 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
-    outputSource: set_operator/log_file_stdout
+    outputSource: set_operation/log_file_stdout
 
   filtering_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
     doc: "Filtering stderr log"
-    outputSource: set_operator/log_file_stderr
+    outputSource: set_operation/log_file_stderr
 
 
 steps:
 
-  set_operator:
+  set_operation:
     run: ../tools/genelists-sets.cwl
     in:
       filtered_list_A: filtered_list_A
