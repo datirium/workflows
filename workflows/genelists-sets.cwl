@@ -26,28 +26,22 @@ inputs:
       position: 1
 
   filtered_list_A:
-    type:
-    - "null"
-    - File
-    default: null
+    type: File
     format: "http://edamontology.org/format_3475"
     label: "Filtered genelist A:"
-    doc: "filtered differential genelists from DESeq or diffbind pipelines"
+    doc: "Select list A from filtered differential genelists from DESeq or diffbind pipelines"
     'sd:upstreamSource': "genelists_for_A/filtered_file"
     'sd:localLabel': true
 
   filtered_list_B:
-    type:
-    - "null"
-    - File
-    default: null
+    type: File
     format: "http://edamontology.org/format_3475"
     label: "Filtered geneslist B:"
-    doc: "filtered differential genelists from DESeq or diffbind pipelines"
+    doc: "Select list B from filtered differential genelists from DESeq or diffbind pipelines"
     'sd:upstreamSource': "genelists_for_B/filtered_file"
     'sd:localLabel': true
 
-  set_operation:
+  set_operator:
     type:
     - "null"
     - type: enum
@@ -104,7 +98,7 @@ steps:
       filtered_list_A: filtered_list_A
       filtered_list_B: filtered_list_B
       set_operation:
-        source: set_operation
+        source: set_operator
         valueFrom: $(self)
     out:
       - genelist_filtered_set
