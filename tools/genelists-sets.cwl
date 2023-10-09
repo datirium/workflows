@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -160,7 +160,4 @@ doc: |
   This tool takes as input 2 filtered genelists samples and performs the user input set operation on them.
   The output is a single filtered gene list in the same format as the input files (headerless BED file with [chrom start end name score strand]).
   The returned score value (column 5) is always derived from file A.
-
-
-  ____________________________________________________________________________________________________
       

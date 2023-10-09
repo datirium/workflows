@@ -23,39 +23,16 @@ inputs:
     sd:preview:
       position: 1
 
-  genelist_A_name:
-    type:
-    - "null"
-    - string
-    default: null
-    label: "Genelist A"
-    sd:preview:
-      position: 2
-    doc: "genelist A alias/sample name"
-    'sd:upstreamSource': "genelists/alias"
-    'sd:localLabel': true
-
-  genelist_B_name:
-    type:
-    - "null"
-    - string
-    default: null
-    label: "Genelist B:"
-    sd:preview:
-      position: 3
-    doc: "genelist B alias/sample name"
-    'sd:upstreamSource': "genelists/alias"
-    'sd:localLabel': true
-
   filtered_list_A:
     type:
     - "null"
     - File
     default: null
     format: "http://edamontology.org/format_3475"
-    label: "Filtered differential genelist A"
+    label: "Filtered genelist A:"
     doc: "filtered differential genelists from DESeq or diffbind pipelines"
     'sd:upstreamSource': "genelists/filtered_file"
+    'sd:localLabel': true
 
   filtered_list_B:
     type:
@@ -63,21 +40,22 @@ inputs:
     - File
     default: null
     format: "http://edamontology.org/format_3475"
-    label: "Filtered differential geneslist B"
+    label: "Filtered geneslist B:"
     doc: "filtered differential genelists from DESeq or diffbind pipelines"
     'sd:upstreamSource': "genelists/filtered_file"
+    'sd:localLabel': true
 
   set_operation:
     type:
     - "null"
     - type: enum
-      name: "What set result are you looking for?"
+      name: "Set operation user selection"
       symbols:
       - Intersection
       - Union
       - Symmetric_Difference
       - Relative_Complement
-    label: "Select set operation:"
+    label: "Select set operation"
     sd:preview:
       position: 4
     doc: "Set Examples where list A = {1, 2, 3, 4} and list B = {3, 4, 5, 6}:\n
@@ -138,8 +116,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Set Operations for filtered gene lists"
-label: "Set Operations for filtered gene lists"
+s:name: "Set Operations for filtered genelists"
+label: "Set Operations for filtered genelists"
 s:alternateName: "Set Operations for filtered gene lists"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/genelists-sets.cwl
