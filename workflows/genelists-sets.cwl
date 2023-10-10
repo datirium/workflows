@@ -70,6 +70,13 @@ outputs:
     label: "Filtered differentially expressed genes"
     doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
     outputSource: set_operation/genelist_filtered_set
+
+  genelist_filtered_set_w_header:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Filtered differentially expressed genes"
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
+    outputSource: set_operation/genelist_filtered_set_w_header
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Set results'
@@ -102,6 +109,7 @@ steps:
         valueFrom: $(self)
     out:
       - genelist_filtered_set
+      - genelist_filtered_set_w_header
       - log_file_stdout
       - log_file_stderr
 

@@ -66,8 +66,11 @@ inputs:
         comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep "$gene" list2.tsv; done | sort | uniq > relative_complement.tsv
         #       reclaim score for column 5 from file B (list 2)
         awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list2 relative_complement.tsv > genelist-filtered-set.bed
-      fi
 
+      # make headered bed file for scidap table interface
+      printf "Chrom\tStart\tEnd\tName\tScore\tStrand\n" > genelist-filtered-set-w-header.bed
+      cat genelist-filtered-set.bed >> genelist-filtered-set-w-header.bed
+      fi
     inputBinding:
       position: 1
 
@@ -101,6 +104,13 @@ outputs:
       glob: genelist-filtered-set.bed
     doc: |
       filtered gene list based on set operator chosen, formatted as headerless BED file with [chrom start end name score strand]
+
+  genelist_filtered_set_w_header:
+    type: File
+    outputBinding:
+      glob: genelist-filtered-set-w-header.bed
+    doc: |
+      filtered gene list based on set operator chosen, formatted as headered bed file for scidap table interface [chrom start end name score strand]
 
   log_file_stdout:
     type: stdout
