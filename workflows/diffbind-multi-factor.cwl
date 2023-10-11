@@ -314,17 +314,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  center_row:
-    type: boolean?
-    default: false
-    label: "Peak clustering. Apply row mean centering before clustering"
-    doc: |
-      Apply mean centering for normalized read counts
-      prior to running clustering by row. Ignored if
-      clustering method is not set to row or both.
-    'sd:layout':
-      advanced: true
-
   threads:
     type:
     - "null"
@@ -762,7 +751,8 @@ steps:
         valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
       column_distance: column_distance
-      center_row: center_row
+      center_row:
+        default: true
       export_pdf_plots:
         default: true
       threads:
