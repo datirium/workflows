@@ -122,9 +122,9 @@ inputs:
       input samples categories. First column should
       have the name 'sample', all other columns names
       should be selected from the following list:
-      Tissue, Factor, Condition, Treatment, Caller,
-      Replicate. The values from the 'sample' column
-      should correspond to the names of the selected
+      Tissue, Factor, Condition, Treatment, Replicate.
+      The values from the 'sample' column should
+      correspond to the names of the selected
       ChIP-Seq/ATAC-Seq experiments. Values defined in
       each metadata column should not be used in any of
       the other columns. All metadata columns are treated
@@ -422,17 +422,29 @@ outputs:
           tab: 'Exploratory plots'
           Caption: 'Peakset overlap rate'
 
-  pk_scr_corr_plot_png:
+  all_pk_scr_corr_plot_png:
     type: File?
-    label: "Samples correlation (peak score)"
+    label: "Samples correlation (all peaks)"
     doc: |
-      Samples correlation (peak score)
+      Samples correlation (all peaks)
       PNG format
-    outputSource: diffbind/pk_scr_corr_plot_png
+    outputSource: diffbind/all_pk_scr_corr_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
-          Caption: 'Samples correlation (peak score)'
+          Caption: 'Samples correlation (all peaks)'
+
+  cns_pk_scr_corr_plot_png:
+    type: File?
+    label: "Samples correlation (consensus peaks)"
+    doc: |
+      Samples correlation (consensus peaks)
+      PNG format
+    outputSource: diffbind/cns_pk_scr_corr_plot_png
+    'sd:visualPlugins':
+      - image:
+          tab: 'Exploratory plots'
+          Caption: 'Samples correlation (consensus peaks)'
 
   rw_rds_corr_plot_png:
     type: File?
@@ -614,6 +626,14 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   diffbind_stdout_log:
     type: File
     label: "DiffBind stdout log"
@@ -743,12 +763,15 @@ steps:
       row_distance: row_distance
       column_distance: column_distance
       center_row: center_row
+      export_pdf_plots:
+        default: true
       threads:
         source: threads
         valueFrom: $(parseInt(self))
     out:
     - pk_vrlp_s_plot_png
-    - pk_scr_corr_plot_png
+    - all_pk_scr_corr_plot_png
+    - cns_pk_scr_corr_plot_png
     - rw_rds_corr_plot_png
     - nr_rds_corr_plot_png
     - pk_prfl_plot_png
@@ -756,11 +779,49 @@ steps:
     - diff_ma_plot_png
     - nr_rds_pca_1_2_plot_png
     - nr_rds_pca_2_3_plot_png
+    - pk_vrlp_s_plot_pdf
+    - all_pk_scr_corr_plot_pdf
+    - cns_pk_scr_corr_plot_pdf
+    - rw_rds_corr_plot_pdf
+    - nr_rds_corr_plot_pdf
+    - pk_prfl_plot_pdf
+    - diff_vlcn_plot_pdf
+    - diff_ma_plot_pdf
+    - nr_rds_pca_1_2_plot_pdf
+    - nr_rds_pca_2_3_plot_pdf
     - nr_rds_mds_html
     - diff_sts_tsv
     - nr_rds_gct
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - diffbind/pk_vrlp_s_plot_pdf
+        - diffbind/all_pk_scr_corr_plot_pdf
+        - diffbind/cns_pk_scr_corr_plot_pdf
+        - diffbind/rw_rds_corr_plot_pdf
+        - diffbind/nr_rds_corr_plot_pdf
+        - diffbind/pk_prfl_plot_pdf
+        - diffbind/diff_vlcn_plot_pdf
+        - diffbind/diff_ma_plot_pdf
+        - diffbind/nr_rds_pca_1_2_plot_pdf
+        - diffbind/nr_rds_pca_2_3_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
   filter_columns:
     run: ../tools/custom-bash.cwl

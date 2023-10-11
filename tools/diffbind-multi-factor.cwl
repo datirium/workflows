@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.15
+  dockerPull: biowardrobe2/diffbind:v0.0.16
 - class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
   listing: |
@@ -66,12 +66,11 @@ inputs:
       TSV/CSV metadata file to describe datasets provided in --alignments
       and --peaks parameters. First column should have the name 'sample',
       all other columns names should be selected from the following list:
-      Tissue, Factor, Condition, Treatment, Caller, Replicate. The values
-      from the 'sample' column should correspond to the values provided in
-      --aliases parameter. For a proper --contrast intepretation, values
-      defined in each metadata column should not be used in any of the other
-      columns. All metadata columns are treated as factors (no covariates
-      are supported).
+      Tissue, Factor, Condition, Treatment, Replicate. The values from the
+      'sample' column should correspond to the values provided in --aliases
+      parameter. For a proper --contrast intepretation, values defined in
+      each metadata column should not be used in any of the other columns.
+      All metadata columns are treated as factors (no covariates are supported).
 
   scoreby:
     type:
@@ -83,8 +82,8 @@ inputs:
     inputBinding:
       prefix: "--scoreby"
     doc: |
-      Score metrics to build peak overlap correlation heatmap and exclude low
-      quality peaks based on the threshold provided in --score parameter.
+      Score metrics to exclude low quality peaks based on the
+      threshold provided in the --score parameter.
       Default: pvalue
 
   score_threshold:
@@ -310,20 +309,36 @@ outputs:
       Peakset overlap rate
       PDF format
 
-  pk_scr_corr_plot_png:
+  all_pk_scr_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_pk_scr_corr.png"
+      glob: "*_all_pk_scr_corr.png"
     doc: |
-      Datasets correlation (peak score)
+      Datasets correlation (all peaks)
       PNG format
 
-  pk_scr_corr_plot_pdf:
+  all_pk_scr_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_pk_scr_corr.pdf"
+      glob: "*_all_pk_scr_corr.pdf"
     doc: |
-      Datasets correlation (peak score)
+      Datasets correlation (all peaks)
+      PDF format
+
+  cns_pk_scr_corr_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_cns_pk_scr_corr.png"
+    doc: |
+      Datasets correlation (consensus peaks)
+      PNG format
+
+  cns_pk_scr_corr_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_cns_pk_scr_corr.pdf"
+    doc: |
+      Datasets correlation (consensus peaks)
       PDF format
 
   rw_rds_corr_plot_png:
