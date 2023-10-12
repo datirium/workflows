@@ -19,17 +19,23 @@ inputs:
     default: |
       #!/bin/bash
       printf "$(date)\n\nStdout log file for kallisto-index.cwl tool:\n\n"
-      list1=$0; list2=$1; set_operation=$2;
+      list1=$0; list2array=$1; set_operation=$2;
       printf "INPUTS:\n\n"
       printf "\$0 - $list1\n\n"
-      printf "\$1 - $list2\n\n"
+      printf "\$1 - $list2array\n\n"
       printf "\$2 - $set_operation\n\n"
       # commands start
       # zero out col5, then ensure there is only a single row per gene name, as some genes potentially have slightly different start/end positions (likely due to difference of 0- or 1-based upstream tools)
-      awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $list1 | sort | uniq > list1.tmp
+      #   listA
+      awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $list1 | sort | uniq > list1.tmpx
+      awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list1.tmpx > list1.tmp
       awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list1.tmp list1.tmp | sort | uniq > list1.tsv
-      awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $list2 | sort | uniq > list2.tmp
-      awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list2.tmp list2.tmp | sort | uniq > list2.tsv
+      #   groupB, concatenate everything from all group B lists, only keep unique rows (score values will be lost)
+      echo "$list2array" | sed 's/,/\n/g' | while read filepath; do
+          awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $filepath | sort | uniq > list2.tmpx
+          awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list2.tmpx > list2.tmp
+          awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list2.tmp list2.tmp
+      done | sort | uniq > list2.tsv
 
       # Intersection
       #       list of genes shared between the 2 input lists
@@ -50,14 +56,8 @@ inputs:
         awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{if($5!=""){print($0)}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}}' $list2 genelist-filtered-set.tmp > genelist-filtered-set.bed
       fi
 
-      # Symmetric Difference
+      # Symmetric Difference (removing for now, check previous commits if need code)
       #       list of genes that would be left out of an Intersection
-      if [[ "$set_operation" == "Symmetric_Difference" ]]; then
-        comm -3 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep "$gene" list1.tsv; grep "$gene" list2.tsv; done | sort | uniq > symmetric_difference.tsv
-        #       reclaim score for column 5 from both lists (for overlaps, scores from list A reported)
-        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list1 symmetric_difference.tsv > genelist-filtered-set.tmp
-        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{if($5!=""){print($0)}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}}' $list2 genelist-filtered-set.tmp > genelist-filtered-set.bed
-      fi
 
       # Relative Complement (the relative completment of set B would be denoted "A / B")
       #       list of genes that are in set A and not in set B.
@@ -81,8 +81,8 @@ inputs:
     doc: |
       filtered differential genelist from DESeq or diffbind pipelines
 
-  filtered_list_B:
-    type: File
+  filtered_list_B_group:
+    type: File[]
     inputBinding:
       position: 3
     doc: |

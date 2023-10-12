@@ -28,16 +28,16 @@ inputs:
   filtered_list_A:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Filtered genelist A:"
+    label: "Filtered genelist A (important to choose a specific list for relative complement):"
     doc: "Select list A from filtered differential genelists from DESeq or diffbind pipelines"
     'sd:upstreamSource': "genelists_for_A/filtered_file"
     'sd:localLabel': true
 
-  filtered_list_B:
-    type: File
+  filtered_list_B_group:
+    type: File[]
     format: "http://edamontology.org/format_3475"
-    label: "Filtered geneslist B:"
-    doc: "Select list B from filtered differential genelists from DESeq or diffbind pipelines"
+    label: "Filtered genelist group B:"
+    doc: "Select 1 or more lists from filtered differential genelists from DESeq or diffbind pipelines. These will be used to generate intersections and unions among all lists (including list A), and will be applied against list A for the relative complement operation."
     'sd:upstreamSource': "genelists_for_B/filtered_file"
     'sd:localLabel': true
 
@@ -49,16 +49,16 @@ inputs:
       symbols:
       - Intersection
       - Union
-      - Symmetric_Difference
       - Relative_Complement
     label: "Select set operation"
     sd:preview:
       position: 4
-    doc: "Set Examples where list A = {1, 2, 3, 4} and list B = {3, 4, 5, 6}:\n
-       - Intersection: A ∩ B = {3, 4}; scores from list A are reported\n
-       - Union: A ∪ B = {1, 2, 3, 4, 5, 6}; for overlapping elements, scores from list A are reported\n
-       - Symmetric_Difference: A △ B = {1, 2, 5, 6}\n
-       - Relative_Complement: A \ B = {1, 2}"
+    doc: "Set Examples (only scores from list A are reported):\n
+      \tlist A = {1, 2, 3, 4};\n
+      \tlist B = {3, 4, 5, 6};\n\n
+       - Intersection: A ∩ B = {3, 4}\n
+       - Union: A ∪ B = {1, 2, 3, 4, 5, 6}\n
+       - Relative_Complement: A / B = {1, 2}"
     'sd:localLabel': true
 
 
@@ -103,7 +103,7 @@ steps:
     run: ../tools/genelists-sets.cwl
     in:
       filtered_list_A: filtered_list_A
-      filtered_list_B: filtered_list_B
+      filtered_list_B_group: filtered_list_B_group
       set_operation:
         source: set_operator
         valueFrom: $(self)
@@ -162,6 +162,8 @@ s:creator:
 doc: |
   # Set Operations for filtered gene lists
 
-  This workflow takes as input 2 filtered genelists samples and performs the user-selected set operation on them.
+  This workflow takes as input multiple filtered genelists samples and performs the user-selected set operation on them.
+  There is one input for list A from which "scores" will be taken (these are fold change values from deseq or diffbind) and used in the output set list.
+  The second genelist input is for 1+ genelists, that will be aggregated and used for intersection and union directly, and be applied against list A for the relative complement operation.
   The output is a single filtered gene list in the same format as the input files (headerless BED file with [chrom start end name score strand]).
   The returned score value (column 5) is always derived from file A.
