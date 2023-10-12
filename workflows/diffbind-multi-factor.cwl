@@ -238,6 +238,20 @@ inputs:
       peaks where the maximum RPKM for all samples is
       bigger than or equal to the provided value.
 
+  rec_summits:
+    type: int?
+    default: 200
+    label: "Width in bp to extend peaks around summits"
+    doc: |
+      Width in bp to extend peaks around their summits
+      in both directions and replace the original ones.
+      Set it to 100 bp for ATAC-Seq and 200 bp for
+      ChIP-Seq datasets. To skip peaks extension and
+      replacement, set it to negative value.
+      Default: 200 bp (results in 401 bp wide peaks)
+    'sd:layout':
+      advanced: true
+
   promoter_dist:
     type: int?
     default: 1000
@@ -425,15 +439,16 @@ outputs:
 
   cns_pk_scr_corr_plot_png:
     type: File?
-    label: "Samples correlation (consensus peaks)"
+    label: "Samples correlation (opt. rec. cons. peaks)"
     doc: |
-      Samples correlation (consensus peaks)
+      Samples correlation (optionally
+      recentered consensus peaks)
       PNG format
     outputSource: diffbind/cns_pk_scr_corr_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
-          Caption: 'Samples correlation (consensus peaks)'
+          Caption: 'Samples correlation (opt. rec. cons. peaks)'
 
   rw_rds_corr_plot_png:
     type: File?
@@ -730,6 +745,7 @@ steps:
       scoreby: scoreby
       score_threshold: score_threshold
       rpkm_threshold: rpkm_threshold
+      rec_summits: rec_summits
       overlap_threshold: overlap_threshold
       groupby:
         source: groupby
