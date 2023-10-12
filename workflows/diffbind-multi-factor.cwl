@@ -115,9 +115,9 @@ inputs:
       input samples categories. First column should
       have the name 'sample', all other columns names
       should be selected from the following list:
-      Tissue, Factor, Condition, Treatment, Caller,
-      Replicate. The values from the 'sample' column
-      should correspond to the names of the selected
+      Tissue, Factor, Condition, Treatment, Replicate.
+      The values from the 'sample' column should
+      correspond to the names of the selected
       ChIP-Seq/ATAC-Seq experiments. Values defined in
       each metadata column should not be used in any of
       the other columns. All metadata columns are treated
@@ -231,6 +231,20 @@ inputs:
       peaks where the maximum RPKM for all samples is
       bigger than or equal to the provided value.
 
+  rec_summits:
+    type: int?
+    default: 200
+    label: "Width in bp to extend peaks around summits"
+    doc: |
+      Width in bp to extend peaks around their summits
+      in both directions and replace the original ones.
+      Set it to 100 bp for ATAC-Seq and 200 bp for
+      ChIP-Seq datasets. To skip peaks extension and
+      replacement, set it to negative value.
+      Default: 200 bp (results in 401 bp wide peaks)
+    'sd:layout':
+      advanced: true
+
   promoter_dist:
     type: int?
     default: 1000
@@ -304,17 +318,6 @@ inputs:
     doc: |
       Distance metric for hierarchical
       column clustering
-    'sd:layout':
-      advanced: true
-
-  center_row:
-    type: boolean?
-    default: false
-    label: "Peak clustering. Apply row mean centering before clustering"
-    doc: |
-      Apply mean centering for normalized read counts
-      prior to running clustering by row. Ignored if
-      clustering method is not set to row or both.
     'sd:layout':
       advanced: true
 
@@ -415,17 +418,30 @@ outputs:
           tab: 'Exploratory plots'
           Caption: 'Peakset overlap rate'
 
-  pk_scr_corr_plot_png:
+  all_pk_scr_corr_plot_png:
     type: File?
-    label: "Samples correlation (peak score)"
+    label: "Samples correlation (all peaks)"
     doc: |
-      Samples correlation (peak score)
+      Samples correlation (all peaks)
       PNG format
-    outputSource: diffbind/pk_scr_corr_plot_png
+    outputSource: diffbind/all_pk_scr_corr_plot_png
     'sd:visualPlugins':
       - image:
           tab: 'Exploratory plots'
-          Caption: 'Samples correlation (peak score)'
+          Caption: 'Samples correlation (all peaks)'
+
+  cns_pk_scr_corr_plot_png:
+    type: File?
+    label: "Samples correlation (opt. rec. cons. peaks)"
+    doc: |
+      Samples correlation (optionally
+      recentered consensus peaks)
+      PNG format
+    outputSource: diffbind/cns_pk_scr_corr_plot_png
+    'sd:visualPlugins':
+      - image:
+          tab: 'Exploratory plots'
+          Caption: 'Samples correlation (opt. rec. cons. peaks)'
 
   rw_rds_corr_plot_png:
     type: File?
@@ -607,6 +623,14 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
+
   diffbind_stdout_log:
     type: File
     label: "DiffBind stdout log"
@@ -714,6 +738,7 @@ steps:
       scoreby: scoreby
       score_threshold: score_threshold
       rpkm_threshold: rpkm_threshold
+      rec_summits: rec_summits
       overlap_threshold: overlap_threshold
       groupby:
         source: groupby
@@ -735,13 +760,17 @@ steps:
         valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
       column_distance: column_distance
-      center_row: center_row
+      center_row:
+        default: true
+      export_pdf_plots:
+        default: true
       threads:
         source: threads
         valueFrom: $(parseInt(self))
     out:
     - pk_vrlp_s_plot_png
-    - pk_scr_corr_plot_png
+    - all_pk_scr_corr_plot_png
+    - cns_pk_scr_corr_plot_png
     - rw_rds_corr_plot_png
     - nr_rds_corr_plot_png
     - pk_prfl_plot_png
@@ -749,11 +778,49 @@ steps:
     - diff_ma_plot_png
     - nr_rds_pca_1_2_plot_png
     - nr_rds_pca_2_3_plot_png
+    - pk_vrlp_s_plot_pdf
+    - all_pk_scr_corr_plot_pdf
+    - cns_pk_scr_corr_plot_pdf
+    - rw_rds_corr_plot_pdf
+    - nr_rds_corr_plot_pdf
+    - pk_prfl_plot_pdf
+    - diff_vlcn_plot_pdf
+    - diff_ma_plot_pdf
+    - nr_rds_pca_1_2_plot_pdf
+    - nr_rds_pca_2_3_plot_pdf
     - nr_rds_mds_html
     - diff_sts_tsv
     - nr_rds_gct
     - stdout_log
     - stderr_log
+
+  pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - diffbind/pk_vrlp_s_plot_pdf
+        - diffbind/all_pk_scr_corr_plot_pdf
+        - diffbind/cns_pk_scr_corr_plot_pdf
+        - diffbind/rw_rds_corr_plot_pdf
+        - diffbind/nr_rds_corr_plot_pdf
+        - diffbind/pk_prfl_plot_pdf
+        - diffbind/diff_vlcn_plot_pdf
+        - diffbind/diff_ma_plot_pdf
+        - diffbind/nr_rds_pca_1_2_plot_pdf
+        - diffbind/nr_rds_pca_2_3_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: pdf_plots/folder
+    out:
+    - compressed_folder
 
   filter_columns:
     run: ../tools/custom-bash.cwl
@@ -800,7 +867,7 @@ steps:
       input_file: restore_columns/output_file
       script:
         default: |
-          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["log2FoldChange"]<0) color="0,255,0"; print $ix["Chr"]"\t"$ix["Start"]"\t"$ix["End"]"\tpvalue="$ix["pvalue"]";padj="$ix["padj"]";log2FC="$ix["log2FoldChange"]"\t"1000"\t"$ix["Strand"]"\t"$ix["Start"]"\t"$ix["End"]"\t"color}' > `basename $0`
+          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["log2FoldChange"]<0) color="0,255,0"; print $ix["Chr"]"\t"$ix["Start"]"\t"$ix["End"]"\tpvalue="$ix["pvalue"]+0.0";padj="$ix["padj"]+0.0";log2FC="$ix["log2FoldChange"]"\t"1000"\t"$ix["Strand"]"\t"$ix["Start"]"\t"$ix["End"]"\t"color}' > `basename $0`
     out:
     - output_file
 
@@ -943,7 +1010,6 @@ steps:
           echo "| :-- | --: |" >> experiment_info.md
           j=1
           for i in "${@:$COUNT+1:$#}"; do
-            echo "Add $i as $count"
             echo "| $i | $j |" >> experiment_info.md
             (( j++ ))
           done;
