@@ -68,7 +68,7 @@ inputs:
     - File
     - type: array
       items: File
-    label: "FASTQ input file"
+    label: "FASTQ input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format, received after single end sequencing"
 
@@ -111,6 +111,16 @@ inputs:
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
+
+  peak_calling_fdr:
+    type: float?
+    default: 0.05
+    'sd:layout':
+      advanced: true
+    label: "Minimum FDR (q-value) cutoff for peak detection"
+    doc: |
+      Minimum FDR (q-value) cutoff for peak detection. -q, and
+      -p are mutually exclusive.
 
   promoter_dist:
     type: int?
@@ -241,19 +251,12 @@ outputs:
         data: [$1, $2]
         comparable: "atdp"
 
-  samtools_rmdup_log:
-    type: File
-    label: "Remove duplicates log"
-    format: "http://edamontology.org/format_2330"
-    doc: "Samtools rmdup generated log"
-    outputSource: samtools_rmdup/rmdup_log
-
   bambai_pair:
     type: File
     format: "http://edamontology.org/format_2572"
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
-    outputSource: samtools_sort_index_after_rmdup/bam_bai_pair
+    outputSource: samtools_remove_duplicates/deduplicated_bam_bai_pair
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -436,6 +439,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out: [fastq_file]
 
   trim_fastq:
@@ -493,8 +498,11 @@ steps:
   bowtie_aligner:
     label: "Alignment to reference genome"
     doc: |
-      Aligns reads to the reference genome keeping only uniquely mapped reads with
-      less than 3 mismatches.
+      Aligns reads to the reference genome.
+      Reads are assumed to be mapped if they
+      have less than 3 mismatches.
+      sam_file output includes both mapped
+      and unmapped reads.
     run: ../tools/bowtie-alignreads.cwl
     in:
       upstream_filelist: rename/target_file
@@ -529,10 +537,19 @@ steps:
       threads: threads
     out: [bam_bai_pair]
 
+  samtools_mark_duplicates:
+    run: ../tools/samtools-markdup.cwl
+    in:
+      bam_bai_pair: samtools_sort_index/bam_bai_pair
+      keep_duplicates:
+        default: true
+      threads: threads
+    out: [deduplicated_bam_bai_pair]
+
   clean_sam_headers_for_preseq:
     run: ../tools/samtools-clean-headers.cwl
     in:
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_mark_duplicates/deduplicated_bam_bai_pair
     out: [preseq_bam]
 
   preseq:
@@ -547,27 +564,15 @@ steps:
         default: 1000000000
     out: [estimates_file, log_file_stdout, log_file_stderr]
 
-  samtools_rmdup:
-    label: "PCR duplicates removal"
-    doc: |
-      Removes potential PCR duplicates. This step is used to remove reads overamplified
-      in PCR. Unfortunately, it may also remove "good" reads. We do not recommend to
-      remove duplicates unless the library is heavily duplicated.
-    run: ../tools/samtools-rmdup.cwl
+  samtools_remove_duplicates:
+    run: ../tools/samtools-markdup.cwl
     in:
-      trigger: remove_duplicates
-      bam_file: samtools_sort_index/bam_bai_pair
-      single_end:
-        default: true
-    out: [rmdup_output, rmdup_log]
-
-  samtools_sort_index_after_rmdup:
-    run: ../tools/samtools-sort-index.cwl
-    in:
-      trigger: remove_duplicates
-      sort_input: samtools_rmdup/rmdup_output
+      bam_bai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
+      keep_duplicates:
+        source: remove_duplicates
+        valueFrom: $(!self)
       threads: threads
-    out: [bam_bai_pair]
+    out: [deduplicated_bam_bai_pair]
 
   macs2_callpeak:
     label: "Peak detection"
@@ -576,7 +581,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      treatment_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       control_file: control_file
       nolambda:
         source: control_file
@@ -595,8 +600,7 @@ steps:
         valueFrom: $(!self)
       keep_dup:
         default: auto
-      q_value:
-        default: 0.05
+      q_value: peak_calling_fdr
       format_mode:
         default: BAM
       buffer_size:
@@ -617,7 +621,7 @@ steps:
   bam_to_bigwig:
     run: ../tools/bam-bedgraph-bigwig.cwl
     in:
-      bam_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      bam_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
       chrom_length_file: chrom_length
       mapped_reads_number: get_stat/mapped_reads
       fragment_size: macs2_callpeak/macs2_fragments_calculated
@@ -630,20 +634,20 @@ steps:
       read length and quality score, etc.
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index/bam_bai_pair
+      bambai_pair: samtools_mark_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index/bam_bai_pair
+        source: samtools_mark_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report.txt")
     out: [log_file]
 
   get_bam_statistics_after_filtering:
     run: ../tools/samtools-stats.cwl
     in:
-      bambai_pair: samtools_sort_index_after_rmdup/bam_bai_pair
+      bambai_pair: samtools_remove_duplicates/deduplicated_bam_bai_pair
       output_filename:
-        source: samtools_sort_index_after_rmdup/bam_bai_pair
+        source: samtools_remove_duplicates/deduplicated_bam_bai_pair
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
-    out: [log_file]
+    out: [log_file, reads_mapped]
 
   get_stat:
     run: ../tools/collect-statistics-chip-seq.cwl
@@ -653,6 +657,7 @@ steps:
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
       macs2_called_peaks: macs2_callpeak/peak_xls_file
+      atdp_results: average_tag_density/result_file
       preseq_results: preseq/estimates_file
     out: [collected_statistics_yaml, collected_statistics_tsv, mapped_reads, collected_statistics_md]
 
@@ -681,6 +686,13 @@ steps:
       upstream_bp: upstream_dist
     out: [result_file, log_file]
 
+  samtools_sort_index_for_atdp:
+    run: ../tools/samtools-sort-index.cwl
+    in:
+      sort_input: samtools_remove_duplicates/deduplicated_bam_bai_pair
+      threads: threads
+    out: [bam_bai_pair]
+
   average_tag_density:
     label: "Read enrichment around genes TSS"
     doc: |
@@ -688,7 +700,7 @@ steps:
       elements are close to the TSS of their targets.
     run: ../tools/atdp.cwl
     in:
-      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      input_file: samtools_sort_index_for_atdp/bam_bai_pair
       annotation_filename: annotation_file
       fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
       avd_window_bp:
@@ -701,7 +713,9 @@ steps:
         default: "chrX chrY"
       avd_heat_window_bp:
         default: 200
-      mapped_reads: get_stat/mapped_reads
+      mapped_reads:
+        source: get_bam_statistics_after_filtering/reads_mapped
+        valueFrom: $(parseInt(self))
     out: [result_file, log_file]
 
 
@@ -789,9 +803,7 @@ doc: |
   *samtools\_sort\_index*.
 
   Based on workflow’s input parameters indexed and sorted BAM file
-  can be processed by `samtools rmdup` *samtools\_rmdup* to get rid of duplicated reads.
-  If removing duplicates is not required the original input BAM and BAI
-  files return. Otherwise step *samtools\_sort\_index\_after\_rmdup* repeat `samtools sort` and `samtools index` with BAM and BAI files.
+  can be processed by `samtools markdup` *samtools\_remove\_duplicates*  to get rid of duplicated reads.
 
   Right after that `macs2 callpeak` performs peak calling *macs2\_callpeak*. On the base of returned outputs the next step
   *macs2\_island\_count* calculates the number of islands and estimated fragment size. If the last
