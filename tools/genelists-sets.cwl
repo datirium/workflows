@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -99,6 +99,7 @@ inputs:
     type: File[]
     inputBinding:
       position: 3
+      itemSeparator: ","
     doc: |
       filtered differential genelist from DESeq or diffbind pipelines
 
