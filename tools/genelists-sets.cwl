@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -69,15 +69,15 @@ inputs:
       #       list of genes that would be left out of an Intersection
 
       # Relative Complement (the relative completment of set B would be denoted "A / B")
-      #       list of genes that are in set A and not in grouop set B.
+      #       list of genes that are in set A and not in group set B.
       #       so the RC of list 2 are genes in list 1 that are not in list2
       if [[ "$set_operation" == "Relative_Complement" ]]; then
         # concatenate everything from all group B lists
         find ./ -mindepth 1 -maxdepth 1 -name "groupB_list*.tsv" -exec cat {} + | sort | uniq > list2.tsv
         # get rel comp between the 2 lists
-        comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep -P "\t$gene\t" list2.tsv; done | sort | uniq > relative_complement.tsv
-        #       reclaim score for column 5 from file B (list 2)
-        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list2 relative_complement.tsv > genelist-filtered-set.bed
+        comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep -P "\t$gene\t" list1.tsv; done | sort | uniq > relative_complement.tsv
+        #       reclaim score for column 5 from list1 genes
+        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list1 relative_complement.tsv > genelist-filtered-set.bed
       fi
 
       # make headered bed file for scidap table interface
