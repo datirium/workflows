@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -30,39 +30,53 @@ inputs:
       awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $list1 | sort | uniq > list1.tmpx
       awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list1.tmpx > list1.tmp
       awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list1.tmp list1.tmp | sort | uniq > list1.tsv
-      #   groupB, concatenate everything from all group B lists, only keep unique rows (score values will be lost)
+      #   groupB, only keep unique rows (score values will be lost) per input list
+      rep=1
       echo "$list2array" | sed 's/,/\n/g' | while read filepath; do
-          awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $filepath | sort | uniq > list2.tmpx
-          awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list2.tmpx > list2.tmp
-          awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list2.tmp list2.tmp
-      done | sort | uniq > list2.tsv
+        bn=$(basename "$filepath" | sed 's/\.tsv//')
+        awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $filepath | sort | uniq > list2.tmpx
+        awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list2.tmpx > list2.tmp
+        awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list2.tmp list2.tmp | sort | uniq > groupB_list${rep}_${bn}.tsv
+        ((rep++))
+      done
 
       # Intersection
-      #       list of genes shared between the 2 input lists
+      #       list of genes shared between all input lists (have to loop through each list, compare to list A)
       if [[ "$set_operation" == "Intersection" ]]; then
-        comm -12 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep "$gene" list1.tsv; done > intersection.tsv
+        cp list1.tsv int_list1.tmp
+        find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" | sort -V | while read rep; do
+          cp $rep list2.tmp
+          comm -12 <(cut -f4 int_list1.tmp | sort) <(cut -f4 list2.tmp | sort) | while read gene; do grep "$gene" int_list1.tmp; done > int_list1.out
+          mv int_list1.out int_list1.tmp
+        done
+        mv int_list1.tmp intersection.tsv
         #       reclaim score for column 5 from file A (list 1)
         awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list1 intersection.tsv > genelist-filtered-set.bed
       fi
 
       # Union
-      #       list of genes unique among all genes of the 2 input lists
+      #       list of genes unique among all genes of all input lists
       if [[ "$set_operation" == "Union" ]]; then
+        # concatenate everything from all group B lists
+        find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" -exec cat {} + | sort | uniq > list2.tsv
+        # concatenate all lists
         cp list1.tsv union.tmp
         cat list2.tsv >> union.tmp
         awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' union.tmp union.tmp | sort | uniq > union.tsv
-        #       reclaim score for column 5 from both lists (for overlaps, scores from list A reported)
-        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list1 union.tsv > genelist-filtered-set.tmp
-        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{if($5!=""){print($0)}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}}' $list2 genelist-filtered-set.tmp > genelist-filtered-set.bed
+        #       reclaim score for column 5 from list1 genes (for overlaps, scores from list A reported)
+        awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list1 union.tsv > genelist-filtered-set.bed
       fi
 
       # Symmetric Difference (removing for now, check previous commits if need code)
       #       list of genes that would be left out of an Intersection
 
       # Relative Complement (the relative completment of set B would be denoted "A / B")
-      #       list of genes that are in set A and not in set B.
+      #       list of genes that are in set A and not in grouop set B.
       #       so the RC of list 2 are genes in list 1 that are not in list2
       if [[ "$set_operation" == "Relative_Complement" ]]; then
+        # concatenate everything from all group B lists
+        find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" -exec cat {} + | sort | uniq > list2.tsv
+        # get rel comp between the 2 lists
         comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep "$gene" list2.tsv; done | sort | uniq > relative_complement.tsv
         #       reclaim score for column 5 from file B (list 2)
         awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list2 relative_complement.tsv > genelist-filtered-set.bed
