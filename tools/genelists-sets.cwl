@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -56,7 +56,7 @@ inputs:
       #       list of genes unique among all genes of all input lists
       if [[ "$set_operation" == "Union" ]]; then
         # concatenate everything from all group B lists
-        find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" -exec cat {} + | sort | uniq > list2.tsv
+        find ./ -mindepth 1 -maxdepth 1 -name "groupB_list*.tsv" -exec cat {} + | sort | uniq > list2.tsv
         # concatenate all lists
         cp list1.tsv union.tmp
         cat list2.tsv >> union.tmp
@@ -73,7 +73,7 @@ inputs:
       #       so the RC of list 2 are genes in list 1 that are not in list2
       if [[ "$set_operation" == "Relative_Complement" ]]; then
         # concatenate everything from all group B lists
-        find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" -exec cat {} + | sort | uniq > list2.tsv
+        find ./ -mindepth 1 -maxdepth 1 -name "groupB_list*.tsv" -exec cat {} + | sort | uniq > list2.tsv
         # get rel comp between the 2 lists
         comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep -P "\t$gene\t" list2.tsv; done | sort | uniq > relative_complement.tsv
         #       reclaim score for column 5 from file B (list 2)

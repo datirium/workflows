@@ -82,14 +82,14 @@ outputs:
         tab: 'Set results'
         Title: 'Set table'
 
-  filtering_stdout_log:
+  filtering_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: set_operation/log_file_stdout
 
-  filtering_stderr_log:
+  filtering_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
