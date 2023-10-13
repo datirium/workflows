@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -44,7 +44,7 @@ inputs:
         cp list1.tsv int_list1.tmp
         find ./ -mindepth 1 -maxdepth 1 -name "groupB_list*.tsv" | sort -V | while read rep; do
           cp $rep list2.tmp
-          comm -12 <(cut -f4 int_list1.tmp | sort) <(cut -f4 list2.tmp | sort) | while read gene; do grep "$gene" int_list1.tmp; done > int_list1.out
+          comm -12 <(cut -f4 int_list1.tmp | sort) <(cut -f4 list2.tmp | sort) | while read gene; do grep -P "\t$gene\t" int_list1.tmp; done > int_list1.out
           mv int_list1.out int_list1.tmp
         done
         mv int_list1.tmp intersection.tsv
@@ -75,7 +75,7 @@ inputs:
         # concatenate everything from all group B lists
         find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" -exec cat {} + | sort | uniq > list2.tsv
         # get rel comp between the 2 lists
-        comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep "$gene" list2.tsv; done | sort | uniq > relative_complement.tsv
+        comm -23 <(cut -f4 list1.tsv | sort) <(cut -f4 list2.tsv | sort) | while read gene; do grep -P "\t$gene\t" list2.tsv; done | sort | uniq > relative_complement.tsv
         #       reclaim score for column 5 from file B (list 2)
         awk -F'\t' '{if(NR==FNR){score[$4]=$5}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,score[$4],$6)}}' $list2 relative_complement.tsv > genelist-filtered-set.bed
       fi
