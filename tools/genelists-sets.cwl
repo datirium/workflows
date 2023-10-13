@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -31,12 +31,10 @@ inputs:
       awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list1.tmpx > list1.tmp
       awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list1.tmp list1.tmp | sort | uniq > list1.tsv
       #   groupB, only keep unique rows (score values will be lost) per input list
-      rep=1
-      echo "$list2array" | sed 's/,/\n/g' | while read filepath; do
-        bn=$(basename "$filepath" | sed 's/\.tsv//')
+      rep=1; echo "$list2array" | sed 's/,/\n/g' | while read filepath; do
         awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,"0.0",$6)}' $filepath | sort | uniq > list2.tmpx
         awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' list2.tmpx > list2.tmp
-        awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list2.tmp list2.tmp | sort | uniq > groupB_list${rep}_${bn}.tsv
+        awk -F'\t' '{if(NR==FNR){c1[$4]=$1; c2[$4]=$2; c3[$4]=$3; c6[$4]=$6}else{printf("%s\t%s\t%s\t%s\t%s\t%s\n",c1[$4],c2[$4],c3[$4],$4,"0.0",c6[$4])}}' list2.tmp list2.tmp | sort | uniq > groupB_list${rep}.tsv
         ((rep++))
       done
 
@@ -44,7 +42,7 @@ inputs:
       #       list of genes shared between all input lists (have to loop through each list, compare to list A)
       if [[ "$set_operation" == "Intersection" ]]; then
         cp list1.tsv int_list1.tmp
-        find ./ -mindepth 1 -maxdepth 1 -name "groupB_rep*.tsv" | sort -V | while read rep; do
+        find ./ -mindepth 1 -maxdepth 1 -name "groupB_list*.tsv" | sort -V | while read rep; do
           cp $rep list2.tmp
           comm -12 <(cut -f4 int_list1.tmp | sort) <(cut -f4 list2.tmp | sort) | while read gene; do grep "$gene" int_list1.tmp; done > int_list1.out
           mv int_list1.out int_list1.tmp
