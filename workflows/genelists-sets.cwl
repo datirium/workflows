@@ -25,22 +25,6 @@ inputs:
     sd:preview:
       position: 1
 
-  filtered_list_A:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Filtered genelist A (important to choose a specific list for relative complement):"
-    doc: "Select list A from filtered differential genelists from DESeq or diffbind pipelines"
-    'sd:upstreamSource': "genelists_for_A/filtered_file"
-    'sd:localLabel': true
-
-  filtered_list_B_group:
-    type: File[]
-    format: "http://edamontology.org/format_3475"
-    label: "Filtered genelist group B:"
-    doc: "Select 1 or more lists from filtered differential genelists from DESeq or diffbind pipelines. These will be used to generate intersections and unions among all lists (including list A), and will be applied against list A for the relative complement operation."
-    'sd:upstreamSource': "genelists_for_B/filtered_file"
-    'sd:localLabel': true
-
   set_operator:
     type:
     - "null"
@@ -52,7 +36,7 @@ inputs:
       - Relative_Complement
     label: "Select set operation"
     sd:preview:
-      position: 4
+      position: 3
     doc: "Set Examples (only scores from list A are reported):\n
       \tlist A = {1, 2, 3, 4};\n
       \tlist B = {3, 4, 5, 6};\n\n
@@ -60,6 +44,26 @@ inputs:
        - Union: A ∪ B = {1, 2, 3, 4, 5, 6}\n
        - Relative_Complement: A / B = {1, 2}"
     'sd:localLabel': true
+
+  filtered_list_A:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Filtered genelist A (important to choose a specific list for relative complement):"
+    doc: "Select list A from filtered differential genelists from DESeq or diffbind pipelines"
+    'sd:upstreamSource': "genelists_for_A/filtered_file"
+    'sd:localLabel': true
+    sd:preview:
+      position: 8
+
+  filtered_list_B_group:
+    type: File[]
+    format: "http://edamontology.org/format_3475"
+    label: "Filtered genelist group B:"
+    doc: "Select 1 or more lists from filtered differential genelists from DESeq or diffbind pipelines. These will be used to generate intersections and unions among all lists (including list A), and will be applied against list A for the relative complement operation."
+    'sd:upstreamSource': "genelists_for_B/filtered_file"
+    'sd:localLabel': true
+    sd:preview:
+      position: 9
 
 
 outputs:
@@ -82,14 +86,14 @@ outputs:
         tab: 'Set results'
         Title: 'Set table'
 
-  filtering_stdout_log:
+  filtering_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: set_operation/log_file_stdout
 
-  filtering_stderr_log:
+  filtering_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
