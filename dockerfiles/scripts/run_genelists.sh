@@ -426,7 +426,7 @@ mv heatmap.html heatmap_peaknorm99.html
 #		values >= pad to pad value
 #		values < 0-pad remain unchanged
 printf "\n\n"
-printf "running each na-binding data sample through normalization to 95th percentile...\n"
+printf "running each na-binding data sample (no percentile normalization)\n"
 # loop for each sample, grep sample rows, calc percentile, and apply normalization
 head -1 output_na-binding_raw.tsv > output_na-binding.tsv
 tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_name; do

@@ -13,6 +13,7 @@ requirements:
   genelists:
     - "filter-deseq-for-heatmap.cwl"
     - "filter-diffbind-for-heatmap.cwl"
+    - "genelists-sets.cwl"
   samples_nabinding:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
