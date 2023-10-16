@@ -154,8 +154,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "mirna-mirdeep2"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/mirna-mirdeep2-se.cwl
+s:name: "genelists-deseq-diffbind"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/genelists-deseq-diffbind.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
