@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/deseq:v0.0.5
+  dockerPull: biowardrobe2/deseq:v0.0.6
 
 
 inputs:
@@ -70,8 +70,11 @@ inputs:
     doc: |
       Contrast to be be applied for the output, formatted as
       a mathematical formula of values from the --metadata table.
-      If not provided, the last term from the design formula will
-      be used.
+      If not provided, all possible combinations of values from
+      the metadata columns present in the --design but not in the
+      --reduced formula will be used (results will be merged giving
+      the priority to significantly differentially expressed genes
+      with higher absolute log2FoldChange values).
 
   base:
     type:
@@ -215,6 +218,14 @@ inputs:
     doc: |
       In the exploratory visualization analysis output only features with
       adjusted P-value not bigger than this value. Default: 0.05
+
+  minimum_logfc:
+    type: float?
+    inputBinding:
+      prefix: "--logfc"
+    doc: |
+      In the exploratory visualization analysis output only features with
+      absolute log2FoldChange bigger or equal to this value. Default: 0
 
   export_pdf_plots:
     type: boolean?
@@ -365,13 +376,21 @@ doc: |
 
 
 s:about: |
-  usage: run_deseq_manual.R
-        [-h] --expression EXPRESSION [EXPRESSION ...] --aliases ALIASES
-        [ALIASES ...] --metadata METADATA --design DESIGN [--reduced REDUCED]
-        [--contrast CONTRAST] [--base [BASE ...]] [--type {gene,transcript}]
-        [--exclude [EXCLUDE ...]] [--norm {vst,rlog}] [--remove REMOVE]
-        [--cluster {row,column,both}] [--center] [--label [LABEL ...]]
-        [--padj PADJ] [--pdf] [--output OUTPUT] [--cpus CPUS]
+  usage: run_deseq_manual.R [-h] --expression EXPRESSION
+                                        [EXPRESSION ...] --aliases ALIASES
+                                        [ALIASES ...] --metadata METADATA
+                                        --design DESIGN [--reduced REDUCED]
+                                        [--contrast CONTRAST]
+                                        [--base [BASE ...]]
+                                        [--type {gene,transcript}]
+                                        [--exclude [EXCLUDE ...]]
+                                        [--norm {vst,rlog}] [--remove REMOVE]
+                                        [--cluster {row,column,both}]
+                                        [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+                                        [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+                                        [--center] [--label [LABEL ...]]
+                                        [--padj PADJ] [--logfc LOGFC] [--pdf]
+                                        [--output OUTPUT] [--cpus CPUS]
 
   DESeq2 Multi-factor Analysis
 
@@ -401,9 +420,12 @@ s:about: |
                           Should start with ~. If provided, force DESeq2 to run
                           LRT test instead of the Wald.
     --contrast CONTRAST   Contrast to be be applied for the output, formatted as
-                          a mathematical formula of values from the --metadata
-                          table. If not provided, the last term from the design
-                          formula will be used.
+                          a mathematical formula of values from the --metadata table.
+                          If not provided, all possible combinations of values from
+                          the metadata columns present in the --design but not in the
+                          --reduced formula will be used (results will be merged giving
+                          the priority to significantly differentially expressed genes
+                          with higher absolute log2FoldChange values).
     --base [BASE ...]     Value(s) from each metadata file column(s) to be set
                           as the base level(s). Number and order of provided
                           values should correspond the order of columns in
@@ -426,12 +448,18 @@ s:about: |
     --remove REMOVE       Column from the metadata file to remove batch effect
                           before running differential expression analysis. If
                           present, all components that include this term will be
-                          removed from the design and reduced formulas.
-                          Default: do not remove batch effect
+                          removed from the design and reduced formulas. Default:
+                          do not remove batch effect
     --cluster {row,column,both}
                           Hopach clustering method to be run on normalized read
                           counts for the exploratory visualization analysis.
                           Default: do not run clustering
+    --rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+                          Distance metric for HOPACH row clustering. Ignored if
+                          --cluster is not provided. Default: cosangle
+    --columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
+                          Distance metric for HOPACH column clustering. Ignored
+                          if --cluster is not provided. Default: euclid
     --center              Apply mean centering for feature expression prior to
                           running clustering by row. Ignored when --cluster is
                           not row or both. Default: do not centered
@@ -442,6 +470,9 @@ s:about: |
     --padj PADJ           In the exploratory visualization analysis output only
                           features with adjusted P-value not bigger than this
                           value. Default: 0.05
+    --logfc LOGFC         In the exploratory visualization analysis output only
+                          features with absolute log2FoldChange bigger or equal
+                          to this value. Default: 0
     --pdf                 Export plots in PDF. Default: false
     --output OUTPUT       Output prefix for generated files
     --cpus CPUS           Number of cores/cpus to use. Default: 1
