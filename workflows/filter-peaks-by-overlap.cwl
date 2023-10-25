@@ -38,7 +38,7 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta:
+  reference_fasta_for_igv:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
@@ -46,14 +46,6 @@ inputs:
     doc: "Genome index for IGV to use for visualization."
     sd:preview:
       position: 2
-
-  annotation_file:
-    type: File
-    'sd:upstreamSource': "genome_indices/annotation"
-    label: "Annotation file:"
-    'sd:localLabel': true
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
 
   set_operator:
     type:
@@ -83,6 +75,14 @@ inputs:
     'sd:localLabel': true
     sd:preview:
       position: 8
+
+  annotation_file:
+    type: File
+    'sd:upstreamSource': "genome_indices/annotation"
+    label: "Annotation file:"
+    'sd:localLabel': true
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
 
   peak_list_B_group:
     type: File[]
