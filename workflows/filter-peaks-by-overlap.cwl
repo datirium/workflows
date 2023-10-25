@@ -38,11 +38,13 @@ inputs:
     sd:preview:
       position: 1
 
-  indices_folder:
-    type: Directory
+  reference_fasta:
+    type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Reference genome for samples:"
-    doc: "Path to indexed genome folder by **bowtie**, used for IGV of peaks"
+    label: "IGV Genome:"
+    'sd:localLabel': true
+    doc: |
+      Genome index for IGV to use for visualization.
     sd:preview:
       position: 2
 
