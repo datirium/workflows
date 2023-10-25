@@ -14,12 +14,12 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
       printf "$(date)\n\nStdout log file for kallisto-index.cwl tool:\n\n"
-      list1=$0; list2array=$1; set_operation=$2;
+      reference_bed=$0; all_other_bed=$1; set_operation=$2;
       printf "INPUTS:\n"
       printf "\$0 - $reference_bed\n"
       printf "\$1 - $all_other_bed\n"
