@@ -27,6 +27,21 @@ inputs:
     sd:preview:
       position: 1
 
+  indices_folder:
+    type: Directory
+    'sd:upstreamSource': "genome_indices/bowtie_indices"
+    label: "Reference genome for samples:"
+    doc: "Path to indexed genome folder by **bowtie**, used for IGV of peaks"
+    sd:preview:
+      position: 2
+
+  annotation_file:
+    type: File
+    'sd:upstreamSource': "genome_indices/annotation"
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
+
   feature_file:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -74,6 +89,22 @@ inputs:
     'sd:layout':
       advanced: true
 
+  promoter_dist:
+    type: int?
+    default: 1000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from gene TSS for promoter region assignment:"
+    doc: "Max distance from gene TSS (in both directions) for peak to be assigned to the promoter region."
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from the promoter (only in 5' direction) for peak to be assigned to the upstream region:"
+    doc: "Max distance from the promoter (only in 5' direction) for peak to be assigned to the upstream region."
+
 
 outputs:
 
@@ -83,10 +114,32 @@ outputs:
     label: "Filtered called peaks with the nearest genes assigned"
     doc: "Regions of interest formatted as headerless BED file with [chrom start end name]"
     outputSource: feature_select/filtered_file
+
+  filtered_file_for_igv:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Set peaks from operator, in simple bed format."
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end]"
+    outputSource: formatting_bed/filtered_file_for_igv
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Set operated Peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  annotated_peaks_file:
+    type: File?
+    format: "http://edamontology.org/format_3475"
+    label: "gene annotated filtered peaks file"
+    doc: "nearest gene annotation per peak [refseq_id gene_id txStart txEnd strand chrom start end length abssummit pileup log1-p foldenrich log10q region]"
+    outputSource: island_intersect/result_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Filtering results'
-        Title: 'Filtered table'
+        tab: 'Annotated Peak Filtering Results'
+        Title: 'Filtered peaks with nearest gene annotation'
 
   # bambai_pair:
   #   type: File
@@ -125,6 +178,56 @@ steps:
     - filtered_file
     - stdout_log
     - stderr_log
+
+  formatting_bed:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: ScatterFeatureRequirement
+      - class: ShellCommandRequirement
+      inputs:
+        script:
+          type: string?
+          default: |
+            # format for IGV
+            awk -F'\t' '{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),"0","peak_"NR)}}' $0 > output-for-igv.tsv
+            # format for island intersect tool
+            awk -F'\t' 'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"};{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),"0","peak_"NR)}}' $0 > output-for-iaintersect.tsv
+          inputBinding:
+            position: 1
+        headerless_bed:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        filtered_file_for_igv:
+          type: File
+          outputBinding:
+            glob: output-for-igv.tsv
+        filtered_file_for_iaintersect:
+          type: File
+          outputBinding:
+            glob: output-for-iaintersect.tsv
+      baseCommand: ["bash", "-c"]
+    in:
+      headerless_bed: feature_select/filtered_file
+    out:
+    - filtered_file_for_igv
+    - filtered_file_for_iaintersect
+
+  island_intersect:
+    label: "Peak annotation"
+    doc: |
+      Assigns nearest genes to peaks to explore the biological implication of the open
+      chromatin binding sites.
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: formatting_bed/filtered_file_for_iaintersect
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
+    out: [result_file, log_file]
 
 
 $namespaces:
