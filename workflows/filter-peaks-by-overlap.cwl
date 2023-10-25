@@ -123,11 +123,11 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  set_operation_peaks:
+  set_operation_peaks_for_igv:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Set peaks from operator, in simple bed format."
-    doc: "Regions of interest formatted as headerless BED file with [chrom start end]"
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end peak_<n>]"
     outputSource: set_operation/filtered_set_for_igv
     'sd:visualPlugins':
     - igvbrowser:
@@ -138,7 +138,7 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  set_operation_peaks_with_header:
+  iaintersect_input:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Set peaks from operator, formatted for input into iaintersect to find nearest gene per peak."
