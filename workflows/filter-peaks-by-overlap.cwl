@@ -38,7 +38,7 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta_for_igv:
+  reference_fasta:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
@@ -46,6 +46,14 @@ inputs:
     doc: "Genome index for IGV to use for visualization."
     sd:preview:
       position: 2
+
+  annotation_file:
+    type: File
+    'sd:upstreamSource': "genome_indices/annotation"
+    label: "Annotation file:"
+    'sd:localLabel': true
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
 
   set_operator:
     type:
@@ -71,25 +79,17 @@ inputs:
     format: "http://edamontology.org/format_3475"
     label: "Sample to use for peak list A (important to choose a specific list for difference operation):"
     doc: "Choose a sample to use for peak list A, from the ChIP, ATAC, C&R, or diffbind workflows."
-    'sd:upstreamSource': "genelists_for_A/filtered_file"
+    'sd:upstreamSource': "peaklist_A_samples/filtered_file"
     'sd:localLabel': true
     sd:preview:
       position: 8
-
-  annotation_file:
-    type: File
-    'sd:upstreamSource': "genome_indices/annotation"
-    label: "Annotation file:"
-    'sd:localLabel': true
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
 
   peak_list_B_group:
     type: File[]
     format: "http://edamontology.org/format_3475"
     label: "Peak list group B:"
     doc: "Select 1 or more samples for peak list group B, from the ChIP, ATAC, C&R, or diffbind workflows."
-    'sd:upstreamSource': "genelists_for_B/filtered_file"
+    'sd:upstreamSource': "peaklist_B_samples/filtered_file"
     'sd:localLabel': true
     sd:preview:
       position: 9
