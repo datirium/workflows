@@ -408,6 +408,13 @@ outputs:
     doc: "Differential binding analysis results  formatted as chip/atac/cutandrun results exported as TSV"
     outputSource: iaintersect_result_formatted/output_file_1
 
+  iaintersect_result:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Differential binding analysis results formatted as chip/atac/cutandrun results"
+    doc: "Differential binding analysis results  formatted as chip/atac/cutandrun results exported as TSV"
+    outputSource: iaintersect_result_formatted/output_file_1
+
   diffbind_bed_file:
     type: File
     format: "http://edamontology.org/format_3004"
