@@ -38,20 +38,20 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta_for_igv:
+  reference_fasta:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
     'sd:localLabel': true
-    doc: |
-      Genome index for IGV to use for visualization.
+    doc: "Genome index for IGV to use for visualization."
     sd:preview:
       position: 2
 
   annotation_file:
     type: File
     'sd:upstreamSource': "genome_indices/annotation"
-    label: "Annotation file"
+    label: "Annotation file:"
+    'sd:localLabel': true
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
 
