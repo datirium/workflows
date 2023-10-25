@@ -38,7 +38,7 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta:
+  reference_fasta_for_igv:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
@@ -79,7 +79,7 @@ inputs:
     format: "http://edamontology.org/format_3475"
     label: "Sample to use for peak list A (important to choose a specific list for difference operation):"
     doc: "Choose a sample to use for peak list A, from the ChIP, ATAC, C&R, or diffbind workflows."
-    'sd:upstreamSource': "peaklist_A_samples/filtered_file"
+    'sd:upstreamSource': "peaklist_A_samples/iaintersect_result"
     'sd:localLabel': true
     sd:preview:
       position: 8
@@ -89,7 +89,7 @@ inputs:
     format: "http://edamontology.org/format_3475"
     label: "Peak list group B:"
     doc: "Select 1 or more samples for peak list group B, from the ChIP, ATAC, C&R, or diffbind workflows."
-    'sd:upstreamSource': "peaklist_B_samples/filtered_file"
+    'sd:upstreamSource': "peaklist_B_samples/iaintersect_result"
     'sd:localLabel': true
     sd:preview:
       position: 9
