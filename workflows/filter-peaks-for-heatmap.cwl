@@ -191,7 +191,7 @@ steps:
           type: string?
           default: |
             # format for IGV
-            awk -F'\t' '{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),"0","peak_"NR)}}' $0 > output-for-igv.tsv
+            awk -F'\t' '{if($3>$2){printf("%s\t%.0f\t%.0f\t%s\n",$1,$2,$3,"peak_"NR)}}' $0 > output-for-igv.tsv
             # format for island intersect tool
             awk -F'\t' 'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"};{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),"0","peak_"NR)}}' $0 > output-for-iaintersect.tsv
           inputBinding:

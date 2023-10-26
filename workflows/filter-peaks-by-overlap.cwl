@@ -21,6 +21,7 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "diffbind.cwl"
+    - "filter-peaks-for-heatmap.cwl"
   peaklist_B_samples:
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
@@ -29,6 +30,7 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "diffbind.cwl"
+    - "filter-peaks-for-heatmap.cwl"
 
 inputs:
 
