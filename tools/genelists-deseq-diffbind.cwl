@@ -136,10 +136,10 @@ outputs:
     doc: |
       HTML preconfigured morpheus heatmap scaled to 99th percentile
 
-  log_file_stdout:
+  log_file_std_out:
     type: stdout
 
-  log_file_stderr:
+  log_file_std_err:
     type: stderr
 
 

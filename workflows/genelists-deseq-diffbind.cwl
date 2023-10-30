@@ -156,7 +156,7 @@ outputs:
     doc: "peak average read depth per TSS window and gene expression counts matrix"
     outputSource: data_integration/output_counts
 
-  heatmap_gct:
+  heatmap_gct_file:
     type: File
     label: "GCT formatted peak and expression data for morpheus viewer"
     format: "http://edamontology.org/format_3709"
@@ -219,8 +219,8 @@ steps:
       - heatmap_html
       - heatmap_peaknorm95_html
       - heatmap_peaknorm99_html
-      - log_file_stdout
-      - log_file_stderr
+      - log_file_std_out
+      - log_file_std_err
 
 
 $namespaces:
