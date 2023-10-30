@@ -40,13 +40,11 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta:
+  reference_fasta_for_igv:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
     doc: "Genome index for IGV to use for visualization."
-    sd:preview:
-      position: 2
 
   annotation_file:
     type: File
