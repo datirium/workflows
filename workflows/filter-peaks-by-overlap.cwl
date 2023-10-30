@@ -44,7 +44,6 @@ inputs:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
-    'sd:localLabel': true
     doc: "Genome index for IGV to use for visualization."
     sd:preview:
       position: 2
@@ -140,6 +139,36 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
+  peak_list_A_bed:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "input list A bed file, in simple bed format for IGV."
+    doc: "headerless BED file with [chrom start end] for IGV"
+    outputSource: set_operation/list_A_bed_file_for_igv
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Set operated Peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  peak_list_B_group_bed:
+    type: File[]
+    format: "http://edamontology.org/format_3003"
+    label: "input list B array of bed files, in simple bed format for IGV."
+    doc: "headerless BED files with [chrom start end] for IGV"
+    outputSource: set_operation/list_B_bed_array_for_igv
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Set operated Peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
   iaintersect_input:
     type: File
     format: "http://edamontology.org/format_3003"
@@ -158,14 +187,14 @@ outputs:
         tab: 'Annotated Peak Set Results'
         Title: 'set operated peaks with nearest gene annotation'
 
-  filtering_stdout_log_file:
+  filtering_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: set_operation/log_file_stdout
 
-  filtering_stderr_log_file:
+  filtering_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
@@ -184,6 +213,8 @@ steps:
         source: set_operator
         valueFrom: $(self)
     out:
+      - list_A_bed_file_for_igv
+      - list_B_bed_array_for_igv
       - overview_file
       - filtered_set_for_igv
       - filtered_set_for_iaintersect

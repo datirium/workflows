@@ -108,6 +108,20 @@ inputs:
 
 outputs:
 
+  list_A_bed_file_for_igv:
+    type: File
+    outputBinding:
+      glob: groupA-list-1.sorted.bed
+    doc: |
+      simple 3 column bed for IGV
+
+  list_B_bed_array_for_igv:
+    type: File[]
+    outputBinding:
+      glob: groupB*.sorted.bed
+    doc: |
+      simple 3 column bed for IGV
+
   overview_file:
     type: File
     outputBinding:
