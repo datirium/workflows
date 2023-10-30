@@ -10,6 +10,15 @@
 ##########################################################################################
 printf "$(date)\nLog file for run_genelists.sh\n\n"
 
+# increase stack size from default (8MB) to 32MB (issue with saving from R)
+printf "Adjusting ulimit stack size\n"
+printf "\tdefault value\n"
+R --slave -e 'Cstack_info()["size"]'
+printf "\tsetting to 32MB value\n"
+ulimit -s 32000
+printf "\tcheck new value\n"
+R --slave -e 'Cstack_info()["size"]'
+
 
 #	FUNCTIONS
 #===============================================================================
@@ -153,7 +162,10 @@ while read master; do
 	printf "\tget_data(), processing $master\n"
 	genelist_number=$(printf "$master" | cut -f1)
 	genelist_name=$(printf "$master" | cut -f2)
-	genelist_file=$(printf "$master" | cut -f3)
+	genelist_file_tmp=$(printf "$master" | cut -f3)
+	# ensure only 1 gene name per row (macs2 will sometimes report 2+ comma separated genes on a single row)
+	awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' $genelist_file_tmp > genelist.tsv
+	genelist_file="genelist.tsv"
 	genelist_annotation_file=$(printf "$master" | cut -f4)
 	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("no-binding" or "rna-seq")
 	sample_name=$(printf "$master" | cut -f6)
@@ -166,8 +178,8 @@ while read master; do
 		# user input variables
 		bam=$sample_data
 		bn=$(basename $bam | sed 's/\..*//')
-		samtools sort $bam > $bn.sorted.bam
-		samtools index $bn.sorted.bam
+		samtools sort -@ $THREADS $bam > $bn.sorted.bam
+		samtools index -@ $THREADS $bn.sorted.bam
 		# for each gene in filtered genelist file, get tag denisty (average read depth) per window step
 		cat $genelist_file | while read filtered_gene; do
 			timestamp=$(date +%s)
@@ -185,7 +197,9 @@ while read master; do
 				from=$(echo "$txEnd" | awk -v w=$window '{print($0-w)}')
 				to=$(echo "$txEnd" | awk -v w=$window '{print($0+w)}')
 			fi
-			samtools depth -a -r $chr:$from-$to $bn.sorted.bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
+			# in case tss is less than the window size away from the start of the sequence, set from to zero
+			if [[ "$from" -lt 0 ]]; then from=0; fi
+			samtools depth -@ $THREADS -a -r $chr:$from-$to $bn.sorted.bam > $bn-$timestamp.$geneid.$chr-$txStart-$txEnd.depth
 			#   reduce to x windows
 			seq $window_size $step_size $total_window_size | while read step; do
 				# calculate average depth for window
@@ -240,7 +254,7 @@ tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq.tsv
 
 
 #	HEATMAP 95th percentile
-# normalize peak data within each sample and scale from 0-99 per sample
+# normalize peak data within each sample and scale from 0-99 per sample (for better visualization)
 #	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
 #		values >= pad to pad value
 #		values < 0-pad remain unchanged
@@ -297,9 +311,15 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5
 # row metadata file
 printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv >> output_row_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
-sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
+# ensure data rows are unique
+sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
+# add row number for acast aggregation error for assumed uniqueness
+awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
+# update rid in output_counts.tsv file
+cp output_counts.tsv output_counts.tmp
+printf "rid\tcid\tvalue\n" > output_counts.tsv
+awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail -n+2 output_row_metadata.tsv | cut -f1 | sed 's/:/\t/') <(tail -n+2 output_counts.tmp) >> output_counts.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
@@ -309,6 +329,10 @@ sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
 run_genelists_heatmap.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+# make a copy of R inputs
+cp output_row_metadata.tsv output_row_metadata-95p.tsv
+cp output_col_metadata.tsv output_col_metadata-95p.tsv
+cp output_counts.tsv output_counts-95p.tsv
 
 # inject javascript to configure the heatmap
 ed heatmap.html <<EOF
@@ -331,7 +355,7 @@ mv heatmap.html heatmap_peaknorm95.html
 
 
 #	HEATMAP 99th percentile
-# normalize peak data within each sample and scale from 0-99 per sample
+# normalize peak data within each sample and scale from 0-99 per sample (for better visualization)
 #	for each sample, find the 99th percentile average depth (pad), and apply normalization by changing:
 #		values >= pad to pad value
 #		values < 0-pad remain unchanged
@@ -343,7 +367,7 @@ tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_
 	grep "$sample_name" output_na-binding_raw.tsv > peak_norm.tmp
 	#	awk explanation:
 	#		Sort the file numerically
-	#		drop the top 5%
+	#		drop the top 1%
 	#		pick the next value
 	pad=$(cut -f11 peak_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*1); p=p%1?int(p)+1:p; print a[c-p-1]}')
 	#	apply pad normalization and scale from 0-99
@@ -388,9 +412,14 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5
 # row metadata file
 printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv >> output_row_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
-sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
+sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
+# add row number for acast aggregation error for assumed uniqueness
+awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
+# update rid in output_counts.tsv file
+cp output_counts.tsv output_counts.tmp
+printf "rid\tcid\tvalue\n" > output_counts.tsv
+awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail -n+2 output_row_metadata.tsv | cut -f1 | sed 's/:/\t/') <(tail -n+2 output_counts.tmp) >> output_counts.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
@@ -400,6 +429,10 @@ sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
 run_genelists_heatmap.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+# make a copy of R inputs
+cp output_row_metadata.tsv output_row_metadata-99p.tsv
+cp output_col_metadata.tsv output_col_metadata-99p.tsv
+cp output_counts.tsv output_counts-99p.tsv
 
 # inject javascript to configure the heatmap
 ed heatmap.html <<EOF
@@ -420,25 +453,15 @@ mv heatmap.html heatmap_peaknorm99.html
 
 
 
-
+#	HEATMAP no percentile normalization
 # normalize peak data within each sample before scaling among ALL samples
 #	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
 #		values >= pad to pad value
 #		values < 0-pad remain unchanged
 printf "\n\n"
-printf "running each na-binding data sample (no percentile normalization)\n"
+printf "copying na-binding data (no percentile normalization)\n"
 # loop for each sample, grep sample rows, calc percentile, and apply normalization
-head -1 output_na-binding_raw.tsv > output_na-binding.tsv
-tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_name; do
-	grep "$sample_name" output_na-binding_raw.tsv > peak_norm.tmp
-	#	awk explanation:
-	#		Sort the file numerically
-	#		drop the top 5%
-	#		pick the next value
-	pad=$(cut -f11 peak_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*5); p=p%1?int(p)+1:p; print a[c-p-1]}')
-	#	apply pad normalization
-	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\n",pad)}else{printf("%s\n",$11)}}' peak_norm.tmp
-done >> output_na-binding.tsv
+cp output_na-binding_raw.tsv output_na-binding.tsv
 
 # scale peak data between 0-99 for better visualization
 #	get max peak value
@@ -481,9 +504,14 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5
 # row metadata file
 printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv >> output_row_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
-sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
+sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
+# add row number for acast aggregation error for assumed uniqueness
+awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
+# update rid in output_counts.tsv file
+cp output_counts.tsv output_counts.tmp
+printf "rid\tcid\tvalue\n" > output_counts.tsv
+awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail -n+2 output_row_metadata.tsv | cut -f1 | sed 's/:/\t/') <(tail -n+2 output_counts.tmp) >> output_counts.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
@@ -493,6 +521,10 @@ sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
 run_genelists_heatmap.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+# make a copy of R inputs
+cp output_row_metadata.tsv output_row_metadata-100p.tsv
+cp output_col_metadata.tsv output_col_metadata-100p.tsv
+cp output_counts.tsv output_counts-100p.tsv
 
 # inject javascript to configure the heatmap
 ed heatmap.html <<EOF
