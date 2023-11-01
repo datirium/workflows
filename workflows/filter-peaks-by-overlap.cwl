@@ -10,6 +10,9 @@ requirements:
 
 
 'sd:upstream':
+  genome_indices:
+    - "genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   peaklist_A_samples:
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
@@ -37,16 +40,18 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_genome_folder:
+  reference_fasta_for_igv:
     type: Directory?
-    'sd:upstreamSource': "peaklist_A_samples/indices_folder"
+    'sd:upstreamSource': "genome_indices/bowtie_indices"
+    label: "IGV Genome:"
     doc: "Genome index for IGV to use for visualization."
 
   annotation_file:
     type: File
-    'sd:upstreamSource': "peaklist_A_samples/annotation_file"
+    'sd:upstreamSource': "genome_indices/annotation"
+    label: "Annotation file:"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file for IGV visualization."
+    doc: "Tab-separated annotation file for igv"
 
   set_operator:
     type:
@@ -70,7 +75,7 @@ inputs:
   peak_list_A:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Sample to use for peak list A (important to choose a specific list for difference operation):"
+    label: "Peak list A sample:"
     doc: "Choose a sample to use for peak list A, from the ChIP, ATAC, C&R, or diffbind workflows."
     'sd:upstreamSource': "peaklist_A_samples/iaintersect_result"
     'sd:localLabel': true
@@ -80,7 +85,7 @@ inputs:
   peak_list_B_group:
     type: File[]
     format: "http://edamontology.org/format_3475"
-    label: "Peak list group B:"
+    label: "Peak list B sample(s):"
     doc: "Select 1 or more samples for peak list group B, from the ChIP, ATAC, C&R, or diffbind workflows."
     'sd:upstreamSource': "peaklist_B_samples/iaintersect_result"
     'sd:localLabel': true
