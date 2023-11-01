@@ -10,9 +10,6 @@ requirements:
 
 
 'sd:upstream':
-  genome_indices:
-    - "genome-indices.cwl"
-    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   peaklist_A_samples:
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
@@ -40,9 +37,9 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta_for_igv:
+  reference_genome:
     type: Directory?
-    'sd:upstreamSource': "genome_indices/bowtie_indices"
+    'sd:upstreamSource': "peaklist_A_samples/indices_folder"
     label: "IGV Genome:"
     doc: "Genome index for IGV to use for visualization."
 
