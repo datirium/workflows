@@ -40,7 +40,7 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_genome:
+  reference_genome_for_igv:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
@@ -132,7 +132,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "Input Peaks"
+        name: "Set Operation Result"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -147,7 +147,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "Set operated Peaks"
+        name: "Input List A Peaks"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -162,7 +162,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "Set operated Peaks"
+        name: "Input List B Group Peaks"
         displayMode: "COLLAPSE"
         height: 40
 
