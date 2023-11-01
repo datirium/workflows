@@ -40,7 +40,7 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_fasta_for_igv:
+  reference_genome:
     type: Directory?
     'sd:upstreamSource': "genome_indices/bowtie_indices"
     label: "IGV Genome:"
@@ -132,7 +132,7 @@ outputs:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
         type: 'bed'
-        name: "Set operated Peaks"
+        name: "Input Peaks"
         displayMode: "COLLAPSE"
         height: 40
 
