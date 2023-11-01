@@ -37,19 +37,16 @@ inputs:
     sd:preview:
       position: 1
 
-  reference_genome:
+  reference_genome_folder:
     type: Directory?
     'sd:upstreamSource': "peaklist_A_samples/indices_folder"
-    label: "IGV Genome:"
     doc: "Genome index for IGV to use for visualization."
 
   annotation_file:
     type: File
-    'sd:upstreamSource': "genome_indices/annotation"
-    label: "Annotation file:"
-    'sd:localLabel': true
+    'sd:upstreamSource': "peaklist_A_samples/annotation_file"
     format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
+    doc: "Tab-separated annotation file for IGV visualization."
 
   set_operator:
     type:
