@@ -597,7 +597,7 @@ steps:
     run: ../tools/cellranger-utils-count-chr.cwl
     in:
       possorted_genome_bam_bai: generate_counts_matrix/gex_possorted_genome_bam_bai
-      feature_bc_matrix_folder: generate_counts_matrix/filtered_feature_bc_matrix_folder
+      feature_bc_matrix_folder: compress_filtered_feature_bc_matrix_folder/compressed_folder
       selected_chromosome:
         default: "chrY"
       threads:
