@@ -9,12 +9,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-bedops:stable
+  dockerPull: robertplayer/scidap-bedops:v1.0.0
 
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
