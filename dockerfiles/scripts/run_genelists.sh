@@ -127,7 +127,8 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 	for n in $(echo "$NAMES_NABIND" | sed 's/,/\n/g'); do
 		# print formatted samplesheet row
 		if [[ ${bam_array[name_counter]} != "" ]]; then
-			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "na-binding" $n ${bam_array[name_counter]}
+			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "na-binding" ${name_counter}_${n} ${bam_array[name_counter]}
 		fi
 		((name_counter++))
 	done
@@ -140,7 +141,7 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 	for n in $(echo "$NAMES_RNASEQ" | sed 's/,/\n/g'); do
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
-			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" $n ${exp_array[name_counter]}
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} ${exp_array[name_counter]}
 		fi
 		((name_counter++))
 	done

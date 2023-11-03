@@ -13,10 +13,10 @@
 #      Cmd2:        docker image push robertplayer/scidap-genelists:dev
 # Pull Cmd:         docker pull robertplayer/scidap-genelists:dev
 # Test dev:         docker run --rm -ti robertplayer/scidap-genelists:dev /bin/bash
-# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v1.0.0
-# Push for PR:      docker image push robertplayer/scidap-genelists:v1.0.0
-# Pull Cmd:         docker pull robertplayer/scidap-genelists:v1.0.0
-# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v1.0.0 /bin/bash
+# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v2.0.0
+# Push for PR:      docker image push robertplayer/scidap-genelists:v2.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-genelists:v2.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v2.0.0 /bin/bash
 #           
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future
@@ -24,7 +24,8 @@
 
 
 ### Base Image
-FROM biowardrobe2/sc-tools:v0.0.19
+#FROM biowardrobe2/sc-tools:v0.0.19         # initial build from
+FROM biowardrobe2/morpheus:v0.0.2
 #FROM robertplayer/scidap-genelists:dev
 LABEL maintainer="robert.player@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
@@ -42,7 +43,8 @@ COPY ./scripts/fasta_2col.sh /usr/local/bin/
 ### Installing dependencies etc
 RUN apt-get update && \
     # R libraries
-    R -e 'devtools::install_github("cmap/morpheus.R")' && \
+#    R -e 'devtools::install_github("cmap/morpheus.R")' && \
+    R -e 'install.packages("reshape2", repo = "https://cloud.r-project.org/")' && \
     # samtools
     wget https://github.com/samtools/samtools/releases/download/1.17/samtools-1.17.tar.bz2 && \
     tar -xf samtools-1.17.tar.bz2 && \
