@@ -6,7 +6,7 @@
 # Description:      samtools, R
 # Website:          https://github.com/datirium/workflows
 # Provides:         samtools, R
-# Base Image:       biowardrobe2/sc-tools:v0.0.19
+# Base Image:       biowardrobe2/morpheus:v0.0.2
 # Build Cmd:        docker build --platform linux/amd64 --no-cache --rm -t genelists-dev -f scidap-genelists-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
 # Run Cmd:          docker run --rm -ti genelists-dev /bin/bash
 # Push Cmd1:        docker tag genelists-dev robertplayer/scidap-genelists:dev
@@ -24,8 +24,8 @@
 
 
 ### Base Image
-#FROM biowardrobe2/sc-tools:v0.0.19         # initial build from
 FROM biowardrobe2/morpheus:v0.0.2
+#   use for small script updates etc (shorter build time from dev)
 #FROM robertplayer/scidap-genelists:dev
 LABEL maintainer="robert.player@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive

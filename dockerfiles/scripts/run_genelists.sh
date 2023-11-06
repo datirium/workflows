@@ -88,10 +88,10 @@ if [[ "$THREADS" == "" ]]; then THREADS=1; fi
 if [[ "$GENELIST_NAMES" == "" ]]; then echo "error: required param missing (-a), array of genelist sample names"; exit; fi
 if [[ "$GENELIST_ANNOTATION_FILES" == "" ]]; then echo "error: required param missing (-b), array of genelist annotation (feature_file.tsv) files"; exit; fi
 if [[ "$GENELIST_FILTERED_FILES" == "" ]]; then echo "error: required param missing (-c), array of genelist filtered (feature_file) files"; exit; fi
-if [[ "$NAMES_NABIND" == "" ]]; then echo "error: required param missing (-d), array of NA binding sample names"; exit; fi
-if [[ "$NAMES_RNASEQ" == "" ]]; then echo "error: required param missing (-e), array of RNA-Seq sample names"; exit; fi
-if [[ "$FILES_NABIND_BAM" == "" ]]; then echo "error: required param missing (-f), array of NA binding BAM files"; exit; fi
-if [[ "$FILES_RNASEQ_EXP" == "" ]]; then echo "error: required param missing (-g), array of RNA-Seq expression files"; exit; fi
+if [[ "$NAMES_NABIND" == "" ]]; then echo "warning: optional param missing (-d), array of NA binding sample names"; fi
+if [[ "$NAMES_RNASEQ" == "" ]]; then echo "warning: optional param missing (-e), array of RNA-Seq sample names"; fi
+if [[ "$FILES_NABIND_BAM" == "" ]]; then echo "warning: optional param missing (-f), array of NA binding BAM files"; fi
+if [[ "$FILES_RNASEQ_EXP" == "" ]]; then echo "warning: optional param missing (-g), array of RNA-Seq expression files"; fi
 
 
 # defaults
