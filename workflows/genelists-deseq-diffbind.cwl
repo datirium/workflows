@@ -196,12 +196,12 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  log_file_std_out:
+  log_file_stdout:
     type: File
     outputSource: data_integration/log_file_stdout
     label: "log file stdout"
 
-  log_file_std_err:
+  log_file_stderr:
     type: File
     outputSource: data_integration/log_file_stderr
     label: "log file stderr"
@@ -229,8 +229,8 @@ steps:
       - heatmap_html
       - heatmap_peaknorm95_html
       - heatmap_peaknorm99_html
-      - log_file_std_out
-      - log_file_std_err
+      - log_file_stdout
+      - log_file_stderr
 
 
 $namespaces:
