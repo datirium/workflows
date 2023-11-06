@@ -5,7 +5,7 @@
 # Software Version: v2.4.41
 # Description:      Dockerized version of bedops
 # Website:          https://github.com/datirium/workflows
-# Base Image:       r-base:4.2.1
+# Base Image:       biowardrobe2/bedtools2:v2.26.0
 # Build Cmd:        docker build --no-cache --rm -t bedops-dev -f scidap-bedops-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
 # Run Cmd:          docker run --rm -ti bedops-dev /bin/bash
 # Push Cmd1:        docker tag bedops-dev robertplayer/scidap-bedops:stable
@@ -22,7 +22,6 @@
 
 ### Base Image
 #   use for initial image build
-#FROM r-base:4.2.1
 FROM biowardrobe2/bedtools2:v2.26.0
 #   use for small script updates etc (shorter build time from stable)
 #FROM robertplayer/scidap-bedops:stable
