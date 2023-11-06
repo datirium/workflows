@@ -1,0 +1,47 @@
+#################################################################
+# Dockerfile
+#
+# Software:         bedops stand-alone docker
+# Software Version: v2.4.41
+# Description:      Dockerized version of bedops
+# Website:          https://github.com/datirium/workflows
+# Base Image:       biowardrobe2/bedtools2:v2.26.0
+# Build Cmd:        docker build --no-cache --rm -t bedops-dev -f scidap-bedops-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti bedops-dev /bin/bash
+# Push Cmd1:        docker tag bedops-dev robertplayer/scidap-bedops:stable
+#      Cmd2:        docker image push robertplayer/scidap-bedops:stable
+# Pull Cmd:         docker pull robertplayer/scidap-bedops:stable
+# Test Stable:      docker run --rm -ti robertplayer/scidap-bedops:stable /bin/bash
+# re-tag for PR:    docker tag bedops-dev robertplayer/scidap-bedops:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-bedops:v1.0.0
+#
+#   NOTES:
+#   
+#################################################################
+
+
+### Base Image
+#   use for initial image build
+FROM biowardrobe2/bedtools2:v2.26.0
+#   use for small script updates etc (shorter build time from stable)
+#FROM robertplayer/scidap-bedops:stable
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+#       apt-get install ghostscript libgcc-10-dev libxml2-dev libcurl4-openssl-dev libssl-dev pandoc -y && \
+
+### Installing dependencies
+RUN apt-get update && \
+    wget https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    tar jxvf bedops_linux_x86_64-v2.4.41.tar.bz2 && \
+    cp bin/* /usr/local/bin/ && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
