@@ -115,13 +115,13 @@ inputs:
 
   remove:
     type: string?
-    label: "Column from the metadata file to remove batch effect when exporting feature counts"
+    label: "Column from the metadata file to remove batch effect"
     doc: |
-      Column from the metadata file to remove batch effect when
-      exporting feature counts. All components that include this
-      term will be removed from the design formula when correcting
-      for batch effect. Default: do not remove batch effect from
-      the exported counts
+      Column from the metadata file to remove batch effect
+      before running differential expression analysis. If
+      present, all components that include this term will be
+      removed from the design and reduced formulas.
+      Default: do not remove batch effect
 
   base:
     type: string?
@@ -152,25 +152,14 @@ inputs:
       symbols:
       - "vst"
       - "rlog"
-    default: "vst"
+    default: "rlog"
     label: "Read counts normalization for the exploratory visualization analysis"
     doc: |
       Read counts normalization for the exploratory visualization analysis.
       Use 'vst' for medium-to-large datasets (n > 30) and 'rlog' for
       small datasets (n < 30), when there is a wide range of sequencing
       depth across samples.
-      Default: vst
-    'sd:layout':
-      advanced: true
-
-  center_row:
-    type: boolean?
-    default: false
-    label: "Apply mean centering for feature expression prior to running clustering by row"
-    doc: |
-      Apply mean centering for feature expression prior to running
-      clustering by row. Ignored when --cluster is not row or both.
-      Default: do not centered
+      Default: rlog
     'sd:layout':
       advanced: true
 
@@ -259,22 +248,34 @@ inputs:
       advanced: true
 
   threads:
-    type: int?
-    default: 1
-    label: "Number of cores/cpus to use"
-    doc: "Number of cores/cpus to use. Default: 1"
-    'sd:layout':
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+    default: "1"
+    label: "Cores/CPUs"
+    doc: |
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 1
+    "sd:layout":
       advanced: true
 
 
 outputs:
 
-  diff_expr_features:
+  diff_expr_file:
     type: File
     outputSource: deseq_multi_factor/diff_expr_features
     label: "TSV file with not filtered differentially expressed features"
     doc: |
-      TSV file with not filtered differentially expressed features
+      TSV file with not filtered differentially
+      expressed features
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'DE features'
@@ -285,15 +286,16 @@ outputs:
     outputSource: deseq_multi_factor/read_counts_gct
     label: "GCT file with normalized, optionally batch corrected, read counts"
     doc: |
-      GCT file with normalized, optionally batch corrected, read counts
+      GCT file with normalized, optionally batch
+      corrected, read counts
 
   mds_plot_html:
     type: File?
     outputSource: deseq_multi_factor/mds_plot_html
-    label: "MDS plot of normalized counts"
+    label: "MDS plot of normalized, optionally batch corrected, read counts"
     doc: |
-      MDS plot of normalized counts. Optionally batch corrected
-      based on the --remove value.
+      MDS plot of normalized, optionally batch
+      corrected, read counts.
       HTML format
     'sd:visualPlugins':
     - linkList:
@@ -305,7 +307,8 @@ outputs:
     outputSource: deseq_multi_factor/volcano_plot_png
     label: "Volcano plot of differentially expressed features"
     doc: |
-      Volcano plot of differentially expressed features.
+      Volcano plot of differentially expressed
+      features.
       PNG format
     'sd:visualPlugins':
     - image:
@@ -315,15 +318,17 @@ outputs:
   pca_plot_png:
     type: File?
     outputSource: deseq_multi_factor/pca_plot_png
-    label: "PCA plot of normalized counts based on the top 500 features with the highest row variance"
+    label: "PCA plot of normalized, optionally batch corrected, read counts"
     doc: |
-      PCA plot of normalized counts based on the top 500
-      features selected by the highest row variance
+      PCA plot of normalized, optionally batch
+      corrected, read counts based on the top
+      500 features selected by the highest row
+      variance
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
-        Caption: 'PCA plot of normalized counts based on the top 500 features with the highest row variance'
+        Caption: 'PCA plot of normalized, optionally batch corrected, read counts'
 
   volcano_plot_html_file:
     type: File
@@ -372,13 +377,13 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_stdout_log_file:
+  deseq_stdout_log:
     type: File
     outputSource: deseq_multi_factor/stdout_log
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
 
-  deseq_stderr_log_file:
+  deseq_stderr_log:
     type: File
     outputSource: deseq_multi_factor/stderr_log
     label: "DESeq stderr log"
@@ -437,12 +442,15 @@ steps:
         valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
       column_distance: column_distance
-      center_row: center_row
+      center_row:
+        default: true
       selected_features:
         source: selected_features
         valueFrom: $(split_by_common_delim(self))
       maximum_padj: maximum_padj
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
     out:
     - diff_expr_features
     - read_counts_gct
