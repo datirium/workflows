@@ -163,7 +163,7 @@ outputs:
     doc: "GCT formatted peak and expression data for morpheus viewer"
     outputSource: data_integration/heatmap_gct
 
-  heatmap_html:
+  heatmap_nonorm_html:
     type: File
     outputSource: data_integration/heatmap_html
     label: "Heatmap of peak and expression data"
@@ -196,6 +196,16 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
+  log_file_stdout:
+    type: File
+    outputSource: data_integration/log_file_stdout
+    label: "log file stdout"
+
+  log_file_stderr:
+    type: File
+    outputSource: data_integration/log_file_stderr
+    label: "log file stderr"
+
 
 steps:
 
@@ -219,8 +229,8 @@ steps:
       - heatmap_html
       - heatmap_peaknorm95_html
       - heatmap_peaknorm99_html
-      - log_file_std_out
-      - log_file_std_err
+      - log_file_stdout
+      - log_file_stderr
 
 
 $namespaces:

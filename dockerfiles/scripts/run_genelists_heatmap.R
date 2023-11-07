@@ -11,6 +11,7 @@ suppressMessages(library(reshape2))
 suppressMessages(library(morpheus))
 suppressMessages(library(htmlwidgets))
 
+Cstack_info()
 
 ##########################################################################################
 #
