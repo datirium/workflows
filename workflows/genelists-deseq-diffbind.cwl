@@ -229,8 +229,8 @@ steps:
       - heatmap_html
       - heatmap_peaknorm95_html
       - heatmap_peaknorm99_html
-      - log_file_std_out
-      - log_file_std_err
+      - log_file_stdout
+      - log_file_stderr
 
 
 $namespaces:
