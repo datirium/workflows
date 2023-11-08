@@ -125,7 +125,7 @@ outputs:
     - syncfusiongrid:
         tab: 'Transcript Counts'
 
-  overview_file:
+  overview:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
