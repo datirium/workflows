@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -27,8 +27,8 @@ inputs:
       printf "\$4 - $THREADS\n\n"
       # commands start
       if [[ $(basename $R1 | sed 's/.*\.//') == "bz2" ]]; then
-        bzip2 -kc $R1 > r1.fastq
-        bzip2 -kc $R2 > r2.fastq
+        bunzip2 -kc $R1 > r1.fastq
+        bunzip2 -kc $R2 > r2.fastq
         kallisto quant -t $THREADS -i $INDEX -o quant_outdir r1.fastq r2.fastq
       else
         kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
