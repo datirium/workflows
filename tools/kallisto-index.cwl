@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
