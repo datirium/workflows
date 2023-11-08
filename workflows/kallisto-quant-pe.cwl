@@ -125,7 +125,7 @@ outputs:
     - syncfusiongrid:
         tab: 'Transcript Counts'
 
-  overview_file:
+  overview:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
@@ -278,9 +278,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Kallisto transcript quant pipeline"
-label: "Kallisto transcript quant pipeline"
-s:alternateName: "Kallisto transcript quant pipeline"
+s:name: "Kallisto transcript quant pipeline paired end"
+label: "Kallisto transcript quant pipeline paired end"
+s:alternateName: "Kallisto transcript quant pipeline paired end"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kallisto-quant.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -318,20 +318,21 @@ s:creator:
 
 
 doc: |
-  This workflow runs RNA-Seq reads using the kallisto quant tool against a kallisto index reference genome (see "Kallisto index pipeline").
+  This workflow runs paired end RNA-Seq reads using the kallisto quant tool against a kallisto index reference genome (see "Kallisto index pipeline").
   The kallisto transcript-level quantified samples are then compatible with the DESeq and GSEA downstream workflows.
 
   ### __Inputs__
-   - FASTQ files of the reference genome that will be indexed
+   - Kallisto index sample (of experimental organism)
+   - R1/R2 FASTQ files of RNA-Seq read data
    - number of threads to use for multithreading processes
   
   ### __Outputs__
-   - kallisto index file (.kdx).
-   - stdout log file (output in Overview tab as well)
-   - stderr log file
+   - kallisto quant file (transcript estimate tsv)
 
   ### __Data Analysis Steps__
-  1. cwl calls dockercontainer robertplayer/scidap-kallisto to index reference FASTA with `kallisto index`, generating a kallisto index file.
+  1. cwl calls dockercontainer robertplayer/scidap-kallisto to pseudo align reads using `kallisto quant`.
+  2. abundance tsv is formatted
+  3. read and alignment metrics are calculated for the sample piechart, and output to the overview.md file
 
   ### __References__
     -   Bray, N. L., Pimentel, H., Melsted, P. & Pachter, L. Near-optimal probabilistic RNA-seq quantification, Nature Biotechnology 34, 525-527(2016), doi:10.1038/nbt.3519
