@@ -8,12 +8,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-kallisto:stable
+  dockerPull: robertplayer/scidap-kallisto:v1.0.0
 
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -26,7 +26,13 @@ inputs:
       printf "\$3 - $R2\n\n"
       printf "\$4 - $THREADS\n\n"
       # commands start
-      kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
+      if [[ $(basename $R1 | sed 's/.*\.//') == "bz2" ]]; then
+        bzip2 -kc $R1 > r1.fastq
+        bzip2 -kc $R2 > r2.fastq
+        kallisto quant -t $THREADS -i $INDEX -o quant_outdir r1.fastq r2.fastq
+      else
+        kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
+      fi
       # format output for as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
       # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
@@ -38,8 +44,14 @@ inputs:
       total_aligned=$(tail -n+2 transcript_counts.tsv | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       annotated_aligned=$(tail -n+2 transcript_counts.tsv | grep -v "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       unannotated_aligned=$(tail -n+2 transcript_counts.tsv | grep "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
-      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | wc -l | awk '{print($0/4)}'); else read_count_r1=$(wc -l $R1 | awk '{print($0/4)}'); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | wc -l | awk '{print($0/4)}'); else read_count_r2=$(wc -l $R2 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "fastq" ]]; then read_count_r1=$(wc -l $R1 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "fastq" ]]; then read_count_r2=$(wc -l $R2 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "fq" ]]; then read_count_r1=$(wc -l $R1 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "fq" ]]; then read_count_r2=$(wc -l $R2 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | wc -l | awk '{print($0/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | wc -l | awk '{print($0/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "bz2" ]]; then read_count_r1=$(bzip2 -c $R1 | wc -l | awk '{print($0/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "bz2" ]]; then read_count_r1=$(bzip2 -c $R2 | wc -l | awk '{print($0/4)}'); fi
       unmapped=$(printf "$read_count_r1" | awk -v x="$total_aligned" '{print($0-x)}')
 
       #   output stats for pie chart

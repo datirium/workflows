@@ -5,20 +5,14 @@ class: Workflow
 requirements:
   - class: StepInputExpressionRequirement
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
 'sd:upstream':
   kallisto_index: "kallisto-index.cwl"
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Sample short name/Alias:"
-    'sd:localLabel': true
-    doc: |
-      Short name for the analysis.
-    sd:preview:
-      position: 1
 
   kallisto_index:
     type: File
@@ -28,8 +22,6 @@ inputs:
     'sd:localLabel': true
     doc: |
       Kallisto index sample to use for pseudo-alignment, generated from the "Kallisto index pipeline".
-    sd:preview:
-      position: 2
 
   input_annotation_file:
     type: File
