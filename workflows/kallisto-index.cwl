@@ -54,7 +54,7 @@ outputs:
     label: "Kallisto index file."
     outputSource: kallisto_index/kallisto_index
 
-  log_file_stdout:
+  log_file_stdout_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -63,7 +63,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_file_stderr:
+  log_file_stderr_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
