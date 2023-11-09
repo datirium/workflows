@@ -8,7 +8,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_name:
     type: string
     label: "Sample short name/Alias:"
     'sd:localLabel': true
@@ -59,7 +59,7 @@ outputs:
     label: "Kallisto index file."
     outputSource: kallisto_index/kallisto_index
 
-  log_file_stdout_file:
+  log_file_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -68,7 +68,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_file_stderr_file:
+  log_file_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
