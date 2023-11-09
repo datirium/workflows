@@ -8,7 +8,7 @@ requirements:
 
 inputs:
 
-  alias_name:
+  alias:
     type: string
     label: "Sample short name/Alias:"
     'sd:localLabel': true
@@ -40,7 +40,7 @@ inputs:
       \t4. TxStart\n
       \t5. TxEnd\n
       \t6. Strand\n\n
-      NOTE: Sequence names (string after the '>') in the transcriptome FASTA must match column 3 (Chrom) of the annotation TSV."
+      NOTE: Sequence names (string after the >) in the transcriptome FASTA must match column 3 (Chrom) of the annotation TSV."
     sd:preview:
       position: 3
 
