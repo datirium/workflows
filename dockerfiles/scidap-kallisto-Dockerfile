@@ -18,12 +18,14 @@
 #   
 #   NOTES:
 #   
+#   v1.0.0
+#       - added bzip2 tool
+#       - compatibility with geo downloaded input fastqs
 #################################################################
 
 
 ### Base Image
 #   use for initial image build
-#FROM quay.io/biocontainers/kallisto:0.44.0--h7d86c95_2         # way too stripped down
 FROM ubuntu:22.04
 #   use for small script updates etc (shorter build time from stable)
 #FROM robertplayer/scidap-kallisto:stable
@@ -46,6 +48,7 @@ RUN apt update && \
     apt install -y cmake && \
     apt install -y clang && \
     apt install -y zlib1g-dev && \
+    apt install -y bzip2 && \
     mkdir -p /apps/src/ && \
     cd /apps/src/ && \
     git clone https://github.com/pachterlab/kallisto.git && \

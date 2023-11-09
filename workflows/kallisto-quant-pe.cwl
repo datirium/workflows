@@ -5,20 +5,14 @@ class: Workflow
 requirements:
   - class: StepInputExpressionRequirement
 
+'sd:metadata':
+  - "../metadata/rnaseq-header.cwl"
+
 'sd:upstream':
   kallisto_index: "kallisto-index.cwl"
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Sample short name/Alias:"
-    'sd:localLabel': true
-    doc: |
-      Short name for the analysis.
-    sd:preview:
-      position: 1
 
   kallisto_index:
     type: File
@@ -27,18 +21,22 @@ inputs:
     'sd:upstreamSource': "kallisto_index/index_file"
     'sd:localLabel': true
     doc: |
-      Kallisto index sample to use for pseudo-alignment, generated from the "Kallisto index pipeline".
-    sd:preview:
-      position: 2
+      Kallisto index sample to use for pseudo-alignment, generated from the 'Kallisto index pipeline'.
 
   input_annotation_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Annotation file (gff, gtf, tsv):"
+    label: "Annotation file (tsv):"
     'sd:upstreamSource': "kallisto_index/input_annotation_file"
-    doc: |
-      TSV file containing gene annotations for the reference genome. From kallisto index upstream.
-      Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
+    doc: "TSV file containing gene annotations for the reference genome (from kallisto index upstream).\n\n
+      Required columns (include headers as row 1 of TSV):\n
+      \t1. RefseqId
+      \t2. GeneId
+      \t3. Chrom (gene/transcript id/name)
+      \t4. TxStart
+      \t5. TxEnd
+      \t6. Strand\n\n
+      NOTE: Sequence names (string after the '>') in the transcriptome FASTA must match column 3 (Chrom) of the annotation TSV."
 
   fastq_file_R1:
     type:
@@ -133,7 +131,7 @@ outputs:
     - syncfusiongrid:
         tab: 'Transcript Counts'
 
-  overview:
+  overview_file:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
@@ -274,8 +272,8 @@ steps:
     in:
       kallisto_index: kallisto_index
       annotation_tsv: input_annotation_file
-      fastq_R1: fastq_file_R1
-      fastq_R2: fastq_file_R2
+      fastq_R1: rename_R1/target_file
+      fastq_R2: rename_R2/target_file
       threads: threads
     out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, log_file_stdout, log_file_stderr]
 
@@ -286,9 +284,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Kallisto transcript quant pipeline"
-label: "Kallisto transcript quant pipeline"
-s:alternateName: "Kallisto transcript quant pipeline"
+s:name: "Kallisto transcript quant pipeline paired end"
+label: "Kallisto transcript quant pipeline paired end"
+s:alternateName: "Kallisto transcript quant pipeline paired end"
 
 s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kallisto-quant.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -326,20 +324,21 @@ s:creator:
 
 
 doc: |
-  This workflow runs RNA-Seq reads using the kallisto quant tool against a kallisto index reference genome (see "Kallisto index pipeline").
+  This workflow runs paired end RNA-Seq reads using the kallisto quant tool against a kallisto index reference genome (see "Kallisto index pipeline").
   The kallisto transcript-level quantified samples are then compatible with the DESeq and GSEA downstream workflows.
 
   ### __Inputs__
-   - FASTQ files of the reference genome that will be indexed
+   - Kallisto index sample (of experimental organism)
+   - R1/R2 FASTQ files of RNA-Seq read data
    - number of threads to use for multithreading processes
   
   ### __Outputs__
-   - kallisto index file (.kdx).
-   - stdout log file (output in Overview tab as well)
-   - stderr log file
+   - kallisto quant file (transcript estimate tsv)
 
   ### __Data Analysis Steps__
-  1. cwl calls dockercontainer robertplayer/scidap-kallisto to index reference FASTA with `kallisto index`, generating a kallisto index file.
+  1. cwl calls dockercontainer robertplayer/scidap-kallisto to pseudo align reads using `kallisto quant`.
+  2. abundance tsv is formatted
+  3. read and alignment metrics are calculated for the sample piechart, and output to the overview.md file
 
   ### __References__
     -   Bray, N. L., Pimentel, H., Melsted, P. & Pachter, L. Near-optimal probabilistic RNA-seq quantification, Nature Biotechnology 34, 525-527(2016), doi:10.1038/nbt.3519

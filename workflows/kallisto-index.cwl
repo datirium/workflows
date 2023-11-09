@@ -22,8 +22,8 @@ inputs:
     format: "http://edamontology.org/format_1929"
     label: "Reference genome FASTA file to index:"
     'sd:localLabel': true
-    doc: |
-      FASTA file of the reference genome that will be indexed. May be compressed with gzip. Must end in '.gz', '.fasta', '.fa', or '.fna'.
+    doc: "FASTA file of the reference genome that will be indexed. May be compressed with gzip. Must end in '.gz', '.fasta', '.fa', or '.fna'.\n\n
+      NOTE: Sequence names (string after the '>') in the transcriptome FASTA must match column 3 (Chrom/gene id/name) of the annotation TSV."
     sd:preview:
       position: 2
 
@@ -32,9 +32,15 @@ inputs:
     format: "http://edamontology.org/format_3475"
     label: "Annotation file (gff, gtf, tsv):"
     'sd:localLabel': true
-    doc: |
-      TSV file containing gene annotations for the reference genome.
-      Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
+    doc: "TSV file containing gene annotations for the reference genome (from kallisto index upstream).\n\n
+      Required columns (include headers as row 1 of TSV):\n
+      \t1. RefseqId\n
+      \t2. GeneId\n
+      \t3. Chrom (gene/transcript id/name)\n
+      \t4. TxStart\n
+      \t5. TxEnd\n
+      \t6. Strand\n\n
+      NOTE: Sequence names (string after the >) in the transcriptome FASTA must match column 3 (Chrom) of the annotation TSV."
     sd:preview:
       position: 3
 
