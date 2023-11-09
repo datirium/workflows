@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -26,33 +26,12 @@ inputs:
       printf "\$3 - $R2\n\n"
       printf "\$4 - $THREADS\n\n"
       # commands start
-      if [[ $(basename $R1 | sed 's/.*\.//') == "bz2" ]]; then
-        bunzip2 -kc $R1 > r1.fastq
-        bunzip2 -kc $R2 > r2.fastq
-        printf "\tgetting fastq counts from bz2 fastqs\n"
-        read_count_r1=$(awk 'END{print(NR/4)}' r1.fastq)
-        read_count_r2=$(awk 'END{print(NR/4)}' r2.fastq)
-        kallisto quant -t $THREADS -i $INDEX -o quant_outdir r1.fastq r2.fastq
-      else
-        kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
-      fi
+      kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
       # format output for as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
       # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
       #   force "est_counts" to integers
-      #   adding index sequence name parsing to remove everything after common delimiter chars (need to match names in annotation file)
-      #     TESTING:       awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{split($1,col1,"|");split(col1[1],col11," ");split(col11[1],col111,";");split(col111[1],col1111,":");printf("%s\t%0.f\t%s\n",anno[col1111[1]],$4,$5)}}'
-      awk -F'\t' '{
-        if(NR==FNR){
-          anno[$3]=$0
-        }else{
-          split($1,col1,"|")
-          split(col1[1],col11," ")
-          split(col11[1],col111,";")
-          split(col111[1],col1111,":")
-          printf("%s\t%0.f\t%s\n",anno[col1111[1]],$4,$5)
-        }
-      }' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
+      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
 
       # print for overview.md
       #   read metrics

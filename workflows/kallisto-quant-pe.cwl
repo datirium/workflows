@@ -21,16 +21,22 @@ inputs:
     'sd:upstreamSource': "kallisto_index/index_file"
     'sd:localLabel': true
     doc: |
-      Kallisto index sample to use for pseudo-alignment, generated from the "Kallisto index pipeline".
+      Kallisto index sample to use for pseudo-alignment, generated from the 'Kallisto index pipeline'.
 
   input_annotation_file:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "Annotation file (gff, gtf, tsv):"
+    label: "Annotation file (tsv):"
     'sd:upstreamSource': "kallisto_index/input_annotation_file"
-    doc: |
-      TSV file containing gene annotations for the reference genome. From kallisto index upstream.
-      Required columns (include headers as row 1 of TSV): RefseqId, GeneId, Chrom (transcript id/name), TxStart (start of alignment in query), TxEnd (end of alignment in query), Strand (if query start < query end strand +, else -).
+    doc: "TSV file containing gene annotations for the reference genome (from kallisto index upstream).\n\n
+      Required columns (include headers as row 1 of TSV):\n
+      \t1. RefseqId
+      \t2. GeneId
+      \t3. Chrom (gene/transcript id/name)
+      \t4. TxStart
+      \t5. TxEnd
+      \t6. Strand\n\n
+      NOTE: Sequence names (string after the '>') in the transcriptome FASTA must match column 3 (Chrom) of the annotation TSV."
 
   fastq_file_R1:
     type:
