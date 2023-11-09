@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -30,8 +30,8 @@ inputs:
         bunzip2 -kc $R1 > r1.fastq
         bunzip2 -kc $R2 > r2.fastq
         printf "\tgetting fastq counts from bz2 fastqs\n"
-        read_count_r1=$(awk '{print(NR/4)}' r1.fastq)
-        read_count_r2=$(awk '{print(NR/4)}' r2.fastq)
+        read_count_r1=$(awk 'END{print(NR/4)}' r1.fastq)
+        read_count_r2=$(awk 'END{print(NR/4)}' r2.fastq)
         kallisto quant -t $THREADS -i $INDEX -o quant_outdir r1.fastq r2.fastq
       else
         kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
@@ -59,12 +59,12 @@ inputs:
       total_aligned=$(tail -n+2 transcript_counts.tsv | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       annotated_aligned=$(tail -n+2 transcript_counts.tsv | grep -v "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       unannotated_aligned=$(tail -n+2 transcript_counts.tsv | grep "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
-      if [[ $(basename $R1 | sed 's/.*\.//') == "fastq" ]]; then read_count_r1=$(awk '{print(NR/4)}' $R1); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "fastq" ]]; then read_count_r2=$(awk '{print(NR/4)}' $R2); fi
-      if [[ $(basename $R1 | sed 's/.*\.//') == "fq" ]]; then read_count_r1=$(awk '{print(NR/4)}' $R1); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "fq" ]]; then read_count_r2=$(awk '{print(NR/4)}' $R2); fi
-      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | awk '{print(NR/4)}'); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | awk '{print(NR/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "fastq" ]]; then read_count_r1=$(awk 'END{print(NR/4)}' $R1); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "fastq" ]]; then read_count_r2=$(awk 'END{print(NR/4)}' $R2); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "fq" ]]; then read_count_r1=$(awk 'END{print(NR/4)}' $R1); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "fq" ]]; then read_count_r2=$(awk 'END{print(NR/4)}' $R2); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | awk 'END{print(NR/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | awk 'END{print(NR/4)}'); fi
       unmapped=$(printf "$read_count_r1" | awk -v x="$total_aligned" '{print($0-x)}')
 
       #   output stats for pie chart

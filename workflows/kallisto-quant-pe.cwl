@@ -125,7 +125,7 @@ outputs:
     - syncfusiongrid:
         tab: 'Transcript Counts'
 
-  overview_file:
+  overview:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
@@ -266,8 +266,8 @@ steps:
     in:
       kallisto_index: kallisto_index
       annotation_tsv: input_annotation_file
-      fastq_R1: fastq_file_R1
-      fastq_R2: fastq_file_R2
+      fastq_R1: rename_R1/target_file
+      fastq_R2: rename_R2/target_file
       threads: threads
     out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, log_file_stdout, log_file_stderr]
 
