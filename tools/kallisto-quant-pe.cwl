@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -31,7 +31,10 @@ inputs:
       # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
       #   force "est_counts" to integers
-      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
+      #     for custom transcriptome sequence names, there will be a pipe delimiter after the geneid (e.g. >gene12345|5) to force uniqueness
+      #     this needs to be accounted for, and all est counts from the same geneid (string before the pipe) should be summed
+      awk -F'\t' '{split($1,seqname,"|"); est_counts[seqname[1]]+=$4; tpm[seqname[1]]+=$5}END{for(name in est_counts){printf("%s\t%0.f\t%0.f\n",name,est_counts[name],tpm[name])}}' <(tail -n+2 ./quant_outdir/abundance.tsv) > transcript_counts.tmp
+      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$2,$3)}}' $ANNO transcript_counts.tmp >> transcript_counts.tsv
 
       # print for overview.md
       #   read metrics
