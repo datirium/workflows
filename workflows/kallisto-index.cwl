@@ -8,7 +8,7 @@ requirements:
 
 inputs:
 
-  alias_name:
+  alias:
     type: string
     label: "Sample short name/Alias:"
     'sd:localLabel': true
@@ -34,14 +34,14 @@ inputs:
     'sd:localLabel': true
     doc: "TSV file containing gene annotations for the reference genome (from kallisto index upstream).\n\n
       Required columns (include headers as row 1 of TSV):\n
-      \t1. RefseqId
-      \t2. GeneId
-      \t3. Chrom (gene/transcript id/name)
-      \t4. TxStart
-      \t5. TxEnd
+      \t1. RefseqId\n
+      \t2. GeneId\n
+      \t3. Chrom (gene/transcript id/name)\n
+      \t4. TxStart\n
+      \t5. TxEnd\n
       \t6. Strand\n\n
       NOTE: Sequence names (string after the '>') in the transcriptome FASTA must match column 3 (Chrom) of the annotation TSV."    sd:preview:
-      position: 3
+    position: 3
 
   threads:
     type: int?
