@@ -133,6 +133,7 @@ inputs:
     inputBinding:
       position: 17
       prefix: "--skip_remap"
+      valueFrom: $(self?"True":"False")                 # Souporcell expects word, not just boolean flag
     doc: |
       Don't remap with minimap2 (not recommended unless in
       conjunction with --common_variants)
