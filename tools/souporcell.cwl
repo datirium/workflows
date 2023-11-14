@@ -130,10 +130,11 @@ inputs:
 
   skip_remap:
     type: boolean?
+    default: false
     inputBinding:
       position: 17
       prefix: "--skip_remap"
-      valueFrom: $(self?"True":"False")                 # Souporcell expects word, not just boolean flag
+      valueFrom: $(self?"True":null)                    # when we return null --skip_remap prefix won't be used at all
     doc: |
       Don't remap with minimap2 (not recommended unless in
       conjunction with --common_variants)
