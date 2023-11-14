@@ -80,6 +80,17 @@ inputs:
     doc: |
       Number of clusters to detect (number of donors merged into one single-cell experiment)
 
+  barcodes_data:
+    type: File?
+    label: "Selected cell barcodes (optional)"
+    doc: |
+      A TSV/CSV file to optionally prefilter
+      the single cell data by including only
+      the cells with the selected barcodes.
+      The provided file should have one cell
+      barcode per line and do not include any
+      header information.
+
   ploidy_count:
     type: int?
     default: 2
@@ -296,20 +307,32 @@ steps:
             tar xzf $0
             mv filtered_feature_bc_matrix/barcodes.tsv.gz .
             gunzip barcodes.tsv.gz
+            if [ -f "$1" ]; then
+                echo "Filter by user provided barcodes"
+                comm -12 --check-order <(sort barcodes.tsv) <(sort $1) > cell_barcodes.tsv
+            else
+                echo "Do not filter by user provided barcodes"
+                mv barcodes.tsv cell_barcodes.tsv
+            fi
           inputBinding:
             position: 5
         filtered_feature_bc_matrix_folder:
           type: File
           inputBinding:
             position: 6
+        barcodes_data:
+          type: File?
+          inputBinding:
+            position: 7
       outputs:
         barcodes_tsv_file:
           type: File
           outputBinding:
-            glob: "barcodes.tsv"
+            glob: "cell_barcodes.tsv"
       baseCommand: ["bash", "-c"]
     in:
       filtered_feature_bc_matrix_folder: filtered_feature_bc_matrix_folder
+      barcodes_data: barcodes_data
     out:
     - barcodes_tsv_file
 
