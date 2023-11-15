@@ -141,6 +141,7 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 	for n in $(echo "$NAMES_RNASEQ" | sed 's/,/\n/g'); do
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
+			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
 			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} ${exp_array[name_counter]}
 		fi
 		((name_counter++))
@@ -158,7 +159,7 @@ printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tch
 
 
 printf "\n\n"
-printf "running master_samplesheet.tsv through simple loop...\n"
+printf "running master_samplesheet.tsv through loop, organizing expression and bam alignment data...\n"
 while read master; do
 	printf "\tget_data(), processing $master\n"
 	genelist_number=$(printf "$master" | cut -f1)
@@ -168,7 +169,7 @@ while read master; do
 	awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' $genelist_file_tmp > genelist.tsv
 	genelist_file="genelist.tsv"
 	genelist_annotation_file=$(printf "$master" | cut -f4)
-	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("no-binding" or "rna-seq")
+	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("na-binding" or "rna-seq")
 	sample_name=$(printf "$master" | cut -f6)
 	sample_data=$(printf "$master" | cut -f7)			# either bam or expression table
 	window=5000   # this is +/- $window of the TSS (for +strand TSS=$txStart, for -strand TSS=$txEnd), total seq length of plotted area is 2*$window
@@ -242,19 +243,90 @@ done < master_samplesheet.tsv
 
 # ensure rows are unique
 head -1 output_na-binding.tmp > output_na-binding_raw.tsv
-head -1 output_rna-seq.tmp > output_rna-seq.tsv
+head -1 output_rna-seq.tmp > output_rna-seq_raw.tsv
 tail -n+2 output_na-binding.tmp | sort | uniq >> output_na-binding_raw.tsv
-tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq.tsv
+tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq_raw.tsv
 #rm output_na-binding.tmp
 #rm output_rna-seq.tmp
 
 
 
 
+# 	CLUSTERING by HOPACH method for each data type, for each genelist
+printf "\n\n"
+printf "running hopach clustering per genelist per data type\n"
+#		apply same rank orders (of each list and data type) to row metadata file
+
+# cluster peak data (ChIP/ATAC/C&R)
+#	sum values per gene for each genelist and sample
+#		make updated output_na-binding_raw.tsv with sums
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tavg_depth\tRpkm\tavg_depth_sum\n" > output_na-binding_raw-sum.tsv
+awk -F'\t' '{if(NR==FNR){unique_sum[$1,$4,$5]+=$11}else{printf("%s\t%.2f\n",$0,unique_sum[$1,$4,$5])}}' <(tail -n+2 output_na-binding_raw.tsv) <(tail -n+2 output_na-binding_raw.tsv) >> output_na-binding_raw-sum.tsv
+#		make input for hopach clustering
+printf "genelist_number\tsample_name\tgeneid\tavg_depth_sum\n" > output_na-binding_raw-cluster_input.tsv
+awk -F'\t' '{unique_sum[$1,$4,$5]+=$11}END{for(x in unique_sum){split(x,sep,SUBSEP); printf("%s\t%s\t%s\t%.2f\n",sep[1],sep[2],sep[3],unique_sum[x])}}' <(tail -n+2 output_na-binding_raw.tsv) >> output_na-binding_raw-cluster_input.tsv
+
+printf "\tdata type: na-binding\n"
+#	print header for new na-binding data file for heatmaps
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tavg_depth\tavg_depth_sum\thopach_rank_nabinding\n" > output_na-binding-cluster_data.tmp
+tail -n+2 output_na-binding_raw-cluster_input.tsv | cut -f1 | sort | uniq | while read genelist_number; do
+	printf "genelist_number\tsample_name\tgeneid\tavg_depth_sum\n" > ${genelist_number}-cluster_data.tmp
+	grep "$genelist_number" output_na-binding_raw-cluster_input.tsv >> ${genelist_number}-cluster_data.tmp
+	grep "$genelist_number" output_na-binding_raw-sum.tsv > ${genelist_number}-sum-cluster_data.tmp
+	printf "\t\tclustering for $genelist_number"
+	run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "avg_depth_sum"
+	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
+	#	for each sample, each gene should have the same rank order value
+	awk -F'\t' '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s\n",$0,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-sum-cluster_data.tmp >> output_na-binding-cluster_data.tmp
+done
+
+
+# expression data clustering
+#	run cluster per gene list
+printf "\tdata type: rna-seq\n"
+#	print header for new rna-seq data file for heatmaps
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\thopach_rank_expression\n" > output_rna-seq-cluster_data.tmp
+tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_number; do
+	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
+	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
+	printf "\t\tclustering for $genelist_number"
+	run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "Rpkm"
+	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
+	#	for each sample, each gene should have the same rank order value
+	awk -F'\t' '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s\n",$0,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-cluster_data.tmp >> output_rna-seq-cluster_data.tmp
+done
+
+# run $genelist_number loop again to add the rank orders from each data type to both output files
+#	required for row_metadata to be congruent between data types (only need to match genelist_number and geneid column values for rank)
+#		add expression rank to nabinding data
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tavg_depth\tavg_depth_sum\thopach_rank_nabinding\thopach_rank_expression\n" > output_na-binding-cluster_data.tsv
+f1="output_rna-seq-cluster_data.tmp"
+f2="output_na-binding-cluster_data.tmp"
+awk -F'\t' '{if(NR==FNR){rank[$1,$5]=$13}else{printf("%s\t%.0f\n",$0,rank[$1,$5])}}' <(tail -n+2 $f1) <(tail -n+2 $f2) >> output_na-binding-cluster_data.tsv
+#		add nabinding rank to expression data
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\thopach_rank_expression\thopach_rank_nabinding\n" > output_rna-seq-cluster_data.tsv
+f1="output_na-binding-cluster_data.tmp"
+f2="output_rna-seq-cluster_data.tmp"
+awk -F'\t' '{if(NR==FNR){rank[$1,$5]=$13}else{printf("%s\t%.0f\n",$0,rank[$1,$5])}}' <(tail -n+2 $f1) <(tail -n+2 $f2) >> output_rna-seq-cluster_data.tsv
 
 
 
-#	HEATMAP 95th percentile
+# setup heatmap file variables
+#data_nabinding="output_na-binding_raw.tsv"
+data_nabinding="output_na-binding-cluster_data.tsv"		# nabinding rank col13, expression rank col14
+#data_rnaseq="output_rna-seq_raw.tsv"
+data_rnaseq="output_rna-seq-cluster_data.tsv"			# nabinding rank col14, expression rank col13
+
+
+
+
+
+
+
+
+
+#	HEATMAP 95th percentile data
+
 # normalize peak data within each sample and scale from 0-99 per sample (for better visualization)
 #	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
 #		values >= pad to pad value
@@ -262,25 +334,42 @@ tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq.tsv
 printf "\n\n"
 printf "running each na-binding data sample through normalization to 95th percentile...\n"
 # loop for each sample, grep sample rows, calc percentile, and apply normalization
-head -1 output_na-binding_raw.tsv > output_na-binding.tsv
-tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_name; do
-	grep "$sample_name" output_na-binding_raw.tsv > peak_norm.tmp
+#	in header also dropping avg_depth_sum [$12] column (not in expression data)
+head -1 $data_nabinding | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$13,$14)}' > output_na-binding.tsv
+tail -n+2 $data_nabinding | cut -f4 | sort | uniq | while read sample_name; do
+	awk -F'\t' -v sample_name="$sample_name" '{if($4==sample_name){print($0)}}' $data_nabinding > peak_norm.tmp
 	#	awk explanation:
-	#		Sort the file numerically
+	#		Sort the file numerically (on avg_depth col11)
 	#		drop the top 5%
 	#		pick the next value
 	pad=$(cut -f11 peak_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*5); p=p%1?int(p)+1:p; print a[c-p-1]}')
 	#	apply pad normalization and scale from 0-99
-	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\n",99)}else{printf("%s\n",99*($11/pad))}}' peak_norm.tmp
+	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\t",99)}else{printf("%s\t",99*($11/pad))}; printf("%s\t%s\n",$13,$14)}' peak_norm.tmp
 done >> output_na-binding.tsv
-
-# scale peak data between 0-99 for better visualization (already done in previous step)
 cp output_na-binding.tsv output_na-binding-forheatmap.tsv
 
-# scale RPKM data between 100-199 for better visualization
-max=$(tail -n+2 output_rna-seq.tsv | cut -f12 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
-head -1 output_rna-seq.tsv | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12)}' > output_rna-seq-forheatmap.tsv
-tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(99*($12/max))+100)}' >> output_rna-seq-forheatmap.tsv
+# normalize expression data within each sample and scale from 100-199 per sample (for better visualization)
+#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
+#		values >= pad to pad value
+#		values < 0-pad remain unchanged
+printf "\n\n"
+printf "running each rna-seq data sample through normalization to 95th percentile...\n"
+# loop for each sample, grep sample rows, calc percentile, and apply normalization
+#	in header also dropping Total_reads [$11] column (not in nabinding data)
+head -1 $data_rnaseq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12,$14,$13)}' > output_rna-seq.tsv
+tail -n+2 $data_rnaseq | cut -f4 | sort | uniq | while read sample_name; do
+	awk -F'\t' -v sample_name="$sample_name" '{if($4==sample_name){print($0)}}' $data_rnaseq > rna_norm.tmp
+	#	awk explanation:
+	#		Sort the file numerically (on Rpkm col12)
+	#		drop the top 5%
+	#		pick the next value
+	pad=$(cut -f12 rna_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*5); p=p%1?int(p)+1:p; print a[c-p-1]}')
+	#	apply pad normalization and scale from 100-199 (also dropping Total_reads column here)
+	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($12 >= pad){printf("%s\t",199)}else{printf("%s\t",100+(99*($12/pad)))}; printf("%s\t%s\n",$14,$13)}' rna_norm.tmp
+done >> output_rna-seq.tsv
+cp output_rna-seq.tsv output_rna-seq-forheatmap.tsv
+
+
 
 # merge na-binding and rna-seq outputs into GCT formatted file for morpheus heatmap compatibility
 #	needs 3 files: counts matrix, row metadata, column metadata
@@ -304,28 +393,23 @@ tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\
 # make unique row and column names with "value" as (avg_depth, TotalReads, Rpkm)
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
-#	merge rna-seq and na-binding data (13 total columns)
+#	merge rna-seq and na-binding data count values
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
 
 # row metadata file
-printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
+printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank_nabinding\thopach_rank_expression\n" > output_row_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
 # ensure data rows are unique
-sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
-# add row number for acast aggregation error for assumed uniqueness
-awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
-# update rid in output_counts.tsv file
-cp output_counts.tsv output_counts.tmp
-printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail -n+2 output_row_metadata.tsv | cut -f1 | sed 's/:/\t/') <(tail -n+2 output_counts.tmp) >> output_counts.tsv
+sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"Rpkm",$3,$4,$10,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"avg_depth",$3,$4,$10,"avg_depth")}}' output_na-binding-forheatmap.tsv >> output_col_metadata.tmp
+# get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
@@ -344,8 +428,11 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 .
 wq
 EOF
-
 mv heatmap.html heatmap_peaknorm95.html
+
+
+
+
 
 
 
@@ -363,25 +450,44 @@ mv heatmap.html heatmap_peaknorm95.html
 printf "\n\n"
 printf "running each na-binding data sample through normalization to 99th percentile...\n"
 # loop for each sample, grep sample rows, calc percentile, and apply normalization
-head -1 output_na-binding_raw.tsv > output_na-binding.tsv
-tail -n+2 output_na-binding_raw.tsv | cut -f4 | sort | uniq | while read sample_name; do
-	grep "$sample_name" output_na-binding_raw.tsv > peak_norm.tmp
+#	in header also dropping avg_depth_sum [$12] column (not in expression data)
+head -1 $data_nabinding | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$13,$14)}' > output_na-binding.tsv
+tail -n+2 $data_nabinding | cut -f4 | sort | uniq | while read sample_name; do
+	grep "$sample_name" $data_nabinding > peak_norm.tmp
 	#	awk explanation:
 	#		Sort the file numerically
 	#		drop the top 1%
 	#		pick the next value
 	pad=$(cut -f11 peak_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*1); p=p%1?int(p)+1:p; print a[c-p-1]}')
 	#	apply pad normalization and scale from 0-99
-	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\n",99)}else{printf("%s\n",99*($11/pad))}}' peak_norm.tmp
+	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($11 >= pad){printf("%s\t",99)}else{printf("%s\t",99*($11/pad))}; printf("%s\t%s\n",$13,$14)}' peak_norm.tmp
 done >> output_na-binding.tsv
-
-# scale peak data between 0-99 for better visualization (already done in previous step)
 cp output_na-binding.tsv output_na-binding-forheatmap.tsv
 
-# scale RPKM data between 100-199 for better visualization
-max=$(tail -n+2 output_rna-seq.tsv | cut -f12 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
-head -1 output_rna-seq.tsv | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12)}' > output_rna-seq-forheatmap.tsv
-tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(99*($12/max))+100)}' >> output_rna-seq-forheatmap.tsv
+# normalize expression data within each sample and scale from 100-199 per sample (for better visualization)
+#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
+#		values >= pad to pad value
+#		values < 0-pad remain unchanged
+printf "\n\n"
+printf "running each rna-seq data sample through normalization to 95th percentile...\n"
+# loop for each sample, grep sample rows, calc percentile, and apply normalization
+#	in header also dropping Total_reads [$11] column
+head -1 $data_rnaseq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12,$14,$13)}' > output_rna-seq.tsv
+tail -n+2 $data_rnaseq | cut -f4 | sort | uniq | while read sample_name; do
+	awk -F'\t' -v sample_name="$sample_name" '{if($4==sample_name){print($0)}}' $data_rnaseq > rna_norm.tmp
+	#	awk explanation:
+	#		Sort the file numerically (on Rpkm col12)
+	#		drop the top 5%
+	#		pick the next value
+	pad=$(cut -f12 rna_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*1); p=p%1?int(p)+1:p; print a[c-p-1]}')
+	#	apply pad normalization and scale from 100-199 (also dropping Total_reads column here)
+	awk -F'\t' -v pad=$pad '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10); if($12 >= pad){printf("%s\t",199)}else{printf("%s\t",100+(99*($12/pad)))}; printf("%s\t%s\n",$14,$13)}' rna_norm.tmp
+done >> output_rna-seq.tsv
+cp output_rna-seq.tsv output_rna-seq-forheatmap.tsv
+
+
+
+# scale RPKM data between 100-199 for better visualization (from above)
 
 # merge na-binding and rna-seq outputs into GCT formatted file for morpheus heatmap compatibility
 #	needs 3 files: counts matrix, row metadata, column metadata
@@ -405,17 +511,17 @@ tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\
 # make unique row and column names with "value" as (avg_depth, TotalReads, Rpkm)
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
-#	merge rna-seq and na-binding data (13 total columns)
+#	merge rna-seq and na-binding data count values
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
 
 # row metadata file
-printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
+printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank_nabinding\thopach_rank_expression\n" > output_row_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
 sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
-# add row number for acast aggregation error for assumed uniqueness
+# add row number for acast aggregation error for assumed uniqueness (many are repeated per sample, since that's part of col metadata and is omitted here)
 awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
 # update rid in output_counts.tsv file
 cp output_counts.tsv output_counts.tmp
@@ -426,6 +532,7 @@ awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail 
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"Rpkm",$3,$4,$10,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"avg_depth",$3,$4,$10,"avg_depth")}}' output_na-binding-forheatmap.tsv >> output_col_metadata.tmp
+# get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
@@ -444,8 +551,11 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 .
 wq
 EOF
-
 mv heatmap.html heatmap_peaknorm99.html
+
+
+
+
 
 
 
@@ -461,19 +571,19 @@ mv heatmap.html heatmap_peaknorm99.html
 #		values < 0-pad remain unchanged
 printf "\n\n"
 printf "copying na-binding data (no percentile normalization)\n"
-# loop for each sample, grep sample rows, calc percentile, and apply normalization
-cp output_na-binding_raw.tsv output_na-binding.tsv
 
 # scale peak data between 0-99 for better visualization
-#	get max peak value
-max=$(tail -n+2 output_na-binding.tsv | cut -f11 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
-head -1 output_na-binding.tsv > output_na-binding-forheatmap.tsv
-tail -n+2 output_na-binding.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,99*($11/max))}' >> output_na-binding-forheatmap.tsv
+#	get max peak (avg_depth) value
+max=$(tail -n+2 $data_nabinding | cut -f11 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
+#	in header also dropping avg_depth_sum [$12] column (not in expression data)
+head -1 $data_nabinding | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$13,$14)}' > output_na-binding-forheatmap.tsv
+tail -n+2 $data_nabinding  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,99*($11/max),$13,$14)}' >> output_na-binding-forheatmap.tsv
 
 # scale RPKM data between 100-199 for better visualization
-max=$(tail -n+2 output_rna-seq.tsv | cut -f12 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
-head -1 output_rna-seq.tsv | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12)}' > output_rna-seq-forheatmap.tsv
-tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(99*($12/max))+100)}' >> output_rna-seq-forheatmap.tsv
+max=$(tail -n+2 $data_rnaseq | cut -f12 | awk 'BEGIN{max=0};{if ($1 > max) max=$1}END{print max}')
+head -1 $data_rnaseq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12,$14,$13)}' > output_rna-seq-forheatmap.tsv
+tail -n+2 $data_rnaseq  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(99*($12/max))+100,$14,$13)}' >> output_rna-seq-forheatmap.tsv
+
 
 # merge na-binding and rna-seq outputs into GCT formatted file for morpheus heatmap compatibility
 #	needs 3 files: counts matrix, row metadata, column metadata
@@ -497,17 +607,17 @@ tail -n+2 output_rna-seq.tsv  | awk -F'\t' -v max=$max '{printf("%s\t%s\t%s\t%s\
 # make unique row and column names with "value" as (avg_depth, TotalReads, Rpkm)
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
-#	merge rna-seq and na-binding data (13 total columns)
+#	merge rna-seq and na-binding data count values
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$3,$4,$10,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$3,$4,$10,"avg_depth",$11)}}' output_na-binding-forheatmap.tsv >> output_counts.tsv
 
 # row metadata file
-printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\n" > output_row_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$1,$2,$5,$6,$7,$8,$9)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
+printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank_nabinding\thopach_rank_expression\n" > output_row_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
 sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
-# add row number for acast aggregation error for assumed uniqueness
+# add row number for acast aggregation error for assumed uniqueness (many are repeated per sample, since that's part of col metadata and is omitted here)
 awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
 # update rid in output_counts.tsv file
 cp output_counts.tsv output_counts.tmp
@@ -518,6 +628,7 @@ awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail 
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"Rpkm",$3,$4,$10,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s\t%s\t%s\t%s\t%s\n",$3,$4,$10,"avg_depth",$3,$4,$10,"avg_depth")}}' output_na-binding-forheatmap.tsv >> output_col_metadata.tmp
+# get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
