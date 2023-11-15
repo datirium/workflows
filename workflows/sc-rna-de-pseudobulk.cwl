@@ -15,6 +15,13 @@ requirements:
           var splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var split_by_comma = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          var splitted_line = line?line.split(/,+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 
 'sd:upstream':
@@ -68,8 +75,8 @@ inputs:
     default: null
     label: "Subsetting values (optional)"
     doc: |
-      Comma or space separated list of values
-      from the single cell metadata column
+      Comma separated list of values from
+      the single cell metadata column
       selected in "Subsetting category
       (optional)" input. Ignored if grouping
       category is not provided. Default: do
@@ -582,7 +589,7 @@ steps:
           }
       subset:
         source: subset
-        valueFrom: $(split_features(self))
+        valueFrom: $(split_by_comma(self))
       splitby:
         source: splitby
         valueFrom: |

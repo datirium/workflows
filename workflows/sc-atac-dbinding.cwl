@@ -15,6 +15,13 @@ requirements:
           let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var split_by_comma = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          var splitted_line = line?line.split(/,+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 
 'sd:upstream':
@@ -657,7 +664,7 @@ steps:
         valueFrom: $(self==""?null:self)                # safety measure
       subset:
         source: subset
-        valueFrom: $(split_features(self))
+        valueFrom: $(split_by_comma(self))
       splitby: splitby
       first_cond: first_cond
       second_cond: second_cond
