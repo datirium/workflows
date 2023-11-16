@@ -113,7 +113,7 @@ printf "\n\n"
 #	MAIN
 #===============================================================================
 printf "generating master samplesheet from all inputs\n"
-#	start counter for genelist arrays
+#	start counter for genelist arrays (needs to start at 0 for getting correct values of names and annotations array indices)
 list_counter=0
 #	turn genelist annotion files and genelist names into arrays
 annotations_array=($(echo "$GENELIST_ANNOTATION_FILES" | sed 's/,/\n/g'))
@@ -224,10 +224,11 @@ while read master; do
 			txEnd=$(printf "$filtered_gene" | cut -f3)  # genelist col3
 			geneid=$(printf "$filtered_gene" | cut -f4)  # genelist col4
 			strand=$(printf "$filtered_gene" | cut -f6)  # genelist col6
-			# search for each gene
-			g=$(grep -P -m 1 "\t$geneid\t$chr\t$txStart\t$txEnd\t$strand" $exp)
+			# search for each gene, only use $chr and $geneid due to peak annotations having multiple geneids per line (when split coordinates for each are not accurate)
+			#	this also addresses the same geneid on multiple chromosomes without using exact coordinates, since the nearest peaks to multiple genes much be co-localized (on same chr)
+			g=$(grep -P -m 1 "\t$geneid\t$chr\t" $exp)
 			if [[ $g == "" ]]; then
-				printf "\t\t\tWARNING, gene does not exist in expression data file: $geneid,$chr,$txStart,$txEnd,$strand"
+				printf "\t\t\tWARNING, gene does not exist in expression data file: $geneid"
 			else
 				TotalReads=$(printf "$g" | cut -f7)
 				Rpkm=$(printf "$g" | cut -f8)
@@ -269,15 +270,20 @@ awk -F'\t' '{unique_sum[$1,$4,$5]+=$11}END{for(x in unique_sum){split(x,sep,SUBS
 printf "\tdata type: na-binding\n"
 #	print header for new na-binding data file for heatmaps
 printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tavg_depth\tavg_depth_sum\thopach_rank_nabinding\n" > output_na-binding-cluster_data.tmp
+#	make another genelist counter, but start at 1, not 0, as leading zeros will be stripped in R after prepending to the cluster rank
+list_counter=1
 tail -n+2 output_na-binding_raw-cluster_input.tsv | cut -f1 | sort | uniq | while read genelist_number; do
 	printf "genelist_number\tsample_name\tgeneid\tavg_depth_sum\n" > ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_na-binding_raw-cluster_input.tsv >> ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_na-binding_raw-sum.tsv > ${genelist_number}-sum-cluster_data.tmp
-	printf "\t\tclustering for $genelist_number"
+	printf "\t\tclustering for $genelist_number\n"
 	run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "avg_depth_sum"
+	# save a copy of hopach output
+	cp hopach_results.out hopach_results.out-nabinding-${genelist_number}
 	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
 	#	for each sample, each gene should have the same rank order value
-	awk -F'\t' '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s\n",$0,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-sum-cluster_data.tmp >> output_na-binding-cluster_data.tmp
+	awk -F'\t' -v listnumber=$list_counter '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s%05d\n",$0,listnumber,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-sum-cluster_data.tmp >> output_na-binding-cluster_data.tmp
+	((list_counter++))
 done
 
 
@@ -286,14 +292,20 @@ done
 printf "\tdata type: rna-seq\n"
 #	print header for new rna-seq data file for heatmaps
 printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\thopach_rank_expression\n" > output_rna-seq-cluster_data.tmp
+#	make another genelist counter, but start at 1, not 0, as leading zeros will be stripped in R after prepending to the cluster rank
+list_counter=1
 tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_number; do
 	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
-	printf "\t\tclustering for $genelist_number"
+	printf "\t\tclustering for $genelist_number\n"
 	run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "Rpkm"
+	# save a copy of hopach output
+	cp hopach_results.out hopach_results.out-rnaseq-${genelist_number}
 	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
 	#	for each sample, each gene should have the same rank order value
-	awk -F'\t' '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s\n",$0,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-cluster_data.tmp >> output_rna-seq-cluster_data.tmp
+	#	in awk, add zero padding up to 5 digits, very unlikely to have >99999 genes in a list
+	awk -F'\t' -v listnumber=$list_counter '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s%05d\n",$0,listnumber,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-cluster_data.tmp >> output_rna-seq-cluster_data.tmp
+	((list_counter++))
 done
 
 # run $genelist_number loop again to add the rank orders from each data type to both output files
@@ -520,13 +532,8 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s:%s\t%s\n",$1
 printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank_nabinding\thopach_rank_expression\n" > output_row_metadata.tsv
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
-sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
-# add row number for acast aggregation error for assumed uniqueness (many are repeated per sample, since that's part of col metadata and is omitted here)
-awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
-# update rid in output_counts.tsv file
-cp output_counts.tsv output_counts.tmp
-printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail -n+2 output_row_metadata.tsv | cut -f1 | sed 's/:/\t/') <(tail -n+2 output_counts.tmp) >> output_counts.tsv
+# ensure data rows are unique
+sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv
@@ -617,12 +624,8 @@ printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\t
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
 awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$13,$1,$2,$5,$6,$7,$8,$9,$12,$13)}}' output_na-binding-forheatmap.tsv >> output_row_metadata.tmp
 sort output_row_metadata.tmp | uniq > output_row_metadata.tmp.uniq
-# add row number for acast aggregation error for assumed uniqueness (many are repeated per sample, since that's part of col metadata and is omitted here)
-awk -F'\t' '{printf("%s:%s\n",NR,$0)}' output_row_metadata.tmp.uniq >> output_row_metadata.tsv
-# update rid in output_counts.tsv file
-cp output_counts.tsv output_counts.tmp
-printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR==FNR){rid[$2]=$1}else{printf("%s:%s\n",rid[$1],$0)}}' <(tail -n+2 output_row_metadata.tsv | cut -f1 | sed 's/:/\t/') <(tail -n+2 output_counts.tmp) >> output_counts.tsv
+# ensure data rows are unique
+sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\ttss_window\tdata_type\n" > output_col_metadata.tsv

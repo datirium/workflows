@@ -128,7 +128,7 @@ inputs:
 
 outputs:
 
-  master_samplesheet:
+  master_samplesheet_tsv:
     type: File
     label: "contains formatted information of the input data and files"
     format: "http://edamontology.org/format_3475"
@@ -221,7 +221,7 @@ steps:
       bam_files: datafiles_nabinding
       expression_files: datafiles_rnaseq
     out:
-      - master_samplesheet
+      - master_samplesheet_tsv
       - output_row_metadata
       - output_col_metadata
       - output_counts

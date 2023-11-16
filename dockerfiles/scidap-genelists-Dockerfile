@@ -13,10 +13,10 @@
 #      Cmd2:        docker image push robertplayer/scidap-genelists:dev
 # Pull Cmd:         docker pull robertplayer/scidap-genelists:dev
 # Test dev:         docker run --rm -ti robertplayer/scidap-genelists:dev /bin/bash
-# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v2.0.0
-# Push for PR:      docker image push robertplayer/scidap-genelists:v2.0.0
-# Pull Cmd:         docker pull robertplayer/scidap-genelists:v2.0.0
-# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v2.0.0 /bin/bash
+# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v3.0.0
+# Push for PR:      docker image push robertplayer/scidap-genelists:v3.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-genelists:v3.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v3.0.0 /bin/bash
 #           
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future

@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:dev
+  dockerPull: robertplayer/scidap-genelists:3.0.0
 
 
 inputs:
@@ -80,7 +80,7 @@ inputs:
 
 outputs:
 
-  master_samplesheet:
+  master_samplesheet_tsv:
     type: File
     outputBinding:
       glob: master_samplesheet.tsv
@@ -136,10 +136,10 @@ outputs:
     doc: |
       HTML preconfigured morpheus heatmap scaled to 99th percentile
 
-  log_file_stdout:
+  log_file_std_out:
     type: stdout
 
-  log_file_stderr:
+  log_file_std_err:
     type: stderr
 
 
