@@ -133,7 +133,7 @@ outputs:
     label: "contains formatted information of the input data and files"
     format: "http://edamontology.org/format_3475"
     doc: "contains formatted information of the input data and files"
-    outputSource: data_integration/master_samplesheet
+    outputSource: data_integration/master_samplesheet_tsv
 
   output_row_metadata:
     type: File
