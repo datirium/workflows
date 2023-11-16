@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:3.0.0
+  dockerPull: robertplayer/scidap-genelists:v3.0.0
 
 
 inputs:
@@ -80,7 +80,7 @@ inputs:
 
 outputs:
 
-  master_samplesheet_tsv:
+  master_samplesheet:
     type: File
     outputBinding:
       glob: master_samplesheet.tsv
