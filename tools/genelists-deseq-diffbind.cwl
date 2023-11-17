@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:v2.0.0
+  dockerPull: robertplayer/scidap-genelists:v3.0.0
 
 
 inputs:

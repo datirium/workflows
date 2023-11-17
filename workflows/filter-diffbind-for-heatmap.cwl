@@ -10,9 +10,7 @@ requirements:
 
 
 'sd:upstream':
-  sample_to_filter:
-  - "diffbind.cwl"
-  - "https://github.com/datirium/workflows/workflows/diffbind.cwl"
+  sample_to_filter: "diffbind.cwl"
 
 
 inputs:
