@@ -26,14 +26,6 @@ output_row_metadata <- args[1]  # ex. output_row_metadata <- 'output_row_metadat
 output_col_metadata <- args[2]  # ex. output_col_metadata <- 'output_col_metadata.tsv'
 output_counts <- args[3]        # ex. output_counts <- 'output_counts.tsv'
 output_location <- args[4]      # ex. output_location <- './'
-<<<<<<< HEAD
-
-output_row_metadata <- 'output_row_metadata.tsv'
-output_col_metadata <- 'output_col_metadata.tsv'
-output_counts <- 'output_counts.tsv'
-output_location <- './'
-=======
->>>>>>> main
 
 # read in files to data frames (counts need to be in matrix)
 row_metadata <- read.table(output_row_metadata,header=T,sep='\t')
