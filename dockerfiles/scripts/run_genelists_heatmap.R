@@ -22,10 +22,10 @@ Cstack_info()
 
 # character vector of positional arguments
 args <- commandArgs(trailingOnly = TRUE)
-output_row_metadata <- args[1]  # ex. 'output_row_metadata.tsv'
-output_col_metadata <- args[2]  # ex. 'output_col_metadata.tsv'
-output_counts <- args[3]        # ex. 'output_counts.tsv'
-output_location <- args[4]      # ex. './'
+output_row_metadata <- args[1]  # ex. output_row_metadata <- 'output_row_metadata.tsv'
+output_col_metadata <- args[2]  # ex. output_col_metadata <- 'output_col_metadata.tsv'
+output_counts <- args[3]        # ex. output_counts <- 'output_counts.tsv'
+output_location <- args[4]      # ex. output_location <- './'
 
 # read in files to data frames (counts need to be in matrix)
 row_metadata <- read.table(output_row_metadata,header=T,sep='\t')
@@ -83,8 +83,8 @@ is_all_numeric <- function(x) {
   !any(is.na(suppressWarnings(as.numeric(na.omit(x))))) & is.character(x)
 }
 morpheus_html <- morpheus(
-    x=na.omit(gct_data$data),
-    rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations,
+    x=gct_data$data,
+    rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
     columnAnnotations=if(nrow(gct_data$columnAnnotations) == 0) NULL else gct_data$columnAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
     colorScheme=list(scalingMode="fixed", stepped=FALSE, values=list(0, 99, 100,199), colors=list("white", "black", "white", "red")),
     rowSortBy=list(list(field="genelist_name", order=0)),
