@@ -115,16 +115,18 @@ printf "\n\n"
 printf "generating master samplesheet from all inputs\n"
 #	start counter for genelist arrays (needs to start at 0 for getting correct values of names and annotations array indices)
 list_counter=0
-#	turn genelist annotion files and genelist names into arrays
-annotations_array=($(echo "$GENELIST_ANNOTATION_FILES" | sed 's/,/\n/g'))
-names_array=($(echo "$GENELIST_NAMES" | sed 's/,/\n/g'))
-for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
+# 	set "internal field separator" to use comma on array string 'itemSeparator: ","'inputs from cwl (defaul is IFS=$' \t\n')
+IFS=$','
+#	turn genelist annotation files and genelist names into arrays
+annotations_array=($(echo "$GENELIST_ANNOTATION_FILES"))
+names_array=($(echo "$GENELIST_NAMES"))
+for f in ${GENELIST_FILTERED_FILES[@]}; do
 	# loop through NA binding names
 	#	start counter for name array
 	name_counter=0
 	#	turn bam files into an array
-	bam_array=($(echo "$FILES_NABIND_BAM" | sed 's/,/\n/g'))
-	for n in $(echo "$NAMES_NABIND" | sed 's/,/\n/g'); do
+	bam_array=($(echo "$FILES_NABIND_BAM"))
+	for n in ${NAMES_NABIND[@]}; do
 		# print formatted samplesheet row
 		if [[ ${bam_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
@@ -137,8 +139,8 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 	#	start counter for name array
 	name_counter=0
 	#	turn bam files into an array
-	exp_array=($(echo "$FILES_RNASEQ_EXP" | sed 's/,/\n/g'))
-	for n in $(echo "$NAMES_RNASEQ" | sed 's/,/\n/g'); do
+	exp_array=($(echo "$FILES_RNASEQ_EXP"))
+	for n in ${NAMES_RNASEQ[@]}; do
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
@@ -149,6 +151,8 @@ for f in $(echo "$GENELIST_FILTERED_FILES" | sed 's/,/\n/g'); do
 
 	((list_counter++))
 done > master_samplesheet.tsv
+# reset IFS
+IFS=$' \t\n'
 
 
 # initialize output files with headers
@@ -165,8 +169,14 @@ while read master; do
 	genelist_number=$(printf "$master" | cut -f1)
 	genelist_name=$(printf "$master" | cut -f2)
 	genelist_file_tmp=$(printf "$master" | cut -f3)
-	# ensure only 1 gene name per row (macs2 will sometimes report 2+ comma separated genes on a single row)
-	awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' $genelist_file_tmp > genelist.tsv
+	# ensure only 1 gene name per row (iaintersect can sometimes report 2+ comma separated genes on a single row)
+	awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' $genelist_file_tmp > genelist.tmp
+	# also ensure only a single geneid per chr (different chr can share a geneid)
+	cut -f1,4 genelist.tmp | sort | uniq | while read chr_geneid; do
+		chr=$(printf "$chr_geneid" | cut -f1)
+		geneid=$(printf "$chr_geneid" | cut -f2)
+		grep "$chr" genelist.tmp | grep -m1 "$geneid"
+	done > genelist.tsv
 	genelist_file="genelist.tsv"
 	genelist_annotation_file=$(printf "$master" | cut -f4)
 	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("na-binding" or "rna-seq")
