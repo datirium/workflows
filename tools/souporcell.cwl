@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: cumulusprod/souporcell:2021.03
+  dockerPull: cumulusprod/souporcell:2022.12
 
 
 inputs:
