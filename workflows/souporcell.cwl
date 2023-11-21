@@ -375,7 +375,7 @@ steps:
       min_ref: min_ref
       max_loci: max_loci
       restarts_count: restarts_count
-      common_variants_vcf_file: common_variants_vcf_file
+      # common_variants_vcf_file: common_variants_vcf_file
       known_genotypes_vcf_file: known_genotypes_vcf_file
       known_genotypes_sample_names:
         source: known_genotypes_sample_names
