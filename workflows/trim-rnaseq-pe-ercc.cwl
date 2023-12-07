@@ -261,7 +261,7 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
-  bowtie_log_file:
+  bowtie_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
@@ -435,7 +435,7 @@ outputs:
     doc: "Calculated rpkm values, grouped by common TSS"
     outputSource: group_isoforms_ercc/common_tss_file
 
-  ercc_counts_tsv:
+  ercc_counts:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "mapped counts for ERCC sequences"
@@ -709,7 +709,7 @@ steps:
         uL_per_M_cells: uL_per_M_cells
         rnaseq_counts: rpkm_calculation/isoforms_file
       out:
-      - ercc_counts_tsv
+      - ercc_counts
       - ercc_plot
       - rpkm_isoforms_ercc_norm
       - log_file_stdout

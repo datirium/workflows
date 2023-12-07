@@ -53,7 +53,7 @@ inputs:
 
 outputs:
 
-  ercc_counts_tsv:
+  ercc_counts:
     type: File
     outputBinding:
       glob: ercc_counts.tsv
