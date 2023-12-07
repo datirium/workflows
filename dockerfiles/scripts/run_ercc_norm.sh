@@ -1,6 +1,8 @@
 #!/bin/bash
-
 printf "$(date)\nLog file for run_ercc_norm.sh\n\n"
+# export paths (just in case docker failed to do so)
+export PATH="$PATH:/dockerdata/apps/src/bowtie2-2.5.2"
+export PATH="$PATH:/dockerdata/apps/src/samtools-1.12"
 
 #	FUNCTIONS
 #===============================================================================

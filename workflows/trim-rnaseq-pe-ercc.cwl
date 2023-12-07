@@ -57,15 +57,11 @@ inputs:
     type: float
     label: "Dilution factor used for ERCC ExFold mix 1 (float)"
     doc: "dilution factor used for ERCC ExFold mix 1 before spike-in"
-    'sd:layout':
-      advanced: true
 
   uL_per_M_cells:
     type: float
     label: "Volume of ERCC ExFold mix 1 added to sample per million cells (float)"
     doc: "volume of ERCC ExFold mix 1 spike-in to sample per million cells"
-    'sd:layout':
-      advanced: true
 
   fastq_file_upstream:
     type:
@@ -265,7 +261,7 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
-  bowtie_log:
+  bowtie_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Bowtie alignment log"
@@ -713,7 +709,7 @@ steps:
         uL_per_M_cells: uL_per_M_cells
         rnaseq_counts: rpkm_calculation/isoforms_file
       out:
-      - ercc_counts
+      - ercc_counts_tsv
       - ercc_plot
       - rpkm_isoforms_ercc_norm
       - log_file_stdout
