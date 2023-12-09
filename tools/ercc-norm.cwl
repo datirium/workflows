@@ -53,6 +53,13 @@ inputs:
 
 outputs:
 
+  ercc_sam:
+    type: File
+    outputBinding:
+      glob: unaligned_pairs-to-ERCC.sam
+    doc: |
+      unaligned input reads (against primary reference) aligned to ERCC sequences sam file
+
   ercc_counts:
     type: File
     outputBinding:
@@ -60,12 +67,12 @@ outputs:
     doc: |
       row metadata for GCT formatter
 
-  ercc_plot:
+  ercc_pdf_plot:
     type: File
     outputBinding:
       glob: ercc_expected_v_actual_count_plot.pdf
     doc: |
-      expected molecules per cell vs actual ERCC molecule counts (log10)
+      ERCC molecules per cell counts (log10) expected vs observed
 
   rpkm_isoforms_ercc_norm:
     type: File
@@ -129,40 +136,25 @@ s:creator:
 
 
 doc: |
-  A CWL tool for producing a GCT data file for the morpheus heatmap, and an html heatmap.
-  Uses both ATAC/ChIP/CRT (NA [nucleic acid] binding) and RNA-Seq data to derive visualization data.
-  NA binding data in the form of BAM files per sample is processed to output an average read depth per window +/-5Kbp of each gene's TSS (transcription start site).
-  RNA-Seq data in the form of gene expression count matrices are processed to output TotalReads and Rpkm values per gene.
-  These data are then integrated into a single count matrix, a row, and a column metadata file as input to an Rscript that will format the 3 files into GCT format for morpheus heatmap viewer.
-  The HTML heatmap is then produced with preconfigured sorting and grouping settings.
 
+  Tool for building linear regression function from ERCC ExFold mix 1 RPKM (molecule per cell vs RPKM), and applying this for normalization of RNA-Seq RPKM count data.
 
-  Primary Output files:
-  - heatmap.gct, GCT formatted peak and expression data for morpheus viewer
-  - heatmap.html, html of morpheus heatmap with preconfigured settings, peak data scaled among all samples
-  - heatmap_peaknorm95.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample to 95th percentile
-  - heatmap_peaknorm99.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample to 99th percentile
+    Primary Output files:
+     - unaligned_pairs-to-ERCC.sam
+     - ercc_counts.tsv
+     - isoforms.ercc_norm_rpkm.csv
+     - ercc_expected_v_actual_count_plot.pdf
 
-  Secondary Output files:
-  - master_samplesheet.tsv, contains formatted information of the input data and files
-  - output_row_metadata.tsv, row metadata for GCT formatter
-  - output_col_metadata.tsv, column metadata for GCT formatter
-  - output_counts.tsv, peak average read depth per TSS window and gene expression counts matrix
-
-  PARAMS:
-    SECTION 1: general
-    -h	help		    show this message
-    -t  INT			    number of threads
-    -a	ARRAY		    array of genelist sample names (no commas in names)
-    -b  FILE ARRAY	array of associated annotation files for each gene list from (-c), with header
-    -c  FILE ARRAY	array of filtered gene list TSVs (must be headerless, columns are: chr, txStart, txEnd, geneID, L2FC, Strand)
-    -d	ARRAY		    array of sample names from NA binding experiments (no commas in names)
-    -e	ARARY		    array of sample names from RNA-Seq experiments (no commas in names)
-    -f	FILE ARRAY	array of BAM files from NA binding experiments
-    -g	FILE ARARY	array of expression table files from RNA-Seq experiments	
-
+    PARAMS:
+    -h  help	show this message
+    -t  INT	number of threads
+    -u  FILE   array of unaligned "R1,R2" reads post-primary alignment
+    -d  FLOAT  dilution factor used for ERCC ExFold mix 1 before spike-in
+    -m  FLOAT  volume of ERCC ExFold mix 1 spike-in to sample per million cells
+    -c  FILE   csv file containing isoform counts (format: RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm)
 
   ____________________________________________________________________________________________________
   References:
-  - Morpheus, https://software.broadinstitute.org/morpheus
+  - Langmead B, Salzberg S. Fast gapped-read alignment with Bowtie 2. Nature Methods. 2012, 9:357-359.
+  - Twelve years of SAMtools and BCFtools. Danecek et al. GigaScience, Volume 10, Issue 2, February 2021, giab008, https://doi.org/10.1093/gigascience/giab008
       

@@ -57,7 +57,7 @@ r2 <- signif(summary$r.squared ,digits=3)
 pdf(file = "ercc_expected_v_actual_count_plot.pdf",   # The directory you want to save the file in
     width = 6, # The width of the plot in inches
     height = 6.4)
-plot(log10(ab$molecules_per_cell), log10(ab$count), main="expected molecules per cell vs actual\nERCC molecule counts (log10)", xlab="log10(expected molecules per cell)", ylab="log10(actual counts)", pch=19)
+plot(log10(ab$molecules_per_cell), log10(ab$count), main="ERCC molecules per cell counts (log10)\nExpected vs Observed", xlab="log10(expected molecules per cell)", ylab="log10(observed counts)", pch=19)
 #       Add fit lines
 abline(lm(log10(count) ~ log10(molecules_per_cell), data=ab), col="red")
 legend('bottomright', bty="n", legend=c(paste('linear regression\nr^2=',r2,'; ','y=',m,'x+',b,sep="")),
@@ -83,6 +83,6 @@ rpkm[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
 my_function <- function(x) 10^x
 rpkm[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
 #       rename column header
-colnames(rpkm_norm)[8] <- 'ercc_norm_rpkm'
+#colnames(rpkm_norm)[8] <- 'ercc_norm_rpkm'     # ACTUALL DON'T, this will cause group_isoforms step to fail (I think - testing now)
 #       save to new csv file
 write.csv(rpkm_norm, "isoforms.ercc_norm_rpkm.csv-hasquotes", row.names=FALSE)

@@ -409,7 +409,6 @@ outputs:
     doc: "RPKM distribution plot for isoforms in PDF format"
     outputSource: get_gene_body/rpkm_distribution_plot_pdf
 
-# NEW STUFF
   rpkm_isoforms_ercc_normalized:
     type: File
     format: "http://edamontology.org/format_3752"
@@ -435,6 +434,13 @@ outputs:
     doc: "Calculated rpkm values, grouped by common TSS"
     outputSource: group_isoforms_ercc/common_tss_file
 
+  ercc_sam:
+    type: File
+    format: "http://edamontology.org/format_2573"
+    label: "unaligned input reads (against primary reference) aligned to ERCC sequences sam file"
+    doc: "unaligned input reads (against primary reference) aligned to ERCC sequences sam file"
+    outputSource: ercc_spikein_norm/ercc_sam
+
   ercc_counts:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -442,12 +448,12 @@ outputs:
     doc: "mapped counts for ERCC sequences"
     outputSource: ercc_spikein_norm/ercc_counts
 
-  ercc_plot_pdf:
+  ercc_plot_pdf_file:
     type: File
     format: "http://edamontology.org/format_3508"
-    label: "Report: miRDeep2 results"
-    doc: "standard mirdeep2 results html report of novel and known mirs in your data"
-    outputSource: ercc_spikein_norm/ercc_plot
+    label: "Plot: ERCC molecules per cell counts, Expected vs Observed"
+    doc: "ERCC molecules per cell counts (log10) expected vs observed"
+    outputSource: ercc_spikein_norm/ercc_pdf_plot
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -466,8 +472,6 @@ outputs:
     label: "stderr logfile"
     doc: "captures standard error from ercc-norm.cwl"
     outputSource: ercc_spikein_norm/log_file_stderr
-
-# NEW STUFF
 
 
 steps:
@@ -709,8 +713,9 @@ steps:
         uL_per_M_cells: uL_per_M_cells
         rnaseq_counts: rpkm_calculation/isoforms_file
       out:
+      - ercc_sam
       - ercc_counts
-      - ercc_plot
+      - ercc_pdf_plot
       - rpkm_isoforms_ercc_norm
       - log_file_stdout
       - log_file_stderr
@@ -821,6 +826,8 @@ doc: |
   10. The RPKM value for each gene is input to the resulting function to produce an expected copy number value that will be used as the renormalized value for the gene to be used in downstream differential expression
 
   ### __References__
+    - Langmead B, Salzberg S. Fast gapped-read alignment with Bowtie 2. Nature Methods. 2012, 9:357-359.
+    - Twelve years of SAMtools and BCFtools. Danecek et al. GigaScience, Volume 10, Issue 2, February 2021, giab008, https://doi.org/10.1093/gigascience/giab008
     - Lovén, J. et al. Revisiting global gene expression analysis. Cell 151(3), 476–482 (2012).
 
 

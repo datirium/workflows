@@ -24,14 +24,10 @@ PARAMS:
  -m  FLOAT  volume of ERCC ExFold mix 1 spike-in to sample per million cells
  -c  FILE   csv file containing isoform counts (format: RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm)
 
-
-BismarkCov formatted bed:
-    https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf
-    The genome-wide cytosine report (optional) is tab-delimited in the following format (1-based coords):
-    <chromosome> <position> <strand> <count methylated> <count unmethylated> <C-context> <trinucleotide context>
-
 ____________________________________________________________________________________________________
 References:
+    Langmead B, Salzberg S. Fast gapped-read alignment with Bowtie 2. Nature Methods. 2012, 9:357-359.
+    Twelve years of SAMtools and BCFtools. Danecek et al. GigaScience, Volume 10, Issue 2, February 2021, giab008, https://doi.org/10.1093/gigascience/giab008
 
 EOF
 }
