@@ -10,14 +10,10 @@ requirements:
 
 'sd:upstream':
   chipseq_sample:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "cutandrun-pe.cwl"
   chipseq_control:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "cutandrun-pe.cwl"

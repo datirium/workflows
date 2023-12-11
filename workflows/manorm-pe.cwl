@@ -10,13 +10,11 @@ requirements:
 
 'sd:upstream':
   first_chipseq_sample:
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
   second_chipseq_sample:
-    - "chipseq-pe.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"

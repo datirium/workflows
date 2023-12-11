@@ -10,8 +10,6 @@ requirements:
 
 'sd:upstream':
   first_biological_condition:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
     - "trim-chipseq-se.cwl"
@@ -19,8 +17,6 @@ requirements:
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
   second_biological_condition:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
     - "trim-chipseq-se.cwl"
@@ -28,8 +24,6 @@ requirements:
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
   blocked_condition:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
     - "trim-chipseq-se.cwl"

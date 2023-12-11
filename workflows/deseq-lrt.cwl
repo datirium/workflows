@@ -11,12 +11,6 @@ requirements:
 
 'sd:upstream':
   rnaseq_experiment:
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"

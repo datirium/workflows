@@ -11,16 +11,10 @@ requirements:
 
 'sd:upstream':
   sample:
-  - "chipseq-se.cwl"
-  - "chipseq-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
-  - "rnaseq-se.cwl"
-  - "rnaseq-pe.cwl"
-  - "rnaseq-se-dutp.cwl"
-  - "rnaseq-pe-dutp.cwl"
   - "trim-rnaseq-pe.cwl"
   - "trim-rnaseq-se.cwl"
   - "trim-rnaseq-pe-dutp.cwl"

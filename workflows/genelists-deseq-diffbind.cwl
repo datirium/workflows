@@ -14,8 +14,6 @@ requirements:
     - "filter-deseq-for-heatmap.cwl"
     - "filter-diffbind-for-heatmap.cwl"
   samples_nabinding:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
     - "trim-chipseq-se.cwl"
@@ -24,12 +22,6 @@ requirements:
     - "trim-atacseq-pe.cwl"
   samples_rnaseq:
     - "mirna-mirdeep2-se.cwl"
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"

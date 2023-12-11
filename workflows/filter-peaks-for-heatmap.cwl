@@ -11,8 +11,6 @@ requirements:
 
 'sd:upstream':
   sample_to_filter:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
