@@ -112,46 +112,24 @@ inputs:
     'sd:layout':
       advanced: true
 
-  parallel_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "32"
-    default: "32"
-    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
-    doc: |
-      Maximum memory in GB allowed to be shared between the workers
-      when using multiple --cpus.
-      Forced to 32 GB
-    'sd:layout':
-      advanced: true
-
-  vector_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "64"
-    default: "64"
-    label: "Maximum vector memory in GB allowed to be used by R"
-    doc: |
-      Maximum vector memory in GB allowed to be used by R.
-      Forced to 64 GB
-    'sd:layout':
-      advanced: true
-
   threads:
     type:
     - "null"
     - type: enum
       symbols:
       - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
-      Number of cores/cpus to use
-      Forced to 1
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 1
     'sd:layout':
       advanced: true
 
@@ -251,11 +229,9 @@ steps:
       verbose:
         default: true
       parallel_memory_limit:
-        source: parallel_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 32
       vector_memory_limit:
-        source: vector_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 96
       threads:
         source: threads
         valueFrom: $(parseInt(self))
