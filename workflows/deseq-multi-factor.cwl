@@ -111,10 +111,10 @@ inputs:
       Contrast to be be applied for the output, formatted as
       a mathematical formula of values from the --metadata table.
       If not provided, all possible combinations of values from
-      the metadata columns present in the --design but not in the
-      --reduced formula will be used (results will be merged giving
-      the priority to significantly differentially expressed genes
-      with higher absolute log2FoldChange values).
+      the metadata columns present in the --design will be used
+      (results will be merged giving the priority to significantly
+      differentially expressed genes with higher absolute
+      log2FoldChange values).
 
   remove:
     type: string?
