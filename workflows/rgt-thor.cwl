@@ -10,27 +10,19 @@ requirements:
 
 'sd:upstream':
   first_biological_condition:
-  - "chipseq-se.cwl"
-  - "chipseq-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
-  - "https://github.com/datirium/workflows/workflows/chipseq-se.cwl"
-  - "https://github.com/datirium/workflows/workflows/chipseq-pe.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
   second_biological_condition:
-  - "chipseq-se.cwl"
-  - "chipseq-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
-  - "https://github.com/datirium/workflows/workflows/chipseq-se.cwl"
-  - "https://github.com/datirium/workflows/workflows/chipseq-pe.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
