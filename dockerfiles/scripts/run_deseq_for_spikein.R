@@ -19,76 +19,12 @@ suppressMessages(library(ggrepel))
 
 ##########################################################################################
 #
-# v1.0.0
-# - Update run_deseq.R to output both all genes and filtered gene list by padj
-# - copied dockerfile and run_deseq.R script from Barski lab to Datirium repo
 #
 #
-# v0.0.27
-# - Update run_deseq.R to export baseMean column
-#   needed for MA-plot
-#
-# v0.0.26
-#
-# - Updated run_deseq.R with MDS plot and updated GCT export
-# - Remove run_deseq_manual.R script
-# - Need to install GlimmaV2 from GitHub as on official repo it's old
-#
-# v0.0.25
-#
-# - Add MDS plot and updated GCT export
-#
-# v0.0.24
-#
-# - Fix bug with pval in DESeq and pvalue in DESeq2. Now all it pvalue
-#
-# v0.0.23
-#
-# - Use RpkmCondition1 and RpkmCondition2 for RPKM columns in the output TSV file
-#   We need hardcoded values for later filtering.
-#
-# v0.0.22
-#
-# - Column names for RPKM don't include spaces and brackets anymore
-#
-# v0.0.21
-#
-# - Add ggrepel for proper label positioning
-#
-# v0.0.20
-#
-# - Add --batchfile parameter to run_deseq.R to compensate batch effect
-#
-# v0.0.19
-#
-# - Add --batchfile to compensate batch effect. Works only for DESeq2
-#
-# v0.0.18
-#
-# - Add --digits parameter to set a precision in output table
-#
-# v0.0.17
-#
-# - Update labels in cls, replaces n/a with na in gct files
-#
-# v0.0.16
-#
-# - Add max(rpkm) cutoff filtering
-#
-# v0.0.15
-#
-# - fix bug with " and ' in arguments. Replace all with ""
-#
-# v0.0.14
-#
-# - add PCA plot
-#
-# v0.0.13
-#
-# - Fix bug in phenotype.cls column order
-# - Fix bug in logFC sign for DESeq2
-#
-# v0.0.8
+# v0.0.1
+#   - base script copied from `datirium/workflows/dockerfiles/scripts/run_deseq.R` (at v1.0.0)
+#   - if both groups have >1 samples, runs DESeq without calculating sizeFactors by default, they are instead set manually to 1 for all samples
+#   - this is intended to run RNA-Seq data that has been normalized via spike-in sequences (e.g. ERCC ExFold)
 #
 # All input CSV/TSV files should have the following header (case-sensitive)
 # <RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm>         - CSV
@@ -109,9 +45,9 @@ suppressMessages(library(ggrepel))
 # 
 # Additionally we calculate -LOG10(pval) and -LOG10(padj)
 #
-# Use -un and -tn to set custom names for treated and untreated conditions
+# Use -tn and -un to set custom names for treated and untreated conditions
 #
-# Use -ua and -ta to set aliases for input expression files. Should be unique
+# Use -ta and -ua to set aliases for input expression files. Should be unique
 # Exports GCT and CLS files to be used by GSEA. GCT files is always with uppercase GeneId
 # 
 ##########################################################################################
@@ -585,7 +521,11 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
         design=~conditions
     }
     
+    # set DESeq matrix
     dse <- DESeqDataSetFromMatrix(countData=countData, colData=column_data, design=design)
+    # disable normalization by setting size factors to 1 for all samples
+    dse$sizeFactor <- 1
+    # run DESeq
     dsq <- DESeq(dse)
     # check size/normalization factors
     print("DESeq sizeFactors (dsq)")

@@ -13,7 +13,10 @@ Help message for \`run_ercc_norm.sh\`:
     Wrapper for building linear regression function from ERCC ExFold mix 1 RPKM (molecule per cell vs RPKM), and applying this for normalization of RNA-Seq RPKM count data.
 
     Primary Output files:
-     - rpkm_erccnorm_counts.tsv
+     - unaligned_pairs-to-ERCC.sam
+     - ercc_counts.tsv
+     - isoforms.ercc_norm_rpkm.csv
+     - ercc_expected_v_actual_count_plot.pdf
 
 
 PARAMS:

@@ -6,24 +6,24 @@ options(scipen=999)
 ##########################################################################################
 #
 # v0.0.1
-# - normalizes RPKM RNA-Seq data using spike-in of ERCC ExFold mix 1, dilution factor, and uL per million cells
+# - normalizes RNA-Seq data using spike-in of ERCC ExFold mix 1, dilution factor, and uL per million cells
 #
 ##########################################################################################
 
 # character vector of positional arguments
 args <- commandArgs(trailingOnly = TRUE)
-dilution_factor <- as.numeric(args[1])      # dilution factor used for sample
-uL_per_M_cells <- as.numeric(args[2])       # volume of spike-in per 1M cells in sample
-d <- read.table(args[3], sep='\t', header=T)
-expected_d <- read.table(args[4], sep='\t', header=T)
-rpkm <- read.table(args[5], sep=',', header=T)
+dilution_factor <- as.numeric(args[1])                  # dilution factor used for sample
+uL_per_M_cells <- as.numeric(args[2])                   # volume of spike-in per 1M cells in sample
+d <- read.table(args[3], sep='\t', header=T)            # counts of ercc aligned reads
+expected_d <- read.table(args[4], sep='\t', header=T)   # expected ercc counts
+counts <- read.table(args[5], sep=',', header=T)        # target organism transcript count data
 
 ### EXAMPLE INPUTS  ###
 #dilution_factor <- 0.10
 #uL_per_M_cells <- 1
 #d <- read.table('ercc_counts.tsv', sep='\t', header=T)
 #expected_d <- read.table('/dockerdata/ercc_exfold_mix1_expected_counts.tsv', sep='\t', header=T)
-#rpkm <- read.table('/data/scidap_workflow_testing/workflow_rnaseq_ercc_spikein/testing_docker_image/read_1.isoforms.csv', sep=',', header=T)
+#counts <- read.table('/data/scidap_workflow_testing/workflow_rnaseq_ercc_spikein/testing_docker_image/read_1.isoforms.csv', sep=',', header=T)
 
 #   transform 'molecules per uL' to 'molecules per cell' for mix1 expected molecules
 #       multiply by dilution factor
@@ -71,18 +71,31 @@ m <- model$coefficients[2]
 b <- model$coefficients[1]
 
 
-#   normalize transcript RPKM to spike-in
-rpkm_norm <- rpkm
+#   normalize transcript RPKM counts to spike-in
+rpkm_norm <- counts
 #       transform rpkm to log10
 my_function <- function(x) log10(x)
-rpkm[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
+counts[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
 #       apply each count to linear function to predict normalized count
 my_function <- function(x) (m*x)+b
-rpkm[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
+counts[c('Rpkm')] <- lapply(counts[c('Rpkm')], my_function)
 #       convert out of log10
 my_function <- function(x) 10^x
-rpkm[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
+counts[c('Rpkm')] <- lapply(counts[c('Rpkm')], my_function)
 #       rename column header
-#colnames(rpkm_norm)[8] <- 'ercc_norm_rpkm'     # ACTUALL DON'T, this will cause group_isoforms step to fail (I think - testing now)
+#colnames(rpkm_norm)[8] <- 'ercc_norm_rpkm'     # ACTUALL DON'T, this will cause group_isoforms step to fail
+
+#   normalize transcript Total counts to spike-in
+total_norm <- counts
+#       transform rpkm to log10
+my_function <- function(x) log10(x)
+counts[c('TotalReads')] <- lapply(total_norm[c('TotalReads')], my_function)
+#       apply each count to linear function to predict normalized count
+my_function <- function(x) (m*x)+b
+counts[c('TotalReads')] <- lapply(counts[c('TotalReads')], my_function)
+#       convert out of log10
+my_function <- function(x) 10^x
+counts[c('TotalReads')] <- lapply(counts[c('TotalReads')], my_function)
+
 #       save to new csv file
-write.csv(rpkm_norm, "isoforms.ercc_norm_rpkm.csv-hasquotes", row.names=FALSE)
+write.csv(counts, "isoforms.ercc_norm_rpkm.csv-hasquotes", row.names=FALSE)

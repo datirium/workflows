@@ -163,9 +163,11 @@
 
 
 ### Base Image
-# FROM r-base:4.0.4     # pulled from Barski lab repo, so building from that base
-FROM biowardrobe2/scidap-deseq:v0.0.27
-LABEL maintainer="misha.kotliar@gmail.com"
+# FROM r-base:4.0.4     # this is the original, initial base image; pulled from Barski lab repo, so building from that base
+# FROM biowardrobe2/scidap-deseq:v0.0.27    # for faster build tests
+# for even faster build tests, run from latest stable build
+FROM robertplayer/scidap-deseq:v1.0.0
+LABEL maintainer="robert.player@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
 
 ################## BEGIN INSTALLATION ######################
@@ -179,16 +181,17 @@ ENV URL_LOCFIT "https://cran.r-project.org/src/contrib/Archive/locfit/locfit_${V
 
 COPY ./scripts/install_from_source.R /tmp/install_from_source.R
 COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq.R
+COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq_for_spikein.R
 COPY ./scripts/run_deseq_lrt.R /usr/local/bin/run_deseq_lrt.R
 COPY ./scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
 
 ### Installing python3, pip3 and argparse
 RUN apt-get update && \
     apt-get install -y gcc-10-base libgcc-10-dev python3-dev python3-pip libxml2-dev libssl-dev libcurl4-openssl-dev \
-                       pandoc libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev \
-                       libjpeg-dev vim && \
+                        pandoc libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype-dev libpng-dev libtiff5-dev \
+                        libjpeg-dev vim && \
     pip3 install argparse --break-system-packages && \
-### Installing biocmanager, biocparallel, deseq, deseq2, argparse, pheatmap
+    # Installing biocmanager, biocparallel, deseq, deseq2, argparse, pheatmap
     Rscript /tmp/install_from_source.R "${URL_BIOCMANAGER}" && \
     Rscript /tmp/install_from_source.R "${URL_LOCFIT}" && \
     R -e "BiocManager::install(version = '3.11', update=FALSE, ask=FALSE)" && \
@@ -202,11 +205,16 @@ RUN apt-get update && \
     R -e 'install.packages("htmlwidgets", repo = "https://cloud.r-project.org/")' && \
     R -e 'install.packages("devtools", repo = "https://cloud.r-project.org/")' && \
     R -e 'devtools::install_github("hasaru-k/GlimmaV2")' && \
-### Installing run_deseq.R, get_gene_n_tss.R, run_deseq_lrt.R scripts
+    # make script executable from $PATH
     chmod +x /usr/local/bin/run_deseq.R && \
+    ls -la /usr/local/bin/run_deseq.R && \
+    chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
+    ls -la /usr/local/bin/run_deseq_for_spikein.R && \
     chmod +x /usr/local/bin/run_deseq_lrt.R && \
+    ls -la /usr/local/bin/run_deseq_lrt.R && \
     chmod +x /usr/local/bin/get_gene_n_tss.R && \
-### Cleaning
+    ls -la /usr/local/bin/get_gene_n_tss.R && \
+    # Cleaning
     apt-get clean && \
     apt-get purge && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
