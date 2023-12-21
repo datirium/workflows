@@ -181,7 +181,7 @@ ENV URL_LOCFIT "https://cran.r-project.org/src/contrib/Archive/locfit/locfit_${V
 
 COPY ./scripts/install_from_source.R /tmp/install_from_source.R
 COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq.R
-COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq_for_spikein.R
+COPY ./scripts/run_deseq_for_spikein.R /usr/local/bin/run_deseq_for_spikein.R
 COPY ./scripts/run_deseq_lrt.R /usr/local/bin/run_deseq_lrt.R
 COPY ./scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
 

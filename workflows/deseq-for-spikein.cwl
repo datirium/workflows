@@ -32,7 +32,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by isoforms (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms_ercc_normalized"
     'sd:localLabel': true
 
   rpkm_genes_cond_1:
@@ -43,7 +43,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by genes (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes_ercc_normalized"
 
   rpkm_common_tss_cond_1:
     type:
@@ -53,7 +53,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by common TSS (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss_ercc_normalized"
 
   rpkm_isoforms_cond_2:
     type:
@@ -395,14 +395,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_std_out_log:
+  deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
     outputSource: deseq/stdout_log
 
-  deseq_std_err_log:
+  deseq_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"

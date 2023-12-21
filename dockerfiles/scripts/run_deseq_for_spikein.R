@@ -524,11 +524,11 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
     # set DESeq matrix
     dse <- DESeqDataSetFromMatrix(countData=countData, colData=column_data, design=design)
     # disable normalization by setting size factors to 1 for all samples
-    dse$sizeFactor <- 1
+    sizeFactors(dse) <- 1
     # run DESeq
     dsq <- DESeq(dse)
     # check size/normalization factors
-    print("DESeq sizeFactors (dsq)")
+    print("DESeq sizeFactor (dsq)")
     print(dsq$sizeFactor)
 
     # for norm count file. Batch correction doens't influence it
