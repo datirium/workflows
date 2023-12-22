@@ -3,9 +3,9 @@ options(warn=-1)
 options(width=200)
 options(scipen=999)
 
-library(argparse)
-library(hopach)
-library(reshape2)
+suppressMessages(library(argparse))
+suppressMessages(library(hopach))
+suppressMessages(library(reshape2))
 
 ##########################################################################################
 #
