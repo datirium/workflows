@@ -18,7 +18,6 @@ requirements:
 'sd:upstream':
   genome_indices:
   - "genome-indices.cwl"
-  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -173,7 +172,7 @@ outputs:
     doc: "STAR Log.final.out"
     outputSource: star_aligner/log_final
 
-  star_out_log:
+  star_out_log_file:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR log out"

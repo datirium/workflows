@@ -384,7 +384,7 @@ outputs:
     doc: |
       Directory html data for MA-plot
 
-  heatmap_html:
+  expression_heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
     label: "Heatmap of normalized counts"
@@ -464,7 +464,7 @@ steps:
       column_distance: column_distance
       center_row: center_row
       maximum_padj: maximum_padj
-      threads: threads
+      threads_count: threads
     out:
       - diff_expr_file
       - plot_lfc_vs_mean

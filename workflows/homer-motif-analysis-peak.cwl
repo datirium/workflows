@@ -11,6 +11,7 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "genome-indices.cwl"
+    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   regions_a:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
@@ -18,6 +19,7 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+    - "filter-diffbind-for-heatmap.cwl"
   regions_b:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
@@ -25,6 +27,7 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+    - "filter-diffbind-for-heatmap.cwl"
 
 inputs:
 

@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-deseq:dev
+  dockerPull: robertplayer/scidap-deseqspikein:v1.0.0
 
 
 inputs:
@@ -154,7 +154,7 @@ inputs:
     doc: |
       Output prefix. Default: deseq
 
-  threads:
+  threads_count:
     type: int?
     inputBinding:
       prefix: '-p'
