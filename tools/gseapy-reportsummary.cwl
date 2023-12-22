@@ -9,7 +9,7 @@ requirements:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -44,8 +44,8 @@ inputs:
       printf "\n" >> reportsummary.md
       #   PHENOTYPE AND ANALYSIS DETAILS
       # get phenotype names
-      p1=$(tail -1 $deseq_phenotypes | cut -f2 -d$' ')
-      p2=$(tail -1 $deseq_phenotypes | cut -f3 -d$' ')
+      p1=$(tail -1 $deseq_phenotypes | awk -F' ' '{print($1)}')
+      p2=$(tail -1 $deseq_phenotypes | awk -F' ' '{print($NF)}')
       echo $p1 $p2
       # phenotype 1
       enriched=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){x++}}END{print(x)}')
