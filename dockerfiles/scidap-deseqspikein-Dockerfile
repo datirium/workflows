@@ -16,149 +16,24 @@
 #                   argparse          latest
 #                   pheatmap          latest
 # Base Image:       r-base:4.0.2
-# Build Cmd:        docker build --no-cache --rm -t deseq-dev -f scidap-deseq-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
-# Run Cmd:          docker run --rm -ti deseq-dev /bin/bash
-# Push Cmd1:        docker tag deseq-dev robertplayer/scidap-deseq:dev
-#      Cmd2:        docker image push robertplayer/scidap-deseq:dev
-# Pull Cmd:         docker pull robertplayer/scidap-deseq:dev
-# Test dev:         docker run --rm -ti robertplayer/scidap-deseq:dev /bin/bash
-# re-tag for PR:    docker tag deseq-dev robertplayer/scidap-deseq:v1.0.0
-# Push for PR:      docker image push robertplayer/scidap-deseq:v1.0.0
-# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-deseq:v1.0.0 /bin/bash
+# Build Cmd:        docker build --no-cache --rm -t deseqspikein-dev -f scidap-deseqspikein-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti deseqspikein-dev /bin/bash
+# Push Cmd1:        docker tag deseqspikein-dev robertplayer/scidap-deseqspikein:dev
+#      Cmd2:        docker image push robertplayer/scidap-deseqspikein:dev
+# Pull Cmd:         docker pull robertplayer/scidap-deseqspikein:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-deseqspikein:dev /bin/bash
+# re-tag for PR:    docker tag deseqspikein-dev robertplayer/scidap-deseqspikein:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-deseqspikein:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-deseqspikein:v1.0.0 /bin/bash
 #################################################################
 #
 # v1.0.0
+# - copied this dockerfile (scidap-deseq-Dockerfile, v1.0.0) and the run_deseq.R script from Barski lab to Datirium repo
 # - Update run_deseq.R to output both all genes and filtered gene list by padj
-# - also copied this dockerfile and the run_deseq.R script from Barski lab to Datirium repo
+# - Added run_deseq_for_spikein.R to image for ERCC spike-in RNA-Seq samples
+# - This new Rscript runs DESeq with sizeFactors set to 1 for all samples
+# - Input count matrix is expected to already be normalized for size from spike-in counts (see trim-rnaseq-pe-ercc.cwl for normalization details)
 #
-#
-# v0.0.27
-# - Update run_deseq.R to export baseMean column
-#   needed for MA-plot
-#
-# v0.0.26
-#
-# - Updated run_deseq.R with MDS plot and updated GCT export
-# - Remove run_deseq_manual.R script
-# - Need to install GlimmaV2 from GitHub as on official repo it's old
-#
-# v0.0.25
-#
-# - Added run_deseq_manual.R script
-#
-# v0.0.24
-#
-# - Fix bug with pval in DESeq and pvalue in DESeq2. Now all it pvalue
-#
-# v0.0.23
-#
-# - Use RpkmCondition1 and RpkmCondition2 for RPKM columns in the output TSV file
-#   We need hardcoded values for later filtering.
-#
-# v0.0.22
-#
-# - Column names for RPKM don't include spaces and brackets anymore
-# - use r-base:4.0.4
-# - Need to downgrade to Bioconductor 3.11, as DESeq is not available
-#   in the newer versions
-#
-# v0.0.21
-#
-# - Add ggrepel for proper label positioning
-#
-# v0.0.20
-#
-# - Add --batchfile parameter to run_deseq.R to compensate batch effect
-#
-# v0.0.19
-#
-# - Update run_deseq.R (sets precision with --digits parameter)
-#
-# v0.0.18
-#
-# - Fix bug in get_gene_n_tss.R: works good for duplucate gene names
-#
-# v0.0.17
-#
-# - Update labels in cls, replaces n/a with na in gct files
-#
-# v0.0.16
-#
-# - Add max(rpkm) cutoff filtering
-#
-# v0.0.15
-#
-# - fix bug with " and ' in arguments. Replace all with ""
-#
-# v0.0.14
-#
-# - add PCA plot
-#
-# v0.0.13
-#
-# - Fix bug in phenotype.cls column order
-# - Fix bug in logFC sign for DESeq2
-#
-# v0.0.12
-#
-# - Update run_deseq.R (v0.0.8)
-#   * Export CLS file to be used by GSEA
-#
-# v0.0.11
-#
-# - Update run_deseq.R (v0.0.7)
-#   * Use -ua and -ta to set aliases for input expression files. Should be unique
-#   * Export GCT file to be used by GSEA
-#
-# v0.0.10
-#
-# - add run_deseq_lrt.R (v0.0.1)
-#   * Run DeSeq2 for multi-factor analysis using LRT (likelihood ratio or chi-squared test)
-#
-# v0.0.9
-#
-# - update run_deseq.R (v0.0.6)
-#   * proper way to set custom column names for outputs
-#
-# v0.0.8
-#   switch to r-base:3.6.0
-#   install
-#     BiocManager   1.30.4
-#     BiocParallel  1.18.0
-#     DESeq         1.36.0
-#     DESeq2        1.24.0
-#     argparse      latest
-#     pheatmap      latest
-#
-# v0.0.7
-# - update run_deseq.R (v0.0.5)
-#   * add -LOG10(pval) and -LOG10(padj) columns
-#
-# v0.0.6
-# - update run_deseq.R (v0.0.4)
-#   * generate heatmap to show the expression data of the 30 most highly expressed genes
-#   * build plot to show the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples
-#
-# v0.0.5
-# Update get_gene_n_tss.R to v0.0.2.
-# If arguments --gene and --tss are not provided, generate default values
-# based on the --isoforms input
-#
-# v0.0.4
-# - fix bug when loading TSV files by run_deseq.R (v0.0.3) script
-# - support loading both *.csv and *.tsv files
-#   file type is identified from file's extension,
-#   by default csv
-#
-# v0.0.3
-# - add get_gene_n_tss.R script to group isoforms CSV file by
-#   gene and common tss
-#
-# v0.0.2
-# - the output file's rows order corresponds to the rows order of
-#   the first CSV file in the untreated group
-# - DESeq/DESeq2 always compares untreated_vs_treated groups
-# - fixed sign for log2FoldChange column
 #################################################################
 
 
@@ -181,6 +56,7 @@ ENV URL_LOCFIT "https://cran.r-project.org/src/contrib/Archive/locfit/locfit_${V
 
 COPY ./scripts/install_from_source.R /tmp/install_from_source.R
 COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq.R
+COPY ./scripts/run_deseq_for_spikein.R /usr/local/bin/run_deseq_for_spikein.R
 COPY ./scripts/run_deseq_lrt.R /usr/local/bin/run_deseq_lrt.R
 COPY ./scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
 
@@ -207,6 +83,8 @@ RUN apt-get update && \
     # make script executable from $PATH
     chmod +x /usr/local/bin/run_deseq.R && \
     ls -la /usr/local/bin/run_deseq.R && \
+    chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
+    ls -la /usr/local/bin/run_deseq_for_spikein.R && \
     chmod +x /usr/local/bin/run_deseq_lrt.R && \
     ls -la /usr/local/bin/run_deseq_lrt.R && \
     chmod +x /usr/local/bin/get_gene_n_tss.R && \

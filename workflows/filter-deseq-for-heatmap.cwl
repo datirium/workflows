@@ -13,6 +13,7 @@ requirements:
   sample_to_filter:
   - "deseq.cwl"
   - "deseq-multi-factor.cwl"
+  - "deseq-for-spikein.cwl"
 
 
 inputs:
@@ -83,14 +84,14 @@ outputs:
         tab: 'Filtering results'
         Title: 'Filtered table'
 
-  filtering_stdout_log:
+  filtering_std_out_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: feature_select/stdout_log
 
-  filtering_stderr_log:
+  filtering_std_err_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"

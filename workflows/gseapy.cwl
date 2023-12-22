@@ -136,7 +136,7 @@ inputs:
     'sd:layout':
       advanced: true
 
-  threads:
+  threads_count:
     type: int?
     default: 4
     label: "Number of threads"
@@ -227,7 +227,7 @@ steps:
       ascending_rank_sorting: ascending_rank_sorting
       graphs_count: graphs_count
       seed: seed
-      threads: threads
+      threads: threads_count
     out:
       - enrichment_report
       - enrichment_plots

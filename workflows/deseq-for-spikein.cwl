@@ -11,36 +11,8 @@ requirements:
 
 'sd:upstream':
   rnaseq_cond_1:
-    - "mirna-mirdeep2-se.cwl"
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
-    - "trim-rnaseq-pe.cwl"
-    - "trim-rnaseq-se.cwl"
-    - "trim-rnaseq-pe-dutp.cwl"
-    - "trim-rnaseq-pe-smarter-dutp.cwl"
-    - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
-    - "kallisto-quant-pe.cwl"
     - "trim-rnaseq-pe-ercc.cwl"
   rnaseq_cond_2:
-    - "mirna-mirdeep2-se.cwl"
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
-    - "trim-rnaseq-pe.cwl"
-    - "trim-rnaseq-se.cwl"
-    - "trim-rnaseq-pe-dutp.cwl"
-    - "trim-rnaseq-pe-smarter-dutp.cwl"
-    - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
-    - "kallisto-quant-pe.cwl"
     - "trim-rnaseq-pe-ercc.cwl"
 
 
@@ -60,7 +32,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by isoforms (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms_ercc_normalized"
     'sd:localLabel': true
 
   rpkm_genes_cond_1:
@@ -71,7 +43,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by genes (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes_ercc_normalized"
 
   rpkm_common_tss_cond_1:
     type:
@@ -81,7 +53,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by common TSS (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss_ercc_normalized"
 
   rpkm_isoforms_cond_2:
     type:
@@ -412,7 +384,7 @@ outputs:
     doc: |
       Directory html data for MA-plot
 
-  heatmap_html:
+  expression_heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
     label: "Heatmap of normalized counts"
@@ -423,14 +395,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_std_out_log:
+  deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
     outputSource: deseq/stdout_log
 
-  deseq_std_err_log:
+  deseq_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
@@ -453,7 +425,7 @@ outputs:
 steps:
 
   deseq:
-    run: ../tools/deseq-advanced.cwl
+    run: ../tools/deseq-advanced-for-spikein.cwl
     in:
       untreated_files:
         source: [group_by, rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1]
@@ -492,7 +464,7 @@ steps:
       column_distance: column_distance
       center_row: center_row
       maximum_padj: maximum_padj
-      threads: threads
+      threads_count: threads
     out:
       - diff_expr_file
       - plot_lfc_vs_mean
@@ -572,11 +544,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "DESeq - differential gene expression analysis"
-label: "DESeq - differential gene expression analysis"
-s:alternateName: "Differential gene expression analysis based on the negative binomial distribution"
+s:name: "DESeq - differential gene expression analysis for spike-in normalized RNA-Seq"
+label: "DESeq - differential gene expression analysis for spike-in normalized RNA-Seq"
+s:alternateName: "Differential gene expression analysis for spike-in normalized RNA-Seq based on the negative binomial distribution"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq.cwl
+s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/deseq-for-spikein.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -586,23 +558,37 @@ s:isPartOf:
   s:url: http://commonwl.org/
 
 s:creator:
+- class: s:Organization
+  s:legalName: "Datirium LLC"
+  s:location:
+  - class: s:PostalAddress
+    s:addressCountry: "USA"
+    s:addressLocality: "Cincinnati"
+    s:addressRegion: "OH"
+    s:postalCode: ""
+    s:streetAddress: ""
+    s:telephone: ""
+  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
+  s:department:
   - class: s:Organization
-    s:legalName: "Datirium, LLC"
-    s:member:
+    s:legalName: "Datirium LLC"
+    s:department:
+    - class: s:Organization
+      s:legalName: "Bioinformatics"
+      s:member:
       - class: s:Person
-        s:name: Artem BArski
-        s:email: mailto:Artem.Barski@datirum.com
-      - class: s:Person
-        s:name: Andrey Kartashov
-        s:email: mailto:Andrey.Kartashov@datirium.com
+        s:name: Robert Player
+        s:email: mailto:support@datirium.com
         s:sameAs:
-          - id: http://orcid.org/0000-0001-9102-5681
+        - id: https://orcid.org/0000-0001-5872-259X
 
 
 doc: |
   # Differential gene expression analysis
 
-  This differential gene expression (DGE) analysis takes as input samples from two experimental conditions that have been processed with an RNA-Seq workflow (see list of "Upstream workflows" below).
+  This differential gene expression (DGE) analysis takes as input samples from two experimental conditions that have been processed with a spike-in normalized RNA-Seq workflow (see list of "Upstream workflows" at top of file).
+
+  The size factor estimation and application for normalization is disabled in this version of the DESeq workflow, otherwise all other aspects are the same.
 
   DESeq estimates variance-mean dependence in count data from high-throughput sequencing assays, then tests for DGE based on a model which assumes a negative binomial distribution of gene expression (aligned read count per gene).
 
