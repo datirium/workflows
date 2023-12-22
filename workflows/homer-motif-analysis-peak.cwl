@@ -19,7 +19,6 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
-    - "filter-diffbind-for-heatmap.cwl"
   regions_b:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
@@ -27,6 +26,9 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+  diff_regions_a:
+    - "filter-diffbind-for-heatmap.cwl"
+  diff_regions_b:
     - "filter-diffbind-for-heatmap.cwl"
 
 inputs:
@@ -58,12 +60,16 @@ inputs:
     format: "http://edamontology.org/format_3003"
     label: "Target regions ranges. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
     doc: "Target regions ranges. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+    'sd:upstreamSource': "diff_regions_a/filtered_file"
+    'sd:localLabel': true
 
   diff_regions_file_b:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Background regions ranges. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
     doc: "Background regions ranges. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+    'sd:upstreamSource': "diff_regions_b/filtered_file"
+    'sd:localLabel': true
 
   genome_fasta_file:
     type: File
@@ -175,13 +181,6 @@ outputs:
     label: "Compressed file with Homer motifs"
     doc: "Homer motifs"
 
-  homer_stdout_log:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    outputSource: find_motifs/stdout_log
-    label: "Homer stdout log"
-    doc: "Homer stdout log"
-
   homer_known_motifs:
     type: File?
     format: "http://edamontology.org/format_2331"
@@ -204,7 +203,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  homer_stderr_log:
+  homer_std_out_log:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    outputSource: find_motifs/stdout_log
+    label: "Homer stdout log"
+    doc: "Homer stdout log"
+
+  homer_std_err_log:
     type: File
     format: "http://edamontology.org/format_2330"
     outputSource: find_motifs/stderr_log
