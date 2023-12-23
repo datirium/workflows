@@ -128,6 +128,8 @@ inputs:
       - "2"
       - "3"
       - "4"
+      - "5"
+      - "6"
     default: "4"
     label: "Cores/CPUs"
     doc: |
