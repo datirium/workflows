@@ -11,9 +11,9 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "genome-indices.cwl"
-    - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
   peaklist:
     - "filter-diffbind-for-heatmap.cwl"
+    - "genelists-sets.cwl"
 
 inputs:
 
@@ -97,7 +97,7 @@ outputs:
     label: "Compressed file with Homer motifs"
     doc: "Homer motifs"
 
-  homer_stdout_log:
+  homer_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     outputSource: find_motifs/stdout_log
