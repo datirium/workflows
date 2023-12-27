@@ -13,6 +13,7 @@ requirements:
     - "genome-indices.cwl"
   peaklist:
     - "filter-diffbind-for-heatmap.cwl"
+    - "filter-peaks-by-overlap.cwl"
     - "genelists-sets.cwl"
 
 inputs:
@@ -97,7 +98,7 @@ outputs:
     label: "Compressed file with Homer motifs"
     doc: "Homer motifs"
 
-  homer_stdout_log_file:
+  homer_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     outputSource: find_motifs/stdout_log
