@@ -190,7 +190,7 @@ outputs:
     doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
     outputSource: formatting_bed_for_homer/headerless_bed
 
-  filtering_stdout_log:
+  filtering_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
@@ -249,7 +249,7 @@ steps:
           type: string?
           default: |
             # format for homer [chrom start end name score strand]
-            awk -F'\t' '{printf("%s\t%.0f\t%.0f\t%s\t%s\t%s\n",$6,$3,$4,$2,"NA",$5)}' <(tail -n+2 $0) | sort | uniq > output-for-igv.tsv
+            awk -F'\t' '{printf("%s\t%.0f\t%.0f\t%s\t%s\t%s\n",$6,$3,$4,$2,"NA",$5)}' <(tail -n+2 $0) | sort | uniq > output-for-homer.tsv
           inputBinding:
             position: 1
         input_file:
