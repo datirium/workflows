@@ -165,7 +165,7 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  filtered_file:
+  iaintersect_input:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Set peaks from operator, formatted for input into iaintersect to find nearest gene per peak."
@@ -182,6 +182,13 @@ outputs:
     - syncfusiongrid:
         tab: 'Annotated Peak Set Results'
         Title: 'set operated peaks with nearest gene annotation'
+
+  filtered_file:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Filtered overlapped peaks in headerless bed format for homer motif analysis"
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
+    outputSource: formatting_bed_for_homer/headerless_bed
 
   filtering_stdout_log:
     type: File
@@ -229,6 +236,36 @@ steps:
       promoter_bp: promoter_dist
       upstream_bp: upstream_dist
     out: [result_file, log_file]
+
+  formatting_bed_for_homer:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: ScatterFeatureRequirement
+      - class: ShellCommandRequirement
+      inputs:
+        script:
+          type: string?
+          default: |
+            # format for homer [chrom start end name score strand]
+            awk -F'\t' '{printf("%s\t%.0f\t%.0f\t%s\t%s\t%s\n",$6,$3,$4,$2,"NA",$5)}' <(tail -n+2 $0) | sort | uniq > output-for-igv.tsv
+          inputBinding:
+            position: 1
+        input_file:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        headerless_bed:
+          type: File
+          outputBinding:
+            glob: output-for-homer.tsv
+      baseCommand: ["bash", "-c"]
+    in:
+      input_file: island_intersect/result_file
+    out:
+    - headerless_bed
 
 
 $namespaces:
