@@ -165,7 +165,7 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  iaintersect_input:
+  filtered_file:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Set peaks from operator, formatted for input into iaintersect to find nearest gene per peak."
