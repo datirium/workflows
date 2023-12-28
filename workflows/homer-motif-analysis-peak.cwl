@@ -172,7 +172,7 @@ outputs:
     label: "Compressed file with Homer motifs"
     doc: "Homer motifs"
 
-  homer_stdout_log:
+  homer_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     outputSource: find_motifs/stdout_log
@@ -328,9 +328,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Motif Finding with HOMER with target and background regions from peaks"
-s:name: "Motif Finding with HOMER with target and background regions from peaks"
-s:alternateName: "Motif Finding with HOMER with target and background regions from peaks"
+label: "DEPRECATED - Motif Finding with HOMER with target and background regions from peaks"
+s:name: "DEPRECATED - Motif Finding with HOMER with target and background regions from peaks"
+s:alternateName: "DEPRECATED - Motif Finding with HOMER with target and background regions from peaks"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/homer-motif-analysis-peak.cwl
 s:codeRepository: https://github.com/datirium/workflows

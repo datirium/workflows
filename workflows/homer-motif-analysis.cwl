@@ -11,7 +11,10 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "genome-indices.cwl"
-
+  peaklist:
+    - "filter-diffbind-for-heatmap.cwl"
+    - "filter-peaks-by-overlap.cwl"
+    - "genelists-sets.cwl"
 
 inputs:
 
@@ -26,6 +29,8 @@ inputs:
     format: "http://edamontology.org/format_3003"
     label: "Regions file. Headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
     doc: "Regions of interest. Formatted as headerless BED file with minimum [chrom start end] columns. Optionally, CSV"
+    'sd:upstreamSource': "peaklist/filtered_file"
+    'sd:localLabel': true
 
   motifs_db:
     type:
