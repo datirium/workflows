@@ -1,15 +1,10 @@
 #!/bin/bash
 
-#   NOT CURRENTLY IN USE
+#   NOT CURRENTLY IN USE (rolled up into the cwl tool)
 #   Shell wrapper for run_kraken2pe.sh
 #
 ##########################################################################################
-#
-# v0.0.1
-# - format input lists for rnbeads in Rscript
-# - run rnbeads Rscript
-##########################################################################################
-printf "$(date)\nLog file for run_rnbeads_diff.sh\n\n"
+printf "$(date)\nLog file for run_kraken2pe.sh\n\n"
 
 
 #	FUNCTIONS
@@ -17,7 +12,7 @@ printf "$(date)\nLog file for run_rnbeads_diff.sh\n\n"
 usage()
 {
 cat << EOF
-Help message for \`run_rnbeads_diff.sh\`:
+Help message for \`run_kraken2pe.sh\`:
     Wrapper for kraken2 taxonomic sequence classification system and associated report and visualization (viz pending)
 
     Primary Output files:
@@ -52,20 +47,10 @@ PARAMS:
  -t  INT	number of threads
  -d  STRING   kraken2 database enum (Viral, MinusB, PlusPFP-16, EuPathDB46) - this will be determined by the cwl tool calling this script
 
- -a  STRING     name of condition1
-
-
-BismarkCov formatted bed:
-    https://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf
-    The genome-wide cytosine report (optional) is tab-delimited in the following format (1-based coords):
-    <chromosome> <position> <strand> <count methylated> <count unmethylated> <C-context> <trinucleotide context>
 
 ____________________________________________________________________________________________________
 References:
-	https://rnbeads.org/materials/example_3/differential_methylation.html
-        Makambi, K. (2003) Weighted inverse chi-square method for correlated significance tests. Journal of Applied Statistics, 30(2), 225234
-    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4216143/
-        Assenov Y, Müller F, Lutsik P, Walter J, Lengauer T, Bock C. Comprehensive analysis of DNA methylation data with RnBeads. Nat Methods. 2014 Nov;11(11):1138-1140. doi: 10.1038/nmeth.3115. Epub 2014 Sep 28. PMID: 25262207; PMCID: PMC4216143.
+    Wood, D.E., Lu, J. & Langmead, B. Improved metagenomic analysis with Kraken 2. Genome Biol 20, 257 (2019). https://doi.org/10.1186/s13059-019-1891-0
 EOF
 }
 
@@ -79,10 +64,6 @@ do
 		h) usage; exit 1 ;;
 		t) THREADS=$OPTARG ;;
         d) DATABASE=$OPTARG ;;
-
-		a) CONDITION1_NAME=$OPTARG ;;
-		b) CONDITION2_NAME=$OPTARG ;;
-
 		?) usage; exit ;;
 	esac
 done
@@ -98,8 +79,6 @@ printf "\tworkdir - $workdir\n\n"
 printf "List of inputs:\n"
 printf "\tTHREADS - $THREADS\n"
 printf "\tGENOME - $GENOME\n"
-printf "\tCONDITION1_NAME - $CONDITION1_NAME\n"
-
 printf "\tOUTDIR - $OUTDIR\n"
 
 
@@ -139,16 +118,6 @@ kraken2 --db $dbpath --threads $THREADS --paired --classified-out classified_rea
 
 # for SE read classification (will use in different script)
 #kraken2 --db /data/k2db/k2_pluspfp_16gb_20221209/ --threads 2 $FASTQ --output kraken.tsv --report kraken.report
-
-
-#	OUTPUTS
-#===============================================================================
-# 
-
-#   format kraken report for table
-
-
-
 
 
 # clean up

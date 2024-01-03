@@ -11,6 +11,14 @@ requirements:
 'sd:upstream':
   genome_indices:
     - "genome-indices.cwl"
+  target_peaklist:
+    - "filter-diffbind-for-heatmap.cwl"
+    - "filter-peaks-by-overlap.cwl"
+    - "genelists-sets.cwl"
+  background_peaklist:
+    - "filter-diffbind-for-heatmap.cwl"
+    - "filter-peaks-by-overlap.cwl"
+    - "genelists-sets.cwl"
 
 
 inputs:
@@ -26,12 +34,16 @@ inputs:
     format: "http://edamontology.org/format_3003"
     label: "Target regions. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
     doc: "Target regions. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+    'sd:upstreamSource': "target_peaklist/filtered_file"
+    'sd:localLabel': true
 
   background_regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
     label: "Background regions. Headerless BED file with minimum [chrom start end name dummy strand] columns. Optionally, CSV"
     doc: "Background regions. Headerless BED file with minimum [chrom start end unique_id dummy strand] columns. Optionally, CSV"
+    'sd:upstreamSource': "background_peaklist/filtered_file"
+    'sd:localLabel': true
 
   genome_fasta_file:
     type: File
@@ -127,7 +139,7 @@ outputs:
     label: "Compressed file with Homer motifs"
     doc: "Homer motifs"
 
-  homer_stdout_log:
+  homer_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     outputSource: find_motifs/stdout_log
