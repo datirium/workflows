@@ -10,7 +10,10 @@ requirements:
 
 
 'sd:upstream':
-  deseq_experiment: "deseq.cwl"
+  deseq_experiment:
+    - "deseq.cwl"
+    - "deseq-for-spikein.cwl"
+
 
 inputs:
 
@@ -184,7 +187,7 @@ outputs:
     doc: "GSEApy stderr log"
     outputSource: run_gseapy/stderr_log
 
-  summary_report:
+  summary_report_file:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "Enrichment report"

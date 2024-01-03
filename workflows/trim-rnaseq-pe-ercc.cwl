@@ -270,22 +270,26 @@ outputs:
   rpkm_isoforms:
     type: File
     format: "http://edamontology.org/format_3752"
-    label: "RPKM, grouped by isoforms"
-    doc: "Calculated rpkm values, grouped by isoforms"
+    label: "read counts grouped by isoforms"
+    doc: "read counts grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by gene name"
-    doc: "Calculated rpkm values, grouped by gene name"
+    label: "read counts grouped by gene name"
+    doc: "read counts grouped by gene name"
     outputSource: group_isoforms/genes_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene Expression'
+        Title: 'Read counts grouped by gene name'
 
   rpkm_common_tss:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by common TSS"
-    doc: "Calculated rpkm values, grouped by common TSS"
+    label: "read counts grouped by common TSS"
+    doc: "read counts grouped by common TSS"
     outputSource: group_isoforms/common_tss_file
 
   htseq_count_gene_expression_file:
@@ -411,26 +415,26 @@ outputs:
   rpkm_isoforms_ercc_normalized:
     type: File
     format: "http://edamontology.org/format_3752"
-    label: "RPKM, grouped by isoforms"
-    doc: "Calculated rpkm values, grouped by isoforms"
+    label: "scaled read counts grouped by isoforms"
+    doc: "scaled read counts grouped by isoforms"
     outputSource: ercc_spikein_norm/rpkm_isoforms_ercc_norm
 
   rpkm_genes_ercc_normalized:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by gene name"
-    doc: "Calculated rpkm values, grouped by gene name"
+    label: "scaled read counts grouped by gene name"
+    doc: "Scaled read counts grouped by gene name"
     outputSource: group_isoforms_ercc/genes_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Gene Expression'
-        Title: 'RPKM, grouped by gene name'
+        tab: 'Gene Expression Scaled'
+        Title: 'Scaled read counts grouped by gene name'
 
   rpkm_common_tss_ercc_normalized:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by common TSS"
-    doc: "Calculated rpkm values, grouped by common TSS"
+    label: "scaled read counts grouped by common TSS"
+    doc: "scaled read counts grouped by common TSS"
     outputSource: group_isoforms_ercc/common_tss_file
 
   ercc_sam:
@@ -458,14 +462,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  ercc_spikein_norm_stdout:
+  ercc_spikein_norm_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
     doc: "captures standard output from ercc-norm.cwl"
     outputSource: ercc_spikein_norm/log_file_stdout
 
-  ercc_spikein_norm_stderr:
+  ercc_spikein_norm_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
