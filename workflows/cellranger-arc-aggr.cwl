@@ -150,6 +150,13 @@ outputs:
       Aggregation metadata file
       in CSV format
 
+  grouping_data:
+    type: File
+    outputSource: aggregate_counts/grouping_data
+    label: "Example of datasets grouping"
+    doc: |
+      Example of TSV file to define datasets grouping
+
   filtered_feature_bc_matrix_folder:
     type: File
     outputSource: compress_filtered_feature_bc_matrix_folder/compressed_folder
@@ -307,6 +314,7 @@ steps:
     - raw_feature_bc_matrices_folder
     - raw_feature_bc_matrices_h5
     - aggregation_metadata
+    - grouping_data
     - loupe_browser_track
     - stdout_log
     - stderr_log
