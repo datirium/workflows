@@ -144,6 +144,12 @@ outputs:
     label: "Aggregation metadata in CSV format"
     doc: "Aggregation metadata in CSV format"
 
+  grouping_data:
+    type: File
+    outputSource: aggregate_counts/grouping_data
+    label: "Example of datasets grouping"
+    doc: "Example of TSV file to define datasets grouping"
+
   loupe_browser_track:
     type: File
     outputSource: aggregate_counts/loupe_browser_track
@@ -239,6 +245,7 @@ steps:
     - filtered_feature_bc_matrix_folder
     - filtered_feature_bc_matrix_h5
     - aggregation_metadata
+    - grouping_data
     - loupe_browser_track
     - clonotypes_csv
     - consensus_sequences_fasta

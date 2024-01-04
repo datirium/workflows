@@ -59,7 +59,8 @@ inputs:
     'sd:localLabel': true
 
   memory_limit:
-    type: int
+    type: int?
+    default: 20
     'sd:upstreamSource': "genome_indices/memory_limit"
 
   normalization_mode:
@@ -146,6 +147,13 @@ outputs:
     doc: |
       Aggregation metadata file
       in CSV format
+
+  grouping_data:
+    type: File
+    outputSource: aggregate_counts/grouping_data
+    label: "Example of datasets grouping"
+    doc: |
+      Example of TSV file to define datasets grouping
 
   filtered_feature_bc_matrix_folder:
     type: File
@@ -304,6 +312,7 @@ steps:
     - raw_feature_bc_matrices_folder
     - raw_feature_bc_matrices_h5
     - aggregation_metadata
+    - grouping_data
     - loupe_browser_track
     - stdout_log
     - stderr_log
