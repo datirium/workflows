@@ -80,7 +80,7 @@ counts[c('Rpkm')] <- lapply(rpkm_norm[c('Rpkm')], my_function)
 my_function <- function(x) (m*x)+b
 counts[c('Rpkm')] <- lapply(counts[c('Rpkm')], my_function)
 #       convert out of log10
-my_function <- function(x) 10^x
+my_function <- function(x) as.integer(10^x)
 counts[c('Rpkm')] <- lapply(counts[c('Rpkm')], my_function)
 #       rename column header
 #colnames(rpkm_norm)[8] <- 'ercc_norm_rpkm'     # ACTUALL DON'T, this will cause group_isoforms step to fail
@@ -94,7 +94,7 @@ counts[c('TotalReads')] <- lapply(total_norm[c('TotalReads')], my_function)
 my_function <- function(x) (m*x)+b
 counts[c('TotalReads')] <- lapply(counts[c('TotalReads')], my_function)
 #       convert out of log10
-my_function <- function(x) 10^x
+my_function <- function(x) as.integer(10^x)
 counts[c('TotalReads')] <- lapply(counts[c('TotalReads')], my_function)
 
 #       save to new csv file
