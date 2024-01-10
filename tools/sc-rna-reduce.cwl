@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -177,20 +177,14 @@ inputs:
       Default: false
 
   dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use in UMAP projection (from 1 to
-      50). If single value N is provided, use from 1 to N
-      PCs. If multiple values are provided, subset to only
-      specified PCs. In combination with --ntgr set to
-      harmony, multiple values will result in using all
-      principal components starting from 1 to the max of the
-      provided values. Default: from 1 to 10
+      Dimensionality to use for datasets integration (if provided RDS
+      file includes multiple datasets and --ntgr is not set to 'harmony')
+      and UMAP projection (from 1 to 50).
+      Default: 10
 
   umap_spread:
     type: float?

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -34,17 +34,11 @@ inputs:
       Default: pca
 
   dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use (from 1 to 50). If single value N is provided,
-      use from 1 to N dimensions. If multiple values are provided, subset
-      to only selected dimensions. May fail if user specified more dimensions
-      than it was available in the selected --reduction.
+      Dimensionality to use (from 1 to 50).
       Default: use all available dimensions
 
   query_source_column:
