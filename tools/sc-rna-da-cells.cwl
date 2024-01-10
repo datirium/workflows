@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -35,17 +35,12 @@ inputs:
       Default: pca
 
   dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
       Dimensionality to use when running DA analysis (from 1 to 50).
-      If single value N is provided, use from 1 to N PCs. If multiple
-      values are provided, subset to only selected PCs.
-      Default: from 1 to 10
+      Default: 10
 
   score_vector_knn:
     type:

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -26,19 +26,13 @@ inputs:
       dimensionality reductions applied to that assay.
 
   dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use when constructing nearest-
-      neighbor graph before clustering (from 1 to 50). If
-      single value N is provided, use from 1 to N
-      dimensions. If multiple values are provided, subset to
-      only selected dimensions.
-      Default: from 1 to 10
+      Dimensionality to use when constructing nearest-neighbor
+      graph before clustering (from 1 to 50).
+      Default: 10
 
   cluster_metric:
     type:

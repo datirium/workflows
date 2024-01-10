@@ -115,9 +115,7 @@ inputs:
     doc: |
       Number of dimensions to be used in LSI,
       datasets integration, and UMAP projection.
-      Accepted values range from 2 to 50. First
-      dimension is always excluded, unless
-      "Integration method" is set to "harmony".
+      Accepted values range from 2 to 50.
       Default: 40
 
   datasets_metadata:

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -26,17 +26,14 @@ inputs:
       'atac_lsi' and 'atacumap' dimensionality reductions applied to that assay.
 
   dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
       Dimensionality to use when constructing nearest-neighbor graph before clustering
-      (from 1 to 50). If single value N is provided, use from 2 to N dimensions. If
-      multiple values are provided, subset to only selected dimensions.
-      Default: from 2 to 10
+      (from 2 to 50). First LSI component is always excluded unless the provided RDS
+      file consists of multiple datasets integrated with Harmony.
+      Default: 10
 
   cluster_metric:
     type:

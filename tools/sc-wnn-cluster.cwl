@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -27,32 +27,24 @@ inputs:
       and 'atacumap' dimensionality reductions should be present.
 
   rna_dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--rnadimensions"
     doc: |
       Dimensionality from the 'pca' reduction to use when constructing weighted
-      nearest-neighbor graph before clustering (from 1 to 50). If single value N
-      is provided, use from 1 to N dimensions. If multiple values are provided,
-      subset to only selected dimensions.
-      Default: from 1 to 10
+      nearest-neighbor graph before clustering (from 1 to 50).
+      Default: 10
 
   atac_dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--atacdimensions"
     doc: |
       Dimensionality from the 'atac_lsi' reduction to use when constructing weighted
-      nearest-neighbor graph before clustering (from 1 to 50). If single value N
-      is provided, use from 2 to N dimensions. If multiple values are provided,
-      subset to only selected dimensions.
-      Default: from 2 to 10
+      nearest-neighbor graph before clustering (from 2 to 50). First LSI component is
+      always excluded unless the provided RDS file consists of multiple datasets
+      where ATAC assay were integrated with Harmony.
+      Default: 10
 
   cluster_algorithm:
     type:

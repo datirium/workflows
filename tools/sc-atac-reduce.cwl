@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.31
+  dockerPull: biowardrobe2/sc-tools:v0.0.32
 
 
 inputs:
@@ -84,8 +84,8 @@ inputs:
       prefix: "--ntgr"
     doc: |
       Integration method used for joint analysis of multiple
-      datasets. Automatically set to 'none' if loaded Suerat
-      object includes only one dataset. Default: signac
+      datasets.
+      Default: signac
 
   integrate_by:
     type:
@@ -115,21 +115,14 @@ inputs:
       Default: 0 (use all available peaks)
 
   dimensions:
-    type:
-    - "null"
-    - int
-    - int[]
+    type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use for datasets integration and
-      UMAP projection (from 2 to 50). If single value N is
-      provided, use from 2 to N LSI components. If multiple
-      values are provided, subset to only selected LSI
-      components. In combination with --ntgr set to harmony,
-      multiple values will result in using all dimensions
-      starting from 1(!) to the max of the provided values.
-      Default: from 2 to 10
+      Dimensionality to use for datasets integration (if provided RDS file includes
+      multiple datasets and --ntgr is not set to 'none') and UMAP projection.
+      (from 2 to 50). First LSI component is always excluded.
+      Default: 10
 
   umap_spread:
     type: float?
