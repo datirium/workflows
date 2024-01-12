@@ -176,6 +176,24 @@ inputs:
       plots will be built.
       Default: None
 
+  cvrg_upstream_bp:
+    type: int?
+    inputBinding:
+      prefix: "--upstream"
+    doc: |
+      Number of bases to extend the genome coverage region for
+      a specific gene upstream. Ignored if --genes or --fragments
+      parameters are not provided. Default: 2500
+
+  cvrg_downstream_bp:
+    type: int?
+    inputBinding:
+      prefix: "--downstream"
+    doc: |
+      Number of bases to extend the genome coverage region for
+      a specific gene downstream. Ignored if --genes or --fragments
+      parameters are not provided. Default: 2500
+
   identify_diff_genes:
     type: boolean?
     inputBinding:
@@ -911,23 +929,31 @@ doc: |
 
 
 s:about: |
-  usage: sc_wnn_cluster.R
-        [-h] --query QUERY
-        [--rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]]
-        [--atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]]
-        [--algorithm {louvain,mult-louvain,slm,leiden}] [--uspread USPREAD]
-        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-        [--umethod {uwot,uwot-learn,umap-learn}]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--fragments FRAGMENTS]
-        [--genes [GENES [GENES ...]]] [--diffgenes] [--diffpeaks]
-        [--rnalogfc RNALOGFC] [--rnaminpct RNAMINPCT] [--rnaonlypos]
-        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--ataclogfc ATACLOGFC] [--atacminpct ATACMINPCT]
-        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_wnn_cluster.R [-h] --query QUERY
+                                        [--rnadimensions RNADIMENSIONS]
+                                        [--atacdimensions ATACDIMENSIONS]
+                                        [--algorithm {louvain,mult-louvain,slm,leiden}]
+                                        [--uspread USPREAD]
+                                        [--umindist UMINDIST]
+                                        [--uneighbors UNEIGHBORS]
+                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                        [--umethod {uwot,uwot-learn,umap-learn}]
+                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                        [--fragments FRAGMENTS]
+                                        [--genes [GENES [GENES ...]]]
+                                        [--upstream UPSTREAM]
+                                        [--downstream DOWNSTREAM] [--diffgenes]
+                                        [--diffpeaks] [--rnalogfc RNALOGFC]
+                                        [--rnaminpct RNAMINPCT] [--rnaonlypos]
+                                        [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--ataclogfc ATACLOGFC]
+                                        [--atacminpct ATACMINPCT]
+                                        [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--scope]
+                                        [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell WNN Cluster Analysis
 
@@ -939,20 +965,17 @@ s:about: |
                           assays correspondingly. Additionally, 'pca',
                           'rnaumap', 'atac_lsi' and 'atacumap' dimensionality
                           reductions should be present.
-    --rnadimensions [RNADIMENSIONS [RNADIMENSIONS ...]]
+    --rnadimensions RNADIMENSIONS
                           Dimensionality from the 'pca' reduction to use when
                           constructing weighted nearest-neighbor graph before
-                          clustering (from 1 to 50). If single value N is
-                          provided, use from 1 to N dimensions. If multiple
-                          values are provided, subset to only selected
-                          dimensions. Default: from 1 to 10
-    --atacdimensions [ATACDIMENSIONS [ATACDIMENSIONS ...]]
+                          clustering (from 1 to 50). Default: 10
+    --atacdimensions ATACDIMENSIONS
                           Dimensionality from the 'atac_lsi' reduction to use
                           when constructing weighted nearest-neighbor graph
-                          before clustering (from 1 to 50). If single value N is
-                          provided, use from 2 to N dimensions. If multiple
-                          values are provided, subset to only selected
-                          dimensions. Default: from 2 to 10
+                          before clustering (from 2 to 50). First LSI component
+                          is always excluded unless the provided RDS file
+                          consists of multiple datasets where ATAC assay were
+                          integrated with Harmony. Default: 10
     --algorithm {louvain,mult-louvain,slm,leiden}
                           Algorithm for modularity optimization when running
                           clustering. Default: louvain
@@ -994,6 +1017,13 @@ s:about: |
                           insertion frequency plots for the nearest peaks. If '
                           --fragments' is not provided only gene expression
                           plots will be built. Default: None
+    --upstream UPSTREAM   Number of bases to extend the genome coverage region
+                          for a specific gene upstream. Ignored if --genes or
+                          --fragments parameters are not provided. Default: 2500
+    --downstream DOWNSTREAM
+                          Number of bases to extend the genome coverage region
+                          for a specific gene downstream. Ignored if --genes or
+                          --fragments parameters are not provided. Default: 2500
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) between each pair of clusters for all
                           resolutions. Default: false
@@ -1039,6 +1069,9 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
+    --scope               Save Seurat data to SCope compatible loom file. Only
+                          not normalized raw counts from the RNA assay will be
+                          saved. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic

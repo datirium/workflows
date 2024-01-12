@@ -50,6 +50,15 @@ inputs:
       assigned cell types. Should start with 'custom_', otherwise, it won't
       be shown in UCSC Cell Browser.
 
+  query_splitby_column:
+    type: string?
+    inputBinding:
+      prefix: "--splitby"
+    doc: |
+      Column from the Seurat object metadata to additionally split
+      every cluster selected with --source into smaller groups.
+      Default: do not split
+
   identify_diff_genes:
     type: boolean?
     inputBinding:
@@ -189,6 +198,24 @@ inputs:
       peaks the loaded Seurat object should include ATAC assay as well as the --fragments
       file should be provided.
       Default: None
+
+  cvrg_upstream_bp:
+    type: int?
+    inputBinding:
+      prefix: "--upstream"
+    doc: |
+      Number of bases to extend the genome coverage region for
+      a specific gene upstream. Ignored if --genes or --fragments
+      parameters are not provided. Default: 2500
+
+  cvrg_downstream_bp:
+    type: int?
+    inputBinding:
+      prefix: "--downstream"
+    doc: |
+      Number of bases to extend the genome coverage region for
+      a specific gene downstream. Ignored if --genes or --fragments
+      parameters are not provided. Default: 2500
 
   export_pdf_plots:
     type: boolean?
@@ -981,7 +1008,8 @@ doc: |
 s:about: |
   usage: sc_ctype_assign.R [-h] --query QUERY --celltypes
                                           CELLTYPES --source SOURCE --target
-                                          TARGET [--diffgenes] [--diffpeaks]
+                                          TARGET [--splitby SPLITBY]
+                                          [--diffgenes] [--diffpeaks]
                                           [--rnalogfc RNALOGFC]
                                           [--rnaminpct RNAMINPCT] [--rnaonlypos]
                                           [--rnatestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
@@ -989,7 +1017,9 @@ s:about: |
                                           [--atacminpct ATACMINPCT]
                                           [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                           [--fragments FRAGMENTS]
-                                          [--genes [GENES [GENES ...]]] [--pdf]
+                                          [--genes [GENES [GENES ...]]]
+                                          [--upstream UPSTREAM]
+                                          [--downstream DOWNSTREAM] [--pdf]
                                           [--verbose] [--h5seurat] [--h5ad]
                                           [--cbbuild] [--scope]
                                           [--output OUTPUT]
@@ -1016,6 +1046,9 @@ s:about: |
                           to save manually assigned cell types. Should start
                           with 'custom_', otherwise, it won't be shown in UCSC
                           Cell Browser.
+    --splitby SPLITBY     Column from the Seurat object metadata to additionally
+                          split every cluster selected with --source into
+                          smaller groups. Default: do not split
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) for assigned cell types. Ignored if loaded
                           Seurat object doesn't include genes expression
@@ -1073,6 +1106,13 @@ s:about: |
                           frequency plots for the nearest peaks the loaded
                           Seurat object should include ATAC assay as well as the
                           --fragments file should be provided. Default: None
+    --upstream UPSTREAM   Number of bases to extend the genome coverage region
+                          for a specific gene upstream. Ignored if --genes or
+                          --fragments parameters are not provided. Default: 2500
+    --downstream DOWNSTREAM
+                          Number of bases to extend the genome coverage region
+                          for a specific gene downstream. Ignored if --genes or
+                          --fragments parameters are not provided. Default: 2500
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false

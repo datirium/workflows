@@ -705,22 +705,23 @@ doc: |
 
 
 s:about: |
-  usage: sc_atac_reduce.R
-        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
-        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
-        [--ntgr {signac,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
-        [--minvarpeaks MINVARPEAKS]
-        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
-        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,
-                    braycurtis,mahalanobis,wminkowski,seuclidean,cosine,
-                    correlation,haversine,hamming,jaccard,dice,russelrao,
-                    kulsinski,ll_dirichlet,hellinger,rogerstanimoto,
-                    sokalmichener,sokalsneath,yule}]
-        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_atac_reduce.R [-h] --query QUERY
+                                        [--metadata METADATA]
+                                        [--barcodes BARCODES]
+                                        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
+                                        [--ntgr {signac,harmony,none}]
+                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
+                                        [--minvarpeaks MINVARPEAKS]
+                                        [--dimensions DIMENSIONS]
+                                        [--uspread USPREAD]
+                                        [--umindist UMINDIST]
+                                        [--uneighbors UNEIGHBORS]
+                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                        [--umethod {uwot,uwot-learn,umap-learn}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
@@ -754,8 +755,7 @@ s:about: |
                           Default: log-tfidf
     --ntgr {signac,harmony,none}
                           Integration method used for joint analysis of multiple
-                          datasets. Automatically set to 'none' if loaded Suerat
-                          object includes only one dataset. Default: signac
+                          datasets. Default: signac
     --ntgrby [NTGRBY [NTGRBY ...]]
                           Column(s) from the Seurat object metadata to define
                           the variable(s) that should be integrated out when
@@ -770,15 +770,12 @@ s:about: |
                           cells peaks as highly variable. These peaks are used
                           for datasets integration, scaling and dimensionality
                           reduction. Default: 0 (use all available peaks)
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
-                          Dimensionality to use for datasets integration and
-                          UMAP projection (from 2 to 50). If single value N is
-                          provided, use from 2 to N LSI components. If multiple
-                          values are provided, subset to only selected LSI
-                          components. In combination with --ntgr set to harmony,
-                          multiple values will result in using all dimensions
-                          starting from 1(!) to the max of the provided values.
-                          Default: from 2 to 10
+    --dimensions DIMENSIONS
+                          Dimensionality to use for datasets integration (if
+                          provided RDS file includes multiple datasets and
+                          --ntgr is not set to 'none') and UMAP projection.
+                          (from 2 to 50). First LSI component is always
+                          excluded. Default: 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -794,10 +791,7 @@ s:about: |
                           structure being preserved at the loss of detailed
                           local structure. In general this parameter should
                           often be in the range 5 to 50. Default: 30
-    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,
-               mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,
-               hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,
-               rogerstanimoto,sokalmichener,sokalsneath,yule}
+    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}
                           The metric to use to compute distances in high
                           dimensional space for UMAP. Default: cosine
     --umethod {uwot,uwot-learn,umap-learn}
