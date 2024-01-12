@@ -10,6 +10,8 @@ requirements:
 
 
 'sd:upstream':
+  genome_indices:
+    - "genome-indices.cwl"
   sample_to_filter:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
@@ -41,7 +43,6 @@ inputs:
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
     'sd:upstreamSource': "genome_indices/annotation"
-    'sd:localLabel': true
 
   sql_query:
     type: string
