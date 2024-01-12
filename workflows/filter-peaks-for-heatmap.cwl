@@ -126,7 +126,7 @@ outputs:
         tab: 'Annotated Peak Filtering Results'
         Title: 'Filtered peaks with nearest gene annotation'
 
-  filtering_stdout_log:
+  filtering_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
