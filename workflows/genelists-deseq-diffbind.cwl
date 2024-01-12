@@ -13,6 +13,7 @@ requirements:
   genelists:
     - "filter-deseq-for-heatmap.cwl"
     - "filter-diffbind-for-heatmap.cwl"
+    - "filter-peaks-for-heatmap.cwl"
     - "genelists-sets.cwl"
   samples_nabinding:
     - "chipseq-se.cwl"
@@ -196,12 +197,12 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  log_file_stdout:
+  stdout_log_file:
     type: File
     outputSource: data_integration/log_file_stdout
     label: "log file stdout"
 
-  log_file_stderr:
+  stderr_log_file:
     type: File
     outputSource: data_integration/log_file_stderr
     label: "log file stderr"
