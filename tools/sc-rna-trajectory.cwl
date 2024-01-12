@@ -668,10 +668,10 @@ doc: |
 s:about: |
   usage: sc_rna_trajectory.R [-h] --query QUERY
                                             [--reduction REDUCTION]
-                                            [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
-                                            --source SOURCE
-                                            [--barcodes BARCODES]
+                                            [--dimensions DIMENSIONS] --source
+                                            SOURCE [--barcodes BARCODES]
                                             [--start START] [--ngenes NGENES]
+                                            [--genes [GENES [GENES ...]]]
                                             [--pdf] [--verbose] [--h5seurat]
                                             [--h5ad] [--cbbuild]
                                             [--output OUTPUT]
@@ -689,13 +689,9 @@ s:about: |
     --reduction REDUCTION
                           Dimensionality reduction to be used in the trajectory
                           analysis. Default: pca
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
-                          Dimensionality to use (from 1 to 50). If single value
-                          N is provided, use from 1 to N dimensions. If multiple
-                          values are provided, subset to only selected
-                          dimensions. May fail if user specified more dimensions
-                          than it was available in the selected --reduction.
-                          Default: use all available dimensions
+    --dimensions DIMENSIONS
+                          Dimensionality to use (from 1 to 50). Default: use all
+                          available dimensions
     --source SOURCE       Column from the metadata of the loaded Seurat object
                           to select clusters from
     --barcodes BARCODES   Path to the TSV/CSV file to optionally prefilter and
@@ -710,7 +706,8 @@ s:about: |
                           trajectory. Default: defined automatically
     --ngenes NGENES       Number of the most predictive genes to be shows on the
                           gene expression heatmap. Default: 50
-    --genes               Genes of interest to build genes expression plots.
+    --genes [GENES [GENES ...]]
+                          Genes of interest to build genes expression plots.
                           Default: None
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false

@@ -769,17 +769,20 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_cluster.R
-        [-h] --query QUERY [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
-        [--ametric {euclidean,cosine,manhattan,hamming}]
-        [--algorithm {louvain,mult-louvain,slm,leiden}]
-        [--resolution [RESOLUTION [RESOLUTION ...]]]
-        [--genes [GENES [GENES ...]]] [--diffgenes] [--logfc LOGFC]
-        [--minpct MINPCT] [--onlypos]
-        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_cluster.R [-h] --query QUERY
+                                        [--dimensions DIMENSIONS]
+                                        [--ametric {euclidean,cosine,manhattan,hamming}]
+                                        [--algorithm {louvain,mult-louvain,slm,leiden}]
+                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                        [--genes [GENES [GENES ...]]]
+                                        [--diffgenes] [--logfc LOGFC]
+                                        [--minpct MINPCT] [--onlypos]
+                                        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--scope]
+                                        [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Cluster Analysis
 
@@ -790,12 +793,10 @@ s:about: |
                           stored in the RNA assay, as well as 'pca' and
                           'rnaumap' dimensionality reductions applied to that
                           assay.
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+    --dimensions DIMENSIONS
                           Dimensionality to use when constructing nearest-
-                          neighbor graph before clustering (from 1 to 50). If
-                          single value N is provided, use from 1 to N
-                          dimensions. If multiple values are provided, subset to
-                          only selected dimensions. Default: from 1 to 10
+                          neighbor graph before clustering (from 1 to 50).
+                          Default: 10
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used when constructing nearest-
                           neighbor graph before clustering. Default: euclidean
@@ -837,6 +838,8 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
+    --scope               Save Seurat data to SCope compatible loom file.
+                          Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic

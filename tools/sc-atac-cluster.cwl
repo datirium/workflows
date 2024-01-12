@@ -103,6 +103,24 @@ inputs:
       Ignored if '--fragments' is not provided.
       Default: None
 
+  cvrg_upstream_bp:
+    type: int?
+    inputBinding:
+      prefix: "--upstream"
+    doc: |
+      Number of bases to extend the genome coverage region for
+      a specific gene upstream. Ignored if --genes or --fragments
+      parameters are not provided. Default: 2500
+
+  cvrg_downstream_bp:
+    type: int?
+    inputBinding:
+      prefix: "--downstream"
+    doc: |
+      Number of bases to extend the genome coverage region for
+      a specific gene downstream. Ignored if --genes or --fragments
+      parameters are not provided. Default: 2500
+
   identify_diff_peaks:
     type: boolean?
     inputBinding:
@@ -582,17 +600,22 @@ doc: |
 
 
 s:about: |
-  usage: sc_atac_cluster.R
-        [-h] --query QUERY [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
-        [--ametric {euclidean,cosine,manhattan,hamming}]
-        [--algorithm {louvain,mult-louvain,slm,leiden}]
-        [--resolution [RESOLUTION [RESOLUTION ...]]] [--fragments FRAGMENTS]
-        [--genes [GENES [GENES ...]]] [--diffpeaks] [--logfc LOGFC]
-        [--minpct MINPCT]
-        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_atac_cluster.R [-h] --query QUERY
+                                          [--dimensions DIMENSIONS]
+                                          [--ametric {euclidean,cosine,manhattan,hamming}]
+                                          [--algorithm {louvain,mult-louvain,slm,leiden}]
+                                          [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                          [--fragments FRAGMENTS]
+                                          [--genes [GENES [GENES ...]]]
+                                          [--upstream UPSTREAM]
+                                          [--downstream DOWNSTREAM]
+                                          [--diffpeaks] [--logfc LOGFC]
+                                          [--minpct MINPCT]
+                                          [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+                                          [--pdf] [--verbose] [--h5seurat]
+                                          [--h5ad] [--cbbuild] [--output OUTPUT]
+                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                          [--cpus CPUS] [--memory MEMORY]
 
   Single-cell ATAC-Seq Cluster Analysis
 
@@ -603,12 +626,12 @@ s:about: |
                           information stored in the ATAC assay, as well as
                           'atac_lsi' and 'atacumap' dimensionality reductions
                           applied to that assay.
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+    --dimensions DIMENSIONS
                           Dimensionality to use when constructing nearest-
-                          neighbor graph before clustering (from 1 to 50). If
-                          single value N is provided, use from 2 to N
-                          dimensions. If multiple values are provided, subset to
-                          only selected dimensions. Default: from 2 to 10
+                          neighbor graph before clustering (from 2 to 50). First
+                          LSI component is always excluded unless the provided
+                          RDS file consists of multiple datasets integrated with
+                          Harmony. Default: 10
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used when constructing nearest-
                           neighbor graph before clustering. Default: euclidean
@@ -633,6 +656,13 @@ s:about: |
                           it will be additionally shown on the right side of the
                           plots. Ignored if '--fragments' is not provided.
                           Default: None
+    --upstream UPSTREAM   Number of bases to extend the genome coverage region
+                          for a specific gene upstream. Ignored if --genes or
+                          --fragments parameters are not provided. Default: 2500
+    --downstream DOWNSTREAM
+                          Number of bases to extend the genome coverage region
+                          for a specific gene downstream. Ignored if --genes or
+                          --fragments parameters are not provided. Default: 2500
     --diffpeaks           Identify differentially accessible peaks between each
                           pair of clusters for all resolutions. Default: false
     --logfc LOGFC         For differentially accessible peaks identification

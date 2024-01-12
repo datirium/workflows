@@ -97,6 +97,22 @@ inputs:
       "Dimensionality reduction" to be used
       for cluster names assignment.
 
+  query_splitby_column:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "dataset"
+      - "condition"
+      - "none"
+    default: "none"
+    label: "Criteria to split every cluster by (optional)"
+    doc: |
+      Criteria to split every cluster defined by
+      the selected dimensionality reduction and
+      resolution into several groups.
+      Default: "none"
+
   cell_type_data:
     type: File
     label: "Cell types"
@@ -655,6 +671,18 @@ steps:
       query_target_column:
         source: [query_reduction, query_resolution]
         valueFrom: $(get_query_column("custom_", self[0], self[1]))
+      query_splitby_column:
+        source: query_splitby_column
+        valueFrom: |
+          ${
+            if (self == "dataset") {
+              return "new.ident";
+            } else if (self == "condition") {
+              return "condition";
+            } else {
+              return null;
+            }
+          }
       atac_fragments_file: atac_fragments_file
       genes_of_interest:
         source: genes_of_interest

@@ -786,21 +786,27 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_reduce.R
-        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
-        [--cellcycle CELLCYCLE] [--norm {sct,log,sctglm}]
-        [--ntgr {seurat,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
-        [--highvargenes HIGHVARGENES] [--regressmt]
-        [--regressgenes [REGRESSGENES [REGRESSGENES ...]]]
-        [--regressccfull | --regressccdiff]
-        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
-        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
-        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--scope] [--cbbuild] [--lowmem]
-        [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_reduce.R [-h] --query QUERY [--metadata METADATA]
+                                        [--barcodes BARCODES]
+                                        [--cellcycle CELLCYCLE]
+                                        [--norm {sct,log,sctglm}]
+                                        [--ntgr {seurat,harmony,none}]
+                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
+                                        [--highvargenes HIGHVARGENES]
+                                        [--regressmt]
+                                        [--regressgenes REGRESSGENES]
+                                        [--regressccfull | --regressccdiff]
+                                        [--dimensions DIMENSIONS]
+                                        [--uspread USPREAD]
+                                        [--umindist UMINDIST]
+                                        [--uneighbors UNEIGHBORS]
+                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+                                        [--umethod {uwot,uwot-learn,umap-learn}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--scope] [--cbbuild]
+                                        [--lowmem] [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Dimensionality Reduction Analysis
 
@@ -860,8 +866,8 @@ s:about: |
                           variation. Default: false
     --regressgenes REGRESSGENES
                           Regex pattern to identify genes which expression
-                          should be regressed as a confounding source of variation.
-                          Default: none
+                          should be regressed as a confounding source of
+                          variation. Default: none
     --regressccfull       Regress all signals associated with cell cycle phase.
                           Ignored if --cellcycle is not provided. Mutually
                           exclusive with --regressccdiff parameter. Default:
@@ -871,14 +877,11 @@ s:about: |
                           and cycling cells will be maintained. Ignored if
                           --cellcycle is not provided. Mutually exclusive with
                           --regressccfull Default: false
-    --dimensions [DIMENSIONS [DIMENSIONS ...]]
-                          Dimensionality to use in UMAP projection (from 1 to
-                          50). If single value N is provided, use from 1 to N
-                          PCs. If multiple values are provided, subset to only
-                          specified PCs. In combination with --ntgr set to
-                          harmony, multiple values will result in using all
-                          principal components starting from 1 to the max of the
-                          provided values. Default: from 1 to 10
+    --dimensions DIMENSIONS
+                          Dimensionality to use for datasets integration (if
+                          provided RDS file includes multiple datasets and
+                          --ntgr is not set to 'harmony') and UMAP projection
+                          (from 1 to 50). Default: 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
