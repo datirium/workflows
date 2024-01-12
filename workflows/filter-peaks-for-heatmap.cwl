@@ -17,6 +17,8 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+    - "cutandrun-macs2-pe.cwl"
+    - "cutandrun-seacr-pe.cwl"
 
 
 inputs:
@@ -124,14 +126,14 @@ outputs:
         tab: 'Annotated Peak Filtering Results'
         Title: 'Filtered peaks with nearest gene annotation'
 
-  filtering_stdout_log:
+  stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: feature_select/stdout_log
 
-  filtering_stderr_log:
+  stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
