@@ -27,21 +27,6 @@ inputs:
     sd:preview:
       position: 1
 
-  indices_folder:
-    type: Directory
-    'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Reference genome for samples:"
-    doc: "Path to indexed genome folder by **bowtie**, used for IGV of peaks"
-    sd:preview:
-      position: 2
-
-  annotation_file:
-    type: File
-    'sd:upstreamSource': "genome_indices/annotation"
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
-
   feature_file:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -50,14 +35,13 @@ inputs:
     'sd:upstreamSource': "sample_to_filter/iaintersect_result"
     'sd:localLabel': true
 
-  # alignment_file:
-  #   type: File
-  #   secondaryFiles:
-  #   - .bai
-  #   format: "http://edamontology.org/format_2572"
-  #   label: "ChIP/ATAC experiment"
-  #   doc: "Coordinate sorted BAM and BAI index files"
-  #   'sd:upstreamSource': "sample_to_filter/bambai_pair"
+  annotation_file:
+    type: File
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
+    'sd:upstreamSource': "genome_indices/annotation"
+    'sd:localLabel': true
 
   sql_query:
     type: string
@@ -80,7 +64,7 @@ inputs:
     type:
     - "null"
     - string[]
-    default: ["chrom", "start", "end", "chrom || '-' || start || '-' || end AS name"]
+    default: ["chrom", "start", "end", "chrom || '-' || start || '-' || end AS name", "foldenrich AS score", "strand"]
     label: "Columns to print"
     doc: |
       List of columns to print (SELECT parameters for SQL query).
@@ -140,13 +124,6 @@ outputs:
     - syncfusiongrid:
         tab: 'Annotated Peak Filtering Results'
         Title: 'Filtered peaks with nearest gene annotation'
-
-  # bambai_pair:
-  #   type: File
-  #   format: "http://edamontology.org/format_2572"
-  #   label: "Not changed coordinate sorted BAM and BAI index files"
-  #   doc: "Not changed coordinate sorted BAM and BAI index files"
-  #   outputSource: alignment_file
 
   filtering_stdout_log:
     type: File
