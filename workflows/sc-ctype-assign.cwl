@@ -500,48 +500,6 @@ outputs:
         tab: 'Genes of interest'
         Caption: 'UMAP, gene expression, WNN'
 
-  xpr_per_cell_sgnl_rd_rnaumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: ctype_assign/xpr_per_cell_sgnl_rd_rnaumap_plot_png
-    label: "UMAP, gene expression density, RNA"
-    doc: |
-      UMAP, gene expression density, RNA
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression density, RNA'
-
-  xpr_per_cell_sgnl_rd_atacumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: ctype_assign/xpr_per_cell_sgnl_rd_atacumap_plot_png
-    label: "UMAP, gene expression density, ATAC"
-    doc: |
-      UMAP, gene expression density, ATAC
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression density, ATAC'
-
-  xpr_per_cell_sgnl_rd_wnnumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: ctype_assign/xpr_per_cell_sgnl_rd_wnnumap_plot_png
-    label: "UMAP, gene expression density, WNN"
-    doc: |
-      UMAP, gene expression density, WNN
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression density, WNN'
-
   xpr_htmp_plot_png:
     type: File?
     outputSource: ctype_assign/xpr_htmp_plot_png
@@ -738,9 +696,6 @@ steps:
     - xpr_per_cell_rd_rnaumap_plot_png
     - xpr_per_cell_rd_atacumap_plot_png
     - xpr_per_cell_rd_wnnumap_plot_png
-    - xpr_per_cell_sgnl_rd_rnaumap_plot_png
-    - xpr_per_cell_sgnl_rd_atacumap_plot_png
-    - xpr_per_cell_sgnl_rd_wnnumap_plot_png
     - cvrg_plot_png
     - xpr_htmp_plot_png
     - umap_rd_rnaumap_plot_pdf

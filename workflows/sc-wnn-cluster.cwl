@@ -393,20 +393,6 @@ outputs:
         tab: 'Genes of interest'
         Caption: 'UMAP, gene expression'
 
-  xpr_per_cell_sgnl_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_wnn_cluster/xpr_per_cell_sgnl_plot_png
-    label: "UMAP, gene expression density"
-    doc: |
-      UMAP, gene expression density
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression density'
-
   xpr_htmp_res_plot_png:
     type:
     - "null"
@@ -591,7 +577,6 @@ steps:
     - cmp_gr_ph_spl_clst_res_plot_png
     - xpr_avg_res_plot_png
     - xpr_per_cell_plot_png
-    - xpr_per_cell_sgnl_plot_png
     - xpr_dnst_res_plot_png
     - cvrg_res_plot_png
     - xpr_htmp_res_plot_png
