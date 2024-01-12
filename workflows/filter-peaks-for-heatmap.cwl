@@ -10,8 +10,6 @@ requirements:
 
 
 'sd:upstream':
-  genome_indices:
-    - "genome-indices.cwl"
   sample_to_filter:
     - "chipseq-se.cwl"
     - "chipseq-pe.cwl"
@@ -42,7 +40,7 @@ inputs:
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
-    'sd:upstreamSource': "genome_indices/annotation"
+    'sd:upstreamSource': "sample_to_filter/annotation_file"
 
   sql_query:
     type: string
@@ -126,7 +124,7 @@ outputs:
         tab: 'Annotated Peak Filtering Results'
         Title: 'Filtered peaks with nearest gene annotation'
 
-  filtering_stdout_log_file:
+  filtering_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
