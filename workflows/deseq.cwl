@@ -439,13 +439,13 @@ outputs:
 
   morpheus_stdout_log:
     type: File
-    outputSource: morpheus_heatmap/stdout_log
+    outputSource: morpheus_heatmap/stdout_log_file
     label: "Morpheus heatmap stdout log"
     doc: "Morpheus heatmap stdout log"
 
   morpheus_stderr_log:
     type: File
-    outputSource: morpheus_heatmap/stderr_log
+    outputSource: morpheus_heatmap/stdout_log_file
     label: "Morpheus heatmap stderr log"
     doc: "Morpheus heatmap stderr log"
 
@@ -505,8 +505,8 @@ steps:
       - read_counts_file_filtered
       - phenotypes_file
       - mds_plot_html
-      - stdout_log
-      - stderr_log
+      - stdout_log_file
+      - stderr_log_file
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
