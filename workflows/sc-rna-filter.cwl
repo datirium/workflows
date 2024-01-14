@@ -100,9 +100,9 @@ inputs:
   minimum_umis:
     type: string?
     default: "500"
-    label: "Include cells where at least this many UMI (transcripts) are detected"
+    label: "Include cells where at least this many RNA reads are detected"
     doc: |
-      Include cells where at least this many UMI (transcripts) are detected.
+      Include cells where at least this many RNA reads are detected.
       If multiple values provided, each of them will be applied to the correspondent
       dataset from the '--mex' input based on the '--identity' file.
       Default: 500 (applied to all datasets)
@@ -135,9 +135,9 @@ inputs:
   maximum_mito_perc:
     type: float?
     default: 5
-    label: "Include cells with the percentage of transcripts mapped to mitochondrial genes not bigger than this value"
+    label: "Include cells with the percentage of RNA reads mapped to mitochondrial genes not bigger than this value"
     doc: |
-      Include cells with the percentage of transcripts mapped to mitochondrial
+      Include cells with the percentage of RNA reads mapped to mitochondrial
       genes not bigger than this value.
       Default: 5 (applied to all datasets)
     'sd:layout':
@@ -262,14 +262,14 @@ outputs:
   raw_umi_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_dnst_plot_png
-    label: "Transcripts per cell density (not filtered)"
+    label: "RNA reads per cell density (not filtered)"
     doc: |
-      Transcripts per cell density (not filtered).
+      RNA reads per cell density (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Transcripts per cell density'
+        Caption: 'RNA reads per cell density'
 
   raw_gene_dnst_plot_png:
     type: File?
@@ -286,26 +286,26 @@ outputs:
   raw_gene_umi_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_gene_umi_plot_png
-    label: "Genes vs transcripts per cell correlation (not filtered)"
+    label: "Genes vs RNA reads per cell correlation (not filtered)"
     doc: |
-      Genes vs transcripts per cell correlation (not filtered).
+      Genes vs RNA reads per cell correlation (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Genes vs transcripts per cell correlation'
+        Caption: 'Genes vs RNA reads per cell correlation'
 
   raw_mito_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_mito_dnst_plot_png
-    label: "Percentage of transcripts mapped to mitochondrial genes per cell density (not filtered)"
+    label: "Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered)"
     doc: |
-      Percentage of transcripts mapped to mitochondrial genes per cell density (not filtered).
+      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Percentage of transcripts mapped to mitochondrial genes per cell density'
+        Caption: 'Percentage of RNA reads mapped to mitochondrial genes per cell density'
 
   raw_nvlt_dnst_plot_png:
     type: File?
@@ -346,14 +346,14 @@ outputs:
   raw_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_dnst_spl_cnd_plot_png
-    label: "Split by grouping condition transcripts per cell density (not filtered)"
+    label: "Split by grouping condition RNA reads per cell density (not filtered)"
     doc: |
-      Split by grouping condition transcripts per cell density (not filtered).
+      Split by grouping condition RNA reads per cell density (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Split by grouping condition transcripts per cell density'
+        Caption: 'Split by grouping condition RNA reads per cell density'
 
   raw_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -370,15 +370,15 @@ outputs:
   raw_mito_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_mito_dnst_spl_cnd_plot_png
-    label: "Split by grouping condition the percentage of transcripts mapped to mitochondrial genes per cell density (not filtered)"
+    label: "Split by grouping condition the percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered)"
     doc: |
-      Split by grouping condition the percentage of transcripts mapped
+      Split by grouping condition the percentage of RNA reads mapped
       to mitochondrial genes per cell density (not filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Not filtered QC'
-        Caption: 'Split by grouping condition the percentage of transcripts mapped to mitochondrial genes per cell density'
+        Caption: 'Split by grouping condition the percentage of RNA reads mapped to mitochondrial genes per cell density'
 
   raw_nvlt_dnst_spl_cnd_plot_png:
     type: File?
@@ -431,14 +431,14 @@ outputs:
   fltr_umi_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_dnst_plot_png
-    label: "Transcripts per cell density (filtered)"
+    label: "RNA reads per cell density (filtered)"
     doc: |
-      Transcripts per cell density (filtered).
+      RNA reads per cell density (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Transcripts per cell density'
+        Caption: 'RNA reads per cell density'
 
   fltr_gene_dnst_plot_png:
     type: File?
@@ -455,26 +455,26 @@ outputs:
   fltr_gene_umi_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_gene_umi_plot_png
-    label: "Genes vs transcripts per cell correlation (filtered)"
+    label: "Genes vs RNA reads per cell correlation (filtered)"
     doc: |
-      Genes vs transcripts per cell correlation (filtered).
+      Genes vs RNA reads per cell correlation (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Genes vs transcripts per cell correlation'
+        Caption: 'Genes vs RNA reads per cell correlation'
 
   fltr_mito_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_mito_dnst_plot_png
-    label: "Percentage of transcripts mapped to mitochondrial genes per cell density (filtered)"
+    label: "Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered)"
     doc: |
-      Percentage of transcripts mapped to mitochondrial genes per cell density (filtered).
+      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Percentage of transcripts mapped to mitochondrial genes per cell density'
+        Caption: 'Percentage of RNA reads mapped to mitochondrial genes per cell density'
 
   fltr_nvlt_dnst_plot_png:
     type: File?
@@ -515,14 +515,14 @@ outputs:
   fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_dnst_spl_cnd_plot_png
-    label: "Split by grouping condition transcripts per cell density (filtered)"
+    label: "Split by grouping condition RNA reads per cell density (filtered)"
     doc: |
-      Split by grouping condition transcripts per cell density (filtered).
+      Split by grouping condition RNA reads per cell density (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Split by grouping condition transcripts per cell density'
+        Caption: 'Split by grouping condition RNA reads per cell density'
 
   fltr_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -539,15 +539,15 @@ outputs:
   fltr_mito_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_mito_dnst_spl_cnd_plot_png
-    label: "Split by grouping condition the percentage of transcripts mapped to mitochondrial genes per cell density (filtered)"
+    label: "Split by grouping condition the percentage of RNA reads mapped to mitochondrial genes per cell density (filtered)"
     doc: |
-      Split by grouping condition the percentage of transcripts mapped
+      Split by grouping condition the percentage of RNA reads mapped
       to mitochondrial genes per cell density (filtered).
       PNG format
     'sd:visualPlugins':
     - image:
         tab: 'Filtered QC'
-        Caption: 'Split by grouping condition the percentage of transcripts mapped to mitochondrial genes per cell density'
+        Caption: 'Split by grouping condition the percentage of RNA reads mapped to mitochondrial genes per cell density'
 
   fltr_nvlt_dnst_spl_cnd_plot_png:
     type: File?

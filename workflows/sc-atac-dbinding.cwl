@@ -347,10 +347,10 @@ outputs:
   first_fragments_bigwig_file:
     type: File
     outputSource: sc_atac_dbinding/first_fragments_bigwig_file
-    label: "Genome coverage for fragments (first)"
+    label: "Genome coverage for ATAC fragments (first)"
     doc: |
       Genome coverage in bigWig format calculated
-      for fragments from the cells that belong to
+      for ATAC fragments from the cells that belong to
       the group defined by the --first and
       --groupby parameters.
     'sd:visualPlugins':
@@ -358,16 +358,16 @@ outputs:
         tab: 'Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Fragments coverage (first)"
+        name: "ATAC fragments coverage (first)"
         height: 120
 
   second_fragments_bigwig_file:
     type: File
     outputSource: sc_atac_dbinding/second_fragments_bigwig_file
-    label: "Genome coverage for fragments (second)"
+    label: "Genome coverage for ATAC fragments (second)"
     doc: |
       Genome coverage in bigWig format calculated
-      for fragments from the cells that belong to
+      for ATAC fragments from the cells that belong to
       the group defined by the --second and
       --groupby parameters.
     'sd:visualPlugins':
@@ -375,7 +375,7 @@ outputs:
         tab: 'Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Fragments coverage (second)"
+        name: "ATAC fragments coverage (second)"
         height: 120
 
   first_tn5ct_bigwig_file:

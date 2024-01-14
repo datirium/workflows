@@ -70,7 +70,7 @@ inputs:
     label: "Cell Ranger ARC Sample (optional)"
     doc: |
       "Cell Ranger ARC Sample" for generating
-      fragments coverage plots over the genes
+      ATAC fragments coverage plots over the genes
       of interest.
     'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
     'sd:localLabel': true
@@ -169,7 +169,7 @@ inputs:
     doc: |
       Comma or space separated list of genes
       of interest to visualize expression and
-      to generate fragments coverage plots.
+      to generate ATAC fragments coverage plots.
       Ignored if "Cell Ranger ARC Sample" input
       is not provided.
       Default: None
@@ -522,13 +522,13 @@ outputs:
     - type: array
       items: File
     outputSource: ctype_assign/cvrg_plot_png
-    label: "Fragments coverage"
+    label: "ATAC fragments coverage"
     doc: |
-      Fragments coverage
+      ATAC fragments coverage
     'sd:visualPlugins':
     - image:
         tab: 'Genome coverage'
-        Caption: 'Fragments coverage'
+        Caption: 'ATAC fragments coverage'
 
   xpr_htmp_tsv:
     type: File?

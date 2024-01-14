@@ -157,11 +157,11 @@ inputs:
   minimum_umis:
     type: string?
     default: "500"
-    label: "Minimum number of transcripts per cell"
+    label: "Minimum number of RNA reads per cell"
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
-      cells with the number of transcripts
+      cells with the number of RNA reads
       smaller than the provided value.
       If the selected "Cell Ranger ARC
       Sample" includes multiple aggregated
@@ -245,7 +245,7 @@ inputs:
       Quality control filtering threshold
       to exclude from the analysis all
       cells with the percentage of
-      transcripts mapped to mitochondrial
+      RNA reads mapped to mitochondrial
       genes exceeding the provided value.
       Default: 5
     "sd:layout":
@@ -282,11 +282,11 @@ inputs:
   minimum_fragments:
     type: string?
     default: "1000"
-    label: "Minimum number of fragments in peaks per cell"
+    label: "Minimum number of ATAC fragments in peaks per cell"
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
-      cells with the number of fragments
+      cells with the number of ATAC fragments
       in peaks smaller than the provided
       value. If the selected "Cell Ranger
       ARC Sample" includes multiple aggregated
@@ -494,14 +494,14 @@ outputs:
   raw_umi_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_umi_dnst_plot_png
-    label: "Transcripts per cell, raw"
+    label: "RNA reads per cell, raw"
     doc: |
-      Transcripts per cell density
+      RNA reads per cell density
       for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "Transcripts per cell"
+        Caption: "RNA reads per cell"
 
   raw_gene_dnst_plot_png:
     type: File?
@@ -518,21 +518,21 @@ outputs:
   raw_gene_umi_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_gene_umi_plot_png
-    label: "Genes vs transcripts, raw"
+    label: "Genes vs RNA reads, raw"
     doc: |
-      Genes vs transcripts per cell
+      Genes vs RNA reads per cell
       for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "Genes vs transcripts"
+        Caption: "Genes vs RNA reads"
 
   raw_mito_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_mito_dnst_plot_png
     label: "Mitochondrial percentage, raw"
     doc: |
-      Percentage of transcripts mapped to
+      Percentage of RNA reads mapped to
       mitochondrial genes per cell density
       for raw data
     "sd:visualPlugins":
@@ -555,14 +555,14 @@ outputs:
   raw_frgm_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_frgm_dnst_plot_png
-    label: "Fragments in peaks per cell, raw"
+    label: "ATAC fragments in peaks per cell, raw"
     doc: |
-      Fragments in peaks per cell density
-      for raw data
+      ATAC fragments in peaks per
+      cell density for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "Fragments in peaks per cell"
+        Caption: "ATAC fragments in peaks per cell"
 
   raw_peak_dnst_plot_png:
     type: File?
@@ -592,26 +592,26 @@ outputs:
   raw_rna_atac_cnts_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_rna_atac_cnts_plot_png
-    label: "Transcripts vs fragments in peaks, raw"
+    label: "RNA reads vs ATAC fragments in peaks, raw"
     doc: |
-      Transcripts vs fragments in peaks
-      per cell for raw data
+      RNA reads vs ATAC fragments in
+      peaks per cell for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "Transcripts vs fragments in peaks"
+        Caption: "RNA reads vs ATAC fragments in peaks"
 
   raw_tss_frgm_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_tss_frgm_plot_png
-    label: "TSS enrichment score vs fragments in peaks, raw"
+    label: "TSS enrichment score vs ATAC fragments in peaks, raw"
     doc: |
-      TSS enrichment score vs fragments in peaks
-      per cell for raw data
+      TSS enrichment score vs ATAC fragments
+      in peaks per cell for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "TSS enrichment score vs fragments in peaks"
+        Caption: "TSS enrichment score vs ATAC fragments in peaks"
 
   raw_qc_mtrcs_dnst_plot_png:
     type: File?
@@ -676,26 +676,26 @@ outputs:
   raw_frgm_hist_png:
     type: File?
     outputSource: sc_multiome_filter/raw_frgm_hist_png
-    label: "Fragments length, raw"
+    label: "ATAC fragments length, raw"
     doc: |
-      Fragments length distribution
+      ATAC fragments length distribution
       for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw"
-        Caption: "Fragments length"
+        Caption: "ATAC fragments length"
 
   raw_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_umi_dnst_spl_cnd_plot_png
-    label: "Transcripts per cell, raw, split by condition"
+    label: "RNA reads per cell, raw, split by condition"
     doc: |
-      Split by grouping condition transcripts
+      Split by grouping condition RNA reads
       per cell density for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw, by condition"
-        Caption: "Transcripts per cell"
+        Caption: "RNA reads per cell"
 
   raw_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -715,7 +715,7 @@ outputs:
     label: "Mitochondrial percentage, raw, split by condition"
     doc: |
       Split by grouping condition the
-      percentage of transcripts mapped to
+      percentage of RNA reads mapped to
       mitochondrial genes per cell density
       for raw data
     "sd:visualPlugins":
@@ -739,14 +739,15 @@ outputs:
   raw_frgm_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_multiome_filter/raw_frgm_dnst_spl_cnd_plot_png
-    label: "Fragments in peaks per cell, raw, split by condition"
+    label: "ATAC fragments in peaks per cell, raw, split by condition"
     doc: |
-      Split by grouping condition fragments
-      in peaks per cell density for raw data
+      Split by grouping condition ATAC
+      fragments in peaks per cell density
+      for raw data
     "sd:visualPlugins":
     - image:
         tab: "Raw, by condition"
-        Caption: "Fragments in peaks per cell"
+        Caption: "ATAC fragments in peaks per cell"
 
   raw_peak_dnst_spl_cnd_plot_png:
     type: File?
@@ -813,14 +814,14 @@ outputs:
   fltr_umi_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_umi_dnst_plot_png
-    label: "Transcripts per cell, filtered"
+    label: "RNA reads per cell, filtered"
     doc: |
-      Transcripts per cell density
+      RNA reads per cell density
       for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "Transcripts per cell"
+        Caption: "RNA reads per cell"
 
   fltr_gene_dnst_plot_png:
     type: File?
@@ -837,21 +838,21 @@ outputs:
   fltr_gene_umi_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_gene_umi_plot_png
-    label: "Genes vs transcripts, filtered"
+    label: "Genes vs RNA reads, filtered"
     doc: |
-      Genes vs transcripts per cell
+      Genes vs RNA reads per cell
       for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "Genes vs transcripts"
+        Caption: "Genes vs RNA reads"
 
   fltr_mito_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_mito_dnst_plot_png
     label: "Mitochondrial percentage, filtered"
     doc: |
-      Percentage of transcripts mapped to
+      Percentage of RNA reads mapped to
       mitochondrial genes per cell density
       for filtered data
     "sd:visualPlugins":
@@ -874,14 +875,14 @@ outputs:
   fltr_frgm_dnst_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_frgm_dnst_plot_png
-    label: "Fragments in peaks per cell, filtered"
+    label: "ATAC fragments in peaks per cell, filtered"
     doc: |
-      Fragments in peaks per cell density
-      for filtered data
+      ATAC fragments in peaks per cell
+      density for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "Fragments in peaks per cell"
+        Caption: "ATAC fragments in peaks per cell"
 
   fltr_peak_dnst_plot_png:
     type: File?
@@ -911,26 +912,27 @@ outputs:
   fltr_rna_atac_cnts_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_rna_atac_cnts_plot_png
-    label: "Transcripts vs fragments in peaks, filtered"
+    label: "RNA reads vs ATAC fragments in peaks, filtered"
     doc: |
-      Transcripts vs fragments in peaks
-      per cell for filtered data
-    "sd:visualPlugins":
-    - image:
-        tab: "Filtered"
-        Caption: "Transcripts vs fragments in peaks"
-
-  fltr_tss_frgm_plot_png:
-    type: File?
-    outputSource: sc_multiome_filter/fltr_tss_frgm_plot_png
-    label: "TSS enrichment score vs fragments in peaks, filtered"
-    doc: |
-      TSS enrichment score vs fragments in
+      RNA reads vs ATAC fragments in
       peaks per cell for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "TSS enrichment score vs fragments in peaks"
+        Caption: "RNA reads vs ATAC fragments in peaks"
+
+  fltr_tss_frgm_plot_png:
+    type: File?
+    outputSource: sc_multiome_filter/fltr_tss_frgm_plot_png
+    label: "TSS enrichment score vs ATAC fragments in peaks, filtered"
+    doc: |
+      TSS enrichment score vs ATAC
+      fragments in peaks per cell for
+      filtered data
+    "sd:visualPlugins":
+    - image:
+        tab: "Filtered"
+        Caption: "TSS enrichment score vs ATAC fragments in peaks"
 
   fltr_qc_mtrcs_dnst_plot_png:
     type: File?
@@ -995,26 +997,26 @@ outputs:
   fltr_frgm_hist_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_frgm_hist_png
-    label: "Fragments length, filtered"
+    label: "ATAC fragments length, filtered"
     doc: |
-      Fragments length distribution
+      ATAC fragments length distribution
       for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered"
-        Caption: "Fragments length"
+        Caption: "ATAC fragments length"
 
   fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_umi_dnst_spl_cnd_plot_png
-    label: "Transcripts per cell, filtered, split by condition"
+    label: "RNA reads per cell, filtered, split by condition"
     doc: |
-      Split by grouping condition transcripts
+      Split by grouping condition RNA reads
       per cell density for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered, by condition"
-        Caption: "Transcripts per cell"
+        Caption: "RNA reads per cell"
 
   fltr_gene_dnst_spl_cnd_plot_png:
     type: File?
@@ -1034,7 +1036,7 @@ outputs:
     label: "Mitochondrial percentage, filtered, split by condition"
     doc: |
       Split by grouping condition the
-      percentage of transcripts mapped to
+      percentage of RNA reads mapped to
       mitochondrial genes per cell density
       for filtered data
     "sd:visualPlugins":
@@ -1058,15 +1060,15 @@ outputs:
   fltr_frgm_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_multiome_filter/fltr_frgm_dnst_spl_cnd_plot_png
-    label: "Fragments in peaks per cell, filtered, split by condition"
+    label: "ATAC fragments in peaks per cell, filtered, split by condition"
     doc: |
-      Split by grouping condition fragments
-      in peaks per cell density for filtered
-      data
+      Split by grouping condition ATAC
+      fragments in peaks per cell density
+      for filtered data
     "sd:visualPlugins":
     - image:
         tab: "Filtered, by condition"
-        Caption: "Fragments in peaks per cell"
+        Caption: "ATAC fragments in peaks per cell"
 
   fltr_peak_dnst_spl_cnd_plot_png:
     type: File?
@@ -1141,14 +1143,16 @@ outputs:
     outputSource: sc_multiome_filter/stdout_log
     label: "Output log, filtering step"
     doc: |
-      stdout log generated by sc_multiome_filter step
+      stdout log generated by
+      sc_multiome_filter step
 
   sc_multiome_filter_stderr_log:
     type: File
     outputSource: sc_multiome_filter/stderr_log
     label: "Error log, filtering step"
     doc: |
-      stderr log generated by sc_multiome_filter step
+      stderr log generated by
+      sc_multiome_filter step
 
 
 steps:
