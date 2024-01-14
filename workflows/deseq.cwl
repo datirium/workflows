@@ -423,29 +423,29 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_std_out_log:
+  deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
-    outputSource: deseq/stdout_log
+    outputSource: deseq/stdout_log_file
 
-  deseq_std_err_log:
+  deseq_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
-    outputSource: deseq/stderr_log
+    outputSource: deseq/stdout_log_file
 
   morpheus_stdout_log:
     type: File
-    outputSource: morpheus_heatmap/stdout_log_file
+    outputSource: morpheus_heatmap/stdout_log
     label: "Morpheus heatmap stdout log"
     doc: "Morpheus heatmap stdout log"
 
   morpheus_stderr_log:
     type: File
-    outputSource: morpheus_heatmap/stdout_log_file
+    outputSource: morpheus_heatmap/stderr_log
     label: "Morpheus heatmap stderr log"
     doc: "Morpheus heatmap stderr log"
 
