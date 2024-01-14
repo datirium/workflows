@@ -124,13 +124,13 @@ inputs:
       - "5"
       - "6"
     default: "1"
-    label: "Cores/CPUs"
+    label: "Number of cores/cpus to use"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
       Default: 1
-    "sd:layout":
+    'sd:layout':
       advanced: true
 
 
@@ -176,16 +176,16 @@ outputs:
     - type: array
       items: File
     outputSource: sc_atac_coverage/fragments_bigwig_file
-    label: "Genome coverage for fragments"
+    label: "Genome coverage for ATAC fragments"
     doc: |
-      Genome coverage calculated for fragments
+      Genome coverage calculated for ATAC fragments
       in bigWig format
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "Fragments coverage"
+        name: "ATAC fragments coverage"
         height: 120
 
   experiment_info:
@@ -269,7 +269,7 @@ $schemas:
 
 label: "Single-cell ATAC-Seq Genome Coverage"
 s:name: "Single-cell ATAC-Seq Genome Coverage"
-s:alternateName: "Creates genome coverage bigWig files from the provided fragments file and selected grouping parameters"
+s:alternateName: "Creates genome coverage bigWig files from the provided ATAC fragments file and selected grouping parameters"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-coverage.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -310,4 +310,4 @@ doc: |
   Single-cell ATAC-Seq Genome Coverage
 
   Creates genome coverage bigWig files from the provided
-  fragments file and selected grouping parameters
+  ATAC fragments file and selected grouping parameters

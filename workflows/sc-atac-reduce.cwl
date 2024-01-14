@@ -275,14 +275,14 @@ outputs:
   umap_spl_frgm_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_frgm_plot_png
-    label: "UMAP, colored by dataset, split by fragments in peaks per cell"
+    label: "UMAP, colored by dataset, split by ATAC fragments in peaks per cell"
     doc: |
       UMAP, colored by dataset, split
-      by fragments in peaks per cell.
+      by ATAC fragments in peaks per cell.
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by fragments in peaks per cell'
+        Caption: 'UMAP, colored by dataset, split by ATAC fragments in peaks per cell'
 
   umap_spl_peak_plot_png:
     type: File?
@@ -359,14 +359,14 @@ outputs:
   umap_gr_cnd_spl_frgm_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_gr_cnd_spl_frgm_plot_png
-    label: "UMAP, colored by grouping condition, split by fragments in peaks per cell"
+    label: "UMAP, colored by grouping condition, split by ATAC fragments in peaks per cell"
     doc: |
       UMAP, colored by grouping condition,
-      split by fragments in peaks per cell
+      split by ATAC fragments in peaks per cell
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by fragments in peaks per cell'
+        Caption: 'UMAP, colored by grouping condition, split by ATAC fragments in peaks per cell'
 
   umap_gr_cnd_spl_peak_plot_png:
     type: File?

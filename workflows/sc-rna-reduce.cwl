@@ -181,7 +181,7 @@ inputs:
     label: "Regress mitochondrial percentage"
     default: false
     doc: |
-      Regress the percentage of transcripts
+      Regress the percentage of RNA reads
       mapped to mitochondrial genes as a
       confounding source of variation.
       Default: false
@@ -374,14 +374,14 @@ outputs:
   umap_spl_umi_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_spl_umi_plot_png
-    label: "UMAP, colored by dataset, split by transcripts per cell"
+    label: "UMAP, colored by dataset, split by RNA reads per cell"
     doc: |
       UMAP, colored by dataset, split by
-      transcripts per cell
+      RNA reads per cell
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by transcripts per cell'
+        Caption: 'UMAP, colored by dataset, split by RNA reads per cell'
 
   umap_spl_gene_plot_png:
     type: File?
@@ -446,14 +446,14 @@ outputs:
   umap_gr_cnd_spl_umi_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_gr_cnd_spl_umi_plot_png
-    label: "UMAP, colored by grouping condition, split by transcripts per cell"
+    label: "UMAP, colored by grouping condition, split by RNA reads per cell"
     doc: |
       UMAP, colored by grouping condition,
-      split by transcripts per cell
+      split by RNA reads per cell
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by transcripts per cell'
+        Caption: 'UMAP, colored by grouping condition, split by RNA reads per cell'
 
   umap_gr_cnd_spl_gene_plot_png:
     type: File?
