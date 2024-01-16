@@ -113,16 +113,6 @@ inputs:
       resolution into several groups.
       Default: "none"
 
-  cell_type_data:
-    type: File
-    label: "Cell types"
-    doc: |
-      A TSV/CSV file with the names for each
-      cluster defined by "Clustering resolution"
-      and "Dimensionality reduction" parameters.
-      The file should have two columns named
-      'cluster' and 'celltype'.
-
   identify_diff_genes:
     type: boolean?
     default: true
@@ -173,6 +163,16 @@ inputs:
       Ignored if "Cell Ranger ARC Sample" input
       is not provided.
       Default: None
+
+  cell_type_data:
+    type: File
+    label: "Cell types"
+    doc: |
+      A TSV/CSV file with the names for each
+      cluster defined by "Clustering resolution"
+      and "Dimensionality reduction" parameters.
+      The file should have two columns named
+      'cluster' and 'celltype'.
 
   color_theme:
     type:
