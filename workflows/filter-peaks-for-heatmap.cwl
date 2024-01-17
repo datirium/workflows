@@ -65,7 +65,7 @@ inputs:
     type:
     - "null"
     - string[]
-    default: ["chrom", "start", "end", "chrom || '-' || start || '-' || end AS name", "foldenrich AS score", "strand"]
+    default: ["chrom", "start", "end", "gene_id AS name", "foldenrich AS score", "strand"]
     label: "Columns to print"
     doc: |
       List of columns to print (SELECT parameters for SQL query).
@@ -126,14 +126,14 @@ outputs:
         tab: 'Annotated Peak Filtering Results'
         Title: 'Filtered peaks with nearest gene annotation'
 
-  stdout_log:
+  stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: feature_select/stdout_log
 
-  stderr_log:
+  stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
