@@ -36,8 +36,8 @@ inputs:
     doc: |
       Analysis that includes single-cell
       RNA-Seq datasets run through either
-      "Single-cell Manual Cell Type
-      Assignment" or "Single-cell RNA-Seq
+      "Single-Cell Manual Cell Type
+      Assignment" or "Single-Cell RNA-Seq
       Cluster Analysis" at any of the
       processing stages.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
