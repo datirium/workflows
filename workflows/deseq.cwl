@@ -423,19 +423,19 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_stdout_log:
+  deseq_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
     outputSource: deseq/stdout_log_file
 
-  deseq_stderr_log:
+  deseq_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
-    outputSource: deseq/stdout_log_file
+    outputSource: deseq/stderr_log_file
 
   morpheus_stdout_log:
     type: File
