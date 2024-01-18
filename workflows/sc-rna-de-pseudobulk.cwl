@@ -744,9 +744,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell RNA-Seq Differential Expression Analysis"
-s:name: "Single-cell RNA-Seq Differential Expression Analysis"
-s:alternateName: "Identifies differentially expressed genes between groups of cells optionally coerced to the pseudobulk form"
+label: "Single-Cell RNA-Seq Differential Expression Analysis"
+s:name: "Single-Cell RNA-Seq Differential Expression Analysis"
+s:alternateName: "Identifies differentially expressed genes between any two groups of cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-de-pseudobulk.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -784,8 +784,8 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Differential Expression Analysis
+  Single-Cell RNA-Seq Differential Expression Analysis
 
-  Identifies differentially expressed genes
-  between groups of cells optionally coerced
-  to the pseudobulk form.
+  Identifies differentially expressed genes between any two
+  groups of cells, optionally aggregating gene expression
+  data from single-cell to pseudobulk form.

@@ -631,9 +631,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Immune Profiling Analysis"
-s:name: "Single-cell Immune Profiling Analysis"
-s:alternateName: "TCR/BCR clonotype dynamics analysis"
+label: "Single-Cell Immune Profiling Analysis"
+s:name: "Single-Cell Immune Profiling Analysis"
+s:alternateName: "Estimates clonotype diversity and dynamics from V(D)J sequencing data assembled into contigs"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-vdj-profile.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -671,6 +671,7 @@ s:creator:
 
 
 doc: |
-  Single-cell Immune Profiling Analysis
+  Single-Cell Immune Profiling Analysis
 
-  TCR/BCR clonotype dynamics analysis
+  Estimates clonotype diversity and dynamics from V(D)J
+  sequencing data assembled into contigs

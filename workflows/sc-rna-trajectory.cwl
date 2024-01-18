@@ -598,9 +598,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell RNA-Seq Trajectory Analysis"
-s:name: "Single-cell RNA-Seq Trajectory Analysis"
-s:alternateName: "Aligns cells along the trajectory defined based on PCA or other dimensionality reduction"
+label: "Single-Cell RNA-Seq Trajectory Analysis"
+s:name: "Single-Cell RNA-Seq Trajectory Analysis"
+s:alternateName: "Infers developmental trajectories and pseudotime from cells clustered by similarity of gene expression data"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-trajectory.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -638,7 +638,7 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Trajectory Analysis
+  Single-Cell RNA-Seq Trajectory Analysis
 
-  Aligns cells along the trajectory defined based
-  on PCA or other dimensionality reduction
+  Infers developmental trajectories and pseudotime from
+  cells clustered by similarity of gene expression data.

@@ -476,9 +476,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger ATAC Count"
-s:name: "Cell Ranger ATAC Count"
-s:alternateName: "Counts reads from a single scATAC-Seq library"
+label: "Cell Ranger Count (ATAC)"
+s:name: "Cell Ranger Count (ATAC)"
+s:alternateName: "Quantifies single-cell chromatin accessibility of the sequencing data from a single 10x Genomics library"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-atac-count.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -516,6 +516,9 @@ s:creator:
 
 
 doc: |
-  Cell Ranger ATAC Count
+  Cell Ranger Count (ATAC)
 
-  Counts reads from a single scATAC-Seq library
+  Quantifies single-cell chromatin accessibility of the sequencing
+  data from a single 10x Genomics library. The results of this
+  workflow are primarily used in “Cellranger Aggregate (ATAC)”
+  pipeline.

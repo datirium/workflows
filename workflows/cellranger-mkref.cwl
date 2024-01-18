@@ -194,9 +194,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Cell Ranger Build Reference Indices"
-label: "Cell Ranger Build Reference Indices"
-s:alternateName: "Builds reference genome indices for Cell Ranger Gene Expression and Cell Ranger Multiome ATAC + Gene Expression experiments"
+s:name: "Cell Ranger Reference (RNA, ATAC, RNA+ATAC)"
+label: "Cell Ranger Reference (RNA, ATAC, RNA+ATAC)"
+s:alternateName: "Builds a reference genome of a selected species for quantifying gene expression and chromatin accessibility"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-mkref.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -234,5 +234,9 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Build Reference Indices
-  ===================================
+  Cell Ranger Reference (RNA, ATAC, RNA+ATAC)
+
+  Builds a reference genome of a selected species for quantifying
+  gene expression and chromatin accessibility. The results of this
+  workflow are used in all “Cell Ranger Count” and “Cell Ranger
+  Aggregate” pipelines.

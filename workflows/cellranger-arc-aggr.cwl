@@ -356,9 +356,9 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Cell Ranger ARC Aggregate Gene Expression and Chromatin Accessibility"
-s:name: "Cell Ranger ARC Aggregate Gene Expression and Chromatin Accessibility"
-s:alternateName: "Aggregates data from multiple Cell Ranger ARC Count Gene Expression and Chromatin Accessibility experiments"
+label: "Cell Ranger Aggregate (RNA+ATAC)"
+s:name: "Cell Ranger Aggregate (RNA+ATAC)"
+s:alternateName: "Combines outputs from multiple runs of Cell Ranger Count (RNA+ATAC) pipeline"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-arc-aggr.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -396,7 +396,8 @@ s:creator:
 
 
 doc: |
-  Cell Ranger ARC Aggregate Gene Expression and Chromatin Accessibility
-  
-  Aggregates data from multiple Cell Ranger ARC Count Gene
-  Expression and Chromatin Accessibility experiments.
+  Cell Ranger Aggregate (RNA+ATAC)
+
+  Combines outputs from multiple runs of “Cell Ranger Count (RNA+ATAC)”
+  pipeline. The results of this workflow are primarily used in
+  “Single-Cell Multiome ATAC and RNA-Seq Filtering Analysis” pipeline.

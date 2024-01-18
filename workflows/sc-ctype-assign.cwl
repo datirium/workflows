@@ -789,9 +789,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Manual Cell Type Assignment"
-s:name: "Single-cell Manual Cell Type Assignment"
-s:alternateName: "Assigns cell types for clusters based on the provided metadata file"
+label: "Single-Cell Manual Cell Type Assignment"
+s:name: "Single-Cell Manual Cell Type Assignment"
+s:alternateName: "Assigns identities to clustered cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-ctype-assign.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -829,7 +829,17 @@ s:creator:
 
 
 doc: |
-  Single-cell Manual Cell Type Assignment
+  Single-Cell Manual Cell Type Assignment
 
-  Assigns cell types for clusters based on
-  the provided metadata file.
+  Assigns identities to cells clustered with any of the “Single-Cell
+  Cluster Analysis” pipelines. For “Single-Cell RNA-Seq Cluster Analysis”
+  the results of this workflow are primarily used in “Single-Cell
+  RNA-Seq Differential Expression Analysis”, “Single-Cell RNA-Seq
+  Trajectory Analysis”, and, when combined with outputs from “Cell Ranger
+  Count (RNA+VDJ)” or “Cell Ranger Aggregate (RNA, RNA+VDJ)” workflows –
+  in “Single-Cell Immune Profiling Analysis” pipelines. For “Single-Cell
+  ATAC-Seq Cluster Analysis” the results of this workflow are primarily
+  used in “Single-Cell ATAC-Seq Differential Binding Analysis” and
+  “Single-Cell ATAC-Seq Genome Coverage” pipelines. For “Single-Cell WNN
+  Cluster Analysis” – in all of the above, except the “Single-Cell
+  Immune Profiling Analysis” workflow.

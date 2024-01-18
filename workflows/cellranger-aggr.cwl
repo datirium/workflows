@@ -293,9 +293,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Aggregate"
-s:name: "Cell Ranger Aggregate"
-s:alternateName: "Aggregates data from multiple Cell Ranger Count Gene Expression experiments"
+label: "Cell Ranger Aggregate (RNA, RNA+VDJ)"
+s:name: "Cell Ranger Aggregate (RNA, RNA+VDJ)"
+s:alternateName: "Combines outputs from multiple runs of either Cell Ranger Count (RNA) or Cell Ranger Count (RNA+VDJ) pipelines"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-aggr.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -333,7 +333,9 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Aggregate
-  
-  Aggregates outputs from multiple runs of Cell Ranger Count Gene Expression or
-  Cell Ranger Multi Gene Expression and V(D)J Repertoire Profiling experiments
+  Cell Ranger Aggregate (RNA, RNA+VDJ)
+
+  Combines outputs from multiple runs of either “Cell Ranger Count (RNA)”
+  or “Cell Ranger Count (RNA+VDJ)” pipelines. The results of this workflow
+  are primarily used in “Single-Cell RNA-Seq Filtering Analysis” and
+  “Single-Cell Immune Profiling Analysis” pipelines.

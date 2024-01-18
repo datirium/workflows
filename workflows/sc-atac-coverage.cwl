@@ -267,9 +267,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell ATAC-Seq Genome Coverage"
-s:name: "Single-cell ATAC-Seq Genome Coverage"
-s:alternateName: "Creates genome coverage bigWig files from the provided ATAC fragments file and selected grouping parameters"
+label: "Single-Cell ATAC-Seq Genome Coverage"
+s:name: "Single-Cell ATAC-Seq Genome Coverage"
+s:alternateName: "Generates genome coverage tracks from chromatin accessibility data of selected cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-coverage.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -307,7 +307,7 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Genome Coverage
+  Single-Cell ATAC-Seq Genome Coverage
 
-  Creates genome coverage bigWig files from the provided
-  ATAC fragments file and selected grouping parameters
+  Generates genome coverage tracks from chromatin
+  accessibility data of selected cells

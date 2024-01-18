@@ -789,9 +789,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell RNA-Seq Filtering Analysis"
-s:name: "Single-cell RNA-Seq Filtering Analysis"
-s:alternateName: "Filters single-cell RNA-Seq datasets based on the common QC metrics"
+label: "Single-Cell RNA-Seq Filtering Analysis"
+s:name: "Single-Cell RNA-Seq Filtering Analysis"
+s:alternateName: "Removes low-quality cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-filter.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -829,6 +829,9 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Filtering Analysis
-  
-  Filters single-cell RNA-Seq datasets based on the common QC metrics.
+  Single-Cell RNA-Seq Filtering Analysis
+
+  Removes low-quality cells from the outputs of “Cell Ranger Count (RNA)”,
+  “Cell Ranger Count (RNA+VDJ)”, and “Cell Ranger Aggregate (RNA, RNA+VDJ)”
+  pipelines. The results of this workflow are primarily used in “Single-Cell
+  RNA-Seq Dimensionality Reduction Analysis” pipeline.

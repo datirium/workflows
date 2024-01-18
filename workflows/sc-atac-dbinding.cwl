@@ -925,9 +925,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell ATAC-Seq Differential Binding Analysis"
-s:name: "Single-cell ATAC-Seq Differential Binding Analysis"
-s:alternateName: "Identifies differential bound sites between two groups of cells"
+label: "Single-Cell ATAC-Seq Differential Binding Analysis"
+s:name: "Single-Cell ATAC-Seq Differential Binding Analysis"
+s:alternateName: "Identifies differentially bound sites between any two groups of cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-dbinding.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -965,7 +965,8 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Differential Binding Analysis
+  Single-Cell ATAC-Seq Differential Binding Analysis
 
-  Identifies differential bound sites between two
-  groups of cells
+  Identifies differentially bound sites between any two
+  groups of cells, optionally aggregating chromatin
+  accessibility data from single-cell to pseudobulk form.
