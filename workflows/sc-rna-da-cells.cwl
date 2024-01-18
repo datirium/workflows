@@ -35,7 +35,7 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Experiment run through Single-cell RNA-Seq Dimensionality Reduction Analysis"
+    label: "Experiment run through Single-Cell RNA-Seq Dimensionality Reduction Analysis"
     doc: |
       Path to the RDS file to load Seurat object from. This file should include genes
       expression information stored in the RNA assay and selected with the --reduction
