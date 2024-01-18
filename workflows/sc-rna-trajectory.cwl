@@ -40,11 +40,11 @@ inputs:
       Analysis that includes single-cell
       multiome RNA and ATAC-Seq or just
       RNA-Seq datasets run through either
-      "Single-cell Manual Cell Type
+      "Single-Cell Manual Cell Type
       Assignment" (based on the RNA or WNN
-      clustering results), "Single-cell
+      clustering results), "Single-Cell
       RNA-Seq Cluster Analysis", or
-      "Single-cell WNN Cluster Analysis"
+      "Single-Cell WNN Cluster Analysis"
       at any of the processing stages.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true

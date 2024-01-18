@@ -51,9 +51,9 @@ inputs:
       Analysis that includes clustered
       single-cell data and was run through
       at least one of the following workflows:
-      "Single-cell RNA-Seq Cluster Analysis",
-      "Single-cell ATAC-Seq Cluster Analysis",
-      "Single-cell WNN Cluster Analysis", -
+      "Single-Cell RNA-Seq Cluster Analysis",
+      "Single-Cell ATAC-Seq Cluster Analysis",
+      "Single-Cell WNN Cluster Analysis", -
       at any of the processing stages.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true

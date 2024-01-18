@@ -44,7 +44,7 @@ inputs:
       Analysis that includes single-cell
       multiome RNA and ATAC-Seq or just
       RNA-Seq datasets run through
-      "Single-cell RNA-Seq Dimensionality
+      "Single-Cell RNA-Seq Dimensionality
       Reduction Analysis" at any of the
       processing stages.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
