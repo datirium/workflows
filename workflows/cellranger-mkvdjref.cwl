@@ -98,9 +98,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Build V(D)J Reference Indices"
-s:name: "Cell Ranger Build V(D)J Reference Indices"
-s:alternateName: "Build a Cell Ranger V(D)J-compatible reference folder from a user-supplied genome FASTA and gene GTF files"
+label: "Cell Ranger Reference (VDJ)"
+s:name: "Cell Ranger Reference (VDJ)"
+s:alternateName: "Builds a reference genome of a selected species for V(D)J contigs assembly and clonotype calling"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/cellranger-mkvdjref.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -138,7 +138,8 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Build V(D)J Reference Indices
-  
-  Build a Cell Ranger V(D)J-compatible reference folder from
-  a user-supplied genome FASTA and gene GTF files.
+  Cell Ranger Reference (VDJ)
+
+  Builds a reference genome of a selected species for V(D)J
+  contigs assembly and clonotype calling. The results of this
+  workflow are used in “Cell Ranger Count (RNA+VDJ)” pipeline.

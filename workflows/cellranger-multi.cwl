@@ -631,9 +631,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Multi Gene Expression and V(D)J Repertoire Profiling"
-s:name: "Cell Ranger Multi Gene Expression and V(D)J Repertoire Profiling"
-s:alternateName: "Quantifies gene expression and performs profiling of V(D)J repertoire from a single GEM well"
+label: "Cell Ranger Count (RNA+VDJ)"
+s:name: "Cell Ranger Count (RNA+VDJ)"
+s:alternateName: "Quantifies single-cell gene expression, performs V(D)J contigs assembly and clonotype calling of the sequencing data from a single 10x Genomics library in a combined manner"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/cellranger-multi.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -671,7 +671,11 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Multi Gene Expression and V(D)J Repertoire Profiling
+  Cell Ranger Count (RNA+VDJ)
 
-  Quantifies gene expression and performs profiling of V(D)J
-  repertoire from a single GEM well
+  Quantifies single-cell gene expression, performs V(D)J contigs
+  assembly and clonotype calling of the sequencing data from a
+  single 10x Genomics library in a combined manner. The results
+  of this workflow are primarily used in either “Single-Cell
+  RNA-Seq Filtering Analysis”, “Single-Cell Immune Profiling Analysis”,
+  or “Cell Ranger Aggregate (RNA, RNA+VDJ)” pipelines.

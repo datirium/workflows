@@ -464,9 +464,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell ATAC-Seq Cluster Analysis"
-s:name: "Single-cell ATAC-Seq Cluster Analysis"
-s:alternateName: "Clusters single-cell ATAC-Seq datasets, identifies differentially accessible peaks"
+label: "Single-Cell ATAC-Seq Cluster Analysis"
+s:name: "Single-Cell ATAC-Seq Cluster Analysis"
+s:alternateName: "Clusters cells by similarity of chromatin accessibility data"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-cluster.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -504,7 +504,10 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Cluster Analysis
+  Single-Cell ATAC-Seq Cluster Analysis
 
-  Clusters single-cell ATAC-Seq datasets, identifies
-  differentially accessible peaks.
+  Clusters cells by similarity of chromatin accessibility data
+  from the outputs of “Single-Cell ATAC-Seq Dimensionality
+  Reduction Analysis” pipeline. The results of this workflow are
+  primarily used in “Single-Cell Manual Cell Type Assignment”
+  pipeline.

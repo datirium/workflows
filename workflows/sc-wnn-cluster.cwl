@@ -647,9 +647,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell WNN Cluster Analysis"
-s:name: "Single-cell WNN Cluster Analysis"
-s:alternateName: "Clusters multiome ATAC and RNA-Seq datasets, identifies gene markers and differentially accessible peaks"
+label: "Single-Cell WNN Cluster Analysis"
+s:name: "Single-Cell WNN Cluster Analysis"
+s:alternateName: "Clusters cells by similarity based on both gene expression and chromatin accessibility data"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-wnn-cluster.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -687,8 +687,11 @@ s:creator:
 
 
 doc: |
-  Single-cell WNN Cluster Analysis
+  Single-Cell WNN Cluster Analysis
 
-  Clusters multiome ATAC and RNA-Seq datasets,
-  identifies gene markers and differentially
-  accessible peaks.
+  Clusters cells by similarity based on both gene expression and
+  chromatin accessibility data from the outputs of “Single-Cell
+  RNA-Seq Dimensionality Reduction Analysis” and “Single-Cell
+  ATAC-Seq Dimensionality Reduction Analysis” pipelines run
+  sequentially. The results of this workflow are primarily used
+  in “Single-Cell Manual Cell Type Assignment” pipeline.

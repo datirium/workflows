@@ -1445,9 +1445,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Multiome ATAC and RNA-Seq Filtering Analysis"
-s:name: "Single-cell Multiome ATAC and RNA-Seq Filtering Analysis"
-s:alternateName: "Filters single-cell multiome ATAC and RNA-Seq datasets based on the multiple QC metrics"
+label: "Single-Cell Multiome ATAC and RNA-Seq Filtering Analysis"
+s:name: "Single-Cell Multiome ATAC and RNA-Seq Filtering Analysis"
+s:alternateName: "Removes low-quality cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-multiome-filter.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -1485,7 +1485,10 @@ s:creator:
 
 
 doc: |
-  Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
-  
-  Filters single-cell multiome ATAC and RNA-Seq datasets
-  based on the multiple QC metrics.
+  Single-Cell Multiome ATAC and RNA-Seq Filtering Analysis
+
+  Removes low-quality cells from the outputs of “Cell Ranger Count
+  (RNA+ATAC)” and “Cell Ranger Aggregate (RNA+ATAC)” pipelines. The
+  results of this workflow are primarily used in “Single-Cell RNA-Seq
+  Dimensionality Reduction Analysis” and “Single-Cell ATAC-Seq
+  Dimensionality Reduction Analysis” pipelines.

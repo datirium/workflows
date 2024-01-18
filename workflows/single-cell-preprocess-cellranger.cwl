@@ -401,9 +401,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Cell Ranger Count Gene Expression"
-label: "Cell Ranger Count Gene Expression"
-s:alternateName: "Counts gene expression for a single library"
+s:name: "Cell Ranger Count (RNA)"
+label: "Cell Ranger Count (RNA)"
+s:alternateName: "Quantifies single-cell gene expression of the sequencing data from a single 10x Genomics library"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/single-cell-preprocess-cellranger.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -441,6 +441,9 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Count Gene Expression
+  Cell Ranger Count (RNA)
 
-  Quantifies gene expression from a single-cell RNA-Seq library.
+  Quantifies single-cell gene expression of the sequencing data
+  from a single 10x Genomics library. The results of this workflow
+  are primarily used in either “Single-Cell RNA-Seq Filtering
+  Analysis” or “Cell Ranger Aggregate (RNA, RNA+VDJ)” pipelines.

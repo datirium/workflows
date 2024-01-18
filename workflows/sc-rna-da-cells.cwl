@@ -436,9 +436,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Differential Abundance Analysis"
-s:name: "Single-cell Differential Abundance Analysis"
-s:alternateName: "Detects cell subpopulations with differential abundance between datasets split by biological condition"
+label: "Single-Cell Differential Abundance Analysis"
+s:name: "Single-Cell Differential Abundance Analysis"
+s:alternateName: "Compares the composition of cell types between two tested conditions"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-da-cells.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -476,7 +476,7 @@ s:creator:
 
 
 doc: |
-  Single-cell Differential Abundance Analysis
+  Single-Cell Differential Abundance Analysis
 
-  Detects cell subpopulations with differential abundance
-  between datasets split by biological condition.
+  Compares the composition of cell types between
+  two tested conditions
