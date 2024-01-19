@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.32
+  dockerPull: biowardrobe2/sc-tools:v0.0.33
 
 
 inputs:
@@ -143,7 +143,7 @@ inputs:
     inputBinding:
       prefix: "--regressmt"
     doc: |
-      Regress the percentage of transcripts mapped to mitochondrial genes as a
+      Regress the percentage of RNA reads mapped to mitochondrial genes as a
       confounding source of variation.
       Default: false
 
@@ -499,7 +499,7 @@ outputs:
       glob: "*_umap_spl_umi.png"
     doc: |
       UMAP, colored by dataset, split by
-      transcripts per cell.
+      RNA reads per cell.
       PNG format
 
   umap_spl_umi_plot_pdf:
@@ -508,7 +508,7 @@ outputs:
       glob: "*_umap_spl_umi.pdf"
     doc: |
       UMAP, colored by dataset, split by
-      transcripts per cell.
+      RNA reads per cell.
       PDF format
 
   umap_spl_gene_plot_png:
@@ -641,7 +641,7 @@ outputs:
       glob: "*_umap_gr_cnd_spl_umi.png"
     doc: |
       UMAP, colored by grouping condition,
-      split by transcripts per cell.
+      split by RNA reads per cell.
       PNG format
 
   umap_gr_cnd_spl_umi_plot_pdf:
@@ -650,7 +650,7 @@ outputs:
       glob: "*_umap_gr_cnd_spl_umi.pdf"
     doc: |
       UMAP, colored by grouping condition,
-      split by transcripts per cell.
+      split by RNA reads per cell.
       PDF format
 
   umap_gr_cnd_spl_gene_plot_png:
@@ -861,7 +861,7 @@ s:about: |
                           Number of highly variable genes used in datasets
                           integration, scaling and dimensionality reduction.
                           Default: 3000
-    --regressmt           Regress the percentage of transcripts mapped to
+    --regressmt           Regress the percentage of RNA reads mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
     --regressgenes REGRESSGENES

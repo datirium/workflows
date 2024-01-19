@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.32
+  dockerPull: biowardrobe2/sc-tools:v0.0.33
 
 
 inputs:
@@ -150,7 +150,7 @@ outputs:
     outputBinding:
       glob: "*_frg_cov.bigWig"
     doc: |
-      Genome coverage calculated for fragments
+      Genome coverage calculated for ATAC fragments
       in bigWig format
 
   stdout_log:
@@ -175,7 +175,7 @@ $schemas:
 
 label: "Single-cell ATAC-Seq Genome Coverage"
 s:name: "Single-cell ATAC-Seq Genome Coverage"
-s:alternateName: "Creates genome coverage bigWig files from the provided fragments file and selected grouping parameters"
+s:alternateName: "Creates genome coverage bigWig files from the provided ATAC fragments file and selected grouping parameters"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-atac-coverage.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -215,7 +215,7 @@ s:creator:
 doc: |
   Single-cell ATAC-Seq Genome Coverage
 
-  Creates genome coverage bigWig files from the provided fragments file
+  Creates genome coverage bigWig files from the provided ATAC fragments file
   and selected grouping parameters.
 
   --tmpdir parameter is not exposed as input.
