@@ -57,9 +57,9 @@ inputs:
   force_cells:
     type: int?
     default: null
-    label: "Define the top N barcodes with the most fragments overlapping peaks as cells"
+    label: "Define the top N barcodes with the most ATAC fragments overlapping peaks as cells"
     doc: |
-      Define the top N barcodes with the most fragments overlapping
+      Define the top N barcodes with the most ATAC fragments overlapping
       peaks as cells. N must be a positive integer <= 20,000. Please
       consult the documentation before using this option
     'sd:layout':

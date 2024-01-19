@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.32
+  dockerPull: biowardrobe2/sc-tools:v0.0.33
 
 
 inputs:
@@ -829,7 +829,7 @@ outputs:
     outputBinding:
       glob: "*_cvrg_*.png"
     doc: |
-      Fragments coverage.
+      ATAC fragments coverage.
       PNG format
 
   cvrg_plot_pdf:
@@ -840,7 +840,7 @@ outputs:
     outputBinding:
       glob: "*_cvrg_*.pdf"
     doc: |
-      Fragments coverage.
+      ATAC fragments coverage.
       PDF format
 
   xpr_htmp_plot_png:

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.32
+  dockerPull: biowardrobe2/sc-tools:v0.0.33
 
 
 inputs:
@@ -384,7 +384,7 @@ outputs:
       glob: "*_umap_spl_frgm.png"
     doc: |
       UMAP, colored by dataset, split
-      by fragments in peaks per cell.
+      by ATAC fragments in peaks per cell.
       PNG format
 
   umap_spl_frgm_plot_pdf:
@@ -393,7 +393,7 @@ outputs:
       glob: "*_umap_spl_frgm.pdf"
     doc: |
       UMAP, colored by dataset, split
-      by fragments in peaks per cell.
+      by ATAC fragments in peaks per cell.
       PDF format
 
   umap_spl_peak_plot_png:
@@ -492,7 +492,7 @@ outputs:
       glob: "*_umap_gr_cnd_spl_frgm.png"
     doc: |
       UMAP, colored by grouping condition,
-      split by fragments in peaks per cell.
+      split by ATAC fragments in peaks per cell.
       PNG format
 
   umap_gr_cnd_spl_frgm_plot_pdf:
@@ -501,7 +501,7 @@ outputs:
       glob: "*_umap_gr_cnd_spl_frgm.pdf"
     doc: |
       UMAP, colored by grouping condition,
-      split by fragments in peaks per cell.
+      split by ATAC fragments in peaks per cell.
       PDF format
 
   umap_gr_cnd_spl_peak_plot_png:
