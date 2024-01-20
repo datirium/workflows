@@ -258,12 +258,6 @@ inputs:
       Number of cores/cpus to use.
       Default: 1
 
-  dummy_input:
-    type: boolean?
-    inputBinding:
-      prefix: "--dummy"
-    doc: |
-      To trigger major version update
 
 outputs:
 
