@@ -534,7 +534,7 @@ steps:
         default: true
       parallel_memory_limit:
         default: 32
-      vector_memory_limit:
+      vector_memory_limit_:
         default: 96
       threads:
         source: threads

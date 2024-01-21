@@ -12,7 +12,7 @@ requirements:
       Experiment
 - class: EnvVarRequirement
   envDef:
-    R_MAX_VSIZE: $((inputs.vector_memory_limit * 1000000000).toString())
+    R_MAX_VSIZE: $((inputs.vector_memory_limit_ * 1000000000).toString())
 
 
 hints:
@@ -243,7 +243,7 @@ inputs:
       when using multiple --cpus.
       Default: 32
 
-  vector_memory_limit:
+  vector_memory_limit_:
     type: int?
     default: 128
     doc: |
