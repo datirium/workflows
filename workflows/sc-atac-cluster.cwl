@@ -399,7 +399,7 @@ steps:
       color_theme: color_theme
       parallel_memory_limit:
         default: 32
-      vector_memory_limit_:
+      vector_memory_limit:
         default: 96
       threads:
         source: threads
