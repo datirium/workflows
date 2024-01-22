@@ -55,11 +55,15 @@ inputs:
     type: File
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ATAC/ARC Count/Aggregate Experiment"
+    label: "Cell Ranger ATAC or RNA+ATAC Sample"
     doc: |
-      Count and barcode information for every ATAC fragment used in the
-      loaded Seurat object. File should be saved in TSV format and to be
-      tbi-indexed.
+      Any "Cell Ranger ATAC or RNA+ATAC Sample"
+      for generating ATAC fragments coverage
+      files. This sample can be analyzed with
+      one of the following pipelines: "Cell
+      Ranger Count (RNA+ATAC)", "Cell Ranger
+      Aggregate (RNA+ATAC)", "Cell Ranger Count
+      (ATAC)", or "Cell Ranger Aggregate (ATAC)".
     'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
     'sd:localLabel': true
 

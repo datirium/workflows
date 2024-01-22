@@ -59,11 +59,14 @@ inputs:
     type: File?
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ARC Sample (optional)"
+    label: "Cell Ranger RNA+ATAC Sample (optional)"
     doc: |
-      "Cell Ranger ARC Sample" for generating
-      ATAC fragments coverage plots over the genes
-      of interest.
+      Any "Cell Ranger ATAC or RNA+ATAC Sample"
+      for generating ATAC fragments coverage
+      plots over the genes of interest. This
+      sample can be analyzed with either
+      "Cell Ranger Count (RNA+ATAC)" or "Cell
+      Ranger Aggregate (RNA+ATAC)" pipeline
     'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
     'sd:localLabel': true
 
@@ -149,8 +152,8 @@ inputs:
       Comma or space separated list of genes
       of interest to visualize expression and
       to generate ATAC fragments coverage plots.
-      Ignored if "Cell Ranger ARC Sample" input
-      is not provided.
+      Ignored if "Cell Ranger RNA+ATAC Sample"
+      input is not provided.
       Default: None
 
   color_theme:

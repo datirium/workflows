@@ -521,5 +521,5 @@ doc: |
 
   Quantifies single-cell chromatin accessibility of the sequencing
   data from a single 10x Genomics library. The results of this
-  workflow are primarily used in “Cellranger Aggregate (ATAC)”
+  workflow are primarily used in “Cell Ranger Aggregate (ATAC)”
   pipeline.

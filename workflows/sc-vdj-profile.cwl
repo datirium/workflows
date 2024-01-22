@@ -13,13 +13,9 @@ requirements:
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
-  - "https://github.com/datirium/workflows/workflows/sc-rna-cluster.cwl"
-  - "https://github.com/datirium/workflows/workflows/sc-ctype-assign.cwl"
   sc_vdj_sample:
   - "cellranger-multi.cwl"
   - "cellranger-aggr.cwl"
-  - "https://github.com/datirium/workflows/workflows/cellranger-multi.cwl"
-  - "https://github.com/datirium/workflows/workflows/cellranger-aggr.cwl"
 
 
 inputs:
@@ -45,13 +41,15 @@ inputs:
 
   contigs_data:
     type: File
-    label: "Cell Ranger Immune Profiling Sample"
+    label: "Cell Ranger RNA+VDJ Sample"
     doc: |
-      "Cell Ranger Multi Gene Expression and
-      V(D)J Repertoire Profiling" or "Cell
-      Ranger Aggregate" sample to load high
-      level annotations of each high-confidence
-      contig from the cell-associated barcodes
+      Any "Cell Ranger RNA+VDJ Sample" to
+      load high level annotations of each
+      high-confidence contig from the
+      cell-associated barcodes. This sample
+      can be analyzed with either "Cell
+      Ranger Count (RNA+VDJ)" or "Cell Ranger
+      Aggregate (RNA, RNA+VDJ)" pipeline.
     'sd:upstreamSource': "sc_vdj_sample/filtered_contig_annotations_csv"
     'sd:localLabel': true
 
