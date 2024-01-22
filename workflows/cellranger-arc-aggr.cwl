@@ -10,12 +10,10 @@ requirements:
 
 
 'sd:upstream':
-  sc_rnaseq_sample:
+  sc_arc_sample:
   - "cellranger-arc-count.cwl"
-  - "https://github.com/datirium/workflows/workflows/cellranger-arc-count.cwl"
   genome_indices:
   - "cellranger-mkref.cwl"
-  - "https://github.com/datirium/workflows/workflows/cellranger-mkref.cwl"
 
 
 inputs:
@@ -28,28 +26,28 @@ inputs:
 
   gex_molecule_info_h5:
     type: File[]
-    label: "Cell Ranger ARC Sample"
+    label: "Cell Ranger RNA+ATAC Sample"
     doc: |
-      Any "Cell Ranger ARC Sample" that
-      produces RNA molecule-level data,
-      ATAC fragments, and ATAC and RNA
-      barcode metrics files.
-    'sd:upstreamSource': "sc_rnaseq_sample/gex_molecule_info_h5"
+      Any "Cell Ranger RNA+ATAC Sample"
+      that produces both gene expression
+      and chromatin accessibility data
+      from a single 10x Genomics library
+    'sd:upstreamSource': "sc_arc_sample/gex_molecule_info_h5"
     'sd:localLabel': true
 
   gem_well_labels:
     type: string[]
-    'sd:upstreamSource': "sc_rnaseq_sample/alias"
+    'sd:upstreamSource': "sc_arc_sample/alias"
 
   atac_fragments_file_from_count:
     type: File[]
     secondaryFiles:
     - .tbi
-    'sd:upstreamSource': "sc_rnaseq_sample/atac_fragments_file"
+    'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
 
   barcode_metrics_report:
     type: File[]
-    'sd:upstreamSource': "sc_rnaseq_sample/barcode_metrics_report"
+    'sd:upstreamSource': "sc_arc_sample/barcode_metrics_report"
 
   indices_folder:
     type: Directory

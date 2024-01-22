@@ -23,10 +23,6 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-ctype-assign.cwl"
-  - "https://github.com/datirium/workflows/workflows/sc-rna-cluster.cwl"
-  - "https://github.com/datirium/workflows/workflows/sc-atac-cluster.cwl"
-  - "https://github.com/datirium/workflows/workflows/sc-wnn-cluster.cwl"
-  - "https://github.com/datirium/workflows/workflows/sc-ctype-assign.cwl"
 
 
 inputs:

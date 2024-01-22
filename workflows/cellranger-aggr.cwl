@@ -13,7 +13,6 @@ requirements:
   sc_experiment:
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
-  - "https://github.com/datirium/workflows/workflows/single-cell-preprocess-cellranger.cwl"
 
 
 inputs:
@@ -28,8 +27,12 @@ inputs:
     type:
     - "null"
     -  File[]
-    label: "Single-cell Experiment"
-    doc: "Molecule-level information from individual runs of cellranger count"
+    label: "Cell Ranger RNA or RNA+VDJ Sample"
+    doc: |
+      Any "Cell Ranger RNA or RNA+VDJ Sample"
+      that produces gene expression and,
+      optionally, V(D)J contigs data, from a
+      single 10x Genomics library
     'sd:upstreamSource': "sc_experiment/molecule_info_h5"
     'sd:localLabel': true
 
@@ -37,17 +40,11 @@ inputs:
     type:
     - "null"
     - Directory[]
-    label: "Single-cell Experiment"
-    doc: "Filtered data folders from individual runs of cellranger multi"
     'sd:upstreamSource': "sc_experiment/filtered_data_folder"
-    'sd:localLabel': true
 
   gem_well_labels:
     type: string[]
-    label: "Single-cell Experiment"
-    doc: "Array of GEM well identifiers to be used for labeling purposes only"
     'sd:upstreamSource': "sc_experiment/alias"
-    'sd:localLabel': true
 
   normalization_mode:
     type:

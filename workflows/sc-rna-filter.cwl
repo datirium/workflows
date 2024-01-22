@@ -35,15 +35,15 @@ inputs:
     label: "Cell Ranger RNA or RNA+VDJ Sample"
     doc: |
       Any "Cell Ranger RNA or RNA+VDJ Sample"
-      that produces gene expression data
-      in a form of compressed feature-barcode
-      matrix in a MEX format, and optional
-      aggregation metadata file in TSV/CSV
-      format. This sample can be analyzed with
-      one of the following pipelines: "Cell
-      Ranger Count (RNA)", "Cell Ranger Count
-      (RNA+VDJ)", or "Cell Ranger Aggregate
-      (RNA, RNA+VDJ)"
+      that produces gene expression data in
+      a form of compressed feature-barcode
+      matrix in a MEX format, optional annotated
+      V(D)J contigs data, and optional aggregation
+      metadata file in TSV/CSV format. This
+      sample can be analyzed with one of the
+      following pipelines: "Cell Ranger Count
+      (RNA)", "Cell Ranger Count (RNA+VDJ)",
+      or "Cell Ranger Aggregate (RNA, RNA+VDJ)"
     "sd:upstreamSource": "sc_rna_sample/filtered_feature_bc_matrix_folder"
     "sd:localLabel": true
 

@@ -13,7 +13,6 @@ requirements:
   sc_experiment:
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
-  - "https://github.com/datirium/workflows/workflows/single-cell-preprocess-cellranger.cwl"
 
 
 inputs:

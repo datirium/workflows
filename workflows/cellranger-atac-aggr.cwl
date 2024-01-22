@@ -14,7 +14,6 @@ requirements:
   - "cellranger-atac-count.cwl"
   genome_indices:
   - "cellranger-mkref.cwl"
-  - "https://github.com/datirium/workflows/workflows/cellranger-mkref.cwl"
 
 
 inputs:
