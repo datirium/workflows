@@ -36,6 +36,7 @@ requirements:
   - "cellranger-atac-aggr.cwl"
   genome_indices:
   - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -62,12 +63,15 @@ inputs:
     type: File
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ATAC/ARC Count/Aggregate Experiment"
+    label: "Cell Ranger ATAC or RNA+ATAC Sample"
     doc: |
-      Count and barcode information for every ATAC fragment
-      used in the loaded Seurat object. File should be saved
-      in TSV format with tbi-index file.
-      tbi-indexed.
+      Any "Cell Ranger ATAC or RNA+ATAC Sample"
+      for loading chromatin accessibility data
+      from. This sample can be analyzed with
+      one of the following pipelines: "Cell
+      Ranger Count (RNA+ATAC)", "Cell Ranger
+      Aggregate (RNA+ATAC)", "Cell Ranger Count
+      (ATAC)", or "Cell Ranger Aggregate (ATAC)".
     'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
     'sd:localLabel': true
 
@@ -697,7 +701,7 @@ steps:
     - stdout_log
     - stderr_log
 
-  pdf_plots:
+  folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
       input_files:
@@ -715,7 +719,7 @@ steps:
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: pdf_plots/folder
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 

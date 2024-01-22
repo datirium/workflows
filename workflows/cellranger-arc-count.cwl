@@ -32,7 +32,8 @@ inputs:
     'sd:localLabel': true
 
   memory_limit:
-    type: int
+    type: int?
+    default: 20
     'sd:upstreamSource': "genome_indices/memory_limit"
 
   gex_fastq_file_r1:

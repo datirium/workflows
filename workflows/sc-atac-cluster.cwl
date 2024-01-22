@@ -27,10 +27,11 @@ requirements:
   - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
-  sc_arc_sample:
+  sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
-
+  - "cellranger-atac-count.cwl"
+  - "cellranger-atac-aggr.cwl"
 
 inputs:
 
@@ -57,12 +58,17 @@ inputs:
     type: File?
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ARC Sample (optional)"
+    label: "Cell Ranger ATAC or RNA+ATAC Sample (optional)"
     doc: |
-      "Cell Ranger ARC Sample" for generating
-      ATAC fragments coverage plots over the genes
-      of interest.
-    'sd:upstreamSource': "sc_arc_sample/atac_fragments_file"
+      Any "Cell Ranger ATAC or RNA+ATAC Sample"
+      for generating ATAC fragments coverage
+      plots over the genes of interest. This
+      sample can be analyzed with one of the
+      following pipelines: "Cell Ranger Count
+      (RNA+ATAC)", "Cell Ranger Aggregate
+      (RNA+ATAC)", "Cell Ranger Count (ATAC)",
+      or "Cell Ranger Aggregate (ATAC)".
+    'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
     'sd:localLabel': true
 
   dimensions:
@@ -115,9 +121,9 @@ inputs:
     label: "Genes of interest"
     doc: |
       Comma or space separated list of genes
-      of interest to generate ATAC fragments coverage
-      plots. Ignored if "Cell Ranger ARC Sample"
-      input is not provided.
+      of interest to generate ATAC fragments
+      coverage plots. Ignored if "Cell Ranger
+      ATAC or RNA+ATAC" input is not provided.
       Default: None
 
   color_theme:
@@ -428,7 +434,7 @@ steps:
     - stdout_log
     - stderr_log
 
-  pdf_plots:
+  folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
       input_files:
@@ -451,7 +457,7 @@ steps:
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: pdf_plots/folder
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 

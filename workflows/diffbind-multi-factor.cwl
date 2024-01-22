@@ -22,8 +22,13 @@ requirements:
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
   genome_indices:
   - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -792,7 +797,7 @@ steps:
     - stdout_log
     - stderr_log
 
-  pdf_plots:
+  folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
       input_files:
@@ -816,7 +821,7 @@ steps:
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: pdf_plots/folder
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 
@@ -1064,6 +1069,7 @@ s:creator:
 
 doc: |
   DiffBind Multi-factor Analysis
+  ------------------------------
   
   DiffBind processes ChIP-Seq data enriched for genomic loci where specific protein/DNA binding occurs, including peak sets identified by ChIP-Seq peak callers and
   aligned sequence read datasets. It is designed to work with multiple peak sets simultaneously, representing different ChIP experiments (antibodies, transcription

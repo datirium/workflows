@@ -316,8 +316,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Cellranger Aggregate (ATAC)"
-s:name: "Cellranger Aggregate (ATAC)"
+label: "Cell Ranger Aggregate (ATAC)"
+s:name: "Cell Ranger Aggregate (ATAC)"
 s:alternateName: "Combines outputs from multiple runs of Cell Ranger Count (ATAC) pipeline"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-atac-aggr.cwl
@@ -356,7 +356,7 @@ s:creator:
 
 
 doc: |
-  Cellranger Aggregate (ATAC)
+  Cell Ranger Aggregate (ATAC)
 
-  Combines outputs from multiple runs of “Cell Ranger
-  Count (ATAC)” pipeline.
+  Combines outputs from multiple runs of
+  “Cell Ranger Count (ATAC)” pipeline.

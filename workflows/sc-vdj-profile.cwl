@@ -41,13 +41,15 @@ inputs:
 
   contigs_data:
     type: File
-    label: "Cell Ranger Immune Profiling Sample"
+    label: "Cell Ranger RNA+VDJ Sample"
     doc: |
-      "Cell Ranger Multi Gene Expression and
-      V(D)J Repertoire Profiling" or "Cell
-      Ranger Aggregate" sample to load high
-      level annotations of each high-confidence
-      contig from the cell-associated barcodes
+      Any "Cell Ranger RNA+VDJ Sample" to
+      load high level annotations of each
+      high-confidence contig from the
+      cell-associated barcodes. This sample
+      can be analyzed with either "Cell
+      Ranger Count (RNA+VDJ)" or "Cell Ranger
+      Aggregate (RNA, RNA+VDJ)" pipeline.
     'sd:upstreamSource': "sc_vdj_sample/filtered_contig_annotations_csv"
     'sd:localLabel': true
 
@@ -585,7 +587,7 @@ steps:
     - stdout_log
     - stderr_log
 
-  pdf_plots:
+  folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
       input_files:
@@ -620,7 +622,7 @@ steps:
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: pdf_plots/folder
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 

@@ -114,13 +114,13 @@ inputs:
       - "5"
       - "6"
     default: "1"
-    label: "Cores/CPUs"
+    label: "Number of cores/cpus to use"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
       Default: 1
-    "sd:layout":
+    'sd:layout':
       advanced: true
 
 
@@ -331,7 +331,7 @@ steps:
     - stdout_log
     - stderr_log
 
-  pdf_plots:
+  folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
       input_files:
@@ -354,7 +354,7 @@ steps:
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: pdf_plots/folder
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 
