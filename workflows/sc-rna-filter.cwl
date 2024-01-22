@@ -790,7 +790,7 @@ steps:
     - stdout_log
     - stderr_log
 
-  pdf_plots:
+  folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
       input_files:
@@ -832,7 +832,7 @@ steps:
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: pdf_plots/folder
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 
