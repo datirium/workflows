@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-kallisto:v1.0.0
+  dockerPull: robertplayer/scidap-kallisto:stable
 
 
 inputs:
@@ -31,22 +31,15 @@ inputs:
       # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
       #   force "est_counts" to integers
-      #     for custom transcriptome sequence names, there will be a pipe delimiter after the geneid (e.g. >gene12345|5) to force uniqueness
-      #     this needs to be accounted for, and all est counts from the same geneid (string before the pipe) should be summed
-      awk -F'\t' '{split($1,seqname,"|"); est_counts[seqname[1]]+=$4; tpm[seqname[1]]+=$5}END{for(name in est_counts){printf("%s\t%0.f\t%0.f\n",name,est_counts[name],tpm[name])}}' <(tail -n+2 ./quant_outdir/abundance.tsv) > transcript_counts.tmp
-      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$2,$3)}}' $ANNO transcript_counts.tmp >> transcript_counts.tsv
+      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
 
       # print for overview.md
       #   read metrics
       total_aligned=$(tail -n+2 transcript_counts.tsv | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       annotated_aligned=$(tail -n+2 transcript_counts.tsv | grep -v "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       unannotated_aligned=$(tail -n+2 transcript_counts.tsv | grep "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
-      if [[ $(basename $R1 | sed 's/.*\.//') == "fastq" ]]; then read_count_r1=$(awk 'END{print(NR/4)}' $R1); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "fastq" ]]; then read_count_r2=$(awk 'END{print(NR/4)}' $R2); fi
-      if [[ $(basename $R1 | sed 's/.*\.//') == "fq" ]]; then read_count_r1=$(awk 'END{print(NR/4)}' $R1); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "fq" ]]; then read_count_r2=$(awk 'END{print(NR/4)}' $R2); fi
-      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | awk 'END{print(NR/4)}'); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | awk 'END{print(NR/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | wc -l | awk '{print($0/4)}'); else read_count_r1=$(wc -l $R1 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | wc -l | awk '{print($0/4)}'); else read_count_r2=$(wc -l $R2 | awk '{print($0/4)}'); fi
       unmapped=$(printf "$read_count_r1" | awk -v x="$total_aligned" '{print($0-x)}')
 
       #   output stats for pie chart

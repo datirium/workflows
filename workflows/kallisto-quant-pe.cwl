@@ -153,6 +153,13 @@ outputs:
           colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
           data: [$2, $3, $4, $5]
 
+  kallisto_abundance_file:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "raw kallisto count estimates file"
+    doc: "raw kallisto count estimates file"
+    outputSource: kallisto_quant/kallisto_abundance_file
+
 
 steps:
 
