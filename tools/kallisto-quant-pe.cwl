@@ -27,11 +27,17 @@ inputs:
       printf "\$4 - $THREADS\n\n"
       # commands start
       kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
-      # format output for as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
+      # format output for use as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
+      #   original file (works with standard deseq) - transcript_counts.tsv
+      #   reformatted file (for deseq multi-factor) - transcript_counts_mf.tsv
       # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
       #   force "est_counts" to integers
       awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
+
+      # making reformatted file for deseq multi-factor (placing Chrom string in place of "na" for col1 [RefseqId] and col2 [GeneId])
+      printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts_mf.tsv
+      tail -n+2 transcript_counts.tsv | awk -F'\t' '{if($2=="na"){printf("%s\t%s\t%s\t%s\t%s\t%s\t%0.f\t%s\n",$3,$3,$3,$4,$5,$6,$7,$8)}else{print($0)}}' >> transcript_counts_mf.tsv
 
       # print for overview.md
       #   read metrics
@@ -162,9 +168,16 @@ outputs:
   transcript_counts:
     type: File
     outputBinding:
+      glob: transcript_counts_mf.tsv
+    doc: |
+      Gene expression table formatted for input into DESeq. The na values for unannotated genes have been replaced by the Chrom name.
+
+  transcript_counts_standard:
+    type: File
+    outputBinding:
       glob: transcript_counts.tsv
     doc: |
-      Gene expression table formatted for input into DESeq
+      Gene expression table formatted for input into DESeq (contains na values where annotations are not found). This particular output works with standard deseq, the multi-factor output will be used for both.
 
   log_file_stdout:
     type: File
