@@ -24,10 +24,15 @@ inputs:
 
   indices_folder:
     type: Directory
-    label: "Genome type"
+    label: "Cell Ranger Reference Sample"
     doc: |
-      Reference genome package created
-      with cellranger-arc mkref command.
+      Any "Cell Ranger Reference Sample" that
+      builds a reference genome package of a
+      selected species for quantifying gene
+      expression and chromatin accessibility.
+      This sample can be obtained from "Cell
+      Ranger Reference (RNA, ATAC, RNA+ATAC)"
+      pipeline.
     'sd:upstreamSource': "genome_indices/arc_indices_folder"
     'sd:localLabel': true
 
@@ -41,7 +46,6 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "RNA FASTQ, Read 1"
     doc: |
       Optionally compressed FASTQ file
@@ -55,7 +59,6 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "RNA FASTQ, Read 2"
     doc: |
       Optionally compressed FASTQ file
@@ -68,7 +71,6 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "ATAC FASTQ, Read 1"
     doc: |
       Optionally compressed FASTQ file
@@ -82,7 +84,6 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "ATAC FASTQ, Read 2"
     doc: |
       Optionally compressed FASTQ file
@@ -96,7 +97,6 @@ inputs:
     - File
     - type: array
       items: File
-    format: "http://edamontology.org/format_1930"
     label: "ATAC FASTQ, Read 3"
     doc: |
       Optionally compressed FASTQ file
@@ -252,26 +252,42 @@ outputs:
   gex_possorted_genome_bam_bai:
     type: File
     outputSource: generate_counts_matrix/gex_possorted_genome_bam_bai
-    label: "RNA position-sorted alignments"
+    label: "RNA reads"
     doc: |
-      Position-sorted and indexed BAM file
-      of RNA read alignments to the genome
-      and transcriptome. Each read in this
-      BAM file has a 10x Chromium cellular
-      (associated with a 10x Genomics gel
-      bead) barcode and molecular barcode
-      information attached.
+      Genome track of RNA reads aligned to
+      the reference genome. Each read has
+      a 10x Chromium cellular (associated
+      with a 10x Genomics gel bead) barcode
+      and molecular barcode information
+      attached.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
+        type: "alignment"
+        format: "bam"
+        name: "RNA reads"
+        displayMode: "SQUISHED"
 
   atac_possorted_genome_bam_bai:
     type: File
     outputSource: generate_counts_matrix/atac_possorted_genome_bam_bai
-    label: "ATAC position-sorted alignments"
+    label: "ATAC fragments"
     doc: |
-      Position-sorted and indexed BAM file
-      for the Chromatin Accessibility
-      library. Chromium cellular barcode
-      and mapping information for each read
-      is stored as TAG fields.
+      Genome track of ATAC fragments aligned
+      to the reference genome. Each read has
+      a 10x Chromium cellular (associated
+      with a 10x Genomics gel bead) barcode
+      and mapping information stored in TAG
+      fields.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
+        type: "alignment"
+        format: "bam"
+        name: "ATAC fragments"
+        displayMode: "SQUISHED"
 
   filtered_feature_bc_matrix_folder:
     type: File
@@ -373,9 +389,16 @@ outputs:
     outputSource: generate_counts_matrix/atac_peaks_bed_file
     label: "ATAC peaks"
     doc: |
-      Locations of open-chromatin regions
-      identified in this sample. These
-      regions are referred to as "peaks".
+      Genome track of open-chromatin
+      regions identified as peaks.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "ATAC peaks"
+        displayMode: "COLLAPSE"
+        height: 40
 
   atac_cut_sites_bigwig_file:
     type: File
@@ -384,12 +407,12 @@ outputs:
     doc: |
       Genome track of observed transposition
       sites in the experiment smoothed at a
-      resolution of 400 bases in bigWig format.
-    'sd:visualPlugins':
+      resolution of 400 bases.
+    "sd:visualPlugins":
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
+        type: "wig"
         name: "ATAC cut sites"
         height: 120
 
