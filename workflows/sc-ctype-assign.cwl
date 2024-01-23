@@ -69,7 +69,7 @@ inputs:
       Any "Cell Ranger ATAC or RNA+ATAC Sample"
       for generating ATAC fragments coverage
       plots over the genes of interest. This
-      sample can be analyzed with one of the
+      sample can be obtained from one of the
       following pipelines: "Cell Ranger Count
       (RNA+ATAC)", "Cell Ranger Aggregate
       (RNA+ATAC)", "Cell Ranger Count (ATAC)",
@@ -163,7 +163,7 @@ inputs:
       of interest to visualize expression and
       to generate ATAC fragments coverage plots.
       Ignored if "Cell Ranger ATAC or RNA+ATAC
-      Sample" input is not provided.
+      Sample (optional)" input is not provided.
       Default: None
 
   cell_type_data:

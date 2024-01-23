@@ -40,7 +40,7 @@ inputs:
       format, ATAC fragments file in TSV
       format, and optional aggregation
       metadata file in TSV/CSV format.
-      This sample can be analyzed with
+      This sample can be obtained from
       either "Cell Ranger Count (RNA+ATAC)"
       or "Cell Ranger Aggregate (RNA+ATAC)"
       pipeline.
