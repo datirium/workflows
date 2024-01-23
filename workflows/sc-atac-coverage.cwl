@@ -59,7 +59,7 @@ inputs:
     doc: |
       Any "Cell Ranger ATAC or RNA+ATAC Sample"
       for generating ATAC fragments coverage
-      files. This sample can be analyzed with
+      files. This sample can be obtained from
       one of the following pipelines: "Cell
       Ranger Count (RNA+ATAC)", "Cell Ranger
       Aggregate (RNA+ATAC)", "Cell Ranger Count

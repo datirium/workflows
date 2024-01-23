@@ -47,7 +47,7 @@ inputs:
       load high level annotations of each
       high-confidence contig from the
       cell-associated barcodes. This sample
-      can be analyzed with either "Cell
+      can be obtained from either "Cell
       Ranger Count (RNA+VDJ)" or "Cell Ranger
       Aggregate (RNA, RNA+VDJ)" pipeline.
     'sd:upstreamSource': "sc_vdj_sample/filtered_contig_annotations_csv"

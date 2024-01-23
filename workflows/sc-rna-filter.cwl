@@ -40,7 +40,7 @@ inputs:
       matrix in a MEX format, optional annotated
       V(D)J contigs data, and optional aggregation
       metadata file in TSV/CSV format. This
-      sample can be analyzed with one of the
+      sample can be obtained from one of the
       following pipelines: "Cell Ranger Count
       (RNA)", "Cell Ranger Count (RNA+VDJ)",
       or "Cell Ranger Aggregate (RNA, RNA+VDJ)"

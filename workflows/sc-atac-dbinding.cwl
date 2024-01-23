@@ -67,7 +67,7 @@ inputs:
     doc: |
       Any "Cell Ranger ATAC or RNA+ATAC Sample"
       for loading chromatin accessibility data
-      from. This sample can be analyzed with
+      from. This sample can be obtained from
       one of the following pipelines: "Cell
       Ranger Count (RNA+ATAC)", "Cell Ranger
       Aggregate (RNA+ATAC)", "Cell Ranger Count
