@@ -272,10 +272,10 @@ outputs:
   atac_possorted_genome_bam_bai:
     type: File
     outputSource: generate_counts_matrix/atac_possorted_genome_bam_bai
-    label: "ATAC fragments"
+    label: "ATAC reads"
     doc: |
-      Genome track of ATAC fragments aligned
-      to the reference genome. Each read has
+      Genome track of ATAC reads aligned to
+      the reference genome. Each read has
       a 10x Chromium cellular (associated
       with a 10x Genomics gel bead) barcode
       and mapping information stored in TAG
@@ -286,7 +286,7 @@ outputs:
         id: "igvbrowser"
         type: "alignment"
         format: "bam"
-        name: "ATAC fragments"
+        name: "ATAC reads"
         displayMode: "SQUISHED"
 
   filtered_feature_bc_matrix_folder:
