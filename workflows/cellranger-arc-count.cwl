@@ -403,7 +403,7 @@ outputs:
   atac_cut_sites_bigwig_file:
     type: File
     outputSource: generate_counts_matrix/atac_cut_sites_bigwig_file
-    label: "ATAC cut sites"
+    label: "ATAC transposition counts"
     doc: |
       Genome track of observed transposition
       sites in the experiment smoothed at a
@@ -413,7 +413,7 @@ outputs:
         tab: "IGV Genome Browser"
         id: "igvbrowser"
         type: "wig"
-        name: "ATAC cut sites"
+        name: "ATAC transposition counts"
         height: 120
 
   atac_peak_annotation_file:
