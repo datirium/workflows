@@ -127,16 +127,16 @@ outputs:
     label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_common_tss)"
     doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
     outputSource: kallisto_quant/transcript_counts
+
+  transcript_counts_with_na:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "kallisto estimated counts per transcript, with na for unannotated genes"
+    doc: "These are kallisto esimate counts per transcript. This file contains na where annotations not available."
+    outputSource: kallisto_quant/transcript_counts_standard
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Transcript Counts'
-
-  transcript_counts_all:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_common_tss)"
-    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. This file contains na where annotations not available."
-    outputSource: kallisto_quant/transcript_counts_standard
 
   overview_file:
     type: File

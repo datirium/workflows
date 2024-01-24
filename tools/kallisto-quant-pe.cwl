@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -36,7 +36,7 @@ inputs:
       awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
 
       # making reformatted file for deseq multi-factor (removing unannotated transcripts labeled as "na" for col1 [RefseqId] and col2 [GeneId] from the output count table)
-      grep -v "^na\tna\t" transcript_counts.tsv > transcript_counts_mf.tsv
+      grep -vP "^na\tna\t" transcript_counts.tsv > transcript_counts_mf.tsv
 
       # print for overview.md
       #   read metrics
