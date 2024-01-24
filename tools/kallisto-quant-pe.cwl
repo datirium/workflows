@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -38,8 +38,8 @@ inputs:
       # making reformatted file for deseq multi-factor (removing unannotated transcripts labeled as "na" for col1 [RefseqId] and col2 [GeneId] from the output count table)
       # and if there are duplicate geneIds, only retain the one with the higher read count
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts_mf.tsv
-      grep -vP "^na\tna\t" transcript_counts.tsv > transcript_counts_mf.tmp
-      awk -F'\t' '{if(NR==FNR){if($7>tr[$2]){c1[$2]=$1; c3[$2]=$3; c4[$2]=$4; c5[$2]=$5; c6[$2]=$6; tr[$2]=$7; rpkm[$2]=$8}}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%0.f\t%s\n",c1[$2],$2,c3[$2],c4[$2],c5[$2],c6[$2],tr[$2],rpkm[$2])}}' transcript_counts_mf.tmp transcript_counts_mf.tmp >> transcript_counts_mf.tsv
+      tail -n+2 transcript_counts.tsv | grep -vP "^na\tna\t" > transcript_counts_mf.tmp
+      awk -F'\t' '{if(NR==FNR){if($7>tr[$2]){c1[$2]=$1; c3[$2]=$3; c4[$2]=$4; c5[$2]=$5; c6[$2]=$6; tr[$2]=$7; rpkm[$2]=$8}}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%0.f\t%s\n",c1[$2],$2,c3[$2],c4[$2],c5[$2],c6[$2],tr[$2],rpkm[$2])}}' transcript_counts_mf.tmp transcript_counts_mf.tmp | sort | uniq >> transcript_counts_mf.tsv
 
       # print for overview.md
       #   read metrics

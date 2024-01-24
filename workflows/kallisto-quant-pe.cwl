@@ -128,7 +128,7 @@ outputs:
     doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
     outputSource: kallisto_quant/transcript_counts
 
-  transcript_counts_all:
+  transcript_counts_with_na:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "kallisto estimated counts per transcript, with na for unannotated genes"
