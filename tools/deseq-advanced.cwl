@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-deseq:dev
+  dockerPull: robertplayer/scidap-deseq:v1.0.0
 
 
 inputs:
@@ -223,10 +223,10 @@ outputs:
       based on the --remove value.
       HTML format
 
-  stdout_log_file:
+  std_out_log:
     type: stdout
 
-  stderr_log_file:
+  std_err_log:
     type: stderr
 
 

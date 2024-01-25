@@ -423,19 +423,19 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_stdout_log_file:
+  deseq_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
-    outputSource: deseq/stdout_log_file
+    outputSource: deseq/std_out_log
 
-  deseq_stderr_log_file:
+  deseq_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
-    outputSource: deseq/stderr_log_file
+    outputSource: deseq/std_err_log
 
   morpheus_stdout_log:
     type: File
@@ -505,8 +505,8 @@ steps:
       - read_counts_file_filtered
       - phenotypes_file
       - mds_plot_html
-      - stdout_log_file
-      - stderr_log_file
+      - std_out_log
+      - std_err_log
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
