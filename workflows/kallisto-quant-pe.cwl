@@ -125,8 +125,15 @@ outputs:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_common_tss)"
-    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript"
+    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
     outputSource: kallisto_quant/transcript_counts
+
+  transcript_counts_all:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "kallisto estimated counts per transcript, with na for unannotated genes"
+    doc: "These are kallisto esimate counts per transcript. This file contains na where annotations not available."
+    outputSource: kallisto_quant/transcript_counts_standard
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Transcript Counts'
@@ -152,6 +159,13 @@ outputs:
       - pie:
           colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
           data: [$2, $3, $4, $5]
+
+  kallisto_abundance_tsv:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "raw kallisto count estimates file"
+    doc: "raw kallisto count estimates file"
+    outputSource: kallisto_quant/kallisto_abundance_file
 
 
 steps:
@@ -275,7 +289,7 @@ steps:
       fastq_R1: rename_R1/target_file
       fastq_R2: rename_R2/target_file
       threads: threads
-    out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, log_file_stdout, log_file_stderr]
+    out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, transcript_counts_standard, log_file_stdout, log_file_stderr]
 
 
 $namespaces:

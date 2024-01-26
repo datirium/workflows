@@ -27,26 +27,27 @@ inputs:
       printf "\$4 - $THREADS\n\n"
       # commands start
       kallisto quant -t $THREADS -i $INDEX -o quant_outdir $R1 $R2
-      # format output for as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
+      # format output for use as deseq upstream (e.g. rpkm_isoforms_cond_1, rpkm_genes_cond_1, rpkm_common_tss_cond_1), only using "genes" in this case
+      #   original file (works with standard deseq) - transcript_counts.tsv
+      #   reformatted file (for deseq multi-factor) - transcript_counts_mf.tsv
       # using kallisto's "est_counts" output (col4 in abundance.tsv) counts per transcript (as required/expect by deseq tool for diffexp analysis)
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts.tsv
       #   force "est_counts" to integers
-      #     for custom transcriptome sequence names, there will be a pipe delimiter after the geneid (e.g. >gene12345|5) to force uniqueness
-      #     this needs to be accounted for, and all est counts from the same geneid (string before the pipe) should be summed
-      awk -F'\t' '{split($1,seqname,"|"); est_counts[seqname[1]]+=$4; tpm[seqname[1]]+=$5}END{for(name in est_counts){printf("%s\t%0.f\t%0.f\n",name,est_counts[name],tpm[name])}}' <(tail -n+2 ./quant_outdir/abundance.tsv) > transcript_counts.tmp
-      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$2,$3)}}' $ANNO transcript_counts.tmp >> transcript_counts.tsv
+      awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
+
+      # making reformatted file for deseq multi-factor (removing unannotated transcripts labeled as "na" for col1 [RefseqId] and col2 [GeneId] from the output count table)
+      # and if there are duplicate geneIds, only retain the one with the higher read count
+      printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts_mf.tsv
+      tail -n+2 transcript_counts.tsv | grep -vP "^na\tna\t" > transcript_counts_mf.tmp
+      awk -F'\t' '{if(NR==FNR){if($7>=tr[$2]){c1[$2]=$1; c3[$2]=$3; c4[$2]=$4; c5[$2]=$5; c6[$2]=$6; tr[$2]=$7; rpkm[$2]=$8}}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%0.f\t%s\n",c1[$2],$2,c3[$2],c4[$2],c5[$2],c6[$2],tr[$2],rpkm[$2])}}' transcript_counts_mf.tmp transcript_counts_mf.tmp | sort | uniq >> transcript_counts_mf.tsv
 
       # print for overview.md
       #   read metrics
       total_aligned=$(tail -n+2 transcript_counts.tsv | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       annotated_aligned=$(tail -n+2 transcript_counts.tsv | grep -v "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
       unannotated_aligned=$(tail -n+2 transcript_counts.tsv | grep "^na" | awk -F'\t' '{x+=$7}END{printf("%0.f",x)}')
-      if [[ $(basename $R1 | sed 's/.*\.//') == "fastq" ]]; then read_count_r1=$(awk 'END{print(NR/4)}' $R1); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "fastq" ]]; then read_count_r2=$(awk 'END{print(NR/4)}' $R2); fi
-      if [[ $(basename $R1 | sed 's/.*\.//') == "fq" ]]; then read_count_r1=$(awk 'END{print(NR/4)}' $R1); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "fq" ]]; then read_count_r2=$(awk 'END{print(NR/4)}' $R2); fi
-      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | awk 'END{print(NR/4)}'); fi
-      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | awk 'END{print(NR/4)}'); fi
+      if [[ $(basename $R1 | sed 's/.*\.//') == "gz" ]]; then read_count_r1=$(gunzip -c $R1 | wc -l | awk '{print($0/4)}'); else read_count_r1=$(wc -l $R1 | awk '{print($0/4)}'); fi
+      if [[ $(basename $R2 | sed 's/.*\.//') == "gz" ]]; then read_count_r2=$(gunzip -c $R2 | wc -l | awk '{print($0/4)}'); else read_count_r2=$(wc -l $R2 | awk '{print($0/4)}'); fi
       unmapped=$(printf "$read_count_r1" | awk -v x="$total_aligned" '{print($0-x)}')
 
       #   output stats for pie chart
@@ -64,7 +65,11 @@ inputs:
 
       #   format for overview file
       printf "\n\n\tgenerating overview.md file...\n"
-      printf "#### INPUTS\n" > overview.md
+
+      printf "-" > overview.md
+      printf " NOTE: Unannotated transcripts will not be used in downstream differential expression analysis.\n" >> overview.md
+      printf "\n" >> overview.md
+      printf "#### INPUTS\n" >> overview.md
       printf "-" >> overview.md
       printf " \$INDEX, $INDEX\n" >> overview.md
       printf "-" >> overview.md
@@ -169,9 +174,16 @@ outputs:
   transcript_counts:
     type: File
     outputBinding:
+      glob: transcript_counts_mf.tsv
+    doc: |
+      Gene expression table formatted for input into DESeq and DESeq multi factor. The na values for unannotated genes have been removed.
+
+  transcript_counts_standard:
+    type: File
+    outputBinding:
       glob: transcript_counts.tsv
     doc: |
-      Gene expression table formatted for input into DESeq
+      Gene expression table formatted for input into DESeq (contains na values where annotations are not found). This particular output works with standard deseq, the multi-factor output will be used for both.
 
   log_file_stdout:
     type: File
