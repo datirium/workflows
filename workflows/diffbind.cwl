@@ -385,6 +385,20 @@ outputs:
           tab: 'Differential Peak Calling'
           Title: 'Differential Binding Analysis Results'
 
+  diffbind_report_file_formatted:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Differential binding analysis results formatted as chip/atac/cutandrun results"
+    doc: "Differential binding analysis results  formatted as chip/atac/cutandrun results exported as TSV"
+    outputSource: iaintersect_result_formatted/output_file_1
+
+  iaintersect_result:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Differential binding analysis results formatted as chip/atac/cutandrun results"
+    doc: "Differential binding analysis results  formatted as chip/atac/cutandrun results exported as TSV"
+    outputSource: iaintersect_result_formatted_for_setops/output_file_1
+
   diffbind_bed_file:
     type: File
     format: "http://edamontology.org/format_3004"
@@ -652,14 +666,14 @@ outputs:
     doc: "Box plots of read distributions for significantly differentially bound sites"
     outputSource: select_files/selected_boxplot_pdf
 
-  diffbind_stdout_log:
+  diffbind_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stdout log"
     doc: "diffbind stdout log"
     outputSource: diffbind/stdout_log
 
-  diffbind_stderr_log:
+  diffbind_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stderr log"
@@ -940,6 +954,66 @@ steps:
           cat iaintersect_result.tsv | paste - diffbind_result.tsv >> `basename $0`
           rm iaintersect_result.tsv diffbind_result.tsv
     out: [output_file]
+
+  iaintersect_result_formatted:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: ScatterFeatureRequirement
+      - class: ShellCommandRequirement
+      inputs:
+        script:
+          type: string?
+          default: |
+            printf "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tabssummit\tpileup\tlog10p\tfoldenrich\tlog10q\tregion\n" > iaintersect_result_formatted.tsv
+            awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$7,$8,$9,len,"0","0","0","0","0","na")}' <(tail -n+2 $0) >> iaintersect_result_formatted.tsv
+          inputBinding:
+            position: 1
+        input_file_1:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        output_file_1:
+          type: File
+          outputBinding:
+            glob: iaintersect_result_formatted.tsv
+      baseCommand: ["bash", "-c"]
+    in:
+      input_file_1: restore_columns/output_file
+    out:
+    - output_file_1
+
+  iaintersect_result_formatted_for_setops:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: ScatterFeatureRequirement
+      - class: ShellCommandRequirement
+      inputs:
+        script:
+          type: string?
+          default: |
+            printf "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tabssummit\tpileup\tlog10p\tfoldenrich\tlog10q\tregion\n" > iaintersect_result_formatted_for_setops.tsv
+            awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$7,$8,$9,len,"0","0","0","0","0","na")}' <(tail -n+2 $0) >> iaintersect_result_formatted_for_setops.tsv
+          inputBinding:
+            position: 1
+        input_file_1:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        output_file_1:
+          type: File
+          outputBinding:
+            glob: iaintersect_result_formatted_for_setops.tsv
+      baseCommand: ["bash", "-c"]
+    in:
+      input_file_1: restore_columns/output_file
+    out:
+    - output_file_1
 
   convert_to_bed:
     run: ../tools/custom-bash.cwl

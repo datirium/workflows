@@ -16,7 +16,8 @@ requirements:
   - "../metadata/rnaseq-header.cwl"
 
 'sd:upstream':
-  genome_indices: "genome-indices.cwl"
+  genome_indices:
+  - "genome-indices.cwl"
 
 
 inputs:
@@ -45,9 +46,21 @@ inputs:
   annotation_file:
     type: File
     label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
+    format:
+      - "http://edamontology.org/format_2306"
+      - "http://edamontology.org/format_3475"
     'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
+
+  dilution_factor:
+    type: float
+    label: "Dilution factor used for ERCC ExFold mix 1 (float)"
+    doc: "dilution factor used for ERCC ExFold mix 1 before spike-in"
+
+  uL_per_M_cells:
+    type: float
+    label: "Volume of ERCC ExFold mix 1 added to sample per million cells (float)"
+    doc: "volume of ERCC ExFold mix 1 spike-in to sample per million cells"
 
   fastq_file_upstream:
     type:
@@ -159,7 +172,7 @@ outputs:
     doc: "STAR Log.final.out"
     outputSource: star_aligner/log_final
 
-  star_out_log:
+  star_out_log_file:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR log out"
@@ -257,26 +270,26 @@ outputs:
   rpkm_isoforms:
     type: File
     format: "http://edamontology.org/format_3752"
-    label: "RPKM, grouped by isoforms"
-    doc: "Calculated rpkm values, grouped by isoforms"
+    label: "read counts grouped by isoforms"
+    doc: "read counts grouped by isoforms"
     outputSource: rpkm_calculation/isoforms_file
 
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by gene name"
-    doc: "Calculated rpkm values, grouped by gene name"
+    label: "read counts grouped by gene name"
+    doc: "read counts grouped by gene name"
     outputSource: group_isoforms/genes_file
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Gene Expression'
-        Title: 'RPKM, grouped by gene name'
+        Title: 'Read counts grouped by gene name'
 
   rpkm_common_tss:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "RPKM, grouped by common TSS"
-    doc: "Calculated rpkm values, grouped by common TSS"
+    label: "read counts grouped by common TSS"
+    doc: "read counts grouped by common TSS"
     outputSource: group_isoforms/common_tss_file
 
   htseq_count_gene_expression_file:
@@ -399,6 +412,70 @@ outputs:
     doc: "RPKM distribution plot for isoforms in PDF format"
     outputSource: get_gene_body/rpkm_distribution_plot_pdf
 
+  rpkm_isoforms_ercc_normalized:
+    type: File
+    format: "http://edamontology.org/format_3752"
+    label: "scaled read counts grouped by isoforms"
+    doc: "scaled read counts grouped by isoforms"
+    outputSource: ercc_spikein_norm/rpkm_isoforms_ercc_norm
+
+  rpkm_genes_ercc_normalized:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "scaled read counts grouped by gene name"
+    doc: "Scaled read counts grouped by gene name"
+    outputSource: group_isoforms_ercc/genes_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene Expression Scaled'
+        Title: 'Scaled read counts grouped by gene name'
+
+  rpkm_common_tss_ercc_normalized:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "scaled read counts grouped by common TSS"
+    doc: "scaled read counts grouped by common TSS"
+    outputSource: group_isoforms_ercc/common_tss_file
+
+  ercc_sam:
+    type: File
+    format: "http://edamontology.org/format_2573"
+    label: "unaligned input reads (against primary reference) aligned to ERCC sequences sam file"
+    doc: "unaligned input reads (against primary reference) aligned to ERCC sequences sam file"
+    outputSource: ercc_spikein_norm/ercc_sam
+
+  ercc_counts:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "mapped counts for ERCC sequences"
+    doc: "mapped counts for ERCC sequences"
+    outputSource: ercc_spikein_norm/ercc_counts
+
+  ercc_plot_pdf_file:
+    type: File
+    format: "http://edamontology.org/format_3508"
+    label: "Plot: ERCC molecules per cell counts, Expected vs Observed"
+    doc: "ERCC molecules per cell counts (log10) expected vs observed"
+    outputSource: ercc_spikein_norm/ercc_pdf_plot
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  ercc_spikein_norm_log_stdout:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stdout logfile"
+    doc: "captures standard output from ercc-norm.cwl"
+    outputSource: ercc_spikein_norm/log_file_stdout
+
+  ercc_spikein_norm_log_stderr:
+    type: File
+    format: "http://edamontology.org/format_2330"
+    label: "stderr logfile"
+    doc: "captures standard error from ercc-norm.cwl"
+    outputSource: ercc_spikein_norm/log_file_stderr
+
 
 steps:
 
@@ -461,8 +538,7 @@ steps:
       target_filename:
         source: extract_fastq_upstream/fastq_file
         valueFrom: $(self.basename)
-    out:
-      - target_file
+    out: [target_file]
 
   rename_downstream:
     run: ../tools/rename.cwl
@@ -471,8 +547,7 @@ steps:
       target_filename:
         source: extract_fastq_downstream/fastq_file
         valueFrom: $(self.basename)
-    out:
-      - target_file
+    out: [target_file]
 
   star_aligner:
     run: ../tools/star-alignreads.cwl
@@ -573,8 +648,7 @@ steps:
     run: ../tools/ucsc-genepredtogtf.cwl
     in:
       annotation_tsv_file: annotation_file
-    out:
-    - annotation_gtf_file
+    out: [annotation_gtf_file]
 
   htseq_count_gene_expression:
     run: ../tools/htseq-count.cwl
@@ -612,7 +686,10 @@ steps:
         isoforms_file: rpkm_calculation/isoforms_file
         paired_end:
           default: true
-      out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md]
+      out:
+      - collected_statistics_yaml
+      - collected_statistics_tsv
+      - collected_statistics_md
 
   get_gene_body:
     run: ../tools/plugin-plot-rna.cwl
@@ -630,6 +707,30 @@ steps:
     - gene_body_plot_pdf
     - rpkm_distribution_plot_pdf
 
+  ercc_spikein_norm:
+      run: ../tools/ercc-norm.cwl
+      in:
+        threads: threads
+        unaligned_fastq_files: bowtie_aligner/unaligned_fastq
+        dilution_factor: dilution_factor
+        uL_per_M_cells: uL_per_M_cells
+        rnaseq_counts: rpkm_calculation/isoforms_file
+      out:
+      - ercc_sam
+      - ercc_counts
+      - ercc_pdf_plot
+      - rpkm_isoforms_ercc_norm
+      - log_file_stdout
+      - log_file_stderr
+
+  group_isoforms_ercc:
+    run: ../tools/group-isoforms.cwl
+    in:
+      isoforms_file: ercc_spikein_norm/rpkm_isoforms_ercc_norm
+    out:
+      - genes_file
+      - common_tss_file
+
 
 $namespaces:
   s: http://schema.org/
@@ -637,11 +738,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Trim Galore RNA-Seq pipeline paired-end"
-label: "Trim Galore RNA-Seq pipeline paired-end"
-s:alternateName: "Run RNA-Seq BioWardrobe basic analysis with pair-end data file"
+s:name: "ERCC ExFold RNA-Seq pipeline paired-end"
+label: "ERCC ExFold RNA-Seq pipeline paired-end"
+s:alternateName: "ERCC ExFold RNA-Seq pipeline paired-end"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-rnaseq-pe.cwl
+s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/trim-rnaseq-pe-ercc.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -652,44 +753,69 @@ s:isPartOf:
 
 s:creator:
 - class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:legalName: "Datirium LLC"
   s:location:
   - class: s:PostalAddress
     s:addressCountry: "USA"
     s:addressLocality: "Cincinnati"
     s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+    s:postalCode: ""
+    s:streetAddress: ""
+    s:telephone: ""
+  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
   s:department:
   - class: s:Organization
-    s:legalName: "Allergy and Immunology"
+    s:legalName: "Datirium LLC"
     s:department:
     - class: s:Organization
-      s:legalName: "Barski Research Lab"
+      s:legalName: "Bioinformatics"
       s:member:
       - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
+        s:name: Robert Player
+        s:email: mailto:support@datirium.com
         s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-      - class: s:Person
-        s:name: Andrey Kartashov
-        s:email: mailto:Andrey.Kartashov@cchmc.org
-        s:sameAs:
-        - id: http://orcid.org/0000-0001-9102-5681
-
+        - id: https://orcid.org/0000-0001-5872-259X
 
 # doc:
 #   $include: ../descriptions/trim-rnaseq-pe.md
 
 
 doc: |
-  The original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
-  **RNA-Seq** basic analysis for a **pair-end** experiment.
-  A corresponded input [FASTQ](http://maq.sourceforge.net/fastq.shtml) file has to be provided.
+  An analysis workflow for paired-end RNA-Seq sequencing experiments that have used the ERCC ExFold Mix1 spike-in RNA for normalization.
 
+  ### __Inputs__
+  *General Info (required\*):*
+  - Experiment short name/Alias* - a unique name for the sample (e.g. what was used on tubes while processing it)
+  - Cells* - sample cell type or organism name
+  - Conditions* - experimental condition name
+  - Catalog # - catalog number for cells from vender/supplier
+  - Primary [genome index](https://scidap.com/tutorials/basic/genome-indices) for read alignment* - preprocessed genome index of sample organism for primary alignment and transcript counting
+  - FASTQ file for R1* - read 1 file of a pair-end library
+  - FASTQ file for R2* - read 2 file of a pair-end library
+  - ERCC ExFold Mix1 Dilution Factor* - for calculating expected molecules per cell for each ERCC_ID (e.g. if diluting by 1:10, enter the value 0.10 for this input)
+  - Volume (uL) of diluted mix per 1 million cells added to extracted RNA sample* - for calculating expected molecules per cell for each ERCC_ID (e.g if your sample has 4,000,000 cells and 8uL of diluted mix1 was added, enter the value 2.0 for this input)
+
+  *Advanced:*
+  - Number of bases to clip from the 3p end - used by bowtie aligner to trim <int> bases from 3' (right) end of reads
+  - Number of bases to clip from the 5p end - used by bowtie aligner to trim <int> bases from 5' (left) end of reads
+  - Call samtools rmdup to remove duplicates from sorted BAM file? - toggle on/off to remove duplicate reads from analysis
+  - Fragment Length Filter will retain fragments between set base pair (bp) ranges for peak analysis - drop down menu
+      - `Default_Range` retains fragments <1000 bp
+      - `Histone_Binding_Library` retains fragments between 130-300 bp
+      - `Transcription_Factor_Binding_Library` retains fragments <130 bp
+  - Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region - default set to `1000`
+  - Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region - default set to `20000`
+  - Number of threads for steps that support multithreading - default set to `2`
+
+
+  ### __Outputs__
+  Intermediate and final downloadable outputs include:
+  - quality statistics and visualizations for both R1/R2 input FASTQ files
+  - coordinate sorted BAM file with associated BAI file for primary alignment
+  - read pileup/coverage in BigWig format (raw depth values) for IGV
+  - common tss, gene, and isoform counts (Total, RPKM, and spike-normalized RPKM)
+
+  ### __Data Analysis Steps__
   Current workflow must be used with paired-end RNA-Seq data. It performs the following steps:
   1. Trim adapters from input FASTQ files
   2. Use STAR to align reads from input FASTQ files according to the predefined reference indices; generate unsorted BAM file and alignment statistics file
@@ -698,3 +824,13 @@ doc: |
   5. Generate BigWig file using sorted BAM file
   6. Map input FASTQ files to predefined rRNA reference indices using Bowtie to define the level of rRNA contamination; export resulted statistics to file
   7. Calculate isoform expression level for the sorted BAM file and GTF/TAB annotation file using GEEP reads-counting utility; export results to file
+  8. Use isoforms RPKM file as input into ERCC normalization script that will calculate the expected molecules per cell (a proxy for copy number) for each ERCC_ID by multiplying “molecules_per_uL_mix1” (col 2 in 'ercc_exfold_mix1_expected_counts.tsv' file in the docker image) by the input dilution factor then multiplying by the input volume per 10^6 cell and dividing by 1,000,000 cells
+  9. A linear regression is performed on the resulting spike-in scatter plot of molecule per cell vs RPKM
+  10. The RPKM value for each gene is input to the resulting function to produce an expected copy number value that will be used as the renormalized value for the gene to be used in downstream differential expression
+
+  ### __References__
+    - Langmead B, Salzberg S. Fast gapped-read alignment with Bowtie 2. Nature Methods. 2012, 9:357-359.
+    - Twelve years of SAMtools and BCFtools. Danecek et al. GigaScience, Volume 10, Issue 2, February 2021, giab008, https://doi.org/10.1093/gigascience/giab008
+    - Lovén, J. et al. Revisiting global gene expression analysis. Cell 151(3), 476–482 (2012).
+
+

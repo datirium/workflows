@@ -657,6 +657,13 @@ outputs:
       Morpheus heatmap stderr log
     outputSource: morpheus_heatmap/stderr_log
 
+  iaintersect_result:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Differential binding analysis results formatted as chip/atac/cutandrun results"
+    doc: "Differential binding analysis results  formatted as chip/atac/cutandrun results exported as TSV"
+    outputSource: assign_genes/result_file
+
 
 steps:
 

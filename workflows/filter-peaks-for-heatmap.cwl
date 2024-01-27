@@ -15,6 +15,8 @@ requirements:
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
+    - "cutandrun-macs2-pe.cwl"
+    - "cutandrun-seacr-pe.cwl"
 
 
 inputs:
@@ -33,14 +35,12 @@ inputs:
     'sd:upstreamSource': "sample_to_filter/iaintersect_result"
     'sd:localLabel': true
 
-  # alignment_file:
-  #   type: File
-  #   secondaryFiles:
-  #   - .bai
-  #   format: "http://edamontology.org/format_2572"
-  #   label: "ChIP/ATAC experiment"
-  #   doc: "Coordinate sorted BAM and BAI index files"
-  #   'sd:upstreamSource': "sample_to_filter/bambai_pair"
+  annotation_file:
+    type: File
+    label: "Annotation file"
+    format: "http://edamontology.org/format_3475"
+    doc: "Tab-separated annotation file"
+    'sd:upstreamSource': "sample_to_filter/annotation_file"
 
   sql_query:
     type: string
@@ -63,7 +63,7 @@ inputs:
     type:
     - "null"
     - string[]
-    default: ["chrom", "start", "end", "chrom || '-' || start || '-' || end AS name"]
+    default: ["chrom", "start", "end", "gene_id AS name", "foldenrich AS score", "strand"]
     label: "Columns to print"
     doc: |
       List of columns to print (SELECT parameters for SQL query).
@@ -71,6 +71,22 @@ inputs:
       4th columns should be unique, so we use a combination of chrom-start-end.
     'sd:layout':
       advanced: true
+
+  promoter_dist:
+    type: int?
+    default: 1000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from gene TSS for promoter region assignment:"
+    doc: "Max distance from gene TSS (in both directions) for peak to be assigned to the promoter region."
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    'sd:layout':
+      advanced: true
+    label: "Max distance from the promoter (only in 5' direction) for peak to be assigned to the upstream region:"
+    doc: "Max distance from the promoter (only in 5' direction) for peak to be assigned to the upstream region."
 
 
 outputs:
@@ -81,26 +97,41 @@ outputs:
     label: "Filtered called peaks with the nearest genes assigned"
     doc: "Regions of interest formatted as headerless BED file with [chrom start end name]"
     outputSource: feature_select/filtered_file
+
+  filtered_file_for_igv:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Set peaks from operator, in simple bed format."
+    doc: "Regions of interest formatted as headerless BED file with [chrom start end]"
+    outputSource: formatting_bed/filtered_file_for_igv
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'bed'
+        name: "Set operated Peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  annotated_peaks_file:
+    type: File?
+    format: "http://edamontology.org/format_3475"
+    label: "gene annotated filtered peaks file"
+    doc: "nearest gene annotation per peak [refseq_id gene_id txStart txEnd strand chrom start end length abssummit pileup log1-p foldenrich log10q region]"
+    outputSource: island_intersect/result_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Filtering results'
-        Title: 'Filtered table'
+        tab: 'Annotated Peak Filtering Results'
+        Title: 'Filtered peaks with nearest gene annotation'
 
-  # bambai_pair:
-  #   type: File
-  #   format: "http://edamontology.org/format_2572"
-  #   label: "Not changed coordinate sorted BAM and BAI index files"
-  #   doc: "Not changed coordinate sorted BAM and BAI index files"
-  #   outputSource: alignment_file
-
-  filtering_stdout_log:
+  stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: feature_select/stdout_log
 
-  filtering_stderr_log:
+  stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
@@ -123,6 +154,56 @@ steps:
     - filtered_file
     - stdout_log
     - stderr_log
+
+  formatting_bed:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: ScatterFeatureRequirement
+      - class: ShellCommandRequirement
+      inputs:
+        script:
+          type: string?
+          default: |
+            # format for IGV
+            awk -F'\t' '{if($3>$2){printf("%s\t%.0f\t%.0f\t%s\n",$1,$2,$3,"peak_"NR)}}' $0 > output-for-igv.tsv
+            # format for island intersect tool
+            awk -F'\t' 'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"};{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),"0","peak_"NR)}}' $0 > output-for-iaintersect.tsv
+          inputBinding:
+            position: 1
+        headerless_bed:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        filtered_file_for_igv:
+          type: File
+          outputBinding:
+            glob: output-for-igv.tsv
+        filtered_file_for_iaintersect:
+          type: File
+          outputBinding:
+            glob: output-for-iaintersect.tsv
+      baseCommand: ["bash", "-c"]
+    in:
+      headerless_bed: feature_select/filtered_file
+    out:
+    - filtered_file_for_igv
+    - filtered_file_for_iaintersect
+
+  island_intersect:
+    label: "Peak annotation"
+    doc: |
+      Assigns nearest genes to peaks to explore the biological implication of the open
+      chromatin binding sites.
+    run: ../tools/iaintersect.cwl
+    in:
+      input_filename: formatting_bed/filtered_file_for_iaintersect
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
+    out: [result_file, log_file]
 
 
 $namespaces:

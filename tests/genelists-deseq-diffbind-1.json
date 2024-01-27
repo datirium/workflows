@@ -1,6 +1,6 @@
 {
   "alias": "genelists-test",
-  "genelist_names": ["deseq_genelist","diffbind_genelist"],
+  "genelist_names": ["deseq fdr05","diffbind fdr01"],
   "genelist_feature_files": [
     {
       "class": "File",

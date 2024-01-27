@@ -13,6 +13,7 @@ requirements:
   sample_to_filter:
   - "deseq.cwl"
   - "deseq-multi-factor.cwl"
+  - "deseq-for-spikein.cwl"
 
 
 inputs:
@@ -71,19 +72,26 @@ outputs:
     label: "Filtered differentially expressed genes"
     doc: "Regions of interest formatted as headerless BED file with [chrom start end name score strand]"
     outputSource: feature_select/filtered_file
+
+  filtered_file_w_header:
+    type: File
+    format: "http://edamontology.org/format_3003"
+    label: "Filtered differentially expressed genes"
+    doc: "Regions of interest formatted as headered BED file with [chrom start end name score strand]"
+    outputSource: add_header/filtered_file_with_header
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Filtering results'
         Title: 'Filtered table'
 
-  filtering_stdout_log:
+  filtering_std_out_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: feature_select/stdout_log
 
-  filtering_stderr_log:
+  filtering_std_err_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
@@ -123,6 +131,36 @@ steps:
     - filtered_file
     - stdout_log
     - stderr_log
+
+  add_header:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      requirements:
+      - class: ScatterFeatureRequirement
+      - class: ShellCommandRequirement
+      inputs:
+        script:
+          type: string?
+          default: |
+            printf "Chrom\tStart\tEnd\tName\tScore\tStrand\n" > genelist-filtered-set-w-header.bed
+            cat $0 >> genelist-filtered-set-w-header.bed
+          inputBinding:
+            position: 1
+        headerless_bed:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        filtered_file_with_header:
+          type: File
+          outputBinding:
+            glob: genelist-filtered-set-w-header.bed
+      baseCommand: ["bash", "-c"]
+    in:
+      headerless_bed: feature_select/filtered_file
+    out:
+    - filtered_file_with_header
 
 
 $namespaces:

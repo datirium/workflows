@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:v1.0.0
+  dockerPull: robertplayer/scidap-genelists:v3.0.0
 
 
 inputs:
@@ -46,7 +46,7 @@ inputs:
       Array of filtered differential genelists from DESeq or diffbind pipelines.
 
   sample_names_nabinding:
-    type: string[]
+    type: string[]?
     inputBinding:
       prefix: "-d"
       itemSeparator: ","
@@ -54,7 +54,7 @@ inputs:
       Array of aliases for ChIP/ATAC/CRT-Seq experiments for row metadata.
 
   sample_names_rnaseq:
-    type: string[]
+    type: string[]?
     inputBinding:
       prefix: "-e"
       itemSeparator: ","
@@ -62,7 +62,7 @@ inputs:
       Array of aliases for RNA-Seq experiments for column metadata.
 
   bam_files:
-    type: File[]
+    type: File[]?
     inputBinding:
       prefix: "-f"
       itemSeparator: ","
@@ -70,7 +70,7 @@ inputs:
       Array of sample coordinate sorted BAM alignment and BAI index files.
 
   expression_files:
-    type: File[]
+    type: File[]?
     inputBinding:
       prefix: "-g"
       itemSeparator: ","
@@ -154,8 +154,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "mirna-mirdeep2"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/mirna-mirdeep2-se.cwl
+s:name: "genelists-deseq-diffbind"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/genelists-deseq-diffbind.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 

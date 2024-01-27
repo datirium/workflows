@@ -13,6 +13,8 @@ requirements:
   genelists:
     - "filter-deseq-for-heatmap.cwl"
     - "filter-diffbind-for-heatmap.cwl"
+    - "filter-peaks-for-heatmap.cwl"
+    - "genelists-sets.cwl"
   samples_nabinding:
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
@@ -147,14 +149,14 @@ outputs:
     doc: "peak average read depth per TSS window and gene expression counts matrix"
     outputSource: data_integration/output_counts
 
-  heatmap_gct:
+  heatmap_gct_file:
     type: File
     label: "GCT formatted peak and expression data for morpheus viewer"
     format: "http://edamontology.org/format_3709"
     doc: "GCT formatted peak and expression data for morpheus viewer"
     outputSource: data_integration/heatmap_gct
 
-  heatmap_html:
+  heatmap_nonorm_html:
     type: File
     outputSource: data_integration/heatmap_html
     label: "Heatmap of peak and expression data"
@@ -186,6 +188,16 @@ outputs:
     - linkList:
         tab: 'Overview'
         target: "_blank"
+
+  stdout_log_file:
+    type: File
+    outputSource: data_integration/log_file_stdout
+    label: "log file stdout"
+
+  stderr_log_file:
+    type: File
+    outputSource: data_integration/log_file_stderr
+    label: "log file stderr"
 
 
 steps:

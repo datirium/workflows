@@ -10,7 +10,10 @@ requirements:
 
 
 'sd:upstream':
-  deseq_experiment: "deseq.cwl"
+  deseq_experiment:
+    - "deseq.cwl"
+    - "deseq-for-spikein.cwl"
+
 
 inputs:
 
@@ -136,7 +139,7 @@ inputs:
     'sd:layout':
       advanced: true
 
-  threads:
+  threads_count:
     type: int?
     default: 4
     label: "Number of threads"
@@ -184,7 +187,7 @@ outputs:
     doc: "GSEApy stderr log"
     outputSource: run_gseapy/stderr_log
 
-  summary_report:
+  summary_report_file:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "Enrichment report"
@@ -227,7 +230,7 @@ steps:
       ascending_rank_sorting: ascending_rank_sorting
       graphs_count: graphs_count
       seed: seed
-      threads: threads
+      threads: threads_count
     out:
       - enrichment_report
       - enrichment_plots
