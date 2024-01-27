@@ -51,10 +51,15 @@ inputs:
 
   indices_folder:
     type: Directory
-    label: "Genome type"
+    label: "Cell Ranger Reference Sample"
     doc: |
-      Reference genome package created
-      with cellranger-arc mkref command.
+      Any "Cell Ranger Reference Sample" that
+      builds a reference genome package of a
+      selected species for quantifying gene
+      expression and chromatin accessibility.
+      This sample can be obtained from "Cell
+      Ranger Reference (RNA, ATAC, RNA+ATAC)"
+      pipeline.
     'sd:upstreamSource': "genome_indices/arc_indices_folder"
     'sd:localLabel': true
 

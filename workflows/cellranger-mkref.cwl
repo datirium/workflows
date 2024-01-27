@@ -19,39 +19,52 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   genome_fasta_file:
     type: File
-    format: "http://edamontology.org/format_1929"
     label: "Genome type"
-    doc: "Reference genome FASTA file that includes all chromosomes"
+    doc: |
+      Genome type to be used for
+      generating reference genome
+      indices
     'sd:upstreamSource': "genome_indices/fasta_output"
     'sd:localLabel': true
 
   annotation_gtf_file:
     type: File
-    format: "http://edamontology.org/format_2306"
-    label: "Genome type"
-    doc: "GTF annotation file that includes refGene and mitochondrial DNA annotations"
     'sd:upstreamSource': "genome_indices/annotation_gtf"
-    'sd:localLabel': true
-
-  threads:
-    type: int?
-    default: 4
-    label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
-    'sd:layout':
-      advanced: true
 
   memory_limit:
     type: int?
     default: 20
     label: "Maximum memory used (GB)"
-    doc: "Maximum memory used (GB). The same will be applied to virtual memory"
+    doc: |
+      Maximum memory used (GB). The same
+      will be applied to virtual memory
+    'sd:layout':
+      advanced: true
+
+  threads:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+    default: "4"
+    label: "Cores/CPUs"
+    doc: |
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 4
     'sd:layout':
       advanced: true
 
@@ -115,7 +128,9 @@ steps:
     in:
       genome_fasta_file: genome_fasta_file
       annotation_gtf_file: annotation_gtf_file
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
       memory_limit: memory_limit
       output_folder_name:
         default: "cellranger_ref"
@@ -181,7 +196,9 @@ steps:
         default: ["chrM"]                        # as recommended in Cell Ranger ARC manual
       output_folder_name:
         default: "cellranger_arc_ref"
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
       memory_limit: memory_limit
     out:
     - indices_folder
