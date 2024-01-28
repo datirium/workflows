@@ -12,11 +12,15 @@ requirements:
   genome_indices:
     - "genome-indices.cwl"
   regions_a:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
   regions_b:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"

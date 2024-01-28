@@ -10,11 +10,15 @@ requirements:
 
 'sd:upstream':
   first_biological_condition:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
   second_biological_condition:
+    - "chipseq-se.cwl"
+    - "chipseq-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
     - "trim-atacseq-se.cwl"

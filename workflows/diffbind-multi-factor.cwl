@@ -18,6 +18,8 @@ requirements:
 
 'sd:upstream':
   dna_experiment:
+  - "chipseq-se.cwl"
+  - "chipseq-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
