@@ -93,7 +93,6 @@ steps:
       pairchip: pairchip
       fragment_size: fragment_size
       scale: scale
-      chrom_length_file: chrom_length_file
       mapped_reads_number: mapped_reads_number
       strand: strand
       du: dutp
