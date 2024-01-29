@@ -10,29 +10,25 @@ requirements:
         var root = inputs.bam_file.basename.split('.').slice(0,-1).join('.');
         return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
     };
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return  [
-                {
-                  "entry": inputs.bam_file,
-                  "entryname": inputs.bam_file.basename,
-                  "writable": true
-                }
-              ]
-    }
+
+hints:
 - class: DockerRequirement
   dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
 
 
 inputs:
 
-  bash_script:
+  bash_script_:
     type: string?
     default: |
       #!/bin/bash
       if [ "$0" = "true" ]; then
-        umi_tools dedup --random-seed=12345 "${@:1}"
+        echo "Copy $2 to __temp.bam"
+        cp $2 __temp.bam
+        samtools sort __temp.bam -o __temp_sorted.bam
+        samtools index __temp_sorted.bam
+        umi_tools dedup --random-seed=12345 -I __temp_sorted.bam "${@:3}"
+        rm -f __temp.bam __temp_sorted.bam __temp_sorted.bam.bai
       else
         echo "Skip umi_tools dedup " ${@:1}
       fi
