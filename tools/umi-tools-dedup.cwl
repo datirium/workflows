@@ -18,7 +18,7 @@ hints:
 
 inputs:
 
-  bash_script_:
+  bash_script:
     type: string?
     default: |
       #!/bin/bash
