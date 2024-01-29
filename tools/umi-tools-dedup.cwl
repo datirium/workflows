@@ -27,7 +27,7 @@ requirements:
 
 inputs:
 
-  bash_script:
+  bash_script_:
     type: string?
     default: |
       #!/bin/bash
