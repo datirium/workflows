@@ -23,14 +23,11 @@ inputs:
     default: |
       #!/bin/bash
       if [ "$0" = "true" ]; then
-        echo "Copy $2 to __temp.bam"
-        cp $2 __temp.bam
-        samtools sort __temp.bam -o __temp_sorted.bam
-        samtools index __temp_sorted.bam
-        umi_tools dedup --random-seed=12345 -I __temp_sorted.bam "${@:3}"
-        rm -f __temp.bam __temp_sorted.bam __temp_sorted.bam.bai
+        umi_tools dedup --random-seed=12345 "${@:1}"
       else
         echo "Skip umi_tools dedup " ${@:1}
+        cp $2 $4
+        cp $2.bai $4.bai
       fi
     inputBinding:
       position: 5
@@ -55,24 +52,24 @@ inputs:
       prefix: "-I"
     doc: "Input BAM file"
 
+  output_filename:
+    type: string?
+    inputBinding:
+      position: 8
+      prefix: "-S"
+      valueFrom: $(default_output_filename())
+    default: ""
+    doc: "Output filename"
+
   paired_end:
     type: boolean?
     inputBinding:
-      position: 8
+      position: 9
       prefix: "--paired"
     doc: |
       Inputs BAM file is paired end - output both read pairs.
       This will also force the use of the template length to
       determine reads with the same mapping coordinates.
-
-  output_filename:
-    type: string?
-    inputBinding:
-      position: 9
-      prefix: "-S"
-      valueFrom: $(default_output_filename())
-    default: ""
-    doc: "Output filename"
 
   output_stats:
     type: string?
@@ -101,16 +98,9 @@ outputs:
   dedup_bam_file:
     type: File
     outputBinding:
-      glob: |
-        ${ return inputs.trigger?default_output_filename():inputs.bam_file.basename }
-    secondaryFiles: |
-      ${
-          if (inputs.bam_file.secondaryFiles && inputs.trigger == false){
-            return inputs.bam_file.secondaryFiles;
-          } else {
-            return "null";
-          }
-        }
+      glob: $(default_output_filename())
+    secondaryFiles:
+    - .bai
 
   output_stats:
     type:
