@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -36,9 +36,10 @@ inputs:
       awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
 
       # making reformatted file for deseq multi-factor (removing unannotated transcripts labeled as "na" for col1 [RefseqId] and col2 [GeneId] from the output count table)
-      
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts_mf.tsv
       tail -n+2 transcript_counts.tsv | grep -vP "^na\tna\t" >> transcript_counts_mf.tsv
+      # convert to csv or 'get_gene_n_tss.R'
+      sed 's/\t/,/g' transcript_counts_mf.tsv > transcript_counts_mf.csv
       
       # REMOVING THIS FOR NOW, REPLACING WITH 
       # and if there are duplicate geneIds, only retain the one with the higher read count
@@ -177,7 +178,7 @@ outputs:
   transcript_counts:
     type: File
     outputBinding:
-      glob: transcript_counts_mf.tsv
+      glob: transcript_counts_mf.csv
     doc: |
       Gene expression table formatted for input into DESeq and DESeq multi factor. The na values for unannotated genes have been removed.
 

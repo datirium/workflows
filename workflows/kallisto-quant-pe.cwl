@@ -123,7 +123,7 @@ outputs:
 
   rpkm_isoforms:
     type: File
-    format: "http://edamontology.org/format_3475"
+    format: "http://edamontology.org/format_3752"
     label: "kallisto estimated counts per transcript"
     doc: "Quantitation by isoform. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
     outputSource: kallisto_quant/transcript_counts
@@ -156,7 +156,7 @@ outputs:
     - syncfusiongrid:
         tab: 'Transcript Counts'
 
-  overview_file_tab:
+  overview_file:
     type: File
     format: "http://edamontology.org/format_3835"
     label: "summary of inputs"
@@ -377,7 +377,7 @@ doc: |
 
   ### __Data Analysis Steps__
   1. cwl calls dockercontainer robertplayer/scidap-kallisto to pseudo align reads using `kallisto quant`.
-  2. abundance tsv is formatted
+  2. abundance tsv is formatted, and additional files are produced for gene and common TSS counts for use in differential expression analysis
   3. read and alignment metrics are calculated for the sample piechart, and output to the overview.md file
 
   ### __References__
