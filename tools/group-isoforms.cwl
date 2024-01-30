@@ -34,12 +34,6 @@ inputs:
       prefix: "--tss"
     doc: "Output TSV common tss expression filename"
 
-  update_change:
-    type: string?
-    inputBinding:
-      position: 8
-    doc: "this is only here to force a tool update"
-
 
 outputs:
 
