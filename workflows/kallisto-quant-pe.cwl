@@ -121,12 +121,30 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
+  rpkm_isoforms:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "kallisto estimated counts per transcript"
+    doc: "Quantitation by isoform. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
+    outputSource: kallisto_quant/transcript_counts
+
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_common_tss)"
-    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
-    outputSource: kallisto_quant/transcript_counts
+    label: "Quantitation by gene name"
+    doc: "Quantitation by gene name. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are derived from kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
+    outputSource: group_isoforms/genes_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene Expression'
+        Title: 'RPKM, grouped by gene name'
+
+  rpkm_common_tss:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Quantitation by common TSS"
+    doc: "Quantitation by common TSS. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are derived from kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
+    outputSource: group_isoforms/common_tss_file
 
   transcript_counts_all:
     type: File
@@ -290,6 +308,14 @@ steps:
       fastq_R2: rename_R2/target_file
       threads: threads
     out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, transcript_counts_standard, log_file_stdout, log_file_stderr]
+
+  group_isoforms:
+    run: ../tools/group-isoforms.cwl
+    in:
+      isoforms_file: kallisto_quant/transcript_counts
+    out:
+      - genes_file
+      - common_tss_file
 
 
 $namespaces:

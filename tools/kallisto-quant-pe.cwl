@@ -13,7 +13,7 @@ hints:
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
@@ -36,10 +36,13 @@ inputs:
       awk -F'\t' '{if(NR==FNR){anno[$3]=$0}else{printf("%s\t%0.f\t%s\n",anno[$1],$4,$5)}}' $ANNO <(tail -n+2 ./quant_outdir/abundance.tsv) >> transcript_counts.tsv
 
       # making reformatted file for deseq multi-factor (removing unannotated transcripts labeled as "na" for col1 [RefseqId] and col2 [GeneId] from the output count table)
-      # and if there are duplicate geneIds, only retain the one with the higher read count
+      
       printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm\n" > transcript_counts_mf.tsv
-      tail -n+2 transcript_counts.tsv | grep -vP "^na\tna\t" > transcript_counts_mf.tmp
-      awk -F'\t' '{if(NR==FNR){if($7>=tr[$2]){c1[$2]=$1; c3[$2]=$3; c4[$2]=$4; c5[$2]=$5; c6[$2]=$6; tr[$2]=$7; rpkm[$2]=$8}}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%0.f\t%s\n",c1[$2],$2,c3[$2],c4[$2],c5[$2],c6[$2],tr[$2],rpkm[$2])}}' transcript_counts_mf.tmp transcript_counts_mf.tmp | sort | uniq >> transcript_counts_mf.tsv
+      tail -n+2 transcript_counts.tsv | grep -vP "^na\tna\t" >> transcript_counts_mf.tsv
+      
+      # REMOVING THIS FOR NOW, REPLACING WITH 
+      # and if there are duplicate geneIds, only retain the one with the higher read count
+      #awk -F'\t' '{if(NR==FNR){if($7>=tr[$2]){c1[$2]=$1; c3[$2]=$3; c4[$2]=$4; c5[$2]=$5; c6[$2]=$6; tr[$2]=$7; rpkm[$2]=$8}}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%0.f\t%s\n",c1[$2],$2,c3[$2],c4[$2],c5[$2],c6[$2],tr[$2],rpkm[$2])}}' transcript_counts_mf.tmp transcript_counts_mf.tmp | sort | uniq >> transcript_counts_mf.tsv
 
       # print for overview.md
       #   read metrics
@@ -67,7 +70,7 @@ inputs:
       printf "\n\n\tgenerating overview.md file...\n"
 
       printf "-" > overview.md
-      printf " NOTE: Unannotated transcripts will not be used in downstream differential expression analysis.\n" >> overview.md
+      printf " NOTE: Unannotated transcripts are not shown in the gene expression tab, and will not be used in downstream differential expression analysis.\n" >> overview.md
       printf "\n" >> overview.md
       printf "#### INPUTS\n" >> overview.md
       printf "-" >> overview.md
@@ -247,4 +250,10 @@ s:creator:
         - id: https://orcid.org/0000-0001-5872-259X
 
 doc: |
-    Tool indexes a reference genome fasta using `kallisto index`.
+  This tool quantitates RNA-Seq reads using the pseudo aligner Kallisto. Read counts are estimates.
+
+  ### __Data Analysis Steps__
+  1. cwl calls dockercontainer robertplayer/scidap-kallisto to pseudo align reads using `kallisto quant`
+  2. abundance tsv is merged with annotation data
+  3. rows are summed per unique GeneID, and resulting file formatted for use in differential expression analysis
+  4. read and alignment metrics are calculated for the sample piechart, and output to the overview.md file
