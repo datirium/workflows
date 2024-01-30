@@ -121,12 +121,37 @@ outputs:
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
+  rpkm_isoforms:
+    type: File
+    format: "http://edamontology.org/format_3752"
+    label: "kallisto estimated counts per transcript"
+    doc: "Quantitation by isoform. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
+    outputSource: kallisto_quant/transcript_counts
+
   rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "kallisto estimated counts per transcript (same as rpkm_isoforms and rpkm_common_tss)"
-    doc: "NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are kallisto esimate counts per transcript"
-    outputSource: kallisto_quant/transcript_counts
+    label: "Quantitation by gene name"
+    doc: "Quantitation by gene name. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are derived from kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
+    outputSource: group_isoforms/genes_file
+    'sd:visualPlugins':
+    - syncfusiongrid:
+        tab: 'Gene Expression'
+        Title: 'RPKM, grouped by gene name'
+
+  rpkm_common_tss:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Quantitation by common TSS"
+    doc: "Quantitation by common TSS. NOT ACTUALLY RPKM, output name required for DESeq compatibility, these are derived from kallisto esimate counts per transcript. The na values for unannotated genes have been removed."
+    outputSource: group_isoforms/common_tss_file
+
+  transcript_counts_all:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "kallisto estimated counts per transcript, with na for unannotated genes"
+    doc: "These are kallisto esimate counts per transcript. This file contains na where annotations not available."
+    outputSource: kallisto_quant/transcript_counts_standard
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Transcript Counts'
@@ -152,6 +177,13 @@ outputs:
       - pie:
           colors: ['#b3de69', '#99c0db', '#fdc381', '#fb8072']
           data: [$2, $3, $4, $5]
+
+  kallisto_abundance_tsv:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "raw kallisto count estimates file"
+    doc: "raw kallisto count estimates file"
+    outputSource: kallisto_quant/kallisto_abundance_file
 
 
 steps:
@@ -275,7 +307,15 @@ steps:
       fastq_R1: rename_R1/target_file
       fastq_R2: rename_R2/target_file
       threads: threads
-    out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, log_file_stdout, log_file_stderr]
+    out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, transcript_counts_standard, log_file_stdout, log_file_stderr]
+
+  group_isoforms:
+    run: ../tools/group-isoforms.cwl
+    in:
+      isoforms_file: kallisto_quant/transcript_counts
+    out:
+      - genes_file
+      - common_tss_file
 
 
 $namespaces:
@@ -337,7 +377,7 @@ doc: |
 
   ### __Data Analysis Steps__
   1. cwl calls dockercontainer robertplayer/scidap-kallisto to pseudo align reads using `kallisto quant`.
-  2. abundance tsv is formatted
+  2. abundance tsv is formatted, and additional files are produced for gene and common TSS counts for use in differential expression analysis
   3. read and alignment metrics are calculated for the sample piechart, and output to the overview.md file
 
   ### __References__
