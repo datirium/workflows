@@ -11,7 +11,6 @@ requirements:
         return inputs.output_filename?inputs.output_filename:root+"_dedup."+ext;
     };
 
-
 hints:
 - class: DockerRequirement
   dockerPull: quay.io/biocontainers/umi_tools:1.0.1--py38h0213d0e_2
@@ -27,6 +26,8 @@ inputs:
         umi_tools dedup --random-seed=12345 "${@:1}"
       else
         echo "Skip umi_tools dedup " ${@:1}
+        cp $2 $4
+        cp $2.bai $4.bai
       fi
     inputBinding:
       position: 5
@@ -51,24 +52,24 @@ inputs:
       prefix: "-I"
     doc: "Input BAM file"
 
+  output_filename:
+    type: string?
+    inputBinding:
+      position: 8
+      prefix: "-S"
+      valueFrom: $(default_output_filename())
+    default: ""
+    doc: "Output filename"
+
   paired_end:
     type: boolean?
     inputBinding:
-      position: 8
+      position: 9
       prefix: "--paired"
     doc: |
       Inputs BAM file is paired end - output both read pairs.
       This will also force the use of the template length to
       determine reads with the same mapping coordinates.
-
-  output_filename:
-    type: string?
-    inputBinding:
-      position: 9
-      prefix: "-S"
-      valueFrom: $(default_output_filename())
-    default: ""
-    doc: "Output filename"
 
   output_stats:
     type: string?
@@ -97,16 +98,9 @@ outputs:
   dedup_bam_file:
     type: File
     outputBinding:
-      glob: |
-        ${ return inputs.trigger?default_output_filename():inputs.bam_file.basename }
-    secondaryFiles: |
-      ${
-          if (inputs.bam_file.secondaryFiles && inputs.trigger == false){
-            return inputs.bam_file.secondaryFiles;
-          } else {
-            return "null";
-          }
-        }
+      glob: $(default_output_filename())
+    secondaryFiles:
+    - .bai
 
   output_stats:
     type:
@@ -123,8 +117,8 @@ outputs:
 
 
 baseCommand: [bash, '-c']
-stdout: umi_tools_dedup_stdout_file.log
-stderr: umi_tools_dedup_stderr_file.log
+stdout: umi_tools_dedup_stdout.log
+stderr: umi_tools_dedup_stderr.log
 
 
 $namespaces:
