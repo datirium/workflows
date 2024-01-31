@@ -118,8 +118,8 @@ outputs:
 
 
 baseCommand: [bash, '-c']
-stdout: umi_tools_dedup_stdout.log
-stderr: umi_tools_dedup_stderr.log
+stdout: umi_tools_dedup_stdout_file.log
+stderr: umi_tools_dedup_stdout_file.log
 
 
 $namespaces:
