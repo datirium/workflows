@@ -31,7 +31,7 @@ requirements:
   - "cellranger-atac-aggr.cwl"
   genome_indices:
   - "genome-indices.cwl"
-  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
+
 
 inputs:
 
@@ -55,15 +55,11 @@ inputs:
     type: File
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ATAC or RNA+ATAC Sample"
+    label: "Cell Ranger ATAC/ARC Count/Aggregate Experiment"
     doc: |
-      Any "Cell Ranger ATAC or RNA+ATAC Sample"
-      for generating ATAC fragments coverage
-      files. This sample can be obtained from
-      one of the following pipelines: "Cell
-      Ranger Count (RNA+ATAC)", "Cell Ranger
-      Aggregate (RNA+ATAC)", "Cell Ranger Count
-      (ATAC)", or "Cell Ranger Aggregate (ATAC)".
+      Count and barcode information for every ATAC fragment used in the
+      loaded Seurat object. File should be saved in TSV format and to be
+      tbi-indexed.
     'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
     'sd:localLabel': true
 
@@ -116,24 +112,46 @@ inputs:
     'sd:layout':
       advanced: true
 
+  parallel_memory_limit:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "32"
+    default: "32"
+    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Forced to 32 GB
+    'sd:layout':
+      advanced: true
+
+  vector_memory_limit:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "64"
+    default: "64"
+    label: "Maximum vector memory in GB allowed to be used by R"
+    doc: |
+      Maximum vector memory in GB allowed to be used by R.
+      Forced to 64 GB
+    'sd:layout':
+      advanced: true
+
   threads:
     type:
     - "null"
     - type: enum
       symbols:
       - "1"
-      - "2"
-      - "3"
-      - "4"
-      - "5"
-      - "6"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
-      Parallelization parameter to define the
-      number of cores/CPUs that can be utilized
-      simultaneously.
-      Default: 1
+      Number of cores/cpus to use
+      Forced to 1
     'sd:layout':
       advanced: true
 
@@ -180,16 +198,16 @@ outputs:
     - type: array
       items: File
     outputSource: sc_atac_coverage/fragments_bigwig_file
-    label: "Genome coverage for ATAC fragments"
+    label: "Genome coverage for fragments"
     doc: |
-      Genome coverage calculated for ATAC fragments
+      Genome coverage calculated for fragments
       in bigWig format
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "ATAC fragments coverage"
+        name: "Fragments coverage"
         height: 120
 
   experiment_info:
@@ -233,9 +251,11 @@ steps:
       verbose:
         default: true
       parallel_memory_limit:
-        default: 32
+        source: parallel_memory_limit
+        valueFrom: $(parseInt(self))
       vector_memory_limit:
-        default: 96
+        source: vector_memory_limit
+        valueFrom: $(parseInt(self))
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -271,9 +291,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-Cell ATAC-Seq Genome Coverage"
-s:name: "Single-Cell ATAC-Seq Genome Coverage"
-s:alternateName: "Generates genome coverage tracks from chromatin accessibility data of selected cells"
+label: "Single-cell ATAC-Seq Genome Coverage"
+s:name: "Single-cell ATAC-Seq Genome Coverage"
+s:alternateName: "Creates genome coverage bigWig files from the provided fragments file and selected grouping parameters"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-coverage.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -311,7 +331,7 @@ s:creator:
 
 
 doc: |
-  Single-Cell ATAC-Seq Genome Coverage
+  Single-cell ATAC-Seq Genome Coverage
 
-  Generates genome coverage tracks from chromatin
-  accessibility data of selected cells
+  Creates genome coverage bigWig files from the provided
+  fragments file and selected grouping parameters

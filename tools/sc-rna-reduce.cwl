@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -52,36 +52,14 @@ inputs:
       Default: all cells used, no extra metadata is added
 
   cell_cycle_data:
-    type:
-    - "null"
-    - File
-    - type: enum
-      symbols:
-      - "hg19"
-      - "hg38"
-      - "mm10"
+    type: File?
     inputBinding:
       prefix: "--cellcycle"
-      valueFrom: |
-        ${
-          if (self.class && self.class == "File"){
-            return self;
-          } else if (self == "hg19") {
-            return "/opt/sc_tools/human_cc_genes.csv";
-          } else if (self == "hg38") {
-            return "/opt/sc_tools/human_cc_genes.csv";
-          } else if (self == "mm10") {
-            return "/opt/sc_tools/mouse_cc_genes.csv";
-          } else {
-            return null;
-          }
-        }
     doc: |
       Path to the TSV/CSV file with the information for cell cycle score assignment.
       First column - 'phase', second column 'gene_id'. If loaded Seurat object already
       includes cell cycle scores in 'S.Score', 'G2M.Score', and 'CC.Difference' metatada
-      columns they will be overwritten. If a string value provided, it should be one of
-      the hg19, hg38, or mm10 as we replace it with the file location from docker image.
+      columns they will be overwritten.
       Default: skip cell cycle score assignment.
 
   normalization_method:
@@ -143,17 +121,20 @@ inputs:
     inputBinding:
       prefix: "--regressmt"
     doc: |
-      Regress the percentage of RNA reads mapped to mitochondrial genes as a
+      Regress the percentage of transcripts mapped to mitochondrial genes as a
       confounding source of variation.
       Default: false
 
   regress_genes:
-    type: string?
+    type:
+    - "null"
+    - string
+    - string[]
     inputBinding:
       prefix: "--regressgenes"
     doc: |
-      Regex pattern to identify genes which expression should be
-      regressed as a confounding source of variation. Default: none
+      Genes which expression should be regressed as a confounding source of variation.
+      Default: None
 
   regress_ccycle_full:
     type: boolean?
@@ -177,14 +158,20 @@ inputs:
       Default: false
 
   dimensions:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use for datasets integration (if provided RDS
-      file includes multiple datasets and --ntgr is not set to 'harmony')
-      and UMAP projection (from 1 to 50).
-      Default: 10
+      Dimensionality to use in UMAP projection (from 1 to
+      50). If single value N is provided, use from 1 to N
+      PCs. If multiple values are provided, subset to only
+      specified PCs. In combination with --ntgr set to
+      harmony, multiple values will result in using all
+      principal components starting from 1 to the max of the
+      provided values. Default: from 1 to 10
 
   umap_spread:
     type: float?
@@ -382,7 +369,7 @@ outputs:
     outputBinding:
       glob: "*_elbow.png"
     doc: |
-      Elbow plot.
+      Elbow plot (from cells PCA).
       PNG format
 
   elbow_plot_pdf:
@@ -390,7 +377,7 @@ outputs:
     outputBinding:
       glob: "*_elbow.pdf"
     doc: |
-      Elbow plot.
+      Elbow plot (from cells PCA).
       PDF format
 
   qc_dim_corr_plot_png:
@@ -398,7 +385,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.png"
     doc: |
-      Correlation between QC metrics and principal components.
+      Correlation plots between QC metrics and cells PCA components.
       PNG format
 
   qc_dim_corr_plot_pdf:
@@ -406,7 +393,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.pdf"
     doc: |
-      Correlation between QC metrics and principal components.
+      Correlation plots between QC metrics and cells PCA components.
       PDF format
 
   umap_qc_mtrcs_plot_png:
@@ -414,7 +401,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.png"
     doc: |
-      UMAP, QC metrics.
+      QC metrics on cells UMAP.
       PNG format
 
   umap_qc_mtrcs_plot_pdf:
@@ -422,7 +409,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.pdf"
     doc: |
-      UMAP, QC metrics.
+      QC metrics on cells UMAP.
       PDF format
 
   umap_plot_png:
@@ -430,7 +417,7 @@ outputs:
     outputBinding:
       glob: "*_umap.png"
     doc: |
-      UMAP, colored by dataset.
+      Cells UMAP.
       PNG format
 
   umap_plot_pdf:
@@ -438,7 +425,7 @@ outputs:
     outputBinding:
       glob: "*_umap.pdf"
     doc: |
-      UMAP, colored by dataset.
+      Cells UMAP.
       PDF format
 
   umap_spl_ph_plot_png:
@@ -446,8 +433,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph.png"
     doc: |
-      UMAP, colored by dataset, split by
-      cell cycle phase.
+      Split by cell cycle phase cells UMAP.
       PNG format
 
   umap_spl_ph_plot_pdf:
@@ -455,8 +441,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph.pdf"
     doc: |
-      UMAP, colored by dataset, split by
-      cell cycle phase.
+      Split by cell cycle phase cells UMAP.
       PDF format
 
   ccpca_plot_png:
@@ -464,7 +449,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca.png"
     doc: |
-      PCA, colored by cell cycle phase.
+      Cells PCA using only cell cycle genes.
       PNG format
 
   ccpca_plot_pdf:
@@ -472,7 +457,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca.pdf"
     doc: |
-      PCA, colored by cell cycle phase.
+      Cells PCA using only cell cycle genes.
       PDF format
 
   umap_spl_mito_plot_png:
@@ -480,8 +465,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_mito.png"
     doc: |
-      UMAP, colored by dataset, split by
-      mitochondrial percentage.
+      Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
       PNG format
 
   umap_spl_mito_plot_pdf:
@@ -489,8 +473,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_mito.pdf"
     doc: |
-      UMAP, colored by dataset, split by
-      mitochondrial percentage.
+      Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
       PDF format
 
   umap_spl_umi_plot_png:
@@ -498,8 +481,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_umi.png"
     doc: |
-      UMAP, colored by dataset, split by
-      RNA reads per cell.
+      Split by the UMI per cell counts cells UMAP.
       PNG format
 
   umap_spl_umi_plot_pdf:
@@ -507,8 +489,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_umi.pdf"
     doc: |
-      UMAP, colored by dataset, split by
-      RNA reads per cell.
+      Split by the UMI per cell counts cells UMAP.
       PDF format
 
   umap_spl_gene_plot_png:
@@ -516,8 +497,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_gene.png"
     doc: |
-      UMAP, colored by dataset, split by
-      genes per cell.
+      Split by the genes per cell counts cells UMAP.
       PNG format
 
   umap_spl_gene_plot_pdf:
@@ -525,8 +505,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_gene.pdf"
     doc: |
-      UMAP, colored by dataset, split by
-      genes per cell.
+      Split by the genes per cell counts cells UMAP.
       PDF format
 
   umap_spl_idnt_plot_png:
@@ -534,7 +513,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.png"
     doc: |
-      UMAP, split by dataset.
+      Split by dataset cells UMAP.
       PNG format
 
   umap_spl_idnt_plot_pdf:
@@ -542,7 +521,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.pdf"
     doc: |
-      UMAP, split by dataset.
+      Split by dataset cells UMAP.
       PDF format
 
   ccpca_spl_idnt_plot_png:
@@ -550,8 +529,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_idnt.png"
     doc: |
-      PCA, colored by cell cycle phase,
-      split by dataset.
+      Split by dataset cells PCA using only cell cycle genes.
       PNG format
 
   ccpca_spl_idnt_plot_pdf:
@@ -559,8 +537,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_idnt.pdf"
     doc: |
-      PCA, colored by cell cycle phase,
-      split by dataset.
+      Split by dataset cells PCA using only cell cycle genes.
       PDF format
 
   umap_spl_cnd_plot_png:
@@ -568,8 +545,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.png"
     doc: |
-      UMAP, colored by dataset, split by
-      grouping condition.
+      Split by grouping condition cells UMAP.
       PNG format
 
   umap_spl_cnd_plot_pdf:
@@ -577,8 +553,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.pdf"
     doc: |
-      UMAP, colored by dataset, split by
-      grouping condition.
+      Split by grouping condition cells UMAP.
       PDF format
 
   umap_gr_cnd_spl_ph_plot_png:
@@ -586,8 +561,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_ph.png"
     doc: |
-      UMAP, colored by grouping condition,
-      split by cell cycle phase.
+      Grouped by condition split by cell cycle cells UMAP.
       PNG format
 
   umap_gr_cnd_spl_ph_plot_pdf:
@@ -595,8 +569,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_ph.pdf"
     doc: |
-      UMAP, colored by grouping condition,
-      split by cell cycle phase.
+      Grouped by condition split by cell cycle cells UMAP.
       PDF format
 
   ccpca_spl_cnd_plot_png:
@@ -604,8 +577,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_cnd.png"
     doc: |
-      PCA, colored by cell cycle phase,
-      split by grouping condition.
+      Split by grouping condition cells PCA using only cell cycle genes.
       PNG format
 
   ccpca_spl_cnd_plot_pdf:
@@ -613,8 +585,7 @@ outputs:
     outputBinding:
       glob: "*_ccpca_spl_cnd.pdf"
     doc: |
-      PCA, colored by cell cycle phase,
-      split by grouping condition.
+      Split by grouping condition cells PCA using only cell cycle genes.
       PDF format
 
   umap_gr_cnd_spl_mito_plot_png:
@@ -622,8 +593,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_mito.png"
     doc: |
-      UMAP, colored by grouping condition,
-      split by mitochondrial percentage.
+      Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
       PNG format
 
   umap_gr_cnd_spl_mito_plot_pdf:
@@ -631,8 +601,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_mito.pdf"
     doc: |
-      UMAP, colored by grouping condition,
-      split by mitochondrial percentage.
+      Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
       PDF format
 
   umap_gr_cnd_spl_umi_plot_png:
@@ -640,8 +609,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_umi.png"
     doc: |
-      UMAP, colored by grouping condition,
-      split by RNA reads per cell.
+      Grouped by condition split by the UMI per cell counts cells UMAP.
       PNG format
 
   umap_gr_cnd_spl_umi_plot_pdf:
@@ -649,8 +617,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_umi.pdf"
     doc: |
-      UMAP, colored by grouping condition,
-      split by RNA reads per cell.
+      Grouped by condition split by the UMI per cell counts cells UMAP.
       PDF format
 
   umap_gr_cnd_spl_gene_plot_png:
@@ -658,8 +625,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_gene.png"
     doc: |
-      UMAP, colored by grouping condition,
-      split by genes per cell.
+      Grouped by condition split by the genes per cell counts cells UMAP.
       PNG format
 
   umap_gr_cnd_spl_gene_plot_pdf:
@@ -667,8 +633,7 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_cnd_spl_gene.pdf"
     doc: |
-      UMAP, colored by grouping condition,
-      split by genes per cell.
+      Grouped by condition split by the genes per cell counts cells UMAP.
       PDF format
 
   ucsc_cb_config_data:
@@ -786,27 +751,21 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_reduce.R [-h] --query QUERY [--metadata METADATA]
-                                        [--barcodes BARCODES]
-                                        [--cellcycle CELLCYCLE]
-                                        [--norm {sct,log,sctglm}]
-                                        [--ntgr {seurat,harmony,none}]
-                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
-                                        [--highvargenes HIGHVARGENES]
-                                        [--regressmt]
-                                        [--regressgenes REGRESSGENES]
-                                        [--regressccfull | --regressccdiff]
-                                        [--dimensions DIMENSIONS]
-                                        [--uspread USPREAD]
-                                        [--umindist UMINDIST]
-                                        [--uneighbors UNEIGHBORS]
-                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-                                        [--umethod {uwot,uwot-learn,umap-learn}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--scope] [--cbbuild]
-                                        [--lowmem] [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_reduce.R
+        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
+        [--cellcycle CELLCYCLE] [--norm {sct,log,sctglm}]
+        [--ntgr {seurat,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
+        [--highvargenes HIGHVARGENES] [--regressmt]
+        [--regressgenes [REGRESSGENES [REGRESSGENES ...]]]
+        [--regressccfull | --regressccdiff]
+        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
+        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
+        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--scope] [--cbbuild] [--lowmem]
+        [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Dimensionality Reduction Analysis
 
@@ -861,13 +820,12 @@ s:about: |
                           Number of highly variable genes used in datasets
                           integration, scaling and dimensionality reduction.
                           Default: 3000
-    --regressmt           Regress the percentage of RNA reads mapped to
+    --regressmt           Regress the percentage of transcripts mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
-    --regressgenes REGRESSGENES
-                          Regex pattern to identify genes which expression
-                          should be regressed as a confounding source of
-                          variation. Default: none
+    --regressgenes [REGRESSGENES [REGRESSGENES ...]]
+                          Genes which expression should be regressed as a
+                          confounding source of variation. Default: None
     --regressccfull       Regress all signals associated with cell cycle phase.
                           Ignored if --cellcycle is not provided. Mutually
                           exclusive with --regressccdiff parameter. Default:
@@ -877,11 +835,14 @@ s:about: |
                           and cycling cells will be maintained. Ignored if
                           --cellcycle is not provided. Mutually exclusive with
                           --regressccfull Default: false
-    --dimensions DIMENSIONS
-                          Dimensionality to use for datasets integration (if
-                          provided RDS file includes multiple datasets and
-                          --ntgr is not set to 'harmony') and UMAP projection
-                          (from 1 to 50). Default: 10
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+                          Dimensionality to use in UMAP projection (from 1 to
+                          50). If single value N is provided, use from 1 to N
+                          PCs. If multiple values are provided, subset to only
+                          specified PCs. In combination with --ntgr set to
+                          harmony, multiple values will result in using all
+                          principal components starting from 1 to the max of the
+                          provided values. Default: from 1 to 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1

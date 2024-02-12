@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -84,8 +84,8 @@ inputs:
       prefix: "--ntgr"
     doc: |
       Integration method used for joint analysis of multiple
-      datasets.
-      Default: signac
+      datasets. Automatically set to 'none' if loaded Suerat
+      object includes only one dataset. Default: signac
 
   integrate_by:
     type:
@@ -115,14 +115,21 @@ inputs:
       Default: 0 (use all available peaks)
 
   dimensions:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use for datasets integration (if provided RDS file includes
-      multiple datasets and --ntgr is not set to 'none') and UMAP projection.
-      (from 2 to 50). First LSI component is always excluded.
-      Default: 10
+      Dimensionality to use for datasets integration and
+      UMAP projection (from 2 to 50). If single value N is
+      provided, use from 2 to N LSI components. If multiple
+      values are provided, subset to only selected LSI
+      components. In combination with --ntgr set to harmony,
+      multiple values will result in using all dimensions
+      starting from 1(!) to the max of the provided values.
+      Default: from 2 to 10
 
   umap_spread:
     type: float?
@@ -301,7 +308,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.png"
     doc: |
-      Correlation between QC metrics and LSI components.
+      Correlation plots between QC metrics and cells LSI dimensions.
       PNG format
 
   qc_dim_corr_plot_pdf:
@@ -309,7 +316,7 @@ outputs:
     outputBinding:
       glob: "*_qc_dim_corr.pdf"
     doc: |
-      Correlation between QC metrics and LSI components.
+      Correlation plots between QC metrics and cells LSI dimensions.
       PDF format
 
   umap_qc_mtrcs_plot_png:
@@ -317,7 +324,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.png"
     doc: |
-      UMAP, QC metrics.
+      QC metrics on cells UMAP.
       PNG format
 
   umap_qc_mtrcs_plot_pdf:
@@ -325,7 +332,7 @@ outputs:
     outputBinding:
       glob: "*_umap_qc_mtrcs.pdf"
     doc: |
-      UMAP, QC metrics.
+      QC metrics on cells UMAP.
       PDF format
 
   umap_plot_png:
@@ -333,7 +340,7 @@ outputs:
     outputBinding:
       glob: "*_umap.png"
     doc: |
-      UMAP, colored by dataset.
+      Cells UMAP.
       PNG format
 
   umap_plot_pdf:
@@ -341,7 +348,7 @@ outputs:
     outputBinding:
       glob: "*_umap.pdf"
     doc: |
-      UMAP, colored by dataset.
+      Cells UMAP.
       PDF format
 
   umap_spl_idnt_plot_png:
@@ -349,7 +356,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.png"
     doc: |
-      UMAP, split by dataset.
+      Split by dataset cells UMAP.
       PNG format
 
   umap_spl_idnt_plot_pdf:
@@ -357,7 +364,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt.pdf"
     doc: |
-      UMAP, split by dataset.
+      Split by dataset cells UMAP.
       PDF format
 
   umap_spl_cnd_plot_png:
@@ -365,8 +372,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.png"
     doc: |
-      UMAP, colored by dataset, split
-      by grouping condition.
+      Split by grouping condition cells UMAP.
       PNG format
 
   umap_spl_cnd_plot_pdf:
@@ -374,26 +380,23 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd.pdf"
     doc: |
-      UMAP, colored by dataset, split
-      by grouping condition.
+      Split by grouping condition cells UMAP.
       PDF format
 
-  umap_spl_frgm_plot_png:
+  umap_spl_umi_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_frgm.png"
+      glob: "*_umap_spl_umi.png"
     doc: |
-      UMAP, colored by dataset, split
-      by ATAC fragments in peaks per cell.
+      Split by the UMI per cell counts cells UMAP.
       PNG format
 
-  umap_spl_frgm_plot_pdf:
+  umap_spl_umi_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_frgm.pdf"
+      glob: "*_umap_spl_umi.pdf"
     doc: |
-      UMAP, colored by dataset, split
-      by ATAC fragments in peaks per cell.
+      Split by the UMI per cell counts cells UMAP.
       PDF format
 
   umap_spl_peak_plot_png:
@@ -401,8 +404,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_peak.png"
     doc: |
-      UMAP, colored by dataset, split
-      by peaks per cell.
+      Split by the peaks per cell counts cells UMAP.
       PNG format
 
   umap_spl_peak_plot_pdf:
@@ -410,8 +412,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_peak.pdf"
     doc: |
-      UMAP, colored by dataset, split
-      by peaks per cell.
+      Split by the peaks per cell counts cells UMAP.
       PDF format
 
   umap_spl_tss_plot_png:
@@ -419,8 +420,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_tss.png"
     doc: |
-      UMAP, colored by dataset, split
-      by TSS enrichment score.
+      Split by the TSS enrichment score cells UMAP.
       PNG format
 
   umap_spl_tss_plot_pdf:
@@ -428,8 +428,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_tss.pdf"
     doc: |
-      UMAP, colored by dataset, split
-      by TSS enrichment score.
+      Split by the TSS enrichment score cells UMAP.
       PDF format
 
   umap_spl_ncls_plot_png:
@@ -437,8 +436,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ncls.png"
     doc: |
-      UMAP, colored by dataset, split
-      by nucleosome signal.
+      Split by the nucleosome signal cells UMAP.
       PNG format
 
   umap_spl_ncls_plot_pdf:
@@ -446,8 +444,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ncls.pdf"
     doc: |
-      UMAP, colored by dataset, split
-      by nucleosome signal.
+      Split by the nucleosome signal cells UMAP.
       PDF format
 
   umap_spl_frip_plot_png:
@@ -455,8 +452,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_frip.png"
     doc: |
-      UMAP, colored by dataset,
-      split by FRiP.
+      Split by the FRiP cells UMAP.
       PNG format
 
   umap_spl_frip_plot_pdf:
@@ -464,8 +460,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_frip.pdf"
     doc: |
-      UMAP, colored by dataset,
-      split by FRiP.
+      Split by the FRiP cells UMAP.
       PDF format
 
   umap_spl_blck_plot_png:
@@ -473,8 +468,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_blck.png"
     doc: |
-      UMAP, colored by dataset, split
-      by blacklist fraction.
+      Split by the genomic blacklist regions fraction cells UMAP.
       PNG format
 
   umap_spl_blck_plot_pdf:
@@ -482,116 +476,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_blck.pdf"
     doc: |
-      UMAP, colored by dataset, split
-      by blacklist fraction.
-      PDF format
-
-  umap_gr_cnd_spl_frgm_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_frgm.png"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by ATAC fragments in peaks per cell.
-      PNG format
-
-  umap_gr_cnd_spl_frgm_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_frgm.pdf"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by ATAC fragments in peaks per cell.
-      PDF format
-
-  umap_gr_cnd_spl_peak_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_peak.png"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by peaks per cell.
-      PNG format
-
-  umap_gr_cnd_spl_peak_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_peak.pdf"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by peaks per cell.
-      PDF format
-
-  umap_gr_cnd_spl_tss_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_tss.png"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by TSS enrichment score.
-      PNG format
-
-  umap_gr_cnd_spl_tss_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_tss.pdf"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by TSS enrichment score.
-      PDF format
-
-  umap_gr_cnd_spl_ncls_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_ncls.png"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by nucleosome signal.
-      PNG format
-
-  umap_gr_cnd_spl_ncls_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_ncls.pdf"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by nucleosome signal.
-      PDF format
-
-  umap_gr_cnd_spl_frip_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_frip.png"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by FRiP.
-      PNG format
-
-  umap_gr_cnd_spl_frip_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_frip.pdf"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by FRiP.
-      PDF format
-
-  umap_gr_cnd_spl_blck_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_blck.png"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by blacklist fraction.
-      PNG format
-
-  umap_gr_cnd_spl_blck_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_cnd_spl_blck.pdf"
-    doc: |
-      UMAP, colored by grouping condition,
-      split by blacklist fraction.
+      Split by the genomic blacklist regions fraction cells UMAP.
       PDF format
 
   ucsc_cb_config_data:
@@ -599,24 +484,21 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser
-      configuration data.
+      Directory with UCSC Cellbrowser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser
-      html data.
+      Directory with UCSC Cellbrowser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory
-      with UCSC Cellbrowser html data.
+      HTML index file from the directory with UCSC Cellbrowser html data.
 
   seurat_data_rds:
     type: File
@@ -705,23 +587,22 @@ doc: |
 
 
 s:about: |
-  usage: sc_atac_reduce.R [-h] --query QUERY
-                                        [--metadata METADATA]
-                                        [--barcodes BARCODES]
-                                        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
-                                        [--ntgr {signac,harmony,none}]
-                                        [--ntgrby [NTGRBY [NTGRBY ...]]]
-                                        [--minvarpeaks MINVARPEAKS]
-                                        [--dimensions DIMENSIONS]
-                                        [--uspread USPREAD]
-                                        [--umindist UMINDIST]
-                                        [--uneighbors UNEIGHBORS]
-                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
-                                        [--umethod {uwot,uwot-learn,umap-learn}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_atac_reduce.R
+        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
+        [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
+        [--ntgr {signac,harmony,none}] [--ntgrby [NTGRBY [NTGRBY ...]]]
+        [--minvarpeaks MINVARPEAKS]
+        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--uspread USPREAD]
+        [--umindist UMINDIST] [--uneighbors UNEIGHBORS]
+        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,
+                    braycurtis,mahalanobis,wminkowski,seuclidean,cosine,
+                    correlation,haversine,hamming,jaccard,dice,russelrao,
+                    kulsinski,ll_dirichlet,hellinger,rogerstanimoto,
+                    sokalmichener,sokalsneath,yule}]
+        [--umethod {uwot,uwot-learn,umap-learn}] [--pdf] [--verbose]
+        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell ATAC-Seq Dimensionality Reduction Analysis
 
@@ -755,7 +636,8 @@ s:about: |
                           Default: log-tfidf
     --ntgr {signac,harmony,none}
                           Integration method used for joint analysis of multiple
-                          datasets. Default: signac
+                          datasets. Automatically set to 'none' if loaded Suerat
+                          object includes only one dataset. Default: signac
     --ntgrby [NTGRBY [NTGRBY ...]]
                           Column(s) from the Seurat object metadata to define
                           the variable(s) that should be integrated out when
@@ -770,12 +652,15 @@ s:about: |
                           cells peaks as highly variable. These peaks are used
                           for datasets integration, scaling and dimensionality
                           reduction. Default: 0 (use all available peaks)
-    --dimensions DIMENSIONS
-                          Dimensionality to use for datasets integration (if
-                          provided RDS file includes multiple datasets and
-                          --ntgr is not set to 'none') and UMAP projection.
-                          (from 2 to 50). First LSI component is always
-                          excluded. Default: 10
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
+                          Dimensionality to use for datasets integration and
+                          UMAP projection (from 2 to 50). If single value N is
+                          provided, use from 2 to N LSI components. If multiple
+                          values are provided, subset to only selected LSI
+                          components. In combination with --ntgr set to harmony,
+                          multiple values will result in using all dimensions
+                          starting from 1(!) to the max of the provided values.
+                          Default: from 2 to 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -791,7 +676,10 @@ s:about: |
                           structure being preserved at the loss of detailed
                           local structure. In general this parameter should
                           often be in the range 5 to 50. Default: 30
-    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}
+    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,
+               mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,
+               hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,
+               rogerstanimoto,sokalmichener,sokalsneath,yule}
                           The metric to use to compute distances in high
                           dimensional space for UMAP. Default: cosine
     --umethod {uwot,uwot-learn,umap-learn}
