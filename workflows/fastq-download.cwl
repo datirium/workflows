@@ -231,7 +231,7 @@ $schemas:
 
 label: "FASTQ Download"
 s:name: "FASTQ Download"
-s:alternateName: "Downloads FASTQ files from the provided SRR identifiers"
+s:alternateName: "Assists in downloading problematic single-cell sequencing data from Sequence Read Archive (SRA)"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/fastq-download.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -270,5 +270,6 @@ s:creator:
 
 doc: |
   FASTQ Download
-  
-  Downloads FASTQ files from the provided SRR identifiers
+
+  Assists in downloading problematic single-cell sequencing
+  data from Sequence Read Archive (SRA)
