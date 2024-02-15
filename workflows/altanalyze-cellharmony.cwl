@@ -211,7 +211,7 @@ s:creator:
     s:legalName: "Allergy and Immunology"
     s:department:
     - class: s:Organization
-      s:legalName: "Barski Research Lab"
+      s:legalName: "B Research Lab"
       s:member:
       - class: s:Person
         s:name: Michael 
