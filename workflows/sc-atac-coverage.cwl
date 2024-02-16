@@ -127,7 +127,7 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Number of cores/cpus to use"
     doc: |
       Parallelization parameter to define the

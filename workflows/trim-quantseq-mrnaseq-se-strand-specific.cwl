@@ -120,7 +120,7 @@ inputs:
 
   threads:
     type: int?
-    default: 1
+    default: 6
     'sd:layout':
       advanced: true
     label: "Number of threads"

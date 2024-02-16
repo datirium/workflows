@@ -123,7 +123,7 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "4"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the

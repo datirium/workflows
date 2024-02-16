@@ -54,7 +54,7 @@ inputs:
 
   threads:
     type: int?
-    default: 2
+    default: 6
     label: "Number of Bowtie2/Trimmomatic/Samtools threads to use"
     doc: "Set the number of threads for Bowtie2, Trimmomatic, Samtools"
     'sd:layout':
