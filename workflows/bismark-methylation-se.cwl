@@ -351,7 +351,7 @@ s:creator:
       s:legalName: "Barski Research Lab"
       s:member:
       - class: s:Person
-        s:name: Michael Kotliar
+        s:name: Michael Kotl
         s:email: mailto:michael.kotliar@cchmc.org
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
