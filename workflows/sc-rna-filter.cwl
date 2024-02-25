@@ -25,7 +25,7 @@ requirements:
 
 inputs:
 
-  alias_:
+  alias:
     type: string
     label: "Analysis name"
     sd:preview:
@@ -651,7 +651,7 @@ outputs:
       Example of datasets metadata file
       in TSV format
 
-  pdf_plots:
+  pdf_plots_:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
     label: "Plots in PDF format"
