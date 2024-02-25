@@ -651,7 +651,7 @@ outputs:
       Example of datasets metadata file
       in TSV format
 
-  pdf_plots_:
+  pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
     label: "Plots in PDF format"
