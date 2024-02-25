@@ -17,6 +17,7 @@ requirements:
 "sd:upstream":
   sc_rna_sample:
   - "cellranger-aggr.cwl"
+  - "https://github.com/datirium/workflows/workflows/cellranger-aggr.cwl"
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
   - "sc-format-transform.cwl"
