@@ -678,7 +678,7 @@ outputs:
 
 steps:
 
-  uncompress_feature_bc_matrices:
+  uncompress_feature_bc_matrices_:
     doc: |
       Extracts the content of TAR file into a folder
     run: ../tools/tar-extract.cwl
@@ -692,7 +692,7 @@ steps:
       Filters single-cell RNA-Seq datasets based on the common QC metrics
     run: ../tools/sc-rna-filter.cwl
     in:
-      feature_bc_matrices_folder: uncompress_feature_bc_matrices/extracted_folder
+      feature_bc_matrices_folder: uncompress_feature_bc_matrices_/extracted_folder
       aggregation_metadata: aggregation_metadata
       grouping_data: grouping_data
       barcodes_data: barcodes_data
