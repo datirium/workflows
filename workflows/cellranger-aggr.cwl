@@ -27,12 +27,8 @@ inputs:
     type:
     - "null"
     -  File[]
-    label: "Cell Ranger RNA or RNA+VDJ Sample"
-    doc: |
-      Any "Cell Ranger RNA or RNA+VDJ Sample"
-      that produces gene expression and,
-      optionally, V(D)J contigs data, from a
-      single 10x Genomics library
+    label: "Single-cell Experiment"
+    doc: "Molecule-level information from individual runs of cellranger count"
     'sd:upstreamSource': "sc_experiment/molecule_info_h5"
     'sd:localLabel': true
 
@@ -40,11 +36,17 @@ inputs:
     type:
     - "null"
     - Directory[]
+    label: "Single-cell Experiment"
+    doc: "Filtered data folders from individual runs of cellranger multi"
     'sd:upstreamSource': "sc_experiment/filtered_data_folder"
+    'sd:localLabel': true
 
   gem_well_labels:
     type: string[]
+    label: "Single-cell Experiment"
+    doc: "Array of GEM well identifiers to be used for labeling purposes only"
     'sd:upstreamSource': "sc_experiment/alias"
+    'sd:localLabel': true
 
   normalization_mode:
     type:
@@ -53,7 +55,7 @@ inputs:
       symbols:
       - "none"
       - "mapped"
-    default: "none"
+    default: "mapped"
     label: "Library depth normalization mode"
     doc: "Library depth normalization mode"
     'sd:layout':
@@ -141,12 +143,6 @@ outputs:
     outputSource: aggregate_counts/aggregation_metadata
     label: "Aggregation metadata in CSV format"
     doc: "Aggregation metadata in CSV format"
-
-  grouping_data:
-    type: File
-    outputSource: aggregate_counts/grouping_data
-    label: "Example of datasets grouping"
-    doc: "Example of TSV file to define datasets grouping"
 
   loupe_browser_track:
     type: File
@@ -243,7 +239,6 @@ steps:
     - filtered_feature_bc_matrix_folder
     - filtered_feature_bc_matrix_h5
     - aggregation_metadata
-    - grouping_data
     - loupe_browser_track
     - clonotypes_csv
     - consensus_sequences_fasta
@@ -291,9 +286,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Aggregate (RNA, RNA+VDJ)"
-s:name: "Cell Ranger Aggregate (RNA, RNA+VDJ)"
-s:alternateName: "Combines outputs from multiple runs of either Cell Ranger Count (RNA) or Cell Ranger Count (RNA+VDJ) pipelines"
+label: "Cell Ranger Aggregate"
+s:name: "Cell Ranger Aggregate"
+s:alternateName: "Aggregates data from multiple Cell Ranger Count Gene Expression experiments"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-aggr.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -331,9 +326,7 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Aggregate (RNA, RNA+VDJ)
-
-  Combines outputs from multiple runs of either “Cell Ranger Count (RNA)”
-  or “Cell Ranger Count (RNA+VDJ)” pipelines. The results of this workflow
-  are primarily used in “Single-Cell RNA-Seq Filtering Analysis” and
-  “Single-Cell Immune Profiling Analysis” pipelines.
+  Cell Ranger Aggregate
+  
+  Aggregates outputs from multiple runs of Cell Ranger Count Gene Expression or
+  Cell Ranger Multi Gene Expression and V(D)J Repertoire Profiling experiments

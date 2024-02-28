@@ -15,13 +15,6 @@ requirements:
           let splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
-    - var split_by_comma = function(line) {
-          function get_unique(value, index, self) {
-            return self.indexOf(value) === index && value != "";
-          }
-          var splitted_line = line?line.split(/,+/).filter(get_unique):null;
-          return (splitted_line && !!splitted_line.length)?splitted_line:null;
-      };
 
 
 'sd:upstream':
@@ -36,7 +29,6 @@ requirements:
   - "cellranger-atac-aggr.cwl"
   genome_indices:
   - "genome-indices.cwl"
-  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -63,15 +55,12 @@ inputs:
     type: File
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ATAC or RNA+ATAC Sample"
+    label: "Cell Ranger ATAC/ARC Count/Aggregate Experiment"
     doc: |
-      Any "Cell Ranger ATAC or RNA+ATAC Sample"
-      for loading chromatin accessibility data
-      from. This sample can be obtained from
-      one of the following pipelines: "Cell
-      Ranger Count (RNA+ATAC)", "Cell Ranger
-      Aggregate (RNA+ATAC)", "Cell Ranger Count
-      (ATAC)", or "Cell Ranger Aggregate (ATAC)".
+      Count and barcode information for every ATAC fragment
+      used in the loaded Seurat object. File should be saved
+      in TSV format with tbi-index file.
+      tbi-indexed.
     'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
     'sd:localLabel': true
 
@@ -252,24 +241,46 @@ inputs:
     'sd:layout':
       advanced: true
 
+  parallel_memory_limit:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "32"
+    default: "32"
+    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Forced to 32 GB
+    'sd:layout':
+      advanced: true
+
+  vector_memory_limit:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "64"
+    default: "64"
+    label: "Maximum vector memory in GB allowed to be used by R"
+    doc: |
+      Maximum vector memory in GB allowed to be used by R.
+      Forced to 64 GB
+    'sd:layout':
+      advanced: true
+
   threads:
     type:
     - "null"
     - type: enum
       symbols:
       - "1"
-      - "2"
-      - "3"
-      - "4"
-      - "5"
-      - "6"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
-      Parallelization parameter to define the
-      number of cores/CPUs that can be utilized
-      simultaneously.
-      Default: 1
+      Number of cores/cpus to use
+      Forced to 1
     'sd:layout':
       advanced: true
 
@@ -350,10 +361,10 @@ outputs:
   first_fragments_bigwig_file:
     type: File
     outputSource: sc_atac_dbinding/first_fragments_bigwig_file
-    label: "Genome coverage for ATAC fragments (first)"
+    label: "Genome coverage for fragments (first)"
     doc: |
       Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
+      for fragments from the cells that belong to
       the group defined by the --first and
       --groupby parameters.
     'sd:visualPlugins':
@@ -361,16 +372,16 @@ outputs:
         tab: 'Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "ATAC fragments coverage (first)"
+        name: "Fragments coverage (first)"
         height: 120
 
   second_fragments_bigwig_file:
     type: File
     outputSource: sc_atac_dbinding/second_fragments_bigwig_file
-    label: "Genome coverage for ATAC fragments (second)"
+    label: "Genome coverage for fragments (second)"
     doc: |
       Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
+      for fragments from the cells that belong to
       the group defined by the --second and
       --groupby parameters.
     'sd:visualPlugins':
@@ -378,7 +389,7 @@ outputs:
         tab: 'Genome Browser'
         id: 'igvbrowser'
         type: 'wig'
-        name: "ATAC fragments coverage (second)"
+        name: "Fragments coverage (second)"
         height: 120
 
   first_tn5ct_bigwig_file:
@@ -608,14 +619,6 @@ outputs:
         tab: 'Overall'
         Caption: 'Tag density heatmap around centers of diff. bound sites'
 
-  pdf_plots:
-    type: File
-    outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
-    doc: |
-      Compressed folder with plots
-      in PDF format
-
   sc_atac_dbinding_stdout_log:
     type: File
     outputSource: sc_atac_dbinding/stdout_log
@@ -645,7 +648,7 @@ steps:
         valueFrom: $(self==""?null:self)                # safety measure
       subset:
         source: subset
-        valueFrom: $(split_by_comma(self))
+        valueFrom: $(split_features(self))
       splitby: splitby
       first_cond: first_cond
       second_cond: second_cond
@@ -664,12 +667,12 @@ steps:
       minimum_logfc: minimum_logfc
       verbose:
         default: true
-      export_pdf_plots:
-        default: true
       parallel_memory_limit:
-        default: 32
+        source: parallel_memory_limit
+        valueFrom: $(parseInt(self))
       vector_memory_limit:
-        default: 96
+        source: vector_memory_limit
+        valueFrom: $(parseInt(self))
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -694,34 +697,8 @@ steps:
     - second_enrch_bigbed_file
     - first_enrch_bed_file
     - second_enrch_bed_file
-    - umap_rd_rnaumap_plot_pdf
-    - umap_rd_atacumap_plot_pdf
-    - umap_rd_wnnumap_plot_pdf
-    - dbnd_vlcn_plot_pdf
     - stdout_log
     - stderr_log
-
-  folder_pdf_plots:
-    run: ../tools/files-to-folder.cwl
-    in:
-      input_files:
-        source:
-        - sc_atac_dbinding/umap_rd_rnaumap_plot_pdf
-        - sc_atac_dbinding/umap_rd_atacumap_plot_pdf
-        - sc_atac_dbinding/umap_rd_wnnumap_plot_pdf
-        - sc_atac_dbinding/dbnd_vlcn_plot_pdf
-        valueFrom: $(self.flat().filter(n => n))
-      folder_basename:
-        default: "pdf_plots"
-    out:
-    - folder
-
-  compress_pdf_plots:
-    run: ../tools/tar-compress.cwl
-    in:
-      folder_to_compress: folder_pdf_plots/folder
-    out:
-    - compressed_folder
 
   add_label_column:
     run: ../tools/custom-bash.cwl
@@ -929,9 +906,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-Cell ATAC-Seq Differential Binding Analysis"
-s:name: "Single-Cell ATAC-Seq Differential Binding Analysis"
-s:alternateName: "Identifies differentially bound sites between any two groups of cells"
+label: "Single-cell ATAC-Seq Differential Binding Analysis"
+s:name: "Single-cell ATAC-Seq Differential Binding Analysis"
+s:alternateName: "Identifies differential bound sites between two groups of cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-dbinding.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -969,8 +946,7 @@ s:creator:
 
 
 doc: |
-  Single-Cell ATAC-Seq Differential Binding Analysis
+  Single-cell ATAC-Seq Differential Binding Analysis
 
-  Identifies differentially bound sites between any two
-  groups of cells, optionally aggregating chromatin
-  accessibility data from single-cell to pseudobulk form.
+  Identifies differential bound sites between two
+  groups of cells
