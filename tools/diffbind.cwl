@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.15
+  dockerPull: biowardrobe2/diffbind:v0.0.16
 
 
 inputs:
@@ -91,12 +91,6 @@ inputs:
       prefix: "-c2"
     doc: "Condition 2 name, single word with letters and numbers only. Default: condition_2"
 
-  fragmentsize:
-    type: int?
-    inputBinding:
-      prefix: "-fs"
-    doc: "Extend each read from its endpoint along the appropriate strand. Default: 125bp"
-
   cutoff_value:
     type: float?
     inputBinding:
@@ -112,12 +106,6 @@ inputs:
     inputBinding:
       prefix: "-cp"
     doc: "Parameter to which cutoff should be applied (fdr or pvalue). Default: fdr"
-
-  remove_duplicates:
-    type: boolean?
-    inputBinding:
-      prefix: "-rd"
-    doc: "Remove reads that map to exactly the same genomic position. Default: false"
 
   analysis_method:
     type:
@@ -135,11 +123,15 @@ inputs:
       prefix: "-mo"
     doc: "Min peakset overlap. Only include peaks in at least this many peaksets when generating consensus peakset. Default: 2"
 
-  min_read_counts:
+  rec_summits:
     type: int?
     inputBinding:
-      prefix: "-mc"
-    doc: "Min read counts. Exclude all merged intervals where the MAX raw read counts among all of the samples is smaller than the specified value. Default: 0"
+      prefix: "--summits"
+    doc: |
+      Width in bp to extend peaks around their summits in both directions
+      and replace the original ones. Set it to 100 bp for ATAC-Seq and 200
+      bp for ChIP-Seq datasets. To skip peaks extension and replacement, set
+      it to negative value. Default: 200 bp (results in 401 bp wide peaks)
 
   use_common:
     type: boolean?
@@ -726,19 +718,21 @@ doc: |
   Runs R script to compute differentially bound sites from multiple ChIP-seq experiments using affinity (quantitative) and occupancy data.
 
 s:about: |
-  usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/run_diffbind.R
-        [-h] -r1 READ1 [READ1 ...] -r2 READ2 [READ2 ...] -p1 PEAK1 [PEAK1 ...]
-        -p2 PEAK2 [PEAK2 ...] [-n1 [NAME1 [NAME1 ...]]]
-        [-n2 [NAME2 [NAME2 ...]]] [-bl [BLOCK [BLOCK ...]]]
-        [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
-        [-c1 CONDITION1] [-c2 CONDITION2] [-fs FRAGMENTSIZE] [-rd]
-        [-me {edger,deseq2,all}] [-mo MINOVERLAP] [-uc] [-mc MINCOUNTS]
-        [-cu CUTOFF] [-cp {pvalue,fdr}] [-th THREADS] [-pa PADDING] [-o OUTPUT]
+  usage: run_diffbind.R [-h] -r1 READ1 [READ1 ...] -r2 READ2 [READ2 ...] -p1
+                        PEAK1 [PEAK1 ...] -p2 PEAK2 [PEAK2 ...]
+                        [-n1 [NAME1 ...]] [-n2 [NAME2 ...]] [-bl [BLOCK ...]]
+                        [-bf BLOCKFILE]
+                        [-pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}]
+                        [-c1 CONDITION1] [-c2 CONDITION2]
+                        [-me {edger,deseq2,all}] [-mo MINOVERLAP] [-uc]
+                        [--summits SUMMITS] [-cu CUTOFF] [-cp {pvalue,fdr}]
+                        [-co {Reds,Greens,Blues,Greys,YlOrRd,Oranges}]
+                        [-th THREADS] [-pa PADDING] [-o OUTPUT]
 
   Differential binding analysis of ChIP-Seq experiments using affinity (read
   count) data
 
-  optional arguments:
+  options:
     -h, --help            show this help message and exit
     -r1 READ1 [READ1 ...], --read1 READ1 [READ1 ...]
                           Read files for condition 1. Minimim 2 files in BAM
@@ -752,16 +746,21 @@ s:about: |
     -p2 PEAK2 [PEAK2 ...], --peak2 PEAK2 [PEAK2 ...]
                           Peak files for condition 2. Minimim 2 files in format
                           set with -pf
-    -n1 [NAME1 [NAME1 ...]], --name1 [NAME1 [NAME1 ...]]
+    -n1 [NAME1 ...], --name1 [NAME1 ...]
                           Sample names for condition 1. Default: basenames of
                           -r1 without extensions
-    -n2 [NAME2 [NAME2 ...]], --name2 [NAME2 [NAME2 ...]]
+    -n2 [NAME2 ...], --name2 [NAME2 ...]
                           Sample names for condition 2. Default: basenames of
                           -r2 without extensions
-    -bl [BLOCK [BLOCK ...]], --block [BLOCK [BLOCK ...]]
+    -bl [BLOCK ...], --block [BLOCK ...]
                           Blocking attribute for multi-factor analysis. Minimum
                           2. Either names from --name1 or/and --name2 or array
                           of bool based on [read1]+[read2]. Default: not applied
+    -bf BLOCKFILE, --blockfile BLOCKFILE
+                          Blocking attribute metadata file for multi-factor
+                          analysis. Headerless TSV/CSV file. First column -
+                          names from --name1 and --name2, second column - group
+                          name. --block is ignored
     -pf {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}, --peakformat {raw,bed,narrow,macs,bayes,tpic,sicer,fp4,swembl,csv,report}
                           Peak files format. One of [raw, bed, narrow, macs,
                           bayes, tpic, sicer, fp4, swembl, csv, report].
@@ -772,11 +771,6 @@ s:about: |
     -c2 CONDITION2, --condition2 CONDITION2
                           Condition 2 name, single word with letters and numbers
                           only. Default: condition_2
-    -fs FRAGMENTSIZE, --fragmentsize FRAGMENTSIZE
-                          Extend each read from its endpoint along the
-                          appropriate strand. Default: 125bp
-    -rd, --removedup      Remove reads that map to exactly the same genomic
-                          position. Default: false
     -me {edger,deseq2,all}, --method {edger,deseq2,all}
                           Method by which to analyze differential binding
                           affinity. Default: all
@@ -787,16 +781,20 @@ s:about: |
     -uc, --usecommon      Derive consensus peaks only from the common peaks
                           within each condition. Min peakset overlap and min
                           read counts are ignored. Default: false
-    -mc MINCOUNTS, --mincounts MINCOUNTS
-                          Min read counts. Exclude all merged intervals where
-                          the MAX raw read counts among all of the samples is
-                          smaller than the specified value. Default: 0
+    --summits SUMMITS     Width in bp to extend peaks around their summits in
+                          both directions and replace the original ones. Set it
+                          to 100 bp for ATAC-Seq and 200 bp for ChIP-Seq
+                          datasets. To skip peaks extension and replacement, set
+                          it to negative value. Default: 200 bp (results in 401
+                          bp wide peaks)
     -cu CUTOFF, --cutoff CUTOFF
                           Cutoff for reported results. Applied to the parameter
                           set with -cp. Default: 0.05
     -cp {pvalue,fdr}, --cparam {pvalue,fdr}
                           Parameter to which cutoff should be applied (fdr or
                           pvalue). Default: fdr
+    -co {Reds,Greens,Blues,Greys,YlOrRd,Oranges}, --color {Reds,Greens,Blues,Greys,YlOrRd,Oranges}
+                          Color scheme. Default: Greens
     -th THREADS, --threads THREADS
                           Threads to use
     -pa PADDING, --padding PADDING
