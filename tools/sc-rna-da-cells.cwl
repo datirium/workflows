@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -35,12 +35,17 @@ inputs:
       Default: pca
 
   dimensions:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--dimensions"
     doc: |
       Dimensionality to use when running DA analysis (from 1 to 50).
-      Default: 10
+      If single value N is provided, use from 1 to N PCs. If multiple
+      values are provided, subset to only selected PCs.
+      Default: from 1 to 10
 
   score_vector_knn:
     type:
@@ -527,18 +532,14 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_da_cells.R [-h] --query QUERY
-                                          [--reduction REDUCTION]
-                                          [--dimensions DIMENSIONS]
-                                          [--knn [KNN [KNN ...]]]
-                                          [--metadata METADATA] --splitby
-                                          SPLITBY --first FIRST --second SECOND
-                                          [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                          [--ranges RANGES RANGES] [--pdf]
-                                          [--verbose] [--h5seurat] [--h5ad]
-                                          [--cbbuild] [--output OUTPUT]
-                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                          [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_da_cells.R
+        [-h] --query QUERY [--reduction REDUCTION]
+        [--dimensions [DIMENSIONS [DIMENSIONS ...]]] [--knn [KNN [KNN ...]]]
+        [--metadata METADATA] --splitby SPLITBY --first FIRST --second SECOND
+        [--resolution [RESOLUTION [RESOLUTION ...]]] [--ranges RANGES RANGES]
+        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Differential Abundance Analysis
 
@@ -553,9 +554,11 @@ s:about: |
     --reduction REDUCTION
                           Dimensionality reduction to be used for DA analysis.
                           Default: pca
-    --dimensions DIMENSIONS
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when running DA analysis (from 1
-                          to 50). Default: 10
+                          to 50). If single value N is provided, use from 1 to N
+                          PCs. If multiple values are provided, subset to only
+                          selected PCs. Default: from 1 to 10
     --knn [KNN [KNN ...]]
                           Array of k values for kNN graph construction when
                           calculating the score vector for each cell to
