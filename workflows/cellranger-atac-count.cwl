@@ -24,22 +24,10 @@ inputs:
 
   indices_folder:
     type: Directory
-    label: "Cell Ranger Reference Sample"
-    doc: |
-      Any "Cell Ranger Reference Sample" that
-      builds a reference genome package of a
-      selected species for quantifying gene
-      expression and chromatin accessibility.
-      This sample can be obtained from "Cell
-      Ranger Reference (RNA, ATAC, RNA+ATAC)"
-      pipeline.
+    label: "Genome Type"
+    doc: "Cell Ranger ARC generated genome indices folder"
     'sd:upstreamSource': "genome_indices/arc_indices_folder"
     'sd:localLabel': true
-
-  memory_limit:
-    type: int?
-    default: 20
-    'sd:upstreamSource': "genome_indices/memory_limit"
 
   fastq_file_r1:
     type:
@@ -68,34 +56,32 @@ inputs:
   force_cells:
     type: int?
     default: null
-    label: "Define the top N barcodes with the most ATAC fragments overlapping peaks as cells"
+    label: "Define the top N barcodes with the most fragments overlapping peaks as cells"
     doc: |
-      Define the top N barcodes with the most ATAC fragments overlapping
+      Define the top N barcodes with the most fragments overlapping
       peaks as cells. N must be a positive integer <= 20,000. Please
       consult the documentation before using this option
     'sd:layout':
       advanced: true
 
   threads:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "1"
-      - "2"
-      - "3"
-      - "4"
-      - "5"
-      - "6"
-    default: "4"
-    label: "Cores/CPUs"
-    doc: |
-      Parallelization parameter to define the
-      number of cores/CPUs that can be utilized
-      simultaneously.
-      Default: 4
+    type: int?
+    default: 4
+    label: "Number of threads"
+    doc: "Number of threads for those steps that support multithreading"
     'sd:layout':
       advanced: true
+
+  memory_limit:
+    type: int?
+    default: 20
+    label: "Genome Type"
+    doc: |
+      Maximum memory used (GB).
+      The same as was used for generating indices.
+      The same will be applied to virtual memory
+    'sd:upstreamSource': "genome_indices/memory_limit"
+    'sd:localLabel': true
 
 
 outputs:
@@ -168,22 +154,10 @@ outputs:
   possorted_genome_bam_bai:
     type: File
     outputSource: generate_counts_matrix/possorted_genome_bam_bai
-    label: "ATAC reads"
+    label: "Aligned to the genome indexed reads BAM+BAI files"
     doc: |
-      Genome track of ATAC reads aligned to
-      the reference genome. Each read has
-      a 10x Chromium cellular (associated
-      with a 10x Genomics gel bead) barcode
-      and mapping information stored in TAG
-      fields.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "IGV Genome Browser"
-        id: "igvbrowser"
-        type: "alignment"
-        format: "bam"
-        name: "ATAC reads"
-        displayMode: "SQUISHED"
+      Indexed position-sorted reads aligned to the genome annotated
+      with barcode information in BAM format
 
   atac_fragments_file:
     type: File
@@ -196,18 +170,10 @@ outputs:
   peaks_bed_file:
     type: File
     outputSource: generate_counts_matrix/peaks_bed_file
-    label: "ATAC peaks"
+    label: "Identified peaks in BED format"
     doc: |
-      Genome track of open-chromatin
-      regions identified as peaks.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "IGV Genome Browser"
-        id: "igvbrowser"
-        type: "annotation"
-        name: "ATAC peaks"
-        displayMode: "COLLAPSE"
-        height: 40
+      Locations of open-chromatin regions identified in the
+      experiment (these regions are referred to as "peaks")
 
   peak_annotation_file:
     type: File
@@ -219,17 +185,15 @@ outputs:
   cut_sites_bigwig_file:
     type: File
     outputSource: generate_counts_matrix/cut_sites_bigwig_file
-    label: "ATAC transposition counts"
+    label: "Smoothed transposition site track in bigWig format"
     doc: |
-      Genome track of observed transposition
-      sites in the experiment smoothed at a
-      resolution of 400 bases.
-    "sd:visualPlugins":
+      Smoothed transposition site track in bigWig format
+    'sd:visualPlugins':
     - igvbrowser:
-        tab: "IGV Genome Browser"
-        id: "igvbrowser"
-        type: "wig"
-        name: "ATAC transposition counts"
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'wig'
+        name: "ATAC cut sites"
         height: 120
 
   # peak_motif_mapping_bed:
@@ -340,6 +304,13 @@ outputs:
         vertical: true
         tab: 'Overview'
 
+  compressed_html_data_folder:
+    type: File
+    outputSource: compress_html_data_folder/compressed_folder
+    label: "Compressed folder with CellBrowser formatted results"
+    doc: |
+      Compressed folder with CellBrowser formatted results
+
   html_data_folder:
     type: Directory
     outputSource: cellbrowser_build/html_data
@@ -392,9 +363,7 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_fastq_r1/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
+      threads: threads
     out:
     - html_file
 
@@ -402,9 +371,7 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_fastq_r2/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
+      threads: threads
     out:
     - html_file
 
@@ -412,9 +379,7 @@ steps:
     run: ../tools/fastqc.cwl
     in:
       reads_file: extract_fastq_r3/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
+      threads: threads
     out:
     - html_file
 
@@ -426,9 +391,7 @@ steps:
       fastq_file_r3: extract_fastq_r3/fastq_file
       indices_folder: indices_folder
       force_cells: force_cells
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
+      threads: threads
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
     out:
@@ -499,6 +462,13 @@ steps:
     - html_data
     - index_html_file
 
+  compress_html_data_folder:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: cellbrowser_build/html_data
+    out:
+    - compressed_folder
+
 
 $namespaces:
   s: http://schema.org/
@@ -506,9 +476,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Count (ATAC)"
-s:name: "Cell Ranger Count (ATAC)"
-s:alternateName: "Quantifies single-cell chromatin accessibility of the sequencing data from a single 10x Genomics library"
+label: "Cell Ranger ATAC Count"
+s:name: "Cell Ranger ATAC Count"
+s:alternateName: "Counts reads from a single scATAC-Seq library"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-atac-count.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -546,9 +516,6 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Count (ATAC)
+  Cell Ranger ATAC Count
 
-  Quantifies single-cell chromatin accessibility of the sequencing
-  data from a single 10x Genomics library. The results of this
-  workflow are primarily used in “Cell Ranger Aggregate (ATAC)”
-  pipeline.
+  Counts reads from a single scATAC-Seq library

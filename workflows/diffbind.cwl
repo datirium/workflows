@@ -195,17 +195,11 @@ inputs:
     doc: "Chromosome length file"
     'sd:upstreamSource': "genome_indices/chrom_length"   
 
-  rec_summits:
+  fragmentsize:
     type: int?
-    default: 200
-    label: "Width in bp to extend peaks around summits"
-    doc: |
-      Width in bp to extend peaks around their summits
-      in both directions and replace the original ones.
-      Set it to 100 bp for ATAC-Seq and 200 bp for
-      ChIP-Seq datasets. To skip peaks extension and
-      replacement, set it to negative value.
-      Default: 200 bp (results in 401 bp wide peaks)
+    default: 125
+    label: "Reads extension size, bp"
+    doc: "Extended each read from its endpoint along the appropriate strand. Default: 125bp"
     'sd:layout':
       advanced: true
 
@@ -233,11 +227,27 @@ inputs:
     'sd:layout':
       advanced: true
 
+  min_read_counts:
+    type: int?
+    default: 0
+    label: "Minimum read counts. Exclude intervals where MAX read counts for all samples < specified value"
+    doc: "Min read counts. Exclude all merged intervals where the MAX raw read counts among all of the samples is smaller than the specified value. Default: 0"
+    'sd:layout':
+      advanced: true
+
   use_common:
     type: boolean?
     default: false
     label: "Use common peaks within each condition. Ignore Minimum peakset overlap"
     doc: "Derive consensus peaks only from the common peaks within each condition. Min peakset overlap is ignored. Default: false"
+    'sd:layout':
+      advanced: true
+
+  remove_duplicates:
+    type: boolean?
+    default: false
+    label: "Remove duplicated reads"
+    doc: "Remove reads that map to exactly the same genomic position. Default: false"
     'sd:layout':
       advanced: true
 
@@ -800,11 +810,13 @@ steps:
       sample_names_cond_2: sample_names_cond_2
       cutoff_value: cutoff_value
       cutoff_param: cutoff_param
+      fragmentsize: fragmentsize
+      remove_duplicates: remove_duplicates
       analysis_method: analysis_method
       blocked_attributes: blocked_attributes
       blocked_file: blocked_file
       min_overlap: min_overlap
-      rec_summits: rec_summits
+      min_read_counts: min_read_counts
       use_common: use_common
       threads: threads
       peakformat:
@@ -1027,7 +1039,7 @@ steps:
       input_file: restore_columns/output_file
       script:
         default: |
-          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["Fold"]<0) color="0,255,0"; print $ix["Chr"]"\t"$ix["Start"]"\t"$ix["End"]"\tPv="$ix["p-value"]+0.0";FDR="$ix["FDR"]+0.0"\t"1000"\t"$ix["Strand"]"\t"$ix["Start"]"\t"$ix["End"]"\t"color}' > `basename $0`
+          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["Fold"]<0) color="0,255,0"; print $ix["Chr"]"\t"$ix["Start"]"\t"$ix["End"]"\tPv="$ix["p-value"]";FDR="$ix["FDR"]"\t"1000"\t"$ix["Strand"]"\t"$ix["Start"]"\t"$ix["End"]"\t"color}' > `basename $0`
     out: [output_file]
 
   sort_bed:

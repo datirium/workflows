@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -26,13 +26,19 @@ inputs:
       dimensionality reductions applied to that assay.
 
   dimensions:
-    type: int?
+    type:
+    - "null"
+    - int
+    - int[]
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use when constructing nearest-neighbor
-      graph before clustering (from 1 to 50).
-      Default: 10
+      Dimensionality to use when constructing nearest-
+      neighbor graph before clustering (from 1 to 50). If
+      single value N is provided, use from 1 to N
+      dimensions. If multiple values are provided, subset to
+      only selected dimensions.
+      Default: from 1 to 10
 
   cluster_metric:
     type:
@@ -259,7 +265,7 @@ outputs:
     outputBinding:
       glob: "*_umap_res_*.png"
     doc: |
-      UMAP, colored by cluster.
+      Clustered cells UMAP.
       PNG format
 
   umap_res_plot_pdf:
@@ -270,7 +276,7 @@ outputs:
     outputBinding:
       glob: "*_umap_res_*.pdf"
     doc: |
-      UMAP, colored by cluster.
+      Clustered cells UMAP.
       PDF format
 
   slh_res_plot_png:
@@ -281,7 +287,7 @@ outputs:
     outputBinding:
       glob: "*_slh_res_*.png"
     doc: |
-      Silhouette scores.
+      Silhouette scores. Downsampled to max 500 cells per cluster.
       PNG format
 
   slh_res_plot_pdf:
@@ -292,7 +298,7 @@ outputs:
     outputBinding:
       glob: "*_slh_res_*.pdf"
     doc: |
-      Silhouette scores.
+      Silhouette scores. Downsampled to max 500 cells per cluster.
       PDF format
 
   umap_spl_idnt_res_plot_png:
@@ -303,8 +309,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_res_*.png"
     doc: |
-      UMAP, colored by cluster,
-      split by dataset.
+      Split by dataset clustered cells UMAP.
       PNG format
 
   umap_spl_idnt_res_plot_pdf:
@@ -315,8 +320,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_idnt_res_*.pdf"
     doc: |
-      UMAP, colored by cluster,
-      split by dataset.
+      Split by dataset clustered cells UMAP.
       PDF format
 
   cmp_gr_clst_spl_idnt_res_plot_png:
@@ -327,9 +331,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_idnt_res_*.png"
     doc: |
-      Composition plot, colored by
-      cluster, split by dataset,
-      downsampled.
+      Grouped by cluster split by dataset cells composition plot. Downsampled.
       PNG format
 
   cmp_gr_clst_spl_idnt_res_plot_pdf:
@@ -340,9 +342,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_idnt_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      cluster, split by dataset,
-      downsampled.
+      Grouped by cluster split by dataset cells composition plot. Downsampled.
       PDF format
 
   cmp_gr_idnt_spl_clst_res_plot_png:
@@ -353,9 +353,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_clst_res_*.png"
     doc: |
-      Composition plot, colored by
-      dataset, split by cluster,
-      downsampled.
+      Grouped by dataset split by cluster cells composition plot. Downsampled.
       PNG format
 
   cmp_gr_idnt_spl_clst_res_plot_pdf:
@@ -366,9 +364,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_clst_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      dataset, split by cluster,
-      downsampled.
+      Grouped by dataset split by cluster cells composition plot. Downsampled.
       PDF format
 
   umap_spl_cnd_res_plot_png:
@@ -379,8 +375,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_res_*.png"
     doc: |
-      UMAP, colored by cluster,
-      split by grouping condition.
+      Split by grouping condition clustered cells UMAP.
       PNG format
 
   umap_spl_cnd_res_plot_pdf:
@@ -391,8 +386,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_cnd_res_*.pdf"
     doc: |
-      UMAP, colored by cluster,
-      split by grouping condition.
+      Split by grouping condition clustered cells UMAP.
       PDF format
 
   cmp_gr_clst_spl_cnd_res_plot_png:
@@ -403,9 +397,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_cnd_res_*.png"
     doc: |
-      Composition plot, colored by
-      cluster, split by grouping
-      condition, downsampled.
+      Grouped by cluster split by condition cells composition plot. Downsampled.
       PNG format
 
   cmp_gr_clst_spl_cnd_res_plot_pdf:
@@ -416,9 +408,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_cnd_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      cluster, split by grouping
-      condition, downsampled.
+      Grouped by cluster split by condition cells composition plot. Downsampled.
       PDF format
 
   cmp_gr_cnd_spl_clst_res_plot_png:
@@ -429,9 +419,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_clst_res_*.png"
     doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cluster, downsampled.
+      Grouped by condition split by cluster cells composition plot. Downsampled.
       PNG format
 
   cmp_gr_cnd_spl_clst_res_plot_pdf:
@@ -442,9 +430,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_clst_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cluster, downsampled.
+      Grouped by condition split by cluster cells composition plot. Downsampled.
       PDF format
 
   umap_spl_ph_res_plot_png:
@@ -455,8 +441,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_res_*.png"
     doc: |
-      UMAP, colored by cluster,
-      split by cell cycle phase.
+      Split by cell cycle phase clustered cells UMAP.
       PNG format
 
   umap_spl_ph_res_plot_pdf:
@@ -467,8 +452,7 @@ outputs:
     outputBinding:
       glob: "*_umap_spl_ph_res_*.pdf"
     doc: |
-      UMAP, colored by cluster,
-      split by cell cycle phase.
+      Split by cell cycle phase clustered cells UMAP.
       PDF format
 
   cmp_gr_ph_spl_idnt_plot_png:
@@ -476,9 +460,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_idnt.png"
     doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      dataset, downsampled.
+      Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
       PNG format
 
   cmp_gr_ph_spl_idnt_plot_pdf:
@@ -486,9 +468,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_idnt.pdf"
     doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      dataset, downsampled.
+      Grouped by cell cycle phase split by dataset cells composition plot. Downsampled.
       PDF format
 
   cmp_gr_ph_spl_clst_res_plot_png:
@@ -499,9 +479,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_clst_res_*.png"
     doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      cluster, downsampled.
+      Grouped by cell cycle phase split by cluster cells composition plot. Downsampled.
       PNG format
 
   cmp_gr_ph_spl_clst_res_plot_pdf:
@@ -512,9 +490,7 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_ph_spl_clst_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      cluster, downsampled.
+      Grouped by cell cycle phase split by cluster cells composition plot. Downsampled.
       PDF format
 
   xpr_avg_res_plot_png:
@@ -525,7 +501,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_avg_res_*.png"
     doc: |
-      Gene expression dot plot.
+      Log normalized scaled average gene expression per cluster.
       PNG format
 
   xpr_avg_res_plot_pdf:
@@ -536,7 +512,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_avg_res_*.pdf"
     doc: |
-      Gene expression dot plot.
+      Log normalized scaled average gene expression per cluster.
       PDF format
 
   xpr_per_cell_plot_png:
@@ -547,7 +523,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_[!sgnl_]*.png"
     doc: |
-      UMAP, gene expression.
+      Log normalized gene expression on cells UMAP.
       PNG format
 
   xpr_per_cell_plot_pdf:
@@ -558,7 +534,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_[!sgnl_]*.pdf"
     doc: |
-      UMAP, gene expression.
+      Log normalized gene expression on cells UMAP.
       PDF format
 
   xpr_per_cell_sgnl_plot_png:
@@ -569,7 +545,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_*.png"
     doc: |
-      UMAP, gene expression density.
+      Log normalized gene expression density on cells UMAP.
       PNG format
 
   xpr_per_cell_sgnl_plot_pdf:
@@ -580,7 +556,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_*.pdf"
     doc: |
-      UMAP, gene expression density.
+      Log normalized gene expression density on cells UMAP.
       PDF format
 
   xpr_dnst_res_plot_png:
@@ -591,7 +567,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_dnst_res_*.png"
     doc: |
-      Gene expression violin plot.
+      Log normalized gene expression density per cluster.
       PNG format
 
   xpr_dnst_res_plot_pdf:
@@ -602,7 +578,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_dnst_res_*.pdf"
     doc: |
-      Gene expression violin plot.
+      Log normalized gene expression density per cluster.
       PDF format
 
   xpr_htmp_res_plot_png:
@@ -613,7 +589,7 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp_res_*.png"
     doc: |
-      Gene expression heatmap.
+      Normalized gene expression heatmap grouped by cluster.
       PNG format
 
   xpr_htmp_res_plot_pdf:
@@ -624,28 +600,15 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp_res_*.pdf"
     doc: |
-      Gene expression heatmap.
+      Normalized gene expression heatmap grouped by cluster.
       PDF format
-
-  xpr_htmp_res_tsv:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_htmp_res_*.tsv"
-    doc: |
-      Gene markers used for gene
-      expression heatmap.
-      TSV format
 
   gene_markers_tsv:
     type: File?
     outputBinding:
       glob: "*_gene_markers.tsv"
     doc: |
-      Gene markers per cluster for
-      all resolutions.
+      Differentially expressed genes between each pair of clusters for all resolutions.
       TSV format
 
   ucsc_cb_config_data:
@@ -653,24 +616,21 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser
-      configuration data.
+      Directory with UCSC Cellbrowser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser
-      html data.
+      Directory with UCSC Cellbrowser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory
-      with UCSC Cellbrowser html data.
+      HTML index file from the directory with UCSC Cellbrowser html data.
 
   seurat_data_rds:
     type: File
@@ -684,24 +644,21 @@ outputs:
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Reduced Seurat data in
-      h5seurat format
+      Reduced Seurat data in h5seurat format
 
   seurat_data_h5ad:
     type: File?
     outputBinding:
       glob: "*_data.h5ad"
     doc: |
-      Reduced Seurat data in
-      h5ad format
+      Reduced Seurat data in h5ad format
 
   seurat_data_scope:
     type: File?
     outputBinding:
       glob: "*_data.loom"
     doc: |
-      Reduced Seurat data in
-      SCope compatible loom format
+      Reduced Seurat data in SCope compatible loom format
 
   stdout_log:
     type: stdout
@@ -769,20 +726,17 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_cluster.R [-h] --query QUERY
-                                        [--dimensions DIMENSIONS]
-                                        [--ametric {euclidean,cosine,manhattan,hamming}]
-                                        [--algorithm {louvain,mult-louvain,slm,leiden}]
-                                        [--resolution [RESOLUTION [RESOLUTION ...]]]
-                                        [--genes [GENES [GENES ...]]]
-                                        [--diffgenes] [--logfc LOGFC]
-                                        [--minpct MINPCT] [--onlypos]
-                                        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--scope]
-                                        [--output OUTPUT]
-                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_cluster.R
+        [-h] --query QUERY [--dimensions [DIMENSIONS [DIMENSIONS ...]]]
+        [--ametric {euclidean,cosine,manhattan,hamming}]
+        [--algorithm {louvain,mult-louvain,slm,leiden}]
+        [--resolution [RESOLUTION [RESOLUTION ...]]]
+        [--genes [GENES [GENES ...]]] [--diffgenes] [--logfc LOGFC]
+        [--minpct MINPCT] [--onlypos]
+        [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
+        [--pdf] [--verbose] [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
+        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Cluster Analysis
 
@@ -793,10 +747,12 @@ s:about: |
                           stored in the RNA assay, as well as 'pca' and
                           'rnaumap' dimensionality reductions applied to that
                           assay.
-    --dimensions DIMENSIONS
+    --dimensions [DIMENSIONS [DIMENSIONS ...]]
                           Dimensionality to use when constructing nearest-
-                          neighbor graph before clustering (from 1 to 50).
-                          Default: 10
+                          neighbor graph before clustering (from 1 to 50). If
+                          single value N is provided, use from 1 to N
+                          dimensions. If multiple values are provided, subset to
+                          only selected dimensions. Default: from 1 to 10
     --ametric {euclidean,cosine,manhattan,hamming}
                           Distance metric used when constructing nearest-
                           neighbor graph before clustering. Default: euclidean
@@ -838,8 +794,6 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
-    --scope               Save Seurat data to SCope compatible loom file.
-                          Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic

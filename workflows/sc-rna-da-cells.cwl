@@ -35,7 +35,7 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Experiment run through Single-Cell RNA-Seq Dimensionality Reduction Analysis"
+    label: "Experiment run through Single-cell RNA-Seq Dimensionality Reduction Analysis"
     doc: |
       Path to the RDS file to load Seurat object from. This file should include genes
       expression information stored in the RNA assay and selected with the --reduction
@@ -126,24 +126,46 @@ inputs:
     'sd:layout':
       advanced: true
 
+  parallel_memory_limit:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "32"
+    default: "32"
+    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
+    doc: |
+      Maximum memory in GB allowed to be shared between the workers
+      when using multiple --cpus.
+      Forced to 32 GB
+    'sd:layout':
+      advanced: true
+
+  vector_memory_limit:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "64"
+    default: "64"
+    label: "Maximum vector memory in GB allowed to be used by R"
+    doc: |
+      Maximum vector memory in GB allowed to be used by R.
+      Forced to 64 GB
+    'sd:layout':
+      advanced: true
+
   threads:
     type:
     - "null"
     - type: enum
       symbols:
       - "1"
-      - "2"
-      - "3"
-      - "4"
-      - "5"
-      - "6"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
-      Parallelization parameter to define the
-      number of cores/CPUs that can be utilized
-      simultaneously.
-      Default: 1
+      Number of cores/cpus to use
+      Forced to 1
     'sd:layout':
       advanced: true
 
@@ -295,6 +317,13 @@ outputs:
         tab: 'Per dataset'
         Caption: 'Split by dataset cells WNN UMAP with DA scores'
 
+  ucsc_cb_config_data:
+    type: File
+    outputSource: compress_cellbrowser_config_data/compressed_folder
+    label: "Compressed directory with UCSC Cellbrowser configuration data"
+    doc: |
+      Compressed directory with UCSC Cellbrowser configuration data.
+
   ucsc_cb_html_data:
     type: Directory
     outputSource: da_cells/ucsc_cb_html_data
@@ -319,14 +348,6 @@ outputs:
     label: "Processed Seurat data in RDS format"
     doc: |
       Processed Seurat data in RDS format
-
-  pdf_plots:
-    type: File
-    outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
-    doc: |
-      Compressed folder with plots
-      in PDF format
 
   da_cells_stdout_log:
     type: File
@@ -364,13 +385,13 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
-      export_pdf_plots:
-        default: true
       color_theme: color_theme
       parallel_memory_limit:
-        default: 32
+        source: parallel_memory_limit
+        valueFrom: $(parseInt(self))
       vector_memory_limit:
-        default: 96
+        source: vector_memory_limit
+        valueFrom: $(parseInt(self))
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -385,47 +406,17 @@ steps:
     - umap_spl_idnt_rd_rnaumap_da_scr_plot_png
     - umap_spl_idnt_rd_atacumap_da_scr_plot_png
     - umap_spl_idnt_rd_wnnumap_da_scr_plot_png
-    - da_perm_plot_pdf
-    - umap_rd_rnaumap_res_plot_pdf
-    - umap_rd_atacumap_res_plot_pdf
-    - umap_rd_wnnumap_res_plot_pdf
-    - umap_spl_cnd_rd_rnaumap_res_plot_pdf
-    - umap_spl_cnd_rd_atacumap_res_plot_pdf
-    - umap_spl_cnd_rd_wnnumap_res_plot_pdf
-    - umap_spl_idnt_rd_rnaumap_da_scr_plot_pdf
-    - umap_spl_idnt_rd_atacumap_da_scr_plot_pdf
-    - umap_spl_idnt_rd_wnnumap_da_scr_plot_pdf
+    - ucsc_cb_config_data
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
 
-  folder_pdf_plots:
-    run: ../tools/files-to-folder.cwl
-    in:
-      input_files:
-        source:
-        - da_cells/da_perm_plot_pdf
-        - da_cells/umap_rd_rnaumap_res_plot_pdf
-        - da_cells/umap_rd_atacumap_res_plot_pdf
-        - da_cells/umap_rd_wnnumap_res_plot_pdf
-        - da_cells/umap_spl_cnd_rd_rnaumap_res_plot_pdf
-        - da_cells/umap_spl_cnd_rd_atacumap_res_plot_pdf
-        - da_cells/umap_spl_cnd_rd_wnnumap_res_plot_pdf
-        - da_cells/umap_spl_idnt_rd_rnaumap_da_scr_plot_pdf
-        - da_cells/umap_spl_idnt_rd_atacumap_da_scr_plot_pdf
-        - da_cells/umap_spl_idnt_rd_wnnumap_da_scr_plot_pdf
-        valueFrom: $(self.flat().filter(n => n))
-      folder_basename:
-        default: "pdf_plots"
-    out:
-    - folder
-
-  compress_pdf_plots:
+  compress_cellbrowser_config_data:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: folder_pdf_plots/folder
+      folder_to_compress: da_cells/ucsc_cb_config_data
     out:
     - compressed_folder
 
@@ -436,9 +427,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-Cell Differential Abundance Analysis"
-s:name: "Single-Cell Differential Abundance Analysis"
-s:alternateName: "Compares the composition of cell types between two tested conditions"
+label: "Single-cell Differential Abundance Analysis"
+s:name: "Single-cell Differential Abundance Analysis"
+s:alternateName: "Detects cell subpopulations with differential abundance between datasets split by biological condition"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-da-cells.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -476,7 +467,7 @@ s:creator:
 
 
 doc: |
-  Single-Cell Differential Abundance Analysis
+  Single-cell Differential Abundance Analysis
 
-  Compares the composition of cell types between
-  two tested conditions
+  Detects cell subpopulations with differential abundance
+  between datasets split by biological condition.
