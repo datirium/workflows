@@ -107,15 +107,12 @@ inputs:
 
   contrast:
     type: string?
-    label: "Contrast. If not provided, use all possible combinations"
+    label: "Contrast. If not provided, use the last term from the design formula."
     doc: |
       Contrast to be be applied for the output, formatted as
       a mathematical formula of values from the --metadata table.
-      If not provided, all possible combinations of values from
-      the metadata columns present in the --design will be used
-      (results will be merged giving the priority to significantly
-      differentially expressed genes with higher absolute
-      log2FoldChange values).
+      If not provided, the last term from the design formula will
+      be used.
 
   remove:
     type: string?
@@ -248,16 +245,6 @@ inputs:
     doc: |
       In the exploratory visualization analysis output only features with
       adjusted P-value not bigger than this value. Default: 0.05
-    'sd:layout':
-      advanced: true
-
-  minimum_logfc:
-    type: float?
-    default: 0
-    label: "Minimum log2FoldChange to show features in the exploratory visualization analysis"
-    doc: |
-      In the exploratory visualization analysis output only features with
-      absolute log2FoldChange bigger or equal to this value. Default: 0
     'sd:layout':
       advanced: true
 
@@ -462,7 +449,6 @@ steps:
         source: selected_features
         valueFrom: $(split_by_common_delim(self))
       maximum_padj: maximum_padj
-      minimum_logfc: minimum_logfc
       threads:
         source: threads
         valueFrom: $(parseInt(self))
