@@ -45,7 +45,9 @@ inputs:
   annotation_file:
     type: File
     label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
+    format:
+      - "http://edamontology.org/format_2306"
+      - "http://edamontology.org/format_3475"
     'sd:upstreamSource': "genome_indices/annotation"
     doc: "GTF or TAB-separated annotation file"
 

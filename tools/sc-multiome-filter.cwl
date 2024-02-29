@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -74,34 +74,11 @@ inputs:
       Default: each dataset is assigned to its own group.
 
   blacklist_regions_file:
-    type:
-    - "null"
-    - File
-    - type: enum
-      symbols:
-      - "hg19"
-      - "hg38"
-      - "mm10"
+    type: File?
     inputBinding:
       prefix: "--blacklist"
-      valueFrom: |
-        ${
-          if (self.class && self.class == "File"){
-            return self;
-          } else if (self == "hg19") {
-            return "/opt/sc_tools/hg19-blacklist.v2.bed";
-          } else if (self == "hg38") {
-            return "/opt/sc_tools/hg38-blacklist.v2.bed";
-          } else if (self == "mm10") {
-            return "/opt/sc_tools/mm10-blacklist.v2.bed";
-          } else {
-            return null;
-          }
-        }
     doc: |
       Path to the optional BED file with the genomic blacklist regions.
-      If a string value provided, it should be one of the hg19, hg38,
-      or mm10 as we replace it with the file location from docker image
 
   barcodes_data:
     type: File?
@@ -150,17 +127,17 @@ inputs:
       the '--mex' input based on the '--identity' file.
       Default: 5000 (applied to all datasets)
 
-  minimum_umis:
+  rna_minimum_umi:
     type:
     - "null"
     - int
     - int[]
     inputBinding:
-      prefix: "--minumis"
+      prefix: "--rnaminumi"
     doc: |
-      Include cells where at least this many RNA reads are detected.
-      If multiple values provided, each of them will be applied to the
-      correspondent dataset from the '--mex' input based on the '--identity' file.
+      Include cells where at least this many UMI (RNA transcripts) are detected.
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the '--mex' input based on the '--identity' file.
       Default: 500 (applied to all datasets)
 
   mito_pattern:
@@ -176,7 +153,7 @@ inputs:
     inputBinding:
       prefix: "--maxmt"
     doc: |
-      Include cells with the percentage of RNA reads mapped to mitochondrial
+      Include cells with the percentage of transcripts mapped to mitochondrial
       genes not bigger than this value.
       Default: 5 (applied to all datasets)
 
@@ -202,18 +179,17 @@ inputs:
       Include only peaks detected in at least this many cells.
       Default: 5 (applied to all datasets)
 
-  minimum_fragments:
+  atac_minimum_umi:
     type:
     - "null"
     - int
     - int[]
     inputBinding:
-      prefix: "--minfragments"
+      prefix: "--atacminumi"
     doc: |
-      Include cells where at least this many ATAC fragments in peaks are
-      detected. If multiple values provided, each of them will be
-      applied to the correspondent dataset from the '--mex' input
-      based on the '--identity' file.
+      Include cells where at least this many UMI (ATAC transcripts) are detected.
+      If multiple values provided, each of them will be applied to the correspondent
+      dataset from the '--mex' input based on the '--identity' file.
       Default: 1000 (applied to all datasets)
 
   maximum_nucl_signal:
@@ -226,7 +202,7 @@ inputs:
     doc: |
       Include cells with the nucleosome signal not bigger than this value.
       Nucleosome signal quantifies the approximate ratio of mononucleosomal
-      to nucleosome-free ATAC fragments. If multiple values provided, each of
+      to nucleosome-free fragments. If multiple values provided, each of
       them will be applied to the correspondent dataset from the '--mex' input
       based on the '--identity' file.
       Default: 4 (applied to all datasets)
@@ -240,8 +216,8 @@ inputs:
       prefix: "--mintssenrich"
     doc: |
       Include cells with the TSS enrichment score not lower than this value.
-      Score is calculated based on the ratio of ATAC fragments centered at the TSS
-      to ATAC fragments in TSS-flanking regions. If multiple values provided, each
+      Score is calculated based on the ratio of fragments centered at the TSS
+      to fragments in TSS-flanking regions. If multiple values provided, each
       of them will be applied to the correspondent dataset from the '--mex' input
       based on the '--identity' file.
       Default: 2 (applied to all datasets)
@@ -256,7 +232,7 @@ inputs:
     doc: |
       Include cells with the FRiP not lower than this value. If multiple values
       provided, each of them will be applied to the correspondent dataset from the
-      '--mex' input based on the '--identity' file. FRiP is calculated for ATAC fragments.
+      '--mex' input based on the '--identity' file. FRiP is calculated for fragments.
       Default: 0.15 (applied to all datasets)
 
   maximum_blacklist_fraction:
@@ -267,7 +243,7 @@ inputs:
     inputBinding:
       prefix: "--maxblacklist"
     doc: |
-      Include cells with the fraction of ATAC fragments in
+      Include cells with the fraction of fragments in
       genomic blacklist regions not bigger than this value.
       If multiple values provided, each of them will be
       applied to the correspondent dataset from the '--mex'
@@ -288,14 +264,6 @@ inputs:
       maximum nucleosome signal, and minimum TSS enrichment
       scores filters.
       Default: do not call peaks
-
-  minimum_qvalue:
-    type: float?
-    inputBinding:
-      prefix: "--qvalue"
-    doc: |
-      Minimum FDR (q-value) cutoff for MACS2 peak detection.
-      Ignored if --callby is not provided. Default: 0.05
 
   remove_doublets:
     type:
@@ -493,20 +461,20 @@ outputs:
       Number of cells per dataset (not filtered).
       PDF format
 
-  raw_umi_dnst_plot_png:
+  raw_rna_umi_dnst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_umi_dnst.png"
+      glob: "*_raw_rna_umi_dnst.png"
     doc: |
-      RNA reads per cell density (not filtered).
+      UMI per cell density for RNA assay (not filtered).
       PNG format
 
-  raw_umi_dnst_plot_pdf:
+  raw_rna_umi_dnst_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_umi_dnst.pdf"
+      glob: "*_raw_rna_umi_dnst.pdf"
     doc: |
-      RNA reads per cell density (not filtered).
+      UMI per cell density for RNA assay (not filtered).
       PDF format
 
   raw_gene_dnst_plot_png:
@@ -525,20 +493,20 @@ outputs:
       Genes per cell density (not filtered).
       PDF format
 
-  raw_gene_umi_plot_png:
+  raw_gene_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi.png"
+      glob: "*_raw_gene_umi_corr.png"
     doc: |
-      Genes vs RNA reads per cell (not filtered).
+      Genes vs UMI per cell correlation for RNA assay (not filtered).
       PNG format
 
-  raw_gene_umi_plot_pdf:
+  raw_gene_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi.pdf"
+      glob: "*_raw_gene_umi_corr.pdf"
     doc: |
-      Genes vs RNA reads per cell (not filtered).
+      Genes vs UMI per cell correlation for RNA assay (not filtered).
       PDF format
 
   raw_mito_dnst_plot_png:
@@ -546,7 +514,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst.png"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
+      Percentage of transcripts mapped to mitochondrial genes per cell density (not filtered).
       PNG format
 
   raw_mito_dnst_plot_pdf:
@@ -554,7 +522,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst.pdf"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
+      Percentage of transcripts mapped to mitochondrial genes per cell density (not filtered).
       PDF format
 
   raw_nvlt_dnst_plot_png:
@@ -573,20 +541,20 @@ outputs:
       Novelty score per cell density for RNA assay (not filtered).
       PDF format
 
-  raw_frgm_dnst_plot_png:
+  raw_atac_umi_dnst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_frgm_dnst.png"
+      glob: "*_raw_atac_umi_dnst.png"
     doc: |
-      ATAC fragments in peaks per cell density (not filtered).
+      UMI per cell density for ATAC assay (not filtered).
       PNG format
 
-  raw_frgm_dnst_plot_pdf:
+  raw_atac_umi_dnst_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_frgm_dnst.pdf"
+      glob: "*_raw_atac_umi_dnst.pdf"
     doc: |
-      ATAC fragments in peaks per cell density (not filtered).
+      UMI per cell density for ATAC assay (not filtered).
       PDF format
 
   raw_peak_dnst_plot_png:
@@ -621,36 +589,36 @@ outputs:
       Fraction of ATAC fragments within genomic blacklist regions per cell density (not filtered).
       PDF format
 
-  raw_rna_atac_cnts_plot_png:
+  raw_rna_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_rna_atac_cnts.png"
+      glob: "*_raw_rna_atac_umi_corr.png"
     doc: |
-      RNA reads vs ATAC fragments in peaks per cell (not filtered).
+      UMI per cell correlation for RNA vs ATAC assays (not filtered).
       PNG format
 
-  raw_rna_atac_cnts_plot_pdf:
+  raw_rna_atac_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_rna_atac_cnts.pdf"
+      glob: "*_raw_rna_atac_umi_corr.pdf"
     doc: |
-      RNA reads vs ATAC fragments in peaks per cell (not filtered).
+      UMI per cell correlation for RNA vs ATAC assays (not filtered).
       PDF format
 
-  raw_tss_frgm_plot_png:
+  raw_tss_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_tss_frgm.png"
+      glob: "*_raw_tss_atac_umi_corr.png"
     doc: |
-      TSS enrichment score vs ATAC fragments in peaks per cell (not filtered).
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (not filtered).
       PNG format
 
-  raw_tss_frgm_plot_pdf:
+  raw_tss_atac_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_tss_frgm.pdf"
+      glob: "*_raw_tss_atac_umi_corr.pdf"
     doc: |
-      TSS enrichment score vs ATAC fragments in peaks per cell (not filtered).
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (not filtered).
       PDF format
 
   raw_qc_mtrcs_dnst_plot_png:
@@ -738,7 +706,7 @@ outputs:
     outputBinding:
       glob: "*_raw_frgm_hist.png"
     doc: |
-      ATAC fragments length histogram (not filtered).
+      Fragments length histogram (not filtered).
       PNG format
 
   raw_frgm_hist_pdf:
@@ -746,23 +714,23 @@ outputs:
     outputBinding:
       glob: "*_raw_frgm_hist.pdf"
     doc: |
-      ATAC fragments length histogram (not filtered).
+      Fragments length histogram (not filtered).
       PDF format
 
-  raw_umi_dnst_spl_cnd_plot_png:
+  raw_rna_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_umi_dnst_spl_cnd.png"
+      glob: "*_raw_rna_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition RNA reads per cell density (not filtered).
+      Split by grouping condition UMI per cell density for RNA assay (not filtered).
       PNG format
 
-  raw_umi_dnst_spl_cnd_plot_pdf:
+  raw_rna_umi_dnst_spl_cnd_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_umi_dnst_spl_cnd.pdf"
+      glob: "*_raw_rna_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition RNA reads per cell density (not filtered).
+      Split by grouping condition UMI per cell density for RNA assay (not filtered).
       PDF format
 
   raw_gene_dnst_spl_cnd_plot_png:
@@ -786,7 +754,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
+      Split by grouping condition the percentage of transcripts mapped
       to mitochondrial genes per cell density (not filtered).
       PNG format
 
@@ -795,7 +763,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
+      Split by grouping condition the percentage of transcripts mapped
       to mitochondrial genes per cell density (not filtered).
       PDF format
 
@@ -815,20 +783,20 @@ outputs:
       Split by grouping condition the novelty score per cell density for RNA assay (not filtered).
       PDF format
 
-  raw_frgm_dnst_spl_cnd_plot_png:
+  raw_atac_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_frgm_dnst_spl_cnd.png"
+      glob: "*_raw_atac_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition ATAC fragments in peaks per cell density (not filtered).
+      Split by grouping condition UMI per cell density for ATAC assay (not filtered).
       PNG format
 
-  raw_frgm_dnst_spl_cnd_plot_pdf:
+  raw_atac_umi_dnst_spl_cnd_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_frgm_dnst_spl_cnd.pdf"
+      glob: "*_raw_atac_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition ATAC fragments in peaks per cell density (not filtered).
+      Split by grouping condition UMI per cell density for ATAC assay (not filtered).
       PDF format
 
   raw_peak_dnst_spl_cnd_plot_png:
@@ -913,20 +881,20 @@ outputs:
       Number of cells per dataset (intermediate filtered).
       PDF format
 
-  mid_fltr_umi_dnst_plot_png:
+  mid_fltr_rna_umi_dnst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_umi_dnst.png"
+      glob: "*_mid_fltr_rna_umi_dnst.png"
     doc: |
-      RNA reads per cell density (intermediate filtered).
+      UMI per cell density for RNA assay (intermediate filtered).
       PNG format
 
-  mid_fltr_umi_dnst_plot_pdf:
+  mid_fltr_rna_umi_dnst_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_umi_dnst.pdf"
+      glob: "*_mid_fltr_rna_umi_dnst.pdf"
     doc: |
-      RNA reads per cell density (intermediate filtered).
+      UMI per cell density for RNA assay (intermediate filtered).
       PDF format
 
   mid_fltr_gene_dnst_plot_png:
@@ -945,20 +913,20 @@ outputs:
       Genes per cell density (intermediate filtered).
       PDF format
 
-  mid_fltr_gene_umi_plot_png:
+  mid_fltr_gene_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gene_umi.png"
+      glob: "*_mid_fltr_gene_umi_corr.png"
     doc: |
-      Genes vs RNA reads per cell (intermediate filtered).
+      Genes vs UMI per cell correlation for RNA assay (intermediate filtered).
       PNG format
 
-  mid_fltr_gene_umi_plot_pdf:
+  mid_fltr_gene_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_gene_umi.pdf"
+      glob: "*_mid_fltr_gene_umi_corr.pdf"
     doc: |
-      Genes vs RNA reads per cell (intermediate filtered).
+      Genes vs UMI per cell correlation for RNA assay (intermediate filtered).
       PDF format
 
   mid_fltr_mito_dnst_plot_png:
@@ -966,7 +934,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_mito_dnst.png"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (intermediate filtered).
+      Percentage of transcripts mapped to mitochondrial genes per cell density (intermediate filtered).
       PNG format
 
   mid_fltr_mito_dnst_plot_pdf:
@@ -974,7 +942,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_mito_dnst.pdf"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (intermediate filtered).
+      Percentage of transcripts mapped to mitochondrial genes per cell density (intermediate filtered).
       PDF format
 
   mid_fltr_nvlt_dnst_plot_png:
@@ -993,20 +961,20 @@ outputs:
       Novelty score per cell density for RNA assay (intermediate filtered).
       PDF format
 
-  mid_fltr_frgm_dnst_plot_png:
+  mid_fltr_atac_umi_dnst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_frgm_dnst.png"
+      glob: "*_mid_fltr_atac_umi_dnst.png"
     doc: |
-      ATAC fragments in peaks per cell density (intermediate filtered).
+      UMI per cell density for ATAC assay (intermediate filtered).
       PNG format
 
-  mid_fltr_frgm_dnst_plot_pdf:
+  mid_fltr_atac_umi_dnst_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_frgm_dnst.pdf"
+      glob: "*_mid_fltr_atac_umi_dnst.pdf"
     doc: |
-      ATAC fragments in peaks per cell density (intermediate filtered).
+      UMI per cell density for ATAC assay (intermediate filtered).
       PDF format
 
   mid_fltr_peak_dnst_plot_png:
@@ -1041,36 +1009,36 @@ outputs:
       Fraction of ATAC fragments within genomic blacklist regions per cell density (intermediate filtered).
       PDF format
 
-  mid_fltr_rna_atac_cnts_plot_png:
+  mid_fltr_rna_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_rna_atac_cnts.png"
+      glob: "*_mid_fltr_rna_atac_umi_corr.png"
     doc: |
-      RNA reads vs ATAC fragments in peaks per cell (intermediate filtered).
+      UMI per cell correlation for RNA vs ATAC assays (intermediate filtered).
       PNG format
 
-  mid_fltr_rna_atac_cnts_plot_pdf:
+  mid_fltr_rna_atac_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_rna_atac_cnts.pdf"
+      glob: "*_mid_fltr_rna_atac_umi_corr.pdf"
     doc: |
-      RNA reads vs ATAC fragments in peaks per cell (intermediate filtered).
+      UMI per cell correlation for RNA vs ATAC assays (intermediate filtered).
       PDF format
 
-  mid_fltr_tss_frgm_plot_png:
+  mid_fltr_tss_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_tss_frgm.png"
+      glob: "*_mid_fltr_tss_atac_umi_corr.png"
     doc: |
-      TSS enrichment score vs ATAC fragments in peaks per cell (intermediate filtered).
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (intermediate filtered).
       PNG format
 
-  mid_fltr_tss_frgm_plot_pdf:
+  mid_fltr_tss_atac_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_tss_frgm.pdf"
+      glob: "*_mid_fltr_tss_atac_umi_corr.pdf"
     doc: |
-      TSS enrichment score vs ATAC fragments in peaks per cell (intermediate filtered).
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (intermediate filtered).
       PDF format
 
   mid_fltr_qc_mtrcs_dnst_plot_png:
@@ -1158,7 +1126,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_frgm_hist.png"
     doc: |
-      ATAC fragments length histogram (intermediate filtered).
+      Fragments length histogram (intermediate filtered).
       PNG format
 
   mid_fltr_frgm_hist_pdf:
@@ -1166,23 +1134,23 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_frgm_hist.pdf"
     doc: |
-      ATAC fragments length histogram (intermediate filtered).
+      Fragments length histogram (intermediate filtered).
       PDF format
 
-  mid_fltr_umi_dnst_spl_cnd_plot_png:
+  mid_fltr_rna_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_umi_dnst_spl_cnd.png"
+      glob: "*_mid_fltr_rna_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition RNA reads per cell density (intermediate filtered).
+      Split by grouping condition UMI per cell density for RNA assay (intermediate filtered).
       PNG format
 
-  mid_fltr_umi_dnst_spl_cnd_plot_pdf:
+  mid_fltr_rna_umi_dnst_spl_cnd_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_umi_dnst_spl_cnd.pdf"
+      glob: "*_mid_fltr_rna_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition RNA reads per cell density (intermediate filtered).
+      Split by grouping condition UMI per cell density for RNA assay (intermediate filtered).
       PDF format
 
   mid_fltr_gene_dnst_spl_cnd_plot_png:
@@ -1206,7 +1174,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
+      Split by grouping condition the percentage of transcripts mapped
       to mitochondrial genes per cell density (intermediate filtered).
       PNG format
 
@@ -1215,7 +1183,7 @@ outputs:
     outputBinding:
       glob: "*_mid_fltr_mito_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
+      Split by grouping condition the percentage of transcripts mapped
       to mitochondrial genes per cell density (intermediate filtered).
       PDF format
 
@@ -1235,20 +1203,20 @@ outputs:
       Split by grouping condition the novelty score per cell density for RNA assay (intermediate filtered).
       PDF format
 
-  mid_fltr_frgm_dnst_spl_cnd_plot_png:
+  mid_fltr_atac_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_frgm_dnst_spl_cnd.png"
+      glob: "*_mid_fltr_atac_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition ATAC fragments in peaks per cell density (intermediate filtered).
+      Split by grouping condition UMI per cell density for ATAC assay (intermediate filtered).
       PNG format
 
-  mid_fltr_frgm_dnst_spl_cnd_plot_pdf:
+  mid_fltr_atac_umi_dnst_spl_cnd_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_frgm_dnst_spl_cnd.pdf"
+      glob: "*_mid_fltr_atac_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition ATAC fragments in peaks per cell density (intermediate filtered).
+      Split by grouping condition UMI per cell density for ATAC assay (intermediate filtered).
       PDF format
 
   mid_fltr_peak_dnst_spl_cnd_plot_png:
@@ -1333,20 +1301,20 @@ outputs:
       Number of cells per dataset (filtered).
       PDF format
 
-  fltr_umi_dnst_plot_png:
+  fltr_rna_umi_dnst_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_umi_dnst.png"
+      glob: "*[!_mid]_fltr_rna_umi_dnst.png"
     doc: |
-      RNA reads per cell density (filtered).
+      UMI per cell density for RNA assay (filtered).
       PNG format
 
-  fltr_umi_dnst_plot_pdf:
+  fltr_rna_umi_dnst_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_umi_dnst.pdf"
+      glob: "*[!_mid]_fltr_rna_umi_dnst.pdf"
     doc: |
-      RNA reads per cell density (filtered).
+      UMI per cell density for RNA assay (filtered).
       PDF format
 
   fltr_gene_dnst_plot_png:
@@ -1365,20 +1333,20 @@ outputs:
       Genes per cell density (filtered).
       PDF format
 
-  fltr_gene_umi_plot_png:
+  fltr_gene_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_gene_umi.png"
+      glob: "*[!_mid]_fltr_gene_umi_corr.png"
     doc: |
-      Genes vs RNA reads per cell (filtered).
+      Genes vs UMI per cell correlation for RNA assay (filtered).
       PNG format
 
-  fltr_gene_umi_plot_pdf:
+  fltr_gene_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_gene_umi.pdf"
+      glob: "*[!_mid]_fltr_gene_umi_corr.pdf"
     doc: |
-      Genes vs RNA reads per cell (filtered).
+      Genes vs UMI per cell correlation for RNA assay (filtered).
       PDF format
 
   fltr_mito_dnst_plot_png:
@@ -1386,7 +1354,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_mito_dnst.png"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
+      Percentage of transcripts mapped to mitochondrial genes per cell density (filtered).
       PNG format
 
   fltr_mito_dnst_plot_pdf:
@@ -1394,7 +1362,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_mito_dnst.pdf"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
+      Percentage of transcripts mapped to mitochondrial genes per cell density (filtered).
       PDF format
 
   fltr_nvlt_dnst_plot_png:
@@ -1413,20 +1381,20 @@ outputs:
       Novelty score per cell density for RNA assay (filtered).
       PDF format
 
-  fltr_frgm_dnst_plot_png:
+  fltr_atac_umi_dnst_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_frgm_dnst.png"
+      glob: "*[!_mid]_fltr_atac_umi_dnst.png"
     doc: |
-      ATAC fragments in peaks per cell density (filtered).
+      UMI per cell density for ATAC assay (filtered).
       PNG format
 
-  fltr_frgm_dnst_plot_pdf:
+  fltr_atac_umi_dnst_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_frgm_dnst.pdf"
+      glob: "*[!_mid]_fltr_atac_umi_dnst.pdf"
     doc: |
-      ATAC fragments in peaks per cell density (filtered).
+      UMI per cell density for ATAC assay (filtered).
       PDF format
 
   fltr_peak_dnst_plot_png:
@@ -1461,20 +1429,20 @@ outputs:
       Fraction of ATAC fragments within genomic blacklist regions per cell density (filtered).
       PDF format
 
-  fltr_rna_atac_cnts_plot_png:
+  fltr_rna_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_rna_atac_cnts.png"
+      glob: "*[!_mid]_fltr_rna_atac_umi_corr.png"
     doc: |
-      RNA reads vs ATAC fragments in peaks per cell (filtered).
+      UMI per cell correlation for RNA vs ATAC assays (filtered).
       PNG format
 
-  fltr_rna_atac_cnts_plot_pdf:
+  fltr_rna_atac_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_rna_atac_cnts.pdf"
+      glob: "*[!_mid]_fltr_rna_atac_umi_corr.pdf"
     doc: |
-      RNA reads vs ATAC fragments in peaks per cell (filtered).
+      UMI per cell correlation for RNA vs ATAC assays (filtered).
       PDF format
 
   fltr_rnadbl_plot_png:
@@ -1525,20 +1493,20 @@ outputs:
       Doublets overlap for RNA and ATAC assays per dataset (filtered).
       PDF format
 
-  fltr_tss_frgm_plot_png:
+  fltr_tss_atac_umi_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_tss_frgm.png"
+      glob: "*[!_mid]_fltr_tss_atac_umi_corr.png"
     doc: |
-      TSS enrichment score vs ATAC fragments in peaks per cell (filtered).
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (filtered).
       PNG format
 
-  fltr_tss_frgm_plot_pdf:
+  fltr_tss_atac_umi_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_tss_frgm.pdf"
+      glob: "*[!_mid]_fltr_tss_atac_umi_corr.pdf"
     doc: |
-      TSS enrichment score vs ATAC fragments in peaks per cell (filtered).
+      TSS enrichment score vs UMI per cell correlation for ATAC assay (filtered).
       PDF format
 
   fltr_qc_mtrcs_dnst_plot_png:
@@ -1578,7 +1546,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_frgm_hist.png"
     doc: |
-      ATAC fragments length histogram (filtered).
+      Fragments length histogram (filtered).
       PNG format
 
   fltr_frgm_hist_pdf:
@@ -1586,23 +1554,23 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_frgm_hist.pdf"
     doc: |
-      ATAC fragments length histogram (filtered).
+      Fragments length histogram (filtered).
       PDF format
 
-  fltr_umi_dnst_spl_cnd_plot_png:
+  fltr_rna_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_umi_dnst_spl_cnd.png"
+      glob: "*[!_mid]_fltr_rna_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition RNA reads per cell density (filtered).
+      Split by grouping condition UMI per cell density for RNA assay (filtered).
       PNG format
 
-  fltr_umi_dnst_spl_cnd_plot_pdf:
+  fltr_rna_umi_dnst_spl_cnd_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_umi_dnst_spl_cnd.pdf"
+      glob: "*[!_mid]_fltr_rna_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition RNA reads per cell density (filtered).
+      Split by grouping condition UMI per cell density for RNA assay (filtered).
       PDF format
 
   fltr_gene_dnst_spl_cnd_plot_png:
@@ -1626,7 +1594,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
+      Split by grouping condition the percentage of transcripts mapped
       to mitochondrial genes per cell density (filtered).
       PNG format
 
@@ -1635,7 +1603,7 @@ outputs:
     outputBinding:
       glob: "*[!_mid]_fltr_mito_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
+      Split by grouping condition the percentage of transcripts mapped
       to mitochondrial genes per cell density (filtered).
       PDF format
 
@@ -1655,20 +1623,20 @@ outputs:
       Split by grouping condition the novelty score per cell density for RNA assay (filtered).
       PDF format
 
-  fltr_frgm_dnst_spl_cnd_plot_png:
+  fltr_atac_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_frgm_dnst_spl_cnd.png"
+      glob: "*[!_mid]_fltr_atac_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition ATAC fragments in peaks per cell density (filtered).
+      Split by grouping condition UMI per cell density for ATAC assay (filtered).
       PNG format
 
-  fltr_frgm_dnst_spl_cnd_plot_pdf:
+  fltr_atac_umi_dnst_spl_cnd_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_frgm_dnst_spl_cnd.pdf"
+      glob: "*[!_mid]_fltr_atac_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition ATAC fragments in peaks per cell density (filtered).
+      Split by grouping condition UMI per cell density for ATAC assay (filtered).
       PDF format
 
   fltr_peak_dnst_spl_cnd_plot_png:
@@ -1732,14 +1700,6 @@ outputs:
       glob: "*_data.rds"
     doc: |
       Filtered Seurat data in RDS format
-
-  datasets_metadata:
-    type: File
-    outputBinding:
-      glob: "*_meta.tsv"
-    doc: |
-      Example of datasets metadata file
-      in TSV format
 
   seurat_data_h5seurat:
     type: File?
@@ -1833,35 +1793,34 @@ doc: |
 
 s:about: |
   usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
-                                            --fragments FRAGMENTS --annotations
-                                            ANNOTATIONS --seqinfo SEQINFO
-                                            [--grouping GROUPING]
-                                            [--blacklist BLACKLIST]
-                                            [--barcodes BARCODES]
-                                            [--rnamincells RNAMINCELLS]
-                                            [--mingenes [MINGENES [MINGENES ...]]]
-                                            [--maxgenes [MAXGENES [MAXGENES ...]]]
-                                            [--minumis [MINUMIS [MINUMIS ...]]]
-                                            [--mitopattern MITOPATTERN]
-                                            [--maxmt MAXMT]
-                                            [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                                            [--atacmincells ATACMINCELLS]
-                                            [--minfragments [MINFRAGMENTS [MINFRAGMENTS ...]]]
-                                            [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
-                                            [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
-                                            [--minfrip [MINFRIP [MINFRIP ...]]]
-                                            [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
-                                            [--callby CALLBY] [--qvalue QVALUE]
-                                            [--removedoublets {union,onlyrna,onlyatac,intersect}]
-                                            [--rnadbr RNADBR]
-                                            [--rnadbrsd RNADBRSD]
-                                            [--atacdbr ATACDBR]
-                                            [--atacdbrsd ATACDBRSD] [--pdf]
-                                            [--verbose] [--h5seurat] [--h5ad]
-                                            [--cbbuild] [--tmpdir TMPDIR]
-                                            [--output OUTPUT]
-                                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                                            [--cpus CPUS] [--memory MEMORY]
+                                          --fragments FRAGMENTS --annotations
+                                          ANNOTATIONS --seqinfo SEQINFO
+                                          [--grouping GROUPING]
+                                          [--blacklist BLACKLIST]
+                                          [--barcodes BARCODES]
+                                          [--rnamincells RNAMINCELLS]
+                                          [--mingenes [MINGENES [MINGENES ...]]]
+                                          [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                          [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
+                                          [--mitopattern MITOPATTERN]
+                                          [--maxmt MAXMT]
+                                          [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                          [--atacmincells ATACMINCELLS]
+                                          [--atacminumi [ATACMINUMI [ATACMINUMI ...]]]
+                                          [--maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]]
+                                          [--mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]]
+                                          [--minfrip [MINFRIP [MINFRIP ...]]]
+                                          [--maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]]
+                                          [--callby CALLBY]
+                                          [--removedoublets {union,onlyrna,onlyatac,intersect}]
+                                          [--rnadbr RNADBR]
+                                          [--rnadbrsd RNADBRSD]
+                                          [--atacdbr ATACDBR]
+                                          [--atacdbrsd ATACDBRSD] [--pdf]
+                                          [--verbose] [--h5seurat] [--h5ad]
+                                          [--cbbuild] [--output OUTPUT]
+                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                          [--cpus CPUS] [--memory MEMORY]
 
   Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
 
@@ -1917,9 +1876,9 @@ s:about: |
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --minumis [MINUMIS [MINUMIS ...]]
-                          Include cells where at least this many RNA reads
-                          are detected. If multiple values
+    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
+                          Include cells where at least this many UMI (RNA
+                          transcripts) are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the '--mex' input based on
                           the '--identity' file. Default: 500 (applied to all
@@ -1927,7 +1886,7 @@ s:about: |
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
                           Default: '^mt-|^MT-'
-    --maxmt MAXMT         Include cells with the percentage of RNA reads
+    --maxmt MAXMT         Include cells with the percentage of transcripts
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
     --minnovelty [MINNOVELTY [MINNOVELTY ...]]
@@ -1940,24 +1899,25 @@ s:about: |
     --atacmincells ATACMINCELLS
                           Include only peaks detected in at least this many
                           cells. Default: 5 (applied to all datasets)
-    --minfragments [MINFRAGMENTS [MINFRAGMENTS ...]]
-                          Include cells where at least this many ATAC fragments in
-                          peaks are detected. If multiple values provided, each
-                          of them will be applied to the correspondent dataset
-                          from the '--mex' input based on the '--identity' file.
-                          Default: 1000 (applied to all datasets)
+    --atacminumi [ATACMINUMI [ATACMINUMI ...]]
+                          Include cells where at least this many UMI (ATAC
+                          transcripts) are detected. If multiple values
+                          provided, each of them will be applied to the
+                          correspondent dataset from the '--mex' input based on
+                          the '--identity' file. Default: 1000 (applied to all
+                          datasets)
     --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
-                          free ATAC fragments. If multiple values provided, each of
+                          free fragments. If multiple values provided, each of
                           them will be applied to the correspondent dataset from
                           the '--mex' input based on the '--identity' file.
                           Default: 4 (applied to all datasets)
     --mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]
                           Include cells with the TSS enrichment score not lower
                           than this value. Score is calculated based on the
-                          ratio of ATAC fragments centered at the TSS to ATAC fragments in
+                          ratio of fragments centered at the TSS to fragments in
                           TSS-flanking regions. If multiple values provided,
                           each of them will be applied to the correspondent
                           dataset from the '--mex' input based on the '--
@@ -1967,10 +1927,10 @@ s:about: |
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the '--mex'
                           input based on the '--identity' file. FRiP is
-                          calculated for ATAC fragments. Default: 0.15 (applied to
+                          calculated for fragments. Default: 0.15 (applied to
                           all datasets)
     --maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]
-                          Include cells with the fraction of ATAC fragments in
+                          Include cells with the fraction of fragments in
                           genomic blacklist regions not bigger than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the '--mex'
@@ -1984,8 +1944,6 @@ s:about: |
                           only after applying all RNA related thresholds,
                           maximum nucleosome signal, and minimum TSS enrichment
                           scores filters. Default: do not call peaks
-    --qvalue QVALUE       Minimum FDR (q-value) cutoff for MACS2 peak detection.
-                          Ignored if --callby is not provided. Default: 0.05
     --removedoublets {union,onlyrna,onlyatac,intersect}
                           Remove cells that were identified as doublets. For RNA
                           assay cells with UMI < 200 will not be evaluated.
@@ -2011,9 +1969,6 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save Seurat data to h5ad file. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
-    --tmpdir TMPDIR       Directory to keep temporary files. Default: either
-                          /tmp or defined by environment variables TMPDIR, TMP,
-                          TEMP.
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.21
 
 
 inputs:
@@ -369,7 +369,7 @@ outputs:
       glob: "*_first.bigWig"
     doc: |
       Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
+      for fragments from the cells that belong to
       the group defined by the --first and
       --groupby parameters.
       
@@ -379,7 +379,7 @@ outputs:
       glob: "*_second.bigWig"
     doc: |
       Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
+      for fragments from the cells that belong to
       the group defined by the --second and
       --groupby parameters.
 
