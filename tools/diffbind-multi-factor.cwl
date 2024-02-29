@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/diffbind:v0.0.16
+  dockerPull: biowardrobe2/diffbind:v0.0.15
 - class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
   listing: |
@@ -66,11 +66,12 @@ inputs:
       TSV/CSV metadata file to describe datasets provided in --alignments
       and --peaks parameters. First column should have the name 'sample',
       all other columns names should be selected from the following list:
-      Tissue, Factor, Condition, Treatment, Replicate. The values from the
-      'sample' column should correspond to the values provided in --aliases
-      parameter. For a proper --contrast intepretation, values defined in
-      each metadata column should not be used in any of the other columns.
-      All metadata columns are treated as factors (no covariates are supported).
+      Tissue, Factor, Condition, Treatment, Caller, Replicate. The values
+      from the 'sample' column should correspond to the values provided in
+      --aliases parameter. For a proper --contrast intepretation, values
+      defined in each metadata column should not be used in any of the other
+      columns. All metadata columns are treated as factors (no covariates
+      are supported).
 
   scoreby:
     type:
@@ -82,8 +83,8 @@ inputs:
     inputBinding:
       prefix: "--scoreby"
     doc: |
-      Score metrics to exclude low quality peaks based on the
-      threshold provided in the --score parameter.
+      Score metrics to build peak overlap correlation heatmap and exclude low
+      quality peaks based on the threshold provided in --score parameter.
       Default: pvalue
 
   score_threshold:
@@ -103,16 +104,6 @@ inputs:
       Filtering threshold to keep only those peaks where the max RPKM for
       all datasets is bigger than or equal to the provided value.
       Default: 1
-
-  rec_summits:
-    type: int?
-    inputBinding:
-      prefix: "--summits"
-    doc: |
-      Width in bp to extend peaks around their summits in both directions
-      and replace the original ones. Set it to 100 bp for ATAC-Seq and 200
-      bp for ChIP-Seq datasets. To skip peaks extension and replacement, set
-      it to negative value. Default: 200 bp (results in 401 bp wide peaks)
 
   overlap_threshold:
     type: float?
@@ -319,38 +310,20 @@ outputs:
       Peakset overlap rate
       PDF format
 
-  all_pk_scr_corr_plot_png:
+  pk_scr_corr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_all_pk_scr_corr.png"
+      glob: "*_pk_scr_corr.png"
     doc: |
-      Datasets correlation (all peaks)
+      Datasets correlation (peak score)
       PNG format
 
-  all_pk_scr_corr_plot_pdf:
+  pk_scr_corr_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_all_pk_scr_corr.pdf"
+      glob: "*_pk_scr_corr.pdf"
     doc: |
-      Datasets correlation (all peaks)
-      PDF format
-
-  cns_pk_scr_corr_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_cns_pk_scr_corr.png"
-    doc: |
-      Datasets correlation (optionally
-      recentered consensus peaks)
-      PNG format
-
-  cns_pk_scr_corr_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_cns_pk_scr_corr.pdf"
-    doc: |
-      Datasets correlation (optionally
-      recentered consensus peaks)
+      Datasets correlation (peak score)
       PDF format
 
   rw_rds_corr_plot_png:
@@ -555,21 +528,16 @@ doc: |
 
 
 s:about: |
-  usage: run_diffbind_manual.R [-h] --alignments ALIGNMENTS [ALIGNMENTS ...]
-                              --peaks PEAKS [PEAKS ...] --aliases ALIASES
-                              [ALIASES ...] --metadata METADATA
-                              [--scoreby {pvalue,qvalue}] [--score SCORE]
-                              [--minrpkm MINRPKM] [--summits SUMMITS]
-                              [--minoverlap MINOVERLAP]
-                              [--groupby [GROUPBY ...]] --design DESIGN
-                              [--contrast CONTRAST] [--base [BASE ...]]
-                              [--method {edger,deseq2}]
-                              [--norm {auto,rle,tmm,lib}] [--padj PADJ]
-                              [--cluster {row,column,both}]
-                              [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-                              [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-                              [--center] [--pdf] [--output OUTPUT]
-                              [--cpus CPUS]
+  usage: run_diffbind_manual.R
+        [-h] --alignments ALIGNMENTS [ALIGNMENTS ...] --peaks PEAKS [PEAKS ...]
+        --aliases ALIASES [ALIASES ...] --metadata METADATA
+        [--scoreby {pvalue,qvalue}] [--score SCORE] [--minrpkm MINRPKM]
+        [--minoverlap MINOVERLAP] [--groupby [GROUPBY ...]] --design DESIGN
+        [--contrast CONTRAST] [--base [BASE ...]] [--method {edger,deseq2}]
+        [--norm {auto,rle,tmm,lib}] [--padj PADJ] [--cluster {row,column,both}]
+        [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+        [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+        [--center] [--pdf] [--output OUTPUT] [--cpus CPUS]
 
   DiffBind Multi-factor Analysis
 
@@ -591,29 +559,24 @@ s:about: |
                           --alignments and --peaks parameters. First column
                           should have the name 'sample', all other columns names
                           should be selected from the following list: Tissue,
-                          Factor, Condition, Treatment, Replicate. The values
-                          from the 'sample' column should correspond to the
-                          values provided in --aliases parameter. For a proper
-                          --contrast intepretation, values defined in each
-                          metadata column should not be used in any of the other
-                          columns. All metadata columns are treated as factors
-                          (no covariates are supported).
+                          Factor, Condition, Treatment, Caller, Replicate. The
+                          values from the 'sample' column should correspond to
+                          the values provided in --aliases parameter. For a
+                          proper --contrast intepretation, values defined in
+                          each metadata column should not be used in any of the
+                          other columns. All metadata columns are treated as
+                          factors (no covariates are supported).
     --scoreby {pvalue,qvalue}
-                          Score metrics to exclude low quality peaks based on
-                          the threshold provided in the --score parameter.
-                          Default: pvalue
+                          Score metrics to build peak overlap correlation
+                          heatmap and exclude low quality peaks based on the
+                          threshold provided in --score parameter. Default:
+                          pvalue
     --score SCORE         Filtering threshold to keep only those peaks where the
                           metric selected in --scoreby parameter is less than or
                           equal to the provided value. Default: 0.05
     --minrpkm MINRPKM     Filtering threshold to keep only those peaks where the
                           max RPKM for all datasets is bigger than or equal to
                           the provided value. Default: 1
-    --summits SUMMITS     Width in bp to extend peaks around their summits in
-                          both directions and replace the original ones. Set it
-                          to 100 bp for ATAC-Seq and 200 bp for ChIP-Seq
-                          datasets. To skip peaks extension and replacement, set
-                          it to negative value. Default: 200 bp (results in 401
-                          bp wide peaks)
     --minoverlap MINOVERLAP
                           Filtering threshold to keep only those peaks that are
                           present in at least this many datasets when generating
