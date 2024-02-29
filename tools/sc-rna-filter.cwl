@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.21
+  dockerPull: biowardrobe2/sc-tools:v0.0.33
 
 
 inputs:
@@ -95,15 +95,15 @@ inputs:
       the '--mex' input based on the '--identity' file.
       Default: 5000 (applied to all datasets)
 
-  rna_minimum_umi:
+  minimum_umis:
     type:
     - "null"
     - int
     - int[]
     inputBinding:
-      prefix: "--rnaminumi"
+      prefix: "--minumis"
     doc: |
-      Include cells where at least this many UMI (transcripts) are detected.
+      Include cells where at least this many RNA reads are detected.
       If multiple values provided, each of them will be applied to the correspondent
       dataset from the '--mex' input based on the '--identity' file.
       Default: 500 (applied to all datasets)
@@ -135,7 +135,7 @@ inputs:
     inputBinding:
       prefix: "--maxmt"
     doc: |
-      Include cells with the percentage of transcripts mapped to mitochondrial
+      Include cells with the percentage of RNA reads mapped to mitochondrial
       genes not bigger than this value.
       Default: 5 (applied to all datasets)
 
@@ -314,7 +314,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst.png"
     doc: |
-      UMI per cell density (not filtered).
+      RNA reads per cell density (not filtered).
       PNG format
 
   raw_umi_dnst_plot_pdf:
@@ -322,7 +322,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst.pdf"
     doc: |
-      UMI per cell density (not filtered).
+      RNA reads per cell density (not filtered).
       PDF format
 
   raw_gene_dnst_plot_png:
@@ -341,20 +341,20 @@ outputs:
       Genes per cell density (not filtered).
       PDF format
 
-  raw_gene_umi_corr_plot_png:
+  raw_gene_umi_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi_corr.png"
+      glob: "*_raw_gene_umi.png"
     doc: |
-      Genes vs UMI per cell correlation (not filtered).
+      Genes vs RNA reads per cell correlation (not filtered).
       PNG format
 
-  raw_gene_umi_corr_plot_pdf:
+  raw_gene_umi_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_raw_gene_umi_corr.pdf"
+      glob: "*_raw_gene_umi.pdf"
     doc: |
-      Genes vs UMI per cell correlation (not filtered).
+      Genes vs RNA reads per cell correlation (not filtered).
       PDF format
 
   raw_mito_dnst_plot_png:
@@ -362,7 +362,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst.png"
     doc: |
-      Percentage of transcripts mapped to mitochondrial genes per cell density (not filtered).
+      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
       PNG format
 
   raw_mito_dnst_plot_pdf:
@@ -370,7 +370,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst.pdf"
     doc: |
-      Percentage of transcripts mapped to mitochondrial genes per cell density (not filtered).
+      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
       PDF format
 
   raw_nvlt_dnst_plot_png:
@@ -426,7 +426,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition UMI per cell density (not filtered).
+      Split by grouping condition RNA reads per cell density (not filtered).
       PNG format
 
   raw_umi_dnst_spl_cnd_plot_pdf:
@@ -434,7 +434,7 @@ outputs:
     outputBinding:
       glob: "*_raw_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition UMI per cell density (not filtered).
+      Split by grouping condition RNA reads per cell density (not filtered).
       PDF format
 
   raw_gene_dnst_spl_cnd_plot_png:
@@ -458,7 +458,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of transcripts mapped
+      Split by grouping condition the percentage of RNA reads mapped
       to mitochondrial genes per cell density (not filtered).
       PNG format
 
@@ -467,7 +467,7 @@ outputs:
     outputBinding:
       glob: "*_raw_mito_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition the percentage of transcripts mapped
+      Split by grouping condition the percentage of RNA reads mapped
       to mitochondrial genes per cell density (not filtered).
       PDF format
 
@@ -540,7 +540,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst.png"
     doc: |
-      UMI per cell density (filtered).
+      RNA reads per cell density (filtered).
       PNG format
 
   fltr_umi_dnst_plot_pdf:
@@ -548,7 +548,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst.pdf"
     doc: |
-      UMI per cell density (filtered).
+      RNA reads per cell density (filtered).
       PDF format
 
   fltr_gene_dnst_plot_png:
@@ -567,20 +567,20 @@ outputs:
       Genes per cell density (filtered).
       PDF format
 
-  fltr_gene_umi_corr_plot_png:
+  fltr_gene_umi_plot_png:
     type: File?
     outputBinding:
-      glob: "*_fltr_gene_umi_corr.png"
+      glob: "*_fltr_gene_umi.png"
     doc: |
-      Genes vs UMI per cell correlation (filtered).
+      Genes vs RNA reads per cell correlation (filtered).
       PNG format
 
-  fltr_gene_umi_corr_plot_pdf:
+  fltr_gene_umi_plot_pdf:
     type: File?
     outputBinding:
-      glob: "*_fltr_gene_umi_corr.pdf"
+      glob: "*_fltr_gene_umi.pdf"
     doc: |
-      Genes vs UMI per cell correlation (filtered).
+      Genes vs RNA reads per cell correlation (filtered).
       PDF format
 
   fltr_mito_dnst_plot_png:
@@ -588,7 +588,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_mito_dnst.png"
     doc: |
-      Percentage of transcripts mapped to mitochondrial genes per cell density (filtered).
+      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
       PNG format
 
   fltr_mito_dnst_plot_pdf:
@@ -596,7 +596,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_mito_dnst.pdf"
     doc: |
-      Percentage of transcripts mapped to mitochondrial genes per cell density (filtered).
+      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
       PDF format
 
   fltr_nvlt_dnst_plot_png:
@@ -652,7 +652,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition UMI per cell density (filtered).
+      Split by grouping condition RNA reads per cell density (filtered).
       PNG format
 
   fltr_umi_dnst_spl_cnd_plot_pdf:
@@ -660,7 +660,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_umi_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition UMI per cell density (filtered).
+      Split by grouping condition RNA reads per cell density (filtered).
       PDF format
 
   fltr_gene_dnst_spl_cnd_plot_png:
@@ -684,7 +684,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of transcripts mapped
+      Split by grouping condition the percentage of RNA reads mapped
       to mitochondrial genes per cell density (filtered).
       PNG format
 
@@ -693,7 +693,7 @@ outputs:
     outputBinding:
       glob: "*_fltr_mito_dnst_spl_cnd.pdf"
     doc: |
-      Split by grouping condition the percentage of transcripts mapped
+      Split by grouping condition the percentage of RNA reads mapped
       to mitochondrial genes per cell density (filtered).
       PDF format
 
@@ -740,6 +740,14 @@ outputs:
       glob: "*_data.rds"
     doc: |
       Filtered Seurat data in RDS format
+
+  datasets_metadata:
+    type: File
+    outputBinding:
+      glob: "*_meta.tsv"
+    doc: |
+      Example of datasets metadata file
+      in TSV format
 
   seurat_data_h5seurat:
     type: File?
@@ -832,18 +840,19 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_filter.R
-        [-h] --mex MEX [MEX ...] --identity IDENTITY [--grouping GROUPING]
-        [--barcodes BARCODES] [--rnamincells RNAMINCELLS]
-        [--mingenes [MINGENES [MINGENES ...]]]
-        [--maxgenes [MAXGENES [MAXGENES ...]]]
-        [--rnaminumi [RNAMINUMI [RNAMINUMI ...]]]
-        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-        [--mitopattern MITOPATTERN] [--maxmt MAXMT] [--removedoublets]
-        [--rnadbr RNADBR] [--rnadbrsd RNADBRSD] [--pdf] [--verbose]
-        [--h5seurat] [--h5ad] [--cbbuild] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity IDENTITY
+                        [--grouping GROUPING] [--barcodes BARCODES]
+                        [--rnamincells RNAMINCELLS]
+                        [--mingenes [MINGENES [MINGENES ...]]]
+                        [--maxgenes [MAXGENES [MAXGENES ...]]]
+                        [--minumis [MINUMIS [MINUMIS ...]]]
+                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                        [--mitopattern MITOPATTERN] [--maxmt MAXMT]
+                        [--removedoublets] [--rnadbr RNADBR]
+                        [--rnadbrsd RNADBRSD] [--pdf] [--verbose] [--h5seurat]
+                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                        [--cpus CPUS] [--memory MEMORY]
 
   Single-cell RNA-Seq Filtering Analysis
 
@@ -894,9 +903,9 @@ s:about: |
                           will be applied to the correspondent dataset from the
                           '--mex' input based on the '--identity' file. Default:
                           5000 (applied to all datasets)
-    --rnaminumi [RNAMINUMI [RNAMINUMI ...]]
-                          Include cells where at least this many UMI
-                          (transcripts) are detected. If multiple values
+    --minumis [MINUMIS [MINUMIS ...]]
+                          Include cells where at least this many RNA reads
+                          are detected. If multiple values
                           provided, each of them will be applied to the
                           correspondent dataset from the '--mex' input based on
                           the '--identity' file. Default: 500 (applied to all
@@ -911,7 +920,7 @@ s:about: |
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
                           Default: '^mt-|^MT-'
-    --maxmt MAXMT         Include cells with the percentage of transcripts
+    --maxmt MAXMT         Include cells with the percentage of RNA reads
                           mapped to mitochondrial genes not bigger than this
                           value. Default: 5 (applied to all datasets)
     --removedoublets      Remove cells that were identified as doublets. Cells
