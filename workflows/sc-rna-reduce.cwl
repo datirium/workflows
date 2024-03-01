@@ -29,64 +29,20 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   query_data_rds:
     type: File
-    label: "Experiment run through either Single-cell RNA-Seq or Multiome ATAC and RNA-Seq Filtering Analysis"
+    label: "Single-cell Analysis with Filtered RNA-Seq Datasets"
     doc: |
-      Path to the RDS file to load Seurat object from. This file should include genes
-      expression information stored in the RNA assay.
+      Any analysis that includes single-cell
+      multiome ATAC and RNA-Seq or just
+      RNA-Seq datasets filtered by QC metrics
+      to include only high-quality cells.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
-
-  datasets_metadata:
-    type: File?
-    label: "Path to the TSV/CSV file to optionally extend Seurat object metadata with categorical values"
-    doc: |
-      Path to the TSV/CSV file to optionally extend Seurat object metadata with
-      categorical values using samples identities. First column - 'library_id'
-      should correspond to all unique values from the 'new.ident' column of the
-      loaded Seurat object. If any of the provided in this file columns are already
-      present in the Seurat object metadata, they will be overwritten. When combined
-      with --barcodes parameter, first the metadata will be extended, then barcode
-      filtering will be applied.
-      Default: no extra metadata is added
-
-  barcodes_data:
-    type: File?
-    label: "Optional TSV/CSV file to prefilter and extend metadata be barcodes. First column should be named as 'barcode'"
-    doc: |
-      Path to the TSV/CSV file to optionally prefilter and
-      extend Seurat object metadata be selected barcodes.
-      First column should be named as 'barcode'. If file
-      includes any other columns they will be added to the
-      Seurat object metadata ovewriting the existing ones if
-      those are present.
-      Default: all cells used, no extra metadata is added
-
-  cell_cycle_data:
-    type: File?
-    label: "Optional TSV/CSV file with cell cycle data. First column - 'phase', second column 'gene_id'"
-    doc: |
-      Path to the TSV/CSV file with the information for cell cycle score assignment.
-      First column - 'phase', second column 'gene_id'. If loaded Seurat object already
-      includes cell cycle scores in 'S.Score', 'G2M.Score', and 'CC.Difference' metatada
-      columns they will be overwritten.
-      Default: skip cell cycle score assignment.
-
-  dimensions:
-    type: int?
-    label: "Dimensionality to use in UMAP projection (from 1 to 50)"
-    default: 40
-    doc: |
-      Dimensionality to use in UMAP projection (from 1 to 50). If single value N
-      is provided, use from 1 to N PCs. If multiple values are provided, subset to
-      only selected PCs. In combination with --ntgr set to harmony, selected principle
-      components will be used in Harmony integration.
-      Default: from 1 to 10
 
   normalization_method:
     type:
@@ -94,17 +50,22 @@ inputs:
     - type: enum
       symbols:
       - "sct"
-      - "log"
       - "sctglm"
-    label: "Normalization method applied to genes expression counts"
+      - "log"
+    label: "Normalization method"
     default: "sctglm"
     doc: |
-      Normalization method applied to genes expression counts. If loaded Seurat object
-      includes multiple datasets, normalization will be run independently for each of
-      them, unless integration is disabled with 'none' or set to 'harmony'
-      Default: sct
-    'sd:layout':
-      advanced: true
+      Normalization and variance stabilization
+      method to remove technical variability
+      between the cells. "sct" - use sctransform
+      package described in Hafemeister and Satija,
+      Genome Biology 2019. "sctglm" - use updated
+      sctransform package described in Choudhary
+      and Satija, Genome Biology, 2022. "log" -
+      use a combination of NormalizeData and
+      ScaleData functions described in Stuart and
+      Butler, Cell 2019.
+      Default: sctglm
 
   integration_method:
     type:
@@ -114,59 +75,69 @@ inputs:
       - "seurat"
       - "harmony"
       - "none"
-    label: "Integration method used for joint analysis of multiple datasets"
+    label: "Integration method"
     default: "seurat"
     doc: |
-      Integration method used for joint analysis of multiple datasets. Automatically
-      set to 'none' if loaded Seurat object includes only one dataset.
+      Integration method to match shared cell
+      types and states across experimental
+      batches, donors, conditions, or datasets.
+      "seurat" - use cross-dataset pairs of
+      cells that are in a matched biological
+      state ("anchors") to correct for technical
+      differences. "harmony" - use Harmony
+      algorithm described in Korsunsky, Millard,
+      and Fan, Nat Methods, 2019, to iteratively
+      correct PCA embeddings. "none" - do not
+      run integration, merge datasets instead.
       Default: seurat
-    'sd:layout':
-      advanced: true
 
   integrate_by:
-    type: string?
-    label: "Variable(s) to be integrated out when running multiple integration with Harmony"
-    default: "new.ident"
+    type:
+    - "null"
+    - string
+    - type: enum
+      symbols:
+      - "dataset"
+      - "condition"
+    label: "Batch correction (harmony)"
+    default: "dataset"
     doc: |
-      Column(s) from the Seurat object metadata to define the variable(s) that should
-      be integrated out when running multiple datasets integration with harmony. May
-      include columns from the extra metadata added with --metadata parameter. Ignored
-      if --ntgr is not set to harmony.
-      Default: new.ident
-    'sd:layout':
-      advanced: true
+      When "harmony" is selected as "Integration
+      method", batch effects are corrected based
+      on the provided factors. Specifically,
+      "dataset" is used to integrate out the
+      influence of the cells' dataset of origin,
+      while the factor "condition" is used to
+      eliminate the influence of dataset grouping.
+      Default: dataset
 
-  highly_var_genes_count:
+  dimensions:
     type: int?
-    label: "Number of highly variable genes used in datasets integration, scaling and dimensionality reduction"
-    default: 3000
+    label: "Target dimensionality"
+    default: 40
     doc: |
-      Number of highly variable genes used in datasets integration, scaling and
-      dimensionality reduction.
-      Default: 3000
-    'sd:layout':
-      advanced: true
+      Number of principal components to be used
+      in PCA and UMAP projection. Accepted values
+      range from 1 to 50.
+      Default: 40
 
-  regress_mito_perc:
-    type: boolean?
-    label: "Regress the percentage of transcripts mapped to mitochondrial genes as a confounding source of variation"
-    default: false
+  cell_cycle_data:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "human"
+      - "mouse"
+      - "none"
+    label: "Cell cycle gene set"
+    default: "none"
     doc: |
-      Regress the percentage of transcripts mapped to mitochondrial genes as a
-      confounding source of variation.
-      Default: false
-    'sd:layout':
-      advanced: true
-
-  regress_genes:
-    type: string?
-    label: "Regress genes per cell counts as a confounding source of variation"
-    default: null
-    doc: |
-      Genes which expression should be regressed as a confounding source of variation.
-      Default: None
-    'sd:layout':
-      advanced: true
+      Assign cell cycle score and
+      phase based on the gene set
+      for the selected organism.
+      When selected "none", skip
+      cell cycle score assignment.
+      Default: "none"
 
   regress_cellcycle:
     type:
@@ -174,85 +145,114 @@ inputs:
     - type: enum
       symbols:
       - "completely"
-      - "partialy"
-      - "none"
-    label: "Regress cell cycle scores as a confounding source of variation"
-    default: "none"
+      - "partially"
+      - "do not remove"
+    label: "Remove cell cycle"
+    default: "do not remove"
     doc: |
-      "completely" - regress all signals associated with cell cycle phase.
-      "partialy" - regress only differences in cell cycle phase among
-      proliferating cells, signals separating non-cycling and cycling cells
-      will be maintained.
-      "none" - do not regress signals associated with cell cycle phase
-      Default: "none"
-    'sd:layout':
-      advanced: true
+      Remove the influence cell cycle
+      phase on the dimensionality
+      reduction results. When selected
+      "completely", regress all signals
+      associated with the cell cycle phase.
+      For "partially" - regress only the
+      differences in cell cycle phase
+      among proliferating cells, signals
+      separating non-cycling and cycling
+      cells will be maintained. When
+      selected "do not remove" - do not
+      regress signals associated with the
+      cell cycle phase. Ignored if cell
+      cycle gene set is not provided.
+      Default: "do not remove"
 
-  umap_spread:
-    type: float?
-    label: "UMAP Spread - the effective scale of embedded points (determines how clustered/clumped the embedded points are)"
-    default: 1
+  regress_genes:
+    type: string?
+    label: "Regress genes"
+    default: null
     doc: |
-      The effective scale of embedded points on UMAP. In combination with '--mindist'
-      it determines how clustered/clumped the embedded points are.
-      Default: 1
-    'sd:layout':
-      advanced: true
+      Regex pattern to identify genes which
+      expression should be regressed as a
+      confounding source of variation.
+      Default: None
 
-  umap_mindist:
-    type: float?
-    label: "UMAP Min. Dist. - controls how tightly the embedding is allowed compress points together"
-    default: 0.3
+  regress_mito_perc:
+    type: boolean?
+    label: "Regress mitochondrial percentage"
+    default: false
     doc: |
-      Controls how tightly the embedding is allowed compress points together on UMAP.
-      Larger values ensure embedded points are moreevenly distributed, while smaller
-      values allow the algorithm to optimise more accurately with regard to local structure.
-      Sensible values are in the range 0.001 to 0.5.
-      Default:  0.3
-    'sd:layout':
-      advanced: true
+      Regress the percentage of RNA reads
+      mapped to mitochondrial genes as a
+      confounding source of variation.
+      Default: false
 
-  umap_neighbors:
+  datasets_metadata:
+    type: File?
+    label: "Datasets metadata (optional)"
+    doc: |
+      If the selected single-cell analysis
+      includes multiple aggregated datasets,
+      each of them can be assigned to a
+      separate group by one or multiple
+      categories. This can be achieved by
+      providing a TSV/CSV file with
+      "library_id" as the first column and
+      any number of additional columns with
+      unique names, representing the desired
+      grouping categories. To obtain a proper
+      template of this file, download
+      "datasets_metadata.tsv" output from the
+      "Files" tab of the selected "Single-cell
+      Analysis with Filtered RNA-Seq Datasets"
+      and add extra columns as needed.
+
+  barcodes_data:
+    type: File?
+    label: "Selected cell barcodes (optional)"
+    doc: |
+      A TSV/CSV file to optionally prefilter
+      the single cell data by including only
+      the cells with the selected barcodes.
+      The provided file should include at
+      least one column named "barcode", with
+      one cell barcode per line. All other
+      columns, except for "barcode", will be
+      added to the single cell metadata loaded
+      from "Single-cell Analysis with Filtered
+      RNA-Seq Datasets" and can be utilized in
+      the current or future steps of analysis.
+
+  custom_cell_cycle_data:
+    type: File?
+    label: "Custom cell cycle gene set (optional)"
+    doc: |
+      A TSV/CSV file with the gene list
+      for cell cycle score assignment.
+      The file should have two columns
+      named 'phase' and 'gene_id'. If
+      this input is provided, the "Cell
+      cycle gene set" will be ignored.
+
+  highly_var_genes_count:
     type: int?
-    label: "UMAP Neighbors Number - determines the number of neighboring points used"
-    default: 30
+    label: "Number of highly variable genes"
+    default: 3000
     doc: |
-      Determines the number of neighboring points used in UMAP. Larger values will result
-      in more global structure being preserved at the loss of detailed local structure.
-      In general this parameter should often be in the range 5 to 50.
-      Default: 30
+      The number of highly variable genes
+      to be used in gene expression scaling,
+      datasets integration, and dimensionality
+      reduction.
+      Default: 3000
     'sd:layout':
       advanced: true
 
-  umap_metric:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "euclidean"
-      - "cosine"
-      - "correlation"
-    label: "UMAP Dist. Metric - the metric to use to compute distances in high dimensional space"
-    default: "cosine"
+  export_ucsc_cb:
+    type: boolean?
+    default: false
+    label: "Show results in UCSC Cell Browser"
     doc: |
-      The metric to use to compute distances in high dimensional space for UMAP.
-      Default: cosine
-    'sd:layout':
-      advanced: true
-
-  umap_method:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "uwot"
-      - "uwot-learn"
-      - "umap-learn"
-    label: "UMAP implementation to run (if set to 'umap-learn' use 'correlation' distance metric)"
-    default: "uwot"
-    doc: |
-      UMAP implementation to run. If set to 'umap-learn' use --umetric 'correlation'
-      Default: uwot
+      Export results into UCSC Cell Browser
+      Default: false
     'sd:layout':
       advanced: true
 
@@ -270,41 +270,12 @@ inputs:
       - "classic"
       - "void"
     default: "classic"
-    label: "Color theme for all generated plots"
+    label: "Plots color theme"
     doc: |
-      Color theme for all generated plots. One of gray, bw, linedraw, light,
-      dark, minimal, classic, void.
+      Color theme for all plots saved
+      as PNG files.
       Default: classic
-    'sd:layout':
-      advanced: true
-
-  parallel_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "32"
-    default: "32"
-    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
-    doc: |
-      Maximum memory in GB allowed to be shared between the workers
-      when using multiple --cpus.
-      Forced to 32 GB
-    'sd:layout':
-      advanced: true
-
-  vector_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "96"
-    default: "96"
-    label: "Maximum vector memory in GB allowed to be used by R"
-    doc: |
-      Maximum vector memory in GB allowed to be used by R.
-      Forced to 96 GB
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -314,11 +285,18 @@ inputs:
       symbols:
       - "1"
       - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
     default: "1"
-    label: "Number of cores/cpus to use"
+    label: "Cores/CPUs"
     doc: |
-      Number of cores/cpus to use
-    'sd:layout':
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 1
+    "sd:layout":
       advanced: true
 
 
@@ -327,206 +305,222 @@ outputs:
   elbow_plot_png:
     type: File?
     outputSource: sc_rna_reduce/elbow_plot_png
-    label: "Elbow plot (from cells PCA)"
+    label: "Elbow plot"
     doc: |
-      Elbow plot (from cells PCA).
-      PNG format
+      Elbow plot to evaluate the number of
+      principal components that capture the
+      majority of the variation in the data.
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Elbow plot (from cells PCA)'
+        tab: 'QC'
+        Caption: 'Elbow plot'
 
   qc_dim_corr_plot_png:
     type: File?
     outputSource: sc_rna_reduce/qc_dim_corr_plot_png
-    label: "Correlation plots between QC metrics and cells PCA components"
+    label: "Correlation between QC metrics and principal components"
     doc: |
-      Correlation plots between QC metrics and cells PCA components.
-      PNG format
+      Correlation between QC metrics and
+      principal components
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Correlation plots between QC metrics and cells PCA components'
+        tab: 'QC'
+        Caption: 'Correlation between QC metrics and principal components'
 
   umap_qc_mtrcs_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_qc_mtrcs_plot_png
-    label: "QC metrics on cells UMAP"
+    label: "UMAP, QC metrics"
     doc: |
-      QC metrics on cells UMAP.
-      PNG format
+      UMAP, QC metrics
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'QC metrics on cells UMAP'
-
-  umap_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_plot_png
-    label: "Cells UMAP"
-    doc: |
-      Cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Overall'
-        Caption: 'Cells UMAP'
+        tab: 'QC'
+        Caption: 'UMAP, QC metrics'
 
   ccpca_plot_png:
     type: File?
     outputSource: sc_rna_reduce/ccpca_plot_png
-    label: "Cells PCA using only cell cycle genes"
+    label: "PCA, colored by cell cycle phase"
     doc: |
-      Cells PCA using only cell cycle genes.
-      PNG format
+      PCA, colored by cell cycle phase
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Cells PCA using only cell cycle genes'
+        tab: 'QC'
+        Caption: 'PCA, colored by cell cycle phase'
 
-  umap_spl_ph_plot_png:
+  umap_plot_png:
     type: File?
-    outputSource: sc_rna_reduce/umap_spl_ph_plot_png
-    label: "Split by cell cycle phase cells UMAP"
+    outputSource: sc_rna_reduce/umap_plot_png
+    label: "UMAP, colored by dataset"
     doc: |
-      Split by cell cycle phase cells UMAP.
-      PNG format
+      UMAP, colored by dataset
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by cell cycle phase cells UMAP'
-
-  umap_spl_mito_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_mito_plot_png
-    label: "Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP"
-    doc: |
-      Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by the percentage of transcripts mapped to mitochondrial genes cells UMAP'
-
-  umap_spl_umi_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_umi_plot_png
-    label: "Split by the UMI per cell counts cells UMAP"
-    doc: |
-      Split by the UMI per cell counts cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by the UMI per cell counts cells UMAP'
-
-  umap_spl_gene_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_spl_gene_plot_png
-    label: "Split by the genes per cell counts cells UMAP"
-    doc: |
-      Split by the genes per cell counts cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Split by the genes per cell counts cells UMAP'
+        Caption: 'UMAP, colored by dataset'
 
   umap_spl_idnt_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_spl_idnt_plot_png
-    label: "Split by dataset cells UMAP"
+    label: "UMAP, split by dataset"
     doc: |
-      Split by dataset cells UMAP.
-      PNG format
+      UMAP, split by dataset
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by dataset cells UMAP'
+        Caption: 'UMAP, split by dataset'
+
+  umap_spl_umi_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/umap_spl_umi_plot_png
+    label: "UMAP, colored by dataset, split by RNA reads per cell"
+    doc: |
+      UMAP, colored by dataset, split by
+      RNA reads per cell
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'UMAP, colored by dataset, split by RNA reads per cell'
+
+  umap_spl_gene_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/umap_spl_gene_plot_png
+    label: "UMAP, colored by dataset, split by genes per cell"
+    doc: |
+      UMAP, colored by dataset, split by
+      genes per cell
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'UMAP, colored by dataset, split by genes per cell'
+
+  umap_spl_mito_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/umap_spl_mito_plot_png
+    label: "UMAP, colored by dataset, split by mitochondrial percentage"
+    doc: |
+      UMAP, colored by dataset, split by
+      mitochondrial percentage
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'UMAP, colored by dataset, split by mitochondrial percentage'
+
+  umap_spl_ph_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/umap_spl_ph_plot_png
+    label: "UMAP, colored by dataset, split by cell cycle phase"
+    doc: |
+      UMAP, colored by dataset, split by
+      cell cycle phase
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per dataset'
+        Caption: 'UMAP, colored by dataset, split by cell cycle phase'
 
   ccpca_spl_idnt_plot_png:
     type: File?
     outputSource: sc_rna_reduce/ccpca_spl_idnt_plot_png
-    label: "Split by dataset cells PCA using only cell cycle genes"
+    label: "PCA, colored by cell cycle phase, split by dataset"
     doc: |
-      Split by dataset cells PCA using only cell cycle genes.
-      PNG format
+      PCA, colored by cell cycle phase,
+      split by dataset
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by dataset cells PCA using only cell cycle genes'
+        Caption: 'PCA, colored by cell cycle phase, split by dataset'
 
   umap_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_spl_cnd_plot_png
-    label: "Split by grouping condition cells UMAP"
+    label: "UMAP, colored by dataset, split by grouping condition"
     doc: |
-      Split by grouping condition cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split by
+      grouping condition
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'Split by grouping condition cells UMAP'
-
-  umap_gr_cnd_spl_ph_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_gr_cnd_spl_ph_plot_png
-    label: "Grouped by condition split by cell cycle cells UMAP"
-    doc: |
-      Grouped by condition split by cell cycle cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Grouped by condition split by cell cycle cells UMAP'
-
-  ccpca_spl_cnd_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/ccpca_spl_cnd_plot_png
-    label: "Split by grouping condition cells PCA using only cell cycle genes"
-    doc: |
-      Split by grouping condition cells PCA using only cell cycle genes.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Split by grouping condition cells PCA using only cell cycle genes'
-
-  umap_gr_cnd_spl_mito_plot_png:
-    type: File?
-    outputSource: sc_rna_reduce/umap_gr_cnd_spl_mito_plot_png
-    label: "Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP"
-    doc: |
-      Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Grouped by condition split by the percentage of transcripts mapped to mitochondrial genes cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by grouping condition'
 
   umap_gr_cnd_spl_umi_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_gr_cnd_spl_umi_plot_png
-    label: "Grouped by condition split by the UMI per cell counts cells UMAP"
+    label: "UMAP, colored by grouping condition, split by RNA reads per cell"
     doc: |
-      Grouped by condition split by the UMI per cell counts cells UMAP.
-      PNG format
+      UMAP, colored by grouping condition,
+      split by RNA reads per cell
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'Grouped by condition split by the UMI per cell counts cells UMAP'
+        Caption: 'UMAP, colored by grouping condition, split by RNA reads per cell'
 
   umap_gr_cnd_spl_gene_plot_png:
     type: File?
     outputSource: sc_rna_reduce/umap_gr_cnd_spl_gene_plot_png
-    label: "Grouped by condition split by the genes per cell counts cells UMAP"
+    label: "UMAP, colored by grouping condition, split by genes per cell"
     doc: |
-      Grouped by condition split by the genes per cell counts cells UMAP.
-      PNG format
+      UMAP, colored by grouping condition,
+      split by genes per cell
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'Grouped by condition split by the genes per cell counts cells UMAP'
+        Caption: 'UMAP, colored by grouping condition, split by genes per cell'
+
+  umap_gr_cnd_spl_mito_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/umap_gr_cnd_spl_mito_plot_png
+    label: "UMAP, colored by grouping condition, split by mitochondrial percentage"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by mitochondrial percentage
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by mitochondrial percentage'
+
+  umap_gr_cnd_spl_ph_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/umap_gr_cnd_spl_ph_plot_png
+    label: "UMAP, colored by grouping condition, split by cell cycle phase"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by cell cycle phase
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by cell cycle phase'
+
+  ccpca_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_rna_reduce/ccpca_spl_cnd_plot_png
+    label: "PCA, colored by cell cycle phase, split by grouping condition"
+    doc: |
+      PCA, colored by cell cycle phase,
+      split by grouping condition
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'PCA, colored by cell cycle phase, split by grouping condition'
+
+  ucsc_cb_html_data:
+    type: Directory?
+    outputSource: sc_rna_reduce/ucsc_cb_html_data
+    label: "UCSC Cell Browser data"
+    doc: |
+      Directory with UCSC Cell Browser
+      data
+
+  ucsc_cb_html_file:
+    type: File?
+    outputSource: sc_rna_reduce/ucsc_cb_html_file
+    label: "UCSC Cell Browser"
+    doc: |
+      UCSC Cell Browser HTML index file
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
 
   seurat_data_rds:
     type: File
@@ -534,6 +528,14 @@ outputs:
     label: "Processed Seurat data in RDS format"
     doc: |
       Processed Seurat data in RDS format
+
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
 
   sc_rna_reduce_stdout_log:
     type: File
@@ -560,43 +562,61 @@ steps:
     in:
       query_data_rds: query_data_rds
       barcodes_data: barcodes_data
-      cell_cycle_data: cell_cycle_data
+      cell_cycle_data:
+        source: [cell_cycle_data, custom_cell_cycle_data]
+        valueFrom: |
+          ${
+            if (self[1] != null && self[1].class == "File"){
+              return self[1];
+            } else if (self[0].includes("human")) {
+              return "hg38";
+            } else if (self[0].includes("mouse")) {
+              return "mm10";
+            } else {
+              return null;
+            }
+          }
+      regress_ccycle_full:
+        source: regress_cellcycle
+        valueFrom: $(self.includes("completely")?true:null)
+      regress_ccycle_diff:
+        source: regress_cellcycle
+        valueFrom: $(self.includes("partially")?true:null)
       datasets_metadata: datasets_metadata
       normalization_method: normalization_method
       integration_method: integration_method
       integrate_by:
         source: integrate_by
-        valueFrom: $(split_features(self))
+        valueFrom: |
+          ${
+            if (self == "none") {
+              return null;
+            } else if (self == "dataset") {
+              return "new.ident";
+            } else if (self == "condition") {
+              return "condition";
+            } else {
+              return split_features(self);
+            }
+          }
       highly_var_genes_count: highly_var_genes_count
       regress_mito_perc: regress_mito_perc
       regress_genes:
         source: regress_genes
-        valueFrom: $(split_features(self))
-      regress_ccycle_full:
-        source: regress_cellcycle
-        valueFrom: $(self=="completely"?true:null)
-      regress_ccycle_diff: 
-        source: regress_cellcycle
-        valueFrom: $(self=="partialy"?true:null)
+        valueFrom: $(self==""?null:self)            # safety measure
       dimensions: dimensions
-      umap_spread: umap_spread
-      umap_mindist: umap_mindist
-      umap_neighbors: umap_neighbors
-      umap_metric: umap_metric
-      umap_method: umap_method
       verbose:
         default: true
-      export_ucsc_cb:
-        default: false
+      export_ucsc_cb: export_ucsc_cb
       low_memory:
+        default: true
+      export_pdf_plots:
         default: true
       color_theme: color_theme
       parallel_memory_limit:
-        source: parallel_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 32
       vector_memory_limit:
-        source: vector_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 96
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -618,9 +638,63 @@ steps:
     - umap_gr_cnd_spl_mito_plot_png
     - umap_gr_cnd_spl_umi_plot_png
     - umap_gr_cnd_spl_gene_plot_png
+    - elbow_plot_pdf
+    - qc_dim_corr_plot_pdf
+    - umap_qc_mtrcs_plot_pdf
+    - umap_plot_pdf
+    - umap_spl_ph_plot_pdf
+    - ccpca_plot_pdf
+    - umap_spl_mito_plot_pdf
+    - umap_spl_umi_plot_pdf
+    - umap_spl_gene_plot_pdf
+    - umap_spl_idnt_plot_pdf
+    - ccpca_spl_idnt_plot_pdf
+    - umap_spl_cnd_plot_pdf
+    - umap_gr_cnd_spl_ph_plot_pdf
+    - ccpca_spl_cnd_plot_pdf
+    - umap_gr_cnd_spl_mito_plot_pdf
+    - umap_gr_cnd_spl_umi_plot_pdf
+    - umap_gr_cnd_spl_gene_plot_pdf
+    - ucsc_cb_html_data
+    - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  folder_pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_rna_reduce/elbow_plot_pdf
+        - sc_rna_reduce/qc_dim_corr_plot_pdf
+        - sc_rna_reduce/umap_qc_mtrcs_plot_pdf
+        - sc_rna_reduce/umap_plot_pdf
+        - sc_rna_reduce/umap_spl_ph_plot_pdf
+        - sc_rna_reduce/ccpca_plot_pdf
+        - sc_rna_reduce/umap_spl_mito_plot_pdf
+        - sc_rna_reduce/umap_spl_umi_plot_pdf
+        - sc_rna_reduce/umap_spl_gene_plot_pdf
+        - sc_rna_reduce/umap_spl_idnt_plot_pdf
+        - sc_rna_reduce/ccpca_spl_idnt_plot_pdf
+        - sc_rna_reduce/umap_spl_cnd_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_ph_plot_pdf
+        - sc_rna_reduce/ccpca_spl_cnd_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_mito_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_umi_plot_pdf
+        - sc_rna_reduce/umap_gr_cnd_spl_gene_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: folder_pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:
@@ -629,9 +703,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell RNA-Seq Dimensionality Reduction Analysis"
-s:name: "Single-cell RNA-Seq Dimensionality Reduction Analysis"
-s:alternateName: "Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA"
+label: "Single-Cell RNA-Seq Dimensionality Reduction Analysis"
+s:name: "Single-Cell RNA-Seq Dimensionality Reduction Analysis"
+s:alternateName: "Removes noise and confounding sources of variation by reducing dimensionality of gene expression data"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-reduce.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -669,6 +743,11 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Dimensionality Reduction Analysis
+  Single-Cell RNA-Seq Dimensionality Reduction Analysis
 
-  Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA.
+  Removes noise and confounding sources of variation by reducing
+  dimensionality of gene expression data from the outputs of
+  “Single-Cell RNA-Seq Filtering Analysis” or “Single-Cell Multiome
+  ATAC and RNA-Seq Filtering Analysis” pipelines. The results of
+  this workflow are primarily used in “Single-Cell RNA-Seq Cluster
+  Analysis” or “Single-Cell WNN Cluster Analysis” pipelines.

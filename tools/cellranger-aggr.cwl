@@ -13,10 +13,12 @@ requirements:
 - class: InitialWorkDirRequirement
   listing: |
     ${
+      var grouping = "library_id\tcondition\n"
       if (inputs.molecule_info_h5 != null){
         var entry = "sample_id,molecule_h5\n"
         for (var i=0; i < inputs.molecule_info_h5.length; i++){
           entry += get_label(inputs.molecule_info_h5, i) + "," + inputs.molecule_info_h5[i].path + "\n"
+          grouping += get_label(inputs.molecule_info_h5, i) + "\t" + get_label(inputs.molecule_info_h5, i) + "\n"
         }
       } else if (inputs.filtered_data_folder != null){
         var entry = "sample_id,sample_outs,donor,origin\n"
@@ -30,15 +32,24 @@ requirements:
             origin = "origin_" + i
           }
           entry += get_label(inputs.filtered_data_folder, i) + "," + inputs.filtered_data_folder[i].path + "," + donor  + "," + origin + "\n"
+          grouping += get_label(inputs.filtered_data_folder, i) + "\t" + get_label(inputs.filtered_data_folder, i) + "\n"
         }
       } else {
         var entry = "neither molecule_info_h5 nor filtered_data_folder was provided"
+        var grouping = "neither molecule_info_h5 nor filtered_data_folder was provided"
       }
-      return [{
-        "entry": entry,
-        "entryname": "metadata.csv",
-        "writable": true
-      }];
+      return [
+        {
+          "entry": entry,
+          "entryname": "metadata.csv",
+          "writable": true
+        },
+        {
+          "entry": grouping,
+          "entryname": "grouping.tsv",
+          "writable": true
+        }
+      ];
     }
 
 
@@ -197,6 +208,13 @@ outputs:
       glob: "aggregated/outs/aggregation.csv"
     doc: |
       Copy of the input aggregation CSV file
+
+  grouping_data:
+    type: File
+    outputBinding:
+      glob: "grouping.tsv"
+    doc: |
+      Example of TSV file to define datasets grouping
 
   loupe_browser_track:
     type: File

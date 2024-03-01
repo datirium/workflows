@@ -18,39 +18,52 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   genome_fasta_file:
     type: File
-    format: "http://edamontology.org/format_1929"
     label: "Genome type"
-    doc: "Reference genome FASTA file that includes all chromosomes"
+    doc: |
+      Genome type to be used for
+      generating reference genome
+      indices
     'sd:upstreamSource': "genome_indices/fasta_output"
     'sd:localLabel': true
 
   annotation_gtf_file:
     type: File
-    format: "http://edamontology.org/format_2306"
-    label: "Genome type"
-    doc: "GTF annotation file that includes refGene and mitochondrial DNA annotations"
     'sd:upstreamSource': "genome_indices/annotation_gtf"
-    'sd:localLabel': true
-
-  threads:
-    type: int?
-    default: 4
-    label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
-    'sd:layout':
-      advanced: true
 
   memory_limit:
     type: int?
     default: 20
     label: "Maximum memory used (GB)"
-    doc: "Maximum memory used (GB). The same will be applied to virtual memory"
+    doc: |
+      Maximum memory used (GB). The same
+      will be applied to virtual memory
+    'sd:layout':
+      advanced: true
+
+  threads:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+    default: "4"
+    label: "Cores/CPUs"
+    doc: |
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 4
     'sd:layout':
       advanced: true
 
@@ -114,7 +127,9 @@ steps:
     in:
       genome_fasta_file: genome_fasta_file
       annotation_gtf_file: annotation_gtf_file
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
       memory_limit: memory_limit
       output_folder_name:
         default: "cellranger_ref"
@@ -180,7 +195,9 @@ steps:
         default: ["chrM"]                        # as recommended in Cell Ranger ARC manual
       output_folder_name:
         default: "cellranger_arc_ref"
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
       memory_limit: memory_limit
     out:
     - indices_folder
@@ -194,9 +211,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Cell Ranger Build Reference Indices"
-label: "Cell Ranger Build Reference Indices"
-s:alternateName: "Builds reference genome indices for Cell Ranger Gene Expression and Cell Ranger Multiome ATAC + Gene Expression experiments"
+s:name: "Cell Ranger Reference (RNA, ATAC, RNA+ATAC)"
+label: "Cell Ranger Reference (RNA, ATAC, RNA+ATAC)"
+s:alternateName: "Builds a reference genome of a selected species for quantifying gene expression and chromatin accessibility"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-mkref.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -234,5 +251,9 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Build Reference Indices
-  ===================================
+  Cell Ranger Reference (RNA, ATAC, RNA+ATAC)
+
+  Builds a reference genome of a selected species for quantifying
+  gene expression and chromatin accessibility. The results of this
+  workflow are used in all “Cell Ranger Count” and “Cell Ranger
+  Aggregate” pipelines.
