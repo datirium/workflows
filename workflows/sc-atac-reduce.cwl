@@ -27,60 +27,20 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   query_data_rds:
     type: File
-    label: "Experiment run through Single-cell Multiome ATAC and RNA-Seq Filtering Analysis"
+    label: "Single-cell Analysis with Filtered ATAC-Seq Datasets"
     doc: |
-      Path to the RDS file to load Seurat object from. This file should include
-      chromatin accessibility information stored in the ATAC assay.
+      Any analysis that includes single-cell
+      multiome ATAC and RNA-Seq or just
+      ATAC-Seq datasets filtered by QC metrics
+      to include only high-quality cells.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
-
-  datasets_metadata:
-    type: File?
-    label: "Path to the TSV/CSV file to optionally extend Seurat object metadata with categorical values"
-    doc: |
-      Path to the TSV/CSV file to optionally extend Seurat
-      object metadata with categorical values using samples
-      identities. First column - 'library_id' should
-      correspond to all unique values from the 'new.ident'
-      column of the loaded Seurat object. If any of the
-      provided in this file columns are already present in
-      the Seurat object metadata, they will be overwritten.
-      When combined with --barcodes parameter, first the
-      metadata will be extended, then barcode filtering will
-      be applied.
-      Default: no extra metadata is added
-
-  barcodes_data:
-    type: File?
-    label: "Optional TSV/CSV file to prefilter and extend metadata be barcodes. First column should be named as 'barcode'"
-    doc: |
-      Path to the TSV/CSV file to optionally prefilter and
-      extend Seurat object metadata be selected barcodes.
-      First column should be named as 'barcode'. If file
-      includes any other columns they will be added to the
-      Seurat object metadata ovewriting the existing ones if
-      those are present.
-      Default: all cells used, no extra metadata is added
-
-  dimensions:
-    type: int?
-    label: "Dimensionality to use for datasets integration and UMAP projection (from 2 to 50)"
-    default: 40
-    doc: |
-      Dimensionality to use for datasets integration and
-      UMAP projection (from 2 to 50). If single value N is
-      provided, use from 2 to N LSI components. If multiple
-      values are provided, subset to only selected LSI
-      components. In combination with --ntgr set to harmony,
-      multiple values will result in using all dimensions
-      starting from 1(!) to the max of the provided values.
-      Default: from 2 to 10
 
   normalization_method:
     type:
@@ -91,16 +51,18 @@ inputs:
       - "tf-logidf"
       - "logtf-logidf"
       - "idf"
-    label: "TF-IDF normalization method applied to chromatin accessibility counts"
+    label: "Normalization method"
     default: "log-tfidf"
     doc: |
-      TF-IDF normalization method applied to chromatin
-      accessibility counts. log-tfidf - Stuart & Butler et
-      al. 2019, tf-logidf - Cusanovich & Hill et al. 2018,
-      logtf-logidf - Andrew Hill, idf - 10x Genomics,
+      TF-IDF normalization method to correct
+      for differences in cellular sequencing
+      depth. "log-tfidf" - Stuart & Butler
+      et al. 2019. "tf-logidf" - Cusanovich &
+      Hill et al. 2018. "logtf-logidf" - Andrew
+      Hill. "idf" - 10x Genomics. For more
+      details refer to
+      https://stuartlab.org/signac/reference/runtfidf
       Default: log-tfidf
-    'sd:layout':
-      advanced: true
 
   integration_method:
     type:
@@ -110,108 +72,112 @@ inputs:
       - "signac"
       - "harmony"
       - "none"
-    label: "Integration method used for joint analysis of multiple datasets"
+    label: "Integration method"
     default: "signac"
     doc: |
-      Integration method used for joint analysis of multiple
-      datasets. Automatically set to 'none' if loaded Suerat
-      object includes only one dataset. Default: signac
-    'sd:layout':
-      advanced: true
+      Integration method to match shared cell
+      types and states across experimental
+      batches, donors, conditions, or datasets.
+      "signac" - use cross-dataset pairs of
+      cells that are in a matched biological
+      state ("anchors") to correct for technical
+      differences. "harmony" - use Harmony
+      algorithm described in Korsunsky, Millard,
+      and Fan, Nat Methods, 2019, to iteratively
+      correct LSI embeddings. "none" - do not
+      run integration, merge datasets instead.
+      Default: signac
 
   integrate_by:
-    type: string?
-    label: "Variable(s) to be integrated out when running multiple integration with Harmony"
-    default: "new.ident"
+    type:
+    - "null"
+    - string
+    - type: enum
+      symbols:
+      - "dataset"
+      - "condition"
+    label: "Batch correction (harmony)"
+    default: "dataset"
     doc: |
-      Column(s) from the Seurat object metadata to define
-      the variable(s) that should be integrated out when
-      running multiple datasets integration with harmony.
-      May include columns from the extra metadata added with
-      --metadata parameter. Ignored if --ntgr is not set to
-      harmony.
-      Default: new.ident
-    'sd:layout':
-      advanced: true
+      When "harmony" is selected as "Integration
+      method", batch effects are corrected based
+      on the provided factors. Specifically,
+      "dataset" is used to integrate out the
+      influence of the cells' dataset of origin,
+      while the factor "condition" is used to
+      eliminate the influence of dataset grouping.
+      Default: dataset
+
+  dimensions:
+    type: int?
+    label: "Target dimensionality"
+    default: 40
+    doc: |
+      Number of dimensions to be used in LSI,
+      datasets integration, and UMAP projection.
+      Accepted values range from 2 to 50.
+      Default: 40
+
+  datasets_metadata:
+    type: File?
+    label: "Datasets metadata (optional)"
+    doc: |
+      If the selected single-cell analysis
+      includes multiple aggregated datasets,
+      each of them can be assigned to a
+      separate group by one or multiple
+      categories. This can be achieved by
+      providing a TSV/CSV file with
+      "library_id" as the first column and
+      any number of additional columns with
+      unique names, representing the desired
+      grouping categories. To obtain a proper
+      template of this file, download
+      "datasets_metadata.tsv" output from the
+      "Files" tab of the selected "Single-cell
+      Analysis with Filtered ATAC-Seq Datasets"
+      and add extra columns as needed.
+
+  barcodes_data:
+    type: File?
+    label: "Selected cell barcodes (optional)"
+    doc: |
+      A TSV/CSV file to optionally prefilter
+      the single cell data by including only
+      the cells with the selected barcodes.
+      The provided file should include at
+      least one column named "barcode", with
+      one cell barcode per line. All other
+      columns, except for "barcode", will be
+      added to the single cell metadata loaded
+      from "Single-cell Analysis with Filtered
+      ATAC-Seq Datasets" and can be utilized in
+      the current or future steps of analysis.
 
   minimum_var_peaks_perc:
     type: int?
-    label: "Minimum percentile for identifying the top most common peaks as highly variable"
+    label: "Minimum percentile of highly variable peaks"
     default: 0
     doc: |
-      Minimum percentile for identifying the top most common peaks as highly variable.
-      For example, setting to 5 will use the the top 95 percent most common among all cells
-      peaks as highly variable. These peaks are used for datasets integration, scaling
+      Minimum percentile for identifying
+      the top most common peaks as highly
+      variable. For example, setting to 5
+      will use the the top 95 percent most
+      common among all cells peaks as highly
+      variable. Selected peaks are then being
+      used for datasets integration, scaling
       and dimensionality reduction.
       Default: 0 (use all available peaks)
     'sd:layout':
       advanced: true
 
-  umap_spread:
-    type: float?
-    label: "UMAP Spread - the effective scale of embedded points (determines how clustered/clumped the embedded points are)"
-    default: 1
+  export_ucsc_cb:
+    type: boolean?
+    default: false
+    label: "Show results in UCSC Cell Browser"
     doc: |
-      The effective scale of embedded points on UMAP. In combination with '--mindist'
-      it determines how clustered/clumped the embedded points are.
-      Default: 1
-    'sd:layout':
-      advanced: true
-
-  umap_mindist:
-    type: float?
-    label: "UMAP Min. Dist. - controls how tightly the embedding is allowed compress points together"
-    default: 0.3
-    doc: |
-      Controls how tightly the embedding is allowed compress points together on UMAP.
-      Larger values ensure embedded points are moreevenly distributed, while smaller
-      values allow the algorithm to optimise more accurately with regard to local structure.
-      Sensible values are in the range 0.001 to 0.5.
-      Default:  0.3
-    'sd:layout':
-      advanced: true
-
-  umap_neighbors:
-    type: int?
-    label: "UMAP Neighbors Number - determines the number of neighboring points used"
-    default: 30
-    doc: |
-      Determines the number of neighboring points used in UMAP. Larger values will result
-      in more global structure being preserved at the loss of detailed local structure.
-      In general this parameter should often be in the range 5 to 50.
-      Default: 30
-    'sd:layout':
-      advanced: true
-
-  umap_metric:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "euclidean"
-      - "cosine"
-      - "correlation"
-    label: "UMAP Dist. Metric - the metric to use to compute distances in high dimensional space"
-    default: "cosine"
-    doc: |
-      The metric to use to compute distances in high dimensional space for UMAP.
-      Default: cosine
-    'sd:layout':
-      advanced: true
-
-  umap_method:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "uwot"
-      - "uwot-learn"
-      - "umap-learn"
-    label: "UMAP implementation to run (if set to 'umap-learn' use 'correlation' distance metric)"
-    default: "uwot"
-    doc: |
-      UMAP implementation to run. If set to 'umap-learn' use --umetric 'correlation'
-      Default: uwot
+      Export results into UCSC Cell Browser
+      Default: false
     'sd:layout':
       advanced: true
 
@@ -229,41 +195,12 @@ inputs:
       - "classic"
       - "void"
     default: "classic"
-    label: "Color theme for all generated plots"
+    label: "Plots color theme"
     doc: |
-      Color theme for all generated plots. One of gray, bw, linedraw, light,
-      dark, minimal, classic, void.
+      Color theme for all plots saved
+      as PNG files.
       Default: classic
-    'sd:layout':
-      advanced: true
-
-  parallel_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "32"
-    default: "32"
-    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
-    doc: |
-      Maximum memory in GB allowed to be shared between the workers
-      when using multiple --cpus.
-      Forced to 32 GB
-    'sd:layout':
-      advanced: true
-
-  vector_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "96"
-    default: "96"
-    label: "Maximum vector memory in GB allowed to be used by R"
-    doc: |
-      Maximum vector memory in GB allowed to be used by R.
-      Forced to 96 GB
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -273,12 +210,18 @@ inputs:
       symbols:
       - "1"
       - "2"
-    default: "2"
-    label: "Number of cores/cpus to use"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+    default: "1"
+    label: "Cores/CPUs"
     doc: |
-      Number of cores/cpus to use
-      Forced to 2
-    'sd:layout':
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 1
+    "sd:layout":
       advanced: true
 
 
@@ -287,134 +230,222 @@ outputs:
   qc_dim_corr_plot_png:
     type: File?
     outputSource: sc_atac_reduce/qc_dim_corr_plot_png
-    label: "Correlation plots between QC metrics and cells LSI dimensions"
+    label: "Correlation between QC metrics and LSI components"
     doc: |
-      Correlation plots between QC metrics and cells LSI dimensions.
-      PNG format
+      Correlation between QC metrics
+      and LSI components
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Correlation plots between QC metrics and cells LSI dimensions'
+        tab: 'QC'
+        Caption: 'Correlation between QC metrics and LSI components'
 
   umap_qc_mtrcs_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_qc_mtrcs_plot_png
-    label: "QC metrics on cells UMAP"
+    label: "UMAP, QC metrics"
     doc: |
-      QC metrics on cells UMAP.
-      PNG format
+      UMAP, QC metrics
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'QC metrics on cells UMAP'
+        tab: 'QC'
+        Caption: 'UMAP, QC metrics'
 
   umap_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_plot_png
-    label: "Cells UMAP"
+    label: "UMAP, colored by dataset"
     doc: |
-      Cells UMAP.
-      PNG format
+      UMAP, colored by dataset
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Cells UMAP'
+        tab: 'Per dataset'
+        Caption: 'UMAP, colored by dataset'
 
   umap_spl_idnt_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_idnt_plot_png
-    label: "Split by dataset cells UMAP"
+    label: "UMAP, split by dataset"
     doc: |
-      Split by dataset cells UMAP.
-      PNG format
+      UMAP, split by dataset
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by dataset cells UMAP'
+        Caption: 'UMAP, split by dataset'
 
-  umap_spl_umi_plot_png:
+  umap_spl_frgm_plot_png:
     type: File?
-    outputSource: sc_atac_reduce/umap_spl_umi_plot_png
-    label: "Split by the UMI per cell counts cells UMAP"
+    outputSource: sc_atac_reduce/umap_spl_frgm_plot_png
+    label: "UMAP, colored by dataset, split by ATAC fragments in peaks per cell"
     doc: |
-      Split by the UMI per cell counts cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split
+      by ATAC fragments in peaks per cell.
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the UMI per cell counts cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by ATAC fragments in peaks per cell'
 
   umap_spl_peak_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_peak_plot_png
-    label: "Split by the peaks per cell counts cells UMAP"
+    label: "UMAP, colored by dataset, split by peaks per cell"
     doc: |
-      Split by the peaks per cell counts cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split
+      by peaks per cell
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the peaks per cell counts cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by peaks per cell'
 
   umap_spl_tss_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_tss_plot_png
-    label: "Split by the TSS enrichment score cells UMAP"
+    label: "UMAP, colored by dataset, split by TSS enrichment score"
     doc: |
-      Split by the TSS enrichment score cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split
+      by TSS enrichment score
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the TSS enrichment score cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by TSS enrichment score'
 
   umap_spl_ncls_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_ncls_plot_png
-    label: "Split by the nucleosome signal cells UMAP"
+    label: "UMAP, colored by dataset, split by nucleosome signal"
     doc: |
-      Split by the nucleosome signal cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split
+      by nucleosome signal
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the nucleosome signal cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by nucleosome signal'
 
   umap_spl_frip_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_frip_plot_png
-    label: "Split by the FRiP cells UMAP"
+    label: "UMAP, colored by dataset, split by FRiP"
     doc: |
-      Split by the FRiP cells UMAP.
-      PNG format
+      UMAP, colored by dataset,
+      split by FRiP
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the FRiP cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by FRiP'
 
   umap_spl_blck_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_blck_plot_png
-    label: "Split by the genomic blacklist regions fraction cells UMAP"
+    label: "UMAP, colored by dataset, split by blacklist fraction"
     doc: |
-      Split by the genomic blacklist regions fraction cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split
+      by blacklist fraction
     'sd:visualPlugins':
     - image:
         tab: 'Per dataset'
-        Caption: 'Split by the genomic blacklist regions fraction cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by blacklist fraction'
 
   umap_spl_cnd_plot_png:
     type: File?
     outputSource: sc_atac_reduce/umap_spl_cnd_plot_png
-    label: "Split by grouping condition cells UMAP"
+    label: "UMAP, colored by dataset, split by grouping condition"
     doc: |
-      Split by grouping condition cells UMAP.
-      PNG format
+      UMAP, colored by dataset, split
+      by grouping condition
     'sd:visualPlugins':
     - image:
         tab: 'Per group'
-        Caption: 'Split by grouping condition cells UMAP'
+        Caption: 'UMAP, colored by dataset, split by grouping condition'
+
+  umap_gr_cnd_spl_frgm_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_gr_cnd_spl_frgm_plot_png
+    label: "UMAP, colored by grouping condition, split by ATAC fragments in peaks per cell"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by ATAC fragments in peaks per cell
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by ATAC fragments in peaks per cell'
+
+  umap_gr_cnd_spl_peak_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_gr_cnd_spl_peak_plot_png
+    label: "UMAP, colored by grouping condition, split by peaks per cell"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by peaks per cell
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by peaks per cell'
+
+  umap_gr_cnd_spl_tss_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_gr_cnd_spl_tss_plot_png
+    label: "UMAP, colored by grouping condition, split by TSS enrichment score"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by TSS enrichment score
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by TSS enrichment score'
+
+  umap_gr_cnd_spl_ncls_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_gr_cnd_spl_ncls_plot_png
+    label: "UMAP, colored by grouping condition, split by nucleosome signal"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by nucleosome signal
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by nucleosome signal'
+
+  umap_gr_cnd_spl_frip_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_gr_cnd_spl_frip_plot_png
+    label: "UMAP, colored by grouping condition, split by FRiP"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by FRiP
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by FRiP'
+
+  umap_gr_cnd_spl_blck_plot_png:
+    type: File?
+    outputSource: sc_atac_reduce/umap_gr_cnd_spl_blck_plot_png
+    label: "UMAP, colored by grouping condition, split by blacklist fraction"
+    doc: |
+      UMAP, colored by grouping condition,
+      split by blacklist fraction
+    'sd:visualPlugins':
+    - image:
+        tab: 'Per group'
+        Caption: 'UMAP, colored by grouping condition, split by blacklist fraction'
+
+  ucsc_cb_html_data:
+    type: Directory?
+    outputSource: sc_atac_reduce/ucsc_cb_html_data
+    label: "UCSC Cell Browser data"
+    doc: |
+      Directory with UCSC Cell Browser
+      data
+
+  ucsc_cb_html_file:
+    type: File?
+    outputSource: sc_atac_reduce/ucsc_cb_html_file
+    label: "UCSC Cell Browser"
+    doc: |
+      UCSC Cell Browser HTML index file
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
 
   seurat_data_rds:
     type: File
@@ -422,6 +453,14 @@ outputs:
     label: "Processed Seurat data in RDS format"
     doc: |
       Processed Seurat data in RDS format
+
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
 
   sc_atac_reduce_stdout_log:
     type: File
@@ -453,25 +492,30 @@ steps:
       integration_method: integration_method
       integrate_by:
         source: integrate_by
-        valueFrom: $(split_features(self))
+        valueFrom: |
+          ${
+            if (self == "none") {
+              return null;
+            } else if (self == "dataset") {
+              return "new.ident";
+            } else if (self == "condition") {
+              return "condition";
+            } else {
+              return split_features(self);
+            }
+          }
       minimum_var_peaks_perc: minimum_var_peaks_perc
       dimensions: dimensions
-      umap_spread: umap_spread
-      umap_mindist: umap_mindist
-      umap_neighbors: umap_neighbors
-      umap_metric: umap_metric
-      umap_method: umap_method
       verbose:
         default: true
-      export_ucsc_cb:
-        default: false
+      export_ucsc_cb: export_ucsc_cb
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
-        source: parallel_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 32
       vector_memory_limit:
-        source: vector_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 96
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -481,15 +525,75 @@ steps:
     - umap_plot_png
     - umap_spl_idnt_plot_png
     - umap_spl_cnd_plot_png
-    - umap_spl_umi_plot_png
+    - umap_spl_frgm_plot_png
     - umap_spl_peak_plot_png
     - umap_spl_tss_plot_png
     - umap_spl_ncls_plot_png
     - umap_spl_frip_plot_png
     - umap_spl_blck_plot_png
+    - umap_gr_cnd_spl_frgm_plot_png
+    - umap_gr_cnd_spl_peak_plot_png
+    - umap_gr_cnd_spl_tss_plot_png
+    - umap_gr_cnd_spl_ncls_plot_png
+    - umap_gr_cnd_spl_frip_plot_png
+    - umap_gr_cnd_spl_blck_plot_png
+    - qc_dim_corr_plot_pdf
+    - umap_qc_mtrcs_plot_pdf
+    - umap_plot_pdf
+    - umap_spl_idnt_plot_pdf
+    - umap_spl_cnd_plot_pdf
+    - umap_spl_frgm_plot_pdf
+    - umap_spl_peak_plot_pdf
+    - umap_spl_tss_plot_pdf
+    - umap_spl_ncls_plot_pdf
+    - umap_spl_frip_plot_pdf
+    - umap_spl_blck_plot_pdf
+    - umap_gr_cnd_spl_frgm_plot_pdf
+    - umap_gr_cnd_spl_peak_plot_pdf
+    - umap_gr_cnd_spl_tss_plot_pdf
+    - umap_gr_cnd_spl_ncls_plot_pdf
+    - umap_gr_cnd_spl_frip_plot_pdf
+    - umap_gr_cnd_spl_blck_plot_pdf
+    - ucsc_cb_html_data
+    - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
+
+  folder_pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - sc_atac_reduce/qc_dim_corr_plot_pdf
+        - sc_atac_reduce/umap_qc_mtrcs_plot_pdf
+        - sc_atac_reduce/umap_plot_pdf
+        - sc_atac_reduce/umap_spl_idnt_plot_pdf
+        - sc_atac_reduce/umap_spl_cnd_plot_pdf
+        - sc_atac_reduce/umap_spl_frgm_plot_pdf
+        - sc_atac_reduce/umap_spl_peak_plot_pdf
+        - sc_atac_reduce/umap_spl_tss_plot_pdf
+        - sc_atac_reduce/umap_spl_ncls_plot_pdf
+        - sc_atac_reduce/umap_spl_frip_plot_pdf
+        - sc_atac_reduce/umap_spl_blck_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_frgm_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_peak_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_tss_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_ncls_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_frip_plot_pdf
+        - sc_atac_reduce/umap_gr_cnd_spl_blck_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: folder_pdf_plots/folder
+    out:
+    - compressed_folder
 
 
 $namespaces:
@@ -498,9 +602,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell ATAC-Seq Dimensionality Reduction Analysis"
-s:name: "Single-cell ATAC-Seq Dimensionality Reduction Analysis"
-s:alternateName: "Integrates multiple single-cell ATAC-Seq datasets, reduces dimensionality using LSI"
+label: "Single-Cell ATAC-Seq Dimensionality Reduction Analysis"
+s:name: "Single-Cell ATAC-Seq Dimensionality Reduction Analysis"
+s:alternateName: "Removes noise and confounding sources of variation by reducing dimensionality of chromatin accessibility data"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-reduce.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -538,7 +642,11 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Dimensionality Reduction Analysis
+  Single-Cell ATAC-Seq Dimensionality Reduction Analysis
 
-  Integrates multiple single-cell ATAC-Seq datasets,
-  reduces dimensionality using LSI.
+  Removes noise and confounding sources of variation by reducing
+  dimensionality of chromatin accessibility data from the outputs
+  of “Single-Cell Multiome ATAC and RNA-Seq Filtering Analysis”
+  pipelines. The results of this workflow are primarily used in
+  “Single-Cell ATAC-Seq Cluster Analysis” or “Single-Cell WNN
+  Cluster Analysis” pipelines.
