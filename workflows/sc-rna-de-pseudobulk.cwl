@@ -15,6 +15,13 @@ requirements:
           var splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var split_by_comma = function(line) {
+          function get_unique(value, index, self) {
+            return self.indexOf(value) === index && value != "";
+          }
+          var splitted_line = line?line.split(/,+/).filter(get_unique):null;
+          return (splitted_line && !!splitted_line.length)?splitted_line:null;
+      };
 
 
 'sd:upstream':
@@ -29,254 +36,216 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   query_data_rds:
     type: File
-    label: "Single-cell Cluster or Manual Cell Type Assignment Analysis"
+    label: "Single-cell Analysis with Clustered RNA-Seq Datasets"
     doc: |
-      Single-cell analysis run through the
-      clustering or cell type assignment
-      pipelines.
+      Analysis that includes single-cell
+      multiome RNA and ATAC-Seq or just
+      RNA-Seq datasets run through either
+      "Single-Cell Manual Cell Type
+      Assignment", "Single-Cell RNA-Seq
+      Cluster Analysis", or "Single-Cell
+      WNN Cluster Analysis" at any of the
+      processing stages.
     'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
     'sd:localLabel': true
-
-  datasets_metadata:
-    type: File?
-    label: "TSV/CSV file to assign categories per sample"
-    doc: |
-      If selected single-cell analysis was run
-      with the data aggregated from multiple
-      samples, you can optionally provide tab-
-      delimited or comma-separated file to
-      assign additional categories per sample.
-      First column should be named 'library_id'
-      and include all sample names from the
-      selected single-cell analysis regardless
-      whether filtering by barcodes was applied
-      or not. All other columns may have
-      arbitrary names.
-
-  barcodes_data:
-    type: File?
-    label: "TSV/CSV file to filter cells by barcodes"
-    doc: |
-      Loaded single-cell data can be optionally
-      prefiltered by selected cell barcodes.
-      Provided tab-delimited or comma-separated
-      file should have the first column named
-      'barcode'. If this file includes any other
-      columns, they will be used to assign
-      additional categories per cell.
 
   groupby:
     type: string?
     default: null
-    label: "Category to group cells for optional subsetting"
+    label: "Subsetting category (optional)"
     doc: |
-      Before running differential expression
-      analysis input data can be optionally
-      prefiltered to include only certain
-      values from the specific category.
-      Here we define the name of that
-      category.
+      Single cell metadata column to group
+      cells for optional subsetting before
+      running differential expression analysis.
+      To group cells by dataset, use "dataset".
+      Custom groups can be defined based on
+      any single cell metadata added through
+      the "Datasets metadata (optional)" or
+      "Selected cell barcodes (optional)"
+      inputs. Default: do not subset cells
 
   subset:
     type: string?
     default: null
-    label: "List of values to subset cells from the selected category"
+    label: "Subsetting values (optional)"
     doc: |
-      If the category to group cells for
-      optional subsetting was provided,
-      here we define which values should
-      be included into analysis.
+      Comma separated list of values from
+      the single cell metadata column
+      selected in "Subsetting category
+      (optional)" input. Ignored if grouping
+      category is not provided. Default: do
+      not subset cells
 
   splitby:
     type: string
-    label: "Category to split cell into two groups"
+    label: "Comparison category"
     doc: |
-      All remaining after optional prefiltering
-      steps cells will be split into two groups
-      for gene expression comparison.
+      Single cell metadata column to split
+      cells into two comparison groups before
+      running differential expression analysis.
+      To split cells by dataset, use "dataset".
+      Custom groups can be defined based on
+      any single cell metadata added through
+      the "Datasets metadata (optional)" or
+      "Selected cell barcodes (optional)"
+      inputs. The direction of comparison is
+      always "Second comparison group" vs
+      "First comparison group".
 
   first_cond:
     type: string
-    label: "Value from the selected category to define the first group of cells"
+    label: "First comparison group"
     doc: |
-      Cells for which the selected category
-      includes provided value will be used
-      as the first group for differential
-      expression comparison. Direction of
-      comparison is second vs first groups.
+      Value from the single cell metadata
+      column selected in "Comparison category"
+      input to define the first group of cells
+      for differential expression analysis.
 
   second_cond:
     type: string
-    label: "Value from the selected category to define the second group of cells"
+    label: "Second comparison group"
     doc: |
-      Cells for which the selected category
-      includes provided value will be used
-      as the second group for differential
-      expression comparison. Direction of
-      comparison is second vs first groups.
+      Value from the single cell metadata
+      column selected in "Comparison category"
+      input to define the second group of cells
+      for differential expression analysis.
 
   analysis_method:
     type:
     - "null"
     - type: enum
       symbols:
-      - "wilcoxon (by cells, no batches)"                   # (wilcox) Wilcoxon Rank Sum test
-      - "likelihood-ratio (by cells, no batches)"           # (bimod) Likelihood-ratio test
-      - "t-test (by cells, no batches)"                     # (t) Student's t-test
-      - "negative-binomial (by cells, models batches)"      # (negbinom) Negative Binomial Generalized Linear Model (supports --batchby)
-      - "poisson (by cells, models batches)"                # (poisson) Poisson Generalized Linear Model (supports --batchby)
-      - "logistic-regression (by cells, models batches)"    # (LR) Logistic Regression (supports --batchby)
-      - "mast (by cells, models batches)"                   # (MAST) MAST package (supports --batchby)
-      - "deseq (pseudo bulk, models batches)"               # DESeq2 Wald test on pseudobulk aggregated gene expression
-      - "deseq-lrt (pseudo bulk, models batches)"           # DESeq2 LRT test on pseudobulk aggregated gene expression
-    default: wilcoxon
-    label: "Test type to use in differential expression analysis"
+      - "wilcoxon"                                      # (wilcox) Wilcoxon Rank Sum test
+      - "likelihood-ratio"                              # (bimod) Likelihood-ratio test
+      - "t-test"                                        # (t) Student's t-test
+      - "negative-binomial (batch correction)"          # (negbinom) Negative Binomial Generalized Linear Model (supports --batchby)
+      - "poisson (batch correction)"                    # (poisson) Poisson Generalized Linear Model (supports --batchby)
+      - "logistic-regression (batch correction)"        # (LR) Logistic Regression (supports --batchby)
+      - "mast (batch correction)"                       # (MAST) MAST package (supports --batchby)
+      - "deseq (pseudo bulk, batch correction)"         # DESeq2 Wald test on pseudobulk aggregated gene expression
+      - "deseq-lrt (pseudo bulk, batch correction)"     # DESeq2 LRT test on pseudobulk aggregated gene expression
+    default: "wilcoxon"
+    label: "Statistical test"
     doc: |
-      Test type to use in the differential
-      expression analysis. If set to deseq
-      or deseq-lrt, gene expression will be
-      aggregated to the pseudobulk form per
-      sample. Othwerwise, analysis will be
-      run on the cells level. If deseq is
-      selected, the pair-wise Wald test will
-      be used. For deseq-lrt, the Likelihood
-      Ratio Test will be applied between
-      design and reduced formulas. The
-      reduced formula will look like ~1 if
-      grouping by batches is omitted or will
-      be set to the category defined as
-      batches.
+      Statistical test to use in the
+      differential expression analysis. If
+      set to "deseq" or "deseq-lrt", gene
+      expression will be aggregated to the
+      pseudo bulk form per dataset. Othwerwise,
+      analysis will be run on the cells level.
+      If "deseq" is selected, the pair-wise
+      Wald test will be used. For "deseq-lrt",
+      the Likelihood Ratio Test will be applied
+      between design and reduced formulas. The
+      reduced formula will look like "~1" if
+      grouping by batches is omitted or will be
+      set to the category defined in "Batch
+      correction (if supported)" input.
 
   batchby:
     type: string?
     default: null
-    label: "Category to model batch effect"
+    label: "Batch correction (if supported)"
     doc: |
-      If selected test type supports batch
-      effect modeling, the provided category
-      will be used to group cells into
-      batches. For deseq and deseq-lrt tests
-      batch modeling will result in adding it
-      into the design formula. For negative-
-      binomial, poisson, logistic-regression,
-      or mast tests grouping by batches will
-      be used as a latent variable in the
-      FindMarkers function.
-
-  maximum_padj:
-    type: float?
-    default: 0.05
-    label: "Maximum adjusted P-value for genes displayed on the heatmap"
-    doc: |
-      When generating gene expression heatmap
-      per cell output only differentially
-      expressed genes with the adjusted P-value
-      not bigger than this value.
-
-  genes_of_interest:
-    type: string?
-    default: null
-    label: "Genes of interest to be shown on the plots"
-    doc: |
-      Genes of interest to be shown on the
-      volcano, violin, and UMAP plots.
-    'sd:layout':
-      advanced: true
+      Value from the single cell metadata
+      column to be used for batch effect
+      modeling if the selected "Statistical
+      test" supports it (otherwise the
+      workflow will exit with error). For
+      "deseq" and "deseq-lrt" tests batch
+      modeling will result in adding it
+      into the design formula. For
+      negative-binomial, poisson,
+      logistic-regression, or mast tests
+      grouping by batches will be used as
+      a latent variable in the "FindMarkers"
+      function.
 
   exclude_pattern:
     type: string?
     default: null
-    label: "Regex pattern to identify and exclude specific genes from the analysis"
+    label: "Exclude genes"
     doc: |
       Regex pattern to identify and exclude
       specific genes from the differential
       expression analysis (not case-sensitive).
-      If any of such genes were selected as
-      genes of interest to be shown on the plots,
-      they will be excluded from there as well.
-    'sd:layout':
-      advanced: true
+      If any of these genes were also provided
+      in "Genes of interest" input, they will
+      be excluded from that list as well.
 
-  cluster_method:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "row"
-      - "column"
-      - "both"
-      - "none"
-    default: "row"
-    label: "Clustering method for gene expression data"
+  maximum_padj:
+    type: float?
+    default: 0.05
+    label: "Maximum adjusted P-value"
     doc: |
-      Clustering method to be run on
-      the normalized read counts data.
-      "column" and "both" options are
-      supported only when using deseq
-      or desey-lrt tests for which gene
-      expression data aggregated to the
-      pseudobulk form.
-    'sd:layout':
-      advanced: true
+      Maximum adjusted P-value threshold for
+      selecting differentially expressed genes
+      to be visualized on the heatmap.
 
-  row_distance:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "cosangle"
-      - "abscosangle"
-      - "euclid"
-      - "abseuclid"
-      - "cor"
-      - "abscor"
-    default: "cosangle"
-    label: "Distance metric for row clustering"
-    doc: |
-      Distance metric for row clustering.
-      Ignored if clustering method is set
-      to "column" or "none".
-    'sd:layout':
-      advanced: true
-
-  column_distance:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "cosangle"
-      - "abscosangle"
-      - "euclid"
-      - "abseuclid"
-      - "cor"
-      - "abscor"
-    default: "euclid"
-    label: "Distance metric for column clustering"
-    doc: |
-      Distance metric for column clustering.
-      Ignored if clustering method is set
-      to "row" or "none".
-    'sd:layout':
-      advanced: true
-
-  center_row:
+  enable_clustering:
     type: boolean?
-    default: true
-    label: "Gene expression mean centering for clustering by row"
+    default: false
+    label: "Cluster gene expression heatmap"
     doc: |
-      Apply mean centering for gene
-      expression prior to running
-      clustering by row. Ignored if
-      clustering method is set to
-      "column" or "none".
-    'sd:layout':
-      advanced: true
+      Apply hierarchical (HOPACH) clustering
+      on the normalized read counts for the
+      exploratory visualization part of the
+      analysis. If the "Statistical test"
+      input is set to "deseq" or "deseq-lrt",
+      clustering will be performed for both
+      rows (genes) and columns (pseudo bulk
+      gene expression per dataset). For all
+      other statistical tests, clustering will
+      be performed only by rows (genes).
+      Default: clustering not enabled
+
+  genes_of_interest:
+    type: string?
+    default: null
+    label: "Genes of interest"
+    doc: |
+      Comma or space separated list of genes
+      of interest to visualize expression
+      on the generated volcano, violin, and
+      UMAP plots.
+      Default: None
+
+  datasets_metadata:
+    type: File?
+    label: "Datasets metadata (optional)"
+    doc: |
+      If the selected single-cell analysis
+      includes multiple aggregated datasets,
+      each of them can be assigned to a
+      separate group by one or multiple
+      categories. This can be achieved by
+      providing a TSV/CSV file with
+      "library_id" as the first column and
+      any number of additional columns with
+      unique names, representing the desired
+      grouping categories.
+
+  barcodes_data:
+    type: File?
+    label: "Selected cell barcodes (optional)"
+    doc: |
+      A TSV/CSV file to optionally prefilter
+      the single cell data by including only
+      the cells with the selected barcodes.
+      The provided file should include at
+      least one column named "barcode", with
+      one cell barcode per line. All other
+      columns, except for "barcode", will be
+      added to the single cell metadata loaded
+      from "Single-cell Analysis with Clustered
+      RNA-Seq Datasets" and can be utilized in
+      the current or future steps of analysis.
 
   color_theme:
     type:
@@ -292,39 +261,12 @@ inputs:
       - "classic"
       - "void"
     default: "classic"
-    label: "Color theme"
+    label: "Plots color theme"
     doc: |
-      Color theme for all generated plots.
-    'sd:layout':
-      advanced: true
-
-  parallel_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "32"
-    default: "32"
-    label: "Maximum shared memory in GB"
-    doc: |
-      Maximum memory in GB allowed to
-      be shared between the workers
-      when using multiple CPUs.
-    'sd:layout':
-      advanced: true
-
-  vector_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "64"
-    default: "64"
-    label: "Maximum vector memory in GB"
-    doc: |
-      Maximum vector memory in GB
-      allowed to be used by R.
-    'sd:layout':
+      Color theme for all plots saved
+      as PNG files.
+      Default: classic
+    "sd:layout":
       advanced: true
 
   threads:
@@ -333,66 +275,43 @@ inputs:
     - type: enum
       symbols:
       - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
     default: "1"
-    label: "Number of cores/cpus"
+    label: "Cores/CPUs"
     doc: |
-      Number of cores/cpus to use
-    'sd:layout':
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 1
+    "sd:layout":
       advanced: true
 
 
 outputs:
 
-  umap_rd_rnaumap_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/umap_rd_rnaumap_plot_png
-    label: "Cells RNA UMAP split by selected criteria"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (rnaumap dim. reduction).
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Overall'
-        Caption: 'Cells RNA UMAP split by selected criteria'
-
-  umap_rd_atacumap_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/umap_rd_atacumap_plot_png
-    label: "Cells ATAC UMAP split by selected criteria"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (atacumap dim. reduction).
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Overall'
-        Caption: 'Cells ATAC UMAP split by selected criteria'
-
-  umap_rd_wnnumap_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/umap_rd_wnnumap_plot_png
-    label: "Cells WNN UMAP split by selected criteria"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (wnnumap dim. reduction).
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Overall'
-        Caption: 'Cells WNN UMAP split by selected criteria'
-
   mds_plot_html:
     type: File?
     outputSource: de_pseudobulk/mds_plot_html
-    label: "Interactive MDS Plot"
+    label: "MDS Plot"
     doc: |
       MDS plot of pseudobulk aggregated
-      normalized reads counts. All genes.
-      HTML format
+      not filtered normalized reads counts
+      in HTML format
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_html:
+    type: File
+    outputSource: morpheus_heatmap/heatmap_html
+    label: "Heatmap"
+    doc: |
+      Morpheus heatmap in HTML format
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -401,7 +320,7 @@ outputs:
   volcano_plot_html_file:
     type: File
     outputSource: make_volcano_plot/html_file
-    label: "Interactive Volcano Plot"
+    label: "Volcano Plot"
     doc: |
       HTML index file for Volcano Plot
     'sd:visualPlugins':
@@ -412,78 +331,124 @@ outputs:
   volcano_plot_html_data:
     type: Directory
     outputSource: make_volcano_plot/html_data
-    label: "Directory html data for Volcano Plot"
+    label: "Volcano Plot data"
     doc: |
       Directory html data for Volcano Plot
-
-  heatmap_html:
-    type: File
-    outputSource: morpheus_heatmap/heatmap_html
-    label: "Interactive Gene Expression Heatmap"
-    doc: |
-      Morpheus heatmap in HTML format
-    'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
 
   pca_1_2_plot_png:
     type: File?
     outputSource: de_pseudobulk/pca_1_2_plot_png
-    label: "Normalized reads counts PCA (1, 2). All genes."
+    label: "Gene expression PCA (1,2)"
     doc: |
-      Normalized reads counts PCA (1, 2). All genes.
-      PNG format
+      Gene expression PCA (1,2)
+      in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Normalized reads counts PCA (1, 2). All genes'
+        tab: 'QC'
+        Caption: 'Gene expression PCA (1,2)'
   
   pca_2_3_plot_png:
     type: File?
     outputSource: de_pseudobulk/pca_2_3_plot_png
-    label: "Normalized reads counts PCA (2, 3). All genes."
+    label: "Gene expression PCA (2,3)"
     doc: |
-      Normalized reads counts PCA (2, 3). All genes.
+      Gene expression PCA (2,3)
+      in PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'QC'
+        Caption: 'Gene expression PCA (2,3)'
+
+  umap_rd_rnaumap_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/umap_rd_rnaumap_plot_png
+    label: "UMAP, split by comparison category, RNA"
+    doc: |
+      UMAP, split by the single cell metadata
+      column defined in the "Comparison category",
+      optionally subsetted to include only cells
+      with "Subsetting values (optional)" from
+      the "Subsetting category (optional)", RNA
       PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Overall'
-        Caption: 'Normalized reads counts PCA (2, 3). All genes'
+        tab: 'QC'
+        Caption: 'UMAP, split by comparison category, RNA'
+
+  umap_rd_atacumap_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/umap_rd_atacumap_plot_png
+    label: "UMAP, split by comparison category, ATAC"
+    doc: |
+      UMAP, split by the single cell metadata
+      column defined in the "Comparison category",
+      optionally subsetted to include only cells
+      with "Subsetting values (optional)" from
+      the "Subsetting category (optional)", ATAC
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'QC'
+        Caption: 'UMAP, split by comparison category, ATAC'
+
+  umap_rd_wnnumap_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/umap_rd_wnnumap_plot_png
+    label: "UMAP, split by comparison category, WNN"
+    doc: |
+      UMAP, split by the single cell metadata
+      column defined in the "Comparison category",
+      optionally subsetted to include only cells
+      with "Subsetting values (optional)" from
+      the "Subsetting category (optional)", WNN
+      PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'QC'
+        Caption: 'UMAP, split by comparison category, WNN'
 
   dxpr_vlcn_plot_png:
     type: File?
     outputSource: de_pseudobulk/dxpr_vlcn_plot_png
-    label: "Volcano plot of differentially expressed genes"
+    label: "Gene expression volcano plot"
     doc: |
-      Volcano plot of differentially expressed genes.
-      Highlighed genes are either provided by user or
-      top 10 genes with the highest log2FoldChange
-      values. The direction of comparison is defined
-      as --second vs --first. Cells are optionally
-      subsetted to the specific group and optionally
-      coerced to the pseudobulk form.
-      PNG format
+      Volcano plot of differentially expressed
+      genes. Highlighed genes are either provided
+      by user or top 10 genes with the highest
+      log2FoldChange values. PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
+        tab: 'Genes of interest'
         Caption: 'Volcano plot of differentially expressed genes'
 
   xpr_dnst_plot_png:
     type: File?
     outputSource: de_pseudobulk/xpr_dnst_plot_png
-    label: "Log normalized gene expression density plots"
+    label: "Gene expression violin plot"
     doc: |
-      Log normalized gene expression density plots for
-      either user provided or top 10 differentially
-      expressed genes with the highest log2FoldChange
-      values. The direction of comparison is defined
-      as --second vs --first.
-      PNG format
+      Gene expression violin plots for
+      either user provided or top 10
+      differentially expressed genes
+      with the highest log2FoldChange
+      values in PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression'
-        Caption: 'Log normalized gene expression density plots'
+        tab: 'Genes of interest'
+        Caption: 'Gene expression violin plot'
+
+  xpr_htmp_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/xpr_htmp_plot_png
+    label: "Gene expression heatmap"
+    doc: |
+      Gene expression heatmap, filtered
+      by adjusted P-value, optionally
+      subsetted to the specific groups
+      of cells in PNG format
+    'sd:visualPlugins':
+    - image:
+        tab: 'Heatmap'
+        Caption: 'Gene expression heatmap'
 
   xpr_per_cell_rd_rnaumap_plot_png:
     type:
@@ -491,16 +456,15 @@ outputs:
     - type: array
       items: File
     outputSource: de_pseudobulk/xpr_per_cell_rd_rnaumap_plot_png
-    label: "Log normalized gene expression on cells RNA UMAP"
+    label: "UMAP, gene expression, RNA"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (rnaumap dim. reduction).
-      PNG format
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, RNA, PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression RNA'
-        Caption: 'Log normalized gene expression on cells RNA UMAP'
+        tab: 'Gene expression, RNA'
+        Caption: 'UMAP, gene expression, RNA'
 
   xpr_per_cell_rd_atacumap_plot_png:
     type:
@@ -508,16 +472,15 @@ outputs:
     - type: array
       items: File
     outputSource: de_pseudobulk/xpr_per_cell_rd_atacumap_plot_png
-    label: "Log normalized gene expression on cells ATAC UMAP"
+    label: "UMAP, gene expression, ATAC"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (atacumap dim. reduction).
-      PNG format
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, ATAC, PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression ATAC'
-        Caption: 'Log normalized gene expression on cells ATAC UMAP'
+        tab: 'Gene expression, ATAC'
+        Caption: 'UMAP, gene expression, ATAC'
 
   xpr_per_cell_rd_wnnumap_plot_png:
     type:
@@ -525,69 +488,61 @@ outputs:
     - type: array
       items: File
     outputSource: de_pseudobulk/xpr_per_cell_rd_wnnumap_plot_png
-    label: "Log normalized gene expression on cells WNN UMAP"
+    label: "UMAP, gene expression, WNN"
     doc: |
-      Log normalized gene expression on cells UMAP
-      split by selected criteria, optionally subsetted
-      to the specific group (wnnumap dim. reduction).
-      PNG format
+      UMAP, gene expression, split by selected
+      criteria, optionally subsetted to the
+      specific group, WNN, PNG format
     'sd:visualPlugins':
     - image:
-        tab: 'Gene expression WNN'
-        Caption: 'Log normalized gene expression on cells WNN UMAP'
-
-  xpr_htmp_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/xpr_htmp_plot_png
-    label: "Filtered by adjusted P-value normalized gene expression heatmap"
-    doc: |
-      Filtered by adjusted P-value normalized gene
-      expression heatmap per cell optionally subsetted
-      to the specific group.
-      PNG format
-    'sd:visualPlugins':
-    - image:
-        tab: 'Gene expression'
-        Caption: 'Filtered by adjusted P-value normalized gene expression heatmap'
+        tab: 'Gene expression, WNN'
+        Caption: 'UMAP, gene expression, WNN'
 
   diff_expr_genes:
     type: File
     outputSource: de_pseudobulk/diff_expr_genes
-    label: "Differentially expressed genes. Not filtered"
+    label: "Differentially expressed genes"
     doc: |
-      Differentially expressed genes. Not filtered
-      by adjusted P-value.
+      Not filtered by adjusted P-value
+      differentially expressed genes in
       TSV format
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Diff expressed genes'
-        Title: 'Differentially expressed genes. Not filtered'
+        tab: 'Diff. expressed genes'
+        Title: 'Differentially expressed genes'
 
   read_counts_file:
     type: File?
     outputSource: de_pseudobulk/bulk_read_counts_gct
-    label: "GSEA compatible not filtered normalized reads counts"
+    label: "GSEA compatible reads counts"
     doc: |
-      GSEA compatible not filtered normalized reads
-      counts aggregated to pseudobulk form.
-      GCT format
+      GSEA compatible not filtered normalized
+      reads counts aggregated to pseudobulk
+      form in GCT format
 
   phenotypes_file:
     type: File?
     outputSource: de_pseudobulk/bulk_phenotypes_cls
-    label: "GSEA compatible phenotypes file"
+    label: "GSEA compatible phenotypes"
     doc: |
-      GSEA compatible phenotypes file defined based
-      on --splitby, --first, and --second parameters.
-      CLS format
+      GSEA compatible phenotypes file
+      in CLS format
 
   cell_read_counts_gct:
     type: File
     outputSource: de_pseudobulk/cell_read_counts_gct
-    label: "Filtered normalized reads counts per cell"
+    label: "Morpheus compatible reads counts"
     doc: |
-      Filtered normalized reads counts per cell.
-      GCT format
+      Filtered normalized reads counts
+      per cell in GCT format
+
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
 
   de_pseudobulk_stdout_log:
     type: File
@@ -626,11 +581,29 @@ steps:
       barcodes_data: barcodes_data
       groupby:
         source: groupby
-        valueFrom: $(self==""?null:self)            # safety measure
+        valueFrom: |
+          ${
+            if (self == "dataset") {
+              return "new.ident";
+            } else if (self == "") {
+              return null;
+            } else {
+              return self;
+            }
+          }
       subset:
         source: subset
-        valueFrom: $(split_features(self))
-      splitby: splitby
+        valueFrom: $(split_by_comma(self))
+      splitby:
+        source: splitby
+        valueFrom: |
+          ${
+            if (self == "dataset") {
+              return "new.ident";
+            } else {
+              return self;
+            }
+          }
       first_cond: first_cond
       second_cond: second_cond
       analysis_method:
@@ -647,20 +620,36 @@ steps:
         source: exclude_pattern
         valueFrom: $(self==""?null:self)            # safety measure
       cluster_method:
-        source: cluster_method
-        valueFrom: $(self=="none"?null:self)
-      row_distance: row_distance
-      column_distance: column_distance
-      center_row: center_row
+        source:
+        - enable_clustering
+        - analysis_method
+        valueFrom: |
+          ${
+            if (self[0]) {
+              if (self[1].includes("deseq")) {
+                return "both";
+              } else {
+                return "row";
+              }
+            } else {
+              return null;
+            }
+          }
+      row_distance:
+        default: "cosangle"
+      column_distance:
+        default: "euclid"
+      center_row:
+        default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       verbose:
         default: true
       parallel_memory_limit:
-        source: parallel_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 32
       vector_memory_limit:
-        source: vector_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 96
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -668,7 +657,6 @@ steps:
       - umap_rd_rnaumap_plot_png
       - umap_rd_atacumap_plot_png
       - umap_rd_wnnumap_plot_png
-      - mds_plot_html
       - pca_1_2_plot_png
       - pca_2_3_plot_png
       - dxpr_vlcn_plot_png
@@ -677,12 +665,54 @@ steps:
       - xpr_per_cell_rd_atacumap_plot_png
       - xpr_per_cell_rd_wnnumap_plot_png
       - xpr_htmp_plot_png
+      - umap_rd_rnaumap_plot_pdf
+      - umap_rd_atacumap_plot_pdf
+      - umap_rd_wnnumap_plot_pdf
+      - mds_plot_html
+      - pca_1_2_plot_pdf
+      - pca_2_3_plot_pdf
+      - dxpr_vlcn_plot_pdf
+      - xpr_dnst_plot_pdf
+      - xpr_per_cell_rd_rnaumap_plot_pdf
+      - xpr_per_cell_rd_atacumap_plot_pdf
+      - xpr_per_cell_rd_wnnumap_plot_pdf
+      - xpr_htmp_plot_pdf
       - diff_expr_genes
       - bulk_read_counts_gct
       - bulk_phenotypes_cls
       - cell_read_counts_gct
       - stdout_log
       - stderr_log
+
+  folder_pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - de_pseudobulk/umap_rd_rnaumap_plot_pdf
+        - de_pseudobulk/umap_rd_atacumap_plot_pdf
+        - de_pseudobulk/umap_rd_wnnumap_plot_pdf
+        - de_pseudobulk/mds_plot_html
+        - de_pseudobulk/pca_1_2_plot_pdf
+        - de_pseudobulk/pca_2_3_plot_pdf
+        - de_pseudobulk/dxpr_vlcn_plot_pdf
+        - de_pseudobulk/xpr_dnst_plot_pdf
+        - de_pseudobulk/xpr_per_cell_rd_rnaumap_plot_pdf
+        - de_pseudobulk/xpr_per_cell_rd_atacumap_plot_pdf
+        - de_pseudobulk/xpr_per_cell_rd_wnnumap_plot_pdf
+        - de_pseudobulk/xpr_htmp_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
+    run: ../tools/tar-compress.cwl
+    in:
+      folder_to_compress: folder_pdf_plots/folder
+    out:
+    - compressed_folder
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
@@ -714,9 +744,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Pseudobulk Differential Expression Analysis Between Datasets"
-s:name: "Single-cell Pseudobulk Differential Expression Analysis Between Datasets"
-s:alternateName: "Identifies differentially expressed genes between groups of cells coerced to pseudobulk datasets"
+label: "Single-Cell RNA-Seq Differential Expression Analysis"
+s:name: "Single-Cell RNA-Seq Differential Expression Analysis"
+s:alternateName: "Identifies differentially expressed genes between any two groups of cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-de-pseudobulk.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -754,7 +784,8 @@ s:creator:
 
 
 doc: |
-  Single-cell Pseudobulk Differential Expression Analysis Between Datasets
+  Single-Cell RNA-Seq Differential Expression Analysis
 
-  Identifies differentially expressed genes between groups of cells
-  coerced to pseudobulk datasets.
+  Identifies differentially expressed genes between any two
+  groups of cells, optionally aggregating gene expression
+  data from single-cell to pseudobulk form.

@@ -102,46 +102,24 @@ inputs:
     'sd:layout':
       advanced: true
 
-  parallel_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "32"
-    default: "32"
-    label: "Maximum memory in GB allowed to be shared between the workers when using multiple CPUs"
-    doc: |
-      Maximum memory in GB allowed to be shared between the workers
-      when using multiple --cpus.
-      Forced to 32 GB
-    'sd:layout':
-      advanced: true
-
-  vector_memory_limit:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "64"
-    default: "64"
-    label: "Maximum vector memory in GB allowed to be used by R"
-    doc: |
-      Maximum vector memory in GB allowed to be used by R.
-      Forced to 64 GB
-    'sd:layout':
-      advanced: true
-
   threads:
     type:
     - "null"
     - type: enum
       symbols:
       - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
     default: "1"
     label: "Number of cores/cpus to use"
     doc: |
-      Number of cores/cpus to use
-      Forced to 1
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 1
     'sd:layout':
       advanced: true
 
@@ -256,13 +234,6 @@ outputs:
         tab: 'WNN'
         Caption: 'Cells UMAP with winning annotations'
 
-  ucsc_cb_config_data:
-    type: File
-    outputSource: compress_cellbrowser_config_data/compressed_folder
-    label: "Compressed directory with UCSC Cellbrowser configuration data"
-    doc: |
-      Compressed directory with UCSC Cellbrowser configuration data.
-
   ucsc_cb_html_data:
     type: Directory
     outputSource: triangulate/ucsc_cb_html_data
@@ -287,6 +258,14 @@ outputs:
     label: "Processed Seurat data in RDS format"
     doc: |
       Processed Seurat data in RDS format
+
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Plots in PDF format"
+    doc: |
+      Compressed folder with plots
+      in PDF format
 
   triangulate_stdout_log:
     type: File
@@ -317,13 +296,13 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_pdf_plots:
+        default: true
       color_theme: color_theme
       parallel_memory_limit:
-        source: parallel_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 32
       vector_memory_limit:
-        source: vector_memory_limit
-        valueFrom: $(parseInt(self))
+        default: 96
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -337,17 +316,45 @@ steps:
     - umap_tric_rd_rnaumap_plot_png
     - umap_tric_rd_atacumap_plot_png
     - umap_tric_rd_wnnumap_plot_png
-    - ucsc_cb_config_data
+    - umap_tril_rd_rnaumap_plot_pdf
+    - umap_tril_rd_atacumap_plot_pdf
+    - umap_tril_rd_wnnumap_plot_pdf
+    - umap_tria_rd_rnaumap_plot_pdf
+    - umap_tria_rd_atacumap_plot_pdf
+    - umap_tria_rd_wnnumap_plot_pdf
+    - umap_tric_rd_rnaumap_plot_pdf
+    - umap_tric_rd_atacumap_plot_pdf
+    - umap_tric_rd_wnnumap_plot_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
     - stdout_log
     - stderr_log
 
-  compress_cellbrowser_config_data:
+  folder_pdf_plots:
+    run: ../tools/files-to-folder.cwl
+    in:
+      input_files:
+        source:
+        - triangulate/umap_tril_rd_rnaumap_plot_pdf
+        - triangulate/umap_tril_rd_atacumap_plot_pdf
+        - triangulate/umap_tril_rd_wnnumap_plot_pdf
+        - triangulate/umap_tria_rd_rnaumap_plot_pdf
+        - triangulate/umap_tria_rd_atacumap_plot_pdf
+        - triangulate/umap_tria_rd_wnnumap_plot_pdf
+        - triangulate/umap_tric_rd_rnaumap_plot_pdf
+        - triangulate/umap_tric_rd_atacumap_plot_pdf
+        - triangulate/umap_tric_rd_wnnumap_plot_pdf
+        valueFrom: $(self.flat().filter(n => n))
+      folder_basename:
+        default: "pdf_plots"
+    out:
+    - folder
+
+  compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
-      folder_to_compress: triangulate/ucsc_cb_config_data
+      folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
 
