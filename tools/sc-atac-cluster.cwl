@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -220,7 +220,7 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save Seurat data to h5ad file.
+      Save raw counts from the ATAC assay to h5ad file.
       Default: false
 
   export_ucsc_cb:
@@ -262,76 +262,90 @@ inputs:
       Number of cores/cpus to use.
       Default: 1
 
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
+
 
 outputs:
 
-  umap_res_plot_png:
+  umap_gr_clst_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_umap_res_*.png"
+      glob: "*_umap_gr_clst_res_*.png"
     doc: |
-      UMAP, colored by cluster.
-      PNG format
+      UMAP colored by cluster.
+      All cells; all resolutions.
+      PNG format.
 
-  umap_res_plot_pdf:
+  umap_gr_clst_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_umap_res_*.pdf"
+      glob: "*_umap_gr_clst_res_*.pdf"
     doc: |
-      UMAP, colored by cluster.
-      PDF format
+      UMAP colored by cluster.
+      All cells; all resolutions.
+      PDF format.
 
-  slh_res_plot_png:
+  slh_gr_clst_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_slh_res_*.png"
+      glob: "*_slh_gr_clst_res_*.png"
     doc: |
       Silhouette scores.
-      PNG format
+      All cells; all resolutions.
+      PNG format.
 
-  slh_res_plot_pdf:
+  slh_gr_clst_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_slh_res_*.pdf"
+      glob: "*_slh_gr_clst_res_*.pdf"
     doc: |
       Silhouette scores.
-      PDF format
+      All cells; all resolutions.
+      PDF format.
 
-  umap_spl_idnt_res_plot_png:
+  umap_gr_clst_spl_idnt_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_umap_spl_idnt_res_*.png"
+      glob: "*_umap_gr_clst_spl_idnt_res_*.png"
     doc: |
-      UMAP, colored by cluster,
-      split by dataset.
-      PNG format
+      UMAP colored by cluster.
+      Split by dataset; downsampled to the
+      smallest dataset; all resolutions.
+      PNG format.
 
-  umap_spl_idnt_res_plot_pdf:
+  umap_gr_clst_spl_idnt_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_umap_spl_idnt_res_*.pdf"
+      glob: "*_umap_gr_clst_spl_idnt_res_*.pdf"
     doc: |
-      UMAP, colored by cluster,
-      split by dataset.
-      PDF format
+      UMAP colored by cluster.
+      Split by dataset; downsampled to the
+      smallest dataset; all resolutions.
+      PDF format.
 
   cmp_gr_clst_spl_idnt_res_plot_png:
     type:
@@ -341,10 +355,10 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_idnt_res_*.png"
     doc: |
-      Composition plot, colored by
-      cluster, split by dataset,
-      downsampled.
-      PNG format
+      Composition plot colored by cluster.
+      Split by dataset; downsampled to the
+      smallest dataset; all resolutions.
+      PNG format.
 
   cmp_gr_clst_spl_idnt_res_plot_pdf:
     type:
@@ -354,10 +368,10 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_idnt_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      cluster, split by dataset,
-      downsampled.
-      PDF format
+      Composition plot colored by cluster.
+      Split by dataset; downsampled to the
+      smallest dataset; all resolutions.
+      PDF format.
 
   cmp_gr_idnt_spl_clst_res_plot_png:
     type:
@@ -367,10 +381,10 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_clst_res_*.png"
     doc: |
-      Composition plot, colored by
-      dataset, split by cluster,
-      downsampled.
-      PNG format
+      Composition plot colored by dataset.
+      Split by cluster; downsampled to the
+      smallest dataset; all resolutions.
+      PNG format.
 
   cmp_gr_idnt_spl_clst_res_plot_pdf:
     type:
@@ -380,34 +394,38 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_idnt_spl_clst_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      dataset, split by cluster,
-      downsampled.
-      PDF format
+      Composition plot colored by dataset.
+      Split by cluster; downsampled to the
+      smallest dataset; all resolutions.
+      PDF format.
 
-  umap_spl_cnd_res_plot_png:
+  umap_gr_clst_spl_cnd_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_umap_spl_cnd_res_*.png"
+      glob: "*_umap_gr_clst_spl_cnd_res_*.png"
     doc: |
-      UMAP, colored by cluster, split
-      by grouping condition.
-      PNG format
+      UMAP colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group; all resolutions.
+      PNG format.
 
-  umap_spl_cnd_res_plot_pdf:
+  umap_gr_clst_spl_cnd_res_plot_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_umap_spl_cnd_res_*.pdf"
+      glob: "*_umap_gr_clst_spl_cnd_res_*.pdf"
     doc: |
-      UMAP, colored by cluster, split
-      by grouping condition.
-      PDF format
+      UMAP colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group; all resolutions.
+      PDF format.
 
   cmp_gr_clst_spl_cnd_res_plot_png:
     type:
@@ -417,10 +435,11 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_cnd_res_*.png"
     doc: |
-      Composition plot, colored by
-      cluster, split by grouping
-      condition, downsampled.
-      PNG format
+      Composition plot colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group; all resolutions.
+      PNG format.
 
   cmp_gr_clst_spl_cnd_res_plot_pdf:
     type:
@@ -430,10 +449,11 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_clst_spl_cnd_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      cluster, split by grouping
-      condition, downsampled.
-      PDF format
+      Composition plot colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group; all resolutions.
+      PDF format.
 
   cmp_gr_cnd_spl_clst_res_plot_png:
     type:
@@ -443,10 +463,11 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_clst_res_*.png"
     doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cluster, downsampled.
-      PNG format
+      Composition plot colored by grouping condition.
+      Split by cluster; first downsampled to the
+      smallest dataset, then downsampled to the
+      smallest group; all resolutions.
+      PNG format.
 
   cmp_gr_cnd_spl_clst_res_plot_pdf:
     type:
@@ -456,10 +477,11 @@ outputs:
     outputBinding:
       glob: "*_cmp_gr_cnd_spl_clst_res_*.pdf"
     doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cluster, downsampled.
-      PDF format
+      Composition plot colored by grouping condition.
+      Split by cluster; first downsampled to the
+      smallest dataset, then downsampled to the
+      smallest group; all resolutions.
+      PDF format.
 
   cvrg_res_plot_png:
     type:
@@ -469,8 +491,9 @@ outputs:
     outputBinding:
       glob: "*_cvrg_res_*.png"
     doc: |
-      ATAC fragments coverage.
-      PNG format
+      ATAC fragment coverage.
+      All genes of interest; all resolutions.
+      PNG format.
 
   cvrg_res_plot_pdf:
     type:
@@ -480,58 +503,63 @@ outputs:
     outputBinding:
       glob: "*_cvrg_res_*.pdf"
     doc: |
-      ATAC fragments coverage.
-      PDF format
+      ATAC fragment coverage.
+      All genes of interest; all resolutions.
+      PDF format.
 
   peak_markers_tsv:
     type: File?
     outputBinding:
       glob: "*_peak_markers.tsv"
     doc: |
-      Peak markers per cluster for all resolutions.
-      TSV format
+      Peak markers.
+      All resolutions.
+      TSV format.
 
   ucsc_cb_config_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser configuration data.
+      UCSC Cell Browser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html index.
 
   seurat_data_rds:
     type: File
     outputBinding:
       glob: "*_data.rds"
     doc: |
-      Reduced Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   seurat_data_h5seurat:
     type: File?
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Reduced Seurat data in h5seurat format
+      Seurat object.
+      h5Seurat format.
 
   seurat_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_data.h5ad"
+      glob: "*_counts.h5ad"
     doc: |
-      Reduced Seurat data in h5ad format
+      Seurat object.
+      H5AD format.
 
   stdout_log:
     type: stdout
@@ -553,8 +581,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell ATAC-Seq Cluster Analysis"
-s:name: "Single-cell ATAC-Seq Cluster Analysis"
+label: "Single-Cell ATAC-Seq Cluster Analysis"
+s:name: "Single-Cell ATAC-Seq Cluster Analysis"
 s:alternateName: "Clusters single-cell ATAC-Seq datasets, identifies differentially accessible peaks"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-atac-cluster.cwl
@@ -593,14 +621,14 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Cluster Analysis
+  Single-Cell ATAC-Seq Cluster Analysis
 
   Clusters single-cell ATAC-Seq datasets, identifies differentially
   accessible peaks.
 
 
 s:about: |
-  usage: sc_atac_cluster.R [-h] --query QUERY
+  usage: /usr/local/bin/sc_atac_cluster.R [-h] --query QUERY
                                           [--dimensions DIMENSIONS]
                                           [--ametric {euclidean,cosine,manhattan,hamming}]
                                           [--algorithm {louvain,mult-louvain,slm,leiden}]
@@ -616,8 +644,9 @@ s:about: |
                                           [--h5ad] [--cbbuild] [--output OUTPUT]
                                           [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                           [--cpus CPUS] [--memory MEMORY]
+                                          [--seed SEED]
 
-  Single-cell ATAC-Seq Cluster Analysis
+  Single-Cell ATAC-Seq Cluster Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -683,7 +712,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save Seurat data to h5ad file. Default: false
+    --h5ad                Save raw counts from the ATAC assay to h5ad file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
@@ -691,3 +721,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
+    --seed SEED           Seed number for random values. Default: 42

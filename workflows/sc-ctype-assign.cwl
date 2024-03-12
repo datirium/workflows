@@ -26,7 +26,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
@@ -57,8 +57,8 @@ inputs:
       "Single-Cell ATAC-Seq Cluster Analysis",
       "Single-Cell WNN Cluster Analysis", -
       at any of the processing stages.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   atac_fragments_file:
     type: File?
@@ -74,8 +74,8 @@ inputs:
       (RNA+ATAC)", "Cell Ranger Aggregate
       (RNA+ATAC)", "Cell Ranger Count (ATAC)",
       or "Cell Ranger Aggregate (ATAC)".
-    'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_atac_sample/atac_fragments_file"
+    "sd:localLabel": true
 
   query_reduction:
     type:
@@ -215,241 +215,228 @@ inputs:
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
 
 outputs:
 
-  umap_rd_rnaumap_plot_png:
+  umap_gr_ctyp_plot_png:
     type: File?
-    outputSource: ctype_assign/umap_rd_rnaumap_plot_png
-    label: "UMAP, colored by cell type, RNA"
+    outputSource: ctype_assign/umap_gr_ctyp_plot_png
+    label: "UMAP colored by cell type (all cells)"
     doc: |
-      UMAP, colored by cell type, RNA
-    'sd:visualPlugins':
+      UMAP colored by cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cell type'
-        Caption: 'UMAP, colored by cell type, RNA'
+        tab: "Per cell type"
+        Caption: "UMAP colored by cell type (all cells)"
 
-  umap_rd_atacumap_plot_png:
+  umap_gr_ctyp_spl_idnt_plot_png:
     type: File?
-    outputSource: ctype_assign/umap_rd_atacumap_plot_png
-    label: "UMAP, colored by cell type, ATAC"
+    outputSource: ctype_assign/umap_gr_ctyp_spl_idnt_plot_png
+    label: "UMAP colored by cell type (split by dataset, downsampled)"
     doc: |
-      UMAP, colored by cell type, ATAC
-    'sd:visualPlugins':
+      UMAP colored by cell type.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cell type'
-        Caption: 'UMAP, colored by cell type, ATAC'
-
-  umap_rd_wnnumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_rd_wnnumap_plot_png
-    label: "UMAP, colored by cell type, WNN"
-    doc: |
-      UMAP, colored by cell type, WNN
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per cell type'
-        Caption: 'UMAP, colored by cell type, WNN'
-
-  umap_spl_ph_rd_rnaumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_spl_ph_rd_rnaumap_plot_png
-    label: "UMAP, colored by cell type, split by cell cycle phase, RNA"
-    doc: |
-      UMAP, colored by cell type, split
-      by cell cycle phase, RNA
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per cell type'
-        Caption: 'UMAP, colored by cell type, split by cell cycle phase, RNA'
-
-  umap_spl_ph_rd_atacumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_spl_ph_rd_atacumap_plot_png
-    label: "UMAP, colored by cell type, split by cell cycle phase, ATAC"
-    doc: |
-      UMAP, colored by cell type, split
-      by cell cycle phase, ATAC
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per cell type'
-        Caption: 'UMAP, colored by cell type, split by cell cycle phase, ATAC'
-
-  umap_spl_ph_rd_wnnumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_spl_ph_rd_wnnumap_plot_png
-    label: "UMAP, colored by cell type, split by cell cycle phase, WNN"
-    doc: |
-      UMAP, colored by cell type, split
-      by cell cycle phase, WNN
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per cell type'
-        Caption: 'UMAP, colored by cell type, split by cell cycle phase, WNN'
-
-  cmp_gr_ph_spl_ctyp_plot_png:
-    type: File?
-    outputSource: ctype_assign/cmp_gr_ph_spl_ctyp_plot_png
-    label: "Composition plot, colored by cell cycle phase, split by cell type, downsampled"
-    doc: |
-      Composition plot, colored by cell
-      cycle phase, split by cell type,
-      downsampled
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by cell cycle phase, split by cell type, downsampled'
-
-  umap_spl_idnt_rd_rnaumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_spl_idnt_rd_rnaumap_plot_png
-    label: "UMAP, colored by cell type, split by dataset, RNA"
-    doc: |
-      UMAP, colored by cell type,
-      split by dataset, RNA
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by cell type, split by dataset, RNA'
-
-  umap_spl_idnt_rd_atacumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_spl_idnt_rd_atacumap_plot_png
-    label: "UMAP, colored by cell type, split by dataset, ATAC"
-    doc: |
-      UMAP, colored by cell type,
-      split by dataset, ATAC
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by cell type, split by dataset, ATAC'
-
-  umap_spl_idnt_rd_wnnumap_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_spl_idnt_rd_wnnumap_plot_png
-    label: "UMAP, colored by cell type, split by dataset, WNN"
-    doc: |
-      UMAP, colored by cell type,
-      split by dataset, WNN
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by cell type, split by dataset, WNN'
+        tab: "Per dataset"
+        Caption: "UMAP colored by cell type (split by dataset, downsampled)"
 
   cmp_gr_ctyp_spl_idnt_plot_png:
     type: File?
     outputSource: ctype_assign/cmp_gr_ctyp_spl_idnt_plot_png
-    label: "Composition plot, colored by cell type, split by dataset, downsampled"
+    label: "Composition plot colored by cell type (split by dataset, downsampled)"
     doc: |
-      Composition plot, colored by cell
-      type, split by dataset, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cell type.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by cell type, split by dataset, downsampled'
+        tab: "Per dataset"
+        Caption: "Composition plot colored by cell type (split by dataset, downsampled)"
 
   cmp_gr_idnt_spl_ctyp_plot_png:
     type: File?
     outputSource: ctype_assign/cmp_gr_idnt_spl_ctyp_plot_png
-    label: "Composition plot, colored by dataset, split by cell type, downsampled"
+    label: "Composition plot colored by dataset (split by cell type, downsampled)"
     doc: |
-      Composition plot, colored by
-      dataset, split by cell type,
-      downsampled
-    'sd:visualPlugins':
+      Composition plot colored by dataset.
+      Split by cell type; downsampled to
+      the smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by dataset, split by cell type, downsampled'
+        tab: "Per dataset"
+        Caption: "Composition plot colored by dataset (split by cell type, downsampled)"
+
+  umap_gr_ph_spl_idnt_plot_png:
+    type: File?
+    outputSource: ctype_assign/umap_gr_ph_spl_idnt_plot_png
+    label: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
+    doc: |
+      UMAP colored by cell cycle phase.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Per dataset"
+        Caption: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
 
   cmp_gr_ph_spl_idnt_plot_png:
     type: File?
     outputSource: ctype_assign/cmp_gr_ph_spl_idnt_plot_png
-    label: "Composition plot, colored by cell cycle phase, split by dataset, downsampled"
+    label: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
     doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      dataset, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cell cycle phase.
+      Split by dataset; downsampled to the smallest
+      dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by cell cycle phase, split by dataset, downsampled'
+        tab: "Per dataset"
+        Caption: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
 
-  umap_spl_cnd_rd_rnaumap_plot_png:
+  umap_gr_ctyp_spl_ph_png:
     type: File?
-    outputSource: ctype_assign/umap_spl_cnd_rd_rnaumap_plot_png
-    label: "UMAP, colored by cell type, split by grouping condition, RNA"
+    outputSource: ctype_assign/umap_gr_ctyp_spl_ph_png
+    label: "UMAP colored by cell type (split by cell cycle phase, optionally downsampled)"
     doc: |
-      UMAP, colored by cell type, split
-      by grouping condition, RNA
-    'sd:visualPlugins':
+      UMAP colored by cell type.
+      Split by cell cycle phase; downsampled
+      to the smallest dataset (if multiple
+      datasets are analyzed jointly).
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by cell type, split by grouping condition, RNA'
+        tab: "Per cell type"
+        Caption: "UMAP colored by cell type (split by cell cycle phase, optionally downsampled)"
 
-  umap_spl_cnd_rd_atacumap_plot_png:
+  cmp_gr_ph_spl_ctyp_png:
     type: File?
-    outputSource: ctype_assign/umap_spl_cnd_rd_atacumap_plot_png
-    label: "UMAP, colored by cell type, split by grouping condition, ATAC"
+    outputSource: ctype_assign/cmp_gr_ph_spl_ctyp_png
+    label: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled)"
     doc: |
-      UMAP, colored by cell type, split
-      by grouping condition, ATAC
-    'sd:visualPlugins':
+      Composition plot colored by cell cycle phase.
+      Split by cell type; downsampled to the
+      smallest dataset (if multiple datasets are
+      analyzed jointly).
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by cell type, split by grouping condition, ATAC'
+        tab: "Per cell type"
+        Caption: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled)"
 
-  umap_spl_cnd_rd_wnnumap_plot_png:
+  umap_gr_ctyp_spl_cnd_plot_png:
     type: File?
-    outputSource: ctype_assign/umap_spl_cnd_rd_wnnumap_plot_png
-    label: "UMAP, colored by cell type, split by grouping condition, WNN"
+    outputSource: ctype_assign/umap_gr_ctyp_spl_cnd_plot_png
+    label: "UMAP colored by cell type (split by grouping condition, downsampled)"
     doc: |
-      UMAP, colored by cell type, split
-      by grouping condition, WNN
-    'sd:visualPlugins':
+      UMAP colored by cell type.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by cell type, split by grouping condition, WNN'
+        tab: "Per group"
+        Caption: "UMAP colored by cell type (split by grouping condition, downsampled)"
 
   cmp_gr_ctyp_spl_cnd_plot_png:
     type: File?
     outputSource: ctype_assign/cmp_gr_ctyp_spl_cnd_plot_png
-    label: "Composition plot, colored by cell type, split by grouping condition, downsampled"
+    label: "Composition plot colored by cell type (split by grouping condition, downsampled)"
     doc: |
-      Composition plot, colored by cell
-      type, split by grouping condition,
-      downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cell type.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Composition plot, colored by cell type, split by grouping condition, downsampled'
+        tab: "Per group"
+        Caption: "Composition plot colored by cell type (split by grouping condition, downsampled)"
 
   cmp_gr_cnd_spl_ctyp_plot_png:
     type: File?
     outputSource: ctype_assign/cmp_gr_cnd_spl_ctyp_plot_png
-    label: "Composition plot, colored by grouping condition, split by cell type, downsampled"
+    label: "Composition plot colored by grouping condition (split by cell type, downsampled)"
     doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cell type, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by grouping condition.
+      Split by cell type; first downsampled to the
+      smallest dataset, then downsampled to the
+      smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Composition plot, colored by grouping condition, split by cell type, downsampled'
+        tab: "Per group"
+        Caption: "Composition plot colored by grouping condition (split by cell type, downsampled)"
+
+  umap_gr_ph_spl_cnd_plot_png:
+    type: File?
+    outputSource: ctype_assign/umap_gr_ph_spl_cnd_plot_png
+    label: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
+    doc: |
+      UMAP colored by cell cycle phase.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Per group"
+        Caption: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
+
+  cmp_gr_ph_spl_cnd_plot_png:
+    type: File?
+    outputSource: ctype_assign/cmp_gr_ph_spl_cnd_plot_png
+    label: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
+    doc: |
+      Composition plot colored by cell cycle phase.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Per group"
+        Caption: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
 
   xpr_avg_plot_png:
     type: File?
     outputSource: ctype_assign/xpr_avg_plot_png
-    label: "Gene expression dot plot"
+    label: "Average gene expression"
     doc: |
-      Gene expression dot plot
-    'sd:visualPlugins':
+      Average gene expression.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Genes of interest'
-        Caption: 'Gene expression dot plot'
+        tab: "Gene expression"
+        Caption: "Average gene expression"
+
+  xpr_per_cell_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: ctype_assign/xpr_per_cell_plot_png
+    label: "UMAP colored by gene expression (per gene)"
+    doc: |
+      UMAP colored by gene expression.
+      All genes of interest.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene expression"
+        Caption: "UMAP colored by gene expression (per gene)"
 
   xpr_dnst_plot_png:
     type:
@@ -457,66 +444,37 @@ outputs:
     - type: array
       items: File
     outputSource: ctype_assign/xpr_dnst_plot_png
-    label: "Gene expression violin plot"
+    label: "Gene expression density (per gene)"
     doc: |
-      Gene expression violin plot
-    'sd:visualPlugins':
+      Gene expression density.
+      All genes of interest.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Genes of interest'
-        Caption: 'Gene expression violin plot'
-
-  xpr_per_cell_rd_rnaumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: ctype_assign/xpr_per_cell_rd_rnaumap_plot_png
-    label: "UMAP, gene expression, RNA"
-    doc: |
-      UMAP, gene expression, RNA
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression, RNA'
-
-  xpr_per_cell_rd_atacumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: ctype_assign/xpr_per_cell_rd_atacumap_plot_png
-    label: "UMAP, gene expression, ATAC"
-    doc: |
-      UMAP, gene expression, ATAC
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression, ATAC'
-
-  xpr_per_cell_rd_wnnumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: ctype_assign/xpr_per_cell_rd_wnnumap_plot_png
-    label: "UMAP, gene expression, WNN"
-    doc: |
-      UMAP, gene expression, WNN
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression, WNN'
+        tab: "Gene expression"
+        Caption: "Gene expression density (per gene)"
 
   xpr_htmp_plot_png:
     type: File?
     outputSource: ctype_assign/xpr_htmp_plot_png
-    label: "Gene expression heatmap"
+    label: "Gene expression heatmap (top gene markers)"
     doc: |
-      Gene expression heatmap
-    'sd:visualPlugins':
+      Gene expression heatmap.
+      Top gene markers.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Heatmap'
-        Caption: 'Gene expression heatmap'
+        tab: "Gene expression heatmap"
+        Caption: "Gene expression heatmap (top gene markers)"
+
+  xpr_htmp_tsv:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_tsv
+    label: "Gene expression heatmap (top gene markers)"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      TSV format.
 
   cvrg_plot_png:
     type:
@@ -524,58 +482,53 @@ outputs:
     - type: array
       items: File
     outputSource: ctype_assign/cvrg_plot_png
-    label: "ATAC fragments coverage"
+    label: "ATAC fragment coverage (per gene)"
     doc: |
-      ATAC fragments coverage
-    'sd:visualPlugins':
+      ATAC fragment coverage.
+      All genes of interest.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Genome coverage'
-        Caption: 'ATAC fragments coverage'
-
-  xpr_htmp_tsv:
-    type: File?
-    outputSource: ctype_assign/xpr_htmp_tsv
-    label: "Markers from gene expression heatmap"
-    doc: |
-      Gene markers used for gene
-      expression heatmap
+        tab: "Genome coverage"
+        Caption: "ATAC fragment coverage (per gene)"
 
   gene_markers_tsv:
     type: File?
     outputSource: ctype_assign/gene_markers_tsv
-    label: "Gene markers per cell type"
+    label: "Gene markers"
     doc: |
-      Gene markers per cell type
-    'sd:visualPlugins':
+      Gene markers.
+      TSV format.
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'Gene markers'
-        Title: 'Gene markers per cell type'
+        tab: "Gene markers"
+        Title: "Gene markers"
 
   peak_markers_tsv:
     type: File?
     outputSource: ctype_assign/peak_markers_tsv
-    label: "Peak markers per cell type"
+    label: "Peak markers"
     doc: |
-      Peak markers per cell type
-    'sd:visualPlugins':
+      Peak markers.
+      TSV format.
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'Peak markers'
-        Title: 'Peak markers per cell type'
+        tab: "Peak markers"
+        Title: "Peak markers"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: ctype_assign/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: ctype_assign/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -584,38 +537,40 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: ctype_assign/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   seurat_data_scope:
     type: File?
     outputSource: ctype_assign/seurat_data_scope
-    label: "Processed Seurat data in SCope compatible loom format"
+    label: "Seurat object in SCope compatible loom format"
     doc: |
-      Processed Seurat data in SCope compatible loom format
+      Seurat object.
+      SCope compatible.
+      Loom format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   ctype_assign_stdout_log:
     type: File
     outputSource: ctype_assign/stdout_log
-    label: "stdout log generated by ctype_assign step"
+    label: "Output log"
     doc: |
-      stdout log generated by ctype_assign step
+      Stdout log from the ctype_assign step.
 
   ctype_assign_stderr_log:
     type: File
     outputSource: ctype_assign/stderr_log
-    label: "stderr log generated by ctype_assign step"
+    label: "Error log"
     doc: |
-      stderr log generated by ctype_assign step
+      Stderr log from the ctype_assign step.
 
 
 steps:
@@ -641,6 +596,18 @@ steps:
               return "condition";
             } else {
               return null;
+            }
+          }
+      reduction:
+        source: query_reduction
+        valueFrom: |
+          ${
+            if (self == "RNA") {
+              return "rnaumap";
+            } else if (self == "ATAC") {
+              return "atacumap";
+            } else {
+              return "wnnumap";
             }
           }
       atac_fragments_file: atac_fragments_file
@@ -680,59 +647,43 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - umap_rd_rnaumap_plot_png
-    - umap_rd_atacumap_plot_png
-    - umap_rd_wnnumap_plot_png
-    - umap_spl_idnt_rd_rnaumap_plot_png
-    - umap_spl_idnt_rd_atacumap_plot_png
-    - umap_spl_idnt_rd_wnnumap_plot_png
-    - umap_spl_cnd_rd_rnaumap_plot_png
-    - umap_spl_cnd_rd_atacumap_plot_png
-    - umap_spl_cnd_rd_wnnumap_plot_png
-    - umap_spl_ph_rd_rnaumap_plot_png
-    - umap_spl_ph_rd_atacumap_plot_png
-    - umap_spl_ph_rd_wnnumap_plot_png
+    - umap_gr_ctyp_plot_png
+    - umap_gr_ctyp_spl_idnt_plot_png
     - cmp_gr_ctyp_spl_idnt_plot_png
     - cmp_gr_idnt_spl_ctyp_plot_png
+    - umap_gr_ph_spl_idnt_plot_png
     - cmp_gr_ph_spl_idnt_plot_png
+    - umap_gr_ctyp_spl_ph_png
+    - cmp_gr_ph_spl_ctyp_png
+    - umap_gr_ctyp_spl_cnd_plot_png
     - cmp_gr_ctyp_spl_cnd_plot_png
     - cmp_gr_cnd_spl_ctyp_plot_png
-    - cmp_gr_ph_spl_ctyp_plot_png
+    - umap_gr_ph_spl_cnd_plot_png
+    - cmp_gr_ph_spl_cnd_plot_png
     - xpr_avg_plot_png
+    - xpr_per_cell_plot_png
     - xpr_dnst_plot_png
-    - xpr_per_cell_rd_rnaumap_plot_png
-    - xpr_per_cell_rd_atacumap_plot_png
-    - xpr_per_cell_rd_wnnumap_plot_png
-    - cvrg_plot_png
     - xpr_htmp_plot_png
-    - umap_rd_rnaumap_plot_pdf
-    - umap_rd_atacumap_plot_pdf
-    - umap_rd_wnnumap_plot_pdf
-    - umap_spl_idnt_rd_rnaumap_plot_pdf
-    - umap_spl_idnt_rd_atacumap_plot_pdf
-    - umap_spl_idnt_rd_wnnumap_plot_pdf
-    - umap_spl_cnd_rd_rnaumap_plot_pdf
-    - umap_spl_cnd_rd_atacumap_plot_pdf
-    - umap_spl_cnd_rd_wnnumap_plot_pdf
-    - umap_spl_ph_rd_rnaumap_plot_pdf
-    - umap_spl_ph_rd_atacumap_plot_pdf
-    - umap_spl_ph_rd_wnnumap_plot_pdf
+    - cvrg_plot_png
+    - umap_gr_ctyp_plot_pdf
+    - umap_gr_ctyp_spl_idnt_plot_pdf
     - cmp_gr_ctyp_spl_idnt_plot_pdf
     - cmp_gr_idnt_spl_ctyp_plot_pdf
+    - umap_gr_ph_spl_idnt_plot_pdf
     - cmp_gr_ph_spl_idnt_plot_pdf
+    - umap_gr_ctyp_spl_ph_plot_pdf
+    - cmp_gr_ph_spl_ctyp_plot_pdf
+    - umap_gr_ctyp_spl_cnd_plot_pdf
     - cmp_gr_ctyp_spl_cnd_plot_pdf
     - cmp_gr_cnd_spl_ctyp_plot_pdf
-    - cmp_gr_ph_spl_ctyp_plot_pdf
+    - umap_gr_ph_spl_cnd_plot_pdf
+    - cmp_gr_ph_spl_cnd_plot_pdf
     - xpr_avg_plot_pdf
+    - xpr_per_cell_plot_pdf
+    - xpr_per_cell_sgnl_plot_pdf
     - xpr_dnst_plot_pdf
-    - xpr_per_cell_rd_rnaumap_plot_pdf
-    - xpr_per_cell_rd_atacumap_plot_pdf
-    - xpr_per_cell_rd_wnnumap_plot_pdf
-    - xpr_per_cell_sgnl_rd_rnaumap_plot_pdf
-    - xpr_per_cell_sgnl_rd_atacumap_plot_pdf
-    - xpr_per_cell_sgnl_rd_wnnumap_plot_pdf
-    - cvrg_plot_pdf
     - xpr_htmp_plot_pdf
+    - cvrg_plot_pdf
     - xpr_htmp_tsv
     - gene_markers_tsv
     - peak_markers_tsv
@@ -748,34 +699,25 @@ steps:
     in:
       input_files:
         source:
-        - ctype_assign/umap_rd_rnaumap_plot_pdf
-        - ctype_assign/umap_rd_atacumap_plot_pdf
-        - ctype_assign/umap_rd_wnnumap_plot_pdf
-        - ctype_assign/umap_spl_idnt_rd_rnaumap_plot_pdf
-        - ctype_assign/umap_spl_idnt_rd_atacumap_plot_pdf
-        - ctype_assign/umap_spl_idnt_rd_wnnumap_plot_pdf
-        - ctype_assign/umap_spl_cnd_rd_rnaumap_plot_pdf
-        - ctype_assign/umap_spl_cnd_rd_atacumap_plot_pdf
-        - ctype_assign/umap_spl_cnd_rd_wnnumap_plot_pdf
-        - ctype_assign/umap_spl_ph_rd_rnaumap_plot_pdf
-        - ctype_assign/umap_spl_ph_rd_atacumap_plot_pdf
-        - ctype_assign/umap_spl_ph_rd_wnnumap_plot_pdf
+        - ctype_assign/umap_gr_ctyp_plot_pdf
+        - ctype_assign/umap_gr_ctyp_spl_idnt_plot_pdf
         - ctype_assign/cmp_gr_ctyp_spl_idnt_plot_pdf
         - ctype_assign/cmp_gr_idnt_spl_ctyp_plot_pdf
+        - ctype_assign/umap_gr_ph_spl_idnt_plot_pdf
         - ctype_assign/cmp_gr_ph_spl_idnt_plot_pdf
+        - ctype_assign/umap_gr_ctyp_spl_ph_plot_pdf
+        - ctype_assign/cmp_gr_ph_spl_ctyp_plot_pdf
+        - ctype_assign/umap_gr_ctyp_spl_cnd_plot_pdf
         - ctype_assign/cmp_gr_ctyp_spl_cnd_plot_pdf
         - ctype_assign/cmp_gr_cnd_spl_ctyp_plot_pdf
-        - ctype_assign/cmp_gr_ph_spl_ctyp_plot_pdf
+        - ctype_assign/umap_gr_ph_spl_cnd_plot_pdf
+        - ctype_assign/cmp_gr_ph_spl_cnd_plot_pdf
         - ctype_assign/xpr_avg_plot_pdf
+        - ctype_assign/xpr_per_cell_plot_pdf
+        - ctype_assign/xpr_per_cell_sgnl_plot_pdf
         - ctype_assign/xpr_dnst_plot_pdf
-        - ctype_assign/xpr_per_cell_rd_rnaumap_plot_pdf
-        - ctype_assign/xpr_per_cell_rd_atacumap_plot_pdf
-        - ctype_assign/xpr_per_cell_rd_wnnumap_plot_pdf
-        - ctype_assign/xpr_per_cell_sgnl_rd_rnaumap_plot_pdf
-        - ctype_assign/xpr_per_cell_sgnl_rd_atacumap_plot_pdf
-        - ctype_assign/xpr_per_cell_sgnl_rd_wnnumap_plot_pdf
-        - ctype_assign/cvrg_plot_pdf
         - ctype_assign/xpr_htmp_plot_pdf
+        - ctype_assign/cvrg_plot_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"

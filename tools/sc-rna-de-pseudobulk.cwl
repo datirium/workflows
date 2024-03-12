@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -322,6 +322,14 @@ inputs:
       Number of cores/cpus to use.
       Default: 1
 
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
+
 
 outputs:
 
@@ -631,8 +639,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell Differential Expression Analysis"
-s:name: "Single-cell Differential Expression Analysis"
+label: "Single-Cell RNA-Seq Differential Expression Analysis"
+s:name: "Single-Cell RNA-Seq Differential Expression Analysis"
 s:alternateName: "Identifies differentially expressed genes between two groups of cells optionally coerced to pseudobulk form"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-de-pseudobulk.cwl
@@ -671,29 +679,36 @@ s:creator:
 
 
 doc: |
-  Single-cell Differential Expression Analysis
+  Single-Cell RNA-Seq Differential Expression Analysis
 
   Identifies differentially expressed genes between two
   groups of cells optionally coerced to pseudobulk form
 
 
 s:about: |
-  usage: sc_rna_de_pseudobulk.R
-        [-h] --query QUERY [--metadata METADATA] [--barcodes BARCODES]
-        [--groupby GROUPBY] [--subset [SUBSET ...]] --splitby SPLITBY --first
-        FIRST --second SECOND
-        [--test {wilcoxon,likelihood-ratio,t-test,negative-binomial,poisson,logistic-regression,mast,deseq,deseq-lrt}]
-        [--batchby BATCHBY] [--padj PADJ] [--genes [GENES ...]]
-        [--exclude EXCLUDE] [--cluster {row,column,both}]
-        [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-        [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-        [--center] [--pdf] [--verbose] [--output OUTPUT]
-        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-        [--cpus CPUS] [--memory MEMORY]
+  usage: /usr/local/bin/sc_rna_de_pseudobulk.R [-h] --query QUERY
+                                              [--metadata METADATA]
+                                              [--barcodes BARCODES]
+                                              [--groupby GROUPBY]
+                                              [--subset [SUBSET [SUBSET ...]]]
+                                              --splitby SPLITBY --first FIRST
+                                              --second SECOND
+                                              [--test {wilcoxon,likelihood-ratio,t-test,negative-binomial,poisson,logistic-regression,mast,deseq,deseq-lrt}]
+                                              [--batchby BATCHBY] [--padj PADJ]
+                                              [--genes [GENES [GENES ...]]]
+                                              [--exclude EXCLUDE]
+                                              [--cluster {row,column,both}]
+                                              [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+                                              [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
+                                              [--center] [--pdf] [--verbose]
+                                              [--output OUTPUT]
+                                              [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                              [--cpus CPUS] [--memory MEMORY]
+                                              [--seed SEED]
 
-  Single-cell Differential Expression Analysis
+  Single-Cell RNA-Seq Differential Expression Analysis
 
-  options:
+  optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
@@ -723,7 +738,7 @@ s:about: |
                           added with --metadata or --barcodes parameters.
                           Ignored if --subset is not set. Default: do not
                           subset, include all cells into analysis.
-    --subset [SUBSET ...]
+    --subset [SUBSET [SUBSET ...]]
                           Values from the column set with --groupby parameter to
                           subset cells before running differential expression
                           analysis. Ignored if --groupby is not provided.
@@ -768,7 +783,8 @@ s:about: |
                           output only differentially expressed genes with
                           adjusted P-value not bigger than this value. Default:
                           0.05
-    --genes [GENES ...]   Genes of interest to label on the generated plots.
+    --genes [GENES [GENES ...]]
+                          Genes of interest to label on the generated plots.
                           Default: top 10 genes with the highest and the lowest
                           log2FoldChange values.
     --exclude EXCLUDE     Regex pattern to identify and exclude specific genes
@@ -801,3 +817,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
+    --seed SEED           Seed number for random values. Default: 42

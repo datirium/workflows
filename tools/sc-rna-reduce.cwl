@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -98,7 +98,7 @@ inputs:
       Normalization method applied to genes expression counts. If loaded Seurat object
       includes multiple datasets, normalization will be run independently for each of
       them, unless integration is disabled with 'none' or set to 'harmony'
-      Default: sct
+      Default: sctglm
 
   integration_method:
     type:
@@ -183,7 +183,8 @@ inputs:
     doc: |
       Dimensionality to use for datasets integration (if provided RDS
       file includes multiple datasets and --ntgr is not set to 'harmony')
-      and UMAP projection (from 1 to 50).
+      and UMAP projection (from 1 to 50). Set to 0 to use auto-estimated
+      dimensionality.
       Default: 10
 
   umap_spread:
@@ -313,7 +314,7 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save Seurat data to h5ad file.
+      Save raw counts from the RNA assay to h5ad file.
       Default: false
 
   export_scope_data:
@@ -373,6 +374,14 @@ inputs:
     doc: |
       Number of cores/cpus to use.
       Default: 1
+
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
 
 
 outputs:
@@ -676,49 +685,54 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser configuration data.
+      UCSC Cell Browser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html index.
 
   seurat_data_rds:
     type: File
     outputBinding:
       glob: "*_data.rds"
     doc: |
-      Reduced Seurat data in RDS format
+      Seurat object.
+      RDS format
 
   seurat_data_h5seurat:
     type: File?
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Reduced Seurat data in h5seurat format
+      Seurat object.
+      h5Seurat format
 
   seurat_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_data.h5ad"
+      glob: "*_counts.h5ad"
     doc: |
-      Reduced Seurat data in h5ad format
+      Seurat object.
+      H5AD format
 
   seurat_data_scope:
     type: File?
     outputBinding:
       glob: "*_data.loom"
     doc: |
-      Reduced Seurat data in SCope compatible loom format
+      Seurat object.
+      SCope compatible.
+      Loom format
 
   stdout_log:
     type: stdout
@@ -740,8 +754,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell RNA-Seq Dimensionality Reduction Analysis"
-s:name: "Single-cell RNA-Seq Dimensionality Reduction Analysis"
+label: "Single-Cell RNA-Seq Dimensionality Reduction Analysis"
+s:name: "Single-Cell RNA-Seq Dimensionality Reduction Analysis"
 s:alternateName: "Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-reduce.cwl
@@ -780,13 +794,13 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Dimensionality Reduction Analysis
+  Single-Cell RNA-Seq Dimensionality Reduction Analysis
 
   Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA.
 
 
 s:about: |
-  usage: sc_rna_reduce.R [-h] --query QUERY [--metadata METADATA]
+  usage: /usr/local/bin/sc_rna_reduce.R [-h] --query QUERY [--metadata METADATA]
                                         [--barcodes BARCODES]
                                         [--cellcycle CELLCYCLE]
                                         [--norm {sct,log,sctglm}]
@@ -807,8 +821,9 @@ s:about: |
                                         [--lowmem] [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
+                                        [--seed SEED]
 
-  Single-cell RNA-Seq Dimensionality Reduction Analysis
+  Single-Cell RNA-Seq Dimensionality Reduction Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -881,7 +896,8 @@ s:about: |
                           Dimensionality to use for datasets integration (if
                           provided RDS file includes multiple datasets and
                           --ntgr is not set to 'harmony') and UMAP projection
-                          (from 1 to 50). Default: 10
+                          (from 1 to 50). Set to 0 to use auto-estimated
+                          dimensionality. Default: 10
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -906,7 +922,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save Seurat data to h5ad file. Default: false
+    --h5ad                Save raw counts from the RNA assay to h5ad file.
+                          Default: false
     --scope               Save Seurat data to SCope compatible loom file.
                           Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
@@ -921,3 +938,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
+    --seed SEED           Seed number for random values. Default: 42

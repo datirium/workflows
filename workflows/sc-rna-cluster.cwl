@@ -21,7 +21,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
@@ -47,8 +47,8 @@ inputs:
       "Single-Cell RNA-Seq Dimensionality
       Reduction Analysis" at any of the
       processing stages.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   dimensions:
     type: int?
@@ -59,7 +59,8 @@ inputs:
       used in constructing nearest-neighbor
       graph as part of the clustering
       algorithm. Accepted values range from
-      1 to 50.
+      1 to 50. Set to 0 to use auto-estimated
+      dimensionality.
       Default: 40
 
   resolution:
@@ -144,86 +145,119 @@ inputs:
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
 
 outputs:
 
-  umap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/umap_res_plot_png
-    label: "UMAP, colored by cluster"
+  umap_gr_ph_spl_idnt_plot_png:
+    type: File?
+    outputSource: sc_rna_cluster/umap_gr_ph_spl_idnt_plot_png
+    label: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
     doc: |
-      UMAP, colored by cluster
-    'sd:visualPlugins':
+      UMAP colored by cell cycle phase.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'UMAP, colored by cluster'
+        tab: "Per dataset"
+        Caption: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
 
-  slh_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/slh_res_plot_png
-    label: "Silhouette scores"
+  cmp_gr_ph_spl_idnt_plot_png:
+    type: File?
+    outputSource: sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_png
+    label: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
     doc: |
-      Silhouette scores
-    'sd:visualPlugins':
+      Composition plot colored by cell cycle phase.
+      Split by dataset; downsampled to the smallest
+      dataset.
+      PNG format
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Silhouette scores'
+        tab: "Per dataset"
+        Caption: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
 
-  umap_spl_ph_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/umap_spl_ph_res_plot_png
-    label: "UMAP, colored by cluster, split by cell cycle phase"
+  umap_gr_ph_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_rna_cluster/umap_gr_ph_spl_cnd_plot_png
+    label: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
     doc: |
-      UMAP, colored by cluster,
-      split by cell cycle phase
-    'sd:visualPlugins':
+      UMAP colored by cell cycle phase.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'UMAP, colored by cluster, split by cell cycle phase'
+        tab: "Per group"
+        Caption: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
 
-  cmp_gr_ph_spl_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/cmp_gr_ph_spl_clst_res_plot_png
-    label: "Composition plot, colored by cell cycle phase, split by cluster, downsampled"
+  cmp_gr_ph_spl_cnd_plot_png:
+    type: File?
+    outputSource: sc_rna_cluster/cmp_gr_ph_spl_cnd_plot_png
+    label: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
     doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      cluster, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cell cycle phase.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Composition plot, colored by cell cycle phase, split by cluster, downsampled'
+        tab: "Per group"
+        Caption: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
 
-  umap_spl_idnt_res_plot_png:
+  umap_gr_clst_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_rna_cluster/umap_spl_idnt_res_plot_png
-    label: "UMAP, colored by cluster, split by dataset"
+    outputSource: sc_rna_cluster/umap_gr_clst_res_plot_png
+    label: "UMAP colored by cluster (all cells)"
     doc: |
-      UMAP, colored by cluster,
-      split by dataset
-    'sd:visualPlugins':
+      UMAP colored by cluster.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by cluster, split by dataset'
+        tab: "Per cluster"
+        Caption: "UMAP colored by cluster (all cells)"
+
+  slh_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/slh_gr_clst_res_plot_png
+    label: "Silhouette scores (all cells)"
+    doc: |
+      Silhouette scores.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Per cluster"
+        Caption: "Silhouette scores (all cells)"
+
+  umap_gr_clst_spl_idnt_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/umap_gr_clst_spl_idnt_res_plot_png
+    label: "UMAP colored by cluster (split by dataset, downsampled)"
+    doc: |
+      UMAP colored by cluster.
+      Split by dataset; downsampled
+      to the smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Per dataset"
+        Caption: "UMAP colored by cluster (split by dataset, downsampled)"
 
   cmp_gr_clst_spl_idnt_res_plot_png:
     type:
@@ -231,15 +265,16 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/cmp_gr_clst_spl_idnt_res_plot_png
-    label: "Composition plot, colored by cluster, split by dataset, downsampled"
+    label: "Composition plot colored by cluster (split by dataset, downsampled)"
     doc: |
-      Composition plot, colored by
-      cluster, split by dataset,
-      downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cluster.
+      Split by dataset; downsampled
+      to the smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by cluster, split by dataset, downsampled'
+        tab: "Per dataset"
+        Caption: "Composition plot colored by cluster (split by dataset, downsampled)"
 
   cmp_gr_idnt_spl_clst_res_plot_png:
     type:
@@ -247,43 +282,70 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/cmp_gr_idnt_spl_clst_res_plot_png
-    label: "Composition plot, colored by dataset, split by cluster, downsampled"
+    label: "Composition plot colored by dataset (split by cluster, downsampled)"
     doc: |
-      Composition plot, colored by
-      dataset, split by cluster,
-      downsampled
-    'sd:visualPlugins':
+      Composition plot colored by dataset.
+      Split by cluster; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by dataset, split by cluster, downsampled'
+        tab: "Per dataset"
+        Caption: "Composition plot colored by dataset (split by cluster, downsampled)"
 
-  cmp_gr_ph_spl_idnt_plot_png:
-    type: File?
-    outputSource: sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_png
-    label: "Composition plot, colored by cell cycle phase, split by dataset, downsampled"
-    doc: |
-      Composition plot, colored by
-      cell cycle phase, split by
-      dataset, downsampled
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by cell cycle phase, split by dataset, downsampled'
-
-  umap_spl_cnd_res_plot_png:
+  umap_gr_clst_spl_ph_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_rna_cluster/umap_spl_cnd_res_plot_png
-    label: "UMAP, colored by cluster, split by grouping condition"
+    outputSource: sc_rna_cluster/umap_gr_clst_spl_ph_res_plot_png
+    label: "UMAP colored by cluster (split by cell cycle phase, optionally downsampled)"
     doc: |
-      UMAP, colored by cluster,
-      split by grouping condition
-    'sd:visualPlugins':
+      UMAP colored by cluster.
+      Split by cell cycle phase; downsampled
+      to the smallest dataset (if multiple
+      datasets are analyzed jointly).
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by cluster, split by grouping condition'
+        tab: "Per cluster"
+        Caption: "UMAP colored by cluster (split by cell cycle phase, optionally downsampled)"
+
+  cmp_gr_ph_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/cmp_gr_ph_spl_clst_res_plot_png
+    label: "Composition plot colored by cell cycle phase (split by cluster, optionally downsampled)"
+    doc: |
+      Composition plot colored by cell cycle phase.
+      Split by cluster; downsampled to the smallest
+      dataset (if multiple datasets are analyzed
+      jointly).
+      PNG format
+    "sd:visualPlugins":
+    - image:
+        tab: "Per cluster"
+        Caption: "Composition plot colored by cell cycle phase (split by cluster, optionally downsampled)"
+
+  umap_gr_clst_spl_cnd_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/umap_gr_clst_spl_cnd_res_plot_png
+    label: "UMAP colored by cluster (split by grouping condition, downsampled)"
+    doc: |
+      UMAP colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Per group"
+        Caption: "UMAP colored by cluster (split by grouping condition, downsampled)"
 
   cmp_gr_clst_spl_cnd_res_plot_png:
     type:
@@ -291,15 +353,17 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/cmp_gr_clst_spl_cnd_res_plot_png
-    label: "Composition plot, colored by cluster, split by grouping condition, downsampled"
+    label: "Composition plot colored by cluster (split by grouping condition, downsampled)"
     doc: |
-      Composition plot, colored by
-      cluster, split by grouping
-      condition, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Composition plot, colored by cluster, split by grouping condition, downsampled'
+        tab: "Per group"
+        Caption: "Composition plot colored by cluster (split by grouping condition, downsampled)"
 
   cmp_gr_cnd_spl_clst_res_plot_png:
     type:
@@ -307,43 +371,17 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/cmp_gr_cnd_spl_clst_res_plot_png
-    label: "Composition plot, colored by grouping condition, split by cluster, downsampled"
+    label: "Composition plot colored by grouping condition (split by cluster, downsampled)"
     doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cluster, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by grouping condition.
+      Split by cluster; first downsampled to the
+      smallest dataset, then downsampled to the
+      smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Composition plot, colored by grouping condition, split by cluster, downsampled'
-
-  xpr_avg_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/xpr_avg_res_plot_png
-    label: "Gene expression dot plot"
-    doc: |
-      Gene expression dot plot
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'Gene expression dot plot'
-
-  xpr_dnst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/xpr_dnst_res_plot_png
-    label: "Gene expression violin plot"
-    doc: |
-      Gene expression violin plot
-    'sd:visualPlugins':
-    - image:
-        tab: 'Genes of interest'
-        Caption: 'Gene expression violin plot'
+        tab: "Per group"
+        Caption: "Composition plot colored by grouping condition (split by cluster, downsampled)"
 
   xpr_per_cell_plot_png:
     type:
@@ -351,13 +389,46 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/xpr_per_cell_plot_png
-    label: "UMAP, gene expression"
+    label: "UMAP colored by gene expression (per gene)"
     doc: |
-      UMAP, gene expression
-    'sd:visualPlugins':
+      UMAP colored by gene expression.
+      All genes of interest.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Genes of interest'
-        Caption: 'UMAP, gene expression'
+        tab: "Gene expression"
+        Caption: "UMAP colored by gene expression (per gene)"
+
+  xpr_avg_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/xpr_avg_res_plot_png
+    label: "Average gene expression"
+    doc: |
+      Average gene expression.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene expression"
+        Caption: "Average gene expression"
+
+  xpr_dnst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/xpr_dnst_res_plot_png
+    label: "Gene expression density (per gene)"
+    doc: |
+      Gene expression density.
+      All genes of interest.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene expression"
+        Caption: "Gene expression density (per gene)"
 
   xpr_htmp_res_plot_png:
     type:
@@ -365,13 +436,15 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/xpr_htmp_res_plot_png
-    label: "Gene expression heatmap"
+    label: "Gene expression heatmap (top gene markers)"
     doc: |
-      Gene expression heatmap
-    'sd:visualPlugins':
+      Gene expression heatmap.
+      Top gene markers.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Heatmap'
-        Caption: 'Gene expression heatmap'
+        tab: "Gene expression heatmap"
+        Caption: "Gene expression heatmap (top gene markers)"
 
   xpr_htmp_res_tsv:
     type:
@@ -379,37 +452,37 @@ outputs:
     - type: array
       items: File
     outputSource: sc_rna_cluster/xpr_htmp_res_tsv
-    label: "Markers from gene expression heatmap"
+    label: "Gene expression heatmap (top gene markers)"
     doc: |
-      Gene markers used for gene
-      expression heatmap
+      Gene expression heatmap.
+      Top gene markers.
+      TSV format.
 
   gene_markers_tsv:
     type: File?
     outputSource: sc_rna_cluster/gene_markers_tsv
-    label: "Gene markers per cluster for all resolutions"
+    label: "Gene markers"
     doc: |
-      Gene markers per cluster for
-      all resolutions
-    'sd:visualPlugins':
+      Gene markers.
+      TSV format.
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'Gene markers'
-        Title: 'Gene markers per cluster for all resolutions'
+        tab: "Gene markers"
+        Title: "Gene markers"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: sc_rna_cluster/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: sc_rna_cluster/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -418,38 +491,40 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: sc_rna_cluster/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   seurat_data_scope:
     type: File?
     outputSource: sc_rna_cluster/seurat_data_scope
-    label: "Processed Seurat data in SCope compatible loom format"
+    label: "Seurat object in SCope compatible loom format"
     doc: |
-      Processed Seurat data in SCope compatible loom format
+      Seurat object.
+      SCope compatible.
+      Loom format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   sc_rna_cluster_stdout_log:
     type: File
     outputSource: sc_rna_cluster/stdout_log
-    label: "stdout log generated by sc_rna_cluster step"
+    label: "Output log"
     doc: |
-      stdout log generated by sc_rna_cluster step
+      Stdout log from the sc_rna_cluster step.
 
   sc_rna_cluster_stderr_log:
     type: File
     outputSource: sc_rna_cluster/stderr_log
-    label: "stderr log generated by sc_rna_cluster step"
+    label: "Error log"
     doc: |
-      stderr log generated by sc_rna_cluster step
+      Stderr log from the sc_rna_cluster step.
 
 
 steps:
@@ -495,35 +570,41 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - umap_res_plot_png
-    - slh_res_plot_png
-    - umap_spl_idnt_res_plot_png
+    - umap_gr_ph_spl_idnt_plot_png
+    - cmp_gr_ph_spl_idnt_plot_png
+    - umap_gr_ph_spl_cnd_plot_png
+    - cmp_gr_ph_spl_cnd_plot_png
+    - umap_gr_clst_res_plot_png
+    - slh_gr_clst_res_plot_png
+    - umap_gr_clst_spl_idnt_res_plot_png
     - cmp_gr_clst_spl_idnt_res_plot_png
     - cmp_gr_idnt_spl_clst_res_plot_png
-    - umap_spl_cnd_res_plot_png
+    - umap_gr_clst_spl_ph_res_plot_png
+    - cmp_gr_ph_spl_clst_res_plot_png
+    - umap_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_cnd_spl_clst_res_plot_png
-    - umap_spl_ph_res_plot_png
-    - cmp_gr_ph_spl_idnt_plot_png
-    - cmp_gr_ph_spl_clst_res_plot_png
-    - xpr_avg_res_plot_png
     - xpr_per_cell_plot_png
+    - xpr_avg_res_plot_png
     - xpr_dnst_res_plot_png
     - xpr_htmp_res_plot_png
-    - umap_res_plot_pdf
-    - slh_res_plot_pdf
-    - umap_spl_idnt_res_plot_pdf
+    - umap_gr_ph_spl_idnt_plot_pdf
+    - cmp_gr_ph_spl_idnt_plot_pdf
+    - umap_gr_ph_spl_cnd_plot_pdf
+    - cmp_gr_ph_spl_cnd_plot_pdf
+    - umap_gr_clst_res_plot_pdf
+    - slh_gr_clst_res_plot_pdf
+    - umap_gr_clst_spl_idnt_res_plot_pdf
     - cmp_gr_clst_spl_idnt_res_plot_pdf
     - cmp_gr_idnt_spl_clst_res_plot_pdf
-    - umap_spl_cnd_res_plot_pdf
+    - umap_gr_clst_spl_ph_res_plot_pdf
+    - cmp_gr_ph_spl_clst_res_plot_pdf
+    - umap_gr_clst_spl_cnd_res_plot_pdf
     - cmp_gr_clst_spl_cnd_res_plot_pdf
     - cmp_gr_cnd_spl_clst_res_plot_pdf
-    - umap_spl_ph_res_plot_pdf
-    - cmp_gr_ph_spl_idnt_plot_pdf
-    - cmp_gr_ph_spl_clst_res_plot_pdf
-    - xpr_avg_res_plot_pdf
     - xpr_per_cell_plot_pdf
     - xpr_per_cell_sgnl_plot_pdf
+    - xpr_avg_res_plot_pdf
     - xpr_dnst_res_plot_pdf
     - xpr_htmp_res_plot_pdf
     - xpr_htmp_res_tsv
@@ -540,20 +621,23 @@ steps:
     in:
       input_files:
         source:
-        - sc_rna_cluster/umap_res_plot_pdf
-        - sc_rna_cluster/slh_res_plot_pdf
-        - sc_rna_cluster/umap_spl_idnt_res_plot_pdf
+        - sc_rna_cluster/umap_gr_ph_spl_idnt_plot_pdf
+        - sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_pdf
+        - sc_rna_cluster/umap_gr_ph_spl_cnd_plot_pdf
+        - sc_rna_cluster/cmp_gr_ph_spl_cnd_plot_pdf
+        - sc_rna_cluster/umap_gr_clst_res_plot_pdf
+        - sc_rna_cluster/slh_gr_clst_res_plot_pdf
+        - sc_rna_cluster/umap_gr_clst_spl_idnt_res_plot_pdf
         - sc_rna_cluster/cmp_gr_clst_spl_idnt_res_plot_pdf
         - sc_rna_cluster/cmp_gr_idnt_spl_clst_res_plot_pdf
-        - sc_rna_cluster/umap_spl_cnd_res_plot_pdf
+        - sc_rna_cluster/umap_gr_clst_spl_ph_res_plot_pdf
+        - sc_rna_cluster/cmp_gr_ph_spl_clst_res_plot_pdf
+        - sc_rna_cluster/umap_gr_clst_spl_cnd_res_plot_pdf
         - sc_rna_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
         - sc_rna_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
-        - sc_rna_cluster/umap_spl_ph_res_plot_pdf
-        - sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_pdf
-        - sc_rna_cluster/cmp_gr_ph_spl_clst_res_plot_pdf
-        - sc_rna_cluster/xpr_avg_res_plot_pdf
         - sc_rna_cluster/xpr_per_cell_plot_pdf
         - sc_rna_cluster/xpr_per_cell_sgnl_plot_pdf
+        - sc_rna_cluster/xpr_avg_res_plot_pdf
         - sc_rna_cluster/xpr_dnst_res_plot_pdf
         - sc_rna_cluster/xpr_htmp_res_plot_pdf
         valueFrom: $(self.flat().filter(n => n))

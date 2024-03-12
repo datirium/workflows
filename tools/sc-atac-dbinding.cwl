@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -211,7 +211,7 @@ inputs:
       prefix: "--padj"
     doc: |
       In the exploratory visualization part of the analysis
-      output only differentially bound peaks with adjusted
+      output only differentially accessible regions with adjusted
       P-value not bigger than this value. Default: 0.05
 
   minimum_logfc:
@@ -220,7 +220,7 @@ inputs:
       prefix: "--logfc"
     doc: |
       In the exploratory visualization part of the analysis
-      output only differentially bound peaks with log2 Fold
+      output only differentially accessible regions with log2 Fold
       Change not smaller than this value. Default: 1.0
 
   export_pdf_plots:
@@ -291,6 +291,14 @@ inputs:
       Number of cores/cpus to use.
       Default: 1
 
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
+
 
 outputs:
 
@@ -302,7 +310,7 @@ outputs:
       Cells UMAP split by selected criteria,
       optionally subsetted to the specific
       group (rnaumap dim. reduction).
-      PNG format
+      PNG format.
 
   umap_rd_rnaumap_plot_pdf:
     type: File?
@@ -312,7 +320,7 @@ outputs:
       Cells UMAP split by selected criteria,
       optionally subsetted to the specific
       group (rnaumap dim. reduction).
-      PDF format
+      PDF format.
 
   umap_rd_atacumap_plot_png:
     type: File?
@@ -322,7 +330,7 @@ outputs:
       Cells UMAP split by selected criteria,
       optionally subsetted to the specific
       group (atacumap dim. reduction).
-      PNG format
+      PNG format.
 
   umap_rd_atacumap_plot_pdf:
     type: File?
@@ -332,7 +340,7 @@ outputs:
       Cells UMAP split by selected criteria,
       optionally subsetted to the specific
       group (atacumap dim. reduction).
-      PDF format
+      PDF format.
 
   umap_rd_wnnumap_plot_png:
     type: File?
@@ -342,7 +350,7 @@ outputs:
       Cells UMAP split by selected criteria,
       optionally subsetted to the specific
       group (wnnumap dim. reduction).
-      PNG format
+      PNG format.
 
   umap_rd_wnnumap_plot_pdf:
     type: File?
@@ -352,7 +360,7 @@ outputs:
       Cells UMAP split by selected criteria,
       optionally subsetted to the specific
       group (wnnumap dim. reduction).
-      PDF format
+      PDF format.
 
   seurat_peaks_bigbed_file:
     type: File?
@@ -468,24 +476,24 @@ outputs:
     outputBinding:
       glob: "*_db_sites.tsv"
     doc: |
-      Not filtered differentially bound sites
-      in TSV format
+      Not filtered differentially accessible regions.
+      TSV format.
 
   dbnd_vlcn_plot_png:
     type: File?
     outputBinding:
       glob: "*_dbnd_vlcn.png"
     doc: |
-      Volcano plot of differentially bound sites.
-      PNG format
+      Volcano plot of differentially accessible regions.
+      PNG format.
 
   dbnd_vlcn_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_dbnd_vlcn.pdf"
     doc: |
-      Volcano plot of differentially bound sites.
-      PDF format
+      Volcano plot of differentially accessible regions.
+      PDF format.
 
   first_enrch_bigbed_file:
     type: File?
@@ -547,9 +555,9 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell ATAC-Seq Differential Binding Analysis"
-s:name: "Single-cell ATAC-Seq Differential Binding Analysis"
-s:alternateName: "Identifies differential bound sites between two groups of cells"
+label: "Single-Cell ATAC-Seq Differential Accessibility Analysis"
+s:name: "Single-Cell ATAC-Seq Differential Accessibility Analysis"
+s:alternateName: "Identifies differentially accessible regions between two groups of cells"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-atac-dbinding.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -587,27 +595,33 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Differential Binding Analysis
+  Single-Cell ATAC-Seq Differential Accessibility Analysis
 
-  Identifies differential bound sites between two groups of cells
+  Identifies differentially accessible regions between two groups of cells
   --tmpdir parameter is not exposed as input.
 
 
 s:about: |
-  usage: sc_atac_dbinding.R [-h] --query QUERY --fragments FRAGMENTS
-                            [--metadata METADATA] [--barcodes BARCODES]
-                            [--groupby GROUPBY] [--subset [SUBSET [SUBSET ...]]]
-                            --splitby SPLITBY --first FIRST --second SECOND
-                            [--test {negative-binomial,poisson,logistic-regression,mast,manorm2}]
-                            [--genome {hs,mm}] [--qvalue QVALUE]
-                            [--minpeakgap MINPEAKGAP] [--binsize BINSIZE]
-                            [--maxpeaks MAXPEAKS] [--blacklist BLACKLIST]
-                            [--padj PADJ] [--logfc LOGFC] [--pdf] [--verbose]
-                            [--tmpdir TMPDIR] [--output OUTPUT]
-                            [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                            [--cpus CPUS] [--memory MEMORY]
+  usage: /usr/local/bin/sc_atac_dbinding.R [-h] --query QUERY --fragments
+                                          FRAGMENTS [--metadata METADATA]
+                                          [--barcodes BARCODES]
+                                          [--groupby GROUPBY]
+                                          [--subset [SUBSET [SUBSET ...]]]
+                                          --splitby SPLITBY --first FIRST
+                                          --second SECOND
+                                          [--test {negative-binomial,poisson,logistic-regression,mast,manorm2}]
+                                          [--genome {hs,mm}] [--qvalue QVALUE]
+                                          [--minpeakgap MINPEAKGAP]
+                                          [--binsize BINSIZE]
+                                          [--maxpeaks MAXPEAKS]
+                                          [--blacklist BLACKLIST] [--padj PADJ]
+                                          [--logfc LOGFC] [--pdf] [--verbose]
+                                          [--tmpdir TMPDIR] [--output OUTPUT]
+                                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                          [--cpus CPUS] [--memory MEMORY]
+                                          [--seed SEED]
 
-  Single-cell ATAC-Seq Differential Binding Analysis
+  Single-Cell ATAC-Seq Differential Accessibility Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -708,3 +722,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
+    --seed SEED           Seed number for random values. Default: 42

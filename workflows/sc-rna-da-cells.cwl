@@ -14,7 +14,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
@@ -41,8 +41,8 @@ inputs:
       expression information stored in the RNA assay and selected with the --reduction
       parameter dimensionality reduction. Additionally, 'rnaumap', and/or 'atacumap',
       and/or 'wnnumap' dimensionality reductions should be present.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   splitby:
     type: string
@@ -123,7 +123,7 @@ inputs:
       Color theme for all generated plots. One of gray, bw, linedraw, light,
       dark, minimal, classic, void.
       Default: classic
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -143,8 +143,8 @@ inputs:
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
-    'sd:layout':
+      Default: 6
+    "sd:layout":
       advanced: true
 
 
@@ -158,7 +158,7 @@ outputs:
       DA scores random permutations plot for second
       vs first biological conditions comparison.
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Overall'
         Caption: 'DA scores random permutations plot'
@@ -173,7 +173,7 @@ outputs:
     doc: |
       Clustered DA cells subpopulations UMAP (rnaumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Overall'
         Caption: 'Clustered DA cells subpopulations RNA UMAP'
@@ -188,7 +188,7 @@ outputs:
     doc: |
       Clustered DA cells subpopulations UMAP (atacumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Overall'
         Caption: 'Clustered DA cells subpopulations ATAC UMAP'
@@ -203,7 +203,7 @@ outputs:
     doc: |
       Clustered DA cells subpopulations UMAP (wnnumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Overall'
         Caption: 'Clustered DA cells subpopulations WNN UMAP'
@@ -219,9 +219,9 @@ outputs:
       Split by grouping condition clustered DA cells subpopulations UMAP
       (rnaumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
+        tab: "Per group"
         Caption: 'Split by grouping condition clustered DA cells subpopulations RNA UMAP'
 
   umap_spl_cnd_rd_atacumap_res_plot_png:
@@ -235,9 +235,9 @@ outputs:
       Split by grouping condition clustered DA cells subpopulations UMAP
       (atacumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
+        tab: "Per group"
         Caption: 'Split by grouping condition clustered DA cells subpopulations ATAC UMAP'
 
   umap_spl_cnd_rd_wnnumap_res_plot_png:
@@ -251,9 +251,9 @@ outputs:
       Split by grouping condition clustered DA cells subpopulations UMAP
       (wnnumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
+        tab: "Per group"
         Caption: 'Split by grouping condition clustered DA cells subpopulations WNN UMAP'
 
   umap_spl_idnt_rd_rnaumap_da_scr_plot_png:
@@ -264,9 +264,9 @@ outputs:
       Split by dataset cells UMAP with DA scores for second vs first
       biological conditions comparison (rnaumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
+        tab: "Per dataset"
         Caption: 'Split by dataset cells RNA UMAP with DA scores'
 
   umap_spl_idnt_rd_atacumap_da_scr_plot_png:
@@ -277,9 +277,9 @@ outputs:
       Split by dataset cells UMAP with DA scores for second vs first
       biological conditions comparison (atacumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
+        tab: "Per dataset"
         Caption: 'Split by dataset cells ATAC UMAP with DA scores'
 
   umap_spl_idnt_rd_wnnumap_da_scr_plot_png:
@@ -290,57 +290,57 @@ outputs:
       Split by dataset cells UMAP with DA scores for second vs first
       biological conditions comparison (wnnumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
+        tab: "Per dataset"
         Caption: 'Split by dataset cells WNN UMAP with DA scores'
 
   ucsc_cb_html_data:
     type: Directory
     outputSource: da_cells/ucsc_cb_html_data
-    label: "Directory with UCSC Cellbrowser html data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File
     outputSource: da_cells/ucsc_cb_html_file
-    label: "Open in UCSC Cell Browser"
+    label: "UCSC Cell Browser"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
-    'sd:visualPlugins':
+      UCSC Cell Browser html index.
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   seurat_data_rds:
     type: File
     outputSource: da_cells/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   da_cells_stdout_log:
     type: File
     outputSource: da_cells/stdout_log
-    label: "stdout log generated by da_cells step"
+    label: "Output log"
     doc: |
-      stdout log generated by da_cells step
+      Stdout log from the da_cells step.
 
   da_cells_stderr_log:
     type: File
     outputSource: da_cells/stderr_log
-    label: "stderr log generated by da_cells step"
+    label: "Error log"
     doc: |
-      stderr log generated by da_cells step
+      Stderr log from the da_cells step.
 
 
 steps:
@@ -438,7 +438,7 @@ $schemas:
 
 label: "Single-Cell Differential Abundance Analysis"
 s:name: "Single-Cell Differential Abundance Analysis"
-s:alternateName: "Compares the composition of cell types between two tested conditions"
+s:alternateName: "Detects cell subpopulations with differential abundance between datasets split by biological condition"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-da-cells.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -251,7 +251,7 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save Seurat data to h5ad file.
+      Save raw counts from the ATAC assay to h5ad file.
       Default: false
 
   export_ucsc_cb:
@@ -293,6 +293,14 @@ inputs:
       Number of cores/cpus to use.
       Default: 1
 
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
+
 
 outputs:
 
@@ -302,7 +310,7 @@ outputs:
       glob: "*_qc_dim_corr.png"
     doc: |
       Correlation between QC metrics and LSI components.
-      PNG format
+      PNG format.
 
   qc_dim_corr_plot_pdf:
     type: File?
@@ -310,7 +318,7 @@ outputs:
       glob: "*_qc_dim_corr.pdf"
     doc: |
       Correlation between QC metrics and LSI components.
-      PDF format
+      PDF format.
 
   umap_qc_mtrcs_plot_png:
     type: File?
@@ -318,7 +326,7 @@ outputs:
       glob: "*_umap_qc_mtrcs.png"
     doc: |
       UMAP, QC metrics.
-      PNG format
+      PNG format.
 
   umap_qc_mtrcs_plot_pdf:
     type: File?
@@ -326,7 +334,7 @@ outputs:
       glob: "*_umap_qc_mtrcs.pdf"
     doc: |
       UMAP, QC metrics.
-      PDF format
+      PDF format.
 
   umap_plot_png:
     type: File?
@@ -334,7 +342,7 @@ outputs:
       glob: "*_umap.png"
     doc: |
       UMAP, colored by dataset.
-      PNG format
+      PNG format.
 
   umap_plot_pdf:
     type: File?
@@ -342,7 +350,7 @@ outputs:
       glob: "*_umap.pdf"
     doc: |
       UMAP, colored by dataset.
-      PDF format
+      PDF format.
 
   umap_spl_idnt_plot_png:
     type: File?
@@ -350,7 +358,7 @@ outputs:
       glob: "*_umap_spl_idnt.png"
     doc: |
       UMAP, split by dataset.
-      PNG format
+      PNG format.
 
   umap_spl_idnt_plot_pdf:
     type: File?
@@ -358,7 +366,7 @@ outputs:
       glob: "*_umap_spl_idnt.pdf"
     doc: |
       UMAP, split by dataset.
-      PDF format
+      PDF format.
 
   umap_spl_cnd_plot_png:
     type: File?
@@ -367,7 +375,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by grouping condition.
-      PNG format
+      PNG format.
 
   umap_spl_cnd_plot_pdf:
     type: File?
@@ -376,7 +384,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by grouping condition.
-      PDF format
+      PDF format.
 
   umap_spl_frgm_plot_png:
     type: File?
@@ -385,7 +393,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by ATAC fragments in peaks per cell.
-      PNG format
+      PNG format.
 
   umap_spl_frgm_plot_pdf:
     type: File?
@@ -394,7 +402,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by ATAC fragments in peaks per cell.
-      PDF format
+      PDF format.
 
   umap_spl_peak_plot_png:
     type: File?
@@ -403,7 +411,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by peaks per cell.
-      PNG format
+      PNG format.
 
   umap_spl_peak_plot_pdf:
     type: File?
@@ -412,7 +420,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by peaks per cell.
-      PDF format
+      PDF format.
 
   umap_spl_tss_plot_png:
     type: File?
@@ -421,7 +429,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by TSS enrichment score.
-      PNG format
+      PNG format.
 
   umap_spl_tss_plot_pdf:
     type: File?
@@ -430,7 +438,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by TSS enrichment score.
-      PDF format
+      PDF format.
 
   umap_spl_ncls_plot_png:
     type: File?
@@ -439,7 +447,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by nucleosome signal.
-      PNG format
+      PNG format.
 
   umap_spl_ncls_plot_pdf:
     type: File?
@@ -448,7 +456,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by nucleosome signal.
-      PDF format
+      PDF format.
 
   umap_spl_frip_plot_png:
     type: File?
@@ -457,7 +465,7 @@ outputs:
     doc: |
       UMAP, colored by dataset,
       split by FRiP.
-      PNG format
+      PNG format.
 
   umap_spl_frip_plot_pdf:
     type: File?
@@ -466,7 +474,7 @@ outputs:
     doc: |
       UMAP, colored by dataset,
       split by FRiP.
-      PDF format
+      PDF format.
 
   umap_spl_blck_plot_png:
     type: File?
@@ -475,7 +483,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by blacklist fraction.
-      PNG format
+      PNG format.
 
   umap_spl_blck_plot_pdf:
     type: File?
@@ -484,7 +492,7 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by blacklist fraction.
-      PDF format
+      PDF format.
 
   umap_gr_cnd_spl_frgm_plot_png:
     type: File?
@@ -493,7 +501,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by ATAC fragments in peaks per cell.
-      PNG format
+      PNG format.
 
   umap_gr_cnd_spl_frgm_plot_pdf:
     type: File?
@@ -502,7 +510,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by ATAC fragments in peaks per cell.
-      PDF format
+      PDF format.
 
   umap_gr_cnd_spl_peak_plot_png:
     type: File?
@@ -511,7 +519,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by peaks per cell.
-      PNG format
+      PNG format.
 
   umap_gr_cnd_spl_peak_plot_pdf:
     type: File?
@@ -520,7 +528,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by peaks per cell.
-      PDF format
+      PDF format.
 
   umap_gr_cnd_spl_tss_plot_png:
     type: File?
@@ -529,7 +537,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by TSS enrichment score.
-      PNG format
+      PNG format.
 
   umap_gr_cnd_spl_tss_plot_pdf:
     type: File?
@@ -538,7 +546,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by TSS enrichment score.
-      PDF format
+      PDF format.
 
   umap_gr_cnd_spl_ncls_plot_png:
     type: File?
@@ -547,7 +555,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by nucleosome signal.
-      PNG format
+      PNG format.
 
   umap_gr_cnd_spl_ncls_plot_pdf:
     type: File?
@@ -556,7 +564,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by nucleosome signal.
-      PDF format
+      PDF format.
 
   umap_gr_cnd_spl_frip_plot_png:
     type: File?
@@ -565,7 +573,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by FRiP.
-      PNG format
+      PNG format.
 
   umap_gr_cnd_spl_frip_plot_pdf:
     type: File?
@@ -574,7 +582,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by FRiP.
-      PDF format
+      PDF format.
 
   umap_gr_cnd_spl_blck_plot_png:
     type: File?
@@ -583,7 +591,7 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by blacklist fraction.
-      PNG format
+      PNG format.
 
   umap_gr_cnd_spl_blck_plot_pdf:
     type: File?
@@ -592,52 +600,52 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by blacklist fraction.
-      PDF format
+      PDF format.
 
   ucsc_cb_config_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser
-      configuration data.
+      UCSC Cell Browser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser
-      html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory
-      with UCSC Cellbrowser html data.
+      UCSC Cell Browser html index.
 
   seurat_data_rds:
     type: File
     outputBinding:
       glob: "*_data.rds"
     doc: |
-      Reduced Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   seurat_data_h5seurat:
     type: File?
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Reduced Seurat data in h5seurat format
+      Seurat object.
+      h5Seurat format.
 
   seurat_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_data.h5ad"
+      glob: "*_counts.h5ad"
     doc: |
-      Reduced Seurat data in h5ad format
+      Seurat object.
+      H5AD format.
 
   stdout_log:
     type: stdout
@@ -659,8 +667,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell ATAC-Seq Dimensionality Reduction Analysis"
-s:name: "Single-cell ATAC-Seq Dimensionality Reduction Analysis"
+label: "Single-Cell ATAC-Seq Dimensionality Reduction Analysis"
+s:name: "Single-Cell ATAC-Seq Dimensionality Reduction Analysis"
 s:alternateName: "Integrates multiple single-cell ATAC-Seq datasets, reduces dimensionality using LSI"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-atac-reduce.cwl
@@ -699,13 +707,13 @@ s:creator:
 
 
 doc: |
-  Single-cell ATAC-Seq Dimensionality Reduction Analysis
+  Single-Cell ATAC-Seq Dimensionality Reduction Analysis
 
   Integrates multiple single-cell ATAC-Seq datasets, reduces dimensionality using LSI.
 
 
 s:about: |
-  usage: sc_atac_reduce.R [-h] --query QUERY
+  usage: /usr/local/bin/sc_atac_reduce.R [-h] --query QUERY
                                         [--metadata METADATA]
                                         [--barcodes BARCODES]
                                         [--norm {log-tfidf,tf-logidf,logtf-logidf,idf}]
@@ -722,8 +730,9 @@ s:about: |
                                         [--h5ad] [--cbbuild] [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
+                                        [--seed SEED]
 
-  Single-cell ATAC-Seq Dimensionality Reduction Analysis
+  Single-Cell ATAC-Seq Dimensionality Reduction Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -800,7 +809,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save Seurat data to h5ad file. Default: false
+    --h5ad                Save raw counts from the ATAC assay to h5ad file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
@@ -808,3 +818,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
+    --seed SEED           Seed number for random values. Default: 42
