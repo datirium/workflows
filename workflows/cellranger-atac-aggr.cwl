@@ -18,9 +18,9 @@ requirements:
 
 inputs:
 
-  alias_:
+  alias:
     type: string
-    label: "Experiment short name/alias_"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -31,7 +31,7 @@ inputs:
       Array of GEM well identifiers to be used for labeling purposes only.
       If not provided use rootnames of files from the barcode_metrics_report
       input
-    "sd:upstreamSource": "sc_atacseq_sample/alias_"
+    "sd:upstreamSource": "sc_atacseq_sample/alias"
     "sd:localLabel": true
 
   fragments_file_from_count:
