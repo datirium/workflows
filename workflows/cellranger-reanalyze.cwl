@@ -9,7 +9,7 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   sc_experiment:
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
@@ -19,7 +19,7 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -27,8 +27,8 @@ inputs:
     type: File
     label: "Single-cell Experiment"
     doc: "Filtered feature-barcode matrices in HDF5 format from cellranger count/multi"
-    'sd:upstreamSource': "sc_experiment/filtered_feature_bc_matrix_h5"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_experiment/filtered_feature_bc_matrix_h5"
+    "sd:localLabel": true
 
   selected_barcodes:
     type: File?
@@ -66,7 +66,7 @@ inputs:
       Use this if the number of cells estimated by Cell Ranger is not consistent with the
       barcode rank plot. If specifying a value that exceeds the original cell count, you
       must use the raw_gene_bc_matrices_h5.h5
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   num_analysis_bcs:
@@ -78,7 +78,7 @@ inputs:
       want to improve performance or simulate results from lower cell counts. Cannot be
       set higher than the available number of cells.
       Default: null
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   num_pca_bcs:
@@ -91,7 +91,7 @@ inputs:
       will still reflect all the data. Try reducing this parameter if your analysis is running out
       of memory. Cannot be set higher than the available number of cells.
       Default: null
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   num_pca_genes:
@@ -104,7 +104,7 @@ inputs:
       your analysis is running out of memory. Cannot be set higher than the number of genes
       in the reference transcriptome.
       Default: null
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   num_principal_comps:
@@ -116,7 +116,7 @@ inputs:
       to be called. The default value is 100 when the chemistry batch correction is enabled.
       Set from 10 to 100, depending on the number of cell populations/clusters you expect to see.
       Default: 10
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   cbc_knn:
@@ -128,7 +128,7 @@ inputs:
       Setting this too high will increase runtime and may cause out of memory error.
       See Chemistry Batch Correction page for more details. Ranges from 5 to 20.
       Default: 10
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   cbc_alpha:
@@ -140,7 +140,7 @@ inputs:
       which is used to determine if the batch pair will be merged. See Chemistry
       Batch Correction page for more details. Ranges from 0.05 to 0.5.
       Default: 0.1
-    'sd:layout':
+    "sd:layout":
       advanced: true
       
   cbc_sigma:
@@ -152,7 +152,7 @@ inputs:
       vector for each cell. See Chemistry Batch Correction page for more details. Ranges
       from 10 to 500.
       Default: 150
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   cbc_realign_panorama:
@@ -164,7 +164,7 @@ inputs:
       this to True will usually improve the performance, but will also increase runtime and
       memory usage. See Chemistry Batch Correction page for more details. One of true or false.
       Default: false
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   graphclust_neighbors:
@@ -177,7 +177,7 @@ inputs:
       value and that determined by neighbor_a and neighbor_b. Set this value to zero to use those
       values instead. Ranged from 10 to 500, depending on desired granularity.
       Default: 0
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   neighbor_a:
@@ -189,7 +189,7 @@ inputs:
       k = neighbor_a + neighbor_b * log10(n_cells). The actual number of neighbors used is the maximum
       of this value and graphclust_neighbors. Determines how clustering granularity scales with cell count.
       Default: -230.0
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   neighbor_b:
@@ -201,7 +201,7 @@ inputs:
       k = neighbor_a + neighbor_b * log10(n_cells). The actual number of neighbors used is the maximum of
       this value and graphclust_neighbors. Determines how clustering granularity scales with cell count.
       Default: 120.0
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   max_clusters:
@@ -212,7 +212,7 @@ inputs:
       Compute K-means clustering using K values of 2 to N. Setting this too high may cause spurious clusters
       to be called. Ranges from 10 to 50, depending on the number of cell populations / clusters you expect to see.
       Default: 10
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_input_pcs:
@@ -225,7 +225,7 @@ inputs:
       is faster and/or the output looks better when using fewer PCs. Cannot be set higher than
       the num_principal_comps parameter.
       Default: null
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_perplexity:
@@ -236,7 +236,7 @@ inputs:
       TSNE perplexity parameter (see the TSNE FAQ for more details). When analyzing 100k+ cells, increasing this
       parameter may improve TSNE results, but the algorithm will be slower. Ranges from 30 to 50.
       Default: 30
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_theta:
@@ -248,7 +248,7 @@ inputs:
       (and vice versa). The runtime and memory performance of TSNE will increase dramatically if you set this below 0.25.
       Ranges from 0 to 1.
       Default: 0.5
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_max_dims:
@@ -259,7 +259,7 @@ inputs:
       Maximum number of TSNE output dimensions. Set this to 3 to produce both 2D and 3D TSNE projections
       (note: runtime will increase significantly). Ranges from 2 to 3.
       Default: 2
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_max_iter:
@@ -270,7 +270,7 @@ inputs:
       Number of total TSNE iterations. Try increasing this if TSNE results do not look good on larger numbers
       of cells. Runtime increases linearly with number of iterations. Ranges from 1000 to 10000.
       Default: 1000
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_stop_lying_iter:
@@ -281,7 +281,7 @@ inputs:
       Iteration at which TSNE learning rate is reduced. Try increasing this if TSNE results do not look good
       on larger numbers of cells. Cannot be set higher than tsne_max_iter.
       Default: 250
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   tsne_mom_switch_iter:
@@ -292,7 +292,7 @@ inputs:
       Iteration at which TSNE momentum is reduced. Try increasing this if TSNE results do not look good on
       larger numbers of cells. Cannot be set higher than tsne_max_iter. Cannot be set higher than tsne_max_iter.
       Default: 250
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   umap_input_pcs:
@@ -305,7 +305,7 @@ inputs:
       UMAP is faster and/or the output looks better when using fewer PCs. Cannot be set higher than the
       num_principal_comps parameter.
       Default: null
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   umap_n_neighbors:
@@ -317,7 +317,7 @@ inputs:
       Larger values will usually result in more global structure at the loss of detailed local structure.
       Ranges from 5 to 50.
       Default: 30
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   umap_max_dims:
@@ -328,7 +328,7 @@ inputs:
       Maximum number of UMAP output dimensions. Set this to 3 to produce both 2D and 3D UMAP projections.
       Ranges from 2 to 3.
       Default: 2
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   umap_min_dist:
@@ -340,7 +340,7 @@ inputs:
       points are more evenly distributed, while smaller values make the embedding more accurately with
       regard to the local structure. Ranges from 0.001 to 0.5.
       Default: 0.3
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   umap_metric:
@@ -374,7 +374,7 @@ inputs:
     doc: |
       Determines how the distance is computed in the input space.
       Default: "correlation"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   random_seed:
@@ -386,15 +386,15 @@ inputs:
       different results. If the TSNE or UMAP results don't look good, try running multiple times with
       different seeds and pick the TSNE or UMAP that looks best.
       Default: 0
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
     type: int?
-    default: 4
+    default: 6
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   memory_limit:
@@ -402,7 +402,7 @@ inputs:
     default: 30
     label: "Maximum memory used (GB)"
     doc: "Maximum memory used (GB). The same will be applied to virtual memory"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
 
@@ -422,9 +422,9 @@ outputs:
     label: "Reanalyzed run summary metrics and charts in HTML format"
     doc: |
       Reanalyzed run summary metrics and charts in HTML format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   filtered_feature_bc_matrix_folder:
@@ -469,9 +469,9 @@ outputs:
     label: "CellBrowser formatted Cellranger report"
     doc: |
       CellBrowser formatted Cellranger report
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   reanalyze_stdout_log:

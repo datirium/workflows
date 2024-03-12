@@ -9,7 +9,7 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   sc_experiment:
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
@@ -19,7 +19,7 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -33,18 +33,18 @@ inputs:
       that produces gene expression and,
       optionally, V(D)J contigs data, from a
       single 10x Genomics library
-    'sd:upstreamSource': "sc_experiment/molecule_info_h5"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_experiment/molecule_info_h5"
+    "sd:localLabel": true
 
   filtered_data_folder:
     type:
     - "null"
     - Directory[]
-    'sd:upstreamSource': "sc_experiment/filtered_data_folder"
+    "sd:upstreamSource": "sc_experiment/filtered_data_folder"
 
   gem_well_labels:
     type: string[]
-    'sd:upstreamSource': "sc_experiment/alias"
+    "sd:upstreamSource": "sc_experiment/alias"
 
   normalization_mode:
     type:
@@ -56,7 +56,7 @@ inputs:
     default: "none"
     label: "Library depth normalization mode"
     doc: "Library depth normalization mode"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   clonotype_grouping:
@@ -74,15 +74,15 @@ inputs:
       When cellranger aggr is called with cellranger multi outputs, there are three
       ways it can process the datasets depending on the combination of donor and
       origin values
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
     type: int?
-    default: 4
+    default: 6
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   memory_limit:
@@ -90,7 +90,7 @@ inputs:
     default: 30
     label: "Maximum memory used (GB)"
     doc: "Maximum memory used (GB). The same will be applied to virtual memory"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
 
@@ -101,9 +101,9 @@ outputs:
     outputSource: aggregate_counts/web_summary_report
     label: "Aggregated run summary metrics and charts in HTML format"
     doc: "Aggregated run summary metrics and charts in HTML format"
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   metrics_summary_report_json:
@@ -159,10 +159,10 @@ outputs:
     outputSource: aggregate_counts/clonotypes_csv
     label: "CSV file with high-level descriptions of each clonotype"
     doc: "CSV file with high-level descriptions of each clonotype"
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'V(D)J clonotypes'
-        Title: 'V(D)J clonotypes'
+        tab: "V(D)J clonotypes"
+        Title: "V(D)J clonotypes"
 
   consensus_sequences_fasta:
     type: File?
@@ -205,9 +205,9 @@ outputs:
     outputSource: cellbrowser_build/index_html_file
     label: "CellBrowser formatted Cellranger report"
     doc: "CellBrowser formatted Cellranger report"
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   aggregate_counts_stdout_log:

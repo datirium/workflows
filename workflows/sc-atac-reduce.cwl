@@ -16,7 +16,7 @@ requirements:
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
@@ -39,8 +39,8 @@ inputs:
       multiome ATAC and RNA-Seq or just
       ATAC-Seq datasets filtered by QC metrics
       to include only high-quality cells.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   normalization_method:
     type:
@@ -168,7 +168,7 @@ inputs:
       used for datasets integration, scaling
       and dimensionality reduction.
       Default: 0 (use all available peaks)
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   export_ucsc_cb:
@@ -178,7 +178,7 @@ inputs:
     doc: |
       Export results into UCSC Cell Browser
       Default: false
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   color_theme:
@@ -214,13 +214,13 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
@@ -234,10 +234,10 @@ outputs:
     doc: |
       Correlation between QC metrics
       and LSI components
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'Correlation between QC metrics and LSI components'
+        tab: "QC"
+        Caption: "Correlation between QC metrics and LSI components"
 
   umap_qc_mtrcs_plot_png:
     type: File?
@@ -245,10 +245,10 @@ outputs:
     label: "UMAP, QC metrics"
     doc: |
       UMAP, QC metrics
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'UMAP, QC metrics'
+        tab: "QC"
+        Caption: "UMAP, QC metrics"
 
   umap_plot_png:
     type: File?
@@ -256,10 +256,10 @@ outputs:
     label: "UMAP, colored by dataset"
     doc: |
       UMAP, colored by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset"
 
   umap_spl_idnt_plot_png:
     type: File?
@@ -267,10 +267,10 @@ outputs:
     label: "UMAP, split by dataset"
     doc: |
       UMAP, split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, split by dataset'
+        tab: "Per dataset"
+        Caption: "UMAP, split by dataset"
 
   umap_spl_frgm_plot_png:
     type: File?
@@ -279,10 +279,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by ATAC fragments in peaks per cell.
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by ATAC fragments in peaks per cell'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by ATAC fragments in peaks per cell"
 
   umap_spl_peak_plot_png:
     type: File?
@@ -291,10 +291,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by peaks per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by peaks per cell'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by peaks per cell"
 
   umap_spl_tss_plot_png:
     type: File?
@@ -303,10 +303,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by TSS enrichment score
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by TSS enrichment score'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by TSS enrichment score"
 
   umap_spl_ncls_plot_png:
     type: File?
@@ -315,10 +315,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by nucleosome signal
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by nucleosome signal'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by nucleosome signal"
 
   umap_spl_frip_plot_png:
     type: File?
@@ -327,10 +327,10 @@ outputs:
     doc: |
       UMAP, colored by dataset,
       split by FRiP
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by FRiP'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by FRiP"
 
   umap_spl_blck_plot_png:
     type: File?
@@ -339,10 +339,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by blacklist fraction
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by blacklist fraction'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by blacklist fraction"
 
   umap_spl_cnd_plot_png:
     type: File?
@@ -351,10 +351,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split
       by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by dataset, split by grouping condition'
+        tab: "Per group"
+        Caption: "UMAP, colored by dataset, split by grouping condition"
 
   umap_gr_cnd_spl_frgm_plot_png:
     type: File?
@@ -363,10 +363,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by ATAC fragments in peaks per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by ATAC fragments in peaks per cell'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by ATAC fragments in peaks per cell"
 
   umap_gr_cnd_spl_peak_plot_png:
     type: File?
@@ -375,10 +375,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by peaks per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by peaks per cell'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by peaks per cell"
 
   umap_gr_cnd_spl_tss_plot_png:
     type: File?
@@ -387,10 +387,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by TSS enrichment score
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by TSS enrichment score'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by TSS enrichment score"
 
   umap_gr_cnd_spl_ncls_plot_png:
     type: File?
@@ -399,10 +399,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by nucleosome signal
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by nucleosome signal'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by nucleosome signal"
 
   umap_gr_cnd_spl_frip_plot_png:
     type: File?
@@ -411,10 +411,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by FRiP
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by FRiP'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by FRiP"
 
   umap_gr_cnd_spl_blck_plot_png:
     type: File?
@@ -423,25 +423,24 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by blacklist fraction
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by blacklist fraction'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by blacklist fraction"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: sc_atac_reduce/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: sc_atac_reduce/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -450,31 +449,31 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: sc_atac_reduce/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   sc_atac_reduce_stdout_log:
     type: File
     outputSource: sc_atac_reduce/stdout_log
-    label: "stdout log generated by sc_atac_reduce step"
+    label: "Output log"
     doc: |
-      stdout log generated by sc_atac_reduce step
+      Stdout log from the sc_atac_reduce step.
 
   sc_atac_reduce_stderr_log:
     type: File
     outputSource: sc_atac_reduce/stderr_log
-    label: "stderr log generated by sc_atac_reduce step"
+    label: "Error log"
     doc: |
-      stderr log generated by sc_atac_reduce step
+      Stderr log from the sc_atac_reduce step.
 
 
 steps:

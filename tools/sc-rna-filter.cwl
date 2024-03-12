@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -79,7 +79,8 @@ inputs:
     doc: |
       Include cells where at least this many genes are detected. If multiple values
       provided, each of them will be applied to the correspondent dataset from the
-      '--mex' input based on the '--identity' file.
+      '--mex' input based on the '--identity' file. Any 0 will be replaced with the
+      auto-estimated threshold (median - 2.5 * MAD) calculated per dataset.
       Default: 250 (applied to all datasets)
 
   maximum_genes:
@@ -92,7 +93,8 @@ inputs:
     doc: |
       Include cells with the number of genes not bigger than this value. If multiple
       values provided, each of them will be applied to the correspondent dataset from
-      the '--mex' input based on the '--identity' file.
+      the '--mex' input based on the '--identity' file. Any 0 will be replaced with the
+      auto-estimated threshold (median + 5 * MAD) calculated per dataset.
       Default: 5000 (applied to all datasets)
 
   minimum_umis:
@@ -105,7 +107,9 @@ inputs:
     doc: |
       Include cells where at least this many RNA reads are detected.
       If multiple values provided, each of them will be applied to the correspondent
-      dataset from the '--mex' input based on the '--identity' file.
+      dataset from the '--mex' input based on the '--identity' file. Any 0 will be
+      replaced with the auto-estimated threshold (median - 2.5 * MAD) calculated
+      per dataset.
       Default: 500 (applied to all datasets)
 
   minimum_novelty_score:
@@ -136,7 +140,9 @@ inputs:
       prefix: "--maxmt"
     doc: |
       Include cells with the percentage of RNA reads mapped to mitochondrial
-      genes not bigger than this value.
+      genes not bigger than this value. Set to 0 for using an auto-estimated
+      threshold equal to the maximum among (median + 2 * MAD) values
+      calculated per dataset.
       Default: 5 (applied to all datasets)
 
   remove_doublets:
@@ -216,7 +222,7 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save Seurat data to h5ad file.
+      Save raw counts from the RNA assay to h5ad file.
       Default: false
 
   export_ucsc_cb:
@@ -257,6 +263,14 @@ inputs:
     doc: |
       Number of cores/cpus to use.
       Default: 1
+
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
 
 
 outputs:
@@ -355,6 +369,22 @@ outputs:
       glob: "*_raw_gene_umi.pdf"
     doc: |
       Genes vs RNA reads per cell correlation (not filtered).
+      PDF format
+
+  raw_umi_mito_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_umi_mito.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell (not filtered).
+      PNG format
+
+  raw_umi_mito_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_umi_mito.pdf"
+    doc: |
+      RNA reads vs mitochondrial % per cell (not filtered).
       PDF format
 
   raw_mito_dnst_plot_png:
@@ -583,6 +613,22 @@ outputs:
       Genes vs RNA reads per cell correlation (filtered).
       PDF format
 
+  fltr_umi_mito_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_umi_mito.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell (filtered).
+      PNG format
+
+  fltr_umi_mito_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_umi_mito.pdf"
+    doc: |
+      RNA reads vs mitochondrial % per cell (filtered).
+      PDF format
+
   fltr_mito_dnst_plot_png:
     type: File?
     outputBinding:
@@ -718,28 +764,29 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser configuration data.
+      UCSC Cell Browser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html index.
 
   seurat_data_rds:
     type: File
     outputBinding:
       glob: "*_data.rds"
     doc: |
-      Filtered Seurat data in RDS format
+      Seurat object.
+      RDS format
 
   datasets_metadata:
     type: File
@@ -754,14 +801,16 @@ outputs:
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Filtered Seurat data in h5seurat format
+      Seurat object.
+      h5Seurat format
 
   seurat_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_data.h5ad"
+      glob: "*_counts.h5ad"
     doc: |
-      Reduced Seurat data in h5ad format
+      Seurat object.
+      H5AD format
 
   stdout_log:
     type: stdout
@@ -794,8 +843,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell RNA-Seq Filtering Analysis"
-s:name: "Single-cell RNA-Seq Filtering Analysis"
+label: "Single-Cell RNA-Seq Filtering Analysis"
+s:name: "Single-Cell RNA-Seq Filtering Analysis"
 s:alternateName: "Filters single-cell RNA-Seq datasets based on the common QC metrics"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-filter.cwl
@@ -834,27 +883,30 @@ s:creator:
 
 
 doc: |
-  Single-cell RNA-Seq Filtering Analysis
+  Single-Cell RNA-Seq Filtering Analysis
 
   Filters single-cell RNA-Seq datasets based on the common QC metrics.
 
 
 s:about: |
-  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity IDENTITY
-                        [--grouping GROUPING] [--barcodes BARCODES]
-                        [--rnamincells RNAMINCELLS]
-                        [--mingenes [MINGENES [MINGENES ...]]]
-                        [--maxgenes [MAXGENES [MAXGENES ...]]]
-                        [--minumis [MINUMIS [MINUMIS ...]]]
-                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
-                        [--mitopattern MITOPATTERN] [--maxmt MAXMT]
-                        [--removedoublets] [--rnadbr RNADBR]
-                        [--rnadbrsd RNADBRSD] [--pdf] [--verbose] [--h5seurat]
-                        [--h5ad] [--cbbuild] [--output OUTPUT]
-                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                        [--cpus CPUS] [--memory MEMORY]
+  usage: /usr/local/bin/sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity
+                                        IDENTITY [--grouping GROUPING]
+                                        [--barcodes BARCODES]
+                                        [--rnamincells RNAMINCELLS]
+                                        [--mingenes [MINGENES [MINGENES ...]]]
+                                        [--maxgenes [MAXGENES [MAXGENES ...]]]
+                                        [--minumis [MINUMIS [MINUMIS ...]]]
+                                        [--minnovelty [MINNOVELTY [MINNOVELTY ...]]]
+                                        [--mitopattern MITOPATTERN]
+                                        [--maxmt MAXMT] [--removedoublets]
+                                        [--rnadbr RNADBR] [--rnadbrsd RNADBRSD]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
+                                        [--seed SEED]
 
-  Single-cell RNA-Seq Filtering Analysis
+  Single-Cell RNA-Seq Filtering Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -895,21 +947,26 @@ s:about: |
                           Include cells where at least this many genes are
                           detected. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
-                          '--mex' input based on the '--identity' file. Default:
+                          '--mex' input based on the '--identity' file. Any 0
+                          will be replaced with the auto-estimated threshold
+                          (median - 2.5 * MAD) calculated per dataset. Default:
                           250 (applied to all datasets)
     --maxgenes [MAXGENES [MAXGENES ...]]
                           Include cells with the number of genes not bigger than
                           this value. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
-                          '--mex' input based on the '--identity' file. Default:
+                          '--mex' input based on the '--identity' file. Any 0
+                          will be replaced with the auto-estimated threshold
+                          (median + 5 * MAD) calculated per dataset. Default:
                           5000 (applied to all datasets)
     --minumis [MINUMIS [MINUMIS ...]]
-                          Include cells where at least this many RNA reads
-                          are detected. If multiple values
-                          provided, each of them will be applied to the
-                          correspondent dataset from the '--mex' input based on
-                          the '--identity' file. Default: 500 (applied to all
-                          datasets)
+                          Include cells where at least this many RNA reads are
+                          detected. If multiple values provided, each of them
+                          will be applied to the correspondent dataset from the
+                          '--mex' input based on the '--identity' file. Any 0
+                          will be replaced with the auto-estimated threshold
+                          (median - 2.5 * MAD) calculated per dataset. Default:
+                          500 (applied to all datasets)
     --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for as log10(genes)/log10(UMI).
@@ -920,9 +977,11 @@ s:about: |
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
                           Default: '^mt-|^MT-'
-    --maxmt MAXMT         Include cells with the percentage of RNA reads
-                          mapped to mitochondrial genes not bigger than this
-                          value. Default: 5 (applied to all datasets)
+    --maxmt MAXMT         Include cells with the percentage of RNA reads mapped
+                          to mitochondrial genes not bigger than this value. Set
+                          to 0 for using an auto-estimated threshold equal to
+                          the maximum among (median + 2 * MAD) values calculated
+                          per dataset. Default: 5 (applied to all datasets)
     --removedoublets      Remove cells that were identified as doublets. Cells
                           with RNA UMI < 200 will not be evaluated. Default: do
                           not remove doublets
@@ -936,7 +995,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save Seurat data to h5ad file. Default: false
+    --h5ad                Save raw counts from the RNA assay to h5ad file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
@@ -944,3 +1004,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple '--cpus'. Default: 32
+    --seed SEED           Seed number for random values. Default: 42

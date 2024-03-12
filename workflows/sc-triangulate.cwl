@@ -23,7 +23,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
@@ -46,8 +46,8 @@ inputs:
       genes expression and/or chromatin accessibility information stored in the RNA
       and/or ATAC assays correspondingly. Additionally, 'rnaumap', and/or 'atacumap',
       and/or 'wnnumap' dimensionality reductions should be present.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   query_reduction:
     type:
@@ -99,7 +99,7 @@ inputs:
       Color theme for all generated plots. One of gray, bw, linedraw, light,
       dark, minimal, classic, void.
       Default: classic
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -113,14 +113,14 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Number of cores/cpus to use"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
-    'sd:layout':
+      Default: 6
+    "sd:layout":
       advanced: true
 
 
@@ -133,10 +133,10 @@ outputs:
     doc: |
       Cells UMAP with integrated labels (rnaumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'RNA'
-        Caption: 'Cells UMAP with integrated labels'
+        tab: "RNA"
+        Caption: "Cells UMAP with integrated labels"
 
   umap_tric_rd_rnaumap_plot_png:
     type: File?
@@ -145,10 +145,10 @@ outputs:
     doc: |
       Cells UMAP with integration confidence scores (rnaumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'RNA'
-        Caption: 'Cells UMAP with integration confidence scores'
+        tab: "RNA"
+        Caption: "Cells UMAP with integration confidence scores"
 
   umap_tria_rd_rnaumap_plot_png:
     type: File?
@@ -157,10 +157,10 @@ outputs:
     doc: |
       Cells UMAP with winning annotations (rnaumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'RNA'
-        Caption: 'Cells UMAP with winning annotations'
+        tab: "RNA"
+        Caption: "Cells UMAP with winning annotations"
 
   umap_tril_rd_atacumap_plot_png:
     type: File?
@@ -169,10 +169,10 @@ outputs:
     doc: |
       Cells UMAP with integrated labels (atacumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'ATAC'
-        Caption: 'Cells UMAP with integrated labels'
+        tab: "ATAC"
+        Caption: "Cells UMAP with integrated labels"
 
   umap_tric_rd_atacumap_plot_png:
     type: File?
@@ -181,10 +181,10 @@ outputs:
     doc: |
       Cells UMAP with integration confidence scores (atacumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'ATAC'
-        Caption: 'Cells UMAP with integration confidence scores'
+        tab: "ATAC"
+        Caption: "Cells UMAP with integration confidence scores"
 
   umap_tria_rd_atacumap_plot_png:
     type: File?
@@ -193,10 +193,10 @@ outputs:
     doc: |
       Cells UMAP with winning annotations (atacumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'ATAC'
-        Caption: 'Cells UMAP with winning annotations'
+        tab: "ATAC"
+        Caption: "Cells UMAP with winning annotations"
 
   umap_tril_rd_wnnumap_plot_png:
     type: File?
@@ -205,10 +205,10 @@ outputs:
     doc: |
       Cells UMAP with integrated labels (wnnumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'WNN'
-        Caption: 'Cells UMAP with integrated labels'
+        tab: "WNN"
+        Caption: "Cells UMAP with integrated labels"
 
   umap_tric_rd_wnnumap_plot_png:
     type: File?
@@ -217,10 +217,10 @@ outputs:
     doc: |
       Cells UMAP with integration confidence scores (wnnumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'WNN'
-        Caption: 'Cells UMAP with integration confidence scores'
+        tab: "WNN"
+        Caption: "Cells UMAP with integration confidence scores"
 
   umap_tria_rd_wnnumap_plot_png:
     type: File?
@@ -229,57 +229,57 @@ outputs:
     doc: |
       Cells UMAP with winning annotations (wnnumap dim. reduction).
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'WNN'
-        Caption: 'Cells UMAP with winning annotations'
+        tab: "WNN"
+        Caption: "Cells UMAP with winning annotations"
 
   ucsc_cb_html_data:
     type: Directory
     outputSource: triangulate/ucsc_cb_html_data
-    label: "Directory with UCSC Cellbrowser html data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File
     outputSource: triangulate/ucsc_cb_html_file
-    label: "Open in UCSC Cell Browser"
+    label: "UCSC Cell Browser"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
-    'sd:visualPlugins':
+      UCSC Cell Browser html index.
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   seurat_data_rds:
     type: File
     outputSource: triangulate/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   triangulate_stdout_log:
     type: File
     outputSource: triangulate/stdout_log
-    label: "stdout log generated by triangulate step"
+    label: "Output log"
     doc: |
-      stdout log generated by triangulate step
+      Stdout log from the triangulate step.
 
   triangulate_stderr_log:
     type: File
     outputSource: triangulate/stderr_log
-    label: "stderr log generated by triangulate step"
+    label: "Error log"
     doc: |
-      stderr log generated by triangulate step
+      Stderr log from the triangulate step.
 
 
 steps:
@@ -365,8 +365,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Single-cell Label Integration Analysis"
-s:name: "Single-cell Label Integration Analysis"
+label: "Single-Cell Label Integration Analysis"
+s:name: "Single-Cell Label Integration Analysis"
 s:alternateName: "Harmonizes conflicting annotations in single-cell genomics studies"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-triangulate.cwl
@@ -405,6 +405,6 @@ s:creator:
 
 
 doc: |
-  Single-cell Label Integration Analysis
+  Single-Cell Label Integration Analysis
 
   Harmonizes conflicting annotations in single-cell genomics studies.

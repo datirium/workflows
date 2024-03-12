@@ -9,9 +9,10 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   genome_indices:
   - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -29,12 +30,12 @@ inputs:
       Genome type to be used for
       generating reference genome
       indices
-    'sd:upstreamSource': "genome_indices/fasta_output"
-    'sd:localLabel': true
+    "sd:upstreamSource": "genome_indices/fasta_output"
+    "sd:localLabel": true
 
   annotation_gtf_file:
     type: File
-    'sd:upstreamSource': "genome_indices/annotation_gtf"
+    "sd:upstreamSource": "genome_indices/annotation_gtf"
 
   memory_limit:
     type: int?
@@ -43,7 +44,7 @@ inputs:
     doc: |
       Maximum memory used (GB). The same
       will be applied to virtual memory
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -57,14 +58,14 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "4"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
       Default: 4
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
 

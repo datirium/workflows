@@ -9,7 +9,7 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   gex_indices:
   - "cellranger-mkref.cwl"
   vdj_indices:
@@ -20,7 +20,7 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -35,8 +35,8 @@ inputs:
       This sample can be obtained from "Cell
       Ranger Reference (RNA, ATAC, RNA+ATAC)"
       pipeline.
-    'sd:upstreamSource': "gex_indices/indices_folder"
-    'sd:localLabel': true
+    "sd:upstreamSource": "gex_indices/indices_folder"
+    "sd:localLabel": true
 
   memory_limit:
     type: int?
@@ -53,8 +53,8 @@ inputs:
       assembly and clonotype calling. This
       sample can be obtained from "Cell
       Ranger Reference (VDJ)" pipeline.
-    'sd:upstreamSource': "vdj_indices/indices_folder"
-    'sd:localLabel': true
+    "sd:upstreamSource": "vdj_indices/indices_folder"
+    "sd:localLabel": true
 
   gex_fastq_file_r1:
     type:
@@ -109,7 +109,7 @@ inputs:
       Auto-detection does not work for TRG/D (gamma-delta) chains.
       Note that gamma-delta analysis is enabled but the algorithm has
       not been tested extensively.
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -123,7 +123,7 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "4"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
@@ -142,9 +142,9 @@ outputs:
     label: "FastqQC report for GEX FASTQ file R1"
     doc: |
       FastqQC report for GEX FASTQ file R1
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   fastqc_report_gex_fastq_r2:
@@ -153,9 +153,9 @@ outputs:
     label: "FastqQC report for GEX FASTQ file R2"
     doc: |
       FastqQC report for GEX FASTQ file R2
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   fastqc_report_vdj_fastq_r1:
@@ -164,9 +164,9 @@ outputs:
     label: "FastqQC report for V(D)J FASTQ file R1"
     doc: |
       FastqQC report for V(D)J FASTQ file R1
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   fastqc_report_vdj_fastq_r2:
@@ -175,9 +175,9 @@ outputs:
     label: "FastqQC report for V(D)J FASTQ file R2"
     doc: |
       FastqQC report for V(D)J FASTQ file R2
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   web_summary_report:
@@ -186,9 +186,9 @@ outputs:
     label: "Gene Expression and V(D)J Repertoire Profiling"
     doc: |
       Run summary metrics and charts in HTML format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   metrics_summary_report:
@@ -197,10 +197,10 @@ outputs:
     label: "Run summary metrics in TSV format"
     doc: |
       Run summary metrics in TSV format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'QC metrics'
-        Title: 'QC metrics'
+        tab: "QC metrics"
+        Title: "QC metrics"
 
   possorted_genome_bam_bai:
     type: File
@@ -332,10 +332,10 @@ outputs:
       artifacts and filtered out, meaning that they are no longer called as cells.
       However, as clonotype grouping stage is hapenning before forming the final version
       of files in the per_sample_outs folder, the reported cells number won't be affected.
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'V(D)J clonotypes'
-        Title: 'V(D)J clonotypes'
+        tab: "V(D)J clonotypes"
+        Title: "V(D)J clonotypes"
 
   germline_contigs_bam_bai:
     type: File
@@ -428,9 +428,9 @@ outputs:
     label: "UCSC Cell Browser"
     doc: |
       CellBrowser formatted Cellranger report
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   cellranger_multi_stdout_log:

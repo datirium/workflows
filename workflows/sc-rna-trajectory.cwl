@@ -17,7 +17,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
@@ -46,8 +46,8 @@ inputs:
       RNA-Seq Cluster Analysis", or
       "Single-Cell WNN Cluster Analysis"
       at any of the processing stages.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   dimensions:
     type: int?
@@ -116,7 +116,7 @@ inputs:
     doc: |
       Export results into UCSC Cell Browser
       Default: false
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   color_theme:
@@ -152,13 +152,13 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
@@ -171,10 +171,10 @@ outputs:
     label: "Trajectory plot, colored by cluster"
     doc: |
       Trajectory plot, colored by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Trajectory'
-        Caption: 'Trajectory plot, colored by cluster'
+        tab: "Trajectory"
+        Caption: "Trajectory plot, colored by cluster"
 
   trjc_pstm_plot_png:
     type: File?
@@ -182,10 +182,10 @@ outputs:
     label: "Trajectory plot, colored by pseudotime"
     doc: |
       Trajectory plot, colored by pseudotime
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Trajectory'
-        Caption: 'Trajectory plot, colored by pseudotime'
+        tab: "Trajectory"
+        Caption: "Trajectory plot, colored by pseudotime"
 
   dndr_gr_clst_plot_png:
     type: File?
@@ -193,10 +193,10 @@ outputs:
     label: "Dendrogram plot, colored by cluster"
     doc: |
       Dendrogram plot, colored by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Trajectory'
-        Caption: 'Dendrogram plot, colored by cluster'
+        tab: "Trajectory"
+        Caption: "Dendrogram plot, colored by cluster"
 
   dndr_pstm_plot_png:
     type: File?
@@ -204,10 +204,10 @@ outputs:
     label: "Dendrogram plot, colored by pseudotime"
     doc: |
       Dendrogram plot, colored by pseudotime
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Trajectory'
-        Caption: 'Dendrogram plot, colored by pseudotime'
+        tab: "Trajectory"
+        Caption: "Dendrogram plot, colored by pseudotime"
 
   grph_gr_clst_plot_png:
     type: File?
@@ -215,10 +215,10 @@ outputs:
     label: "Trajectory graph, colored by cluster"
     doc: |
       Trajectory graph, colored by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Topology'
-        Caption: 'Trajectory graph, colored by cluster'
+        tab: "Topology"
+        Caption: "Trajectory graph, colored by cluster"
 
   grph_pstm_plot_png:
     type: File?
@@ -226,10 +226,10 @@ outputs:
     label: "Trajectory graph, colored by pseudotime"
     doc: |
       Trajectory graph, colored by pseudotime
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Topology'
-        Caption: 'Trajectory graph, colored by pseudotime'
+        tab: "Topology"
+        Caption: "Trajectory graph, colored by pseudotime"
 
   tplg_plot_png:
     type: File?
@@ -237,10 +237,10 @@ outputs:
     label: "Topology plot"
     doc: |
       Topology plot
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Topology'
-        Caption: 'Topology plot'
+        tab: "Topology"
+        Caption: "Topology plot"
 
   xpr_htmp_plot_png:
     type: File?
@@ -248,10 +248,10 @@ outputs:
     label: "Gene expression heatmap"
     doc: |
       Gene expression heatmap
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Gene expression'
-        Caption: 'Gene expression heatmap'
+        tab: "Gene expression"
+        Caption: "Gene expression heatmap"
 
   xpr_pstm_plot_png:
     type: File?
@@ -259,10 +259,10 @@ outputs:
     label: "Gene expression along pseudotime"
     doc: |
       Gene expression along pseudotime
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Gene expression'
-        Caption: 'Gene expression along pseudotime'
+        tab: "Gene expression"
+        Caption: "Gene expression along pseudotime"
 
   umap_rd_rnaumap_plot_png:
     type: File?
@@ -270,10 +270,10 @@ outputs:
     label: "UMAP, colored by pseudotime, RNA"
     doc: |
       UMAP, colored by pseudotime, RNA
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Pseudotime'
-        Caption: 'UMAP, colored by pseudotime, RNA'
+        tab: "Pseudotime"
+        Caption: "UMAP, colored by pseudotime, RNA"
 
   umap_rd_atacumap_plot_png:
     type: File?
@@ -281,10 +281,10 @@ outputs:
     label: "UMAP, colored by pseudotime, ATAC"
     doc: |
       UMAP, colored by pseudotime, ATAC
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Pseudotime'
-        Caption: 'UMAP, colored by pseudotime, ATAC'
+        tab: "Pseudotime"
+        Caption: "UMAP, colored by pseudotime, ATAC"
 
   umap_rd_wnnumap_plot_png:
     type: File?
@@ -292,10 +292,10 @@ outputs:
     label: "UMAP, colored by pseudotime, WNN"
     doc: |
       UMAP, colored by pseudotime, WNN
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Pseudotime'
-        Caption: 'UMAP, colored by pseudotime, WNN'
+        tab: "Pseudotime"
+        Caption: "UMAP, colored by pseudotime, WNN"
 
   pstm_dnst_spl_idnt_plot_png:
     type: File?
@@ -303,10 +303,10 @@ outputs:
     label: "Pseudotime density, split by dataset"
     doc: |
       Pseudotime density, split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Pseudotime density, split by dataset'
+        tab: "Per dataset"
+        Caption: "Pseudotime density, split by dataset"
 
   pstm_hist_gr_clst_spl_idnt_plot_png:
     type: File?
@@ -316,10 +316,10 @@ outputs:
       Pseudotime histogram,
       colored by cluster,
       split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Pseudotime histogram, colored by cluster, split by dataset'
+        tab: "Per dataset"
+        Caption: "Pseudotime histogram, colored by cluster, split by dataset"
 
   umap_spl_idnt_rd_rnaumap_plot_png:
     type: File?
@@ -328,10 +328,10 @@ outputs:
     doc: |
       UMAP, colored by pseudotime,
       split by dataset, RNA
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by pseudotime, split by dataset, RNA'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by pseudotime, split by dataset, RNA"
 
   umap_spl_idnt_rd_atacumap_plot_png:
     type: File?
@@ -340,10 +340,10 @@ outputs:
     doc: |
       UMAP, colored by pseudotime,
       split by dataset, ATAC
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by pseudotime, split by dataset, ATAC'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by pseudotime, split by dataset, ATAC"
 
   umap_spl_idnt_rd_wnnumap_plot_png:
     type: File?
@@ -352,10 +352,10 @@ outputs:
     doc: |
       UMAP, colored by pseudotime,
       split by dataset, WNN
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by pseudotime, split by dataset, WNN'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by pseudotime, split by dataset, WNN"
 
   pstm_dnst_spl_cnd_plot_png:
     type: File?
@@ -364,10 +364,10 @@ outputs:
     doc: |
       Pseudotime density, split by
       grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Pseudotime density, split by grouping condition'
+        tab: "Per group"
+        Caption: "Pseudotime density, split by grouping condition"
 
   pstm_hist_gr_clst_spl_cnd_plot_png:
     type: File?
@@ -376,10 +376,10 @@ outputs:
     doc: |
       Pseudotime histogram, colored by
       cluster, split by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Pseudotime histogram, colored by cluster, split by grouping condition'
+        tab: "Per group"
+        Caption: "Pseudotime histogram, colored by cluster, split by grouping condition"
 
   umap_spl_cnd_rd_rnaumap_plot_png:
     type: File?
@@ -388,10 +388,10 @@ outputs:
     doc: |
       UMAP, colored by pseudotime,
       split by grouping condition, RNA
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by pseudotime, split by grouping condition, RNA'
+        tab: "Per group"
+        Caption: "UMAP, colored by pseudotime, split by grouping condition, RNA"
 
   umap_spl_cnd_rd_atacumap_plot_png:
     type: File?
@@ -400,10 +400,10 @@ outputs:
     doc: |
       UMAP, colored by pseudotime,
       split by grouping condition, ATAC
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by pseudotime, split by grouping condition, ATAC'
+        tab: "Per group"
+        Caption: "UMAP, colored by pseudotime, split by grouping condition, ATAC"
 
   umap_spl_cnd_rd_wnnumap_plot_png:
     type: File?
@@ -412,25 +412,24 @@ outputs:
     doc: |
       UMAP, colored by pseudotime,
       split by grouping condition, WNN
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by pseudotime, split by grouping condition, WNN'
+        tab: "Per group"
+        Caption: "UMAP, colored by pseudotime, split by grouping condition, WNN"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: rna_trajectory/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: rna_trajectory/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -439,31 +438,31 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: rna_trajectory/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   rna_trajectory_stdout_log:
     type: File
     outputSource: rna_trajectory/stdout_log
-    label: "stdout log generated by rna_trajectory step"
+    label: "Output log"
     doc: |
-      stdout log generated by rna_trajectory step
+      Stdout log from the rna_trajectory step.
 
   rna_trajectory_stderr_log:
     type: File
     outputSource: rna_trajectory/stderr_log
-    label: "stderr log generated by rna_trajectory step"
+    label: "Error log"
     doc: |
-      stderr log generated by rna_trajectory step
+      Stderr log from the rna_trajectory step.
 
 
 steps:
@@ -600,7 +599,7 @@ $schemas:
 
 label: "Single-Cell RNA-Seq Trajectory Analysis"
 s:name: "Single-Cell RNA-Seq Trajectory Analysis"
-s:alternateName: "Infers developmental trajectories and pseudotime from cells clustered by similarity of gene expression data"
+s:alternateName: "Aligns cells along the trajectory defined based on PCA or other dimensionality reduction"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-trajectory.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium

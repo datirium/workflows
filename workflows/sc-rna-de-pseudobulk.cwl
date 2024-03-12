@@ -24,7 +24,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
@@ -52,8 +52,8 @@ inputs:
       Cluster Analysis", or "Single-Cell
       WNN Cluster Analysis" at any of the
       processing stages.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   groupby:
     type: string?
@@ -280,13 +280,13 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
@@ -301,9 +301,9 @@ outputs:
       MDS plot of pseudobulk aggregated
       not filtered normalized reads counts
       in HTML format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   heatmap_html:
@@ -312,9 +312,9 @@ outputs:
     label: "Heatmap"
     doc: |
       Morpheus heatmap in HTML format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   volcano_plot_html_file:
@@ -323,9 +323,9 @@ outputs:
     label: "Volcano Plot"
     doc: |
       HTML index file for Volcano Plot
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   volcano_plot_html_data:
@@ -342,7 +342,7 @@ outputs:
     doc: |
       Gene expression PCA (1,2)
       in PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'QC'
         Caption: 'Gene expression PCA (1,2)'
@@ -354,7 +354,7 @@ outputs:
     doc: |
       Gene expression PCA (2,3)
       in PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'QC'
         Caption: 'Gene expression PCA (2,3)'
@@ -370,7 +370,7 @@ outputs:
       with "Subsetting values (optional)" from
       the "Subsetting category (optional)", RNA
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'QC'
         Caption: 'UMAP, split by comparison category, RNA'
@@ -386,7 +386,7 @@ outputs:
       with "Subsetting values (optional)" from
       the "Subsetting category (optional)", ATAC
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'QC'
         Caption: 'UMAP, split by comparison category, ATAC'
@@ -402,7 +402,7 @@ outputs:
       with "Subsetting values (optional)" from
       the "Subsetting category (optional)", WNN
       PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'QC'
         Caption: 'UMAP, split by comparison category, WNN'
@@ -416,9 +416,9 @@ outputs:
       genes. Highlighed genes are either provided
       by user or top 10 genes with the highest
       log2FoldChange values. PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Genes of interest'
+        tab: "Genes of interest"
         Caption: 'Volcano plot of differentially expressed genes'
 
   xpr_dnst_plot_png:
@@ -431,9 +431,9 @@ outputs:
       differentially expressed genes
       with the highest log2FoldChange
       values in PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Genes of interest'
+        tab: "Genes of interest"
         Caption: 'Gene expression violin plot'
 
   xpr_htmp_plot_png:
@@ -445,7 +445,7 @@ outputs:
       by adjusted P-value, optionally
       subsetted to the specific groups
       of cells in PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Heatmap'
         Caption: 'Gene expression heatmap'
@@ -461,7 +461,7 @@ outputs:
       UMAP, gene expression, split by selected
       criteria, optionally subsetted to the
       specific group, RNA, PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Gene expression, RNA'
         Caption: 'UMAP, gene expression, RNA'
@@ -477,7 +477,7 @@ outputs:
       UMAP, gene expression, split by selected
       criteria, optionally subsetted to the
       specific group, ATAC, PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Gene expression, ATAC'
         Caption: 'UMAP, gene expression, ATAC'
@@ -493,7 +493,7 @@ outputs:
       UMAP, gene expression, split by selected
       criteria, optionally subsetted to the
       specific group, WNN, PNG format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
         tab: 'Gene expression, WNN'
         Caption: 'UMAP, gene expression, WNN'
@@ -506,7 +506,7 @@ outputs:
       Not filtered by adjusted P-value
       differentially expressed genes in
       TSV format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - syncfusiongrid:
         tab: 'Diff. expressed genes'
         Title: 'Differentially expressed genes'
@@ -539,36 +539,23 @@ outputs:
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   de_pseudobulk_stdout_log:
     type: File
     outputSource: de_pseudobulk/stdout_log
-    label: "stdout log generated by de_pseudobulk step"
+    label: "Output log"
     doc: |
-      stdout log generated by de_pseudobulk step
+      Stdout log from the de_pseudobulk step.
 
   de_pseudobulk_stderr_log:
     type: File
     outputSource: de_pseudobulk/stderr_log
-    label: "stderr log generated by de_pseudobulk step"
+    label: "Error log"
     doc: |
-      stderr log generated by de_pseudobulk step
-
-  morpheus_heatmap_stdout_log:
-    type: File
-    outputSource: morpheus_heatmap/stdout_log
-    label: "stdout log generated by morpheus_heatmap step"
-    doc: "stdout log generated by morpheus_heatmap step"
-
-  morpheus_heatmap_stderr_log:
-    type: File
-    outputSource: morpheus_heatmap/stderr_log
-    label: "stderr log generated by morpheus_heatmap step"
-    doc: "stderr log generated by morpheus_heatmap step"
+      Stderr log from the de_pseudobulk step.
 
 
 steps:
@@ -720,8 +707,6 @@ steps:
      read_counts_gct: de_pseudobulk/cell_read_counts_gct
     out:
     - heatmap_html
-    - stdout_log
-    - stderr_log
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
@@ -746,7 +731,7 @@ $schemas:
 
 label: "Single-Cell RNA-Seq Differential Expression Analysis"
 s:name: "Single-Cell RNA-Seq Differential Expression Analysis"
-s:alternateName: "Identifies differentially expressed genes between any two groups of cells"
+s:alternateName: "Identifies differentially expressed genes between two groups of cells optionally coerced to pseudobulk form"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-de-pseudobulk.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium

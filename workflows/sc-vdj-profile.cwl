@@ -9,7 +9,7 @@ requirements:
   - class: InlineJavascriptRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
@@ -36,8 +36,8 @@ inputs:
       Assignment" or "Single-Cell RNA-Seq
       Cluster Analysis" at any of the
       processing stages.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   contigs_data:
     type: File
@@ -50,8 +50,8 @@ inputs:
       can be obtained from either "Cell
       Ranger Count (RNA+VDJ)" or "Cell Ranger
       Aggregate (RNA, RNA+VDJ)" pipeline.
-    'sd:upstreamSource': "sc_vdj_sample/filtered_contig_annotations_csv"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_vdj_sample/filtered_contig_annotations_csv"
+    "sd:localLabel": true
 
   query_source_column:
     type: string
@@ -172,13 +172,13 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
@@ -192,10 +192,10 @@ outputs:
     doc: |
       Unique clonotypes,
       split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Unique clonotypes, split by dataset'
+        tab: "Per dataset"
+        Caption: "Unique clonotypes, split by dataset"
 
   hmst_spl_idnt_plot_png:
     type: File?
@@ -204,10 +204,10 @@ outputs:
     doc: |
       Clonal space homeostasis,
       split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Clonal space homeostasis, split by dataset'
+        tab: "Per dataset"
+        Caption: "Clonal space homeostasis, split by dataset"
 
   vrlp_spl_idnt_plot_png:
     type: File?
@@ -216,10 +216,10 @@ outputs:
     doc: |
       Clonotypes similarity,
       split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Clonotypes similarity, split by dataset'
+        tab: "Per dataset"
+        Caption: "Clonotypes similarity, split by dataset"
 
   ntwr_gr_idnt_plot_png:
     type: File?
@@ -228,10 +228,10 @@ outputs:
     doc: |
       Clonotypes network,
       colored by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Clonotypes network, colored by dataset'
+        tab: "Per dataset"
+        Caption: "Clonotypes network, colored by dataset"
 
   dvrs_gr_clst_spl_idnt_plot_png:
     type: File?
@@ -241,10 +241,10 @@ outputs:
       Clonotypes diversity,
       colored by cluster,
       split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Clonotypes diversity, colored by cluster, split by dataset'
+        tab: "Per dataset"
+        Caption: "Clonotypes diversity, colored by cluster, split by dataset"
 
   chrd_gr_idnt_plot_png:
     type: File?
@@ -253,10 +253,10 @@ outputs:
     doc: |
       Shared clonotype,
       colored by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Shared clonotype, colored by dataset'
+        tab: "Per dataset"
+        Caption: "Shared clonotype, colored by dataset"
 
   gene_spl_idnt_vdjc_plot_png:
     type:
@@ -268,10 +268,10 @@ outputs:
     doc: |
       Relative usage of V, D, J, C
       genes, split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Relative usage of V, D, J, C genes, split by dataset'
+        tab: "Per dataset"
+        Caption: "Relative usage of V, D, J, C genes, split by dataset"
 
   count_spl_clst_plot_png:
     type: File?
@@ -280,10 +280,10 @@ outputs:
     doc: |
       Unique clonotypes,
       split by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Unique clonotypes, split by cluster'
+        tab: "Per cluster"
+        Caption: "Unique clonotypes, split by cluster"
 
   hmst_spl_clst_plot_png:
     type: File?
@@ -292,10 +292,10 @@ outputs:
     doc: |
       Clonal space homeostasis,
       split by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Clonal space homeostasis, split by cluster'
+        tab: "Per cluster"
+        Caption: "Clonal space homeostasis, split by cluster"
 
   vrlp_spl_clst_plot_png:
     type: File?
@@ -304,10 +304,10 @@ outputs:
     doc: |
       Clonotypes similarity,
       split by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Clonotypes similarity, split by cluster'
+        tab: "Per cluster"
+        Caption: "Clonotypes similarity, split by cluster"
 
   ntwr_gr_clst_plot_png:
     type: File?
@@ -316,10 +316,10 @@ outputs:
     doc: |
       Clonotypes network,
       colored by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Clonotypes network, colored by cluster'
+        tab: "Per cluster"
+        Caption: "Clonotypes network, colored by cluster"
 
   dvrs_gr_idnt_spl_clst_plot_png:
     type: File?
@@ -329,10 +329,10 @@ outputs:
       Clonotypes diversity,
       colored by dataset,
       split by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Clonotypes diversity, colored by dataset, split by cluster'
+        tab: "Per cluster"
+        Caption: "Clonotypes diversity, colored by dataset, split by cluster"
 
   chrd_gr_clst_plot_png:
     type: File?
@@ -341,10 +341,10 @@ outputs:
     doc: |
       Shared clonotype,
       colored by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Shared clonotype, colored by cluster'
+        tab: "Per cluster"
+        Caption: "Shared clonotype, colored by cluster"
 
   gene_spl_clst_vdjc_plot_png:
     type:
@@ -356,10 +356,10 @@ outputs:
     doc: |
       Relative usage of V, D, J, C
       genes, split by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Relative usage of V, D, J, C genes, split by cluster'
+        tab: "Per cluster"
+        Caption: "Relative usage of V, D, J, C genes, split by cluster"
 
   count_spl_cnd_plot_png:
     type: File?
@@ -369,10 +369,10 @@ outputs:
       Unique clonotypes,
       split by grouping
       condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Unique clonotypes, split by grouping condition'
+        tab: "Per group"
+        Caption: "Unique clonotypes, split by grouping condition"
 
   hmst_spl_cnd_plot_png:
     type: File?
@@ -381,10 +381,10 @@ outputs:
     doc: |
       Clonal space homeostasis,
       split by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Clonal space homeostasis, split by grouping condition'
+        tab: "Per group"
+        Caption: "Clonal space homeostasis, split by grouping condition"
 
   vrlp_spl_cnd_plot_png:
     type: File?
@@ -393,10 +393,10 @@ outputs:
     doc: |
       Clonotypes similarity,
       split by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Clonotypes similarity, split by grouping condition'
+        tab: "Per group"
+        Caption: "Clonotypes similarity, split by grouping condition"
 
   ntwr_gr_cnd_plot_png:
     type: File?
@@ -405,10 +405,10 @@ outputs:
     doc: |
       Clonotypes network,
       colored by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Clonotypes network, colored by grouping condition'
+        tab: "Per group"
+        Caption: "Clonotypes network, colored by grouping condition"
 
   dvrs_gr_clst_spl_cnd_plot_png:
     type: File?
@@ -418,10 +418,10 @@ outputs:
       Clonotypes diversity,
       colored by cluster,
       split by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Clonotypes diversity, colored by cluster, split by grouping condition'
+        tab: "Per group"
+        Caption: "Clonotypes diversity, colored by cluster, split by grouping condition"
 
   dvrs_gr_cnd_spl_clst_plot_png:
     type: File?
@@ -431,10 +431,10 @@ outputs:
       Clonotypes diversity,
       colored by grouping condition,
       split by cluster
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Clonotypes diversity, colored by grouping condition, split by cluster'
+        tab: "Per group"
+        Caption: "Clonotypes diversity, colored by grouping condition, split by cluster"
 
   chrd_gr_cnd_plot_png:
     type: File?
@@ -444,25 +444,24 @@ outputs:
       Shared clonotype,
       colored by grouping
       condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Shared clonotype, colored by grouping condition'
+        tab: "Per group"
+        Caption: "Shared clonotype, colored by grouping condition"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: vdj_profile/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: vdj_profile/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -471,38 +470,40 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: vdj_profile/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   seurat_data_scope:
     type: File?
     outputSource: vdj_profile/seurat_data_scope
-    label: "Processed Seurat data in SCope compatible loom format"
+    label: "Seurat object in SCope compatible loom format"
     doc: |
-      Processed Seurat data in SCope compatible loom format
+      Seurat object.
+      SCope compatible.
+      Loom format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   vdj_profile_stdout_log:
     type: File
     outputSource: vdj_profile/stdout_log
-    label: "stdout log generated by vdj_profile step"
+    label: "Output log"
     doc: |
-      stdout log generated by vdj_profile step
+      Stdout log from the vdj_profile step.
 
   vdj_profile_stderr_log:
     type: File
     outputSource: vdj_profile/stderr_log
-    label: "stderr log generated by vdj_profile step"
+    label: "Error log"
     doc: |
-      stderr log generated by vdj_profile step
+      Stderr log from the vdj_profile step.
 
 
 steps:
@@ -635,7 +636,7 @@ $schemas:
 
 label: "Single-Cell Immune Profiling Analysis"
 s:name: "Single-Cell Immune Profiling Analysis"
-s:alternateName: "Estimates clonotype diversity and dynamics from V(D)J sequencing data assembled into contigs"
+s:alternateName: "TCR/BCR clonotype dynamics analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-vdj-profile.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium

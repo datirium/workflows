@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -162,7 +162,7 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save Seurat data to h5ad file.
+      Save raw counts from the RNA assay to h5ad file.
       Default: false
 
   export_scope_data:
@@ -215,6 +215,14 @@ inputs:
     doc: |
       Number of cores/cpus to use.
       Default: 1
+
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
 
 
 outputs:
@@ -622,53 +630,54 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser
-      configuration data.
+      UCSC Cell Browser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser
-      html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory
-      with UCSC Cellbrowser html data.
+      UCSC Cell Browser html index.
 
   seurat_data_rds:
     type: File
     outputBinding:
       glob: "*_data.rds"
     doc: |
-      Reduced Seurat data in RDS format
+      Seurat object.
+      RDS format
 
   seurat_data_h5seurat:
     type: File?
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Reduced Seurat data in h5seurat format
+      Seurat object.
+      h5Seurat format
 
   seurat_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_data.h5ad"
+      glob: "*_counts.h5ad"
     doc: |
-      Reduced Seurat data in h5ad format
+      Seurat object.
+      H5AD format
 
   seurat_data_scope:
     type: File?
     outputBinding:
       glob: "*_data.loom"
     doc: |
-      Reduced Seurat data in SCope
-      compatible loom format
+      Seurat object.
+      SCope compatible.
+      Loom format
 
   stdout_log:
     type: stdout
@@ -690,8 +699,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell Immune Profiling Analysis"
-s:name: "Single-cell Immune Profiling Analysis"
+label: "Single-Cell Immune Profiling Analysis"
+s:name: "Single-Cell Immune Profiling Analysis"
 s:alternateName: "TCR/BCR clonotype dynamics analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-vdj-profile.cwl
@@ -730,23 +739,26 @@ s:creator:
 
 
 doc: |
-  Single-cell Immune Profiling Analysis
+  Single-Cell Immune Profiling Analysis
 
   TCR/BCR clonotype dynamics analysis
 
 
 s:about: |
-  usage: sc_vdj_profile.R [-h] --query QUERY --contigs CONTIGS
-                          [--metadata METADATA] [--barcodes BARCODES]
-                          --source SOURCE
-                          [--cloneby {gene,nt,aa,strict}] [--groupby GROUPBY]
-                          [--strictness {removemulti,filtermulti}] [--pdf]
-                          [--verbose] [--h5seurat] [--h5ad] [--cbbuild]
-                          [--scope] [--output OUTPUT]
-                          [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
-                          [--cpus CPUS] [--memory MEMORY]
+  usage: /usr/local/bin/sc_vdj_profile.R [-h] --query QUERY --contigs CONTIGS
+                                        [--metadata METADATA]
+                                        [--barcodes BARCODES] --source SOURCE
+                                        [--cloneby {gene,nt,aa,strict}]
+                                        [--groupby GROUPBY]
+                                        [--strictness {removemulti,filtermulti}]
+                                        [--pdf] [--verbose] [--h5seurat]
+                                        [--h5ad] [--cbbuild] [--scope]
+                                        [--output OUTPUT]
+                                        [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
+                                        [--cpus CPUS] [--memory MEMORY]
+                                        [--seed SEED]
 
-  Single-cell Immune Profiling Analysis
+  Single-Cell Immune Profiling Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -794,7 +806,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save Seurat data to h5ad file. Default: false
+    --h5ad                Save raw counts from the RNA assay to h5ad file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --scope               Save Seurat data to SCope compatible loom file.
                           Default: false
@@ -804,3 +817,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple --cpus. Default: 32
+    --seed SEED           Seed number for random values. Default: 42

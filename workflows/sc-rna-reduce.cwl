@@ -17,7 +17,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-atac-cluster.cwl"
   - "sc-atac-reduce.cwl"
@@ -41,8 +41,8 @@ inputs:
       multiome ATAC and RNA-Seq or just
       RNA-Seq datasets filtered by QC metrics
       to include only high-quality cells.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   normalization_method:
     type:
@@ -118,7 +118,8 @@ inputs:
     doc: |
       Number of principal components to be used
       in PCA and UMAP projection. Accepted values
-      range from 1 to 50.
+      range from 1 to 50. Set to 0 to use
+      auto-estimated dimensionality.
       Default: 40
 
   cell_cycle_data:
@@ -243,7 +244,7 @@ inputs:
       datasets integration, and dimensionality
       reduction.
       Default: 3000
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   export_ucsc_cb:
@@ -253,7 +254,7 @@ inputs:
     doc: |
       Export results into UCSC Cell Browser
       Default: false
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   color_theme:
@@ -289,13 +290,13 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 6
     "sd:layout":
       advanced: true
 
@@ -310,10 +311,10 @@ outputs:
       Elbow plot to evaluate the number of
       principal components that capture the
       majority of the variation in the data.
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'Elbow plot'
+        tab: "QC"
+        Caption: "Elbow plot"
 
   qc_dim_corr_plot_png:
     type: File?
@@ -322,10 +323,10 @@ outputs:
     doc: |
       Correlation between QC metrics and
       principal components
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'Correlation between QC metrics and principal components'
+        tab: "QC"
+        Caption: "Correlation between QC metrics and principal components"
 
   umap_qc_mtrcs_plot_png:
     type: File?
@@ -333,10 +334,10 @@ outputs:
     label: "UMAP, QC metrics"
     doc: |
       UMAP, QC metrics
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'UMAP, QC metrics'
+        tab: "QC"
+        Caption: "UMAP, QC metrics"
 
   ccpca_plot_png:
     type: File?
@@ -344,10 +345,10 @@ outputs:
     label: "PCA, colored by cell cycle phase"
     doc: |
       PCA, colored by cell cycle phase
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'PCA, colored by cell cycle phase'
+        tab: "QC"
+        Caption: "PCA, colored by cell cycle phase"
 
   umap_plot_png:
     type: File?
@@ -355,10 +356,10 @@ outputs:
     label: "UMAP, colored by dataset"
     doc: |
       UMAP, colored by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset"
 
   umap_spl_idnt_plot_png:
     type: File?
@@ -366,10 +367,10 @@ outputs:
     label: "UMAP, split by dataset"
     doc: |
       UMAP, split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, split by dataset'
+        tab: "Per dataset"
+        Caption: "UMAP, split by dataset"
 
   umap_spl_umi_plot_png:
     type: File?
@@ -378,10 +379,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split by
       RNA reads per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by RNA reads per cell'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by RNA reads per cell"
 
   umap_spl_gene_plot_png:
     type: File?
@@ -390,10 +391,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split by
       genes per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by genes per cell'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by genes per cell"
 
   umap_spl_mito_plot_png:
     type: File?
@@ -402,10 +403,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split by
       mitochondrial percentage
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by mitochondrial percentage'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by mitochondrial percentage"
 
   umap_spl_ph_plot_png:
     type: File?
@@ -414,10 +415,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split by
       cell cycle phase
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by dataset, split by cell cycle phase'
+        tab: "Per dataset"
+        Caption: "UMAP, colored by dataset, split by cell cycle phase"
 
   ccpca_spl_idnt_plot_png:
     type: File?
@@ -426,10 +427,10 @@ outputs:
     doc: |
       PCA, colored by cell cycle phase,
       split by dataset
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'PCA, colored by cell cycle phase, split by dataset'
+        tab: "Per dataset"
+        Caption: "PCA, colored by cell cycle phase, split by dataset"
 
   umap_spl_cnd_plot_png:
     type: File?
@@ -438,10 +439,10 @@ outputs:
     doc: |
       UMAP, colored by dataset, split by
       grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by dataset, split by grouping condition'
+        tab: "Per group"
+        Caption: "UMAP, colored by dataset, split by grouping condition"
 
   umap_gr_cnd_spl_umi_plot_png:
     type: File?
@@ -450,10 +451,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by RNA reads per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by RNA reads per cell'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by RNA reads per cell"
 
   umap_gr_cnd_spl_gene_plot_png:
     type: File?
@@ -462,10 +463,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by genes per cell
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by genes per cell'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by genes per cell"
 
   umap_gr_cnd_spl_mito_plot_png:
     type: File?
@@ -474,10 +475,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by mitochondrial percentage
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by mitochondrial percentage'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by mitochondrial percentage"
 
   umap_gr_cnd_spl_ph_plot_png:
     type: File?
@@ -486,10 +487,10 @@ outputs:
     doc: |
       UMAP, colored by grouping condition,
       split by cell cycle phase
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by grouping condition, split by cell cycle phase'
+        tab: "Per group"
+        Caption: "UMAP, colored by grouping condition, split by cell cycle phase"
 
   ccpca_spl_cnd_plot_png:
     type: File?
@@ -498,25 +499,24 @@ outputs:
     doc: |
       PCA, colored by cell cycle phase,
       split by grouping condition
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'PCA, colored by cell cycle phase, split by grouping condition'
+        tab: "Per group"
+        Caption: "PCA, colored by cell cycle phase, split by grouping condition"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: sc_rna_reduce/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: sc_rna_reduce/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -525,31 +525,31 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: sc_rna_reduce/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   sc_rna_reduce_stdout_log:
     type: File
     outputSource: sc_rna_reduce/stdout_log
-    label: "stdout log generated by sc_rna_reduce step"
+    label: "Output log"
     doc: |
-      stdout log generated by sc_rna_reduce step
+      Stdout log from the sc_rna_reduce step.
 
   sc_rna_reduce_stderr_log:
     type: File
     outputSource: sc_rna_reduce/stderr_log
-    label: "stderr log generated by sc_rna_reduce step"
+    label: "Error log"
     doc: |
-      stderr log generated by sc_rna_reduce step
+      Stderr log from the sc_rna_reduce step.
 
 
 steps:
@@ -705,7 +705,7 @@ $schemas:
 
 label: "Single-Cell RNA-Seq Dimensionality Reduction Analysis"
 s:name: "Single-Cell RNA-Seq Dimensionality Reduction Analysis"
-s:alternateName: "Removes noise and confounding sources of variation by reducing dimensionality of gene expression data"
+s:alternateName: "Integrates multiple single-cell RNA-Seq datasets, reduces dimensionality using PCA"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-reduce.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
