@@ -751,7 +751,7 @@ outputs:
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_*.png"
+      glob: "*_xpr_per_cell_[!sgnl_]*.png"
     doc: |
       UMAP colored by gene expression.
       All genes of interest.
@@ -763,7 +763,7 @@ outputs:
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_*.pdf"
+      glob: "*_xpr_per_cell_[!sgnl_]*.pdf"
     doc: |
       UMAP colored by gene expression.
       All genes of interest.
