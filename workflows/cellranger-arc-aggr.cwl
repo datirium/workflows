@@ -18,7 +18,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Analysis name"
     sd:preview:
@@ -37,7 +37,7 @@ inputs:
 
   gem_well_labels:
     type: string[]
-    "sd:upstreamSource": "sc_arc_sample/alias"
+    "sd:upstreamSource": "sc_arc_sample/alias_"
 
   atac_fragments_file_from_count:
     type: File[]

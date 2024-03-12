@@ -17,9 +17,9 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias_"
     sd:preview:
       position: 1
 
@@ -44,7 +44,7 @@ inputs:
 
   gem_well_labels:
     type: string[]
-    "sd:upstreamSource": "sc_experiment/alias"
+    "sd:upstreamSource": "sc_experiment/alias_"
 
   normalization_mode:
     type:
