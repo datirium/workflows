@@ -462,7 +462,7 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  ercc_spikein_norm_log_stdout:
+  ercc_spikein_norm_log_std_out:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -566,7 +566,7 @@ steps:
       clip5pNbases: clip_5p_end
       threads: threads
       outReadsUnmapped:
-        default: "FASTx"
+        default: "Fastx"
     out:
       - aligned_file
       - unmapped_mate_1_file
