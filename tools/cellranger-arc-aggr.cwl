@@ -14,13 +14,21 @@ requirements:
   listing: |
     ${
       var entry = "library_id,atac_fragments,per_barcode_metrics,gex_molecule_info\n"
+      var grouping = "library_id\tcondition\n"
       for (var i=0; i < inputs.gex_molecule_info_h5.length; i++){
         entry += get_label(i) + "," + inputs.atac_fragments_file_from_count[i].path + "," + inputs.barcode_metrics_report[i].path + "," + inputs.gex_molecule_info_h5[i].path + "\n"
+        grouping += get_label(i) + "\t" + get_label(i) + "\n"
       }
-      return [{
-        "entry": entry,
-        "entryname": "metadata.csv"
-      }];
+      return [
+        {
+          "entry": entry,
+          "entryname": "metadata.csv"
+        },
+        {
+          "entry": grouping,
+          "entryname": "grouping.tsv"
+        }
+      ];
     }
 
 
@@ -201,6 +209,13 @@ outputs:
       glob: "aggregated/outs/aggr.csv"
     doc: |
       Copy of the input aggregation CSV file
+
+  grouping_data:
+    type: File
+    outputBinding:
+      glob: "grouping.tsv"
+    doc: |
+      Example of TSV file to define datasets grouping
 
   loupe_browser_track:
     type: File
