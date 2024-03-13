@@ -9,12 +9,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-erccnorm:dev
+  dockerPull: robertplayer/scidap-erccnorm:v2.0.0
 
 
 inputs:
 
-  threads:
+  threads_count:
     type: int
     inputBinding:
       prefix: "-t"

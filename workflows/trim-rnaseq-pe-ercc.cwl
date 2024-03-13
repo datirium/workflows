@@ -462,7 +462,7 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  ercc_spikein_norm_log_std_out:
+  ercc_spikein_norm_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -714,7 +714,7 @@ steps:
   ercc_spikein_norm:
       run: ../tools/ercc-norm.cwl
       in:
-        threads: threads
+        threads_count: threads
         unaligned_R1_fastq: star_aligner/unmapped_mate_1_file
         unaligned_R2_fastq: star_aligner/unmapped_mate_2_file
         dilution_factor: dilution_factor
