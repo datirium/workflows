@@ -9,25 +9,31 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-erccnorm:dev
+  dockerPull: robertplayer/scidap-erccnorm:v2.0.0
 
 
 inputs:
 
-  threads:
+  threads_count:
     type: int
     inputBinding:
       prefix: "-t"
     doc: |
       Number of threads for parallel processing
 
-  unaligned_fastq_files:
-    type: File[]
+  unaligned_R1_fastq:
+    type: File
     inputBinding:
       prefix: "-u"
-      itemSeparator: ","
     doc: |
       unaligned R1 reads post-primary alignment
+
+  unaligned_R2_fastq:
+    type: File
+    inputBinding:
+      prefix: "-v"
+    doc: |
+      unaligned R2 reads post-primary alignment
 
   dilution_factor:
     type: float

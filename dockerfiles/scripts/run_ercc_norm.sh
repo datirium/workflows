@@ -39,12 +39,13 @@ EOF
 #	INPUTS & CHECKS & DEFAULTS
 #===============================================================================
 # parse args
-while getopts "ht:u:d:m:c:" OPTION
+while getopts "ht:u:v:d:m:c:" OPTION
 do
 	case $OPTION in
 		h) usage; exit 1 ;;
 		t) THREADS=$OPTARG ;;
-		u) R1R2_UNALIGNED=$OPTARG ;;
+		u) R1_UNALIGNED=$OPTARG ;;
+		v) R2_UNALIGNED=$OPTARG ;;
         d) DILTUOIN_FACTOR=$OPTARG ;;
 		m) UL_PER_M_CELLS=$OPTARG ;;
 		c) RNASEQ_COUNTS=$OPTARG ;;
@@ -53,7 +54,8 @@ do
 done
 # arg checks
 if [[ "$THREADS" == "" ]]; then THREADS=1; fi
-if [[ "$R1R2_UNALIGNED" == "" ]]; then echo "error: required param missing (-a), array of unaligned R1,R2 reads post-primary alignment"; exit; fi
+if [[ "$R1_UNALIGNED" == "" ]]; then echo "error: required param missing (-u), array of unaligned R1 reads post-primary alignment"; exit; fi
+if [[ "$R2_UNALIGNED" == "" ]]; then echo "error: required param missing (-v), array of unaligned R2 reads post-primary alignment"; exit; fi
 if [[ "$DILTUOIN_FACTOR" == "" ]]; then echo "warning: required param missing (-d), dilution factor used for ERCC ExFold mix 1 before spike-in"; exit; fi
 if [[ "$UL_PER_M_CELLS" == "" ]]; then echo "warning: required param missing (-m), volume of ERCC ExFold mix 1 spike-in to sample per million cells"; exit; fi
 if [[ "$RNASEQ_COUNTS" == "" ]]; then echo "warning: required param missing (-c), csv file containing isoform counts (format: RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm)"; exit; fi
@@ -61,7 +63,8 @@ if [[ "$RNASEQ_COUNTS" == "" ]]; then echo "warning: required param missing (-c)
 printf "List of inputs:\n"
 printf "  SECTION 1: general\n"
 printf "\t-t, \$THREADS, $THREADS\n"
-printf "\t-u, \$R1R2_UNALIGNED, $R1R2_UNALIGNED\n"
+printf "\t-u, \$R1_UNALIGNED, $R1_UNALIGNED\n"
+printf "\t-u, \$R2_UNALIGNED, $R2_UNALIGNED\n"
 printf "\t-d, \$DILTUOIN_FACTOR, $DILTUOIN_FACTOR\n"
 printf "\t-m, \$UL_PER_M_CELLS, $UL_PER_M_CELLS\n"
 printf "\t-c, \$RNASEQ_COUNTS, $RNASEQ_COUNTS\n"
@@ -71,8 +74,6 @@ printf "\n\n"
 
 #	MAIN
 #===============================================================================
-R1_UNALIGNED=$(echo $R1R2_UNALIGNED | sed 's/,/\n/' | head -1)
-R2_UNALIGNED=$(echo $R1R2_UNALIGNED | sed 's/,/\n/' | tail -1)
 # map unaligned reads to ERCC sequences
 bowtie2 -p $THREADS -x /dockerdata/refs/ERCC92.fa -1 $R1_UNALIGNED -2 $R2_UNALIGNED -S unaligned_pairs-to-ERCC.sam
 # get counts of each ERCC sequence
