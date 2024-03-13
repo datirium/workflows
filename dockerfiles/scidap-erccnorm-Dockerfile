@@ -12,10 +12,16 @@
 #      Cmd2:        docker image push robertplayer/scidap-erccnorm:dev
 # Pull Cmd:         docker pull robertplayer/scidap-erccnorm:dev
 # Test dev:         docker run --rm -ti robertplayer/scidap-erccnorm:dev /bin/bash
-# re-tag for PR:    docker tag erccnorm-dev robertplayer/scidap-erccnorm:v1.0.0
-# Push for PR:      docker image push robertplayer/scidap-erccnorm:v1.0.0
+# re-tag for PR:    docker tag erccnorm-dev robertplayer/scidap-erccnorm:v2.0.0
+# Push for PR:      docker image push robertplayer/scidap-erccnorm:v2.0.0
 #   
 #   NOTES:
+#       v1.0.0
+#           - first implementation
+#       v2.0.0
+#           - replaced unaligned reads input
+#           - was bowtie (post-ribosomal alignment)
+#           - is now from star (post-primary alignment)
 #   
 #################################################################
 

@@ -120,15 +120,6 @@ inputs:
 
 outputs:
 
-  unaligned_fastq:
-    type:
-      - "null"
-      - File[]
-    format: "http://edamontology.org/format_1930"
-    label: "Unaligned FASTQ file(s)"
-    doc: "Unaligned FASTQ file(s)"
-    outputSource: bowtie_aligner/unaligned_fastq
-
   bigwig:
     type: File
     format: "http://edamontology.org/format_3006"
@@ -458,7 +449,7 @@ steps:
       sam:
         default: true
       threads: threads
-    out: [log_file, unaligned_fastq]
+    out: [log_file]
 
   rpkm_calculation:
     run: ../tools/geep.cwl
