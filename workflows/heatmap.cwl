@@ -378,9 +378,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Tag density profile around regions of interest"
-label: "Tag density profile around regions of interest"
-s:alternateName: "Generate tag density heatmap and histogram around gene TSS or peak centers"
+s:name: "Tag enrichment heatmap and density profile around regions of interest"
+label: "Tag enrichment heatmap and density profile around regions of interest"
+s:alternateName: "Generate tag enrichment heatmap and density profile histogram around gene TSS or peak centers"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -415,10 +415,6 @@ s:creator:
         s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
-
-
-# doc:
-#   $include: ../descriptions/heatmap.md
 
 
 doc: |
