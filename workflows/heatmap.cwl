@@ -25,6 +25,7 @@ requirements:
   filtered_experiment:
   - "filter-peaks-for-heatmap.cwl"
   - "filter-deseq-for-heatmap.cwl"
+  - "filter-diffbind-for-heatmap.cwl"
   - "genelists-sets.cwl"
 
 
