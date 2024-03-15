@@ -101,9 +101,8 @@ inputs:
     default: null
     label: "Genes of interest"
     doc: |
-      Comma or space separated list of
-      genes of interest to visualize
-      expression.
+      A comma- or space-separated list of genes
+      of interest to visualize expression.
       Default: None
 
   color_theme:

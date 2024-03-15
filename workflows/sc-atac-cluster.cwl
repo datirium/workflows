@@ -336,7 +336,7 @@ outputs:
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Peak markers"
+        tab: "Peak markers table"
         Title: "Peak markers"
 
   ucsc_cb_html_data:

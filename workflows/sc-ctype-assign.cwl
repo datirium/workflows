@@ -501,7 +501,7 @@ outputs:
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Gene markers"
+        tab: "Gene markers table"
         Title: "Gene markers"
 
   peak_markers_tsv:
@@ -513,7 +513,7 @@ outputs:
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Peak markers"
+        tab: "Peak markers table"
         Title: "Peak markers"
 
   ucsc_cb_html_data:
