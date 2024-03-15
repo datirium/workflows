@@ -426,13 +426,13 @@ outputs:
   gene_markers_tsv:
     type: File?
     outputSource: sc_rna_cluster/gene_markers_tsv
-    label: "Gene markers table"
+    label: "Gene markers"
     doc: |
       Gene markers.
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Gene markers"
+        tab: "Gene markers table"
         Title: "Gene markers"
 
   ucsc_cb_html_data:
