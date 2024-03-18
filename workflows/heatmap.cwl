@@ -31,7 +31,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name/Alias"
     sd:preview:
@@ -64,9 +64,9 @@ inputs:
   recentering:
     type:
       - "null"
-      - string
       - type: enum
         symbols: ["Gene TSS", "Peak Center"]
+      - string
     default: "Gene TSS"
     label: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
     doc: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
