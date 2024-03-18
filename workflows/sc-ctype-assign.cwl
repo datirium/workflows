@@ -232,78 +232,8 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cell type"
+        tab: "Split by cell type"
         Caption: "UMAP colored by cell type (all cells)"
-
-  umap_gr_ctyp_spl_idnt_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_gr_ctyp_spl_idnt_plot_png
-    label: "UMAP colored by cell type (split by dataset, downsampled)"
-    doc: |
-      UMAP colored by cell type.
-      Split by dataset; downsampled to the
-      smallest dataset.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "UMAP colored by cell type (split by dataset, downsampled)"
-
-  cmp_gr_ctyp_spl_idnt_plot_png:
-    type: File?
-    outputSource: ctype_assign/cmp_gr_ctyp_spl_idnt_plot_png
-    label: "Composition plot colored by cell type (split by dataset, downsampled)"
-    doc: |
-      Composition plot colored by cell type.
-      Split by dataset; downsampled to the
-      smallest dataset.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "Composition plot colored by cell type (split by dataset, downsampled)"
-
-  cmp_gr_idnt_spl_ctyp_plot_png:
-    type: File?
-    outputSource: ctype_assign/cmp_gr_idnt_spl_ctyp_plot_png
-    label: "Composition plot colored by dataset (split by cell type, downsampled)"
-    doc: |
-      Composition plot colored by dataset.
-      Split by cell type; downsampled to
-      the smallest dataset.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "Composition plot colored by dataset (split by cell type, downsampled)"
-
-  umap_gr_ph_spl_idnt_plot_png:
-    type: File?
-    outputSource: ctype_assign/umap_gr_ph_spl_idnt_plot_png
-    label: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
-    doc: |
-      UMAP colored by cell cycle phase.
-      Split by dataset; downsampled to the
-      smallest dataset.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
-
-  cmp_gr_ph_spl_idnt_plot_png:
-    type: File?
-    outputSource: ctype_assign/cmp_gr_ph_spl_idnt_plot_png
-    label: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
-    doc: |
-      Composition plot colored by cell cycle phase.
-      Split by dataset; downsampled to the smallest
-      dataset.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
 
   umap_gr_ctyp_spl_ph_png:
     type: File?
@@ -317,7 +247,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cell type"
+        tab: "Split by cell type"
         Caption: "UMAP colored by cell type (split by cell cycle phase, optionally downsampled)"
 
   cmp_gr_ph_spl_ctyp_png:
@@ -332,8 +262,64 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cell type"
+        tab: "Split by cell type"
         Caption: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled)"
+
+  umap_gr_ctyp_spl_idnt_plot_png:
+    type: File?
+    outputSource: ctype_assign/umap_gr_ctyp_spl_idnt_plot_png
+    label: "UMAP colored by cell type (split by dataset, downsampled)"
+    doc: |
+      UMAP colored by cell type.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Split by dataset"
+        Caption: "UMAP colored by cell type (split by dataset, downsampled)"
+
+  cmp_gr_ctyp_spl_idnt_plot_png:
+    type: File?
+    outputSource: ctype_assign/cmp_gr_ctyp_spl_idnt_plot_png
+    label: "Composition plot colored by cell type (split by dataset, downsampled)"
+    doc: |
+      Composition plot colored by cell type.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Split by dataset"
+        Caption: "Composition plot colored by cell type (split by dataset, downsampled)"
+
+  umap_gr_ph_spl_idnt_plot_png:
+    type: File?
+    outputSource: ctype_assign/umap_gr_ph_spl_idnt_plot_png
+    label: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
+    doc: |
+      UMAP colored by cell cycle phase.
+      Split by dataset; downsampled to the
+      smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Split by dataset"
+        Caption: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
+
+  cmp_gr_ph_spl_idnt_plot_png:
+    type: File?
+    outputSource: ctype_assign/cmp_gr_ph_spl_idnt_plot_png
+    label: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
+    doc: |
+      Composition plot colored by cell cycle phase.
+      Split by dataset; downsampled to the smallest
+      dataset.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Split by dataset"
+        Caption: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
 
   umap_gr_ctyp_spl_cnd_plot_png:
     type: File?
@@ -347,7 +333,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
+        tab: "Split by group"
         Caption: "UMAP colored by cell type (split by grouping condition, downsampled)"
 
   cmp_gr_ctyp_spl_cnd_plot_png:
@@ -362,23 +348,8 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
+        tab: "Split by group"
         Caption: "Composition plot colored by cell type (split by grouping condition, downsampled)"
-
-  cmp_gr_cnd_spl_ctyp_plot_png:
-    type: File?
-    outputSource: ctype_assign/cmp_gr_cnd_spl_ctyp_plot_png
-    label: "Composition plot colored by grouping condition (split by cell type, downsampled)"
-    doc: |
-      Composition plot colored by grouping condition.
-      Split by cell type; first downsampled to the
-      smallest dataset, then downsampled to the
-      smallest group.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per group"
-        Caption: "Composition plot colored by grouping condition (split by cell type, downsampled)"
 
   umap_gr_ph_spl_cnd_plot_png:
     type: File?
@@ -392,7 +363,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
+        tab: "Split by group"
         Caption: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
 
   cmp_gr_ph_spl_cnd_plot_png:
@@ -407,20 +378,8 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
+        tab: "Split by group"
         Caption: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
-
-  xpr_avg_plot_png:
-    type: File?
-    outputSource: ctype_assign/xpr_avg_plot_png
-    label: "Average gene expression"
-    doc: |
-      Average gene expression.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Gene expression"
-        Caption: "Average gene expression"
 
   xpr_per_cell_plot_png:
     type:
@@ -435,7 +394,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Gene expression"
+        tab: "Genes of interest (UMAP)"
         Caption: "UMAP colored by gene expression (per gene)"
 
   xpr_dnst_plot_png:
@@ -451,30 +410,20 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Gene expression"
+        tab: "Genes of interest (violin plot)"
         Caption: "Gene expression density (per gene)"
 
-  xpr_htmp_plot_png:
+  xpr_avg_plot_png:
     type: File?
-    outputSource: ctype_assign/xpr_htmp_plot_png
-    label: "Gene expression heatmap (top gene markers)"
+    outputSource: ctype_assign/xpr_avg_plot_png
+    label: "Average gene expression"
     doc: |
-      Gene expression heatmap.
-      Top gene markers.
+      Average gene expression.
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Gene expression heatmap"
-        Caption: "Gene expression heatmap (top gene markers)"
-
-  xpr_htmp_tsv:
-    type: File?
-    outputSource: ctype_assign/xpr_htmp_tsv
-    label: "Gene expression heatmap (top gene markers)"
-    doc: |
-      Gene expression heatmap.
-      Top gene markers.
-      TSV format.
+        tab: "Genes of interest (dot plot)"
+        Caption: "Average gene expression"
 
   cvrg_plot_png:
     type:
@@ -489,8 +438,30 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Genome coverage"
+        tab: "Genes of interest (coverage plot)"
         Caption: "ATAC fragment coverage (per gene)"
+
+  xpr_htmp_plot_png:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_plot_png
+    label: "Gene expression heatmap (top gene markers)"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene markers heatmap"
+        Caption: "Gene expression heatmap (top gene markers)"
+
+  xpr_htmp_tsv:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_tsv
+    label: "Gene expression heatmap (top gene markers)"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      TSV format.
 
   gene_markers_tsv:
     type: File?
@@ -501,7 +472,7 @@ outputs:
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Gene markers"
+        tab: "Gene markers table"
         Title: "Gene markers"
 
   peak_markers_tsv:
@@ -513,7 +484,7 @@ outputs:
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Peak markers"
+        tab: "Peak markers table"
         Title: "Peak markers"
 
   ucsc_cb_html_data:
@@ -650,14 +621,12 @@ steps:
     - umap_gr_ctyp_plot_png
     - umap_gr_ctyp_spl_idnt_plot_png
     - cmp_gr_ctyp_spl_idnt_plot_png
-    - cmp_gr_idnt_spl_ctyp_plot_png
     - umap_gr_ph_spl_idnt_plot_png
     - cmp_gr_ph_spl_idnt_plot_png
     - umap_gr_ctyp_spl_ph_png
     - cmp_gr_ph_spl_ctyp_png
     - umap_gr_ctyp_spl_cnd_plot_png
     - cmp_gr_ctyp_spl_cnd_plot_png
-    - cmp_gr_cnd_spl_ctyp_plot_png
     - umap_gr_ph_spl_cnd_plot_png
     - cmp_gr_ph_spl_cnd_plot_png
     - xpr_avg_plot_png
@@ -740,7 +709,7 @@ $schemas:
 
 label: "Single-Cell Manual Cell Type Assignment"
 s:name: "Single-Cell Manual Cell Type Assignment"
-s:alternateName: "Assigns identities to clustered cells"
+s:alternateName: "Single-Cell Manual Cell Type Assignment"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-ctype-assign.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -781,14 +750,15 @@ doc: |
   Single-Cell Manual Cell Type Assignment
 
   Assigns identities to cells clustered with any of the “Single-Cell
-  Cluster Analysis” pipelines. For “Single-Cell RNA-Seq Cluster Analysis”
-  the results of this workflow are primarily used in “Single-Cell
+  Cluster Analysis” pipelines. For “Single-Cell RNA-Seq Cluster
+  Analysis” the results of this workflow are used in the “Single-Cell
   RNA-Seq Differential Expression Analysis”, “Single-Cell RNA-Seq
-  Trajectory Analysis”, and, when combined with outputs from “Cell Ranger
-  Count (RNA+VDJ)” or “Cell Ranger Aggregate (RNA, RNA+VDJ)” workflows –
-  in “Single-Cell Immune Profiling Analysis” pipelines. For “Single-Cell
-  ATAC-Seq Cluster Analysis” the results of this workflow are primarily
-  used in “Single-Cell ATAC-Seq Differential Binding Analysis” and
-  “Single-Cell ATAC-Seq Genome Coverage” pipelines. For “Single-Cell WNN
-  Cluster Analysis” – in all of the above, except the “Single-Cell
-  Immune Profiling Analysis” workflow.
+  Trajectory Analysis”, and — when combined with outputs from the
+  “Cell Ranger Count (RNA+VDJ)” or “Cell Ranger Aggregate (RNA, RNA+VDJ)”
+  workflow — in the “Single-Cell Immune Profiling Analysis” pipeline.
+  For “Single-Cell ATAC-Seq Cluster Analysis”, the results of this
+  workflow are used in the “Single-Cell ATAC-Seq Differential
+  Accessibility Analysis” and “Single-Cell ATAC-Seq Genome Coverage”
+  pipelines. For “Single-Cell WNN Cluster Analysis”, the results of
+  this workflow are used in all of the above, except the “Single-Cell
+  Immune Profiling Analysis” pipeline.
