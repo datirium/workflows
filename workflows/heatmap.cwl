@@ -13,16 +13,20 @@ requirements:
 
 
 'sd:upstream':
-  chipseq_sample:
+  epi_sample:
   - "chipseq-se.cwl"
   - "chipseq-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
+  - "cutandrun-macs2-pe.cwl"
+  - "cutandrun-seacr-pe.cwl"
   filtered_experiment:
   - "filter-peaks-for-heatmap.cwl"
   - "filter-deseq-for-heatmap.cwl"
+  - "filter-diffbind-for-heatmap.cwl"
+  - "genelists-sets.cwl"
 
 
 inputs:
@@ -36,24 +40,23 @@ inputs:
   alignment_file:
     type: File[]
     format: "http://edamontology.org/format_2572"
-    label: "ChIP-Seq experiment(s)"
-    doc: "Array of alignment files in BAM format"
-    'sd:upstreamSource': "chipseq_sample/bambai_pair"
+    label: "Epigenomic sample(s)"
+    doc: "Array of alignment files in BAM format from epigenomic samples selected by user."
+    'sd:upstreamSource': "epi_sample/bambai_pair"
     'sd:localLabel': true
 
   alignment_name:
     type: string[]
-    label: "ChIP-Seq experiment(s)"
-    doc: "Names for input alignment files. Order corresponds to the alignment_file"
-    'sd:upstreamSource': "chipseq_sample/alias"
+    label: "Epigenomic sample(s)"
+    doc: "Names for input alignment files from epigenomic samples selected by user. Order corresponds to the alignment_file"
+    'sd:upstreamSource': "epi_sample/alias"
 
   regions_file:
     type: File
     format: "http://edamontology.org/format_3003"
-    label: "Filter ChIP/ATAC peaks or filter DESeq genes experiment"
+    label: "Filtered Peaks or DEGs sample"
     doc: |
-      "Regions of interest. Formatted as headerless BED file with [chrom start end name score strand] for gene list and
-       [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
+      "Regions of interest from a filtered epigenomic sample or filtered DEGs from a DESeq experiment. Formatted as headerless BED file with [chrom start end name score strand] for gene list and [chrom start end name] for peak file. [name] should be unique, [score] is ignored"
     'sd:upstreamSource': "filtered_experiment/filtered_file"
     'sd:localLabel': true
 
@@ -63,20 +66,20 @@ inputs:
       - type: enum
         symbols: ["Gene TSS", "Peak Center"]
     default: "Gene TSS"
-    label: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
-    doc: "Re-center regions of interest. Chose [Gene TSS] for a gene list or [Peak Center] for a peak file"
+    label: "Re-center regions of interest. Choose [Gene TSS] for a gene list or [Peak Center] for a peak file"
+    doc: "Re-center regions of interest. Choose [Gene TSS] for a gene list or [Peak Center] for a peak file"
 
   fragment_size:
     type: int[]
-    label: "ChIP-Seq experiment(s)"
+    label: "Epigenomic sample(s)"
     doc: "Array of fragment sizes for input BAM files, order corresponds to the alignment_file"
-    'sd:upstreamSource': "chipseq_sample/estimated_fragment_size"
+    'sd:upstreamSource': "epi_sample/estimated_fragment_size"
 
   mapped_reads_number:
     type: int[]
-    label: "ChIP-Seq experiment(s)"
-    doc: "Array of mapped reads numners for input BAM files, order corresponds to the alignment_file"
-    'sd:upstreamSource': "chipseq_sample/mapped_reads_number"
+    label: "Epigenomic sample(s)"
+    doc: "Array of mapped read numbners for input BAM files, order corresponds to the alignment_file"
+    'sd:upstreamSource': "epi_sample/mapped_reads_number"
 
   hist_width:
     type: int?
@@ -98,7 +101,7 @@ inputs:
     type: int?
     default: 4
     label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
+    doc: "Number of threads for steps that support multithreading"
     'sd:layout':
       advanced: true
 
@@ -108,20 +111,20 @@ outputs:
   heatmap_table:
     type: File
     format: "http://edamontology.org/format_3475"
-    label: "TSS centered heatmap as TSV"
-    doc: "TSS centered heatmap as TSV"
+    label: "TSS or peak centered heatmap as TSV"
+    doc: "TSS or peak centered heatmap as TSV"
     outputSource: make_heatmap/histogram_file
   
   heatmap_plot:
     type: File?
     format: "http://edamontology.org/format_3603"
-    label: "TSS centered heatmap as PNG"
-    doc: "TSS centered heatmap as PNG"
+    label: "TSS or peak centered heatmap as PNG"
+    doc: "TSS or peak centered heatmap as PNG"
     outputSource: preview_heatmap/heatmap_png
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
-        Caption: 'TSS Centered Heatmap'
+        Caption: 'Tag Enrichment Heatmap'
 
   histogram_table:
     type: File
@@ -139,7 +142,7 @@ outputs:
     'sd:visualPlugins':
     - image:
         tab: 'Plots'
-        Caption: 'Average Tag Density Plot'
+        Caption: 'Average Tag Density'
 
   recentered_regions_file:
     type: File
@@ -160,24 +163,50 @@ steps:
     out: [tag_folder]
 
   recenter_regions:
-    run: ../tools/custom-bash.cwl
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
+      inputs:
+        script:
+          type: string?
+          default: |
+            if [ "$1" == "Gene TSS" ]
+            then
+              # BED for gene list
+              # chrom  start  end  name  [score] strand
+              echo "Recenter by the gene TSS"
+              cat "$0" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\ts"$4"\t"$5"\t"$6}' > `basename $0`
+            else
+              # BED for peaks
+              # chrom  start  end  name
+              echo "Recenter by the peak center"
+              cat "$0" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\ts"$4"\t"0"\t+"}' > `basename $0`
+            fi
+          inputBinding:
+            position: 1
+        input_file:
+          type: File
+          inputBinding:
+            position: 2
+        param:
+          type:
+            - "null"
+            - type: enum
+              symbols: ["Gene TSS", "Peak Center"]
+          inputBinding:
+            position: 3
+      outputs:
+        output_file:
+          type: File
+          outputBinding:
+            glob: "*"
+      baseCommand: [bash, '-c']
     in:
       input_file: regions_file
       param: recentering
-      script:
-        default: |
-          if [ "$1" == "Gene TSS" ]
-          then
-            # BED for gene list
-            # chrom  start  end  name  [score] strand
-            echo "Recenter by the gene TSS"
-            cat "$0" | awk '{tss=$2; if ($6=="-") tss=$3; print $1"\t"tss"\t"tss"\ts"$4"\t"$5"\t"$6}' > `basename $0`
-          else
-            # BED for peaks
-            # chrom  start  end  name
-            echo "Recenter by the peak center"
-            cat "$0" | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center"\ts"$4"\t"0"\t+"}' > `basename $0`
-          fi
     out: [output_file]
 
   make_heatmap:
@@ -375,9 +404,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Tag density profile around regions of interest"
-label: "Tag density profile around regions of interest"
-s:alternateName: "Generate tag density heatmap and histogram around gene TSS or peak centers"
+s:name: "Tag enrichment heatmap and density profile around regions of interest"
+label: "Tag enrichment heatmap and density profile around regions of interest"
+s:alternateName: "Generate tag enrichment heatmap and density profile histogram around gene TSS or peak centers"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -412,10 +441,6 @@ s:creator:
         s:email: mailto:misha.kotliar@gmail.com
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
-
-
-# doc:
-#   $include: ../descriptions/heatmap.md
 
 
 doc: |
