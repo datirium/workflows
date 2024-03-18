@@ -187,7 +187,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
+        tab: "Split by cluster"
         Caption: "UMAP colored by cluster (all cells)"
 
   slh_gr_clst_res_plot_png:
@@ -203,7 +203,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
+        tab: "Split by cluster"
         Caption: "Silhouette scores (all cells)"
 
   umap_gr_clst_spl_idnt_res_plot_png:
@@ -220,7 +220,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
+        tab: "Split by dataset"
         Caption: "UMAP colored by cluster (split by dataset, downsampled)"
 
   cmp_gr_clst_spl_idnt_res_plot_png:
@@ -237,25 +237,8 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
+        tab: "Split by dataset"
         Caption: "Composition plot colored by cluster (split by dataset, downsampled)"
-
-  cmp_gr_idnt_spl_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_atac_cluster/cmp_gr_idnt_spl_clst_res_plot_png
-    label: "Composition plot colored by dataset (split by cluster, downsampled)"
-    doc: |
-      Composition plot colored by dataset.
-      Split by cluster; downsampled to the
-      smallest dataset.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "Composition plot colored by dataset (split by cluster, downsampled)"
 
   umap_gr_clst_spl_cnd_res_plot_png:
     type:
@@ -272,7 +255,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
+        tab: "Split by group"
         Caption: "UMAP colored by cluster (split by grouping condition, downsampled)"
 
   cmp_gr_clst_spl_cnd_res_plot_png:
@@ -290,26 +273,8 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
+        tab: "Split by group"
         Caption: "Composition plot colored by cluster (split by grouping condition, downsampled)"
-
-  cmp_gr_cnd_spl_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_png
-    label: "Composition plot colored by grouping condition (split by cluster, downsampled)"
-    doc: |
-      Composition plot colored by grouping condition.
-      Split by cluster; first downsampled to the
-      smallest dataset, then downsampled to the
-      smallest group.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Per group"
-        Caption: "Composition plot colored by grouping condition (split by cluster, downsampled)"
 
   cvrg_res_plot_png:
     type:
@@ -324,7 +289,7 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Genome coverage"
+        tab: "Genes of interest (coverage plot)"
         Caption: "ATAC fragment coverage (per gene)"
 
   peak_markers_tsv:
@@ -432,10 +397,8 @@ steps:
     - slh_gr_clst_res_plot_png
     - umap_gr_clst_spl_idnt_res_plot_png
     - cmp_gr_clst_spl_idnt_res_plot_png
-    - cmp_gr_idnt_spl_clst_res_plot_png
     - umap_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_clst_spl_cnd_res_plot_png
-    - cmp_gr_cnd_spl_clst_res_plot_png
     - cvrg_res_plot_png
     - umap_gr_clst_res_plot_pdf
     - slh_gr_clst_res_plot_pdf
@@ -489,7 +452,7 @@ $schemas:
 
 label: "Single-Cell ATAC-Seq Cluster Analysis"
 s:name: "Single-Cell ATAC-Seq Cluster Analysis"
-s:alternateName: "Clusters cells by similarity of chromatin accessibility data"
+s:alternateName: "Single-Cell ATAC-Seq Cluster Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-cluster.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -529,8 +492,10 @@ s:creator:
 doc: |
   Single-Cell ATAC-Seq Cluster Analysis
 
-  Clusters cells by similarity of chromatin accessibility data
-  from the outputs of “Single-Cell ATAC-Seq Dimensionality
-  Reduction Analysis” pipeline. The results of this workflow are
-  primarily used in “Single-Cell Manual Cell Type Assignment”
-  pipeline.
+  Clusters cells by similarity of chromatin accessibility
+  data from the outputs of the “Single-Cell ATAC-Seq
+  Dimensionality Reduction Analysis” pipeline. The results
+  of this workflow are used in the “Single-Cell Manual Cell
+  Type Assignment”, “Single-Cell ATAC-Seq Differential
+  Accessibility Analysis”, and “Single-Cell ATAC-Seq Genome
+  Coverage” pipelines.
