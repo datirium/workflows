@@ -64,6 +64,7 @@ inputs:
   recentering:
     type:
       - "null"
+      - string
       - type: enum
         symbols: ["Gene TSS", "Peak Center"]
     default: "Gene TSS"
