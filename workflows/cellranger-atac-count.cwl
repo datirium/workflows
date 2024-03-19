@@ -41,6 +41,15 @@ inputs:
     default: 20
     "sd:upstreamSource": "genome_indices/memory_limit"
 
+  multiome_arc:
+    type: boolean?
+    default: false
+    label: "scATAC-Seq files come from scMultiome experiment"
+    doc: |
+      Changes chemistry type parameter to indicate
+      that scATAC-Seq data is part of the scMultiome
+      experiment.
+
   fastq_file_r1:
     type:
     - File
@@ -426,6 +435,9 @@ steps:
       fastq_file_r3: extract_fastq_r3/fastq_file
       indices_folder: indices_folder
       force_cells: force_cells
+      chemistry:
+        source: multiome_arc
+        valueFrom: $(self?"ARC-v1":"null")
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -508,7 +520,7 @@ $schemas:
 
 label: "Cell Ranger Count (ATAC)"
 s:name: "Cell Ranger Count (ATAC)"
-s:alternateName: "Quantifies single-cell chromatin accessibility of the sequencing data from a single 10x Genomics library"
+s:alternateName: "Cell Ranger Count (ATAC)"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-atac-count.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -548,7 +560,8 @@ s:creator:
 doc: |
   Cell Ranger Count (ATAC)
 
-  Quantifies single-cell chromatin accessibility of the sequencing
-  data from a single 10x Genomics library. The results of this
-  workflow are primarily used in “Cell Ranger Aggregate (ATAC)”
-  pipeline.
+  Quantifies single-cell chromatin accessibility of the
+  sequencing data from a single 10x Genomics library.
+  The results of this workflow are used in either the
+  “Single-Cell ATAC-Seq Filtering Analysis” or “Cell
+  Ranger Aggregate (ATAC)” pipeline.

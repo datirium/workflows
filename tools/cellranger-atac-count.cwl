@@ -84,10 +84,21 @@ inputs:
       peaks as cells. N must be a positive integer <= 20,000. Please
       consult the documentation before using this option
 
+  chemistry:
+    type: string?
+    inputBinding:
+      position: 12
+      prefix: "--chemistry"
+    doc: |
+      Assay configuration. NOTE: by default the assay
+      configuration is detected automatically. Use
+      "ARC-v1" to indicate that it is a library from
+      the multiome assay.
+
   threads:
     type: int?
     inputBinding:
-      position: 12
+      position: 13
       prefix: "--localcores"
     doc: |
       Set max cores the pipeline may request at one time.
@@ -96,7 +107,7 @@ inputs:
   memory_limit:
     type: int?
     inputBinding:
-      position: 13
+      position: 14
       prefix: "--localmem"
     doc: |
       Set max GB the pipeline may request at one time
@@ -105,7 +116,7 @@ inputs:
   virt_memory_limit:
     type: int?
     inputBinding:
-      position: 14
+      position: 15
       prefix: "--localvmem"
     doc: |
       Set max virtual address space in GB for the pipeline
@@ -267,9 +278,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger ATAC Count"
-s:name: "Cell Ranger ATAC Count"
-s:alternateName: "Counts reads from a single scATAC-Seq library"
+label: "Cell Ranger Count (ATAC)"
+s:name: "Cell Ranger Count (ATAC)"
+s:alternateName: "Cell Ranger Count (ATAC)"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-atac-count.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -307,7 +318,7 @@ s:creator:
 
 
 doc: |
-  Cell Ranger ATAC Count
+  Cell Ranger Count (ATAC)
 
   Counts reads from a single scATAC-Seq library.
 
