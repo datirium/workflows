@@ -16,7 +16,7 @@ requirements:
 
 inputs:
 
-  alias_:
+  alias:
     type: string
     label: "Experiment short name/alias"
     sd:preview:
@@ -45,7 +45,7 @@ inputs:
     type: boolean?
     default: false
     label: "scATAC-Seq files come from scMultiome experiment"
-    doc: "|
+    doc: |
       Changes chemistry type parameter to indicate
       that scATAC-Seq data is part of the scMultiome
       experiment.
