@@ -182,11 +182,21 @@ inputs:
   maximum_padj:
     type: float?
     default: 0.05
-    label: "Maximum adjusted P-value"
+    label: "Maximum adjusted p-value"
     doc: |
-      Maximum adjusted P-value threshold for
+      Maximum adjusted p-value threshold for
       selecting differentially expressed genes
       to be visualized on the heatmap.
+
+  minimum_pct:
+    type: float?
+    default: 0.1
+    label: "Minimum fraction of cells where a gene should be expressed"
+    doc: |
+      Minimum fraction of cells in either of
+      the two tested conditions where the gene
+      should be expressed to be included into
+      analysis.
 
   enable_clustering:
     type: boolean?
@@ -344,8 +354,8 @@ outputs:
       in PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'Gene expression PCA (1,2)'
+        tab: "QC"
+        Caption: "Gene expression PCA (1,2)"
   
   pca_2_3_plot_png:
     type: File?
@@ -356,8 +366,8 @@ outputs:
       in PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'Gene expression PCA (2,3)'
+        tab: "QC"
+        Caption: "Gene expression PCA (2,3)"
 
   umap_rd_rnaumap_plot_png:
     type: File?
@@ -372,8 +382,8 @@ outputs:
       PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'UMAP, split by comparison category, RNA'
+        tab: "QC"
+        Caption: "UMAP, split by comparison category, RNA"
 
   umap_rd_atacumap_plot_png:
     type: File?
@@ -388,8 +398,8 @@ outputs:
       PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'UMAP, split by comparison category, ATAC'
+        tab: "QC"
+        Caption: "UMAP, split by comparison category, ATAC"
 
   umap_rd_wnnumap_plot_png:
     type: File?
@@ -404,8 +414,8 @@ outputs:
       PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'QC'
-        Caption: 'UMAP, split by comparison category, WNN'
+        tab: "QC"
+        Caption: "UMAP, split by comparison category, WNN"
 
   dxpr_vlcn_plot_png:
     type: File?
@@ -419,7 +429,7 @@ outputs:
     "sd:visualPlugins":
     - image:
         tab: "Genes of interest"
-        Caption: 'Volcano plot of differentially expressed genes'
+        Caption: "Volcano plot of differentially expressed genes"
 
   xpr_dnst_plot_png:
     type: File?
@@ -434,7 +444,7 @@ outputs:
     "sd:visualPlugins":
     - image:
         tab: "Genes of interest"
-        Caption: 'Gene expression violin plot'
+        Caption: "Gene expression violin plot"
 
   xpr_htmp_plot_png:
     type: File?
@@ -442,13 +452,13 @@ outputs:
     label: "Gene expression heatmap"
     doc: |
       Gene expression heatmap, filtered
-      by adjusted P-value, optionally
+      by adjusted p-value, optionally
       subsetted to the specific groups
       of cells in PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'Heatmap'
-        Caption: 'Gene expression heatmap'
+        tab: "Heatmap"
+        Caption: "Gene expression heatmap"
 
   xpr_per_cell_rd_rnaumap_plot_png:
     type:
@@ -463,8 +473,8 @@ outputs:
       specific group, RNA, PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'Gene expression, RNA'
-        Caption: 'UMAP, gene expression, RNA'
+        tab: "Gene expression, RNA"
+        Caption: "UMAP, gene expression, RNA"
 
   xpr_per_cell_rd_atacumap_plot_png:
     type:
@@ -479,8 +489,8 @@ outputs:
       specific group, ATAC, PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'Gene expression, ATAC'
-        Caption: 'UMAP, gene expression, ATAC'
+        tab: "Gene expression, ATAC"
+        Caption: "UMAP, gene expression, ATAC"
 
   xpr_per_cell_rd_wnnumap_plot_png:
     type:
@@ -495,21 +505,21 @@ outputs:
       specific group, WNN, PNG format
     "sd:visualPlugins":
     - image:
-        tab: 'Gene expression, WNN'
-        Caption: 'UMAP, gene expression, WNN'
+        tab: "Gene expression, WNN"
+        Caption: "UMAP, gene expression, WNN"
 
   diff_expr_genes:
     type: File
     outputSource: de_pseudobulk/diff_expr_genes
     label: "Differentially expressed genes"
     doc: |
-      Not filtered by adjusted P-value
+      Not filtered by adjusted p-value
       differentially expressed genes in
       TSV format
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'Diff. expressed genes'
-        Title: 'Differentially expressed genes'
+        tab: "Diff. expressed genes"
+        Title: "Differentially expressed genes"
 
   read_counts_file:
     type: File?
@@ -600,6 +610,7 @@ steps:
         source: batchby
         valueFrom: $(self==""?null:self)            # safety measure
       maximum_padj: maximum_padj
+      minimum_pct: minimum_pct
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
@@ -731,7 +742,7 @@ $schemas:
 
 label: "Single-Cell RNA-Seq Differential Expression Analysis"
 s:name: "Single-Cell RNA-Seq Differential Expression Analysis"
-s:alternateName: "Identifies differentially expressed genes between two groups of cells optionally coerced to pseudobulk form"
+s:alternateName: "Single-Cell RNA-Seq Differential Expression Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-de-pseudobulk.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -771,6 +782,6 @@ s:creator:
 doc: |
   Single-Cell RNA-Seq Differential Expression Analysis
 
-  Identifies differentially expressed genes between any two
-  groups of cells, optionally aggregating gene expression
-  data from single-cell to pseudobulk form.
+  Identifies differentially expressed genes between any
+  two groups of cells, optionally aggregating gene
+  expression data from single-cell to pseudobulk form.
