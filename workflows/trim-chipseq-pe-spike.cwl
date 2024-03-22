@@ -556,7 +556,7 @@ outputs:
         tab: 'Annotated Peaks'
         Title: 'Peak list with nearest gene annotation'
 
-  atdp_log_file:
+  atdp_log:
     type: File
     label: "ATDP log"
     format: "http://edamontology.org/format_3475"
