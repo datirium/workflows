@@ -429,14 +429,14 @@ outputs:
     doc: "YAML formatted combined log"
     outputSource: stats_for_vis/modified_file_yaml
 
-  stats_for_vis_log_stdout:
+  stats_for_vis_log_std_out:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stats logfile stdout"
     doc: "stdout from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stdout
 
-  stats_for_vis_log_stderr:
+  stats_for_vis_log_std_err:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stats logfile stderr"
@@ -904,6 +904,8 @@ steps:
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
       spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
+      peak_caller:
+        default: "SEACR"
     out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
 
   convert_bed_to_xls:
