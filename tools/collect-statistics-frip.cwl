@@ -14,16 +14,23 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
       printf "$(date)\nLog file for collect-statistics-frip.cwl tool:\n\n"
-      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5
+      bam=$0; bed=$1; md=$2; tsv=$3; yaml=$4; spikein=$5; tool=$6
       # count of total aligned reads
       tar=$(samtools view -cF0x4 $bam)
-      # order bed coordinates of max bedgraph signal (col6)
-      cut -f6 $bed | sed -e 's/:/\t/' -e 's/-/\t/' | awk -F'\t' '{if($3>$2){printf("%s\t%s\t%s\n",$1,$2,$3)}else{printf("%s\t%s\t%s\n",$1,$3,$2)}}' > ordered.bed
+      # parse peak files depending on tool used
+      printf "Tool is: $tool\n"
+      if [[ $tool == "SEACR" ]]; then
+        # order bed coordinates of max bedgraph signal (col6) for seacr results (awk ensures ascending coordinates)
+        cut -f6 $bed | sed -e 's/:/\t/' -e 's/-/\t/' | awk -F'\t' '{if($3>$2){printf("%s\t%s\t%s\n",$1,$2,$3)}else{printf("%s\t%s\t%s\n",$1,$3,$2)}}' > ordered.bed
+      elif [[ $tool == "MACS2" ]]; then
+        # order bed coordinates of max bedgraph signal (col6) for seacr results (awk ensures ascending coordinates)
+        grep -v "^#" $bed | tail -n+3 | cut -f1,2,3 | awk -F'\t' '{if($3>$2){printf("%s\t%s\t%s\n",$1,$2,$3)}else{printf("%s\t%s\t%s\n",$1,$3,$2)}}' > ordered.bed
+      fi
       # counts of reads in peaks (split col6 due to start(col2) and end(col3) not always in ascending order - req by samtools)
       rip=$(samtools view -c $bam -L ordered.bed 2> /dev/null)
       # frip=rip/tar
@@ -83,6 +90,12 @@ inputs:
       label: "spike-in mapped reads from get_spikein_bam_statistics"
       inputBinding:
           position: 50
+
+  peak_caller:
+      type: string
+      label: "specify either SEACR or MACS2 peak caller tool that was used, will change how input called peaks file is parsed"
+      inputBinding:
+          position: 60
 
 
 outputs:

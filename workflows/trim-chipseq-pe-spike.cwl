@@ -12,11 +12,14 @@ requirements:
     - var get_root = function(basename) {
           return basename.split('.').slice(0,1).join('.');
       };
-  
+
 
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
   genome_indices_spikein: "genome-indices.cwl"
+  control_file:
+  - "trim-chipseq-pe-spike.cwl"
+  - "trim-chipseq-pe.cwl"
 
 
 inputs:
@@ -46,14 +49,14 @@ inputs:
   indices_folder:
     type: Directory
     'sd:upstreamSource': "genome_indices/bowtie_indices"
-    label: "Primary genome index for peak calling:"
+    label: "Primary genome for peak calling"
     'sd:localLabel': true
     doc: "Preprocessed genome index of sample organism for primary alignment and peak calling."
 
   indices_folder_for_spikein:
     type: Directory
     'sd:upstreamSource': "genome_indices_spikein/bowtie_indices"
-    label: "Secondary genome index for spike-in normalization:"
+    label: "Secondary genome for spike-in normalization"
     'sd:localLabel': true
     doc: "preprocessed genome index of spike-in organism for secondary alignment (of unaligned
       reads from primary alignment) and spike-in normalization, default should be E. coli K-12"
@@ -78,12 +81,27 @@ inputs:
     format: "http://edamontology.org/format_2330"
     doc: "Chromosomes length file"
 
+  control_file:
+    type: File?
+    default: null
+    'sd:upstreamSource': "control_file/bambai_pair"
+    'sd:localLabel': true
+    label: "Use sample as a control (optional)"
+    format: "http://edamontology.org/format_2572"
+    doc: "If skipping upstream (i.e. not using an upstream sample as input here), please upload a BAM format file."
+
+  broad_peak:
+    type: boolean?
+    default: False
+    label: "Select to call broad peaks"
+    doc: "Sets broad peak calling for MACS2 (toggle on for histone binding libraries)"
+    
   fastq_file_upstream:
     type:
       - File
       - type: array
         items: File
-    label: "FASTQ file for R1:"
+    label: "FASTQ file for R1"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
     doc: "Read1 data in a FASTQ format, received after paired end sequencing"
@@ -93,10 +111,26 @@ inputs:
       - File
       - type: array
         items: File
-    label: "FASTQ file for R2:"
+    label: "FASTQ file for R2"
     'sd:localLabel': true
     format: "http://edamontology.org/format_1930"
     doc: "Read2 data in a FASTQ format, received after paired end sequencing"
+
+  exp_fragment_size:
+    type: int?
+    default: 150
+    'sd:layout':
+      advanced: true
+    label: "Expected fragment size"
+    doc: "Expected fragment size for MACS2"
+
+  force_fragment_size:
+    type: boolean?
+    default: false
+    'sd:layout':
+      advanced: true
+    label: "Force fragment size"
+    doc: "Force MACS2 to use exp_fragment_size"
 
   clip_3p_end:
     type: int?
@@ -141,15 +175,6 @@ inputs:
     'sd:localLabel': true
     doc: "Fragment Length Filter options: 1) default_below_1000 retains fragments <1000 bp, 2) histones_130_to_300 retains fragments
       between 130-300 bp, and 3) TF_below_130 retains fragments <130 bp."
-
-  numeric_threshold:
-    type: float?
-    default: 0.01
-    'sd:layout':
-      advanced: true
-    label: "A numeric threshold (n) to return top n fraction of peaks based on total signal within peaks (default 0.01):"
-    'sd:localLabel': true
-    doc: "A numeric threshold n between 0 and 1 returns the top n fraction of peaks based on total signal within peaks. Default is 0.01"
 
   promoter_dist:    
     type: int?
@@ -387,34 +412,6 @@ outputs:
     label: "stdout logfile"
     outputSource: fragment_counts/log_file_stdout     
 
-  stringent_peak_log_stderr:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "seacr logfile"
-    doc: "stderr from seacr command"
-    outputSource: seacr_callpeak_stringent/log_file_stderr
-
-  stringent_peak_log_stdout:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "seacr logfile stdout"
-    doc: "stdout from seacr command"
-    outputSource: seacr_callpeak_stringent/log_file_stdout
-
-  relaxed_peak_log_stderr:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "seacr logfile"
-    doc: "stderr from seacr command"
-    outputSource: seacr_callpeak_relaxed/log_file_stderr
-
-  relaxed_peak_log_stdout:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "seacr logfile stdout"
-    doc: "stdout from seacr command"
-    outputSource: seacr_callpeak_relaxed/log_file_stdout
-
   stats_for_vis_md:
     type: File?
     label: "Markdown formatted combined log"
@@ -448,55 +445,105 @@ outputs:
     doc: "YAML formatted combined log"
     outputSource: stats_for_vis/modified_file_yaml
 
-  stats_for_vis_log_std_out:
+  stats_for_vis_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stats logfile stdout"
     doc: "stdout from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stdout
 
-  stats_for_vis_log_std_err:
+  stats_for_vis_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stats logfile stderr"
     doc: "stderr from stats_for_vis step"
     outputSource: stats_for_vis/log_file_stderr
 
-  seacr_relaxed_peaks:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bedgraph file of peaks from seacr relaxed mode"
-    doc: "Bed file of enriched regions called by seacr relaxed mode (from normalized bigwig) in macs2's bed format."
-    outputSource: seacr_callpeak_relaxed/peak_tsv_file
-
-  seacr_stringent_peaks:
-    type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bedgraph file of peaks from seacr stringent mode"
-    doc: "Bed file of enriched regions called by seacr stringent mode (from normalized bigwig) in macs2's bed format."
-    outputSource: seacr_callpeak_stringent/peak_tsv_file
-
-  relaxed_peaks_xls:
-    type: File
-    format: "http://edamontology.org/format_3468"
-    label: "bedgraph file of peaks from seacr stringent mode"
-    doc: "Bed file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2's bed format."
-    outputSource: convert_bed_to_xls_relaxed/output_file
-
   macs2_called_peaks:
     type: File?
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"
-    doc: "XLS file of enriched regions called by seacr stringent mode(from normalized bigwig) in macs2 output format."
-    outputSource: convert_bed_to_xls/output_file
+    doc: "XLS file to include information about called peaks"
+    outputSource: macs2_callpeak/peak_xls_file
+
+  macs2_narrow_peaks:
+    type: File?
+    label: "Narrow peaks"
+    format: "http://edamontology.org/format_3613"
+    doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
+    outputSource: macs2_callpeak/narrow_peak_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
         id: 'igvbrowser'
-        type: 'bed'
-        name: "Stringent Peaks"
+        type: 'annotation'
+        name: "Narrow peaks"
         displayMode: "COLLAPSE"
         height: 40
+
+  macs2_broad_peaks:
+    type: File?
+    label: "Broad peaks"
+    format: "http://edamontology.org/format_3614"
+    doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
+    outputSource: macs2_callpeak/broad_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Broad peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  macs2_peak_summits:
+    type: File?
+    label: "Peak summits"
+    format: "http://edamontology.org/format_3003"
+    doc: "Contains the peak summits locations for every peaks"
+    outputSource: macs2_callpeak/peak_summits_file
+
+  macs2_moder_r:
+    type: File?
+    label: "MACS2 generated R script"
+    format: "http://edamontology.org/format_2330"
+    doc: "R script to produce a PDF image about the model based on your data"
+    outputSource: macs2_callpeak/moder_r_file
+
+  macs2_gapped_peak:
+    type: File?
+    label: "Gapped peaks"
+    format: "http://edamontology.org/format_3586"
+    doc: "Contains both the broad region and narrow peaks"
+    outputSource: macs2_callpeak/gapped_peak_file
+    'sd:visualPlugins':
+    - igvbrowser:
+        tab: 'IGV Genome Browser'
+        id: 'igvbrowser'
+        type: 'annotation'
+        name: "Gapped peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  macs2_log:
+    type: File?
+    label: "MACS2 log"
+    format: "http://edamontology.org/format_2330"
+    doc: "MACS2 output log"
+    outputSource: macs2_callpeak/macs_log
+
+  macs2_fragment_stat:
+    type: File?
+    label: "FRAGMENT, FRAGMENTE, ISLANDS"
+    format: "http://edamontology.org/format_2330"
+    doc: "fragment, calculated fragment, islands count from MACS2 results"
+    outputSource: macs2_callpeak/macs2_stat_file
+
+  estimated_fragment_size:
+    type: int
+    label: "Estimated fragment size"
+    doc: "Estimated fragment size for downstream analyses"
+    outputSource: macs2_callpeak/macs2_fragments_calculated
 
   annotated_peaks_file:
     type: File?
@@ -506,8 +553,32 @@ outputs:
     outputSource: island_intersect/result_file
     'sd:visualPlugins':
     - syncfusiongrid:
-        tab: 'Annotated Peaks (Stringent)'
-        Title: 'sparse enriched peak list with nearest gene annotation'
+        tab: 'Annotated Peaks'
+        Title: 'Peak list with nearest gene annotation'
+
+  atdp_log_file:
+    type: File
+    label: "ATDP log"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated log"
+    outputSource: average_tag_density/log_file
+
+  atdp_result:
+    type: File
+    label: "ATDP results"
+    format: "http://edamontology.org/format_3475"
+    doc: "Average Tag Density generated results"
+    outputSource: average_tag_density/result_file
+    'sd:visualPlugins':
+    - scatter:
+        tab: 'QC Plots'
+        Title: 'Average Tag Density'
+        xAxisTitle: 'Distance From TSS (bases)'
+        yAxisTitle: 'Average Tag Density (per bp)'
+        colors: ["#b3de69"]
+        height: 500
+        data: [$1, $2]
+        comparable: "atdp"
 
 
 steps:
@@ -800,54 +871,53 @@ steps:
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
     doc: |
       Formatting alignment file to account for fragments based on PE bam.
-      Output is a filtered and scaled (normalized) bed file to be used as
-      input for SEACR peak calling.
+      Output is a filtered (see fragment_length_filter input) and scaled
+      (normalized) bed file to be used as input for peak calling.
 
-  seacr_callpeak_relaxed: 
-    run: ../tools/seacr.cwl
+  macs2_callpeak:
+    label: "Peak detection"
+    doc: |
+      Identifies enriched with aligned reads genome areas. Those areas correspond to the
+      transcription factor binding sites.
+    run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold: numeric_threshold
-      norm_control_to_treatment:
-        default: "non"
-      peakcalling_mode:
-        default: "relaxed"
-      output_prefix:
-        source: fragment_counts/sorted_bed_scaled
-        valueFrom: $(get_root(self.basename)+"_scaled")
-    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
-
-  convert_bed_to_xls_relaxed:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: seacr_callpeak_relaxed/peak_tsv_file
-      script:
-        default: >
-          cat $0 | awk -F'\t'
-          '{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),$4,"peak_"NR)}}' > `basename $0`".bed"
+      treatment_file: fragment_counts/sorted_bed_scaled
+      control_file: control_file
+      nolambda:
+        source: control_file
+        valueFrom: $(!self)
+      genome_size: genome_size
+      mfold:
+        default: "4 40"
+      verbose:
+        default: 3
+      nomodel: force_fragment_size
+      extsize: exp_fragment_size
+      bw: exp_fragment_size
+      broad: broad_peak
+      call_summits:
+        source: broad_peak
+        valueFrom: $(!self)
+      keep_dup:
+        default: auto
+      q_value:
+        default: 0.05
+      format_mode:
+        default: AUTO
+      buffer_size:
+        default: 10000
     out:
-    - output_file
-    doc: |
-      formatting seacr bed output into xls for igv browser and input into island_instersect
-
-  seacr_callpeak_stringent:
-    run: ../tools/seacr.cwl
-    in:
-      treatment_bedgraph: fragment_counts/sorted_bed_scaled
-      numeric_threshold: numeric_threshold
-      norm_control_to_treatment:
-        default: "non"
-      peakcalling_mode:
-        default: "stringent"
-      output_prefix:
-        source: fragment_counts/sorted_bed_scaled
-        valueFrom: $(get_root(self.basename)+"_scaled")
-    out: [peak_tsv_file, log_file_stderr, log_file_stdout]
-    doc: |
-      Sparse Enrichment Analysis. Input is normalized depth data using spike-in mapped reads (E. coli by default).
-      Scaling factor (sf) for seq library normalization:
-            sf=(C/[mapped reads]) where C is a constant (10000 used here)
-      Henikoff protocol, Section 16: https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5)
+    - peak_xls_file
+    - narrow_peak_file
+    - peak_summits_file
+    - broad_peak_file
+    - moder_r_file
+    - gapped_peak_file
+    - treat_pileup_bdg_file
+    - control_lambda_bdg_file
+    - macs_log
+    - macs2_stat_file
+    - macs2_fragments_calculated
 
   filter_fragment_lengths:
     run: ../tools/samtools-filter-fragmentlengths.cwl
@@ -896,6 +966,7 @@ steps:
         valueFrom: $(get_root(self.basename)+"_bam_statistics_report_after_filtering.txt")
     out: [log_file, ext_is_section]
 
+  # same cutandrun tools work here
   get_stat:
     run: ../tools/collect-statistics-cutandrun.cwl
     in:
@@ -904,11 +975,11 @@ steps:
       bowtie_alignment_report: bowtie_aligner/log_file
       bam_statistics_report: get_bam_statistics/log_file
       bam_statistics_after_filtering_report: get_bam_statistics_after_filtering/log_file
-      cutandrun_called_peaks: seacr_callpeak_stringent/peak_tsv_file
+      cutandrun_called_peaks: macs2_callpeak/peak_xls_file
       paired_end:
         default: True
       output_prefix:
-        source: seacr_callpeak_stringent/peak_tsv_file
+        source: macs2_callpeak/peak_xls_file
         valueFrom: $(get_root(self.basename))
     out: [collected_statistics_yaml, collected_statistics_tsv, collected_statistics_md, mapped_reads]
     doc: |
@@ -918,41 +989,14 @@ steps:
     run: ../tools/collect-statistics-frip.cwl
     in:
       bam_file: samtools_sort_index/bam_bai_pair
-      called_peaks_norm: seacr_callpeak_stringent/peak_tsv_file
+      called_peaks_norm: macs2_callpeak/peak_xls_file
       collected_statistics_md: get_stat/collected_statistics_md
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
       spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
       peak_caller:
-        default: "SEACR"
+        default: "MACS2"
     out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
-
-  convert_bed_to_xls:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: seacr_callpeak_stringent/peak_tsv_file
-      script:
-        default: >
-          cat $0 | awk -F'\t'
-          '{if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),$4,"peak_"NR)}}' > `basename $0`".bed"
-    out:
-    - output_file
-    doc: |
-      formatting seacr bed output into bed for igv browser
-
-  convert_bed_to_xls_for_iaintersect:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: seacr_callpeak_stringent/peak_tsv_file
-      script:
-        default: >
-          cat $0 | awk -F'\t'
-          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
-          {if($3>$2){printf("%s\t%.0f\t%.0f\t%.0f\t%.0f\t%.0f\t0\t0\t0\t%s\n",$1,$2,$3,$3-$2+1,$2+(($3-$2)/2),$4,"peak_"NR)}}' > `basename $0`"headers.bed"
-    out:
-    - output_file
-    doc: |
-      formatting seacr bed output into xls for input into island_instersect
 
   island_intersect:
     label: "Peak annotation"
@@ -961,10 +1005,33 @@ steps:
       chromatin binding sites.
     run: ../tools/iaintersect.cwl
     in:
-      input_filename: convert_bed_to_xls_for_iaintersect/output_file
+      input_filename: macs2_callpeak/peak_xls_file
       annotation_filename: annotation_file
       promoter_bp: promoter_dist
       upstream_bp: upstream_dist
+    out: [result_file, log_file]
+
+  average_tag_density:
+    label: "Read enrichment around genes TSS"
+    doc: |
+      Generates average tag density plot around genes TSS as a lot of cis-regulatory
+      elements are close to the TSS of their targets.
+    run: ../tools/atdp.cwl
+    in:
+      input_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      annotation_filename: annotation_file
+      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      avd_window_bp:
+        default: 5000
+      avd_smooth_bp:
+        default: 50
+      ignore_chr:
+        default: chrM
+      double_chr:
+        default: "chrX chrY"
+      avd_heat_window_bp:
+        default: 200
+      mapped_reads: get_stat/mapped_reads
     out: [result_file, log_file]
 
 
@@ -974,11 +1041,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "CUT&RUN/TAG SEACR pipeline paired-end"
-label: "CUT&RUN/TAG SEACR pipeline paired-end"
-s:alternateName: "CUR&RUN and CUT&TAG basic sparse enrichment analysis workflow for a paired-end experiment with Trim Galore and SEACR"
+s:name: "Trim Galore ChIP-Seq pipeline paired-end with spike-in"
+label: "Trim Galore ChIP-Seq pipeline paired-end with spike-in"
+s:alternateName: "Trim Galore ChIP-Seq workflow for paired-end reads with spike-in control"
 
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/cutandrun-pe.cwl
+s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/trim-chipseq-pe-spike.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -1014,9 +1081,9 @@ s:creator:
 
 
 doc: |
-  A basic analysis workflow for paired-read CUT&RUN and CUT&TAG sequencing experiments. These sequencing library prep methods are ultra-sensitive chromatin mapping technologies compared to the ChIP-Seq methodology. Its primary benefits include 1) length filtering, 2) a higher signal-to-noise ratio, and 3) built-in normalization for between sample comparisons.
+  A basic analysis workflow for paired-end ChIP-Seq experiments with a spike-in control. These sequencing library prep methods are chromatin mapping technologies compared to the ChIP-Seq methodology. Its primary benefits include 1) length filtering, 2) a higher signal-to-noise ratio, and 3) built-in normalization for between sample comparisons.
 
-  This workflow utilizes the tool [SEACR (Sparse Enrichment Analysis of CUT&RUN data)](https://github.com/FredHutch/SEACR) which calls enriched regions in the target sequence data by identifying the top 1% of regions by area under the curve (of the alignment pileup). This workflow is loosely based on the [CUT-RUNTools-2.0 pipeline](https://github.com/fl-yu/CUT-RUNTools-2.0) pipeline, and the ChIP-Seq pipeline from [BioWardrobe](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465) was used as a CWL template.
+  This workflow utilizes the tool MACS2 which calls enriched regions in the target sequence data by identifying the top regions by area under a poisson distribution (of the alignment pileup).
 
   ### __Inputs__
   *General Info (required\*):*
@@ -1030,17 +1097,17 @@ doc: |
   - FASTQ file for R2* - read 2 file of a pair-end library
 
   *Advanced:*
+  - 
   - Number of bases to clip from the 3p end - used by bowtie aligner to trim <int> bases from 3' (right) end of reads
   - Number of bases to clip from the 5p end - used by bowtie aligner to trim <int> bases from 5' (left) end of reads
   - Call samtools rmdup to remove duplicates from sorted BAM file? - toggle on/off to remove duplicate reads from analysis
   - Fragment Length Filter will retain fragments between set base pair (bp) ranges for peak analysis - drop down menu
-      - `Default_Range` retains fragments <1000 bp
-      - `Histone_Binding_Library` retains fragments between 130-300 bp
-      - `Transcription_Factor_Binding_Library` retains fragments <130 bp
+      - `default_below_1000` retains fragments <1000 bp
+      - `histones_130_to_300` retains fragments between 130-300 bp
+      - `TF_below_130` retains fragments <130 bp
   - Max distance (bp) from gene TSS (in both directions) overlapping which the peak will be assigned to the promoter region - default set to `1000`
   - Max distance (bp) from the promoter (only in upstream directions) overlapping which the peak will be assigned to the upstream region - default set to `20000`
   - Number of threads for steps that support multithreading - default set to `2`
-
 
   ### __Outputs__
   Intermediate and final downloadable outputs include:
@@ -1048,7 +1115,7 @@ doc: |
   - quality statistics and visualizations for both R1/R2 input FASTQ files
   - coordinate sorted BAM file with associated BAI file for primary alignment
   - read pileup/coverage in BigWig format (raw and normalized)
-  - cleaned bed files (containing fragment coordinates), and spike-in normalized SEACR peak-called BED files from both "stringent" and "relaxed" mode.
+  - cleaned bed files (containing fragment coordinates), and spike-in normalized peak-called BED files (also includes "narrow" and "broad" peaks).
   - stringent peak call bed file with nearest gene annotations per peak
 
   ### __Data Analysis Steps__
@@ -1061,15 +1128,11 @@ doc: |
   5. (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly the same location).
       - This step is used to remove reads overamplified during amplification of the library. Unfortunately, it may also remove "good" reads. We usually do not remove duplicates unless the library is heavily duplicated.
   6. Mapping unaligned reads from primary alignment to secondary genome index with Bowtie.
-      - This step is used to obtain the number of reads for normalization, used to scale the pileups from the primary alignment. After normalization, sample pileups/peak may then be appropriately compared to one another assuming an equal use of spike-in material during library preparation. Note the default genome index for this step should be *E. coli* K-12 if no spike-in material was called out in the library protocol. Refer to [Step 16](https://www.protocols.io/view/cut-amp-tag-data-processing-and-analysis-tutorial-e6nvw93x7gmk/v1?step=16#step-4A3D8C70DC3011EABA5FF3676F0827C5) of the "CUT&Tag Data Processing and Analysis Tutorial" by Zheng Y et al (2020). Protocol.io.
+      - This step is used to obtain the number of reads for normalization, used to scale the read count pileups from the primary alignment used for peak calling. After normalization, sample pileups/peak may then be appropriately compared to one another assuming an equal use of spike-in material during library preparation.
   7. Formatting alignment file to account for fragments based on paired-end BAM.
-      - Generates a filtered and normalized bed file to be used as input for SEACR peak calling.
-  8. Call enriched regions using SEACR.
-      - This step uses both stringent and relaxed peak calling modes with a FDR (false discovery rate) of 0.01, and no normalization to a control sample. The output of SEACR is the [called peaks BED format file](https://github.com/FredHutch/SEACR#description-of-output-fields).
+      - Generates a filtered and normalized bed file to be used as input for peak calling.
+  8. Call enriched regions using MACS2.
+      - This step called peaks (broad and narrow) using the MACS2 tool with default parameters and no normalization to a control sample.
   9. Generation and formatting of output files.
       - This step collects read, alignment, and peak statistics, as well asgenerates BigWig coverage/pileup files for display on the browser using IGV. The coverage shows the number of fragments that cover each base in the genome both normalized and unnormalized to the calculated spike-in scaling factor.
 
-
-  ### __References__
-    - Meers MP, Tenenbaum D, Henikoff S. (2019). Peak calling by Sparse Enrichment Analysis for CUT&RUN chromatin profiling. Epigenetics and Chromatin 12(1):42.
-    - Langmead B, Trapnell C, Pop M, Salzberg SL. Ultrafast and memory-efficient alignment of short DNA sequences to the human genome. Genome Biol 10:R25.
