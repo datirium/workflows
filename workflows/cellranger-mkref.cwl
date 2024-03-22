@@ -12,7 +12,6 @@ requirements:
 "sd:upstream":
   genome_indices:
   - "genome-indices.cwl"
-  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -58,7 +57,7 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "6"
+    default: "4"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the

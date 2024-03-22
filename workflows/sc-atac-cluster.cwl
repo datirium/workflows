@@ -161,13 +161,13 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "6"
+    default: "4"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 6
+      Default: 4
     "sd:layout":
       advanced: true
 
