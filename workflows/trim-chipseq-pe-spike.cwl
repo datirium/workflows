@@ -233,14 +233,14 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'FASTQ 1 Base frequency plot'
+        Title: 'FASTQ 1 Base frequency plot (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'FASTQ 1 Quality Control'
+        Title: 'FASTQ 1 Quality Control (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -255,14 +255,14 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'FASTQ 2 Base frequency plot'
+        Title: 'FASTQ 2 Base frequency plot (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'FASTQ 2 Quality Control'
+        Title: 'FASTQ 2 Quality Control (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -556,7 +556,7 @@ outputs:
         tab: 'Annotated Peaks'
         Title: 'Peak list with nearest gene annotation'
 
-  atdp_log:
+  atdp_log_file:
     type: File
     label: "ATDP log"
     format: "http://edamontology.org/format_3475"

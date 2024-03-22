@@ -14,15 +14,34 @@ requirements:
       };
   
 
-'sd:metadata':
-  - "../metadata/chipseq-header.cwl"
-
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
   genome_indices_spikein: "genome-indices.cwl"
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Sample short name"
+    sd:preview:
+      position: 1
+
+  cells:
+    type: string
+    label: "Cell type/name/id"
+    sd:preview:
+      position: 2
+
+  conditions:
+    type: string
+    label: "Experimental condition(s)"
+    sd:preview:
+      position: 3
+
+  catalog:
+    type: string?
+    label: "Catalog #"
 
   indices_folder:
     type: Directory
@@ -189,14 +208,14 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'FASTQ 1 Base frequency plot'
+        Title: 'FASTQ 1 Base frequency plot (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'FASTQ 1 Quality Control'
+        Title: 'FASTQ 1 Quality Control (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -211,14 +230,14 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'FASTQ 2 Base frequency plot'
+        Title: 'FASTQ 2 Base frequency plot (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'FASTQ 2 Quality Control'
+        Title: 'FASTQ 2 Quality Control (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
