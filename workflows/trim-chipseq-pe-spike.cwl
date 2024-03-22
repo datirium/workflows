@@ -871,8 +871,8 @@ steps:
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
     doc: |
       Formatting alignment file to account for fragments based on PE bam.
-      Output is a filtered and scaled (normalized) bed file to be used as
-      input for peak calling.
+      Output is a filtered (see fragment_length_filter input) and scaled
+      (normalized) bed file to be used as input for peak calling.
 
   macs2_callpeak:
     label: "Peak detection"
@@ -881,7 +881,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      treatment_file: fragment_counts/sorted_bed_scaled
       control_file: control_file
       nolambda:
         source: control_file
@@ -903,7 +903,7 @@ steps:
       q_value:
         default: 0.05
       format_mode:
-        default: BAMPE
+        default: AUTO
       buffer_size:
         default: 10000
     out:
