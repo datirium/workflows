@@ -14,9 +14,6 @@ requirements:
       };
   
 
-'sd:metadata':
-  - "../metadata/chipseq-header.cwl"
-
 'sd:upstream':
   genome_indices: "genome-indices.cwl"
   genome_indices_spikein: "genome-indices.cwl"
@@ -24,6 +21,28 @@ requirements:
 
 
 inputs:
+
+  alias:
+    type: string
+    label: "Sample short name"
+    sd:preview:
+      position: 1
+
+  cells:
+    type: string
+    label: "Cell type/name/id"
+    sd:preview:
+      position: 2
+
+  conditions:
+    type: string
+    label: "Experimental condition(s)"
+    sd:preview:
+      position: 3
+
+  catalog:
+    type: string?
+    label: "Catalog #"
 
   indices_folder:
     type: Directory
@@ -212,14 +231,14 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'FASTQ 1 Base frequency plot'
+        Title: 'FASTQ 1 Base frequency plot (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'FASTQ 1 Quality Control'
+        Title: 'FASTQ 1 Quality Control (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -234,14 +253,14 @@ outputs:
     'sd:visualPlugins':
     - line:
         tab: 'QC Plots'
-        Title: 'FASTQ 2 Base frequency plot'
+        Title: 'FASTQ 2 Base frequency plot (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Frequency'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
         tab: 'QC Plots'
-        Title: 'FASTQ 2 Quality Control'
+        Title: 'FASTQ 2 Quality Control (post trim)'
         xAxisTitle: 'Nucleotide position'
         yAxisTitle: 'Quality score'
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
@@ -535,7 +554,7 @@ outputs:
         tab: 'Annotated Peaks'
         Title: 'Peak list with nearest gene annotation'
 
-  atdp_log_file:
+  atdp_log:
     type: File
     label: "ATDP log"
     format: "http://edamontology.org/format_3475"
@@ -850,8 +869,8 @@ steps:
     out: [sorted_bed, sorted_bed_scaled, log_file_stderr, log_file_stdout]
     doc: |
       Formatting alignment file to account for fragments based on PE bam.
-      Output is a filtered and scaled (normalized) bed file to be used as
-      input for peak calling.
+      Output is a filtered (see fragment_length_filter input) and scaled
+      (normalized) bed file to be used as input for peak calling.
 
   macs2_callpeak:
     label: "Peak detection"
@@ -860,7 +879,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
+      treatment_file: fragment_counts/sorted_bed_scaled
       control_file: control_file
       nolambda:
         source: control_file
@@ -882,7 +901,7 @@ steps:
       q_value:
         default: 0.05
       format_mode:
-        default: BAMPE
+        default: AUTO
       buffer_size:
         default: 10000
     out:
@@ -906,6 +925,8 @@ steps:
         source: fragment_length_filter
         valueFrom: $(self)
     out: [log_file_stdout, log_file_stderr, filtered_bam]
+    doc: |
+      Filtering bam file before scaling for IGV.
 
   samtools_sort_index_filtered:
     run: ../tools/samtools-sort-index.cwl
@@ -972,6 +993,8 @@ steps:
       collected_statistics_tsv: get_stat/collected_statistics_tsv
       collected_statistics_yaml: get_stat/collected_statistics_yaml
       spikein_reads_mapped: get_spikein_bam_statistics/reads_mapped
+      peak_caller:
+        default: "MACS2"
     out: [modified_file_md, modified_file_tsv, modified_file_yaml, log_file_stdout, log_file_stderr]
 
   island_intersect:
