@@ -23,8 +23,8 @@ inputs:
     doc: |
       Path to the RDS file to load Seurat object from. This
       file should include genes expression information
-      stored in the RNA assay. Additionally, 'rnaumap',
-      and/or 'atacumap', and/or 'wnnumap' dimensionality
+      stored in the RNA assay. Additionally, rnaumap,
+      and/or atacumap, and/or wnnumap dimensionality
       reductions should be present.
 
   datasets_metadata:
@@ -34,8 +34,8 @@ inputs:
     doc: |
       Path to the TSV/CSV file to optionally extend Seurat
       object metadata with categorical values using samples
-      identities. First column - 'library_id' should
-      correspond to all unique values from the 'new.ident'
+      identities. First column - library_id should
+      correspond to all unique values from the new.ident
       column of the loaded Seurat object. If any of the
       provided in this file columns are already present in
       the Seurat object metadata, they will be overwritten.
@@ -50,7 +50,7 @@ inputs:
     doc: |
       Path to the TSV/CSV file to optionally prefilter and
       extend Seurat object metadata by selected barcodes.
-      First column should be named as 'barcode'. If file
+      First column should be named as barcode. If file
       includes any other columns they will be added to the
       Seurat object metadata ovewriting the existing ones if
       those are present. Default: all cells used, no extra
@@ -167,6 +167,15 @@ inputs:
       output only differentially expressed genes with
       adjusted P-value not bigger than this value.
       Default: 0.05
+
+  minimum_pct:
+    type: float?
+    inputBinding:
+      prefix: "--minpct"
+    doc: |
+      Include only those genes that are detected in not lower than this
+      fraction of cells in either of the two tested conditions.
+      Default: 0.1
 
   genes_of_interest:
     type:
@@ -338,60 +347,66 @@ outputs:
     outputBinding:
       glob: "*_umap_rd_rnaumap.png"
     doc: |
-      UMAP, split by selected criteria,
-      optionally subsetted to the specific
-      group, RNA.
-      PNG format
+      UMAP with cells selected for analysis.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction rnaumap.
+      PNG format.
 
   umap_rd_rnaumap_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_umap_rd_rnaumap.pdf"
     doc: |
-      UMAP, split by selected criteria,
-      optionally subsetted to the specific
-      group, RNA.
-      PDF format
+      UMAP with cells selected for analysis.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction rnaumap.
+      PDF format.
 
   umap_rd_atacumap_plot_png:
     type: File?
     outputBinding:
       glob: "*_umap_rd_atacumap.png"
     doc: |
-      UMAP, split by selected criteria,
-      optionally subsetted to the specific
-      group, ATAC.
-      PNG format
+      UMAP with cells selected for analysis.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction atacumap.
+      PNG format.
 
   umap_rd_atacumap_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_umap_rd_atacumap.pdf"
     doc: |
-      UMAP, split by selected criteria,
-      optionally subsetted to the specific
-      group, ATAC.
-      PDF format
+      UMAP with cells selected for analysis.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction atacumap.
+      PDF format.
 
   umap_rd_wnnumap_plot_png:
     type: File?
     outputBinding:
       glob: "*_umap_rd_wnnumap.png"
     doc: |
-      UMAP, split by selected criteria,
-      optionally subsetted to the specific
-      group, WNN.
-      PNG format
+      UMAP with cells selected for analysis.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction wnnumap.
+      PNG format.
 
   umap_rd_wnnumap_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_umap_rd_wnnumap.pdf"
     doc: |
-      UMAP, split by selected criteria,
-      optionally subsetted to the specific
-      group, WNN.
-      PDF format
+      UMAP with cells selected for analysis.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction wnnumap.
+      PDF format.
 
   mds_plot_html:
     type: File?
@@ -400,7 +415,7 @@ outputs:
     doc: |
       MDS plot of pseudobulk aggregated
       normalized reads counts.
-      HTML format
+      HTML format.
 
   pca_1_2_plot_png:
     type: File?
@@ -408,7 +423,7 @@ outputs:
       glob: "*_pca_1_2.png"
     doc: |
       Gene expression PCA (1,2).
-      PNG format
+      PNG format.
 
   pca_1_2_plot_pdf:
     type: File?
@@ -416,7 +431,7 @@ outputs:
       glob: "*_pca_1_2.pdf"
     doc: |
       Gene expression PCA (1,2).
-      PDF format
+      PDF format.
 
   pca_2_3_plot_png:
     type: File?
@@ -432,13 +447,14 @@ outputs:
       glob: "*_pca_2_3.pdf"
     doc: |
       Gene expression PCA (2,3).
-      PDF format
+      PDF format.
 
   dxpr_vlcn_plot_png:
     type: File?
     outputBinding:
       glob: "*_dxpr_vlcn.png"
     doc: |
+      Differentially expressed genes.
       Volcano plot of differentially expressed genes.
       Highlighed genes are either provided by user or
       top 10 genes with the highest log2FoldChange
@@ -446,13 +462,14 @@ outputs:
       as --second vs --first. Cells are optionally
       subsetted to the specific group and optionally
       coerced to the pseudobulk form.
-      PNG format
+      PNG format.
 
   dxpr_vlcn_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_dxpr_vlcn.pdf"
     doc: |
+      Differentially expressed genes.
       Volcano plot of differentially expressed genes.
       Highlighed genes are either provided by user or
       top 10 genes with the highest log2FoldChange
@@ -460,31 +477,33 @@ outputs:
       as --second vs --first. Cells are optionally
       subsetted to the specific group and optionally
       coerced to the pseudobulk form.
-      PDF format
+      PDF format.
 
   xpr_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_xpr_dnst.png"
     doc: |
+      Gene expression density.
       Gene expression violin plots for either user
       provided or top 10 differentially expressed
       genes with the highest log2FoldChange values.
       The direction of comparison is defined as
       --second vs --first.
-      PNG format
+      PNG format.
 
   xpr_dnst_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_xpr_dnst.pdf"
     doc: |
+      Gene expression density.
       Gene expression violin plots for either user
       provided or top 10 differentially expressed
       genes with the highest log2FoldChange values.
       The direction of comparison is defined as
       --second vs --first.
-      PDF format
+      PDF format.
 
   xpr_per_cell_rd_rnaumap_plot_png:
     type:
@@ -494,10 +513,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.png"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, RNA.
-      PNG format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction rnaumap.
+      PNG format.
 
   xpr_per_cell_rd_rnaumap_plot_pdf:
     type:
@@ -507,10 +527,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_rnaumap_*.pdf"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, RNA.
-      PDF format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction rnaumap.
+      PDF format.
 
   xpr_per_cell_rd_atacumap_plot_png:
     type:
@@ -520,10 +541,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.png"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, ATAC.
-      PNG format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction atacumap.
+      PNG format.
 
   xpr_per_cell_rd_atacumap_plot_pdf:
     type:
@@ -533,10 +555,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_atacumap_*.pdf"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, ATAC.
-      PDF format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction atacumap.
+      PDF format.
 
   xpr_per_cell_rd_wnnumap_plot_png:
     type:
@@ -546,10 +569,11 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.png"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, WNN.
-      PNG format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction wnnumap.
+      PNG format.
 
   xpr_per_cell_rd_wnnumap_plot_pdf:
     type:
@@ -559,30 +583,31 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_rd_wnnumap_*.pdf"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, WNN.
-      PDF format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group;
+      reduction wnnumap.
+      PDF format.
 
   xpr_htmp_plot_png:
     type: File?
     outputBinding:
       glob: "*_xpr_htmp.png"
     doc: |
-      Gene expression heatmap, filtered by adjusted
-      P-value, optionally subsetted to the specific
-      groups of cells.
-      PNG format
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      PNG format.
 
   xpr_htmp_plot_pdf:
     type: File?
     outputBinding:
       glob: "*_xpr_htmp.pdf"
     doc: |
-      Gene expression heatmap, filtered by adjusted
-      P-value, optionally subsetted to the specific
-      groups of cells.
-      PDF format
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      PDF format.
 
   diff_expr_genes:
     type: File?
@@ -590,8 +615,8 @@ outputs:
       glob: "*_de_genes.tsv"
     doc: |
       Differentially expressed genes.
-      Not filtered by adjusted P-value.
-      TSV format
+      Not filtered by adjusted p-value.
+      TSV format.
 
   bulk_read_counts_gct:
     type: File?
@@ -599,17 +624,19 @@ outputs:
       glob: "*_bulk_counts.gct"
     doc: |
       GSEA compatible not filtered normalized
-      reads counts aggregated to pseudobulk form.
-      GCT format
+      reads counts aggregated to pseudobulk
+      form.
+      GCT format.
 
   bulk_phenotypes_cls:
     type: File?
     outputBinding:
       glob: "*_bulk_phntps.cls"
     doc: |
-      GSEA compatible phenotypes file defined based
-      on --splitby, --first, and --second parameters.
-      CLS format
+      GSEA compatible phenotypes file defined
+      based on --splitby, --first, and --second
+      parameters.
+      CLS format.
 
   cell_read_counts_gct:
     type: File?
@@ -617,7 +644,7 @@ outputs:
       glob: "*_cell_counts.gct"
     doc: |
       Filtered normalized reads counts per cell.
-      GCT format
+      GCT format.
 
   stdout_log:
     type: stdout
@@ -641,7 +668,7 @@ $schemas:
 
 label: "Single-Cell RNA-Seq Differential Expression Analysis"
 s:name: "Single-Cell RNA-Seq Differential Expression Analysis"
-s:alternateName: "Identifies differentially expressed genes between two groups of cells optionally coerced to pseudobulk form"
+s:alternateName: "Single-Cell RNA-Seq Differential Expression Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-de-pseudobulk.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -681,12 +708,13 @@ s:creator:
 doc: |
   Single-Cell RNA-Seq Differential Expression Analysis
 
-  Identifies differentially expressed genes between two
-  groups of cells optionally coerced to pseudobulk form
+  Identifies differentially expressed genes between any
+  two groups of cells, optionally aggregating gene
+  expression data from single-cell to pseudobulk form.
 
 
 s:about: |
-  usage: /usr/local/bin/sc_rna_de_pseudobulk.R [-h] --query QUERY
+  usage: sc_rna_de_pseudobulk.R [-h] --query QUERY
                                               [--metadata METADATA]
                                               [--barcodes BARCODES]
                                               [--groupby GROUPBY]
@@ -695,6 +723,7 @@ s:about: |
                                               --second SECOND
                                               [--test {wilcoxon,likelihood-ratio,t-test,negative-binomial,poisson,logistic-regression,mast,deseq,deseq-lrt}]
                                               [--batchby BATCHBY] [--padj PADJ]
+                                              [--minpct MINPCT]
                                               [--genes [GENES [GENES ...]]]
                                               [--exclude EXCLUDE]
                                               [--cluster {row,column,both}]
@@ -712,13 +741,13 @@ s:about: |
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
-                          stored in the RNA assay. Additionally, 'rnaumap',
-                          and/or 'atacumap', and/or 'wnnumap' dimensionality
-                          reductions should be present.
+                          stored in the RNA assay. Additionally, rnaumap, and/or
+                          atacumap, and/or wnnumap dimensionality reductions
+                          should be present.
     --metadata METADATA   Path to the TSV/CSV file to optionally extend Seurat
                           object metadata with categorical values using samples
-                          identities. First column - 'library_id' should
-                          correspond to all unique values from the 'new.ident'
+                          identities. First column - library_id should
+                          correspond to all unique values from the new.ident
                           column of the loaded Seurat object. If any of the
                           provided in this file columns are already present in
                           the Seurat object metadata, they will be overwritten.
@@ -727,7 +756,7 @@ s:about: |
                           be applied. Default: no extra metadata is added
     --barcodes BARCODES   Path to the TSV/CSV file to optionally prefilter and
                           extend Seurat object metadata by selected barcodes.
-                          First column should be named as 'barcode'. If file
+                          First column should be named as barcode. If file
                           includes any other columns they will be added to the
                           Seurat object metadata ovewriting the existing ones if
                           those are present. Default: all cells used, no extra
@@ -783,6 +812,9 @@ s:about: |
                           output only differentially expressed genes with
                           adjusted P-value not bigger than this value. Default:
                           0.05
+    --minpct MINPCT       Include only those genes that are detected in not
+                          lower than this fraction of cells in either of the two
+                          tested conditions. Default: 0.1
     --genes [GENES [GENES ...]]
                           Genes of interest to label on the generated plots.
                           Default: top 10 genes with the highest and the lowest
