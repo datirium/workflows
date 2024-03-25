@@ -21,7 +21,7 @@ requirements:
       };
 
 
-'sd:upstream':
+"sd:upstream":
   sc_tools_sample:
   - "sc-atac-cluster.cwl"
   - "sc-rna-cluster.cwl"
@@ -32,6 +32,7 @@ requirements:
   - "cellranger-arc-aggr.cwl"
   - "cellranger-atac-count.cwl"
   - "cellranger-atac-aggr.cwl"
+
 
 inputs:
 
@@ -51,8 +52,8 @@ inputs:
       "Single-Cell ATAC-Seq Dimensionality
       Reduction Analysis" at any of the
       processing stages.
-    'sd:upstreamSource': "sc_tools_sample/seurat_data_rds"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
+    "sd:localLabel": true
 
   atac_fragments_file:
     type: File?
@@ -68,8 +69,8 @@ inputs:
       (RNA+ATAC)", "Cell Ranger Aggregate
       (RNA+ATAC)", "Cell Ranger Count (ATAC)",
       or "Cell Ranger Aggregate (ATAC)".
-    'sd:upstreamSource': "sc_atac_sample/atac_fragments_file"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_atac_sample/atac_fragments_file"
+    "sd:localLabel": true
 
   dimensions:
     type: int?
@@ -160,61 +161,67 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "1"
+    default: "4"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 1
+      Default: 4
     "sd:layout":
       advanced: true
 
 
 outputs:
 
-  umap_res_plot_png:
+  umap_gr_clst_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_cluster/umap_res_plot_png
-    label: "UMAP, colored by cluster"
+    outputSource: sc_atac_cluster/umap_gr_clst_res_plot_png
+    label: "UMAP colored by cluster (all cells)"
     doc: |
-      UMAP, colored by cluster
-    'sd:visualPlugins':
+      UMAP colored by cluster.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'UMAP, colored by cluster'
+        tab: "Split by cluster"
+        Caption: "UMAP colored by cluster (all cells)"
 
-  slh_res_plot_png:
+  slh_gr_clst_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_cluster/slh_res_plot_png
-    label: "Silhouette scores"
+    outputSource: sc_atac_cluster/slh_gr_clst_res_plot_png
+    label: "Silhouette scores (all cells)"
     doc: |
-      Silhouette scores
-    'sd:visualPlugins':
+      Silhouette scores.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per cluster'
-        Caption: 'Silhouette scores'
+        tab: "Split by cluster"
+        Caption: "Silhouette scores (all cells)"
 
-  umap_spl_idnt_res_plot_png:
+  umap_gr_clst_spl_idnt_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_cluster/umap_spl_idnt_res_plot_png
-    label: "UMAP, colored by cluster, split by dataset"
+    outputSource: sc_atac_cluster/umap_gr_clst_spl_idnt_res_plot_png
+    label: "UMAP colored by cluster (split by dataset, downsampled)"
     doc: |
-      UMAP, colored by cluster,
-      split by dataset
-    'sd:visualPlugins':
+      UMAP colored by cluster.
+      Split by dataset; downsampled
+      to the smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'UMAP, colored by cluster, split by dataset'
+        tab: "Split by dataset"
+        Caption: "UMAP colored by cluster (split by dataset, downsampled)"
 
   cmp_gr_clst_spl_idnt_res_plot_png:
     type:
@@ -222,46 +229,34 @@ outputs:
     - type: array
       items: File
     outputSource: sc_atac_cluster/cmp_gr_clst_spl_idnt_res_plot_png
-    label: "Composition plot, colored by cluster, split by dataset, downsampled"
+    label: "Composition plot colored by cluster (split by dataset, downsampled)"
     doc: |
-      Composition plot, colored by
-      cluster, split by dataset,
-      downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cluster.
+      Split by dataset; downsampled
+      to the smallest dataset.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by cluster, split by dataset, downsampled'
+        tab: "Split by dataset"
+        Caption: "Composition plot colored by cluster (split by dataset, downsampled)"
 
-  cmp_gr_idnt_spl_clst_res_plot_png:
+  umap_gr_clst_spl_cnd_res_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_cluster/cmp_gr_idnt_spl_clst_res_plot_png
-    label: "Composition plot, colored by dataset, split by cluster, downsampled"
+    outputSource: sc_atac_cluster/umap_gr_clst_spl_cnd_res_plot_png
+    label: "UMAP colored by cluster (split by grouping condition, downsampled)"
     doc: |
-      Composition plot, colored by
-      dataset, split by cluster,
-      downsampled
-    'sd:visualPlugins':
+      UMAP colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per dataset'
-        Caption: 'Composition plot, colored by dataset, split by cluster, downsampled'
-
-  umap_spl_cnd_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_atac_cluster/umap_spl_cnd_res_plot_png
-    label: "UMAP, colored by cluster, split by grouping condition"
-    doc: |
-      UMAP, colored by cluster, split
-      by grouping condition
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'UMAP, colored by cluster, split by grouping condition'
+        tab: "Split by group"
+        Caption: "UMAP colored by cluster (split by grouping condition, downsampled)"
 
   cmp_gr_clst_spl_cnd_res_plot_png:
     type:
@@ -269,31 +264,17 @@ outputs:
     - type: array
       items: File
     outputSource: sc_atac_cluster/cmp_gr_clst_spl_cnd_res_plot_png
-    label: "Composition plot, colored by cluster, split by grouping condition, downsampled"
+    label: "Composition plot colored by cluster (split by grouping condition, downsampled)"
     doc: |
-      Composition plot, colored by
-      cluster, split by grouping
-      condition, downsampled
-    'sd:visualPlugins':
+      Composition plot colored by cluster.
+      Split by grouping condition; first downsampled
+      to the smallest dataset, then downsampled to
+      the smallest group.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Per group'
-        Caption: 'Composition plot, colored by cluster, split by grouping condition, downsampled'
-
-  cmp_gr_cnd_spl_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_png
-    label: "Composition plot, colored by grouping condition, split by cluster, downsampled"
-    doc: |
-      Composition plot, colored by
-      grouping condition, split by
-      cluster, downsampled
-    'sd:visualPlugins':
-    - image:
-        tab: 'Per group'
-        Caption: 'Composition plot, colored by grouping condition, split by cluster, downsampled'
+        tab: "Split by group"
+        Caption: "Composition plot colored by cluster (split by grouping condition, downsampled)"
 
   cvrg_res_plot_png:
     type:
@@ -301,39 +282,41 @@ outputs:
     - type: array
       items: File
     outputSource: sc_atac_cluster/cvrg_res_plot_png
-    label: "ATAC fragments coverage"
+    label: "ATAC fragment coverage (per gene)"
     doc: |
-      ATAC fragments coverage
-    'sd:visualPlugins':
+      ATAC fragment coverage.
+      All genes of interest.
+      PNG format.
+    "sd:visualPlugins":
     - image:
-        tab: 'Genome coverage'
-        Caption: 'ATAC fragments coverage'
+        tab: "Genes of interest (coverage plot)"
+        Caption: "ATAC fragment coverage (per gene)"
 
   peak_markers_tsv:
     type: File?
     outputSource: sc_atac_cluster/peak_markers_tsv
-    label: "Peak markers per cluster for all resolutions"
+    label: "Peak markers"
     doc: |
-      Peak markers per cluster for all resolutions
-    'sd:visualPlugins':
+      Peak markers.
+      TSV format.
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'Peak markers'
-        Title: 'Peak markers per cluster for all resolutions'
+        tab: "Peak markers table"
+        Title: "Peak markers"
 
   ucsc_cb_html_data:
     type: Directory?
     outputSource: sc_atac_cluster/ucsc_cb_html_data
-    label: "UCSC Cell Browser data"
+    label: "UCSC Cell Browser (data)"
     doc: |
-      Directory with UCSC Cell Browser
-      data
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputSource: sc_atac_cluster/ucsc_cb_html_file
     label: "UCSC Cell Browser"
     doc: |
-      UCSC Cell Browser HTML index file
+      UCSC Cell Browser html index.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -342,31 +325,31 @@ outputs:
   seurat_data_rds:
     type: File
     outputSource: sc_atac_cluster/seurat_data_rds
-    label: "Processed Seurat data in RDS format"
+    label: "Seurat object in RDS format"
     doc: |
-      Processed Seurat data in RDS format
+      Seurat object.
+      RDS format.
 
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Plots in PDF format"
+    label: "Compressed folder with all PDF plots"
     doc: |
-      Compressed folder with plots
-      in PDF format
+      Compressed folder with all PDF plots.
 
   sc_atac_cluster_stdout_log:
     type: File
     outputSource: sc_atac_cluster/stdout_log
-    label: "stdout log generated by sc_atac_cluster step"
+    label: "Output log"
     doc: |
-      stdout log generated by sc_atac_cluster step
+      Stdout log from the sc_atac_cluster step.
 
   sc_atac_cluster_stderr_log:
     type: File
     outputSource: sc_atac_cluster/stderr_log
-    label: "stderr log generated by sc_atac_cluster step"
+    label: "Error log"
     doc: |
-      stderr log generated by sc_atac_cluster step
+      Stderr log from the sc_atac_cluster step.
 
 
 steps:
@@ -410,21 +393,19 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - umap_res_plot_png
-    - slh_res_plot_png
-    - umap_spl_idnt_res_plot_png
+    - umap_gr_clst_res_plot_png
+    - slh_gr_clst_res_plot_png
+    - umap_gr_clst_spl_idnt_res_plot_png
     - cmp_gr_clst_spl_idnt_res_plot_png
-    - cmp_gr_idnt_spl_clst_res_plot_png
-    - umap_spl_cnd_res_plot_png
+    - umap_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_clst_spl_cnd_res_plot_png
-    - cmp_gr_cnd_spl_clst_res_plot_png
     - cvrg_res_plot_png
-    - umap_res_plot_pdf
-    - slh_res_plot_pdf
-    - umap_spl_idnt_res_plot_pdf
+    - umap_gr_clst_res_plot_pdf
+    - slh_gr_clst_res_plot_pdf
+    - umap_gr_clst_spl_idnt_res_plot_pdf
     - cmp_gr_clst_spl_idnt_res_plot_pdf
     - cmp_gr_idnt_spl_clst_res_plot_pdf
-    - umap_spl_cnd_res_plot_pdf
+    - umap_gr_clst_spl_cnd_res_plot_pdf
     - cmp_gr_clst_spl_cnd_res_plot_pdf
     - cmp_gr_cnd_spl_clst_res_plot_pdf
     - cvrg_res_plot_pdf
@@ -440,12 +421,12 @@ steps:
     in:
       input_files:
         source:
-        - sc_atac_cluster/umap_res_plot_pdf
-        - sc_atac_cluster/slh_res_plot_pdf
-        - sc_atac_cluster/umap_spl_idnt_res_plot_pdf
+        - sc_atac_cluster/umap_gr_clst_res_plot_pdf
+        - sc_atac_cluster/slh_gr_clst_res_plot_pdf
+        - sc_atac_cluster/umap_gr_clst_spl_idnt_res_plot_pdf
         - sc_atac_cluster/cmp_gr_clst_spl_idnt_res_plot_pdf
         - sc_atac_cluster/cmp_gr_idnt_spl_clst_res_plot_pdf
-        - sc_atac_cluster/umap_spl_cnd_res_plot_pdf
+        - sc_atac_cluster/umap_gr_clst_spl_cnd_res_plot_pdf
         - sc_atac_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
         - sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
         - sc_atac_cluster/cvrg_res_plot_pdf
@@ -471,7 +452,7 @@ $schemas:
 
 label: "Single-Cell ATAC-Seq Cluster Analysis"
 s:name: "Single-Cell ATAC-Seq Cluster Analysis"
-s:alternateName: "Clusters cells by similarity of chromatin accessibility data"
+s:alternateName: "Single-Cell ATAC-Seq Cluster Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-atac-cluster.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -511,8 +492,10 @@ s:creator:
 doc: |
   Single-Cell ATAC-Seq Cluster Analysis
 
-  Clusters cells by similarity of chromatin accessibility data
-  from the outputs of “Single-Cell ATAC-Seq Dimensionality
-  Reduction Analysis” pipeline. The results of this workflow are
-  primarily used in “Single-Cell Manual Cell Type Assignment”
-  pipeline.
+  Clusters cells by similarity of chromatin accessibility
+  data from the outputs of the “Single-Cell ATAC-Seq
+  Dimensionality Reduction Analysis” pipeline. The results
+  of this workflow are used in the “Single-Cell Manual Cell
+  Type Assignment”, “Single-Cell ATAC-Seq Differential
+  Accessibility Analysis”, and “Single-Cell ATAC-Seq Genome
+  Coverage” pipelines.

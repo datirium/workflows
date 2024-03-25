@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.33
+  dockerPull: biowardrobe2/sc-tools:v0.0.34
 
 
 inputs:
@@ -134,7 +134,8 @@ inputs:
     doc: |
       Include cells where at least this many genes are detected. If multiple values
       provided, each of them will be applied to the correspondent dataset from the
-      '--mex' input based on the '--identity' file.
+      '--mex' input based on the '--identity' file. Any 0 will be replaced with the
+      auto-estimated threshold (median - 2.5 * MAD) calculated per dataset.
       Default: 250 (applied to all datasets)
 
   maximum_genes:
@@ -147,7 +148,8 @@ inputs:
     doc: |
       Include cells with the number of genes not bigger than this value. If multiple
       values provided, each of them will be applied to the correspondent dataset from
-      the '--mex' input based on the '--identity' file.
+      the '--mex' input based on the '--identity' file. Any 0 will be replaced with the
+      auto-estimated threshold (median + 5 * MAD) calculated per dataset.
       Default: 5000 (applied to all datasets)
 
   minimum_umis:
@@ -161,6 +163,8 @@ inputs:
       Include cells where at least this many RNA reads are detected.
       If multiple values provided, each of them will be applied to the
       correspondent dataset from the '--mex' input based on the '--identity' file.
+      Any 0 will be replaced with the auto-estimated threshold (median - 2.5 * MAD)
+      calculated per dataset.
       Default: 500 (applied to all datasets)
 
   mito_pattern:
@@ -177,7 +181,9 @@ inputs:
       prefix: "--maxmt"
     doc: |
       Include cells with the percentage of RNA reads mapped to mitochondrial
-      genes not bigger than this value.
+      genes not bigger than this value. Set to 0 for using an auto-estimated
+      threshold equal to the maximum among (median + 2 * MAD) values calculated
+      per dataset.
       Default: 5 (applied to all datasets)
 
   minimum_novelty_score:
@@ -213,7 +219,8 @@ inputs:
       Include cells where at least this many ATAC fragments in peaks are
       detected. If multiple values provided, each of them will be
       applied to the correspondent dataset from the '--mex' input
-      based on the '--identity' file.
+      based on the '--identity' file. Any 0 will be replaced with the
+      auto-estimated threshold (median - 2.5 * MAD) calculated per dataset.
       Default: 1000 (applied to all datasets)
 
   maximum_nucl_signal:
@@ -400,7 +407,7 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save Seurat data to h5ad file.
+      Save raw counts from the RNA and ATAC assays to h5ad files.
       Default: false
 
   export_ucsc_cb:
@@ -441,6 +448,14 @@ inputs:
     doc: |
       Number of cores/cpus to use.
       Default: 1
+
+  seed:
+    type: int?
+    inputBinding:
+      prefix: "--seed"
+    doc: |
+      Seed number for random values.
+      Default: 42
 
 
 outputs:
@@ -539,6 +554,22 @@ outputs:
       glob: "*_raw_gene_umi.pdf"
     doc: |
       Genes vs RNA reads per cell (not filtered).
+      PDF format
+
+  raw_umi_mito_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_raw_umi_mito.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell (not filtered).
+      PNG format
+
+  raw_umi_mito_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_raw_umi_mito.pdf"
+    doc: |
+      RNA reads vs mitochondrial % per cell (not filtered).
       PDF format
 
   raw_mito_dnst_plot_png:
@@ -961,6 +992,22 @@ outputs:
       Genes vs RNA reads per cell (intermediate filtered).
       PDF format
 
+  mid_umi_mito_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_mid_umi_mito.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell (intermediate filtered).
+      PNG format
+
+  mid_umi_mito_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*_mid_umi_mito.pdf"
+    doc: |
+      RNA reads vs mitochondrial % per cell (intermediate filtered).
+      PDF format
+
   mid_fltr_mito_dnst_plot_png:
     type: File?
     outputBinding:
@@ -1381,6 +1428,22 @@ outputs:
       Genes vs RNA reads per cell (filtered).
       PDF format
 
+  fltr_umi_mito_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_umi_mito.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell (filtered).
+      PNG format
+
+  fltr_umi_mito_plot_pdf:
+    type: File?
+    outputBinding:
+      glob: "*[!_mid]_fltr_umi_mito.pdf"
+    doc: |
+      RNA reads vs mitochondrial % per cell (filtered).
+      PDF format
+
   fltr_mito_dnst_plot_png:
     type: File?
     outputBinding:
@@ -1710,28 +1773,29 @@ outputs:
     outputBinding:
       glob: "*_cellbrowser"
     doc: |
-      Directory with UCSC Cellbrowser configuration data.
+      UCSC Cell Browser configuration data.
 
   ucsc_cb_html_data:
     type: Directory?
     outputBinding:
       glob: "*_cellbrowser/html_data"
     doc: |
-      Directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html data.
 
   ucsc_cb_html_file:
     type: File?
     outputBinding:
       glob: "*_cellbrowser/html_data/index.html"
     doc: |
-      HTML index file from the directory with UCSC Cellbrowser html data.
+      UCSC Cell Browser html index.
 
   seurat_data_rds:
     type: File
     outputBinding:
       glob: "*_data.rds"
     doc: |
-      Filtered Seurat data in RDS format
+      Seurat object.
+      RDS format
 
   datasets_metadata:
     type: File
@@ -1746,14 +1810,26 @@ outputs:
     outputBinding:
       glob: "*_data.h5seurat"
     doc: |
-      Filtered Seurat data in h5seurat format
+      Seurat object.
+      h5Seurat format
 
-  seurat_data_h5ad:
+  seurat_rna_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_data.h5ad"
+      glob: "*_rna_counts.h5ad"
     doc: |
-      Reduced Seurat data in h5ad format
+      Seurat object.
+      RNA counts.
+      H5AD format.
+
+  seurat_atac_data_h5ad:
+    type: File?
+    outputBinding:
+      glob: "*_atac_counts.h5ad"
+    doc: |
+      Seurat object.
+      ATAC counts.
+      H5AD format.
 
   stdout_log:
     type: stdout
@@ -1786,8 +1862,8 @@ $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 
-label: "Single-cell Multiome ATAC and RNA-Seq Filtering Analysis"
-s:name: "Single-cell Multiome ATAC and RNA-Seq Filtering Analysis"
+label: "Single-Cell Multiome ATAC-Seq and RNA-Seq Filtering Analysis"
+s:name: "Single-Cell Multiome ATAC-Seq and RNA-Seq Filtering Analysis"
 s:alternateName: "Filters single-cell multiome ATAC and RNA-Seq datasets based on the common QC metrics"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-multiome-filter.cwl
@@ -1826,13 +1902,13 @@ s:creator:
 
 
 doc: |
-  Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
+  Single-Cell Multiome ATAC-Seq and RNA-Seq Filtering Analysis
 
   Filters single-cell multiome ATAC and RNA-Seq datasets based on the common QC metrics.
 
 
 s:about: |
-  usage: sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
+  usage: /usr/local/bin/sc_multiome_filter.R [-h] --mex MEX --identity IDENTITY
                                             --fragments FRAGMENTS --annotations
                                             ANNOTATIONS --seqinfo SEQINFO
                                             [--grouping GROUPING]
@@ -1862,8 +1938,9 @@ s:about: |
                                             [--output OUTPUT]
                                             [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                             [--cpus CPUS] [--memory MEMORY]
+                                            [--seed SEED]
 
-  Single-cell Multiome ATAC and RNA-Seq Filtering Analysis
+  Single-Cell Multiome ATAC-Seq and RNA-Seq Filtering Analysis
 
   optional arguments:
     -h, --help            show this help message and exit
@@ -1909,27 +1986,34 @@ s:about: |
                           Include cells where at least this many genes are
                           detected. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
-                          '--mex' input based on the '--identity' file. Default:
+                          '--mex' input based on the '--identity' file. Any 0
+                          will be replaced with the auto-estimated threshold
+                          (median - 2.5 * MAD) calculated per dataset. Default:
                           250 (applied to all datasets)
     --maxgenes [MAXGENES [MAXGENES ...]]
                           Include cells with the number of genes not bigger than
                           this value. If multiple values provided, each of them
                           will be applied to the correspondent dataset from the
-                          '--mex' input based on the '--identity' file. Default:
+                          '--mex' input based on the '--identity' file. Any 0
+                          will be replaced with the auto-estimated threshold
+                          (median + 5 * MAD) calculated per dataset. Default:
                           5000 (applied to all datasets)
     --minumis [MINUMIS [MINUMIS ...]]
-                          Include cells where at least this many RNA reads
-                          are detected. If multiple values
-                          provided, each of them will be applied to the
-                          correspondent dataset from the '--mex' input based on
-                          the '--identity' file. Default: 500 (applied to all
-                          datasets)
+                          Include cells where at least this many RNA reads are
+                          detected. If multiple values provided, each of them
+                          will be applied to the correspondent dataset from the
+                          '--mex' input based on the '--identity' file. Any 0
+                          will be replaced with the auto-estimated threshold
+                          (median - 2.5 * MAD) calculated per dataset. Default:
+                          500 (applied to all datasets)
     --mitopattern MITOPATTERN
                           Regex pattern to identify mitochondrial genes.
                           Default: '^mt-|^MT-'
-    --maxmt MAXMT         Include cells with the percentage of RNA reads
-                          mapped to mitochondrial genes not bigger than this
-                          value. Default: 5 (applied to all datasets)
+    --maxmt MAXMT         Include cells with the percentage of RNA reads mapped
+                          to mitochondrial genes not bigger than this value. Set
+                          to 0 for using an auto-estimated threshold equal to
+                          the maximum among (median + 2 * MAD) values calculated
+                          per dataset. Default: 5 (applied to all datasets)
     --minnovelty [MINNOVELTY [MINNOVELTY ...]]
                           Include cells with the novelty score not lower than
                           this value, calculated for as log10(genes)/log10(UMI)
@@ -1941,34 +2025,37 @@ s:about: |
                           Include only peaks detected in at least this many
                           cells. Default: 5 (applied to all datasets)
     --minfragments [MINFRAGMENTS [MINFRAGMENTS ...]]
-                          Include cells where at least this many ATAC fragments in
-                          peaks are detected. If multiple values provided, each
-                          of them will be applied to the correspondent dataset
-                          from the '--mex' input based on the '--identity' file.
-                          Default: 1000 (applied to all datasets)
+                          Include cells where at least this many ATAC fragments
+                          in peaks are detected. If multiple values provided,
+                          each of them will be applied to the correspondent
+                          dataset from the '--mex' input based on the '--
+                          identity' file. Any 0 will be replaced with the auto-
+                          estimated threshold (median - 2.5 * MAD) calculated
+                          per dataset. Default: 1000 (applied to all datasets)
     --maxnuclsignal [MAXNUCLSIGNAL [MAXNUCLSIGNAL ...]]
                           Include cells with the nucleosome signal not bigger
                           than this value. Nucleosome signal quantifies the
                           approximate ratio of mononucleosomal to nucleosome-
-                          free ATAC fragments. If multiple values provided, each of
-                          them will be applied to the correspondent dataset from
-                          the '--mex' input based on the '--identity' file.
+                          free ATAC fragments. If multiple values provided, each
+                          of them will be applied to the correspondent dataset
+                          from the '--mex' input based on the '--identity' file.
                           Default: 4 (applied to all datasets)
     --mintssenrich [MINTSSENRICH [MINTSSENRICH ...]]
                           Include cells with the TSS enrichment score not lower
                           than this value. Score is calculated based on the
-                          ratio of ATAC fragments centered at the TSS to ATAC fragments in
-                          TSS-flanking regions. If multiple values provided,
-                          each of them will be applied to the correspondent
-                          dataset from the '--mex' input based on the '--
-                          identity' file. Default: 2 (applied to all datasets)
+                          ratio of ATAC fragments centered at the TSS to ATAC
+                          fragments in TSS-flanking regions. If multiple values
+                          provided, each of them will be applied to the
+                          correspondent dataset from the '--mex' input based on
+                          the '--identity' file. Default: 2 (applied to all
+                          datasets)
     --minfrip [MINFRIP [MINFRIP ...]]
                           Include cells with the FRiP not lower than this value.
                           If multiple values provided, each of them will be
                           applied to the correspondent dataset from the '--mex'
                           input based on the '--identity' file. FRiP is
-                          calculated for ATAC fragments. Default: 0.15 (applied to
-                          all datasets)
+                          calculated for ATAC fragments. Default: 0.15 (applied
+                          to all datasets)
     --maxblacklist [MAXBLACKLIST [MAXBLACKLIST ...]]
                           Include cells with the fraction of ATAC fragments in
                           genomic blacklist regions not bigger than this value.
@@ -2009,7 +2096,8 @@ s:about: |
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save Seurat data to h5ad file. Default: false
+    --h5ad                Save raw counts from the RNA and ATAC assays to h5ad
+                          files. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --tmpdir TMPDIR       Directory to keep temporary files. Default: either
                           /tmp or defined by environment variables TMPDIR, TMP,
@@ -2020,3 +2108,4 @@ s:about: |
     --cpus CPUS           Number of cores/cpus to use. Default: 1
     --memory MEMORY       Maximum memory in GB allowed to be shared between the
                           workers when using multiple '--cpus'. Default: 32
+    --seed SEED           Seed number for random values. Default: 42
