@@ -9,7 +9,7 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   genome_indices:
   - "cellranger-mkref.cwl"
 
@@ -18,7 +18,7 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -33,13 +33,22 @@ inputs:
       This sample can be obtained from "Cell
       Ranger Reference (RNA, ATAC, RNA+ATAC)"
       pipeline.
-    'sd:upstreamSource': "genome_indices/arc_indices_folder"
-    'sd:localLabel': true
+    "sd:upstreamSource": "genome_indices/arc_indices_folder"
+    "sd:localLabel": true
 
   memory_limit:
     type: int?
     default: 20
-    'sd:upstreamSource': "genome_indices/memory_limit"
+    "sd:upstreamSource": "genome_indices/memory_limit"
+
+  multiome_arc:
+    type: boolean?
+    default: false
+    label: "scATAC-Seq files come from scMultiome experiment"
+    doc: |
+      Changes chemistry type parameter to indicate
+      that scATAC-Seq data is part of the scMultiome
+      experiment.
 
   fastq_file_r1:
     type:
@@ -73,7 +82,7 @@ inputs:
       Define the top N barcodes with the most ATAC fragments overlapping
       peaks as cells. N must be a positive integer <= 20,000. Please
       consult the documentation before using this option
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -94,7 +103,7 @@ inputs:
       number of cores/CPUs that can be utilized
       simultaneously.
       Default: 4
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
 
@@ -106,9 +115,9 @@ outputs:
     label: "FastqQC report for FASTQ file R1"
     doc: |
       FastqQC report for FASTQ file R1
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   fastqc_report_fastq_r2:
@@ -117,9 +126,9 @@ outputs:
     label: "FastqQC report for FASTQ file R2"
     doc: |
       FastqQC report for FASTQ file R2
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   fastqc_report_fastq_r3:
@@ -128,9 +137,9 @@ outputs:
     label: "FastqQC report for FASTQ file R3"
     doc: |
       FastqQC report for FASTQ file R3
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   web_summary_report:
@@ -139,9 +148,9 @@ outputs:
     label: "Cell Ranger summary"
     doc: |
       Run summary metrics and charts in HTML format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   metrics_summary_report_json:
@@ -326,19 +335,19 @@ outputs:
     outputSource: collect_statistics/collected_statistics_md
     label: "Collected statistics in Markdown format"
     doc: "Collected statistics in Markdown format"
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - markdownView:
-        tab: 'Overview'
+        tab: "Overview"
 
   collected_statistics_tsv:
     type: File
     outputSource: collect_statistics/collected_statistics_tsv
     label: "Collected statistics in TSV format"
     doc: "Collected statistics in TSV format"
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - tableView:
         vertical: true
-        tab: 'Overview'
+        tab: "Overview"
 
   html_data_folder:
     type: Directory
@@ -353,9 +362,9 @@ outputs:
     label: "CellBrowser formatted Cellranger report"
     doc: |
       CellBrowser formatted Cellranger report
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
 
@@ -426,6 +435,9 @@ steps:
       fastq_file_r3: extract_fastq_r3/fastq_file
       indices_folder: indices_folder
       force_cells: force_cells
+      chemistry:
+        source: multiome_arc
+        valueFrom: $(self?"ARC-v1":"null")
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -508,7 +520,7 @@ $schemas:
 
 label: "Cell Ranger Count (ATAC)"
 s:name: "Cell Ranger Count (ATAC)"
-s:alternateName: "Quantifies single-cell chromatin accessibility of the sequencing data from a single 10x Genomics library"
+s:alternateName: "Cell Ranger Count (ATAC)"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/cellranger-atac-count.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -548,7 +560,8 @@ s:creator:
 doc: |
   Cell Ranger Count (ATAC)
 
-  Quantifies single-cell chromatin accessibility of the sequencing
-  data from a single 10x Genomics library. The results of this
-  workflow are primarily used in “Cell Ranger Aggregate (ATAC)”
-  pipeline.
+  Quantifies single-cell chromatin accessibility of the
+  sequencing data from a single 10x Genomics library.
+  The results of this workflow are used in either the
+  “Single-Cell ATAC-Seq Filtering Analysis” or “Cell
+  Ranger Aggregate (ATAC)” pipeline.

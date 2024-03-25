@@ -21,7 +21,7 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -72,7 +72,7 @@ inputs:
     label: "Optional HTTP proxy settings"
     doc: |
       Optional HTTP proxy settings
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   https_proxy:
@@ -80,7 +80,7 @@ inputs:
     label: "Optional HTTPS proxy settings"
     doc: |
       Optional HTTPS proxy settings
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
 
@@ -103,9 +103,9 @@ outputs:
     doc: |
       Collected report for downloaded FASTQ files
       in Markdown format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - markdownView:
-        tab: 'Overview'
+        tab: "Overview"
 
   metadata_xml:
     type:
