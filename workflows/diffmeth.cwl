@@ -392,7 +392,7 @@ s:creator:
       s:legalName: "Bioinformatics"
       s:member:
       - class: s:Person
-        s:name: Robert Player
+        s:name: Robert Playe
         s:email: mailto:support@datirium.com
         s:sameAs:
         - id: https://orcid.org/0000-0001-5872-259X
