@@ -565,8 +565,12 @@ steps:
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
       threads: threads
+      outReadsUnmapped:
+        default: "Fastx"
     out:
       - aligned_file
+      - unmapped_mate_1_file
+      - unmapped_mate_2_file
       - log_final
       - uniquely_mapped_reads_number
       - log_out
@@ -710,8 +714,9 @@ steps:
   ercc_spikein_norm:
       run: ../tools/ercc-norm.cwl
       in:
-        threads: threads
-        unaligned_fastq_files: bowtie_aligner/unaligned_fastq
+        threads_count: threads
+        unaligned_R1_fastq: star_aligner/unmapped_mate_1_file
+        unaligned_R2_fastq: star_aligner/unmapped_mate_2_file
         dilution_factor: dilution_factor
         uL_per_M_cells: uL_per_M_cells
         rnaseq_counts: rpkm_calculation/isoforms_file
