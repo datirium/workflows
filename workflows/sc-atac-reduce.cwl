@@ -20,6 +20,7 @@ requirements:
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
+  - "sc-atac-filter.cwl"
   - "sc-multiome-filter.cwl"
 
 

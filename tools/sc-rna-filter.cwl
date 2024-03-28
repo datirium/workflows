@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.34
+  dockerPull: biowardrobe2/sc-tools:v0.0.35
 
 
 inputs:
@@ -280,484 +280,287 @@ outputs:
     outputBinding:
       glob: "*_raw_1_2_qc_mtrcs_pca.png"
     doc: |
-      PC1 and PC2 from the QC metrics PCA (not filtered).
-      PNG format
-
-  raw_1_2_qc_mtrcs_pca_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_1_2_qc_mtrcs_pca.pdf"
-    doc: |
-      PC1 and PC2 from the QC metrics PCA (not filtered).
-      PDF format
+      QC metrics PCA.
+      Unfiltered; PC1/PC2.
+      PNG format.
 
   raw_2_3_qc_mtrcs_pca_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_2_3_qc_mtrcs_pca.png"
     doc: |
-      PC2 and PC3 from the QC metrics PCA (not filtered).
-      PNG format
-
-  raw_2_3_qc_mtrcs_pca_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_2_3_qc_mtrcs_pca.pdf"
-    doc: |
-      PC2 and PC3 from the QC metrics PCA (not filtered).
-      PDF format
+      QC metrics PCA.
+      Unfiltered; PC2/PC3.
+      PNG format.
 
   raw_cells_count_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_cells_count.png"
     doc: |
-      Number of cells per dataset (not filtered).
-      PNG format
-
-  raw_cells_count_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_cells_count.pdf"
-    doc: |
-      Number of cells per dataset (not filtered).
-      PDF format
+      Number of cells per dataset.
+      Unfiltered.
+      PNG format.
 
   raw_umi_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_umi_dnst.png"
     doc: |
-      RNA reads per cell density (not filtered).
-      PNG format
-
-  raw_umi_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_umi_dnst.pdf"
-    doc: |
-      RNA reads per cell density (not filtered).
-      PDF format
+      Distribution of RNA reads per cell.
+      Unfiltered.
+      PNG format.
 
   raw_gene_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_gene_dnst.png"
     doc: |
-      Genes per cell density (not filtered).
-      PNG format
-
-  raw_gene_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_gene_dnst.pdf"
-    doc: |
-      Genes per cell density (not filtered).
-      PDF format
+      Distribution of genes per cell.
+      Unfiltered.
+      PNG format.
 
   raw_gene_umi_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_gene_umi.png"
     doc: |
-      Genes vs RNA reads per cell correlation (not filtered).
-      PNG format
-
-  raw_gene_umi_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_gene_umi.pdf"
-    doc: |
-      Genes vs RNA reads per cell correlation (not filtered).
-      PDF format
+      Genes vs RNA reads per cell.
+      Unfiltered.
+      PNG format.
 
   raw_umi_mito_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_umi_mito.png"
     doc: |
-      RNA reads vs mitochondrial % per cell (not filtered).
-      PNG format
-
-  raw_umi_mito_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_umi_mito.pdf"
-    doc: |
-      RNA reads vs mitochondrial % per cell (not filtered).
-      PDF format
+      RNA reads vs mitochondrial percentage
+      per cell.
+      Unfiltered.
+      PNG format.
 
   raw_mito_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_mito_dnst.png"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
-      PNG format
-
-  raw_mito_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_mito_dnst.pdf"
-    doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (not filtered).
-      PDF format
+      Distribution of RNA reads mapped
+      to mitochondrial genes per cell.
+      Unfiltered.
+      PNG format.
 
   raw_nvlt_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_nvlt_dnst.png"
     doc: |
-      Novelty score per cell density (not filtered).
-      PNG format
-
-  raw_nvlt_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_nvlt_dnst.pdf"
-    doc: |
-      Novelty score per cell density (not filtered).
-      PDF format
+      Distribution of novelty score per cell.
+      Unfiltered.
+      PNG format.
 
   raw_qc_mtrcs_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_qc_mtrcs_dnst.png"
     doc: |
-      QC metrics per cell density (not filtered).
-      PNG format
-
-  raw_qc_mtrcs_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_qc_mtrcs_dnst.pdf"
-    doc: |
-      QC metrics per cell density (not filtered).
-      PDF format
+      Distribution of QC metrics per cell.
+      Unfiltered.
+      PNG format.
 
   raw_rnadbl_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_rnadbl.png"
     doc: |
-      Percentage of RNA doublets per dataset (not filtered).
-      PNG format
-
-  raw_rnadbl_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_rnadbl.pdf"
-    doc: |
-      Percentage of RNA doublets per dataset (not filtered).
-      PDF format
+      Percentage of RNA doublets.
+      Unfiltered.
+      PNG format.
 
   raw_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition RNA reads per cell density (not filtered).
-      PNG format
-
-  raw_umi_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_umi_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition RNA reads per cell density (not filtered).
-      PDF format
+      Distribution of RNA reads per cell.
+      Unfiltered; split by grouping condition.
+      PNG format.
 
   raw_gene_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_gene_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition genes per cell density (not filtered).
-      PNG format
-
-  raw_gene_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_gene_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition genes per cell density (not filtered).
-      PDF format
+      Distribution of genes per cell.
+      Unfiltered; split by grouping condition.
+      PNG format.
 
   raw_mito_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
-      to mitochondrial genes per cell density (not filtered).
-      PNG format
-
-  raw_mito_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_mito_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition the percentage of RNA reads mapped
-      to mitochondrial genes per cell density (not filtered).
-      PDF format
+      Distribution of RNA reads mapped
+      to mitochondrial genes per cell.
+      Unfiltered; split by grouping condition.
+      PNG format.
 
   raw_nvlt_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_raw_nvlt_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the novelty score per cell density (not filtered).
-      PNG format
-
-  raw_nvlt_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_raw_nvlt_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition the novelty score per cell density (not filtered).
-      PDF format
+      Distribution of novelty score per cell.
+      Unfiltered; split by grouping condition.
+      PNG format.
 
   fltr_1_2_qc_mtrcs_pca_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_1_2_qc_mtrcs_pca.png"
     doc: |
-      PC1 and PC2 from the QC metrics PCA (filtered).
-      PNG format
-
-  fltr_1_2_qc_mtrcs_pca_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_1_2_qc_mtrcs_pca.pdf"
-    doc: |
-      PC1 and PC2 from the QC metrics PCA (filtered).
-      PDF format
+      QC metrics PCA.
+      Filtered; PC1/PC2.
+      PNG format.
 
   fltr_2_3_qc_mtrcs_pca_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_2_3_qc_mtrcs_pca.png"
     doc: |
-      PC2 and PC3 from the QC metrics PCA (filtered).
-      PNG format
-
-  fltr_2_3_qc_mtrcs_pca_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_2_3_qc_mtrcs_pca.pdf"
-    doc: |
-      PC2 and PC3 from the QC metrics PCA (filtered).
-      PDF format
+      QC metrics PCA.
+      Filtered; PC2/PC3.
+      PNG format.
 
   fltr_cells_count_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_cells_count.png"
     doc: |
-      Number of cells per dataset (filtered).
-      PNG format
-
-  fltr_cells_count_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_cells_count.pdf"
-    doc: |
-      Number of cells per dataset (filtered).
-      PDF format
+      Number of cells per dataset.
+      Filtered.
+      PNG format.
 
   fltr_umi_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_umi_dnst.png"
     doc: |
-      RNA reads per cell density (filtered).
-      PNG format
-
-  fltr_umi_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_umi_dnst.pdf"
-    doc: |
-      RNA reads per cell density (filtered).
-      PDF format
+      Distribution of RNA reads per cell.
+      Filtered.
+      PNG format.
 
   fltr_gene_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_gene_dnst.png"
     doc: |
-      Genes per cell density (filtered).
-      PNG format
-
-  fltr_gene_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_gene_dnst.pdf"
-    doc: |
-      Genes per cell density (filtered).
-      PDF format
+      Distribution of genes per cell.
+      Filtered.
+      PNG format.
 
   fltr_gene_umi_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_gene_umi.png"
     doc: |
-      Genes vs RNA reads per cell correlation (filtered).
-      PNG format
-
-  fltr_gene_umi_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_gene_umi.pdf"
-    doc: |
-      Genes vs RNA reads per cell correlation (filtered).
-      PDF format
+      Genes vs RNA reads per cell.
+      Filtered.
+      PNG format.
 
   fltr_umi_mito_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_umi_mito.png"
     doc: |
-      RNA reads vs mitochondrial % per cell (filtered).
-      PNG format
-
-  fltr_umi_mito_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_umi_mito.pdf"
-    doc: |
-      RNA reads vs mitochondrial % per cell (filtered).
-      PDF format
+      RNA reads vs mitochondrial percentage
+      per cell.
+      Filtered.
+      PNG format.
 
   fltr_mito_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_mito_dnst.png"
     doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
-      PNG format
-
-  fltr_mito_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_mito_dnst.pdf"
-    doc: |
-      Percentage of RNA reads mapped to mitochondrial genes per cell density (filtered).
-      PDF format
+      Distribution of RNA reads mapped
+      to mitochondrial genes per cell.
+      Filtered.
+      PNG format.
 
   fltr_nvlt_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_nvlt_dnst.png"
     doc: |
-      Novelty score per cell density (filtered).
-      PNG format
-
-  fltr_nvlt_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_nvlt_dnst.pdf"
-    doc: |
-      Novelty score per cell density (filtered).
-      PDF format
+      Distribution of novelty score per cell.
+      Filtered.
+      PNG format.
 
   fltr_qc_mtrcs_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_qc_mtrcs_dnst.png"
     doc: |
-      QC metrics per cell density (filtered).
-      PNG format
-
-  fltr_qc_mtrcs_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_qc_mtrcs_dnst.pdf"
-    doc: |
-      QC metrics per cell density (filtered).
-      PDF format
+      Distribution of QC metrics per cell.
+      Filtered.
+      PNG format.
 
   fltr_rnadbl_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_rnadbl.png"
     doc: |
-      Percentage of RNA doublets per dataset (filtered).
-      PNG format
-
-  fltr_rnadbl_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_rnadbl.pdf"
-    doc: |
-      Percentage of RNA doublets per dataset (filtered).
-      PDF format
+      Percentage of RNA doublets.
+      Filtered.
+      PNG format.
 
   fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_umi_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition RNA reads per cell density (filtered).
-      PNG format
-
-  fltr_umi_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_umi_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition RNA reads per cell density (filtered).
-      PDF format
+      Distribution of RNA reads per cell.
+      Filtered; split by grouping condition.
+      PNG format.
 
   fltr_gene_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_gene_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition genes per cell density (filtered).
-      PNG format
-
-  fltr_gene_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_gene_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition genes per cell density (filtered).
-      PDF format
+      Distribution of genes per cell.
+      Filtered; split by grouping condition.
+      PNG format.
 
   fltr_mito_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_mito_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the percentage of RNA reads mapped
-      to mitochondrial genes per cell density (filtered).
-      PNG format
-
-  fltr_mito_dnst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_fltr_mito_dnst_spl_cnd.pdf"
-    doc: |
-      Split by grouping condition the percentage of RNA reads mapped
-      to mitochondrial genes per cell density (filtered).
-      PDF format
+      Distribution of RNA reads mapped
+      to mitochondrial genes per cell.
+      Filtered; split by grouping condition.
+      PNG format.
 
   fltr_nvlt_dnst_spl_cnd_plot_png:
     type: File?
     outputBinding:
       glob: "*_fltr_nvlt_dnst_spl_cnd.png"
     doc: |
-      Split by grouping condition the novelty score per cell density (filtered).
-      PNG format
+      Distribution of novelty score per cell.
+      Filtered; split by grouping condition.
+      PNG format.
 
-  fltr_nvlt_dnst_spl_cnd_plot_pdf:
-    type: File?
+  all_plots_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
-      glob: "*_fltr_nvlt_dnst_spl_cnd.pdf"
+      glob: "*.pdf"
     doc: |
-      Split by grouping condition the novelty score per cell density (filtered).
-      PDF format
+      All generated plots.
+      PDF format.
 
   ucsc_cb_config_data:
     type: Directory?
@@ -845,7 +648,7 @@ $schemas:
 
 label: "Single-Cell RNA-Seq Filtering Analysis"
 s:name: "Single-Cell RNA-Seq Filtering Analysis"
-s:alternateName: "Filters single-cell RNA-Seq datasets based on the common QC metrics"
+s:alternateName: "Single-Cell RNA-Seq Filtering Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-filter.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -885,11 +688,15 @@ s:creator:
 doc: |
   Single-Cell RNA-Seq Filtering Analysis
 
-  Filters single-cell RNA-Seq datasets based on the common QC metrics.
+  Removes low-quality cells from the outputs of the “Cell
+  Ranger Count (RNA)”, “Cell Ranger Count (RNA+VDJ)”, and
+  “Cell Ranger Aggregate (RNA, RNA+VDJ)” pipelines. The
+  results of this workflow are used in the “Single-Cell
+  RNA-Seq Dimensionality Reduction Analysis” pipeline.
 
 
 s:about: |
-  usage: /usr/local/bin/sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity
+  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity
                                         IDENTITY [--grouping GROUPING]
                                         [--barcodes BARCODES]
                                         [--rnamincells RNAMINCELLS]
