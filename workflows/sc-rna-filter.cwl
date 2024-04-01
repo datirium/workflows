@@ -712,6 +712,14 @@ outputs:
       Example of datasets metadata file
       in TSV format
 
+  seurat_data_cloupe:
+    type: File?
+    outputSource: sc_rna_filter/seurat_data_cloupe
+    label: "Seurat object in Loupe format"
+    doc: |
+      Seurat object.
+      Loupe format.
+
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
@@ -775,6 +783,8 @@ steps:
         default: true
       export_ucsc_cb:
         default: true
+      export_loupe_data:
+        default: true
       export_pdf_plots:
         default: true
       color_theme: color_theme
@@ -820,6 +830,7 @@ steps:
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
+    - seurat_data_cloupe
     - datasets_metadata
     - stdout_log
     - stderr_log

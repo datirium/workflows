@@ -17,7 +17,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.35
+  dockerPull: biowardrobe2/sc-tools:v0.0.36
 
 
 inputs:
@@ -404,6 +404,14 @@ inputs:
       prefix: "--h5ad"
     doc: |
       Save raw counts from the RNA and ATAC assays to h5ad files.
+      Default: false
+
+  export_loupe_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--loupe"
+    doc: |
+      Save raw counts from the RNA assay to Loupe file.
       Default: false
 
   export_ucsc_cb:
@@ -1303,6 +1311,15 @@ outputs:
       ATAC counts.
       H5AD format.
 
+  seurat_rna_data_cloupe:
+    type: File?
+    outputBinding:
+      glob: "*_rna_counts.cloupe"
+    doc: |
+      Seurat object.
+      RNA counts.
+      Loupe format
+
   stdout_log:
     type: stdout
 
@@ -1570,6 +1587,8 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save raw counts from the RNA and ATAC assays to h5ad
                           files. Default: false
+    --loupe               Save raw counts from the RNA assay to Loupe file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --tmpdir TMPDIR       Directory to keep temporary files. Default: either
                           /tmp or defined by environment variables TMPDIR, TMP,

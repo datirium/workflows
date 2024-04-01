@@ -484,6 +484,14 @@ outputs:
       SCope compatible.
       Loom format.
 
+  seurat_data_cloupe:
+    type: File?
+    outputSource: vdj_profile/seurat_data_cloupe
+    label: "Seurat object in Loupe format"
+    doc: |
+      Seurat object.
+      Loupe format.
+
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
@@ -523,6 +531,8 @@ steps:
         source: strictness
         valueFrom: $(self=="none"?null:self)
       color_theme: color_theme
+      export_loupe_data:
+        default: true
       export_pdf_plots:
         default: true
       verbose:
@@ -584,6 +594,7 @@ steps:
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
+    - seurat_data_cloupe
     - seurat_data_scope
     - stdout_log
     - stderr_log
