@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.35
+  dockerPull: biowardrobe2/sc-tools:v0.0.36
 
 
 inputs:
@@ -277,6 +277,14 @@ inputs:
       prefix: "--h5ad"
     doc: |
       Save raw counts from the RNA and/or ATAC assay(s) to h5ad file(s).
+      Default: false
+
+  export_loupe_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--loupe"
+    doc: |
+      Save raw counts from the RNA assay to Loupe file.
       Default: false
 
   export_scope_data:
@@ -823,6 +831,15 @@ outputs:
       ATAC counts.
       H5AD format.
 
+  seurat_rna_data_cloupe:
+    type: File?
+    outputBinding:
+      glob: "*_rna_counts.cloupe"
+    doc: |
+      Seurat object.
+      RNA counts.
+      Loupe format
+
   seurat_data_scope:
     type: File?
     outputBinding:
@@ -1016,6 +1033,8 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save raw counts from the RNA and/or ATAC assay(s) to
                           h5ad file(s). Default: false
+    --loupe               Save raw counts from the RNA assay to Loupe file.
+                          Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --scope               Save Seurat data to SCope compatible loom file. Only
                           not normalized raw counts from the RNA assay will be
