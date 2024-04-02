@@ -145,7 +145,9 @@ inputs:
     inputBinding:
       prefix: "--loupe"
     doc: |
-      Save raw counts from the RNA assay to Loupe file.
+      Save raw counts from the RNA assay to Loupe file. By
+      enabling this feature you accept the End-User License
+      Agreement available at https://10xgen.com/EULA.
       Default: false
 
   export_ucsc_cb:
@@ -739,7 +741,9 @@ s:about: |
     --h5seurat            Save Seurat data to h5seurat file. Default: false
     --h5ad                Save raw counts from the RNA assay to h5ad file.
                           Default: false
-    --loupe               Save raw counts from the RNA assay to Loupe file.
+    --loupe               Save raw counts from the RNA assay to Loupe file. By
+                          enabling this feature you accept the End-User License
+                          Agreement available at https://10xgen.com/EULA.
                           Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
