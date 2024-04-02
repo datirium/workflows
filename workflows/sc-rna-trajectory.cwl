@@ -119,6 +119,18 @@ inputs:
     "sd:layout":
       advanced: true
 
+  export_loupe_data:
+    type: boolean?
+    default: false
+    label: "Save raw counts to Loupe file by accepting the EULA available at https://10xgen.com/EULA"
+    doc: |
+      Save raw counts from the RNA assay to Loupe file. By
+      enabling this feature you accept the End-User License
+      Agreement available at https://10xgen.com/EULA.
+      Default: false
+    "sd:layout":
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -497,8 +509,7 @@ steps:
       verbose:
         default: true
       export_ucsc_cb: export_ucsc_cb
-      export_loupe_data:
-        default: true
+      export_loupe_data: export_loupe_data
       export_pdf_plots:
         default: true
       color_theme: color_theme

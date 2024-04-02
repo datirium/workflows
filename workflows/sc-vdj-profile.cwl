@@ -139,6 +139,18 @@ inputs:
       RNA-Seq Datasets" and can be utilized in
       the current or future steps of analysis.
 
+  export_loupe_data:
+    type: boolean?
+    default: false
+    label: "Save raw counts to Loupe file by accepting the EULA available at https://10xgen.com/EULA"
+    doc: |
+      Save raw counts from the RNA assay to Loupe file. By
+      enabling this feature you accept the End-User License
+      Agreement available at https://10xgen.com/EULA.
+      Default: false
+    "sd:layout":
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -531,8 +543,7 @@ steps:
         source: strictness
         valueFrom: $(self=="none"?null:self)
       color_theme: color_theme
-      export_loupe_data:
-        default: true
+      export_loupe_data: export_loupe_data
       export_pdf_plots:
         default: true
       verbose:
