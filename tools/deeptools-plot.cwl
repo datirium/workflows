@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -194,7 +194,7 @@ inputs:
     type:
     - "null"
     - type: enum
-      symbols: ["mean", "median", "max", "min", "sum", "region_length"]
+      symbols: ["RdBu", "Set1", "Set2", "Set3", "winter", "Dark2", "cool", "coolwarm", "rainbow"]
     inputBinding:
       position: 16
     doc: |
