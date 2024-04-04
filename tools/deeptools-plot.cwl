@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
@@ -65,14 +65,14 @@ inputs:
       #   replace single spaces with underscore
       sed -i 's/ /_/g' regions-files-names.pair
       # rename regions files using names (these correspond to the row section labels in the deeptools heatmap)
-      while read pair; do mv $(echo $pair | awk -F' ' '{print $1}') $(echo $pair | awk -F' ' '{print $2}')".bed"; done < regions-files-names.pair
+      while read pair; do cp $(echo $pair | awk -F' ' '{print $1}') $(echo $pair | awk -F' ' '{print $2}')".bed"; done < regions-files-names.pair
 
       # pair scores files and names
       awk -F',' '{if(NR==FNR){for(i=1;i<=NF;i++){x[i]=$i}}else{for(j in x){printf("%s\t%s\n",x[j],$j)}}}' <(echo $score_files) <(echo $score_names) > score-files-names.pair
       #   replace single spaces with underscore
       sed -i 's/ /_/g' score-files-names.pair
       # rename scores files using names (these correspond to the column section labels [sample names basically] in the deeptools heatmap)
-      while read pair; do mv $(echo $pair | awk -F' ' '{print $1}') $(echo $pair | awk -F' ' '{print $2}')".bigWig"; done < score-files-names.pair
+      while read pair; do cp $(echo $pair | awk -F' ' '{print $1}') $(echo $pair | awk -F' ' '{print $2}')".bigWig"; done < score-files-names.pair
 
 
 
