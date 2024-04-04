@@ -14,24 +14,24 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
       printf "$(date)\n\nStdout log file for deeptools-plot.cwl tool:\n\n"
       # inputs
-      regions_files=$0
-      regions_names=$1
-      score_files=$2
-      score_names=$3
-      beforeRegionStartLength=$4
-      afterRegionStartLength=$5
-      regionBodyLength=$6
-      threads=$7
-      sortRegions=$8
-      sortUsing=$9
-      colorMap=$10
-      kmeans=$11
+      regions_files=${0}
+      regions_names=${1}
+      score_files=${2}
+      score_names=${3}
+      beforeRegionStartLength=${4}
+      afterRegionStartLength=${5}
+      regionBodyLength=${6}
+      threads=${7}
+      sortRegions=${8}
+      sortUsing=${9}
+      colorMap=${10}
+      kmeans=${11}
 
 
       printf "INPUTS:\n"
@@ -59,11 +59,11 @@ inputs:
 
       # pair regions files and names
       awk -F',' '{if(NR==FNR){for(i=1;i<=NF;i++){x[i]=$i}}else{for(j in x){printf("%s\t%s\n",x[j],$j)}}}' <(echo $regions_files) <(echo $regions_names) > regions-files-names.pair
+      #   replace single spaces with underscore
+      sed -i 's/ /_/g' regions-files-names.pair
       printf "\nContents of 'regions-files-names.pair' file:\n"
       cat regions-files-names.pair
       printf "\n\n"
-      #   replace single spaces with underscore
-      sed -i 's/ /_/g' regions-files-names.pair
       # rename regions files using names (these correspond to the row section labels in the deeptools heatmap)
       while read pair; do cp $(echo $pair | awk -F' ' '{print $1}') $(echo $pair | awk -F' ' '{print $2}')".bed"; done < regions-files-names.pair
 
@@ -71,6 +71,9 @@ inputs:
       awk -F',' '{if(NR==FNR){for(i=1;i<=NF;i++){x[i]=$i}}else{for(j in x){printf("%s\t%s\n",x[j],$j)}}}' <(echo $score_files) <(echo $score_names) > score-files-names.pair
       #   replace single spaces with underscore
       sed -i 's/ /_/g' score-files-names.pair
+      printf "\nContents of 'score-files-names.pair' file:\n"
+      cat score-files-names.pair
+      printf "\n\n"
       # rename scores files using names (these correspond to the column section labels [sample names basically] in the deeptools heatmap)
       while read pair; do cp $(echo $pair | awk -F' ' '{print $1}') $(echo $pair | awk -F' ' '{print $2}')".bigWig"; done < score-files-names.pair
 
