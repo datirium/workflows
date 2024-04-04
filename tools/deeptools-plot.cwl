@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -80,6 +80,7 @@ inputs:
 
 
       # run deeptools compute matrix
+      printf "Running deeptools 'computeMatrix scale-regions' command...\n"
       computeMatrix scale-regions -S $(find ./ -maxdepth 1 -mindepth 1 -name "*.bigWig" | sed $'$!N;s/\\\n/\t/')  \
                                     -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
                                     --beforeRegionStartLength $beforeRegionStartLength \
@@ -91,6 +92,7 @@ inputs:
 
       # make plot
       if [[ $kmeans -gt 0 ]]; then
+        printf "Running deeptools 'plotHeatmap' command with $kmeans kmeans cluster(s)...\n"
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.svg \
             --sortRegions $sortRegions \
@@ -100,6 +102,7 @@ inputs:
             --legendLocation "best" \
             --plotFileFormat "svg"
       else
+        printf "Running deeptools 'plotHeatmap' command without kmeans clustering...\n"
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.svg \
             --sortRegions $sortRegions \
@@ -108,7 +111,7 @@ inputs:
             --legendLocation "best" \
             --plotFileFormat "svg"
       fi
-
+      printf "\n\nscript complete\n"
     inputBinding:
       position: 1
 
