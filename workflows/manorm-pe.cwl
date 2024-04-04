@@ -31,25 +31,22 @@ inputs:
 
   peak_file_first:
     type: File
-    format: "http://edamontology.org/format_3468"
     label: "ChIP-Seq PE sample 1"
     doc: |
-      XLS peak file from sample 1, formatted as MACS2 output
-    'sd:upstreamSource': "first_chipseq_sample/macs2_called_peaks"
+      Narrow peak file from sample 1
+    'sd:upstreamSource': "first_chipseq_sample/macs2_narrow_peaks"
     'sd:localLabel': true
 
   peak_file_second:
     type: File
-    format: "http://edamontology.org/format_3468"
     label: "ChIP-Seq PE sample 2"
     doc: |
-      XLS peak file from sample 2, formatted as MACS2 output
-    'sd:upstreamSource': "second_chipseq_sample/macs2_called_peaks"
+      Narrow peak file from sample 2
+    'sd:upstreamSource': "second_chipseq_sample/macs2_narrow_peaks"
     'sd:localLabel': true
 
   broad_peak_file_first:
     type: File?
-    format: "http://edamontology.org/format_3614"
     label: "ChIP-Seq PE sample 1"
     doc: |
       Broad peak file from sample 1
@@ -58,7 +55,6 @@ inputs:
 
   broad_peak_file_second:
     type: File?
-    format: "http://edamontology.org/format_3614"
     label: "ChIP-Seq PE sample 2"
     doc: |
       Broad peak file from sample 2
@@ -67,7 +63,6 @@ inputs:
 
   bam_file_first:
     type: File
-    format: "http://edamontology.org/format_2572"
     label: "BAM file from sample 1"
     doc: |
       BAM alignment file from sample 1
@@ -75,7 +70,6 @@ inputs:
 
   bam_file_second:
     type: File
-    format: "http://edamontology.org/format_2572"
     label: "BAM file from sample 2"
     doc: |
       BAM alignment file from sample 2
@@ -84,7 +78,6 @@ inputs:
   annotation_file:
     type: File
     label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
     doc: |
       Tab-separated annotation file
     'sd:upstreamSource': "first_chipseq_sample/genome_indices/annotation"
@@ -165,7 +158,6 @@ outputs:
 
   common_peak_file:
     type: File
-    format: "http://edamontology.org/format_3475"
     label: "MAnorm common peak file with assigned genes"
     doc: |
       "File contains nearest gene information, the M-A values and normalized read
@@ -179,7 +171,6 @@ outputs:
 
   above_m_cutoff_peak_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Above M-value cutoff peak file"
     doc: "Above M-value cutoff peak file"
     outputSource: manorm/above_m_cutoff_peak_file
@@ -193,7 +184,6 @@ outputs:
 
   below_m_cutoff_peak_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Below M-value cutoff peak file"
     doc: "Below M-value cutoff peak file"
     outputSource: manorm/below_m_cutoff_peak_file
@@ -207,7 +197,6 @@ outputs:
 
   unbiased_peak_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Unbiased peak file"
     doc: "Unbiased peak file"
     outputSource: manorm/unbiased_peak_file
@@ -221,7 +210,6 @@ outputs:
 
   m_values_wig_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Genome track file for M-values"
     doc: "Genome track file for M-values"
     outputSource: manorm/m_values_wig_file
@@ -235,7 +223,6 @@ outputs:
 
   a_values_wig_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Genome track file for A-values"
     doc: "Genome track file for A-values"
     outputSource: manorm/a_values_wig_file
@@ -249,7 +236,6 @@ outputs:
 
   p_values_wig_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Genome track file for P-values"
     doc: "Genome track file for P-values"
     outputSource: manorm/p_values_wig_file
@@ -263,7 +249,6 @@ outputs:
 
   ma_before_normalization_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
     label: "MA-values before normalization plot"
     doc: "MA-values before normalization plot"
     outputSource: manorm/ma_before_normalization_plot
@@ -274,7 +259,6 @@ outputs:
 
   ma_after_normalization_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
     label: "MA-values after normalization plot"
     doc: "MA-values after normalization plot"
     outputSource: manorm/ma_after_normalization_plot
@@ -285,7 +269,6 @@ outputs:
 
   ma_with_P_value_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
     label: "MA-values with P-values plot"
     doc: "MA-values with P-values plot"
     outputSource: manorm/ma_with_P_value_plot
@@ -296,7 +279,6 @@ outputs:
 
   read_density_on_common_peaks_plot:
     type: File
-    format: "http://edamontology.org/format_3603"
     label: "Read density on common peaks plot"
     doc: "Read density on common peaks plot"
     outputSource: manorm/read_density_on_common_peaks_plot
@@ -307,14 +289,12 @@ outputs:
 
   manorm_stderr_log:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "MAnorm stderr log"
     doc: "MAnorm stderr log"
     outputSource: manorm/stderr_log
 
   manorm_stdout_log:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "MAnorm stdout log"
     doc: "MAnorm stdout log"
     outputSource: manorm/stdout_log
@@ -366,7 +346,7 @@ steps:
               return "broadpeak";
             }
             else {
-              return "macs2";
+              return "narrowpeak";
             }
           }
       read_file_first: bam_file_first
