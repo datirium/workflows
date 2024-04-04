@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
@@ -93,15 +93,15 @@ inputs:
       if [[ $kmeans -gt 0 ]]; then
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.png \
-            --sortRegions $sortRegions
-            --sortUsing $sortUsing
+            --sortRegions $sortRegions \
+            --sortUsing $sortUsing \
             --colorMap $colorMap \
             --kmeans $kmeans
       else
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.png \
-            --sortRegions $sortRegions
-            --sortUsing $sortUsing
+            --sortRegions $sortRegions \
+            --sortUsing $sortUsing \
             --colorMap $colorMap
       fi
 

@@ -153,8 +153,12 @@ outputs:
     label: "Profile and heatmap plot"
     doc: "Profile and heatmap plot for scores over sets of genomic regions made by the 'plotHeatmap' tools."
     outputSource: make_plots/heatmap_file
+    'sd:visualPlugins':
+    - image:
+        tab: 'Plots'
+        Caption: 'Profile and heatmap plot'
 
-  log_stdout:
+  log_file_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -163,7 +167,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_stderr:
+  log_file_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
