@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -231,7 +231,7 @@ outputs:
   heatmap_file:
     type: File
     outputBinding:
-      glob: heatmap.png
+      glob: heatmap.svg
     doc: |
       Profile and heatmap plot for scores over sets of genomic regions made by the 'plotHeatmap' tools
 
