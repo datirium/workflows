@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -96,13 +96,17 @@ inputs:
             --sortRegions $sortRegions \
             --sortUsing $sortUsing \
             --colorMap $colorMap \
-            --kmeans $kmeans
+            --kmeans $kmeans \
+            --legendLocation "best" \
+            --plotFileFormat "svg"
       else
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.png \
             --sortRegions $sortRegions \
             --sortUsing $sortUsing \
-            --colorMap $colorMap
+            --colorMap $colorMap \
+            --legendLocation "best" \
+            --plotFileFormat "svg"
       fi
 
     inputBinding:
