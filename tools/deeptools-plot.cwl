@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -92,7 +92,7 @@ inputs:
 
       # make plot
       #   set plot height based on 4 + number of lists * 5)
-      plotheight=$(awk -F'\t' 'END{print(4+(NR*50))}' regions-files-names.pair)
+      plotheight=$(awk -F'\t' 'END{print(4+(NR*5))}' regions-files-names.pair)
       #   set plot width based on 1 + (number of samples * 3)
       plotwidth=$(awk -F'\t' 'END{print(1+(NR*3))}' score-files-names.pair)
       if [[ $kmeans -gt 0 ]]; then
