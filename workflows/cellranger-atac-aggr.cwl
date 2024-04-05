@@ -9,7 +9,7 @@ requirements:
 - class: MultipleInputFeatureRequirement
 
 
-'sd:upstream':
+"sd:upstream":
   sc_atacseq_sample:
   - "cellranger-atac-count.cwl"
   genome_indices:
@@ -20,7 +20,7 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: "Experiment short name/alias"
     sd:preview:
       position: 1
 
@@ -31,8 +31,8 @@ inputs:
       Array of GEM well identifiers to be used for labeling purposes only.
       If not provided use rootnames of files from the barcode_metrics_report
       input
-    'sd:upstreamSource': "sc_atacseq_sample/alias"
-    'sd:localLabel': true
+    "sd:upstreamSource": "sc_atacseq_sample/alias"
+    "sd:localLabel": true
 
   fragments_file_from_count:
     type: File[]
@@ -43,7 +43,7 @@ inputs:
       Array of files containing count and barcode information for
       every ATAC fragment observed in the "cellranger-atac count"
       experiment in TSV format.
-    'sd:upstreamSource': "sc_atacseq_sample/atac_fragments_file"
+    "sd:upstreamSource": "sc_atacseq_sample/atac_fragments_file"
 
   barcode_metrics_report_from_count:
     type: File[]
@@ -51,7 +51,7 @@ inputs:
     doc: |
       Array of files with per-barcode fragment counts & metrics
       produced by "cellranger-atac count" command in CSV format
-    'sd:upstreamSource': "sc_atacseq_sample/barcode_metrics_report"
+    "sd:upstreamSource": "sc_atacseq_sample/barcode_metrics_report"
 
   indices_folder:
     type: Directory
@@ -64,13 +64,13 @@ inputs:
       This sample can be obtained from "Cell
       Ranger Reference (RNA, ATAC, RNA+ATAC)"
       pipeline.
-    'sd:upstreamSource': "genome_indices/arc_indices_folder"
-    'sd:localLabel': true
+    "sd:upstreamSource": "genome_indices/arc_indices_folder"
+    "sd:localLabel": true
 
   memory_limit:
     type: int?
     default: 20
-    'sd:upstreamSource': "genome_indices/memory_limit"
+    "sd:upstreamSource": "genome_indices/memory_limit"
 
   normalization_mode:
     type:
@@ -80,7 +80,7 @@ inputs:
     default: "none"
     label: "Library depth normalization mode"
     doc: "Library depth normalization mode"
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   threads:
@@ -101,7 +101,7 @@ inputs:
       number of cores/CPUs that can be utilized
       simultaneously.
       Default: 4
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
 
@@ -113,9 +113,9 @@ outputs:
     label: "Run summary metrics and charts in HTML format"
     doc: |
       Run summary metrics and charts in HTML format
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
   metrics_summary_report_json:
@@ -243,9 +243,9 @@ outputs:
     label: "CellBrowser formatted Cellranger report"
     doc: |
       CellBrowser formatted Cellranger report
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - linkList:
-        tab: 'Overview'
+        tab: "Overview"
         target: "_blank"
 
 
