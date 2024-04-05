@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -93,7 +93,7 @@ inputs:
       # make plot
       #   set plot width based on number of samples * 3 (+1 as baseline)
       plotwidth=$(awk -F'\t' 'END{print(1+(NR*3))}' score-files-names.pair)
-      #   set plot height based on number of lists * 4 (+2 as baseline)
+      #   set plot height based on number of lists * 5 (+4 as baseline)
       plotheight=$(awk -F'\t' 'END{print(2+(NR*4))}' regions-files-names.pair)
       if [[ $kmeans -gt 0 ]]; then
         printf "Running deeptools 'plotHeatmap' command with $kmeans kmeans cluster(s)...\n"
@@ -103,7 +103,7 @@ inputs:
             --sortUsing $sortUsing \
             --colorMap $colorMap \
             --kmeans $kmeans \
-            --legendLocation "best" \
+            --legendLocation "upper-left" \
             --heatmapHeight $plotheight \
             --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
@@ -114,7 +114,7 @@ inputs:
             --sortRegions $sortRegions \
             --sortUsing $sortUsing \
             --colorMap $colorMap \
-            --legendLocation "best" \
+            --legendLocation "upper-left" \
             --heatmapHeight $plotheight \
             --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
