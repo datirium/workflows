@@ -1,0 +1,46 @@
+#################################################################
+# Dockerfile
+#
+# Software:         deeptools stand-alone docker (deeptools2)
+# Software Version: deeptools 3.5.5
+# Description:      Dockerized version of deeptools
+# Website:          https://github.com/datirium/workflows
+# Base Image:       biowardrobe2/morpheus:v0.0.2
+# Build Cmd:        docker build --no-cache --rm -t deeptools-dev -f scidap-deeptools-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti deeptools-dev /bin/bash
+# Push Cmd1:        docker tag deeptools-dev robertplayer/scidap-deeptools:stable
+#      Cmd2:        docker image push robertplayer/scidap-deeptools:stable
+# Pull Cmd:         docker pull robertplayer/scidap-deeptools:stable
+# Test Stable:      docker run --rm -ti robertplayer/scidap-deeptools:stable /bin/bash
+# re-tag for PR:    docker tag deeptools-dev robertplayer/scidap-deeptools:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-deeptools:v1.0.0
+#
+#   NOTES:
+#
+#   v1.0.0 - 20240405
+#       - install of deeptools 3.5.5 with pip over morpheus base image
+#   
+#################################################################
+
+
+### Base Image
+#   use for initial image build
+FROM biowardrobe2/morpheus:v0.0.2
+#   use for small script updates etc (shorter build time from stable)
+#FROM robertplayer/scidap-bedops:stable
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing dependencies
+RUN apt-get update && \
+    pip install deeptools && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
