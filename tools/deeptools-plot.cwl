@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -91,6 +91,8 @@ inputs:
 
 
       # make plot
+      #   set plot width based on number of samples * 2 (+2 as baseline)
+      plotwidth=$(awk -F'\t' 'END{print(2+(NR*2))}' score-files-names.pair)
       if [[ $kmeans -gt 0 ]]; then
         printf "Running deeptools 'plotHeatmap' command with $kmeans kmeans cluster(s)...\n"
         plotHeatmap -m matrix.mat.gz \
@@ -109,6 +111,8 @@ inputs:
             --sortUsing $sortUsing \
             --colorMap $colorMap \
             --legendLocation "best" \
+            --heatmapHeight 12 \
+            --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
       fi
       printf "\n\nscript complete\n"
