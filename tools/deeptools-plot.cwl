@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
@@ -80,7 +80,7 @@ inputs:
 
 
       # run deeptools compute matrix
-      printf "Running deeptools 'computeMatrix scale-regions' command...\n"
+      printf "Running deeptools 'computeMatrix scale-regions' command...\n\n"
       computeMatrix scale-regions -S $(find ./ -maxdepth 1 -mindepth 1 -name "*.bigWig" | sed $'$!N;s/\\\n/\t/')  \
                                     -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
                                     --beforeRegionStartLength $beforeRegionStartLength \
@@ -92,7 +92,7 @@ inputs:
 
       # make plot
       #   set plot height based on 4 + number of lists * 5)
-      plotheight=$(awk -F'\t' 'END{print(4+(NR*5))}' regions-files-names.pair)
+      plotheight=$(awk -F'\t' 'END{print(4+(NR*50))}' regions-files-names.pair)
       #   set plot width based on 1 + (number of samples * 3)
       plotwidth=$(awk -F'\t' 'END{print(1+(NR*3))}' score-files-names.pair)
       if [[ $kmeans -gt 0 ]]; then
@@ -108,7 +108,7 @@ inputs:
             --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
       else
-        printf "Running deeptools 'plotHeatmap' command without kmeans clustering, and height = $plotheight x width = $plotwidth . . .\n"
+        printf "Running deeptools 'plotHeatmap' command without kmeans clustering, and height = $plotheight x width = $plotwidth . . .\n\n"
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.svg \
             --sortRegions $sortRegions \
@@ -119,7 +119,7 @@ inputs:
             --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
       fi
-      printf "\n\nscript complete\n"
+      printf "\nscript complete\n"
     inputBinding:
       position: 1
 
