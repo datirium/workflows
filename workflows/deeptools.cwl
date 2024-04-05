@@ -158,7 +158,7 @@ outputs:
         tab: 'Plots'
         Caption: 'Profile and heatmap plot'
 
-  log_file_stdout:
+  log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -167,7 +167,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_file_stderr:
+  log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
