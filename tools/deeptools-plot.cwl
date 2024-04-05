@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
@@ -91,10 +91,10 @@ inputs:
 
 
       # make plot
-      #   set plot width based on number of samples * 3 (+1 as baseline)
+      #   set plot width based on 1 + (number of samples * 3)
       plotwidth=$(awk -F'\t' 'END{print(1+(NR*3))}' score-files-names.pair)
-      #   set plot height based on number of lists * 5 (+4 as baseline)
-      plotheight=$(awk -F'\t' 'END{print(2+(NR*4))}' regions-files-names.pair)
+      #   set plot height based on 4 + number of lists * 5)
+      plotheight=$(awk -F'\t' 'END{print(4+(NR*5))}' regions-files-names.pair)
       if [[ $kmeans -gt 0 ]]; then
         printf "Running deeptools 'plotHeatmap' command with $kmeans kmeans cluster(s)...\n"
         plotHeatmap -m matrix.mat.gz \
