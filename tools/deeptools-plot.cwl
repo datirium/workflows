@@ -9,12 +9,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-deeptools:stable
+  dockerPull: robertplayer/scidap-deeptools:v1.0.0
 
 
 inputs:
 
-  script:
+  script_commands:
     type: string?
     default: |
       #!/bin/bash
@@ -92,13 +92,11 @@ inputs:
 
       # make plot
       #   set plot height based on 4 + number of lists * 5)
-      #   height temporarily unavailable, does not respond to this param in scidap for some reason
-      #                 --heatmapHeight $plotheight \
       plotheight=$(awk -F'\t' 'END{print(4+(NR*50))}' regions-files-names.pair)
       #   set plot width based on 1 + (number of samples * 3)
       plotwidth=$(awk -F'\t' 'END{print(1+(NR*3))}' score-files-names.pair)
       if [[ $kmeans -gt 0 ]]; then
-        printf "Running deeptools 'plotHeatmap' command with $kmeans kmeans cluster(s), and plot width = $plotwidth . . .\n\n"
+        printf "Running deeptools 'plotHeatmap' command with $kmeans kmeans cluster(s), plot height = $plotheight, and width = $plotwidth . . .\n\n"
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.svg \
             --sortRegions $sortRegions \
@@ -106,16 +104,18 @@ inputs:
             --colorMap $colorMap \
             --kmeans $kmeans \
             --legendLocation "upper-right" \
+            --heatmapHeight $plotheight \
             --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
       else
-        printf "Running deeptools 'plotHeatmap' command without kmeans clustering, and plot width = $plotwidth . . .\n\n"
+        printf "Running deeptools 'plotHeatmap' command without kmeans clustering, plot height = $plotheight, and width = $plotwidth . . .\n\n"
         plotHeatmap -m matrix.mat.gz \
             -out heatmap.svg \
             --sortRegions $sortRegions \
             --sortUsing $sortUsing \
             --colorMap $colorMap \
             --legendLocation "upper-right" \
+            --heatmapHeight $plotheight \
             --heatmapWidth $plotwidth \
             --plotFileFormat "svg"
       fi

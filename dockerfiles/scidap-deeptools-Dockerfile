@@ -16,6 +16,9 @@
 # Push for PR:      docker image push robertplayer/scidap-deeptools:v1.0.0
 #
 #   NOTES:
+#
+#   v1.0.0 - 20240405
+#       - install of deeptools 3.5.5 with pip over morpheus base image
 #   
 #################################################################
 
