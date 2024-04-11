@@ -10,7 +10,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/fastqdwnld:v0.0.2
+  dockerPull: biowardrobe2/fastqdwnld:v0.0.3
 
 
 inputs:
@@ -168,10 +168,10 @@ outputs:
           return (!!splitted_line.length)?splitted_line:null;
         }
 
-  stdout_log:
+  log_stdout:
     type: stdout
 
-  stderr_log:
+  log_stderr:
     type: stderr
 
 
