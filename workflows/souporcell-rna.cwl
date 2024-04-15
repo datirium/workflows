@@ -231,7 +231,7 @@ steps:
           default: |
             #!/bin/bash
             tar xzf $0
-            mv filtered_feature_bc_matrix/barcodes.tsv.gz .
+            mv */barcodes.tsv.gz .
             gunzip barcodes.tsv.gz
             if [ -f "$1" ]; then
                 echo "Filter by user provided barcodes"
