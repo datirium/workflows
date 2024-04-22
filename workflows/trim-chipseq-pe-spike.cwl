@@ -298,6 +298,13 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
+  bambai_pair_spikein:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "Coordinate sorted BAM alignment file (+index BAI) for spike-in"
+    doc: "Coordinate sorted BAM file and BAI index file for spike-in, used for normalization in diffbind downstream"
+    outputSource: samtools_sort_index_spikein/bam_bai_pair
+
   bam_statistics_report:
     type: File
     label: "BAM statistics report (original)"
