@@ -4,12 +4,6 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
-- class: InitialWorkDirRequirement
-  listing:
-  - entryname: dummy_metadata.csv
-    entry: |
-      library_id
-      Experiment
 - class: EnvVarRequirement
   envDef:
     R_MAX_VSIZE: $((inputs.vector_memory_limit * 1000000000).toString())
@@ -17,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.36
+  dockerPull: biowardrobe2/sc-tools:v0.0.37
 
 
 inputs:
@@ -34,12 +28,12 @@ inputs:
 
   aggregation_metadata:
     type: File?
+    inputBinding:
+      prefix: "--identity"
     doc: |
-      Path to the metadata TSV/CSV file to set the datasets identities. If --mex points
-      to the Cell Ranger Aggregate (ATAC) or Cell Ranger Aggregate (RNA+ATAC) outputs,
-      the aggr.csv file can be used. If Cell Ranger Count (ATAC) or Cell Ranger Count
-      (RNA+ATAC) outputs have been used in the --mex input, the file should include at
-      least one column - library_id and one row with the alias for that experiment.
+      Path to the metadata TSV/CSV file to set the datasets identities, if --mex points
+      to the Cell Ranger Aggregate (ATAC) or Cell Ranger Aggregate (RNA+ATAC) outputs.
+      The aggr.csv file can be used.
 
   atac_fragments_file:
     type: File
@@ -825,17 +819,6 @@ outputs:
 
 
 baseCommand: ["sc_atac_filter.R"]
-arguments:
-- valueFrom: |
-    ${
-      if (inputs.aggregation_metadata) {
-        return inputs.aggregation_metadata;
-      } else {
-        return runtime.outdir + "/dummy_metadata.csv"
-      }
-    }
-  prefix: "--identity"
-
 
 stdout: sc_atac_filter_stdout.log
 stderr: sc_atac_filter_stderr.log
@@ -898,7 +881,7 @@ doc: |
 
 
 s:about: |
-  usage: sc_atac_filter.R [-h] --mex MEX --identity IDENTITY
+  usage: sc_atac_filter.R [-h] --mex MEX [--identity IDENTITY]
                                         --fragments FRAGMENTS --annotations
                                         ANNOTATIONS --seqinfo SEQINFO
                                         [--grouping GROUPING]
@@ -931,13 +914,9 @@ s:about: |
                           For RNA+ATAC experiments the rows consisting genes
                           will be ignored.
     --identity IDENTITY   Path to the metadata TSV/CSV file to set the datasets
-                          identities. If --mex points to the Cell Ranger
+                          identities, if --mex points to the Cell Ranger
                           Aggregate (ATAC) or Cell Ranger Aggregate (RNA+ATAC)
-                          outputs, the aggr.csv file can be used. If Cell Ranger
-                          Count (ATAC) or Cell Ranger Count (RNA+ATAC) outputs
-                          have been used in the --mex input, the file should
-                          include at least one column - library_id and one row
-                          with the alias for that experiment.
+                          outputs. The aggr.csv file can be used.
     --fragments FRAGMENTS
                           Count and barcode information for every ATAC fragment
                           observed in the experiment in TSV format. Tbi-index

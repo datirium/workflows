@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.36
+  dockerPull: biowardrobe2/sc-tools:v0.0.37
 
 
 inputs:

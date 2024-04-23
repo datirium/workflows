@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.36
+  dockerPull: biowardrobe2/sc-tools:v0.0.37
 
 
 inputs:
@@ -23,8 +23,10 @@ inputs:
     doc: |
       Path to the RDS file to load Seurat object from. This
       file should include gene expression information stored
-      in the RNA assay, as well as 'pca' and 'rnaumap'
-      dimensionality reductions applied to that assay.
+      in the RNA assay, as well as pca and rnaumap dimensionality
+      reductions applied to that assay. If loaded Seurat object
+      includes multiple datasets, it should have a donor column
+      to define grouping for clonotype calling.
 
   contigs_data:
     type: File
@@ -64,14 +66,6 @@ inputs:
       if those are present. Default: all cells used, no
       extra metadata is added
 
-  query_source_column:
-    type: string
-    inputBinding:
-      prefix: "--source"
-    doc: |
-      Column from the metadata of the loaded Seurat
-      object to select clusters from.
-
   cloneby:
     type:
     - "null"
@@ -89,29 +83,37 @@ inputs:
       the amino acid sequence. strict: based on the combination of
       the nucleotide and gene sequences. Default: gene
 
-  groupby:
-    type: string?
+  minimum_frequency:
+    type: int?
     inputBinding:
-      prefix: "--groupby"
+      prefix: "--minfrequency"
     doc: |
-      Column from the metadata of the loaded Seurat object
-      to group cells for clonotype frequency calculation.
-      Default: group by dataset
+      Minimum frequency (number of cells) per
+      clonotype to be reported.
+      Default: 3
 
-  strictness:
+  filterby:
     type:
     - "null"
     - type: enum
       symbols:
-      - "removemulti"
-      - "filtermulti"
+      - "cells"
+      - "chains"
     inputBinding:
-      prefix: "--strictness"
+      prefix: "--filter"
     doc: |
-      Apply stringency filters. Removemulti: remove any cell
-      with more than 2 immune receptor chains. Filtermulti:
-      isolate the top 2 expressed chains in cell with multiple
-      chains. Default: do not apply any filters
+      Stringency filters to be applied. 1) cells: remove
+      cells with more than 2 chains. 2) chains: remove
+      chains exceeding 2 (select the most expressed ones).
+      Default: do not apply any filters.
+
+  remove_partial:
+    type: boolean?
+    inputBinding:
+      prefix: "--removepartial"
+    doc: |
+      Remove cells with only one chain detected.
+      Default: keep all cells if at least one chain detected
 
   export_pdf_plots:
     type: boolean?
@@ -237,403 +239,247 @@ inputs:
 
 outputs:
 
-  count_spl_idnt_plot_png:
+  cl_qnt_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_count_spl_idnt.png"
+      glob: "*_cl_qnt_gr_idnt_spl_ch.png"
     doc: |
-      Unique clonotypes,
-      split by dataset
-      PNG format
+      Percentage of unique clonotypes per dataset.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  count_spl_idnt_plot_pdf:
+  cl_dnst_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_count_spl_idnt.pdf"
+      glob: "*_cl_dnst_gr_idnt_spl_ch.png"
     doc: |
-      Unique clonotypes,
-      split by dataset
-      PDF format
+      Distribution of clonotype frequencies per dataset.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  count_spl_clst_plot_png:
+  allu_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_count_spl_clst.png"
+      glob: "*_allu_gr_idnt_spl_ch.png"
     doc: |
-      Unique clonotypes,
-      split by cluster
-      PNG format
+      Proportion of top shared clonotypes between datasets.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor; top clonotypes selected from
+      each dataset.
+      PNG format.
 
-  count_spl_clst_plot_pdf:
+  hmst_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_count_spl_clst.pdf"
+      glob: "*_hmst_gr_idnt_spl_ch.png"
     doc: |
-      Unique clonotypes,
-      split by cluster
-      PDF format
+      Proportion of clonotype frequencies per dataset.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
 
-  hmst_spl_idnt_plot_png:
+  vrlp_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_hmst_spl_idnt.png"
+      glob: "*_vrlp_gr_idnt_spl_ch.png"
     doc: |
-      Clonal space homeostasis,
-      split by dataset
-      PNG format
+      Overlap of clonotypes between datasets.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  hmst_spl_idnt_plot_pdf:
+  dvrs_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_hmst_spl_idnt.pdf"
+      glob: "*_dvrs_gr_idnt_spl_ch.png"
     doc: |
-      Clonal space homeostasis,
-      split by dataset
-      PDF format
+      Diversity of clonotypes per dataset.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
 
-  hmst_spl_clst_plot_png:
+  gene_gr_idnt_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_hmst_spl_clst.png"
+      glob: "*_gene_gr_idnt_spl_ch.png"
     doc: |
-      Clonal space homeostasis,
-      split by cluster
-      PNG format
+      Distribution of gene usage per dataset.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  hmst_spl_clst_plot_pdf:
+  umap_cl_freq_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_hmst_spl_clst.pdf"
+      glob: "*_umap_cl_freq_spl_ch.png"
     doc: |
-      Clonal space homeostasis,
-      split by cluster
-      PDF format
+      UMAP colored by clonotype frequency.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  vrlp_spl_clst_plot_png:
+  cl_qnt_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_vrlp_spl_clst.png"
+      glob: "*_cl_qnt_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes similarity,
-      split by cluster
-      PNG format
+      Percentage of unique clonotypes per donor.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  vrlp_spl_clst_plot_pdf:
+  cl_dnst_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_vrlp_spl_clst.pdf"
+      glob: "*_cl_dnst_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes similarity,
-      split by cluster
-      PDF format
+      Distribution of clonotype frequencies per donor.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  vrlp_spl_idnt_plot_png:
+  allu_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_vrlp_spl_idnt.png"
+      glob: "*_allu_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes similarity,
-      split by dataset
-      PNG format
+      Proportion of top shared clonotypes between donors.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor; top clonotypes selected from
+      each donor.
+      PNG format.
 
-  vrlp_spl_idnt_plot_pdf:
+  hmst_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_vrlp_spl_idnt.pdf"
+      glob: "*_hmst_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes similarity,
-      split by dataset
-      PDF format
+      Proportion of clonotype frequencies per donor.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
 
-  ntwr_gr_clst_plot_png:
+  vrlp_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntwr_gr_clst.png"
+      glob: "*_vrlp_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes network,
-      colored by cluster
-      PNG format
+      Overlap of clonotypes between donors.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  ntwr_gr_clst_plot_pdf:
+  dvrs_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntwr_gr_clst.pdf"
+      glob: "*_dvrs_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes network,
-      colored by cluster
-      PDF format
+      Diversity of clonotypes per donor.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
 
-  ntwr_gr_idnt_plot_png:
+  gene_gr_dnr_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntwr_gr_idnt.png"
+      glob: "*_gene_gr_dnr_spl_ch.png"
     doc: |
-      Clonotypes network,
-      colored by dataset
-      PNG format
+      Distribution of gene usage per donor.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  ntwr_gr_idnt_plot_pdf:
+  cl_qnt_gr_cnd_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_ntwr_gr_idnt.pdf"
+      glob: "*_cl_qnt_gr_cnd_spl_ch.png"
     doc: |
-      Clonotypes network,
-      colored by dataset
-      PDF format
+      Percentage of unique clonotypes per
+      grouping condition.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  dvrs_gr_clst_spl_idnt_plot_png:
+  cl_dnst_gr_cnd_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_dvrs_gr_clst_spl_idnt.png"
+      glob: "*_cl_dnst_gr_cnd_spl_ch.png"
     doc: |
-      Clonotypes diversity,
-      colored by cluster,
-      split by dataset
-      PNG format
+      Distribution of clonotype frequencies
+      per grouping condition.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  dvrs_gr_clst_spl_idnt_plot_pdf:
+  allu_gr_cnd_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_dvrs_gr_clst_spl_idnt.pdf"
+      glob: "*_allu_gr_cnd_spl_ch.png"
     doc: |
-      Clonotypes diversity,
-      colored by cluster,
-      split by dataset
-      PDF format
+      Proportion of top shared clonotypes between
+      grouping conditions.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor; top clonotypes selected from
+      each grouping condition.
+      PNG format.
 
-  dvrs_gr_idnt_spl_clst_plot_png:
+  hmst_gr_cnd_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_dvrs_gr_idnt_spl_clst.png"
+      glob: "*_hmst_gr_cnd_spl_ch.png"
     doc: |
-      Clonotypes diversity,
-      colored by dataset,
-      split by cluster
-      PNG format
+      Proportion of clonotype frequencies per
+      grouping condition.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
 
-  dvrs_gr_idnt_spl_clst_plot_pdf:
+  vrlp_gr_cnd_spl_ch_plot_png:
     type: File?
     outputBinding:
-      glob: "*_dvrs_gr_idnt_spl_clst.pdf"
+      glob: "*_vrlp_gr_cnd_spl_ch.png"
     doc: |
-      Clonotypes diversity,
-      colored by dataset,
-      split by cluster
-      PDF format
+      Overlap of clonotypes between grouping conditions.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
 
-  gene_spl_clst_vdjc_plot_png:
+  dvrs_gr_cnd_spl_ch_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_dvrs_gr_cnd_spl_ch.png"
+    doc: |
+      Diversity of clonotypes per grouping condition.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
+
+  gene_gr_cnd_spl_ch_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gene_gr_cnd_spl_ch.png"
+    doc: |
+      Distribution of gene usage per grouping condition.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
+
+  all_plots_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_gene_spl_clst_*.png"
+      glob: "*.pdf"
     doc: |
-      Relative usage of V, D, J, C
-      genes, split by cluster
-      PNG format
+      All generated plots.
+      PDF format.
 
-  gene_spl_clst_vdjc_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_gene_spl_clst_*.pdf"
-    doc: |
-      Relative usage of V, D, J, C
-      genes, split by cluster
-      PDF format
-
-  gene_spl_idnt_vdjc_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_gene_spl_idnt_*.png"
-    doc: |
-      Relative usage of V, D, J, C
-      genes, split by dataset
-      PNG format
-
-  gene_spl_idnt_vdjc_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_gene_spl_idnt_*.pdf"
-    doc: |
-      Relative usage of V, D, J, C
-      genes, split by dataset
-      PDF format
-
-  chrd_gr_clst_plot_png:
+  clonotypes_data_tsv:
     type: File?
     outputBinding:
-      glob: "*_chrd_gr_clst.png"
+      glob: "*_clonotypes.tsv"
     doc: |
-      Shared clonotype,
-      colored by cluster
-      PNG format
-
-  chrd_gr_clst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_chrd_gr_clst.pdf"
-    doc: |
-      Shared clonotype,
-      colored by cluster
-      PDF format
-
-  chrd_gr_idnt_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_chrd_gr_idnt.png"
-    doc: |
-      Shared clonotype,
-      colored by dataset
-      PNG format
-
-  chrd_gr_idnt_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_chrd_gr_idnt.pdf"
-    doc: |
-      Shared clonotype,
-      colored by dataset
-      PDF format
-
-  chrd_gr_cnd_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_chrd_gr_cnd.png"
-    doc: |
-      Shared clonotype,
-      colored by grouping condition
-      PNG format
-
-  chrd_gr_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_chrd_gr_cnd.pdf"
-    doc: |
-      Shared clonotype,
-      colored by grouping condition
-      PDF format
-
-  count_spl_cnd_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_count_spl_cnd.png"
-    doc: |
-      Unique clonotypes,
-      split by grouping condition
-      PNG format
-
-  count_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_count_spl_cnd.pdf"
-    doc: |
-      Unique clonotypes,
-      split by grouping condition
-      PDF format
-
-  hmst_spl_cnd_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_hmst_spl_cnd.png"
-    doc: |
-      Clonal space homeostasis,
-      split by grouping condition
-      PNG format
-
-  hmst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_hmst_spl_cnd.pdf"
-    doc: |
-      Clonal space homeostasis,
-      split by grouping condition
-      PDF format
-
-  vrlp_spl_cnd_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_vrlp_spl_cnd.png"
-    doc: |
-      Clonotypes similarity,
-      split by grouping condition
-      PNG format
-
-  vrlp_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_vrlp_spl_cnd.pdf"
-    doc: |
-      Clonotypes similarity,
-      split by grouping condition
-      PDF format
-
-  ntwr_gr_cnd_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_ntwr_gr_cnd.png"
-    doc: |
-      Clonotypes network,
-      colored by grouping condition
-      PNG format
-
-  ntwr_gr_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_ntwr_gr_cnd.pdf"
-    doc: |
-      Clonotypes network,
-      colored by grouping condition
-      PDF format
-
-  dvrs_gr_clst_spl_cnd_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_dvrs_gr_clst_spl_cnd.png"
-    doc: |
-      Clonotypes diversity,
-      colored by cluster,
-      split by grouping condition
-      PNG format
-
-  dvrs_gr_clst_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_dvrs_gr_clst_spl_cnd.pdf"
-    doc: |
-      Clonotypes diversity,
-      colored by cluster,
-      split by grouping condition
-      PDF format
-
-  dvrs_gr_cnd_spl_clst_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_dvrs_gr_cnd_spl_clst.png"
-    doc: |
-      Clonotypes diversity,
-      colored by grouping condition,
-      split by cluster
-      PNG format
-
-  dvrs_gr_cnd_spl_clst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_dvrs_gr_cnd_spl_clst.pdf"
-    doc: |
-      Clonotypes diversity,
-      colored by grouping condition,
-      split by cluster
-      PDF format
+      Clonotypes data.
+      Filtered by minimum clonotype
+      frequency per donor.
+      TSV format.
 
   ucsc_cb_config_data:
     type: Directory?
@@ -662,7 +508,7 @@ outputs:
       glob: "*_data.rds"
     doc: |
       Seurat object.
-      RDS format
+      RDS format.
 
   seurat_data_h5seurat:
     type: File?
@@ -670,7 +516,7 @@ outputs:
       glob: "*_data.h5seurat"
     doc: |
       Seurat object.
-      h5Seurat format
+      h5Seurat format.
 
   seurat_data_h5ad:
     type: File?
@@ -678,7 +524,7 @@ outputs:
       glob: "*_counts.h5ad"
     doc: |
       Seurat object.
-      H5AD format
+      H5AD format.
 
   seurat_data_cloupe:
     type: File?
@@ -686,7 +532,7 @@ outputs:
       glob: "*_counts.cloupe"
     doc: |
       Seurat object.
-      Loupe format
+      Loupe format.
 
   seurat_data_scope:
     type: File?
@@ -695,7 +541,7 @@ outputs:
     doc: |
       Seurat object.
       SCope compatible.
-      Loom format
+      Loom format.
 
   stdout_log:
     type: stdout
@@ -719,7 +565,7 @@ $schemas:
 
 label: "Single-Cell Immune Profiling Analysis"
 s:name: "Single-Cell Immune Profiling Analysis"
-s:alternateName: "TCR/BCR clonotype dynamics analysis"
+s:alternateName: "Single-Cell Immune Profiling Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-vdj-profile.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -759,19 +605,20 @@ s:creator:
 doc: |
   Single-Cell Immune Profiling Analysis
 
-  TCR/BCR clonotype dynamics analysis
+  Estimates clonotype diversity and dynamics from V(D)J
+  sequencing data assembled into contigs.
 
 
 s:about: |
-  usage: /usr/local/bin/sc_vdj_profile.R [-h] --query QUERY --contigs CONTIGS
+  sc_vdj_profile.R [-h] --query QUERY --contigs CONTIGS
                                         [--metadata METADATA]
-                                        [--barcodes BARCODES] --source SOURCE
+                                        [--barcodes BARCODES]
                                         [--cloneby {gene,nt,aa,strict}]
-                                        [--groupby GROUPBY]
-                                        [--strictness {removemulti,filtermulti}]
-                                        [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--scope]
-                                        [--output OUTPUT]
+                                        [--minfrequency MINFREQUENCY]
+                                        [--filter {cells,chains}]
+                                        [--removepartial] [--pdf] [--verbose]
+                                        [--h5seurat] [--h5ad] [--loupe]
+                                        [--cbbuild] [--scope] [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
                                         [--seed SEED]
@@ -782,8 +629,11 @@ s:about: |
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include gene expression information stored
-                          in the RNA assay, as well as 'pca' and 'rnaumap'
-                          dimensionality reductions applied to that assay.
+                          in the RNA assay, as well as pca and rnaumap
+                          dimensionality reductions applied to that assay. If
+                          loaded Seurat object includes multiple datasets, it
+                          should have a donor column to define grouping for
+                          clonotype calling.
     --contigs CONTIGS     Path to the file with high-level annotations of each
                           high-confidence contig from cell-associated barcodes
                           from the Cell Ranger Multi or Cell Ranger Aggregate
@@ -805,22 +655,22 @@ s:about: |
                           Seurat object metadata ovewriting the existing ones if
                           those are present. Default: all cells used, no extra
                           metadata is added
-    --source SOURCE       Column from the metadata of the loaded Seurat object
-                          to select clusters from.
     --cloneby {gene,nt,aa,strict}
                           Defines how to call the clonotype. gene: based on VDJC
                           gene sequence. nt: based on the nucleotide sequence.
                           aa: based on the amino acid sequence. strict: based on
                           the combination of the nucleotide and gene sequences.
                           Default: gene
-    --groupby GROUPBY     Column from the metadata of the loaded Seurat object
-                          to group cells for clonotype frequency calculation.
-                          Default: group by dataset
-    --strictness {removemulti,filtermulti}
-                          Apply stringency filters. Removemulti: remove any cell
-                          with more than 2 immune receptor chains. Filtermulti:
-                          isolate the top 2 expressed chains in cell with
-                          multiple chains. Default: do not apply any filters.
+    --minfrequency MINFREQUENCY
+                          Minimum frequency (number of cells) per clonotype to
+                          be reported. Default: 3
+    --filter {cells,chains}
+                          Stringency filters to be applied. cells: remove cells
+                          with more than 2 chains. chains: remove chains
+                          exceeding 2 (select the most expressed ones). Default:
+                          do not apply any filters.
+    --removepartial       Remove cells with only one chain detected. Default:
+                          keep all cells if at least one chain detected
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
