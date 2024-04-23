@@ -141,7 +141,7 @@ inputs:
       - "minimal"
       - "classic"
       - "void"
-    default: "classic"
+    default: "minimal"
     label: "Plots color theme"
     doc: |
       Color theme for all plots saved
