@@ -129,7 +129,7 @@ inputs:
       - "minimal"
       - "classic"
       - "void"
-    default: "minimal"
+    default: "classic"
     label: "Color theme for all generated plots"
     doc: |
       Color theme for all generated plots. One of gray, bw, linedraw, light,
