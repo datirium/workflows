@@ -4,12 +4,6 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
-- class: InitialWorkDirRequirement
-  listing:
-  - entryname: dummy_metadata.csv
-    entry: |
-      library_id
-      Experiment
 - class: EnvVarRequirement
   envDef:
     R_MAX_VSIZE: $((inputs.vector_memory_limit * 1000000000).toString())
@@ -17,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.36
+  dockerPull: biowardrobe2/sc-tools:v0.0.37
 
 
 inputs:
@@ -32,10 +26,15 @@ inputs:
 
   aggregation_metadata:
     type: File?
+    inputBinding:
+      prefix: "--identity"
     doc: |
-      Path to the metadata TSV/CSV file to set the datasets identities. If '--mex' points to
-      the Cell Ranger Aggregate outputs, the aggregation.csv file can be used. If input is not
-      provided, the default dummy_metadata.csv will be used instead.
+      Path to the metadata TSV/CSV file to set the datasets identities, if '--mex' points to
+      the Cell Ranger Aggregate outputs. The aggregation.csv file can be used. In case of
+      using feature-barcode matrices the file with identities should include at least one
+      column - 'library_id', and a row with aliases per each experiment from the '--mex'
+      input. The order of rows should correspond to the order of feature-barcode matrices
+      provided in the '--mex' parameter.
 
   grouping_data:
     type: File?
@@ -641,17 +640,6 @@ outputs:
 
 
 baseCommand: ["sc_rna_filter.R"]
-arguments:
-- valueFrom: |
-    ${
-      if (inputs.aggregation_metadata) {
-        return inputs.aggregation_metadata;
-      } else {
-        return runtime.outdir + "/dummy_metadata.csv"
-      }
-    }
-  prefix: "--identity"
-
 
 stdout: sc_rna_filter_stdout.log
 stderr: sc_rna_filter_stderr.log
@@ -714,8 +702,9 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...] --identity
-                                        IDENTITY [--grouping GROUPING]
+  usage: sc_rna_filter.R [-h] --mex MEX [MEX ...]
+                                        [--identity IDENTITY]
+                                        [--grouping GROUPING]
                                         [--barcodes BARCODES]
                                         [--rnamincells RNAMINCELLS]
                                         [--mingenes [MINGENES [MINGENES ...]]]
@@ -726,7 +715,8 @@ s:about: |
                                         [--maxmt MAXMT] [--removedoublets]
                                         [--rnadbr RNADBR] [--rnadbrsd RNADBRSD]
                                         [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--output OUTPUT]
+                                        [--h5ad] [--loupe] [--cbbuild]
+                                        [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
                                         [--seed SEED]
@@ -742,10 +732,9 @@ s:about: |
                           Count experiments) and will be merged before the
                           analysis.
     --identity IDENTITY   Path to the metadata TSV/CSV file to set the datasets
-                          identities. If '--mex' points to the Cell Ranger
-                          Aggregate outputs, the aggregation.csv file can be
-                          used. In case of using feature-barcode matrices from a
-                          single or multiple Cell Ranger Count experiments the
+                          identities, if '--mex' points to the Cell Ranger
+                          Aggregate outputs. The aggregation.csv file can be
+                          used. In case of using feature-barcode matrices the
                           file with identities should include at least one
                           column - 'library_id', and a row with aliases per each
                           experiment from the '--mex' input. The order of rows

@@ -11,6 +11,7 @@ requirements:
 
 "sd:upstream":
   sc_tools_sample:
+  - "sc-rna-reduce.cwl"
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
   sc_vdj_sample:
@@ -28,14 +29,12 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Single-cell Analysis with Clustered RNA-Seq Datasets"
+    label: "Single-cell Analysis with PCA Transformed RNA-Seq Datasets"
     doc: |
       Analysis that includes single-cell
-      RNA-Seq datasets run through either
-      "Single-Cell Manual Cell Type
-      Assignment" or "Single-Cell RNA-Seq
-      Cluster Analysis" at any of the
-      processing stages.
+      RNA-Seq datasets run through "Single-Cell
+      RNA-Seq Dimensionality Reduction Analysis"
+      at any of the processing stages.
     "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
     "sd:localLabel": true
 
@@ -52,17 +51,6 @@ inputs:
       Aggregate (RNA, RNA+VDJ)" pipeline.
     "sd:upstreamSource": "sc_vdj_sample/filtered_contig_annotations_csv"
     "sd:localLabel": true
-
-  query_source_column:
-    type: string
-    label: "Cells grouping"
-    doc: |
-      Single cell metadata column to group
-      cells into clusters. Usually, in a form
-      of "[rna|atac|wsnn]_res.X", where X is
-      the clustering resolution. If cell types
-      are available, add "custom_" prefix to
-      the column name.
 
   cloneby:
     type:
@@ -84,23 +72,40 @@ inputs:
       the nucleotide and gene sequences.
       Default: gene
 
-  strictness:
+  filterby:
     type:
     - "null"
     - type: enum
       symbols:
-      - "removemulti"
-      - "filtermulti"
+      - "cells"
+      - "chains"
       - "none"
     default: "none"
     label: "Stringency filter"
     doc: |
-      Apply stringency filters. removemulti:
-      remove any cell with more than 2 immune
-      receptor chains. filtermulti: isolate
-      the top 2 expressed chains in cell with
-      multiple chains. none: do not apply any
-      filters. Default: none
+      Applies stringency filters. 1) cells:
+      removes cells with more than 2 chains.
+      2) chains: removes chains exceeding 2
+      (selects the most expressed ones).
+      Default: none.
+
+  remove_partial:
+    type: boolean?
+    default: false
+    label: "Remove cells with only one chain detected"
+    doc: |
+      Remove cells with only one chain detected.
+      Default: keep all cells if at least one
+      chain detected
+
+  minimum_frequency:
+    type: int?
+    default: 3
+    label: "Minimum clonotype frequency"
+    doc: |
+      Minimum frequency (number of cells) per
+      clonotype to be reported.
+      Default: 3
 
   datasets_metadata:
     type: File?
@@ -115,13 +120,15 @@ inputs:
       "library_id" as the first column and
       any number of additional columns with
       unique names, representing the desired
-      grouping categories.
-# To obtain a proper                               this is not available yet, because we didn't refactor sc-rna-filter pipeline
-# template of this file, download
-# "datasets_metadata.tsv" output from the
-# "Files" tab of the selected "Single-cell
-# Analysis with Filtered RNA-Seq Datasets"
-# and add extra columns as needed.
+      grouping categories. To obtain a proper
+      template of this file, download
+      "datasets_metadata.tsv" output from the
+      "Files" tab of the filtering step that
+      was run before the selected "Single-cell
+      Analysis with PCA Transformed RNA-Seq
+      Datasets" (a.k.a "Single-cell Analysis
+      with Filtered RNA-Seq Datasets") and add
+      extra columns as needed.
 
   barcodes_data:
     type: File?
@@ -183,7 +190,7 @@ inputs:
       - "3"
       - "4"
       - "5"
-      - "6"
+      - "4"
     default: "4"
     label: "Cores/CPUs"
     doc: |
@@ -197,269 +204,328 @@ inputs:
 
 outputs:
 
-  count_spl_idnt_plot_png:
+  umap_cl_freq_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/count_spl_idnt_plot_png
-    label: "Unique clonotypes, split by dataset"
+    outputSource: vdj_profile/umap_cl_freq_spl_ch_plot_png
+    label: "UMAP colored by clonotype frequency (split by chain, filtered by minimum frequency)"
     doc: |
-      Unique clonotypes,
-      split by dataset
+      UMAP colored by clonotype frequency.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
-        Caption: "Unique clonotypes, split by dataset"
+        tab: "UMAP"
+        Caption: "UMAP colored by clonotype frequency (split by chain, filtered by minimum frequency)"
 
-  hmst_spl_idnt_plot_png:
+  hmst_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/hmst_spl_idnt_plot_png
-    label: "Clonal space homeostasis, split by dataset"
+    outputSource: vdj_profile/hmst_gr_idnt_spl_ch_plot_png
+    label: "Proportion of clonotype frequencies per dataset (split by chain, not filtered by minimum frequency)"
     doc: |
-      Clonal space homeostasis,
-      split by dataset
+      Proportion of clonotype frequencies per dataset.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
-        Caption: "Clonal space homeostasis, split by dataset"
+        tab: "Grouped by dataset"
+        Caption: "Proportion of clonotype frequencies per dataset (split by chain, not filtered by minimum frequency)"
 
-  vrlp_spl_idnt_plot_png:
+  dvrs_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/vrlp_spl_idnt_plot_png
-    label: "Clonotypes similarity, split by dataset"
+    outputSource: vdj_profile/dvrs_gr_idnt_spl_ch_plot_png
+    label: "Diversity of clonotypes per dataset (split by chain, not filtered by minimum frequency)"
     doc: |
-      Clonotypes similarity,
-      split by dataset
+      Diversity of clonotypes per dataset.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
-        Caption: "Clonotypes similarity, split by dataset"
+        tab: "Grouped by dataset"
+        Caption: "Diversity of clonotypes per dataset (split by chain, not filtered by minimum frequency)"
 
-  ntwr_gr_idnt_plot_png:
+  vrlp_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/ntwr_gr_idnt_plot_png
-    label: "Clonotypes network, colored by dataset"
+    outputSource: vdj_profile/vrlp_gr_idnt_spl_ch_plot_png
+    label: "Overlap of clonotypes between datasets (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonotypes network,
-      colored by dataset
+      Overlap of clonotypes between datasets.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
-        Caption: "Clonotypes network, colored by dataset"
+        tab: "Grouped by dataset"
+        Caption: "Overlap of clonotypes between datasets (split by chain, filtered by minimum frequency)"
 
-  dvrs_gr_clst_spl_idnt_plot_png:
+  allu_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/dvrs_gr_clst_spl_idnt_plot_png
-    label: "Clonotypes diversity, colored by cluster, split by dataset"
+    outputSource: vdj_profile/allu_gr_idnt_spl_ch_plot_png
+    label: "Proportion of top shared clonotypes between datasets (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonotypes diversity,
-      colored by cluster,
-      split by dataset
+      Proportion of top shared clonotypes between datasets.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor; top clonotypes selected from
+      each dataset.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
-        Caption: "Clonotypes diversity, colored by cluster, split by dataset"
+        tab: "Grouped by dataset"
+        Caption: "Proportion of top shared clonotypes between datasets (split by chain, filtered by minimum frequency)"
 
-  chrd_gr_idnt_plot_png:
+  cl_qnt_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/chrd_gr_idnt_plot_png
-    label: "Shared clonotype, colored by dataset"
+    outputSource: vdj_profile/cl_qnt_gr_idnt_spl_ch_plot_png
+    label: "Percentage of unique clonotypes per dataset (split by chain, filtered by minimum frequency)"
     doc: |
-      Shared clonotype,
-      colored by dataset
+      Percentage of unique clonotypes per dataset.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per dataset"
-        Caption: "Shared clonotype, colored by dataset"
+        tab: "Grouped by dataset"
+        Caption: "Percentage of unique clonotypes per dataset (split by chain, filtered by minimum frequency)"
 
-  gene_spl_idnt_vdjc_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: vdj_profile/gene_spl_idnt_vdjc_plot_png
-    label: "Relative usage of V, D, J, C genes, split by dataset"
-    doc: |
-      Relative usage of V, D, J, C
-      genes, split by dataset
-    "sd:visualPlugins":
-    - image:
-        tab: "Per dataset"
-        Caption: "Relative usage of V, D, J, C genes, split by dataset"
-
-  count_spl_clst_plot_png:
+  gene_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/count_spl_clst_plot_png
-    label: "Unique clonotypes, split by cluster"
+    outputSource: vdj_profile/gene_gr_idnt_spl_ch_plot_png
+    label: "Distribution of gene usage per dataset (split by chain, filtered by minimum frequency)"
     doc: |
-      Unique clonotypes,
-      split by cluster
+      Distribution of gene usage per dataset.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
-        Caption: "Unique clonotypes, split by cluster"
+        tab: "Grouped by dataset"
+        Caption: "Distribution of gene usage per dataset (split by chain, filtered by minimum frequency)"
 
-  hmst_spl_clst_plot_png:
+  cl_dnst_gr_idnt_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/hmst_spl_clst_plot_png
-    label: "Clonal space homeostasis, split by cluster"
+    outputSource: vdj_profile/cl_dnst_gr_idnt_spl_ch_plot_png
+    label: "Distribution of clonotype frequencies per dataset (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonal space homeostasis,
-      split by cluster
+      Distribution of clonotype frequencies per dataset.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
-        Caption: "Clonal space homeostasis, split by cluster"
+        tab: "Grouped by dataset"
+        Caption: "Distribution of clonotype frequencies per dataset (split by chain, filtered by minimum frequency)"
 
-  vrlp_spl_clst_plot_png:
+  hmst_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/vrlp_spl_clst_plot_png
-    label: "Clonotypes similarity, split by cluster"
+    outputSource: vdj_profile/hmst_gr_dnr_spl_ch_plot_png
+    label: "Proportion of clonotype frequencies per donor (split by chain, not filtered by minimum frequency)"
     doc: |
-      Clonotypes similarity,
-      split by cluster
+      Proportion of clonotype frequencies per donor.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
-        Caption: "Clonotypes similarity, split by cluster"
+        tab: "Grouped by donor"
+        Caption: "Proportion of clonotype frequencies per donor (split by chain, not filtered by minimum frequency)"
 
-  ntwr_gr_clst_plot_png:
+  dvrs_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/ntwr_gr_clst_plot_png
-    label: "Clonotypes network, colored by cluster"
+    outputSource: vdj_profile/dvrs_gr_dnr_spl_ch_plot_png
+    label: "Diversity of clonotypes per donor (split by chain, not filtered by minimum frequency)"
     doc: |
-      Clonotypes network,
-      colored by cluster
+      Diversity of clonotypes per donor.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
-        Caption: "Clonotypes network, colored by cluster"
+        tab: "Grouped by donor"
+        Caption: "Diversity of clonotypes per donor (split by chain, not filtered by minimum frequency)"
 
-  dvrs_gr_idnt_spl_clst_plot_png:
+  vrlp_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/dvrs_gr_idnt_spl_clst_plot_png
-    label: "Clonotypes diversity, colored by dataset, split by cluster"
+    outputSource: vdj_profile/vrlp_gr_dnr_spl_ch_plot_png
+    label: "Overlap of clonotypes between donors (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonotypes diversity,
-      colored by dataset,
-      split by cluster
+      Overlap of clonotypes between donors.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
-        Caption: "Clonotypes diversity, colored by dataset, split by cluster"
+        tab: "Grouped by donor"
+        Caption: "Overlap of clonotypes between donors (split by chain, filtered by minimum frequency)"
 
-  chrd_gr_clst_plot_png:
+  allu_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/chrd_gr_clst_plot_png
-    label: "Shared clonotype, colored by cluster"
+    outputSource: vdj_profile/allu_gr_dnr_spl_ch_plot_png
+    label: "Proportion of top shared clonotypes between donors (split by chain, filtered by minimum frequency)"
     doc: |
-      Shared clonotype,
-      colored by cluster
+      Proportion of top shared clonotypes between donors.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor; top clonotypes selected from
+      each donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per cluster"
-        Caption: "Shared clonotype, colored by cluster"
+        tab: "Grouped by donor"
+        Caption: "Proportion of top shared clonotypes between donors (split by chain, filtered by minimum frequency)"
 
-  gene_spl_clst_vdjc_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: vdj_profile/gene_spl_clst_vdjc_plot_png
-    label: "Relative usage of V, D, J, C genes, split by cluster"
-    doc: |
-      Relative usage of V, D, J, C
-      genes, split by cluster
-    "sd:visualPlugins":
-    - image:
-        tab: "Per cluster"
-        Caption: "Relative usage of V, D, J, C genes, split by cluster"
-
-  count_spl_cnd_plot_png:
+  cl_qnt_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/count_spl_cnd_plot_png
-    label: "Unique clonotypes, split by grouping condition"
+    outputSource: vdj_profile/cl_qnt_gr_dnr_spl_ch_plot_png
+    label: "Percentage of unique clonotypes per donor (split by chain, filtered by minimum frequency)"
     doc: |
-      Unique clonotypes,
-      split by grouping
-      condition
+      Percentage of unique clonotypes per donor.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Unique clonotypes, split by grouping condition"
+        tab: "Grouped by donor"
+        Caption: "Percentage of unique clonotypes per donor (split by chain, filtered by minimum frequency)"
 
-  hmst_spl_cnd_plot_png:
+  gene_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/hmst_spl_cnd_plot_png
-    label: "Clonal space homeostasis, split by grouping condition"
+    outputSource: vdj_profile/gene_gr_dnr_spl_ch_plot_png
+    label: "Distribution of gene usage per donor (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonal space homeostasis,
-      split by grouping condition
+      Distribution of gene usage per donor.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Clonal space homeostasis, split by grouping condition"
+        tab: "Grouped by donor"
+        Caption: "Distribution of gene usage per donor (split by chain, filtered by minimum frequency)"
 
-  vrlp_spl_cnd_plot_png:
+  cl_dnst_gr_dnr_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/vrlp_spl_cnd_plot_png
-    label: "Clonotypes similarity, split by grouping condition"
+    outputSource: vdj_profile/cl_dnst_gr_dnr_spl_ch_plot_png
+    label: "Distribution of clonotype frequencies per donor (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonotypes similarity,
-      split by grouping condition
+      Distribution of clonotype frequencies per donor.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Clonotypes similarity, split by grouping condition"
+        tab: "Grouped by donor"
+        Caption: "Distribution of clonotype frequencies per donor (split by chain, filtered by minimum frequency)"
 
-  ntwr_gr_cnd_plot_png:
+  hmst_gr_cnd_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/ntwr_gr_cnd_plot_png
-    label: "Clonotypes network, colored by grouping condition"
+    outputSource: vdj_profile/hmst_gr_cnd_spl_ch_plot_png
+    label: "Proportion of clonotype frequencies per grouping condition (split by chain, not filtered by minimum frequency)"
     doc: |
-      Clonotypes network,
-      colored by grouping condition
+      Proportion of clonotype frequencies per
+      grouping condition.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Clonotypes network, colored by grouping condition"
+        tab: "Grouped by condition"
+        Caption: "Proportion of clonotype frequencies per grouping condition (split by chain, not filtered by minimum frequency)"
 
-  dvrs_gr_clst_spl_cnd_plot_png:
+  dvrs_gr_cnd_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/dvrs_gr_clst_spl_cnd_plot_png
-    label: "Clonotypes diversity, colored by cluster, split by grouping condition"
+    outputSource: vdj_profile/dvrs_gr_cnd_spl_ch_plot_png
+    label: "Diversity of clonotypes per grouping condition (split by chain, not filtered by minimum frequency)"
     doc: |
-      Clonotypes diversity,
-      colored by cluster,
-      split by grouping condition
+      Diversity of clonotypes per grouping condition.
+      Split by chain; not filtered by clonotype frequency.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Clonotypes diversity, colored by cluster, split by grouping condition"
+        tab: "Grouped by condition"
+        Caption: "Diversity of clonotypes per grouping condition (split by chain, not filtered by minimum frequency)"
 
-  dvrs_gr_cnd_spl_clst_plot_png:
+  vrlp_gr_cnd_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/dvrs_gr_cnd_spl_clst_plot_png
-    label: "Clonotypes diversity, colored by grouping condition, split by cluster"
+    outputSource: vdj_profile/vrlp_gr_cnd_spl_ch_plot_png
+    label: "Overlap of clonotypes between grouping conditions (split by chain, filtered by minimum frequency)"
     doc: |
-      Clonotypes diversity,
-      colored by grouping condition,
-      split by cluster
+      Overlap of clonotypes between grouping conditions.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Clonotypes diversity, colored by grouping condition, split by cluster"
+        tab: "Grouped by condition"
+        Caption: "Overlap of clonotypes between grouping conditions (split by chain, filtered by minimum frequency)"
 
-  chrd_gr_cnd_plot_png:
+  allu_gr_cnd_spl_ch_plot_png:
     type: File?
-    outputSource: vdj_profile/chrd_gr_cnd_plot_png
-    label: "Shared clonotype, colored by grouping condition"
+    outputSource: vdj_profile/allu_gr_cnd_spl_ch_plot_png
+    label: "Proportion of top shared clonotypes between grouping conditions (split by chain, filtered by minimum frequency)"
     doc: |
-      Shared clonotype,
-      colored by grouping
-      condition
+      Proportion of top shared clonotypes between
+      grouping conditions.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor; top clonotypes selected from
+      each grouping condition.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Per group"
-        Caption: "Shared clonotype, colored by grouping condition"
+        tab: "Grouped by condition"
+        Caption: "Proportion of top shared clonotypes between grouping conditions (split by chain, filtered by minimum frequency)"
+
+  cl_qnt_gr_cnd_spl_ch_plot_png:
+    type: File?
+    outputSource: vdj_profile/cl_qnt_gr_cnd_spl_ch_plot_png
+    label: "Percentage of unique clonotypes per grouping condition (split by chain, filtered by minimum frequency)"
+    doc: |
+      Percentage of unique clonotypes per
+      grouping condition.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Grouped by condition"
+        Caption: "Percentage of unique clonotypes per grouping condition (split by chain, filtered by minimum frequency)"
+
+  gene_gr_cnd_spl_ch_plot_png:
+    type: File?
+    outputSource: vdj_profile/gene_gr_cnd_spl_ch_plot_png
+    label: "Distribution of gene usage per grouping condition (split by chain, filtered by minimum frequency)"
+    doc: |
+      Distribution of gene usage per grouping condition.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Grouped by condition"
+        Caption: "Distribution of gene usage per grouping condition (split by chain, filtered by minimum frequency)"
+
+  cl_dnst_gr_cnd_spl_ch_plot_png:
+    type: File?
+    outputSource: vdj_profile/cl_dnst_gr_cnd_spl_ch_plot_png
+    label: "Distribution of clonotype frequencies per grouping condition (split by chain, filtered by minimum frequency)"
+    doc: |
+      Distribution of clonotype frequencies
+      per grouping condition.
+      Split by chain; filtered by minimum clonotype
+      frequency per donor.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Grouped by condition"
+        Caption: "Distribution of clonotype frequencies per grouping condition (split by chain, filtered by minimum frequency)"
+
+  clonotypes_data_tsv:
+    type: File?
+    outputSource: vdj_profile/clonotypes_data_tsv
+    label: "Clonotypes (filtered by minimum frequency)"
+    doc: |
+      Clonotypes data.
+      Filtered by minimum clonotype
+      frequency per donor.
+      TSV format.
+    "sd:visualPlugins":
+    - syncfusiongrid:
+        tab: "Clonotypes table"
+        Title: "Clonotypes (filtered by minimum frequency)"
 
   ucsc_cb_html_data:
     type: Directory?
@@ -535,13 +601,12 @@ steps:
       contigs_data: contigs_data
       datasets_metadata: datasets_metadata
       barcodes_data: barcodes_data
-      query_source_column: query_source_column
       cloneby: cloneby
-      groupby:
-        default: "new.ident"
-      strictness:
-        source: strictness
+      minimum_frequency: minimum_frequency
+      filterby:
+        source: filterby
         valueFrom: $(self=="none"?null:self)
+      remove_partial: remove_partial
       color_theme: color_theme
       export_loupe_data: export_loupe_data
       export_pdf_plots:
@@ -560,48 +625,30 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - count_spl_idnt_plot_png
-    - count_spl_idnt_plot_pdf
-    - count_spl_clst_plot_png
-    - count_spl_clst_plot_pdf
-    - hmst_spl_idnt_plot_png
-    - hmst_spl_idnt_plot_pdf
-    - hmst_spl_clst_plot_png
-    - hmst_spl_clst_plot_pdf
-    - vrlp_spl_clst_plot_png
-    - vrlp_spl_clst_plot_pdf
-    - vrlp_spl_idnt_plot_png
-    - vrlp_spl_idnt_plot_pdf
-    - ntwr_gr_clst_plot_png
-    - ntwr_gr_clst_plot_pdf
-    - ntwr_gr_idnt_plot_png
-    - ntwr_gr_idnt_plot_pdf
-    - dvrs_gr_clst_spl_idnt_plot_png
-    - dvrs_gr_clst_spl_idnt_plot_pdf
-    - dvrs_gr_idnt_spl_clst_plot_png
-    - dvrs_gr_idnt_spl_clst_plot_pdf
-    - gene_spl_clst_vdjc_plot_png
-    - gene_spl_clst_vdjc_plot_pdf
-    - gene_spl_idnt_vdjc_plot_png
-    - gene_spl_idnt_vdjc_plot_pdf
-    - chrd_gr_clst_plot_png
-    - chrd_gr_clst_plot_pdf
-    - chrd_gr_idnt_plot_png
-    - chrd_gr_idnt_plot_pdf
-    - chrd_gr_cnd_plot_png
-    - chrd_gr_cnd_plot_pdf
-    - count_spl_cnd_plot_png
-    - count_spl_cnd_plot_pdf
-    - hmst_spl_cnd_plot_png
-    - hmst_spl_cnd_plot_pdf
-    - vrlp_spl_cnd_plot_png
-    - vrlp_spl_cnd_plot_pdf
-    - ntwr_gr_cnd_plot_png
-    - ntwr_gr_cnd_plot_pdf
-    - dvrs_gr_clst_spl_cnd_plot_png
-    - dvrs_gr_clst_spl_cnd_plot_pdf
-    - dvrs_gr_cnd_spl_clst_plot_png
-    - dvrs_gr_cnd_spl_clst_plot_pdf
+    - cl_qnt_gr_idnt_spl_ch_plot_png
+    - cl_dnst_gr_idnt_spl_ch_plot_png
+    - allu_gr_idnt_spl_ch_plot_png
+    - hmst_gr_idnt_spl_ch_plot_png
+    - vrlp_gr_idnt_spl_ch_plot_png
+    - dvrs_gr_idnt_spl_ch_plot_png
+    - gene_gr_idnt_spl_ch_plot_png
+    - umap_cl_freq_spl_ch_plot_png
+    - cl_qnt_gr_dnr_spl_ch_plot_png
+    - cl_dnst_gr_dnr_spl_ch_plot_png
+    - allu_gr_dnr_spl_ch_plot_png
+    - hmst_gr_dnr_spl_ch_plot_png
+    - vrlp_gr_dnr_spl_ch_plot_png
+    - dvrs_gr_dnr_spl_ch_plot_png
+    - gene_gr_dnr_spl_ch_plot_png
+    - cl_qnt_gr_cnd_spl_ch_plot_png
+    - cl_dnst_gr_cnd_spl_ch_plot_png
+    - allu_gr_cnd_spl_ch_plot_png
+    - hmst_gr_cnd_spl_ch_plot_png
+    - vrlp_gr_cnd_spl_ch_plot_png
+    - dvrs_gr_cnd_spl_ch_plot_png
+    - gene_gr_cnd_spl_ch_plot_png
+    - all_plots_pdf
+    - clonotypes_data_tsv
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
@@ -615,27 +662,7 @@ steps:
     in:
       input_files:
         source:
-        - vdj_profile/count_spl_idnt_plot_pdf
-        - vdj_profile/count_spl_clst_plot_pdf
-        - vdj_profile/hmst_spl_idnt_plot_pdf
-        - vdj_profile/hmst_spl_clst_plot_pdf
-        - vdj_profile/vrlp_spl_clst_plot_pdf
-        - vdj_profile/vrlp_spl_idnt_plot_pdf
-        - vdj_profile/ntwr_gr_clst_plot_pdf
-        - vdj_profile/ntwr_gr_idnt_plot_pdf
-        - vdj_profile/dvrs_gr_clst_spl_idnt_plot_pdf
-        - vdj_profile/dvrs_gr_idnt_spl_clst_plot_pdf
-        - vdj_profile/gene_spl_clst_vdjc_plot_pdf
-        - vdj_profile/gene_spl_idnt_vdjc_plot_pdf
-        - vdj_profile/chrd_gr_clst_plot_pdf
-        - vdj_profile/chrd_gr_idnt_plot_pdf
-        - vdj_profile/chrd_gr_cnd_plot_pdf
-        - vdj_profile/count_spl_cnd_plot_pdf
-        - vdj_profile/hmst_spl_cnd_plot_pdf
-        - vdj_profile/vrlp_spl_cnd_plot_pdf
-        - vdj_profile/ntwr_gr_cnd_plot_pdf
-        - vdj_profile/dvrs_gr_clst_spl_cnd_plot_pdf
-        - vdj_profile/dvrs_gr_cnd_spl_clst_plot_pdf
+        - vdj_profile/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"
@@ -658,7 +685,7 @@ $schemas:
 
 label: "Single-Cell Immune Profiling Analysis"
 s:name: "Single-Cell Immune Profiling Analysis"
-s:alternateName: "TCR/BCR clonotype dynamics analysis"
+s:alternateName: "Single-Cell Immune Profiling Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-vdj-profile.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows-datirium
@@ -699,4 +726,4 @@ doc: |
   Single-Cell Immune Profiling Analysis
 
   Estimates clonotype diversity and dynamics from V(D)J
-  sequencing data assembled into contigs
+  sequencing data assembled into contigs.
