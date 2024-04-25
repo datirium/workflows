@@ -49,14 +49,14 @@ inputs:
     'sd:upstreamSource': "second_biological_condition/bambai_pair"
     'sd:localLabel': true
 
-  spikein_read_files_cond_1
+  spikein_read_files_cond_1:
     type: File[]
     format: "http://edamontology.org/format_2572"
     label: "Biological condition 1 spike-in samples. Minimum 2 samples"
     doc: "Spike-in read files for condition 1. Minimim 2 files in BAM format"
     'sd:upstreamSource': "first_biological_condition/bambai_pair_spikein"
 
-  spikein_read_files_cond_2
+  spikein_read_files_cond_2:
     type: File[]
     format: "http://edamontology.org/format_2572"
     label: "Biological condition 2 spike-in samples. Minimum 2 samples"
@@ -672,14 +672,14 @@ outputs:
     doc: "Box plots of read distributions for significantly differentially bound sites"
     outputSource: select_files/selected_boxplot_pdf
 
-  diffbind_stdout_log_file:
+  diffbind_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stdout log"
     doc: "diffbind stdout log"
     outputSource: diffbind/stdout_log
 
-  diffbind_stderr_log_file:
+  diffbind_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stderr log"
@@ -1459,9 +1459,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "DiffBind - Differential Binding Analysis of ChIP-Seq or CUTß&RUN/Tag Peak Data"
-s:name: "DiffBind - Differential Binding Analysis of ChIP-Seq or CUT&RUN/Tag Peak Data"
-s:alternateName: "Compute differentially bound sites from multiple ChIP-seq or CUT&RUN/Tag experiments using affinity (quantitative) and occupancy data."
+label: "DiffBind spike-in - Differential Binding Analysis of ChIP-Seq or CUTß&RUN/Tag Peak Data with spike-in"
+s:name: "DiffBind spike-in - Differential Binding Analysis of ChIP-Seq or CUT&RUN/Tag Peak Data with spike-in"
+s:alternateName: "Compute differentially bound sites from multiple ChIP-seq or CUT&RUN/Tag experiments using affinity (quantitative) and occupancy data that has a spike-in control."
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/diffbind.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -1503,15 +1503,17 @@ s:creator:
 
 
 doc: |
-  Differential Binding Analysis of ChIP-Seq or CUT&RUN/Tag Peak Data
+  Differential Binding Analysis of ChIP-Seq, ATAC-Seq, or CUT&RUN/Tag Peak Data with spike-in
   ---------------------------------------------------
   
-  DiffBind processes ChIP-Seq or CUT&RUN/Tag data enriched for genomic loci where specific
+  DiffBind processes ChIP-Seq, ATAC-Seq, or CUT&RUN/Tag data enriched for genomic loci where specific
   protein/DNA binding occurs, including peak sets identified by peak caller tools and aligned
   sequence read datasets. It is designed to work with multiple peak sets simultaneously,
-  representing different ChIP or CUT&RUN/Tag experiments (antibodies, transcription factor
+  representing different ChIP, ATAC, or CUT&RUN/Tag experiments (antibodies, transcription factor
   and/or histone marks, experimental conditions, replicates) as well as managing the results
-  of multiple peak callers.
+  of multiple peak callers. This specific workflow is designed for experiments that use a spike-in
+  control for each sample. These spike-in reads are used to normalize the datasets during differential
+  analysis using the RLE method (for either edgeR or DESeq) while accounting for background (spike-in).
 
   For more information please refer to:
   -------------------------------------
