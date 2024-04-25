@@ -14,12 +14,11 @@ requirements:
   second_biological_condition:
     - "trim-chipseq-pe-spike.cwl"
   blocked_condition:
-    - "chipseq-se.cwl"
-    - "chipseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
     - "trim-chipseq-se.cwl"
     - "trim-chipseq-pe.cwl"
+    - "trim-chipseq-pe-spike.cwl"
     - "trim-atacseq-se.cwl"
     - "trim-atacseq-pe.cwl"
   genome_indices:
@@ -672,19 +671,19 @@ outputs:
     doc: "Box plots of read distributions for significantly differentially bound sites"
     outputSource: select_files/selected_boxplot_pdf
 
-  diffbind_stdout_log:
+  diffbind_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stdout log"
     doc: "diffbind stdout log"
-    outputSource: diffbind/stdout_log
+    outputSource: diffbind/stdout_log_file
 
-  diffbind_stderr_log:
+  diffbind_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stderr log"
     doc: "diffbind stderr log"
-    outputSource: diffbind/stderr_log
+    outputSource: diffbind/stderr_log_file
 
 
 steps:
@@ -892,8 +891,8 @@ steps:
       - all_peak_overlap_rate_plot_pdf
       - peak_overlap_rate_plot_cond_1_pdf
       - peak_overlap_rate_plot_cond_2_pdf
-      - stdout_log
-      - stderr_log
+      - stdout_log_file
+      - stderr_log_file
 
   filter_columns:
     run: ../tools/custom-bash.cwl
