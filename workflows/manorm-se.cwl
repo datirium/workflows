@@ -21,11 +21,12 @@ requirements:
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
   genome_indices:
   - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name/Alias"
     sd:preview:
