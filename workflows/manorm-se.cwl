@@ -19,6 +19,8 @@ requirements:
   - "trim-atacseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
+  genome_indices:
+  - "genome-indices.cwl"
 
 
 inputs:
@@ -77,10 +79,10 @@ inputs:
 
   annotation_file:
     type: File
-    label: "Annotation file"
+    label: "Genome type"
     doc: |
       Tab-separated annotation file
-    'sd:upstreamSource': "first_chipseq_sample/genome_indices/annotation"
+    'sd:upstreamSource': "genome_indices/annotation"
 
   shift_size_first:
     type: int?
