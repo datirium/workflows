@@ -202,6 +202,8 @@ steps:
     in:
       intervals_file: make_unique/output_file
       genome_fasta_file: genome_fasta_file
+      output_filename:
+        default: "target.fa"
     out:
       - sequences_file
 
@@ -210,6 +212,8 @@ steps:
     in:
       intervals_file: bedtools_shuffle/shuffled_bed_file
       genome_fasta_file: genome_fasta_file
+      output_filename:
+        default: "background.fa"
     out:
       - sequences_file
 
