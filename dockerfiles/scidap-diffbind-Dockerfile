@@ -1,0 +1,67 @@
+#################################################################
+# Software Version: v0.0.16
+# Description:      Differential Binding Analysis
+# Website:          http://www.bioconductor.org/packages/release/bioc/html/DiffBind.html
+# Provides:         diffbind
+# Base Image:       r-base:4.3.1
+# Build Cmd:        docker build --no-cache --rm -t diffbind-dev -f scidap-diffbind-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti diffbind-dev /bin/bash
+# Push Cmd1:        docker tag diffbind-dev robertplayer/scidap-diffbind:dev
+#      Cmd2:        docker image push robertplayer/scidap-diffbind:dev
+# Pull Cmd:         docker pull robertplayer/scidap-diffbind:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-diffbind:dev /bin/bash
+# re-tag for PR:    docker tag diffbind-dev robertplayer/scidap-diffbind:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-diffbind:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-diffbind:v1.0.0 /bin/bash
+#################################################################
+#
+# v0.0.16
+# - starting from v0.0.16 from Barskilab repo
+# - copying docker scripts into datirium repo
+# - includes all functionality from barskilab diffbind
+# - with new spike-in diffbind script
+#
+#################################################################
+
+
+### Base Image
+FROM r-base:4.3.1
+LABEL maintainer="robert.player@gmail.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+COPY ./scripts/run_diffbind.R /usr/local/bin/run_diffbind.R
+COPY ./scripts/run_diffbind_manual.R /usr/local/bin/run_diffbind_manual.R
+COPY ./scripts/run_diffbind-for-spikein.R /usr/local/bin/run_diffbind-for-spikein.R
+
+### Installing dependencies
+RUN apt-get update && \
+    apt-get install -y vim pandoc gcc-10-base libgcc-10-dev cmake python3-dev python3-pip libxml2-dev \
+                       libssl-dev libcurl4-openssl-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+                       libpng-dev libtiff5-dev libjpeg-dev file && \
+    pip3 install --break-system-packages argparse && \
+### Installing R packages
+    R -e "install.packages('BiocManager')" && \
+    R -e "BiocManager::install(version = '3.17', update=TRUE, ask=FALSE)" && \
+    R -e "BiocManager::install('DiffBind')" && \
+    R -e "BiocManager::install('hopach')" && \
+    R -e "BiocManager::install('cmapR')" && \
+    R -e "BiocManager::install('EnhancedVolcano')" && \
+    R -e "BiocManager::install('Glimma')" && \
+    R -e "BiocManager::install('profileplyr')" && \
+    R -e "BiocManager::install('csaw')" && \
+    R -e 'install.packages("argparse", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("ggpubr", repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("tidyverse", repo = "https://cloud.r-project.org/")' && \
+### Installing scripts
+    chmod +x /usr/local/bin/run_diffbind.R && \
+    chmod +x /usr/local/bin/run_diffbind_manual.R && \
+    chmod +x /usr/local/bin/run_diffbind-for-spikein.R && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true

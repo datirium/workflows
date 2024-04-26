@@ -298,6 +298,13 @@ outputs:
         name: "BAM Track"
         displayMode: "SQUISHED"
 
+  bambai_pair_spikein:
+    type: File
+    format: "http://edamontology.org/format_2572"
+    label: "Coordinate sorted BAM alignment file (+index BAI) for spike-in"
+    doc: "Coordinate sorted BAM file and BAI index file for spike-in, used for normalization in diffbind downstream"
+    outputSource: samtools_sort_index_spikein/bam_bai_pair
+
   bam_statistics_report:
     type: File
     label: "BAM statistics report (original)"
@@ -461,17 +468,17 @@ outputs:
 
   macs2_called_peaks:
     type: File?
-    label: "Called peaks"
+    label: "Called peaks raw"
     format: "http://edamontology.org/format_3468"
     doc: "XLS file to include information about called peaks"
     outputSource: macs2_callpeak/peak_xls_file
 
   macs2_narrow_peaks:
     type: File?
-    label: "Narrow peaks"
+    label: "Narrow peaks scaled"
     format: "http://edamontology.org/format_3613"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
-    outputSource: macs2_callpeak/narrow_peak_file
+    outputSource: macs2_callpeak_scaled/narrow_peak_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -483,10 +490,10 @@ outputs:
 
   macs2_broad_peaks:
     type: File?
-    label: "Broad peaks"
+    label: "Broad peaks scaled"
     format: "http://edamontology.org/format_3614"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
-    outputSource: macs2_callpeak/broad_peak_file
+    outputSource: macs2_callpeak_scaled/broad_peak_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -512,10 +519,10 @@ outputs:
 
   macs2_gapped_peak:
     type: File?
-    label: "Gapped peaks"
+    label: "Gapped peaks scaled"
     format: "http://edamontology.org/format_3586"
     doc: "Contains both the broad region and narrow peaks"
-    outputSource: macs2_callpeak/gapped_peak_file
+    outputSource: macs2_callpeak_scaled/gapped_peak_file
     'sd:visualPlugins':
     - igvbrowser:
         tab: 'IGV Genome Browser'
@@ -531,6 +538,13 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "MACS2 output log"
     outputSource: macs2_callpeak/macs_log
+
+  macs2_scaled_log:
+    type: File?
+    label: "MACS2 log from scaled bed input"
+    format: "http://edamontology.org/format_2330"
+    doc: "MACS2 output log"
+    outputSource: macs2_callpeak_scaled/macs_log
 
   macs2_fragment_stat:
     type: File?
@@ -874,14 +888,59 @@ steps:
       Output is a filtered (see fragment_length_filter input) and scaled
       (normalized) bed file to be used as input for peak calling.
 
-  macs2_callpeak:
+  macs2_callpeak_scaled:
     label: "Peak detection"
     doc: |
-      Identifies enriched with aligned reads genome areas. Those areas correspond to the
-      transcription factor binding sites.
+      Identifies enriched genome regions with scaled bed file. Those areas correspond to the
+      transcription factor binding sites. DO NOT USE OUTPUT FOR DIFFBIND.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
       treatment_file: fragment_counts/sorted_bed_scaled
+      control_file: control_file
+      nolambda:
+        source: control_file
+        valueFrom: $(!self)
+      genome_size: genome_size
+      mfold:
+        default: "4 40"
+      verbose:
+        default: 3
+      nomodel: force_fragment_size
+      extsize: exp_fragment_size
+      bw: exp_fragment_size
+      broad: broad_peak
+      call_summits:
+        source: broad_peak
+        valueFrom: $(!self)
+      keep_dup:
+        default: auto
+      q_value:
+        default: 0.05
+      format_mode:
+        default: AUTO
+      buffer_size:
+        default: 10000
+    out:
+    - peak_xls_file
+    - narrow_peak_file
+    - peak_summits_file
+    - broad_peak_file
+    - moder_r_file
+    - gapped_peak_file
+    - treat_pileup_bdg_file
+    - control_lambda_bdg_file
+    - macs_log
+    - macs2_stat_file
+    - macs2_fragments_calculated
+
+  macs2_callpeak:
+    label: "Peak detection"
+    doc: |
+      Identifies enriched genome regions with scaled bed file. Those areas correspond to the
+      transcription factor binding sites. These peaks should be used for diffbind with spike-in norm.
+    run: ../tools/macs2-callpeak-biowardrobe-only.cwl
+    in:
+      treatment_file: fragment_counts/sorted_bed
       control_file: control_file
       nolambda:
         source: control_file
@@ -1020,7 +1079,7 @@ steps:
     in:
       input_file: samtools_sort_index_after_rmdup/bam_bai_pair
       annotation_filename: annotation_file
-      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      fragmentsize_bp: macs2_callpeak_scaled/macs2_fragments_calculated
       avd_window_bp:
         default: 5000
       avd_smooth_bp:
