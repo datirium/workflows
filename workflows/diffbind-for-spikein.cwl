@@ -671,19 +671,19 @@ outputs:
     doc: "Box plots of read distributions for significantly differentially bound sites"
     outputSource: select_files/selected_boxplot_pdf
 
-  diffbind_stdout_log_file:
+  diffbind_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stdout log"
     doc: "diffbind stdout log"
-    outputSource: diffbind/stdout_log_file
+    outputSource: diffbind/stdout_log
 
-  diffbind_stderr_log_file:
+  diffbind_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stderr log"
     doc: "diffbind stderr log"
-    outputSource: diffbind/stderr_log_file
+    outputSource: diffbind/stderr_log
 
 
 steps:
@@ -891,8 +891,8 @@ steps:
       - all_peak_overlap_rate_plot_pdf
       - peak_overlap_rate_plot_cond_1_pdf
       - peak_overlap_rate_plot_cond_2_pdf
-      - stdout_log_file
-      - stderr_log_file
+      - stdout_log
+      - stderr_log
 
   filter_columns:
     run: ../tools/custom-bash.cwl

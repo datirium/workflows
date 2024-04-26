@@ -4,7 +4,7 @@ class: CommandLineTool
 
 requirements:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-diffbind:dev
+  dockerPull: robertplayer/scidap-diffbind:v1.0.0
 
 
 inputs:
@@ -670,10 +670,10 @@ outputs:
       glob: "*_all_peak_overlap_rate.pdf"
     doc: "All peak overlap rate plot"
 
-  stdout_log_file:
+  stdout_log:
     type: stdout
 
-  stderr_log_file:
+  stderr_log:
     type: stderr
 
 
