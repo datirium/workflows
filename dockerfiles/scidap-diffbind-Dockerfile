@@ -50,6 +50,7 @@ RUN apt-get update && \
     R -e "BiocManager::install('EnhancedVolcano')" && \
     R -e "BiocManager::install('Glimma')" && \
     R -e "BiocManager::install('profileplyr')" && \
+    R -e "BiocManager::install('csaw')" && \
     R -e 'install.packages("argparse", repo = "https://cloud.r-project.org/")' && \
     R -e 'install.packages("ggpubr", repo = "https://cloud.r-project.org/")' && \
     R -e 'install.packages("tidyverse", repo = "https://cloud.r-project.org/")' && \
