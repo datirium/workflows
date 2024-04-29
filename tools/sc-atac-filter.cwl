@@ -359,10 +359,10 @@ outputs:
       Unfiltered; PC2/PC3.
       PNG format.
 
-  raw_cells_count_plot_png:
+  raw_cell_cnts_plot_png:
     type: File?
     outputBinding:
-      glob: "*_raw_cells_count.png"
+      glob: "*_raw_cell_cnts.png"
     doc: |
       Number of cells per dataset.
       Unfiltered.
@@ -494,10 +494,10 @@ outputs:
       PC2/PC3.
       PNG format.
 
-  mid_fltr_cells_count_plot_png:
+  mid_fltr_cell_cnts_plot_png:
     type: File?
     outputBinding:
-      glob: "*_mid_fltr_cells_count.png"
+      glob: "*_mid_fltr_cell_cnts.png"
     doc: |
       Number of cells per dataset.
       Unfiltered, after MACS2 peak calling.
@@ -632,10 +632,10 @@ outputs:
       Filtered; PC2/PC3.
       PNG format.
 
-  fltr_cells_count_plot_png:
+  fltr_cell_cnts_plot_png:
     type: File?
     outputBinding:
-      glob: "*[!_mid]_fltr_cells_count.png"
+      glob: "*[!_mid]_fltr_cell_cnts.png"
     doc: |
       Number of cells per dataset.
       Filtered.

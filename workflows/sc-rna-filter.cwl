@@ -320,9 +320,9 @@ outputs:
         tab: "Unfiltered"
         Caption: "QC metrics PCA (unfiltered, PC2/PC3)"
 
-  raw_cells_count_plot_png:
+  raw_cell_cnts_plot_png:
     type: File?
-    outputSource: sc_rna_filter/raw_cells_count_plot_png
+    outputSource: sc_rna_filter/raw_cell_cnts_plot_png
     label: "Number of cells per dataset (unfiltered)"
     doc: |
       Number of cells per dataset.
@@ -518,9 +518,9 @@ outputs:
         tab: "Filtered"
         Caption: "QC metrics PCA (filtered, PC2/PC3)"
 
-  fltr_cells_count_plot_png:
+  fltr_cell_cnts_plot_png:
     type: File?
-    outputSource: sc_rna_filter/fltr_cells_count_plot_png
+    outputSource: sc_rna_filter/fltr_cell_cnts_plot_png
     label: "Number of cells per dataset (filtered)"
     doc: |
       Number of cells per dataset.
@@ -809,7 +809,7 @@ steps:
     out:
     - raw_1_2_qc_mtrcs_pca_plot_png
     - raw_2_3_qc_mtrcs_pca_plot_png
-    - raw_cells_count_plot_png
+    - raw_cell_cnts_plot_png
     - raw_umi_dnst_plot_png
     - raw_gene_dnst_plot_png
     - raw_gene_umi_plot_png
@@ -824,7 +824,7 @@ steps:
     - raw_nvlt_dnst_spl_cnd_plot_png
     - fltr_1_2_qc_mtrcs_pca_plot_png
     - fltr_2_3_qc_mtrcs_pca_plot_png
-    - fltr_cells_count_plot_png
+    - fltr_cell_cnts_plot_png
     - fltr_umi_dnst_plot_png
     - fltr_gene_dnst_plot_png
     - fltr_gene_umi_plot_png

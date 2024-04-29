@@ -270,6 +270,69 @@ inputs:
 
 outputs:
 
+  cell_cnts_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_cell_cnts_gr_clst_res_*.png"
+    doc: |
+      Number of cells per cluster.
+      All cells; all resolutions.
+      PNG format.
+
+  gene_umi_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_gene_umi_spl_clst_res_*.png"
+    doc: |
+      Genes vs RNA reads per cell.
+      Split by cluster; all cells;
+      all resolutions.
+      PNG format.
+
+  umi_mito_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_umi_mito_spl_clst_res_*.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell.
+      Split by cluster; all cells; all
+      resolutions.
+      PNG format.
+
+  rnadbl_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_rnadbl_gr_clst_res_*.png"
+    doc: |
+      Percentage of RNA doublets per cluster.
+      All cells; all resolutions.
+      PNG format.
+
+  qc_mtrcs_dnst_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_qc_mtrcs_dnst_gr_clst_res_*.png"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cluster.
+      All cells; all resolutions.
+      PNG format.
+
   umap_gr_ph_spl_idnt_plot_png:
     type: File?
     outputBinding:
@@ -280,16 +343,6 @@ outputs:
       smallest dataset.
       PNG format.
 
-  umap_gr_ph_spl_idnt_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_ph_spl_idnt.pdf"
-    doc: |
-      UMAP colored by cell cycle phase.
-      Split by dataset; downsampled to the
-      smallest dataset.
-      PDF format.
-
   cmp_gr_ph_spl_idnt_plot_png:
     type: File?
     outputBinding:
@@ -298,17 +351,7 @@ outputs:
       Composition plot colored by cell cycle phase.
       Split by dataset; downsampled to the smallest
       dataset.
-      PNG format
-
-  cmp_gr_ph_spl_idnt_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_cmp_gr_ph_spl_idnt.pdf"
-    doc: |
-      Composition plot colored by cell cycle phase.
-      Split by dataset; downsampled to the smallest
-      dataset.
-      PDF format
+      PNG format.
 
   umap_gr_ph_spl_cnd_plot_png:
     type: File?
@@ -321,17 +364,6 @@ outputs:
       the smallest group.
       PNG format.
 
-  umap_gr_ph_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_gr_ph_spl_cnd.pdf"
-    doc: |
-      UMAP colored by cell cycle phase.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group.
-      PDF format.
-
   cmp_gr_ph_spl_cnd_plot_png:
     type: File?
     outputBinding:
@@ -343,17 +375,6 @@ outputs:
       the smallest group.
       PNG format.
 
-  cmp_gr_ph_spl_cnd_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_cmp_gr_ph_spl_cnd.pdf"
-    doc: |
-      Composition plot colored by cell cycle phase.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group.
-      PDF format.
-
   umap_gr_clst_res_plot_png:
     type:
     - "null"
@@ -364,19 +385,7 @@ outputs:
     doc: |
       UMAP colored by cluster.
       All cells; all resolutions.
-      PNG format
-
-  umap_gr_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      All cells; all resolutions.
-      PDF format
+      PNG format.
 
   slh_gr_clst_res_plot_png:
     type:
@@ -388,19 +397,7 @@ outputs:
     doc: |
       Silhouette scores.
       All cells; all resolutions.
-      PNG format
-
-  slh_gr_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_slh_gr_clst_res_*.pdf"
-    doc: |
-      Silhouette scores.
-      All cells; all resolutions.
-      PDF format
+      PNG format.
 
   umap_gr_clst_spl_idnt_res_plot_png:
     type:
@@ -415,19 +412,6 @@ outputs:
       smallest dataset; all resolutions.
       PNG format.
 
-  umap_gr_clst_spl_idnt_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_spl_idnt_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      Split by dataset; downsampled to the
-      smallest dataset; all resolutions.
-      PDF format.
-
   cmp_gr_clst_spl_idnt_res_plot_png:
     type:
     - "null"
@@ -441,19 +425,6 @@ outputs:
       smallest dataset; all resolutions.
       PNG format.
 
-  cmp_gr_clst_spl_idnt_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_clst_spl_idnt_res_*.pdf"
-    doc: |
-      Composition plot colored by cluster.
-      Split by dataset; downsampled to the
-      smallest dataset; all resolutions.
-      PDF format.
-
   cmp_gr_idnt_spl_clst_res_plot_png:
     type:
     - "null"
@@ -466,19 +437,6 @@ outputs:
       Split by cluster; downsampled to the
       smallest dataset; all resolutions.
       PNG format.
-
-  cmp_gr_idnt_spl_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_idnt_spl_clst_res_*.pdf"
-    doc: |
-      Composition plot colored by dataset.
-      Split by cluster; downsampled to the
-      smallest dataset; all resolutions.
-      PDF format.
 
   umap_gr_clst_spl_ph_res_plot_png:
     type:
@@ -495,21 +453,6 @@ outputs:
       resolutions.
       PNG format.
 
-  umap_gr_clst_spl_ph_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_spl_ph_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      Split by cell cycle phase; downsampled
-      to the smallest dataset (if multiple
-      datasets are analyzed jointly); all
-      resolutions.
-      PDF format.
-
   cmp_gr_ph_spl_clst_res_plot_png:
     type:
     - "null"
@@ -522,21 +465,7 @@ outputs:
       Split by cluster; downsampled to the smallest
       dataset (if multiple datasets are analyzed
       jointly); all resolutions.
-      PNG format
-
-  cmp_gr_ph_spl_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_ph_spl_clst_res_*.pdf"
-    doc: |
-      Composition plot colored by cell cycle phase.
-      Split by cluster; downsampled to the smallest
-      dataset (if multiple datasets are analyzed
-      jointly); all resolutions.
-      PDF format
+      PNG format.
 
   umap_gr_clst_spl_cnd_res_plot_png:
     type:
@@ -552,20 +481,6 @@ outputs:
       the smallest group; all resolutions.
       PNG format.
 
-  umap_gr_clst_spl_cnd_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_spl_cnd_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group; all resolutions.
-      PDF format.
-
   cmp_gr_clst_spl_cnd_res_plot_png:
     type:
     - "null"
@@ -579,20 +494,6 @@ outputs:
       to the smallest dataset, then downsampled to
       the smallest group; all resolutions.
       PNG format.
-
-  cmp_gr_clst_spl_cnd_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_clst_spl_cnd_res_*.pdf"
-    doc: |
-      Composition plot colored by cluster.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group; all resolutions.
-      PDF format.
 
   cmp_gr_cnd_spl_clst_res_plot_png:
     type:
@@ -608,20 +509,6 @@ outputs:
       smallest group; all resolutions.
       PNG format.
 
-  cmp_gr_cnd_spl_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_cnd_spl_clst_res_*.pdf"
-    doc: |
-      Composition plot colored by grouping condition.
-      Split by cluster; first downsampled to the
-      smallest dataset, then downsampled to the
-      smallest group; all resolutions.
-      PDF format.
-
   xpr_per_cell_plot_png:
     type:
     - "null"
@@ -633,18 +520,6 @@ outputs:
       UMAP colored by gene expression.
       All genes of interest.
       PNG format.
-
-  xpr_per_cell_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_[!sgnl_]*.pdf"
-    doc: |
-      UMAP colored by gene expression.
-      All genes of interest.
-      PDF format.
 
   xpr_per_cell_sgnl_plot_png:
     type:
@@ -658,18 +533,6 @@ outputs:
       All genes of interest.
       PNG format.
 
-  xpr_per_cell_sgnl_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_sgnl_*.pdf"
-    doc: |
-      UMAP colored by gene expression density.
-      All genes of interest.
-      PDF format.
-
   xpr_avg_res_plot_png:
     type:
     - "null"
@@ -681,18 +544,6 @@ outputs:
       Average gene expression.
       All resolutions.
       PNG format.
-
-  xpr_avg_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_avg_res_*.pdf"
-    doc: |
-      Average gene expression.
-      All resolutions.
-      PDF format.
 
   xpr_dnst_res_plot_png:
     type:
@@ -706,18 +557,6 @@ outputs:
       All genes of interest; all resolutions.
       PNG format.
 
-  xpr_dnst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_dnst_res_*.pdf"
-    doc: |
-      Gene expression density.
-      All genes of interest; all resolutions.
-      PDF format.
-
   xpr_htmp_res_plot_png:
     type:
     - "null"
@@ -730,16 +569,15 @@ outputs:
       Top gene markers; all resolutions.
       PNG format.
 
-  xpr_htmp_res_plot_pdf:
+  all_plots_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_htmp_res_*.pdf"
+      glob: "*.pdf"
     doc: |
-      Gene expression heatmap.
-      Top gene markers; all resolutions.
+      All generated plots.
       PDF format.
 
   xpr_htmp_res_tsv:
@@ -790,7 +628,7 @@ outputs:
       glob: "*_data.rds"
     doc: |
       Seurat object.
-      RDS format
+      RDS format.
 
   seurat_data_h5seurat:
     type: File?
@@ -798,7 +636,7 @@ outputs:
       glob: "*_data.h5seurat"
     doc: |
       Seurat object.
-      h5Seurat format
+      h5Seurat format.
 
   seurat_data_h5ad:
     type: File?
@@ -806,7 +644,7 @@ outputs:
       glob: "*_counts.h5ad"
     doc: |
       Seurat object.
-      H5AD format
+      H5AD format.
 
   seurat_data_cloupe:
     type: File?
@@ -814,7 +652,7 @@ outputs:
       glob: "*_counts.cloupe"
     doc: |
       Seurat object.
-      Loupe format
+      Loupe format.
 
   seurat_data_scope:
     type: File?
@@ -823,7 +661,7 @@ outputs:
     doc: |
       Seurat object.
       SCope compatible.
-      Loom format
+      Loom format.
 
   stdout_log:
     type: stdout

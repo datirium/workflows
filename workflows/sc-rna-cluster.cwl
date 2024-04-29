@@ -163,6 +163,89 @@ inputs:
 
 outputs:
 
+  cell_cnts_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/cell_cnts_gr_clst_res_plot_png
+    label: "Number of cells per cluster (all cells)"
+    doc: |
+      Number of cells per cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Number of cells per cluster (all cells)"
+
+  gene_umi_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/gene_umi_spl_clst_res_plot_png
+    label: "Genes vs RNA reads per cell (split by cluster, all cells)"
+    doc: |
+      Genes vs RNA reads per cell.
+      Split by cluster; all cells;
+      all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Genes vs RNA reads per cell (split by cluster, all cells)"
+
+  umi_mito_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/umi_mito_spl_clst_res_plot_png
+    label: "RNA reads vs mitochondrial % per cell (split by cluster, all cells)"
+    doc: |
+      RNA reads vs mitochondrial % per cell.
+      Split by cluster; all cells; all
+      resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "RNA reads vs mitochondrial % per cell (split by cluster, all cells)"
+
+  rnadbl_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/rnadbl_gr_clst_res_plot_png
+    label: "Percentage of RNA doublets per cluster (all cells)"
+    doc: |
+      Percentage of RNA doublets per cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of RNA doublets per cluster (all cells)"
+
+  qc_mtrcs_dnst_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/qc_mtrcs_dnst_gr_clst_res_plot_png
+    label: "Distribution of QC metrics per cell colored by cluster (all cells)"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Distribution of QC metrics per cell colored by cluster (all cells)"
+
   umap_gr_clst_res_plot_png:
     type:
     - "null"
@@ -555,6 +638,11 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
+    - cell_cnts_gr_clst_res_plot_png
+    - gene_umi_spl_clst_res_plot_png
+    - umi_mito_spl_clst_res_plot_png
+    - rnadbl_gr_clst_res_plot_png
+    - qc_mtrcs_dnst_gr_clst_res_plot_png
     - umap_gr_ph_spl_idnt_plot_png
     - cmp_gr_ph_spl_idnt_plot_png
     - umap_gr_ph_spl_cnd_plot_png
@@ -571,25 +659,7 @@ steps:
     - xpr_avg_res_plot_png
     - xpr_dnst_res_plot_png
     - xpr_htmp_res_plot_png
-    - umap_gr_ph_spl_idnt_plot_pdf
-    - cmp_gr_ph_spl_idnt_plot_pdf
-    - umap_gr_ph_spl_cnd_plot_pdf
-    - cmp_gr_ph_spl_cnd_plot_pdf
-    - umap_gr_clst_res_plot_pdf
-    - slh_gr_clst_res_plot_pdf
-    - umap_gr_clst_spl_idnt_res_plot_pdf
-    - cmp_gr_clst_spl_idnt_res_plot_pdf
-    - cmp_gr_idnt_spl_clst_res_plot_pdf
-    - umap_gr_clst_spl_ph_res_plot_pdf
-    - cmp_gr_ph_spl_clst_res_plot_pdf
-    - umap_gr_clst_spl_cnd_res_plot_pdf
-    - cmp_gr_clst_spl_cnd_res_plot_pdf
-    - cmp_gr_cnd_spl_clst_res_plot_pdf
-    - xpr_per_cell_plot_pdf
-    - xpr_per_cell_sgnl_plot_pdf
-    - xpr_avg_res_plot_pdf
-    - xpr_dnst_res_plot_pdf
-    - xpr_htmp_res_plot_pdf
+    - all_plots_pdf
     - xpr_htmp_res_tsv
     - gene_markers_tsv
     - ucsc_cb_html_data
@@ -605,25 +675,7 @@ steps:
     in:
       input_files:
         source:
-        - sc_rna_cluster/umap_gr_ph_spl_idnt_plot_pdf
-        - sc_rna_cluster/cmp_gr_ph_spl_idnt_plot_pdf
-        - sc_rna_cluster/umap_gr_ph_spl_cnd_plot_pdf
-        - sc_rna_cluster/cmp_gr_ph_spl_cnd_plot_pdf
-        - sc_rna_cluster/umap_gr_clst_res_plot_pdf
-        - sc_rna_cluster/slh_gr_clst_res_plot_pdf
-        - sc_rna_cluster/umap_gr_clst_spl_idnt_res_plot_pdf
-        - sc_rna_cluster/cmp_gr_clst_spl_idnt_res_plot_pdf
-        - sc_rna_cluster/cmp_gr_idnt_spl_clst_res_plot_pdf
-        - sc_rna_cluster/umap_gr_clst_spl_ph_res_plot_pdf
-        - sc_rna_cluster/cmp_gr_ph_spl_clst_res_plot_pdf
-        - sc_rna_cluster/umap_gr_clst_spl_cnd_res_plot_pdf
-        - sc_rna_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
-        - sc_rna_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
-        - sc_rna_cluster/xpr_per_cell_plot_pdf
-        - sc_rna_cluster/xpr_per_cell_sgnl_plot_pdf
-        - sc_rna_cluster/xpr_avg_res_plot_pdf
-        - sc_rna_cluster/xpr_dnst_res_plot_pdf
-        - sc_rna_cluster/xpr_htmp_res_plot_pdf
+        - sc_rna_cluster/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"

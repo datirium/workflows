@@ -273,6 +273,57 @@ inputs:
 
 outputs:
 
+  cell_cnts_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_cell_cnts_gr_clst_res_*.png"
+    doc: |
+      Number of cells per cluster.
+      All cells; all resolutions.
+      PNG format.
+
+  tss_frgm_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_tss_frgm_spl_clst_res_*.png"
+    doc: |
+      TSS enrichment score vs ATAC
+      fragments in peaks per cell.
+      Split by cluster; all cells;
+      all resolutions.
+      PNG format.
+
+  atacdbl_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_atacdbl_gr_clst_res_*.png"
+    doc: |
+      Percentage of ATAC doublets per cluster.
+      All cells; all resolutions.
+      PNG format.
+
+  qc_mtrcs_dnst_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_qc_mtrcs_dnst_gr_clst_res_*.png"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cluster.
+      All cells; all resolutions.
+      PNG format.
+
   umap_gr_clst_res_plot_png:
     type:
     - "null"
@@ -285,18 +336,6 @@ outputs:
       All cells; all resolutions.
       PNG format.
 
-  umap_gr_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      All cells; all resolutions.
-      PDF format.
-
   slh_gr_clst_res_plot_png:
     type:
     - "null"
@@ -308,18 +347,6 @@ outputs:
       Silhouette scores.
       All cells; all resolutions.
       PNG format.
-
-  slh_gr_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_slh_gr_clst_res_*.pdf"
-    doc: |
-      Silhouette scores.
-      All cells; all resolutions.
-      PDF format.
 
   umap_gr_clst_spl_idnt_res_plot_png:
     type:
@@ -334,19 +361,6 @@ outputs:
       smallest dataset; all resolutions.
       PNG format.
 
-  umap_gr_clst_spl_idnt_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_spl_idnt_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      Split by dataset; downsampled to the
-      smallest dataset; all resolutions.
-      PDF format.
-
   cmp_gr_clst_spl_idnt_res_plot_png:
     type:
     - "null"
@@ -360,19 +374,6 @@ outputs:
       smallest dataset; all resolutions.
       PNG format.
 
-  cmp_gr_clst_spl_idnt_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_clst_spl_idnt_res_*.pdf"
-    doc: |
-      Composition plot colored by cluster.
-      Split by dataset; downsampled to the
-      smallest dataset; all resolutions.
-      PDF format.
-
   cmp_gr_idnt_spl_clst_res_plot_png:
     type:
     - "null"
@@ -385,19 +386,6 @@ outputs:
       Split by cluster; downsampled to the
       smallest dataset; all resolutions.
       PNG format.
-
-  cmp_gr_idnt_spl_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_idnt_spl_clst_res_*.pdf"
-    doc: |
-      Composition plot colored by dataset.
-      Split by cluster; downsampled to the
-      smallest dataset; all resolutions.
-      PDF format.
 
   umap_gr_clst_spl_cnd_res_plot_png:
     type:
@@ -413,20 +401,6 @@ outputs:
       the smallest group; all resolutions.
       PNG format.
 
-  umap_gr_clst_spl_cnd_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_gr_clst_spl_cnd_res_*.pdf"
-    doc: |
-      UMAP colored by cluster.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group; all resolutions.
-      PDF format.
-
   cmp_gr_clst_spl_cnd_res_plot_png:
     type:
     - "null"
@@ -440,20 +414,6 @@ outputs:
       to the smallest dataset, then downsampled to
       the smallest group; all resolutions.
       PNG format.
-
-  cmp_gr_clst_spl_cnd_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_clst_spl_cnd_res_*.pdf"
-    doc: |
-      Composition plot colored by cluster.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group; all resolutions.
-      PDF format.
 
   cmp_gr_cnd_spl_clst_res_plot_png:
     type:
@@ -469,20 +429,6 @@ outputs:
       smallest group; all resolutions.
       PNG format.
 
-  cmp_gr_cnd_spl_clst_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_cmp_gr_cnd_spl_clst_res_*.pdf"
-    doc: |
-      Composition plot colored by grouping condition.
-      Split by cluster; first downsampled to the
-      smallest dataset, then downsampled to the
-      smallest group; all resolutions.
-      PDF format.
-
   cvrg_res_plot_png:
     type:
     - "null"
@@ -495,16 +441,15 @@ outputs:
       All genes of interest; all resolutions.
       PNG format.
 
-  cvrg_res_plot_pdf:
+  all_plots_pdf:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_cvrg_res_*.pdf"
+      glob: "*.pdf"
     doc: |
-      ATAC fragment coverage.
-      All genes of interest; all resolutions.
+      All generated plots.
       PDF format.
 
   peak_markers_tsv:

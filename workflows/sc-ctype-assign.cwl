@@ -234,6 +234,126 @@ inputs:
 
 outputs:
 
+  cell_cnts_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/cell_cnts_gr_ctyp_plot_png
+    label: "Number of cells per cell type (all cells)"
+    doc: |
+      Number of cells per cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Number of cells per cell type (all cells)"
+
+  gene_umi_spl_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/gene_umi_spl_ctyp_plot_png
+    label: "Genes vs RNA reads per cell (split by cell type, all cells)"
+    doc: |
+      Genes vs RNA reads per cell.
+      Split by cell type; all cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Genes vs RNA reads per cell (split by cell type, all cells)"
+
+  umi_mito_spl_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/umi_mito_spl_ctyp_plot_png
+    label: "RNA reads vs mitochondrial % per cell (split by cell type, all cells)"
+    doc: |
+      RNA reads vs mitochondrial % per cell.
+      Split by cell type; all cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "RNA reads vs mitochondrial % per cell (split by cell type, all cells)"
+
+  rnadbl_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/rnadbl_gr_ctyp_plot_png
+    label: "Percentage of RNA doublets per cell type (all cells)"
+    doc: |
+      Percentage of RNA doublets per cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of RNA doublets per cell type (all cells)"
+
+  tss_frgm_spl_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/tss_frgm_spl_ctyp_plot_png
+    label: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+    doc: |
+      TSS enrichment score vs ATAC
+      fragments in peaks per cell.
+      Split by cell type; all cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+
+  atacdbl_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/atacdbl_gr_ctyp_plot_png
+    label: "Percentage of ATAC doublets per cell type (all cells)"
+    doc: |
+      Percentage of ATAC doublets per cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of ATAC doublets per cell type (all cells)"
+
+  rna_atac_cnts_spl_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/rna_atac_cnts_spl_ctyp_plot_png
+    label: "RNA reads vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+    doc: |
+      RNA reads vs ATAC fragments in peaks per cell.
+      Split by cell type; all cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "RNA reads vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+
+  vrlpdbl_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/vrlpdbl_gr_ctyp_plot_png
+    label: "Percentage of RNA and ATAC doublets per cell type (all cells)"
+    doc: |
+      Percentage of RNA and ATAC doublets
+      per cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of RNA and ATAC doublets per cell type (all cells)"
+
+  qc_mtrcs_dnst_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/qc_mtrcs_dnst_gr_ctyp_plot_png
+    label: "Distribution of QC metrics per cell colored by cell type (all cells)"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Distribution of QC metrics per cell colored by cell type (all cells)"
+
   umap_gr_ctyp_plot_png:
     type: File?
     outputSource: ctype_assign/umap_gr_ctyp_plot_png
@@ -640,6 +760,15 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
+    - cell_cnts_gr_ctyp_plot_png
+    - gene_umi_spl_ctyp_plot_png
+    - umi_mito_spl_ctyp_plot_png
+    - rnadbl_gr_ctyp_plot_png
+    - tss_frgm_spl_ctyp_plot_png
+    - atacdbl_gr_ctyp_plot_png
+    - rna_atac_cnts_spl_ctyp_plot_png
+    - vrlpdbl_gr_ctyp_plot_png
+    - qc_mtrcs_dnst_gr_ctyp_plot_png
     - umap_gr_ctyp_plot_png
     - umap_gr_ctyp_spl_idnt_plot_png
     - cmp_gr_ctyp_spl_idnt_plot_png
@@ -656,25 +785,7 @@ steps:
     - xpr_dnst_plot_png
     - xpr_htmp_plot_png
     - cvrg_plot_png
-    - umap_gr_ctyp_plot_pdf
-    - umap_gr_ctyp_spl_idnt_plot_pdf
-    - cmp_gr_ctyp_spl_idnt_plot_pdf
-    - cmp_gr_idnt_spl_ctyp_plot_pdf
-    - umap_gr_ph_spl_idnt_plot_pdf
-    - cmp_gr_ph_spl_idnt_plot_pdf
-    - umap_gr_ctyp_spl_ph_plot_pdf
-    - cmp_gr_ph_spl_ctyp_plot_pdf
-    - umap_gr_ctyp_spl_cnd_plot_pdf
-    - cmp_gr_ctyp_spl_cnd_plot_pdf
-    - cmp_gr_cnd_spl_ctyp_plot_pdf
-    - umap_gr_ph_spl_cnd_plot_pdf
-    - cmp_gr_ph_spl_cnd_plot_pdf
-    - xpr_avg_plot_pdf
-    - xpr_per_cell_plot_pdf
-    - xpr_per_cell_sgnl_plot_pdf
-    - xpr_dnst_plot_pdf
-    - xpr_htmp_plot_pdf
-    - cvrg_plot_pdf
+    - all_plots_pdf
     - xpr_htmp_tsv
     - gene_markers_tsv
     - peak_markers_tsv
@@ -691,25 +802,7 @@ steps:
     in:
       input_files:
         source:
-        - ctype_assign/umap_gr_ctyp_plot_pdf
-        - ctype_assign/umap_gr_ctyp_spl_idnt_plot_pdf
-        - ctype_assign/cmp_gr_ctyp_spl_idnt_plot_pdf
-        - ctype_assign/cmp_gr_idnt_spl_ctyp_plot_pdf
-        - ctype_assign/umap_gr_ph_spl_idnt_plot_pdf
-        - ctype_assign/cmp_gr_ph_spl_idnt_plot_pdf
-        - ctype_assign/umap_gr_ctyp_spl_ph_plot_pdf
-        - ctype_assign/cmp_gr_ph_spl_ctyp_plot_pdf
-        - ctype_assign/umap_gr_ctyp_spl_cnd_plot_pdf
-        - ctype_assign/cmp_gr_ctyp_spl_cnd_plot_pdf
-        - ctype_assign/cmp_gr_cnd_spl_ctyp_plot_pdf
-        - ctype_assign/umap_gr_ph_spl_cnd_plot_pdf
-        - ctype_assign/cmp_gr_ph_spl_cnd_plot_pdf
-        - ctype_assign/xpr_avg_plot_pdf
-        - ctype_assign/xpr_per_cell_plot_pdf
-        - ctype_assign/xpr_per_cell_sgnl_plot_pdf
-        - ctype_assign/xpr_dnst_plot_pdf
-        - ctype_assign/xpr_htmp_plot_pdf
-        - ctype_assign/cvrg_plot_pdf
+        - ctype_assign/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"
