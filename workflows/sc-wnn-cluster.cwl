@@ -228,6 +228,23 @@ outputs:
         tab: "QC"
         Caption: "Number of cells per cluster (all cells)"
 
+  qc_mtrcs_dnst_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_wnn_cluster/qc_mtrcs_dnst_gr_clst_res_plot_png
+    label: "Distribution of QC metrics per cell colored by cluster (all cells)"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Distribution of QC metrics per cell colored by cluster (all cells)"
+
   gene_umi_spl_clst_res_plot_png:
     type:
     - "null"
@@ -262,22 +279,6 @@ outputs:
         tab: "QC"
         Caption: "RNA reads vs mitochondrial % per cell (split by cluster, all cells)"
 
-  rna_atac_cnts_spl_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_wnn_cluster/rna_atac_cnts_spl_clst_res_plot_png
-    label: "RNA reads vs ATAC fragments in peaks per cell (split by cluster, all cells)"
-    doc: |
-      RNA reads vs ATAC fragments in peaks per cell.
-      Split by cluster; all cells; all resolutions.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "RNA reads vs ATAC fragments in peaks per cell (split by cluster, all cells)"
-
   tss_frgm_spl_clst_res_plot_png:
     type:
     - "null"
@@ -295,6 +296,22 @@ outputs:
     - image:
         tab: "QC"
         Caption: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cluster, all cells)"
+
+  rna_atac_cnts_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_wnn_cluster/rna_atac_cnts_spl_clst_res_plot_png
+    label: "RNA reads vs ATAC fragments in peaks per cell (split by cluster, all cells)"
+    doc: |
+      RNA reads vs ATAC fragments in peaks per cell.
+      Split by cluster; all cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "RNA reads vs ATAC fragments in peaks per cell (split by cluster, all cells)"
 
   rnadbl_gr_clst_res_plot_png:
     type:
@@ -344,23 +361,6 @@ outputs:
     - image:
         tab: "QC"
         Caption: "Percentage of RNA and ATAC doublets per cluster (all cells)"
-
-  qc_mtrcs_dnst_gr_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_wnn_cluster/qc_mtrcs_dnst_gr_clst_res_plot_png
-    label: "Distribution of QC metrics per cell colored by cluster (all cells)"
-    doc: |
-      Distribution of QC metrics per cell
-      colored by cluster.
-      All cells; all resolutions.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "Distribution of QC metrics per cell colored by cluster (all cells)"
 
   umap_gr_clst_res_plot_png:
     type:

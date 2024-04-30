@@ -247,6 +247,20 @@ outputs:
         tab: "QC"
         Caption: "Number of cells per cell type (all cells)"
 
+  qc_mtrcs_dnst_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/qc_mtrcs_dnst_gr_ctyp_plot_png
+    label: "Distribution of QC metrics per cell colored by cell type (all cells)"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Distribution of QC metrics per cell colored by cell type (all cells)"
+
   gene_umi_spl_ctyp_plot_png:
     type: File?
     outputSource: ctype_assign/gene_umi_spl_ctyp_plot_png
@@ -273,19 +287,6 @@ outputs:
         tab: "QC"
         Caption: "RNA reads vs mitochondrial % per cell (split by cell type, all cells)"
 
-  rnadbl_gr_ctyp_plot_png:
-    type: File?
-    outputSource: ctype_assign/rnadbl_gr_ctyp_plot_png
-    label: "Percentage of RNA doublets per cell type (all cells)"
-    doc: |
-      Percentage of RNA doublets per cell type.
-      All cells.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "Percentage of RNA doublets per cell type (all cells)"
-
   tss_frgm_spl_ctyp_plot_png:
     type: File?
     outputSource: ctype_assign/tss_frgm_spl_ctyp_plot_png
@@ -300,19 +301,6 @@ outputs:
         tab: "QC"
         Caption: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cell type, all cells)"
 
-  atacdbl_gr_ctyp_plot_png:
-    type: File?
-    outputSource: ctype_assign/atacdbl_gr_ctyp_plot_png
-    label: "Percentage of ATAC doublets per cell type (all cells)"
-    doc: |
-      Percentage of ATAC doublets per cell type.
-      All cells.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "Percentage of ATAC doublets per cell type (all cells)"
-
   rna_atac_cnts_spl_ctyp_plot_png:
     type: File?
     outputSource: ctype_assign/rna_atac_cnts_spl_ctyp_plot_png
@@ -325,6 +313,32 @@ outputs:
     - image:
         tab: "QC"
         Caption: "RNA reads vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+
+  rnadbl_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/rnadbl_gr_ctyp_plot_png
+    label: "Percentage of RNA doublets per cell type (all cells)"
+    doc: |
+      Percentage of RNA doublets per cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of RNA doublets per cell type (all cells)"
+
+  atacdbl_gr_ctyp_plot_png:
+    type: File?
+    outputSource: ctype_assign/atacdbl_gr_ctyp_plot_png
+    label: "Percentage of ATAC doublets per cell type (all cells)"
+    doc: |
+      Percentage of ATAC doublets per cell type.
+      All cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of ATAC doublets per cell type (all cells)"
 
   vrlpdbl_gr_ctyp_plot_png:
     type: File?
@@ -339,20 +353,6 @@ outputs:
     - image:
         tab: "QC"
         Caption: "Percentage of RNA and ATAC doublets per cell type (all cells)"
-
-  qc_mtrcs_dnst_gr_ctyp_plot_png:
-    type: File?
-    outputSource: ctype_assign/qc_mtrcs_dnst_gr_ctyp_plot_png
-    label: "Distribution of QC metrics per cell colored by cell type (all cells)"
-    doc: |
-      Distribution of QC metrics per cell
-      colored by cell type.
-      All cells.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "Distribution of QC metrics per cell colored by cell type (all cells)"
 
   umap_gr_ctyp_plot_png:
     type: File?

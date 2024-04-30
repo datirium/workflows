@@ -190,6 +190,23 @@ outputs:
         tab: "QC"
         Caption: "Number of cells per cluster (all cells)"
 
+  qc_mtrcs_dnst_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_cluster/qc_mtrcs_dnst_gr_clst_res_plot_png
+    label: "Distribution of QC metrics per cell colored by cluster (all cells)"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Distribution of QC metrics per cell colored by cluster (all cells)"
+
   tss_frgm_spl_clst_res_plot_png:
     type:
     - "null"
@@ -223,23 +240,6 @@ outputs:
     - image:
         tab: "QC"
         Caption: "Percentage of ATAC doublets per cluster (all cells)"
-
-  qc_mtrcs_dnst_gr_clst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_atac_cluster/qc_mtrcs_dnst_gr_clst_res_plot_png
-    label: "Distribution of QC metrics per cell colored by cluster (all cells)"
-    doc: |
-      Distribution of QC metrics per cell
-      colored by cluster.
-      All cells; all resolutions.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "Distribution of QC metrics per cell colored by cluster (all cells)"
 
   umap_gr_clst_res_plot_png:
     type:
