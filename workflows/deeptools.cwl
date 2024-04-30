@@ -84,9 +84,9 @@ inputs:
 
   regionBodyLength:
     type: int?
-    default: 5000
-    label: "Distance in bases to which all regions will be fit"
-    doc: "Default: 5000 bp"
+    default: 1000
+    label: "Region Body Length"
+    doc: "Distance between TSS and TES, set to 0 for point centering of plot. Default: 1000 bp"
     'sd:layout':
       advanced: true
 
@@ -158,7 +158,7 @@ outputs:
         tab: 'Plots'
         Caption: 'Profile and heatmap plot'
 
-  log_file_stdout:
+  log_stdout_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -167,7 +167,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_file_stderr:
+  log_stderr_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
