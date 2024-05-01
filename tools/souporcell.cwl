@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: cumulusprod/souporcell:2022.12
+  dockerPull: biowardrobe2/souporcell:v0.0.1
 
 
 inputs:
@@ -43,10 +43,18 @@ inputs:
     doc: |
       Reference genome FASTA file + fai index file
 
+  regions_bed_file:
+    type: File?
+    inputBinding:
+      position: 8
+      prefix: "--regions"
+    doc: |
+      Regions of interest BED file to filter provided or remapped BAM file
+
   clusters_count:
     type: int
     inputBinding:
-      position: 8
+      position: 9
       prefix: "--clusters"
     doc: |
       Number of clusters to detect (number of donors merged into one single-cell experiment)
@@ -54,7 +62,7 @@ inputs:
   ploidy_count:
     type: int?
     inputBinding:
-      position: 9
+      position: 10
       prefix: "--ploidy"
     doc: |
       Ploidy, must be 1 or 2
@@ -63,7 +71,7 @@ inputs:
   min_alt:
     type: int?
     inputBinding:
-      position: 10
+      position: 11
       prefix: "--min_alt"
     doc: |
       Min alt to use locus
@@ -72,7 +80,7 @@ inputs:
   min_ref:
     type: int?
     inputBinding:
-      position: 11
+      position: 12
       prefix: "--min_ref"
     doc: |
       Min ref to use locus
@@ -81,7 +89,7 @@ inputs:
   max_loci:
     type: int?
     inputBinding:
-      position: 12
+      position: 13
       prefix: "--max_loci"
     doc: |
       Max loci per cell, affects speed
@@ -90,7 +98,7 @@ inputs:
   restarts_count:
     type: int?
     inputBinding:
-      position: 13
+      position: 14
       prefix: "--restarts"
     doc: |
       Number of restarts in clustering, when there are > 12
@@ -101,7 +109,7 @@ inputs:
   common_variants_vcf_file:
     type: File?
     inputBinding:
-      position: 14
+      position: 15
       prefix: "--common_variants"
     doc: |
       Common variant loci or known variant loci vcf file,
@@ -110,7 +118,7 @@ inputs:
   known_genotypes_vcf_file:
     type: File?
     inputBinding:
-      position: 15
+      position: 16
       prefix: "--known_genotypes"
     doc: |
       Known variants per clone in population vcf mode, must be .vcf
@@ -122,7 +130,7 @@ inputs:
     - type: array
       items: string
     inputBinding:
-      position: 16
+      position: 17
       prefix: "--known_genotypes_sample_names"
     doc: |
       Which samples in population vcf from known genotypes
@@ -132,7 +140,7 @@ inputs:
     type: boolean?
     default: false
     inputBinding:
-      position: 17
+      position: 18
       prefix: "--skip_remap"
       valueFrom: $(self?"True":null)                    # when we return null --skip_remap prefix won't be used at all
     doc: |
@@ -143,7 +151,7 @@ inputs:
     type: boolean?
     default: false
     inputBinding:
-      position: 18
+      position: 19
       prefix: "--no_umi"
       valueFrom: $(self?"True":"False")                 # Souporcell expects word, not just boolean flag
     doc: |
@@ -153,7 +161,7 @@ inputs:
   umi_tag:
     type: string?
     inputBinding:
-      position: 19
+      position: 20
       prefix: "--umi_tag"
     doc: |
       Set if your umi tag is not UB
@@ -161,7 +169,7 @@ inputs:
   cell_tag:
     type: string?
     inputBinding:
-      position: 20
+      position: 21
       prefix: "--cell_tag"
     doc: |
       Set if your cell barcode tag is not CB
@@ -169,7 +177,7 @@ inputs:
   ignore_data_errors:
     type: boolean?
     inputBinding:
-      position: 21
+      position: 22
       prefix: "--ignore"
     doc: |
       Set to True to ignore data error assertions
@@ -178,7 +186,7 @@ inputs:
     type: int?
     default: 1
     inputBinding:
-      position: 22
+      position: 23
       prefix: "--threads"
     doc: |
       Max threads to use
@@ -279,25 +287,21 @@ doc: |
 
 
 s:about: |
-  usage: souporcell_pipeline.py [-h] -i BAM -b BARCODES -f FASTA -t THREADS -o
-                                OUT_DIR -k CLUSTERS [-p PLOIDY]
-                                [--min_alt MIN_ALT] [--min_ref MIN_REF]
-                                [--max_loci MAX_LOCI] [--restarts RESTARTS]
-                                [--common_variants COMMON_VARIANTS]
-                                [--known_genotypes KNOWN_GENOTYPES]
+  usage: souporcell_pipeline.py [-h] -i BAM -b BARCODES [--regions REGIONS] -f FASTA -t THREADS -o OUT_DIR -k CLUSTERS
+                                [-p PLOIDY] [--min_alt MIN_ALT] [--min_ref MIN_REF] [--max_loci MAX_LOCI] [--restarts RESTARTS]
+                                [--common_variants COMMON_VARIANTS] [--known_genotypes KNOWN_GENOTYPES]
                                 [--known_genotypes_sample_names KNOWN_GENOTYPES_SAMPLE_NAMES [KNOWN_GENOTYPES_SAMPLE_NAMES ...]]
-                                [--skip_remap SKIP_REMAP] [--no_umi NO_UMI]
-                                [--umi_tag UMI_TAG] [--cell_tag CELL_TAG]
+                                [--skip_remap SKIP_REMAP] [--no_umi NO_UMI] [--umi_tag UMI_TAG] [--cell_tag CELL_TAG]
                                 [--ignore IGNORE] [--aligner ALIGNER]
 
-  single cell RNAseq mixed genotype clustering using sparse mixture model
-  clustering.
+  single cell RNAseq mixed genotype clustering using sparse mixture model clustering.
 
   optional arguments:
     -h, --help            show this help message and exit
     -i BAM, --bam BAM     cellranger bam
     -b BARCODES, --barcodes BARCODES
                           barcodes.tsv from cellranger
+    --regions REGIONS     regions.bed file to optionally restrict searching for SNPs to only selected regions
     -f FASTA, --fasta FASTA
                           reference fasta file
     -t THREADS, --threads THREADS
@@ -305,32 +309,25 @@ s:about: |
     -o OUT_DIR, --out_dir OUT_DIR
                           name of directory to place souporcell files
     -k CLUSTERS, --clusters CLUSTERS
-                          number cluster, tbd add easy way to run on a range of
-                          k
+                          number cluster, tbd add easy way to run on a range of k
     -p PLOIDY, --ploidy PLOIDY
                           ploidy, must be 1 or 2, default = 2
     --min_alt MIN_ALT     min alt to use locus, default = 10.
     --min_ref MIN_REF     min ref to use locus, default = 10.
     --max_loci MAX_LOCI   max loci per cell, affects speed, default = 2048.
-    --restarts RESTARTS   number of restarts in clustering, when there are > 12
-                          clusters we recommend increasing this to avoid local
-                          minima
+    --restarts RESTARTS   number of restarts in clustering, when there are > 12 clusters we recommend increasing this to avoid
+                          local minima
     --common_variants COMMON_VARIANTS
-                          common variant loci or known variant loci vcf, must be
-                          vs same reference fasta
+                          common variant loci or known variant loci vcf, must be vs same reference fasta
     --known_genotypes KNOWN_GENOTYPES
-                          known variants per clone in population vcf mode, must
-                          be .vcf right now we dont accept gzip or bcf sorry
+                          known variants per clone in population vcf mode, must be .vcf right now we dont accept gzip or bcf
+                          sorry
     --known_genotypes_sample_names KNOWN_GENOTYPES_SAMPLE_NAMES [KNOWN_GENOTYPES_SAMPLE_NAMES ...]
-                          which samples in population vcf from known genotypes
-                          option represent the donors in your sample
+                          which samples in population vcf from known genotypes option represent the donors in your sample
     --skip_remap SKIP_REMAP
-                          don't remap with minimap2 (not recommended unless in
-                          conjunction with --common_variants
-    --no_umi NO_UMI       set to True if your bam has no UMI tag, will
-                          ignore/override --umi_tag
+                          don't remap with minimap2 (not recommended unless in conjunction with --common_variants
+    --no_umi NO_UMI       set to True if your bam has no UMI tag, will ignore/override --umi_tag
     --umi_tag UMI_TAG     set if your umi tag is not UB
-    --cell_tag CELL_TAG   set if your cell barcode tag is not CB
+    --cell_tag CELL_TAG   DOES NOT WORK, vartrix doesnt support this! set if your cell barcode tag is not CB
     --ignore IGNORE       set to True to ignore data error assertions
-    --aligner ALIGNER     optionally change to HISAT2 if you have it installed,
-                          not included in singularity build
+    --aligner ALIGNER     optionally change to HISAT2 if you have it installed, not included in singularity build
