@@ -73,12 +73,12 @@ inputs:
 
   regions_bed_file:
     type: File?
-    label: "Selected regions (BED, optional)"
+    label: "Selected regions (optional)"
     doc: |
       A BED file to optionally prefilter
       reads from the provided BAM file.
       If minimap2 remapping is not skipped,
-      filtering be regions will be done
+      filtering by regions will be done
       after it.
 
   ploidy_count:
