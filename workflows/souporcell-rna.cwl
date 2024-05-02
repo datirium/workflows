@@ -71,6 +71,16 @@ inputs:
       barcode per line and do not include any
       header information.
 
+  regions_bed_file:
+    type: File?
+    label: "Selected regions (optional)"
+    doc: |
+      A BED file to optionally prefilter
+      reads from the provided BAM file.
+      If minimap2 remapping is not skipped,
+      filtering by regions will be done
+      after it.
+
   ploidy_count:
     type: int?
     default: 2
@@ -268,6 +278,7 @@ steps:
       possorted_genome_bam_bai: possorted_genome_bam_bai
       barcodes_tsv_file: get_barcodes_tsv_file/barcodes_tsv_file
       genome_fasta_file: genome_fasta_file
+      regions_bed_file: regions_bed_file
       clusters_count: clusters_count
       ploidy_count: ploidy_count
       min_alt: min_alt
