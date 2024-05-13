@@ -407,13 +407,13 @@ outputs:
     doc: "Generated bedgraph file"
     outputSource: fragment_counts/sorted_bed_scaled
 
-  fc_log_file_stderr:
+  fc_log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
     outputSource: fragment_counts/log_file_stderr
 
-  fc_log_file_stdout:
+  fc_log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"

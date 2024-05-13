@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -86,6 +86,7 @@ inputs:
                                     --beforeRegionStartLength $beforeRegionStartLength \
                                     --regionBodyLength $regionBodyLength \
                                     --afterRegionStartLength $afterRegionStartLength \
+                                    --binSize 1 \
                                     --skipZeros -o matrix.mat.gz \
                                     --numberOfProcessors $threads
 
