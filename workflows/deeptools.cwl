@@ -86,7 +86,7 @@ inputs:
     type: int?
     default: 1000
     label: "Region Body Length"
-    doc: "Distance between TSS and TES, set to 0 for point centering of plot. Default: 1000 bp"
+    doc: "Only used in scale-regions mode. Distance between x and y (could be TSS and TES, or peak start and peak end, respectively), set to 0 for point centering of plot. Default: 1000 bp"
     'sd:layout':
       advanced: true
 
@@ -136,6 +136,17 @@ inputs:
     default: 0
     label: "Number of clusters to compute. Default: 0"
     doc: "Group rows by cluster instead of region set. When this option is set greater than 0, the matrix is split into clusters using the k-means algorithm."
+    'sd:layout':
+      advanced: true
+
+  subcommand:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["reference-point", "scale-regions"]
+    default: "reference-point"
+    label: "Sets deeptools computeMatrix subcommand for processing the bed matrix."
+    doc: "In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted. In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user."
     'sd:layout':
       advanced: true
 
@@ -191,6 +202,7 @@ steps:
       sortUsing: sortUsing
       colorMap: colorMap
       kmeans: kmeans
+      subcommand: subcommand
     out: [matrix_file, heatmap_file, log_file_stdout, log_file_stderr]
   
 
