@@ -66,21 +66,29 @@ inputs:
     doc: "Sample names for epigenomic samples selected by user for score_files. Order corresponds to the score_files"
     'sd:upstreamSource': "epi_sample/alias"
 
+  subcommand:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["reference-point", "scale-regions"]
+    default: "reference-point"
+    label: "Sets deeptools computeMatrix subcommand for processing the bed matrix."
+    doc: "In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted. In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user."
+    'sd:localLabel': true
+
   beforeRegionStartLength:
     type: int?
     default: 3000
     label: "Distance upstream of the start site of the given regions"
     doc: "Default: 3000 bp"
-    'sd:layout':
-      advanced: true
+    'sd:localLabel': true
 
   afterRegionStartLength:
     type: int?
     default: 3000
     label: "Distance downstream of the end site of the given regions"
     doc: "Default: 3000 bp"
-    'sd:layout':
-      advanced: true
+    'sd:localLabel': true
 
   regionBodyLength:
     type: int?
@@ -139,17 +147,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  subcommand:
-    type:
-    - "null"
-    - type: enum
-      symbols: ["reference-point", "scale-regions"]
-    default: "reference-point"
-    label: "Sets deeptools computeMatrix subcommand for processing the bed matrix."
-    doc: "In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted. In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user."
-    'sd:layout':
-      advanced: true
-
 
 outputs:
 
@@ -169,7 +166,7 @@ outputs:
         tab: 'Plots'
         Caption: 'Profile and heatmap plot'
 
-  log_stdout_file:
+  log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -178,7 +175,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_stderr_file:
+  log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
