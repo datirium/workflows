@@ -66,27 +66,35 @@ inputs:
     doc: "Sample names for epigenomic samples selected by user for score_files. Order corresponds to the score_files"
     'sd:upstreamSource': "epi_sample/alias"
 
+  subcommand:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["reference-point", "scale-regions"]
+    default: "reference-point"
+    label: "Sets deeptools computeMatrix subcommand for processing the bed matrix."
+    doc: "In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted. In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user."
+    'sd:localLabel': true
+
   beforeRegionStartLength:
     type: int?
     default: 3000
     label: "Distance upstream of the start site of the given regions"
     doc: "Default: 3000 bp"
-    'sd:layout':
-      advanced: true
+    'sd:localLabel': true
 
   afterRegionStartLength:
     type: int?
     default: 3000
     label: "Distance downstream of the end site of the given regions"
     doc: "Default: 3000 bp"
-    'sd:layout':
-      advanced: true
+    'sd:localLabel': true
 
   regionBodyLength:
     type: int?
     default: 1000
     label: "Region Body Length"
-    doc: "Distance between TSS and TES, set to 0 for point centering of plot. Default: 1000 bp"
+    doc: "Only used in scale-regions mode. Distance between x and y (could be TSS and TES, or peak start and peak end, respectively), set to 0 for point centering of plot. Default: 1000 bp"
     'sd:layout':
       advanced: true
 
@@ -158,7 +166,7 @@ outputs:
         tab: 'Plots'
         Caption: 'Profile and heatmap plot'
 
-  log_stdout_file:
+  log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -167,7 +175,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_stderr_file:
+  log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
@@ -191,6 +199,7 @@ steps:
       sortUsing: sortUsing
       colorMap: colorMap
       kmeans: kmeans
+      subcommand: subcommand
     out: [matrix_file, heatmap_file, log_file_stdout, log_file_stderr]
   
 
