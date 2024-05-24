@@ -12,21 +12,23 @@ requirements:
 'sd:upstream':
   filtered_regions_sample:
   - "filter-diffbind-for-heatmap.cwl"
+  - "filter-peaks-for-heatmap.cwl"
   - "https://github.com/datirium/workflows/workflows/filter-diffbind-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-peaks-for-heatmap.cwl"
   chipseq_sample:
   - "trim-chipseq-se.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
 
 
 inputs:
 
-  alias:
+  alias_:
     type: string
     label: "Experiment short name/alias"
     sd:preview:
