@@ -22,11 +22,21 @@ requirements:
   - "trim-atacseq-pe.cwl"
   - "cutandrun-macs2-pe.cwl"
   - "cutandrun-seacr-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-se.cwl"
+  - "https://github.com/datirium/workflows/workflows/trim-atacseq-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/cutandrun-macs2-pe.cwl"
+  - "https://github.com/datirium/workflows/workflows/cutandrun-seacr-pe.cwl"
   filtered_experiment:
   - "filter-peaks-for-heatmap.cwl"
   - "filter-deseq-for-heatmap.cwl"
   - "filter-diffbind-for-heatmap.cwl"
   - "genelists-sets.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-peaks-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-deseq-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/filter-diffbind-for-heatmap.cwl"
+  - "https://github.com/datirium/workflows/workflows/genelists-sets.cwl"
 
 
 inputs:
@@ -66,27 +76,35 @@ inputs:
     doc: "Sample names for epigenomic samples selected by user for score_files. Order corresponds to the score_files"
     'sd:upstreamSource': "epi_sample/alias"
 
+  subcommand:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["reference-point", "scale-regions"]
+    default: "reference-point"
+    label: "Sets deeptools computeMatrix subcommand for processing the bed matrix."
+    doc: "In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted. In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user."
+    'sd:localLabel': true
+
   beforeRegionStartLength:
     type: int?
     default: 3000
     label: "Distance upstream of the start site of the given regions"
     doc: "Default: 3000 bp"
-    'sd:layout':
-      advanced: true
+    'sd:localLabel': true
 
   afterRegionStartLength:
     type: int?
     default: 3000
     label: "Distance downstream of the end site of the given regions"
     doc: "Default: 3000 bp"
-    'sd:layout':
-      advanced: true
+    'sd:localLabel': true
 
   regionBodyLength:
     type: int?
-    default: 5000
-    label: "Distance in bases to which all regions will be fit"
-    doc: "Default: 5000 bp"
+    default: 1000
+    label: "Region Body Length"
+    doc: "Only used in scale-regions mode. Distance between x and y (could be TSS and TES, or peak start and peak end, respectively), set to 0 for point centering of plot. Default: 1000 bp"
     'sd:layout':
       advanced: true
 
@@ -158,7 +176,7 @@ outputs:
         tab: 'Plots'
         Caption: 'Profile and heatmap plot'
 
-  log_file_stdout:
+  log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -167,7 +185,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_file_stderr:
+  log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
@@ -191,6 +209,7 @@ steps:
       sortUsing: sortUsing
       colorMap: colorMap
       kmeans: kmeans
+      subcommand: subcommand
     out: [matrix_file, heatmap_file, log_file_stdout, log_file_stderr]
   
 

@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_commands:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -32,7 +32,7 @@ inputs:
       sortUsing=${9}
       colorMap=${10}
       kmeans=${11}
-
+      subcommand=${12}
 
       printf "INPUTS:\n"
       printf "\$0 - $regions_files\n"
@@ -47,6 +47,7 @@ inputs:
       printf "\$9 - $sortUsing\n"
       printf "\$10 - $colorMap\n"
       printf "\$11 - $kmeans\n"
+      printf "\$12 - $subcommand\n"
 
       # commands start
       # check that files and names for regions/scores are equal (in case there could be a comma in a name)
@@ -80,15 +81,28 @@ inputs:
 
 
       # run deeptools compute matrix
-      printf "Running deeptools 'computeMatrix scale-regions' command...\n\n"
-      computeMatrix scale-regions -S $(find ./ -maxdepth 1 -mindepth 1 -name "*.bigWig" | sed $'$!N;s/\\\n/\t/')  \
-                                    -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
-                                    --beforeRegionStartLength $beforeRegionStartLength \
-                                    --regionBodyLength $regionBodyLength \
-                                    --afterRegionStartLength $afterRegionStartLength \
-                                    --skipZeros -o matrix.mat.gz \
-                                    --numberOfProcessors $threads
-
+      if [[ "$subcommand" == "reference-point" ]]; then
+        printf "Running deeptools 'computeMatrix reference-point' command...\n\n"
+        computeMatrix reference-point --referencePoint center \
+                  -S $(find ./ -maxdepth 1 -mindepth 1 -name "*.bigWig" | sed $'$!N;s/\\\n/\t/')  \
+                  -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
+                  --beforeRegionStartLength $beforeRegionStartLength \
+                  --afterRegionStartLength $afterRegionStartLength \
+                  --binSize 1 \
+                  --skipZeros -o matrix.mat.gz \
+                  --numberOfProcessors $threads
+      elif [[ "$subcommand" == "scale-regions" ]]; then
+        printf "Running deeptools 'computeMatrix scale-regions' command...\n\n"
+        computeMatrix scale-regions \
+                  -S $(find ./ -maxdepth 1 -mindepth 1 -name "*.bigWig" | sed $'$!N;s/\\\n/\t/')  \
+                  -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
+                  --beforeRegionStartLength $beforeRegionStartLength \
+                  --regionBodyLength $regionBodyLength \
+                  --afterRegionStartLength $afterRegionStartLength \
+                  --binSize 1 \
+                  --skipZeros -o matrix.mat.gz \
+                  --numberOfProcessors $threads
+      fi
 
       # make plot
       #   set plot height based on 4 + number of lists * 5)
@@ -226,6 +240,18 @@ inputs:
       Group rows by cluster instead of region set. When this option is set greater than 0, the
       matrix is split into clusters using the k-means algorithm
 
+  subcommand:
+    type:
+    - "null"
+    - type: enum
+      symbols: ["reference-point", "scale-regions"]
+    inputBinding:
+      position: 18
+    doc: |
+      Sets deeptools computeMatrix subcommand for processing the bed matrix.
+      In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user.
+      In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted.
+
 
 outputs:
 
@@ -290,6 +316,14 @@ doc: |
       
 
   computeMatrix paramters:
+
+  Sub-commands:
+  scale-regions
+  In the scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user.
+
+  reference-point
+  Reference-point refers to a position within a BED region (e.g., the starting point). In this mode, only those genomicpositions before (upstream) and/or after (downstream) of the reference point will be plotted.
+
   --regionsFileName, -R
     File name, in BED format, containing the regions to plot. If multiple bed files are given, each one is considered a group that can be plotted separately. Also, adding a “#” symbol in the bed file causes all the regions until the previous “#” to be considered one group.
   --scoreFileName, -S
