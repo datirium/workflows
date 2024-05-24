@@ -88,7 +88,7 @@ inputs:
                   -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
                   --beforeRegionStartLength $beforeRegionStartLength \
                   --afterRegionStartLength $afterRegionStartLength \
-                  --binSize 1 \
+                  --binSize 10 \
                   --skipZeros -o matrix.mat.gz \
                   --numberOfProcessors $threads
       elif [[ "$subcommand" == "scale-regions" ]]; then
@@ -99,7 +99,7 @@ inputs:
                   --beforeRegionStartLength $beforeRegionStartLength \
                   --regionBodyLength $regionBodyLength \
                   --afterRegionStartLength $afterRegionStartLength \
-                  --binSize 1 \
+                  --binSize 10 \
                   --skipZeros -o matrix.mat.gz \
                   --numberOfProcessors $threads
       fi
