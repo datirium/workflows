@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -33,6 +33,7 @@ inputs:
       colorMap=${10}
       kmeans=${11}
       subcommand=${12}
+      binSize=${13}
 
       printf "INPUTS:\n"
       printf "\$0 - $regions_files\n"
@@ -48,6 +49,7 @@ inputs:
       printf "\$10 - $colorMap\n"
       printf "\$11 - $kmeans\n"
       printf "\$12 - $subcommand\n"
+      printf "\$13 - $binSize\n"
 
       # commands start
       # check that files and names for regions/scores are equal (in case there could be a comma in a name)
@@ -88,7 +90,7 @@ inputs:
                   -R $(find ./ -maxdepth 1 -mindepth 1 -name "*.bed" | sed $'$!N;s/\\\n/\t/') \
                   --beforeRegionStartLength $beforeRegionStartLength \
                   --afterRegionStartLength $afterRegionStartLength \
-                  --binSize 1 \
+                  --binSize $binSize \
                   --skipZeros -o matrix.mat.gz \
                   --numberOfProcessors $threads
       elif [[ "$subcommand" == "scale-regions" ]]; then
@@ -99,7 +101,7 @@ inputs:
                   --beforeRegionStartLength $beforeRegionStartLength \
                   --regionBodyLength $regionBodyLength \
                   --afterRegionStartLength $afterRegionStartLength \
-                  --binSize 1 \
+                  --binSize $binSize \
                   --skipZeros -o matrix.mat.gz \
                   --numberOfProcessors $threads
       fi
@@ -252,6 +254,13 @@ inputs:
       In scale-regions mode, all regions in the BED file are stretched or shrunken to the length (in bases) indicated by the user.
       In reference-point mode, only those genomic positions before (upstream) and/or after (downstream) the center of each peak will be plotted.
 
+  binSize:
+    type: int
+    inputBinding:
+      position: 19
+    doc: |
+      Length, in bases, of the non-overlapping bins for averaging the score over the regions length.
+
 
 outputs:
 
@@ -338,6 +347,8 @@ doc: |
     Distance downstream of the end site of the given regions. If the regions are genes, this would be the distance downstream of the transcription end site.
   --numberOfProcessors=max/2, -p=max/2
     Number of processors to use. Type “max/2” to use half the maximum number of processors or “max” to use all available processors.
+  --binSize=10, -bs=10
+    Length, in bases, of the non-overlapping bins for averaging the score over the regions length.
 
 
   plotHeatmap parameters:

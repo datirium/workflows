@@ -90,19 +90,27 @@ inputs:
     doc: "Default: 3000 bp"
     'sd:localLabel': true
 
+  binSize:
+    type: int?
+    default: 10
+    label: "Bin Size. Default: 10 bp"
+    doc: "Length, in bases, of the non-overlapping bins for averaging the score over the regions length."
+    'sd:layout':
+      advanced: true
+
   regionBodyLength:
     type: int?
     default: 1000
-    label: "Region Body Length"
-    doc: "Only used in scale-regions mode. Distance between x and y (could be TSS and TES, or peak start and peak end, respectively), set to 0 for point centering of plot. Default: 1000 bp"
+    label: "Region Body Length. Default: 1000 bp"
+    doc: "Only used in scale-regions mode. Distance between x and y (could be TSS and TES, or peak start and peak end, respectively), set to 0 for point centering of plot."
     'sd:layout':
       advanced: true
 
   threads:
     type: int?
     default: 2
-    label: "Number of threads"
-    doc: "Number of threads for steps that support multithreading"
+    label: "Number of Threads. Default: 2"
+    doc: "Number of threads for steps that support multithreading."
     'sd:layout':
       advanced: true
 
@@ -112,8 +120,8 @@ inputs:
     - type: enum
       symbols: ["descend", "ascend", "no"]
     default: "descend"
-    label: "Whether the heatmap should present the regions sorted. Default: descend"
-    doc: "Whether the heatmap should present the regions sorted. Default: descend"
+    label: "Row sorting type for heatmap. Default: descend"
+    doc: "Whether the heatmap should present the regions sorted."
     'sd:layout':
       advanced: true
 
@@ -123,8 +131,8 @@ inputs:
     - type: enum
       symbols: ["mean", "median", "max", "min", "sum", "region_length"]
     default: "mean"
-    label: "Indicate which method should be used for sorting. For each row the method is computed. Default: mean"
-    doc: "Indicate which method should be used for sorting. For each row the method is computed. Default: mean"
+    label: "Sorting Method. Default: mean"
+    doc: "Indicate which method should be used for sorting. For each row the method is computed."
     'sd:layout':
       advanced: true
 
@@ -134,7 +142,7 @@ inputs:
     - type: enum
       symbols: ["RdBu", "Set1", "Set2", "Set3", "winter", "Dark2", "cool", "coolwarm", "rainbow"]
     default: "RdBu"
-    label: "Color map to use for the heatmap."
+    label: "Color Map. Default: RdBu"
     doc: "Color map to use for the heatmap."
     'sd:layout':
       advanced: true
@@ -166,7 +174,7 @@ outputs:
         tab: 'Plots'
         Caption: 'Profile and heatmap plot'
 
-  log_stdout:
+  log_stdout_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -175,7 +183,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_stderr:
+  log_stderr_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
@@ -200,6 +208,7 @@ steps:
       colorMap: colorMap
       kmeans: kmeans
       subcommand: subcommand
+      binSize: binSize
     out: [matrix_file, heatmap_file, log_file_stdout, log_file_stderr]
   
 
