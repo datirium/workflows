@@ -51,7 +51,6 @@ inputs:
 
   read_files_cond_1:
     type:
-    - File
     - type: array
       items: File
     label: "Control group sample(s)"
@@ -64,7 +63,6 @@ inputs:
 
   read_files_cond_2:
     type:
-    - File
     - type: array
       items: File
     label: "Treatment group sample(s)"
@@ -78,7 +76,6 @@ inputs:
   narrow_peak_files_cond_1:
     type:
     - "null"
-    - File
     - type: array
       items: File
     label: "Control group sample(s)"
@@ -90,7 +87,6 @@ inputs:
   narrow_peak_files_cond_2:
     type:
     - "null"
-    - File
     - type: array
       items: File
     label: "Treatment group sample(s)"
@@ -102,7 +98,6 @@ inputs:
   broad_peak_files_cond_1:
     type:
     - "null"
-    - File
     - type: array
       items: File
     label: "Control group sample(s)"
@@ -114,7 +109,6 @@ inputs:
   broad_peak_files_cond_2:
     type:
     - "null"
-    - File
     - type: array
       items: File
     label: "Treatment group sample(s)"
@@ -125,7 +119,6 @@ inputs:
 
   genome_cov_files_cond_1:
     type:
-    - File
     - type: array
       items: File
     label: "Control group sample(s)"
@@ -137,7 +130,6 @@ inputs:
 
   genome_cov_files_cond_2:
     type:
-    - File
     - type: array
       items: File
     label: "Treatment group sample(s)"
@@ -150,7 +142,6 @@ inputs:
   summit_files_cond_1:
     type:
     - "null"
-    - File
     - type: array
       items: File
     label: "Control group sample(s)"
@@ -164,7 +155,6 @@ inputs:
   summit_files_cond_2:
     type:
     - "null"
-    - File
     - type: array
       items: File
     label: "Treatment group sample(s)"
@@ -514,7 +504,6 @@ outputs:
 
   coverage_files_cond_1:
     type:
-    - "null"
     - type: array
       items: File
     label: "Control group sample(s)"
@@ -533,7 +522,6 @@ outputs:
 
   coverage_files_cond_2:
     type:
-    - "null"
     - type: array
       items: File
     label: "Treatment group sample(s)"
@@ -934,47 +922,39 @@ steps:
       inputs:
         genome_cov_files_cond_1:
           type:
-          - File
           - type: array
             items: File
         genome_cov_files_cond_2:
           type:
-          - File
           - type: array
             items: File
         narrow_peak_files_cond_1:
           type:
           - "null"
-          - File
           - type: array
             items: File
         narrow_peak_files_cond_2:
           type:
           - "null"
-          - File
           - type: array
             items: File
         broad_peak_files_cond_1:
           type:
           - "null"
-          - File
           - type: array
             items: File
         broad_peak_files_cond_2:
           type:
           - "null"
-          - File
           - type: array
             items: File
       outputs:
         coverage_files_cond_1:
           type:
-          - "null"
           - type: array
             items: File
         coverage_files_cond_2:
           type:
-          - "null"
           - type: array
             items: File
         n_peak_files_cond_1:
@@ -1020,22 +1000,16 @@ steps:
             var current_source = sources[i];
             var current_output_name = output_names[i];
             results[current_output_name] = null;
-            
-            if (current_source != null){
-              if (Array.isArray(current_source)){
-                for (var j = 0; j < current_source.length; j++){
-                      var new_item = current_source[j];
-                      new_item["basename"] = "u" + "_" + i + "_" + j+ "_" + new_item.basename;
-                      if (results[current_output_name] == null){
-                        results[current_output_name] = [new_item];
-                      } else {
-                        results[current_output_name].push(new_item);
-                      }
-                 }
-              } else {
-                var new_item = current_source;
-                new_item["basename"] = "u" + "_" + i + "_" + j+ "_" + new_item.basename;
-                results[current_output_name] = [new_item];
+
+            if (current_source != null && current_source.length > 0){
+              for (var j = 0; j < current_source.length; j++){
+                    var new_item = current_source[j];
+                    new_item["basename"] = "u" + "_" + i + "_" + j+ "_" + new_item.basename;
+                    if (results[current_output_name] == null){
+                      results[current_output_name] = [new_item];
+                    } else {
+                      results[current_output_name].push(new_item);
+                    }
               }
             }
           }
