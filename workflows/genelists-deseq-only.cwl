@@ -168,12 +168,12 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  stdout_log_file:
+  log_file_stdout:
     type: File
     outputSource: data_integration/log_file_stdout
     label: "log file stdout"
 
-  stderr_log_file:
+  log_file_stderr:
     type: File
     outputSource: data_integration/log_file_stderr
     label: "log file stderr"
@@ -182,7 +182,7 @@ outputs:
 steps:
 
   data_integration:
-    run: ../tools/genelists-deseq-diffbind.cwl
+    run: ../tools/genelists-deseq-only.cwl
     in:
       threads: threads_no
       genelist_names: genelist_names
