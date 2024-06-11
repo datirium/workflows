@@ -120,14 +120,14 @@ outputs:
     doc: |
       HTML preconfigured morpheus heatmap scaled to 99th percentile
 
-  log_stdout:
+  log_file_stdout:
     type: stdout
 
-  log_stderr:
+  log_file_stderr:
     type: stderr
 
 
-baseCommand: ["/usr/locl/bin/run_genelists_rnaseq.sh"]
+baseCommand: ["run_genelists_rnaseq.sh"]
 stdout: genelists_stdout.log
 stderr: genelists_stderr.log
 
