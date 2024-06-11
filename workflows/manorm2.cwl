@@ -451,9 +451,7 @@ outputs:
       each sample.
 
   coverage_files_cond_1:
-    type:
-    - type: array
-      items: File
+    type: File[]
     label: "Control group sample(s)"
     doc: |
       Genome coverage files with the normalized
@@ -469,9 +467,7 @@ outputs:
         height: 120
 
   coverage_files_cond_2:
-    type:
-    - type: array
-      items: File
+    type: File[]
     label: "Treatment group sample(s)"
     doc: |
       Genome coverage files with the normalized
@@ -489,8 +485,7 @@ outputs:
   n_peak_files_cond_1:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Control group sample(s)"
     doc: |
       Narrow peak files with the peaks called
@@ -509,8 +504,7 @@ outputs:
   n_peak_files_cond_2:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Treatment group sample(s)"
     doc: |
       Narrow peak files with the peaks called
@@ -529,8 +523,7 @@ outputs:
   b_peak_files_cond_1:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Control group sample(s)"
     doc: |
       Broad peak files with the peaks called from
@@ -548,8 +541,7 @@ outputs:
   b_peak_files_cond_2:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Treatment group sample(s)"
     doc: |
       Broad peak files with the peaks called from
@@ -581,9 +573,7 @@ outputs:
         height: 40
 
   smpl_corr_raw_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Read counts correlation between the samples (raw)"
     doc: |
       Read counts correlation between the samples.
@@ -597,9 +587,7 @@ outputs:
         Caption: "Read counts correlation between the samples (raw)"
 
   smpl_corr_crtd_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Read counts correlation between the samples (batch corrected)"
     doc: |
       Read counts correlation between the samples.
@@ -613,9 +601,7 @@ outputs:
         Caption: "Read counts correlation between the samples (batch corrected)"
 
   smpl_corr_norm_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Read counts correlation between the samples (normalized)"
     doc: |
       Read counts correlation between the samples.
@@ -630,9 +616,7 @@ outputs:
         Caption: "Read counts correlation between the samples (normalized)"
 
   smpl_vrlp_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Peaks overlap between the samples"
     doc: |
       Peaks overlap between the samples. On the
@@ -646,9 +630,7 @@ outputs:
         Caption: "Peaks overlap between the samples"
 
   cnd_vrlp_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Peaks overlap between the biological conditions"
     doc: |
       Peaks overlap between the biological conditions.
@@ -662,9 +644,7 @@ outputs:
         Caption: "Peaks overlap between the biological conditions"
 
   diff_vlcn_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Volcano plot for differentially bound sites"
     doc: |
       Volcano plot for differentially bound sites.
@@ -676,9 +656,7 @@ outputs:
         Caption: "Volcano plot for differentially bound sites"
 
   diff_ma_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "MA-plot for differentially bound sites"
     doc: |
       MA-plot for differentially bound sites.
@@ -690,9 +668,7 @@ outputs:
         Caption: "MA-plot for differentially bound sites"
 
   pca_1_2_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Read counts PCA (PC1/PC2)."
     doc: |
       Read counts PCA (PC1/PC2).
@@ -704,9 +680,7 @@ outputs:
         Caption: "PCA (1,2) of not filtered normalized counts"
 
   pca_2_3_plot_png:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Read counts PCA (PC2/PC3)"
     doc: |
       Read counts PCA (PC2/PC3).
@@ -718,9 +692,7 @@ outputs:
         Caption: "PCA (2,3) of not filtered normalized counts"
 
   mds_plot_html:
-    type:
-    - "null"
-    - File
+    type: File?
     outputSource: manorm/mds_plot_html
     label: "MDS plot"
     doc: |
@@ -869,62 +841,46 @@ steps:
       class: ExpressionTool
       inputs:
         genome_cov_files_cond_1:
-          type:
-          - type: array
-            items: File
+          type: File[]
         genome_cov_files_cond_2:
-          type:
-          - type: array
-            items: File
+          type: File[]
         narrow_peak_files_cond_1:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
         narrow_peak_files_cond_2:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
         broad_peak_files_cond_1:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
         broad_peak_files_cond_2:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
       outputs:
         coverage_files_cond_1:
-          type:
-          - type: array
-            items: File
+          type: File[]
         coverage_files_cond_2:
-          type:
-          - type: array
-            items: File
+          type: File[]
         n_peak_files_cond_1:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
         n_peak_files_cond_2:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
         b_peak_files_cond_1:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
         b_peak_files_cond_2:
           type:
           - "null"
-          - type: array
-            items: File
+          - File[]
       expression: |
         ${
           var results = {};
