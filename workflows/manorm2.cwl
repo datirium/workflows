@@ -50,9 +50,7 @@ inputs:
       position: 1
 
   read_files_cond_1:
-    type:
-    - type: array
-      items: File
+    type: File[]
     label: "Control group sample(s)"
     doc: |
       Coordinate sorted and indexed BAM files with
@@ -62,9 +60,7 @@ inputs:
     "sd:localLabel": true
 
   read_files_cond_2:
-    type:
-    - type: array
-      items: File
+    type: File[]
     label: "Treatment group sample(s)"
     doc: |
       Coordinate sorted and indexed BAM files with
@@ -76,8 +72,7 @@ inputs:
   narrow_peak_files_cond_1:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Control group sample(s)"
     doc: |
       Narrow peak files with the peaks called from
@@ -87,8 +82,7 @@ inputs:
   narrow_peak_files_cond_2:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Treatment group sample(s)"
     doc: |
       Narrow peak files with the peaks called from
@@ -98,8 +92,7 @@ inputs:
   broad_peak_files_cond_1:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Control group sample(s)"
     doc: |
       Broad peak files with the peaks called from
@@ -109,8 +102,7 @@ inputs:
   broad_peak_files_cond_2:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Treatment group sample(s)"
     doc: |
       Broad peak files with the peaks called from
@@ -118,9 +110,7 @@ inputs:
     "sd:upstreamSource": "treatment/macs2_broad_peaks"
 
   genome_cov_files_cond_1:
-    type:
-    - type: array
-      items: File
+    type: File[]
     label: "Control group sample(s)"
     doc: |
       Genome coverage files with the normalized
@@ -129,9 +119,7 @@ inputs:
     "sd:upstreamSource": "control/bigwig"
 
   genome_cov_files_cond_2:
-    type:
-    - type: array
-      items: File
+    type: File[]
     label: "Treatment group sample(s)"
     doc: |
       Genome coverage files with the normalized
@@ -142,8 +130,7 @@ inputs:
   summit_files_cond_1:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Control group sample(s)"
     doc: |
       BED files with the summits of the peaks
@@ -155,8 +142,7 @@ inputs:
   summit_files_cond_2:
     type:
     - "null"
-    - type: array
-      items: File
+    - File[]
     label: "Treatment group sample(s)"
     doc: |
       BED files with the summits of the peaks
@@ -166,10 +152,7 @@ inputs:
     "sd:upstreamSource": "treatment/macs2_peak_summits"
 
   sample_names_cond_1:
-    type:
-    - string
-    - type: array
-      items: string
+    type: string[]
     label: "Control group sample(s)"
     doc: |
       Names of the samples that belong to
@@ -177,10 +160,7 @@ inputs:
     "sd:upstreamSource": "control/alias"
 
   sample_names_cond_2:
-    type:
-    - string
-    - type: array
-      items: string
+    type: string[]
     label: "Treatment group sample(s)"
     doc: |
       Names of the samples that belong to
@@ -188,9 +168,7 @@ inputs:
     "sd:upstreamSource": "treatment/alias"
 
   condition_1:
-    type:
-    - "null"
-    - string
+    type: string?
     default: "control"
     label: "Control group sample(s)"
     doc: |
@@ -198,9 +176,7 @@ inputs:
       control group.
 
   condition_2:
-    type:
-    - "null"
-    - string
+    type: string?
     default: "treatment"
     label: "Treatment group sample(s)"
     doc: |
@@ -208,9 +184,7 @@ inputs:
       treatment group.
 
   paired_end:
-    type:
-    - "null"
-    - boolean
+    type: boolean?
     default: false
     label: "Consider all reads as paired-end"
     doc: |
@@ -238,10 +212,8 @@ inputs:
     "sd:upstreamSource": "genome_indices/chrom_length"
 
   maximum_peak_number:
-    type:
-    - "null"
-    - int
-    default: null
+    type: int?
+    default: 0
     label: "Maximum number of peaks (optional)"
     doc: |
       The maximum number of the most significant
@@ -252,12 +224,10 @@ inputs:
       by MACS2 either as int(-10*log10qvalue) or
       as int(-10*log10qvalue), depending on the
       cutoff used for peak calling.
-      Default: keep all peaks.
+      Default: 0 - keep all peaks.
 
   minimum_peak_gap:
-    type:
-    - "null"
-    - int
+    type: int?
     default: 150
     label: "Minimum peak gap"
     doc: |
@@ -302,9 +272,7 @@ inputs:
       Default: pseudo-reference
 
   maximum_padj:
-    type:
-    - "null"
-    - float
+    type: float?
     default: 0.05
     label: "Maximum adjusted P-value"
     doc: |
@@ -314,9 +282,7 @@ inputs:
       to the provided value. Default: 0.05
 
   batch_metadata_file:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Batch metadata file (optional)"
     doc: |
       Optional headerless TSV/CSV file for
@@ -329,9 +295,7 @@ inputs:
       Default: do not apply batch correction.
 
   blacklist_regions_file:
-    type:
-    - "null"
-    - File
+    type: File?
     label: "Genomic blacklist regions file (optional)"
     doc: |
       BED file with the genomic blacklist
@@ -342,9 +306,7 @@ inputs:
       genomic bins.
 
   remove_duplicated_reads:
-    type:
-    - "null"
-    - boolean
+    type: boolean?
     default: false
     label: "Remove duplicated reads"
     doc: |
@@ -358,9 +320,7 @@ inputs:
       advanced: true
 
   bin_size:
-    type:
-    - "null"
-    - int
+    type: int?
     default: 2000
     label: "The size of the reference genomic bins"
     doc: |
@@ -374,9 +334,7 @@ inputs:
       advanced: true
 
   fixed_bin_size:
-    type:
-    - "null"
-    - boolean
+    type: boolean?
     default: false
     label: "Force equal size for all reference genomic bins"
     doc: |
@@ -390,9 +348,7 @@ inputs:
       advanced: true
 
   shift_size:
-    type:
-    - "null"
-    - int
+    type: int?
     default: 100
     label: "Shift size for single-end reads"
     doc: |
@@ -408,9 +364,7 @@ inputs:
       advanced: true
 
   exclude_chromosomes:
-    type:
-    - "null"
-    - string
+    type: string?
     default: null
     label: "Chromosomes to be exluded from the analysis"
     doc: |
@@ -422,9 +376,7 @@ inputs:
       advanced: true
 
   minimum_overlap:
-    type:
-    - "null"
-    - float
+    type: float?
     default: 1
     label: "Minimum peak overlap between the samples"
     doc: |
@@ -440,9 +392,7 @@ inputs:
       advanced: true
 
   promoter_dist:
-    type:
-    - "null"
-    - int
+    type: int?
     default: 1000
     label: "Promoter distance, bp"
     doc: |
@@ -455,9 +405,7 @@ inputs:
       advanced: true
 
   upstream_dist:
-    type:
-    - "null"
-    - int
+    type: int?
     default: 20000
     label: "Upstream distance, bp"
     doc: | 
@@ -1074,7 +1022,17 @@ steps:
       minimum_overlap: minimum_overlap
       maximum_padj: maximum_padj
       batch_metadata_file: batch_metadata_file
-      maximum_peak_number: maximum_peak_number
+      maximum_peak_number:
+        source: maximum_peak_number
+        valueFrom: |
+          ${
+            if (self == 0){
+              return null;
+            }
+            else {
+              return self;
+            }
+          }
       minimum_peak_gap: minimum_peak_gap
       bin_size: bin_size
       fixed_bin_size: fixed_bin_size
