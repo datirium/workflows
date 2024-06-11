@@ -463,7 +463,7 @@ outputs:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "wig"
-        name: "Genome coverage"
+        name: "Coverage (control)"
         height: 120
 
   coverage_files_cond_2:
@@ -479,7 +479,7 @@ outputs:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "wig"
-        name: "Genome coverage"
+        name: "Coverage (treatment)"
         height: 120
 
   n_peak_files_cond_1:
@@ -497,7 +497,7 @@ outputs:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "annotation"
-        name: "Called peaks"
+        name: "Peaks (control)"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -516,7 +516,7 @@ outputs:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "annotation"
-        name: "Called peaks"
+        name: "Peaks (treatment)"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -534,7 +534,7 @@ outputs:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "annotation"
-        name: "Called peaks"
+        name: "Peaks (control)"
         displayMode: "COLLAPSE"
         height: 40
 
@@ -552,7 +552,7 @@ outputs:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "annotation"
-        name: "Called peaks"
+        name: "Peaks (treatment)"
         displayMode: "COLLAPSE"
         height: 40
 
