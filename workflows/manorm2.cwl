@@ -643,6 +643,20 @@ outputs:
         tab: "Exploratory plots"
         Caption: "Peaks overlap between the biological conditions"
 
+  ma_corr_plot_png:
+    type: File?
+    label: "Correlation between M and A values"
+    doc: |
+      Correlation between M and A values across the
+      common peak regions of either each pair of
+      biological conditions or each pair of samples.
+      PNG format.
+  outputSource: manorm/ma_corr_plot_png
+    "sd:visualPlugins":
+    - image:
+        tab: "Exploratory plots"
+        Caption: "Correlation between M and A values"
+
   diff_vlcn_plot_png:
     type: File?
     label: "Volcano plot for differentially bound sites"
