@@ -651,7 +651,7 @@ outputs:
       common peak regions of either each pair of
       biological conditions or each pair of samples.
       PNG format.
-  outputSource: manorm/ma_corr_plot_png
+    outputSource: manorm/ma_corr_plot_png
     "sd:visualPlugins":
     - image:
         tab: "Exploratory plots"
