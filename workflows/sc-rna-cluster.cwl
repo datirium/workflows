@@ -633,7 +633,7 @@ steps:
       parallel_memory_limit:
         default: 32
       vector_memory_limit:
-        default: 96
+        default: 128
       threads:
         source: threads
         valueFrom: $(parseInt(self))
