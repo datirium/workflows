@@ -499,7 +499,7 @@ tail -n+2 $data_rnaseq | cut -f4 | sort | uniq | while read sample_name; do
 	awk -F'\t' -v sample_name="$sample_name" '{if($4==sample_name){print($0)}}' $data_rnaseq > rna_norm.tmp
 	#	awk explanation:
 	#		Sort the file numerically (on Rpkm col12)
-	#		drop the top 5%
+	#		drop the top 1%
 	#		pick the next value
 	pad=$(cut -f12 rna_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*1); p=p%1?int(p)+1:p; print a[c-p-1]}')
 	#	apply pad normalization and scale from 100-199 (also dropping Total_reads column here)
