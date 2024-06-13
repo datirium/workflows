@@ -487,11 +487,11 @@ done >> output_na-binding.tsv
 cp output_na-binding.tsv output_na-binding-forheatmap.tsv
 
 # normalize expression data within each sample and scale from 100-199 per sample (for better visualization)
-#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
+#	for each sample, find the 99th percentile average depth (pad), and apply normalization by changing:
 #		values >= pad to pad value
 #		values < 0-pad remain unchanged
 printf "\n\n"
-printf "running each rna-seq data sample through normalization to 95th percentile...\n"
+printf "running each rna-seq data sample through normalization to 99th percentile...\n"
 # loop for each sample, grep sample rows, calc percentile, and apply normalization
 #	in header also dropping Total_reads [$11] column
 head -1 $data_rnaseq | awk -F'\t' '{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$12,$14,$13)}' > output_rna-seq.tsv
@@ -499,7 +499,7 @@ tail -n+2 $data_rnaseq | cut -f4 | sort | uniq | while read sample_name; do
 	awk -F'\t' -v sample_name="$sample_name" '{if($4==sample_name){print($0)}}' $data_rnaseq > rna_norm.tmp
 	#	awk explanation:
 	#		Sort the file numerically (on Rpkm col12)
-	#		drop the top 5%
+	#		drop the top 1%
 	#		pick the next value
 	pad=$(cut -f12 rna_norm.tmp | sort -n | awk 'BEGIN{c=0} length($0){a[c]=$0;c++}END{p=(c/100*1); p=p%1?int(p)+1:p; print a[c-p-1]}')
 	#	apply pad normalization and scale from 100-199 (also dropping Total_reads column here)
@@ -583,9 +583,6 @@ mv heatmap.html heatmap_peaknorm99.html
 
 #	HEATMAP no percentile normalization
 # normalize peak data within each sample before scaling among ALL samples
-#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
-#		values >= pad to pad value
-#		values < 0-pad remain unchanged
 printf "\n\n"
 printf "copying na-binding data (no percentile normalization)\n"
 

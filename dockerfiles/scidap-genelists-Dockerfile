@@ -13,10 +13,10 @@
 #      Cmd2:        docker image push robertplayer/scidap-genelists:dev
 # Pull Cmd:         docker pull robertplayer/scidap-genelists:dev
 # Test dev:         docker run --rm -ti robertplayer/scidap-genelists:dev /bin/bash
-# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v3.0.0
-# Push for PR:      docker image push robertplayer/scidap-genelists:v3.0.0
-# Pull Cmd:         docker pull robertplayer/scidap-genelists:v3.0.0
-# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v3.0.0 /bin/bash
+# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v4.0.0
+# Push for PR:      docker image push robertplayer/scidap-genelists:v4.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-genelists:v4.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v4.0.0 /bin/bash
 #           
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future
@@ -29,6 +29,9 @@
 #
 #   v3.0.0
 #       - added hopach clustering per genelist, per data type
+#
+#   v4.0.0
+#       - adding script for processing rna-seq data only
 #
 #################################################################
 
@@ -46,7 +49,9 @@ ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /tmp
 
 COPY ./scripts/run_genelists.sh /usr/local/bin/
+COPY ./scripts/run_genelists_rnaseq.sh /usr/local/bin/
 COPY ./scripts/run_genelists_heatmap.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq.R /usr/local/bin/
 COPY ./scripts/run_hopach_clustering.R /usr/local/bin/
 COPY ./scripts/fasta_rmlinebreaks.awk /usr/local/bin/
 COPY ./scripts/fasta_2col.sh /usr/local/bin/
@@ -77,10 +82,19 @@ RUN apt-get update && \
     cd /dockerdata/refs && \
     # permitting and symlinking scripts
     chmod +x /usr/local/bin/run_genelists.sh && \
+    ls -la /usr/local/bin/run_genelists.sh && \
+    chmod +x /usr/local/bin/run_genelists_rnaseq.sh && \
+    ls -la /usr/local/bin/run_genelists_rnaseq.sh && \
     chmod +x /usr/local/bin/run_genelists_heatmap.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq.R && \
     chmod +x /usr/local/bin/run_hopach_clustering.R && \
+    ls -la /usr/local/bin/run_hopach_clustering.R && \
     chmod +x /usr/local/bin/fasta_rmlinebreaks.awk && \
+    ls -la /usr/local/bin/fasta_rmlinebreaks.awk && \
     chmod +x /usr/local/bin/fasta_2col.sh && \
+    ls -la /usr/local/bin/fasta_2col.sh && \
     chmod +x /usr/local/bin/samtools-1.17/bin/samtools && \
     ln -s /usr/local/bin/samtools-1.17/bin/samtools /usr/local/bin/ && \
 ### Cleaning
