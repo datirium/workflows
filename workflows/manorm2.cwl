@@ -1102,9 +1102,12 @@ steps:
     run: ../tools/custom-bash.cwl
     in:
       input_file: restore_columns/output_file
+      param:
+        source: maximum_padj
+        valueFrom: $(self + "")                  # to convert it to string
       script:
         default: |
-          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["log2FoldChange"]<0) color="0,255,0"; print $ix["chr"]"\t"$ix["start"]"\t"$ix["end"]"\tpvalue="$ix["pvalue"]+0.0";padj="$ix["padj"]+0.0";log2FC="$ix["log2FoldChange"]"\t"1000"\t"$ix["strand"]"\t"$ix["start"]"\t"$ix["end"]"\t"color}' > `basename $0`
+          cat "$0" | awk -F "\t" -v maximum_padj="$1" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 && $ix["padj"]<=maximum_padj {color="255,0,0"; if ($ix["log2FoldChange"]<0) color="0,255,0"; print $ix["chr"]"\t"$ix["start"]"\t"$ix["end"]"\tpvalue="$ix["pvalue"]+0.0";padj="$ix["padj"]+0.0";log2FC="$ix["log2FoldChange"]"\t"1000"\t"$ix["strand"]"\t"$ix["start"]"\t"$ix["end"]"\t"color}' > `basename $0`
     out:
     - output_file
 
