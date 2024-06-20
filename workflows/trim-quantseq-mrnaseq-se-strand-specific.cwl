@@ -255,7 +255,7 @@ outputs:
   #   doc: "Common TSS expression"
   #   outputSource: group_transcript_expression/common_tss_expression_file
 
-  geep_gene_expression_file:
+  rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "GEEP: expression grouped by gene name"
