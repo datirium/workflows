@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.27
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.28
 
 
 inputs:
@@ -65,13 +65,6 @@ inputs:
     doc: |
       Unique aliases for treated expression files. Default: basenames of -t without extensions
 
-  rpkm_cutoff:
-    type: float?
-    inputBinding:
-      prefix: "-cu"
-    doc: |
-      Minimum threshold for rpkm filtering. Default: 5
-
   cluster_method:
     type:
     - "null"
@@ -121,23 +114,55 @@ inputs:
       Distance metric for HOPACH column clustering. Ignored if --cluster is not
       provided. Default: euclid
 
-  center_row:
-    type: boolean?
-    inputBinding:
-      prefix: "--center"
-    doc: |
-      Apply mean centering for feature expression prior to running
-      clustering by row. Ignored when --cluster is not row or both.
-      Default: do not centered
-
-  maximum_padj:
+  fdr:
     type: float?
     inputBinding:
-      prefix: "--padj"
+      prefix: "--fdr"
     doc: |
-      In the exploratory visualization part of the analysis output only features
-      with adjusted P-value not bigger than this value. Default: 0.05
-
+      In the exploratory visualization part of the analysis output only features,
+      with adjusted p-value (FDR) not bigger than this value. Also the significance,
+      cutoff used for optimizing the independent filtering. Default: 0.1.
+  
+  lfcthreshold:
+    type: float?
+    inputBinding:
+      prefix: "--lfcthreshold"
+    doc: |
+      Log2 fold change threshold for determining significant differential expression.
+      Genes with absolute log2 fold change greater than this threshold will be considered.
+      Default: 0.59 (about 1.5 fold change)
+      
+  regulation:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "up"
+          - "down"
+          - "both"
+    inputBinding:
+      prefix: "--regulation"
+    doc: |
+      Direction of differential expression comparison.
+      'up' for upregulated genes, 'down' for downregulated genes,
+      'both' for both up and downregulated genes. Default: both
+    default: "both"
+    
+  batchcorrection:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "combatseq"
+          - "limma"
+    inputBinding:
+      prefix: "--batchcorrection"
+    doc: |
+      Batch correction method to be applied.
+      'combatseq' applies ComBat_seq at the beginning of the analysis.
+      'limma' applies removeBatchEffect after differential expression analysis (DEA). Default: combatseq
+    default: "combatseq"
+    
   batch_file:
     type: File?
     inputBinding:
@@ -298,11 +323,14 @@ s:about: |
   usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/run_deseq.R
         [-h] -u UNTREATED [UNTREATED ...] -t TREATED [TREATED ...]
         [-ua [UALIAS ...]] [-ta [TALIAS ...]] [-un UNAME] [-tn TNAME]
-        [-bf BATCHFILE] [-cu CUTOFF] [--padj PADJ]
+        [-bf BATCHFILE] [-cu CUTOFF] [--fdr FDR]
+        [--regulation {up,down,both}]
+        [--lfcthreshold LFCTHRESHOLD]
+        [--batchcorrection {combatseq,limma}]
         [--cluster {row,column,both}]
         [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
         [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-        [--center] [-o OUTPUT] [-d DIGITS] [-p THREADS]
+        [-o OUTPUT] [-d DIGITS] [-p THREADS]
 
   Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups (condition-1-vs-
   condition-2)
@@ -332,11 +360,9 @@ s:about: |
                           TSV/CSV file. First column - names from --ualias and
                           --talias, second column - batch group name. Default:
                           None
-    -cu CUTOFF, --cutoff CUTOFF
-                          Minimum threshold for rpkm filtering. Default: 5
-    --padj PADJ           In the exploratory visualization part of the analysis
-                          output only features with adjusted P-value not bigger
-                          than this value. Default: 0.05
+    --fdr FDR             In the exploratory visualization part of the analysis output only features,
+                          with adjusted p-value (FDR) not bigger than this value. Also the significance,
+                          cutoff used for optimizing the independent filtering. Default: 0.1.
     --cluster {row,column,both}
                           Hopach clustering method to be run on normalized read
                           counts for the exploratory visualization part of the
@@ -347,12 +373,21 @@ s:about: |
     --columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}
                           Distance metric for HOPACH column clustering. Ignored
                           if --cluster is not provided. Default: euclid
-    --center              Apply mean centering for feature expression prior to
-                          running clustering by row. Ignored when --cluster is
-                          not row or both. Default: do not centered
     -o OUTPUT, --output OUTPUT
                           Output prefix. Default: deseq
     -d DIGITS, --digits DIGITS
                           Precision, number of digits to print. Default: 3
     -p THREADS, --threads THREADS
                           Threads
+    --lfcthreshold LFCTHRESHOLD
+                          Log2 fold change threshold for determining significant differential expression.
+                          Genes with absolute log2 fold change greater than this threshold will be considered.
+                          Default: 0.59 (about 1.5 fold change)
+    --regulation {up,down,both}
+                          Direction of differential expression comparison.
+                          'up' for upregulated genes, 'down' for downregulated genes,
+                          'both' for both up and downregulated genes. Default: both
+    --batchcorrection {combatseq,limma}
+                          Batch correction method to be applied.
+                          'combatseq' applies ComBat_seq at the beginning of the analysis.
+                          'limma' applies removeBatchEffect after differential expression analysis (DEA). Default: combatseq

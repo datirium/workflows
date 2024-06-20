@@ -117,14 +117,6 @@ inputs:
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
 
-  rpkm_cutoff:
-    type: float?
-    default: 0
-    label: "Minimum rpkm cutoff. Applied before running DEseq"
-    doc: "Minimum threshold for rpkm filtering. Default: 5"
-    'sd:layout':
-      advanced: true
-
   batch_file:
     type: File?
     default: null
@@ -205,25 +197,65 @@ inputs:
       provided. Default: euclid
     'sd:layout':
       advanced: true
-
-  center_row:
-    type: boolean?
-    default: false
-    label: "Apply mean centering for feature expression prior to running clustering by row"
+      
+  regulation:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+        - "up"
+        - "down"
+        - "both"
+    default: "both"
+    label: "Direction of Differential Expression"
+    inputBinding:
+      prefix: "--regulation"
     doc: |
-      Apply mean centering for feature expression prior to running
-      clustering by row. Ignored when --cluster is not row or both.
-      Default: do not centered
+      Direction of differential expression comparison.
+      'up' for upregulated genes, 'down' for downregulated genes,
+      'both' for both up and downregulated genes. Default: both
     'sd:layout':
-      advanced: true
+      advanced: true    
 
-  maximum_padj:
+  fdr:
     type: float?
-    default: 0.05
+    default: 0.1
     label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
     doc: |
-      In the exploratory visualization analysis output only features with
-      adjusted P-value not bigger than this value. Default: 0.05
+      In the exploratory visualization part of the analysis output only features,
+      with adjusted p-value (FDR) not bigger than this value. Also the significance,
+      cutoff used for optimizing the independent filtering. Default: 0.1.
+    'sd:layout':
+      advanced: true
+      
+  lfcthreshold:
+    type: float?
+    default: 0.59
+    label: "Log2 Fold Change Threshold"
+    inputBinding:
+      prefix: "--lfcthreshold"
+    doc: |
+      Log2 fold change threshold for determining significant differential expression.
+      Genes with absolute log2 fold change greater than this threshold will be considered.
+      Default: 0.59 (about 1.5 fold change)
+    'sd:layout':  
+      advanced: true
+      
+  batchcorrection:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "combatseq"
+          - "limma"
+    default: "combatseq"
+    label: "Batch Correction Method"
+    inputBinding:
+      prefix: "--batchcorrection"
+    doc: |
+      Batch correction method to be applied.
+      'combatseq' applies ComBat_seq at the beginning of the analysis.
+      'limma' applies removeBatchEffect after differential expression analysis (DEA). Default: combatseq
     'sd:layout':
       advanced: true
 
@@ -478,16 +510,17 @@ steps:
       treated_name: alias_cond_2
       untreated_sample_names: sample_names_cond_1
       treated_sample_names: sample_names_cond_2
-      rpkm_cutoff: rpkm_cutoff
       batch_file: batch_file
       cluster_method:
         source: cluster_method
         valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
       column_distance: column_distance
-      center_row: center_row
-      maximum_padj: maximum_padj
+      fdr: fdr
       threads: threads
+      lfcthreshold: lfcthreshold
+      regulation: regulation
+      batchcorrection: batchcorrection
     out:
       - diff_expr_file
       - plot_lfc_vs_mean
