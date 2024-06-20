@@ -23,13 +23,11 @@ requirements:
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-quantseq-mrnaseq-se.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-quantseq-mrnaseq-se-strand-specific.cwl"
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
     - "trim-rnaseq-se-dutp.cwl"
-    - "trim-quantseq-mrnaseq-se.cwl"
     - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
 
 

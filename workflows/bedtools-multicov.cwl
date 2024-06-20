@@ -20,7 +20,6 @@ requirements:
   - "trim-rnaseq-pe-dutp.cwl"
   - "trim-rnaseq-se-dutp.cwl"
   - "trim-rnaseq-pe-smarter-dutp.cwl"
-  - "trim-quantseq-mrnaseq-se.cwl"
   - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-chipseq-pe.cwl"
@@ -31,7 +30,6 @@ requirements:
   - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-smarter-dutp.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-quantseq-mrnaseq-se.cwl"
   - "https://github.com/datirium/workflows/workflows/trim-quantseq-mrnaseq-se-strand-specific.cwl"
 
 

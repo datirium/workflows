@@ -669,9 +669,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "QuantSeq 3' mRNA-Seq single-read"
-label: "QuantSeq 3' mRNA-Seq single-read"
-s:alternateName: "Run QuantSeq 3' mRNA-Seq basic analysis with single-end data file"
+s:name: "Deprecated. QuantSeq 3' mRNA-Seq single-read"
+label: "Deprecated. QuantSeq 3' mRNA-Seq single-read"
+s:alternateName: "Deprecated. Run QuantSeq 3' mRNA-Seq basic analysis with single-end data file"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-quantseq-mrnaseq-se.cwl
 s:codeRepository: https://github.com/datirium/workflows
