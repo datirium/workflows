@@ -203,19 +203,21 @@ inputs:
       - "null"
       - type: enum
         symbols:
-        - "up"
-        - "down"
-        - "both"
+          - "both"
+          - "up"
+          - "down"
     default: "both"
     label: "Direction of Differential Expression"
     inputBinding:
       prefix: "--regulation"
     doc: |
-      Direction of differential expression comparison.
-      'up' for upregulated genes, 'down' for downregulated genes,
-      'both' for both up and downregulated genes. Default: both
+      Direction of differential expression comparison. β is the log2 fold change.
+      - 'both' for both up and downregulated genes. This includes |β| > lfcThreshold (greaterAbs) with two-tailed p-values, and |β| < lfcThreshold (lessAbs) with p-values being the maximum of the upper and lower tests. This option considers both directions of regulation in the comparison between condition2 and condition1.
+      - 'up' for upregulated genes (β > lfcThreshold in condition2 compared to condition1). This identifies genes that are more highly expressed in condition2.
+      - 'down' for downregulated genes (β < -lfcThreshold in condition2 compared to condition1). This identifies genes that are less expressed in condition2.
+      Default: both
     'sd:layout':
-      advanced: true    
+      advanced: true   
 
   fdr:
     type: float?
@@ -246,16 +248,18 @@ inputs:
       - "null"
       - type: enum
         symbols:
+          - "none"
           - "combatseq"
-          - "limma"
+          - "limmaremovebatcheffect"
     default: "combatseq"
     label: "Batch Correction Method"
     inputBinding:
       prefix: "--batchcorrection"
     doc: |
-      Batch correction method to be applied.
-      'combatseq' applies ComBat_seq at the beginning of the analysis.
-      'limma' applies removeBatchEffect after differential expression analysis (DEA). Default: combatseq
+      Specifies the batch correction method to be applied.
+      - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
+      - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
+      - Default: none
     'sd:layout':
       advanced: true
 
