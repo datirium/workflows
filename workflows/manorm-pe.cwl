@@ -21,6 +21,8 @@ requirements:
     - "trim-atacseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
+  genome_indices:
+    - "genome-indices.cwl"
 
 
 inputs:
@@ -85,11 +87,10 @@ inputs:
 
   annotation_file:
     type: File
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
+    label: "Genome type"
     doc: |
       Tab-separated annotation file
-    'sd:upstreamSource': "first_chipseq_sample/genome_indices/annotation"
+    'sd:upstreamSource': "genome_indices/annotation"
 
   shift_size_first:
     type: int?

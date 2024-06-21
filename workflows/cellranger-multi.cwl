@@ -10,7 +10,7 @@ requirements:
 
 
 "sd:upstream":
-  gex_indices:
+  genome_indices:
   - "cellranger-mkref.cwl"
   vdj_indices:
   - "cellranger-mkvdjref.cwl"
@@ -35,13 +35,13 @@ inputs:
       This sample can be obtained from "Cell
       Ranger Reference (RNA, ATAC, RNA+ATAC)"
       pipeline.
-    "sd:upstreamSource": "gex_indices/indices_folder"
+    "sd:upstreamSource": "genome_indices/indices_folder"
     "sd:localLabel": true
 
   memory_limit:
     type: int?
     default: 20
-    "sd:upstreamSource": "gex_indices/memory_limit"
+    "sd:upstreamSource": "genome_indices/memory_limit"
 
   vdj_indices_folder:
     type: Directory
@@ -123,7 +123,7 @@ inputs:
       - "4"
       - "5"
       - "6"
-    default: "4"
+    default: "6"
     label: "Cores/CPUs"
     doc: |
       Parallelization parameter to define the
