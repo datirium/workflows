@@ -262,6 +262,24 @@ inputs:
       - Default: none
     'sd:layout':
       advanced: true
+      
+  check_batch_file:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file:
+        source: batch_file
+      param:
+        source: batchcorrection
+      script:
+        default: |
+          #!/bin/bash
+          if [[ "$2" == "combatseq" || "$2" == "limmaremovebatcheffect" ]] && [[ ! -f "$1" ]]; then
+            echo -e "# Warning!\n\n---\n\n**You provided a batch-correction method, but not a batch-file.**\n\nThe chosen parameter was ignored.\n\nPlease ensure that you provide a batch file when using the following batch correction methods:\n\n- **combatseq**\n- **limmaremovebatcheffect**\n\nIf you do not need batch correction, set the method to 'none'.\n\n---" > warning.md
+          else
+            echo -e "" > warning.md
+          fi
+    out:
+    - output_file
 
   sample_names_cond_1:
     type:
@@ -314,6 +332,17 @@ outputs:
         colors: ["#b3de69"]
         height: 600
         data: [$2, $9, $13]
+  
+  batch_file_warning:
+    type: File
+    label: "Warning message"
+    doc: |
+       Markdown file with a warning message if batch_file is not provided
+       but batchcorrection is set to "combatseq" or "limmaremovebatcheffect".
+    outputSource: check_batch_file/output_file
+    "sd:visualPlugins":
+    - markdownView:
+        tab: "Overview"
 
   read_counts_file:
     type: File
