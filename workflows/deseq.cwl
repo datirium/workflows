@@ -262,24 +262,6 @@ inputs:
       - Default: none
     'sd:layout':
       advanced: true
-      
-  check_batch_file:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file:
-        source: batch_file
-      param:
-        source: batchcorrection
-      script:
-        default: |
-          #!/bin/bash
-          if [[ "$2" == "combatseq" || "$2" == "limmaremovebatcheffect" ]] && [[ ! -f "$1" ]]; then
-            echo -e "# Warning!\n\n---\n\n**You provided a batch-correction method, but not a batch-file.**\n\nThe chosen parameter was ignored.\n\nPlease ensure that you provide a batch file when using the following batch correction methods:\n\n- **combatseq**\n- **limmaremovebatcheffect**\n\nIf you do not need batch correction, set the method to 'none'.\n\n---" > warning.md
-          else
-            echo -e "" > warning.md
-          fi
-    out:
-    - output_file
 
   sample_names_cond_1:
     type:
@@ -333,13 +315,15 @@ outputs:
         height: 600
         data: [$2, $9, $13]
   
-  batch_file_warning:
+  deseq_summary_md:
     type: File
-    label: "Warning message"
+    label: "DESeq2 Results Summary"
     doc: |
-       Markdown file with a warning message if batch_file is not provided
-       but batchcorrection is set to "combatseq" or "limmaremovebatcheffect".
-    outputSource: check_batch_file/output_file
+      Markdown file that includes a warning message if batch_file is not provided
+      but batchcorrection is set to "combatseq" or "limmaremovebatcheffect". Additionally,
+      it contains a detailed summary of the DESeq2 analysis results, including total genes
+      with non-zero read count, log fold changes (LFC), outliers, and low count genes.
+    outputSource: deseq/deseq_summary_md
     "sd:visualPlugins":
     - markdownView:
         tab: "Overview"
@@ -556,6 +540,7 @@ steps:
       batchcorrection: batchcorrection
     out:
       - diff_expr_file
+      - deseq_summary_md
       - plot_lfc_vs_mean
       - gene_expr_heatmap
       - plot_pca
@@ -567,6 +552,7 @@ steps:
       - mds_plot_html
       - stdout_log
       - stderr_log
+      - md_report
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl

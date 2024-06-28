@@ -197,6 +197,11 @@ outputs:
     type: File
     outputBinding:
       glob: "*report.tsv"
+      
+  deseq_summary_md:
+    type: File
+    outputBinding:
+      glob: "*summary.md"
 
   read_counts_file:
     type: File
