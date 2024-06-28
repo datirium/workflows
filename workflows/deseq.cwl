@@ -552,7 +552,6 @@ steps:
       - mds_plot_html
       - stdout_log
       - stderr_log
-      - md_report
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
