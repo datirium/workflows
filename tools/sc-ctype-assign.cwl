@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.38
+  dockerPull: biowardrobe2/sc-tools:v0.0.39
 
 
 inputs:
@@ -604,15 +604,11 @@ outputs:
       PNG format.
 
   xpr_dnst_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
+    type: File?
     outputBinding:
-      glob: "*_xpr_dnst_*.png"
+      glob: "*_xpr_dnst.png"
     doc: |
       Gene expression density.
-      All genes of interest.
       PNG format.
 
   xpr_htmp_plot_png:

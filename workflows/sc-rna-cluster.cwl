@@ -442,6 +442,36 @@ outputs:
         tab: "Split by group"
         Caption: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
 
+  xpr_avg_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/xpr_avg_res_plot_png
+    label: "Average gene expression"
+    doc: |
+      Average gene expression.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Genes of interest (expression)"
+        Caption: "Average gene expression"
+
+  xpr_dnst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/xpr_dnst_res_plot_png
+    label: "Gene expression density"
+    doc: |
+      Gene expression density.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Genes of interest (expression)"
+        Caption: "Gene expression density"
+
   xpr_per_cell_plot_png:
     type:
     - "null"
@@ -455,39 +485,8 @@ outputs:
       PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Genes of interest (UMAP)"
+        tab: "Genes of interest (expression)"
         Caption: "UMAP colored by gene expression (per gene)"
-
-  xpr_dnst_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/xpr_dnst_res_plot_png
-    label: "Gene expression density (per gene)"
-    doc: |
-      Gene expression density.
-      All genes of interest.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Genes of interest (violin plot)"
-        Caption: "Gene expression density (per gene)"
-
-  xpr_avg_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: sc_rna_cluster/xpr_avg_res_plot_png
-    label: "Average gene expression"
-    doc: |
-      Average gene expression.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "Genes of interest (dot plot)"
-        Caption: "Average gene expression"
 
   xpr_htmp_res_plot_png:
     type:
