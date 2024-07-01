@@ -40,7 +40,7 @@ requirements:
 
 inputs:
 
-  alias:
+  alias__:
     type: string
     label: "Analysis name"
     sd:preview:
