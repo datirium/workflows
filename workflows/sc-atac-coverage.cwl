@@ -35,7 +35,7 @@ requirements:
 
 inputs:
 
-  alias__:
+  alias:
     type: string
     label: "Experiment short name/alias"
     sd:preview:
