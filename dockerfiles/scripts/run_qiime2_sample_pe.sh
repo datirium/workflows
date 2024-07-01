@@ -120,7 +120,7 @@ qiime dada2 denoise-paired \
   --p-max-ee-f 5 \
   --p-max-ee-r 5 \
   --p-trim-left-f $trimLeftF \
-  --p-trim-left-r $trimLeftF \
+  --p-trim-left-r $trimLeftR \
   --p-trunc-len-f $truncLenF \
   --p-trunc-len-r $truncLenR \
   --o-representative-sequences rep-seqs.qza \
