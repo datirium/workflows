@@ -16,8 +16,8 @@ suppressMessages(library(reshape2))
 
 # character vector of positional arguments
 args <- commandArgs(trailingOnly = TRUE)
-input_file <- args[1]       # ex. input_file <- 'output_na-binding_raw-cluster_input.tsv'
-acast_value <- args[2]      # ex. acast_value <- 'avg_depth_sum' ('Rpkm' or 'avg_depth_sum' for na-binding data)
+input_file <- args[1]       # ex. input_file <- 'genelist_0-cluster_data.tmp'
+acast_value <- args[2]      # ex. acast_value <- 'VST' ('Rpkm' or 'VST' for rna-seq, or 'avg_depth_sum' for na-binding data)
 
 # read in files to data frames (counts need to be in matrix)
 df <- read.table(input_file, header=T, sep='\t')

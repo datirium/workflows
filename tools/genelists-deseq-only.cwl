@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:v4.0.0
+  dockerPull: robertplayer/scidap-genelists:dev
 
 
 inputs:
@@ -64,12 +64,19 @@ inputs:
 
 outputs:
 
-  master_samplesheet:
+  master_samplesheet_scaled:
     type: File
     outputBinding:
-      glob: master_samplesheet.tsv
+      glob: master_samplesheet_scaled.tsv
     doc: |
-      contains formatted information of the input data and files
+      contains formatted information of the input data and files for scaled heatmaps
+
+  master_samplesheet_vst:
+    type: File
+    outputBinding:
+      glob: master_samplesheet_vst.tsv
+    doc: |
+      contains formatted information of the input data and files for vst normalized heatmap
 
   output_row_metadata:
     type: File
@@ -90,35 +97,56 @@ outputs:
     outputBinding:
       glob: output_counts.tsv
     doc: |
-      peak average read depth per TSS window and gene expression counts matrix
+      scaled RPKM (0-99) gene expression counts matrix
+
+  output_counts_vst:
+    type: File
+    outputBinding:
+      glob: output_counts_vst.tsv
+    doc: |
+      VST normalized gene expression counts matrix
 
   heatmap_gct:
     type: File
     outputBinding:
       glob: heatmap.gct
     doc: |
-      GCT formatted peak and expression data for morpheus viewer
+      GCT formatted scaled RPKM values (0-99) expression data for morpheus viewer
+
+  heatmap_vst_gct:
+    type: File
+    outputBinding:
+      glob: heatmap_vst.gct
+    doc: |
+      GCT formatted VST expression data for morpheus viewer
 
   heatmap_html:
     type: File
     outputBinding:
-      glob: heatmap.html
+      glob: heatmap_nonorm.html
     doc: |
-      HTML preconfigured morpheus heatmap
+      HTML preconfigured morpheus heatmap with scaled RPKM values (0-99)
 
-  heatmap_peaknorm95_html:
+  heatmap_norm95_html:
     type: File
     outputBinding:
-      glob: heatmap_peaknorm95.html
+      glob: heatmap_norm95.html
     doc: |
-      HTML preconfigured morpheus heatmap scaled to 95th percentile
+      HTML preconfigured morpheus heatmap with scaled RPKM values (0-99) and 95th percentile max cutoff
 
-  heatmap_peaknorm99_html:
+  heatmap_norm99_html:
     type: File
     outputBinding:
-      glob: heatmap_peaknorm99.html
+      glob: heatmap_norm99.html
     doc: |
-      HTML preconfigured morpheus heatmap scaled to 99th percentile
+      HTML preconfigured morpheus heatmap with scaled RPKM values (0-99) and 99th percentile max cutoff
+
+  heatmap_vst_html:
+    type: File
+    outputBinding:
+      glob: heatmap_vst.html
+    doc: |
+      HTML preconfigured morpheus heatmap with VST values
 
   log_file_stdout:
     type: stdout
@@ -183,16 +211,20 @@ doc: |
 
 
   Primary Output files:
-  - heatmap.gct, GCT formatted peak and expression data for morpheus viewer
-  - heatmap.html, html of morpheus heatmap with preconfigured settings, peak data scaled among all samples
-  - heatmap_peaknorm95.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample to 95th percentile
-  - heatmap_peaknorm99.html, html of morpheus heatmap with preconfigured settings, peak data scaled per individual sample to 99th percentile
+  - heatmap.gct, GCT formatted RPKM expression data for morpheus viewer
+  - heatmap_vst.gct, GCT formatted VST expression data for morpheus viewer (transformed TotalReads counts)
+  - heatmap_vst.html, html of morpheus heatmap with preconfigured settings, VST, no data scaling
+  - heatmap_nonorm.html, html of morpheus heatmap with preconfigured settings, RPKM, no data scaling
+  - heatmap_norm95.html, html of morpheus heatmap with preconfigured settings, RPKM, data scaled per individual sample to 95th percentile
+  - heatmap_norm99.html, html of morpheus heatmap with preconfigured settings, RPKM, data scaled per individual sample to 99th percentile
 
   Secondary Output files:
-  - master_samplesheet.tsv, contains formatted information of the input data and files
+  - master_samplesheet_scaled.tsv, contains formatted information of the input data and files for scaled heatmaps
+  - master_samplesheet_vst.tsv, contains formatted information of the input data and files for vst normalized heatmaps
   - output_row_metadata.tsv, row metadata for GCT formatter
   - output_col_metadata.tsv, column metadata for GCT formatter
-  - output_counts.tsv, peak average read depth per TSS window and gene expression counts matrix
+  - output_counts.tsv, gene expression counts matrix (TotalReads and RPKM)
+  - output_counts_vst.tsv, gene expression counts matrix (VST values)
 
   PARAMS:
     SECTION 1: general

@@ -100,12 +100,19 @@ inputs:
 
 outputs:
 
-  master_samplesheet:
+  master_samplesheet_scaled:
     type: File
-    label: "contains formatted information of the input data and files"
+    label: "contains formatted information of the input data and files for scaled heatmaps"
     format: "http://edamontology.org/format_3475"
-    doc: "contains formatted information of the input data and files"
-    outputSource: data_integration/master_samplesheet
+    doc: "contains formatted information of the input data and files for scaled heatmaps"
+    outputSource: data_integration/master_samplesheet_scaled
+
+  master_samplesheet_vst:
+    type: File
+    label: "contains formatted information of the input data and files for vst heatmap"
+    format: "http://edamontology.org/format_3475"
+    doc: "contains formatted information of the input data and files for vst heatmap"
+    outputSource: data_integration/master_samplesheet_vst
 
   output_row_metadata:
     type: File
@@ -123,46 +130,64 @@ outputs:
 
   output_counts:
     type: File
-    label: "peak average read depth per TSS window and gene expression counts matrix"
+    label: "gene expression RPKM counts matrix scaled to 0-99"
     format: "http://edamontology.org/format_3475"
-    doc: "peak average read depth per TSS window and gene expression counts matrix"
+    doc: "gene expression counts matrix"
     outputSource: data_integration/output_counts
+
+  output_counts_vst:
+    type: File
+    label: "gene expression VST counts matrix"
+    format: "http://edamontology.org/format_3475"
+    doc: "gene expression counts matrix"
+    outputSource: data_integration/output_counts_vst
 
   heatmap_gct_file:
     type: File
-    label: "GCT formatted peak and expression data for morpheus viewer"
+    label: "GCT formatted expression data for morpheus viewer"
     format: "http://edamontology.org/format_3709"
-    doc: "GCT formatted peak and expression data for morpheus viewer"
+    doc: "GCT formatted expression data for morpheus viewer"
     outputSource: data_integration/heatmap_gct
 
   heatmap_nonorm_html:
     type: File
     outputSource: data_integration/heatmap_html
-    label: "Heatmap of peak and expression data"
+    label: "Heatmap of expression data scaled to 0-99"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled among all samples
+      Morpheus heatmap in HTML format scaled to 0-99 
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
         target: "_blank"
 
-  heatmap_peaknorm95_html:
+  heatmap_norm95_html:
     type: File
-    outputSource: data_integration/heatmap_peaknorm95_html
-    label: "Heatmap of peak and expression data (scaled peak data to 95th percentile)"
+    outputSource: data_integration/heatmap_norm95_html
+    label: "Heatmap of expression data scaled to 0-99 and 95th percentile)"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled per individual sample to 95th percentile
+      Morpheus heatmap in HTML format, scaled to 0-99 per individual sample and to 95th percentile
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
         target: "_blank"
 
-  heatmap_peaknorm99_html:
+  heatmap_norm99_html:
     type: File
-    outputSource: data_integration/heatmap_peaknorm99_html
-    label: "Heatmap of peak and expression data (scaled peak data to 99th percentile)"
+    outputSource: data_integration/heatmap_norm99_html
+    label: "Heatmap of expression data (scaled to 0-99 and 99th percentile)"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled per individual sample to 99th percentile
+      Morpheus heatmap in HTML format, scaled to 0-99 per individual sample and to 99th percentile
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_vst_html:
+    type: File
+    outputSource: data_integration/heatmap_vst_html
+    label: "Heatmap of expression data (vst normalized)"
+    doc: |
+      Morpheus heatmap in HTML format, VST normalized expression data
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -191,14 +216,18 @@ steps:
       sample_names_rnaseq: sample_names_rnaseq
       expression_files: datafiles_rnaseq
     out:
-      - master_samplesheet
+      - master_samplesheet_scaled
+      - master_samplesheet_vst
       - output_row_metadata
       - output_col_metadata
       - output_counts
+      - output_counts_vst
       - heatmap_gct
+      - heatmap_vst_gct
       - heatmap_html
-      - heatmap_peaknorm95_html
-      - heatmap_peaknorm99_html
+      - heatmap_norm95_html
+      - heatmap_norm99_html
+      - heatmap_vst_html
       - log_file_stdout
       - log_file_stderr
 

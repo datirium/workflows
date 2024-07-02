@@ -29,17 +29,25 @@ Help message for \`run_genelists_rnaseq.sh\`:
 Shell wrapper for producing a GCT data file for the morpheus heatmap.
 Uses only RNA-Seq data to derive visualization data.
 RNA-Seq data in the form of gene expression count matrices are processed to output TotalReads and Rpkm values per gene.
-This data are then integrated into a single count matrix, a row, and a column metadata file as input to an Rscript that will format the 3 files into GCT format for morpheus heatmap viewer.
+Additionally, TotalReads are used to produce a separate count matrix of VST values.
+This data is then integrated into a single count matrix (one for scaled, a separate matrix for VST), a row, and a column metadata file as input to an Rscript that will format the 3 files into GCT format for morpheus heatmap viewer.
 
 
-Primary Output files:
- - heatmap.gct, GCT formatted peak and expression data for morpheus viewer
+  Primary Output files:
+  - heatmap.gct, GCT formatted RPKM expression data for morpheus viewer
+  - heatmap_vst.gct, GCT formatted VST expression data for morpheus viewer (transformed TotalReads counts)
+  - heatmap_vst.html, html of morpheus heatmap with preconfigured settings, VST, no data scaling
+  - heatmap_nonorm.html, html of morpheus heatmap with preconfigured settings, RPKM, no data scaling
+  - heatmap_norm95.html, html of morpheus heatmap with preconfigured settings, RPKM, data scaled per individual sample to 95th percentile
+  - heatmap_norm99.html, html of morpheus heatmap with preconfigured settings, RPKM, data scaled per individual sample to 99th percentile
 
-Secondary Output files:
- - master_samplesheet.tsv, contains formatted information of the input data and files
- - output_row_metadata.tsv, row metadata for GCT formatter
- - output_col_metadata.tsv, column metadata for GCT formatter
- - output_counts.tsv, gene expression counts matrix
+  Secondary Output files:
+  - master_samplesheet_scaled.tsv, contains formatted information of the input data and files for scaled heatmaps
+  - master_samplesheet_vst.tsv, contains formatted information of the input data and files for vst normalized heatmaps
+  - output_row_metadata.tsv, row metadata for GCT formatter
+  - output_col_metadata.tsv, column metadata for GCT formatter
+  - output_counts.tsv, gene expression counts matrix (TotalReads and RPKM)
+  - output_counts_vst.tsv, gene expression counts matrix (VST values)
 
 PARAMS:
     SECTION 1: general
@@ -103,10 +111,46 @@ printf "\n\n"
 
 #	MAIN
 #===============================================================================
-printf "generating master samplesheet from all inputs\n"
+
+
+
+
+#########################################################################################
+#					HEATMAPS FROM VST COUNT DATA										#
+#					EXPRESSION VALUES not scaled										#
+#########################################################################################
+
+printf "generating count matrix from all input sample expression data for VST\n"
+#	make list of all unique genes among all input samples expression tables
+IFS=$','
+printf "\tmaking unique geneid list\n"
+for n in ${FILES_RNASEQ_EXP[@]}; do tail -n+2 $n | cut -f2; done | sort | uniq > uniq.geneids.tsv
+#	make matrix
+#		initialize with headers
+printf "\tmaking count matrix\n"
+printf "geneid" > expression_matrix_totalreads.tsv
+for n in ${NAMES_RNASEQ[@]}; do printf "\t$n"; done >> expression_matrix_totalreads.tsv
+printf "\n" >> expression_matrix_totalreads.tsv
+#		loop through each gene, pull TotalReads from each sample expression tsv
+while read geneid; do printf "%s" $geneid; for n in ${FILES_RNASEQ_EXP[@]}; do printf "\t%s" $(grep -m 1 "`printf '\t'`$geneid`printf '\t'`" ${n} | cut -f7); done; printf "\n"; done < uniq.geneids.tsv >> expression_matrix_totalreads.tsv
+# 		reset IFS
+IFS=$' \t\n'
+
+# run Rscript to produce variance stabilized transformed count data matrix (vst_normalized_counts_matrix.tsv) and table (vst_normalized_counts_table.tsv)
+printf "\trunning vst normalization\n"
+Rscript /usr/local/bin/run_vst_norm.R expression_matrix_totalreads.tsv
+
+
+
+
+
+
+
+
+printf "generating master samplesheet from all inputs using VST counts\n"
 #	start counter for genelist arrays (needs to start at 0 for getting correct values of names and annotations array indices)
 list_counter=0
-# 	set "internal field separator" to use comma on array string 'itemSeparator: ","'inputs from cwl (defaul is IFS=$' \t\n')
+# 	set "internal field separator" to use comma on array string 'itemSeparator: ","'inputs from cwl (default is IFS=$' \t\n')
 IFS=$','
 #	turn genelist annotation files and genelist names into arrays
 annotations_array=($(echo "$GENELIST_ANNOTATION_FILES"))
@@ -115,33 +159,35 @@ for f in ${GENELIST_FILTERED_FILES[@]}; do
 	# loop through RNA names
 	#	start counter for name array
 	name_counter=0
-	#	turn bam files into an array
+	#	turn expression tsv files into an array
 	exp_array=($(echo "$FILES_RNASEQ_EXP"))
 	for n in ${NAMES_RNASEQ[@]}; do
+        # replace TotalReads and RPKM with VST values, make new 'exp_array' file (genes.tsv) for samplesheet
+		#		replace or match geneids with other metadata from each individual sample file, while making the master samplesheet
+		#		these are then used in place of the 'exp_array=($(echo "$FILES_RNASEQ_EXP"))' in this section's 'master samplesheet')
+        printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tVST\n" > "vst_"$(basename ${exp_array[name_counter]})
+        awk -F'\t' '{if(NR==FNR){vst[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vst[$2])}}' <(grep "${n}" vst_normalized_counts_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_"$(basename ${exp_array[name_counter]})
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
-			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} ${exp_array[name_counter]}
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} "vst_"$(basename ${exp_array[name_counter]})
 		fi
 		((name_counter++))
 	done
-
 	((list_counter++))
-done > master_samplesheet.tsv
+done > master_samplesheet_vst.tsv
 # reset IFS
 IFS=$' \t\n'
 
 
+
+
 # initialize output files with headers
-printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\n" > output_rna-seq.tmp
-# function for building tag density window data and heatmap expression data for each experiment type
-
-
-
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tVST\n" > output_rna-seq.tmp
 printf "\n\n"
-printf "running master_samplesheet.tsv through loop, organizing expression data...\n"
+printf "\trunning master_samplesheet_scaled.tsv through loop, organizing and filtering expression data...\n"
 while read master; do
-	printf "\tprocessing $master\n"
+	printf "\t\tprocessing $master\n"
 	genelist_number=$(printf "$master" | cut -f1)
 	genelist_name=$(printf "$master" | cut -f2)
 	genelist_file_tmp=$(printf "$master" | cut -f3)
@@ -157,7 +203,216 @@ while read master; do
 	genelist_annotation_file=$(printf "$master" | cut -f4)
 	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("na-binding" or "rna-seq" - all in this script should be "rna-seq")
 	sample_name=$(printf "$master" | cut -f6)
-	sample_data=$(printf "$master" | cut -f7)			# should always be 'rna-seq'
+	sample_data=$(printf "$master" | cut -f7)		# should all be *.genes.tsv files (vst expression data)
+
+	if [[ $experiment_type == "rna-seq" ]]; then
+		# user input variables
+		exp=$sample_data
+		bn=$(basename $exp | sed 's/\..*//')
+		# for each gene in filtered genelist file, get VST values
+		cat $genelist_file | while read filtered_gene; do
+			printf "\t\trna-seq, processing gene:\t $filtered_gene\n"
+			chr=$(printf "$filtered_gene" | cut -f1)  # genelist col1
+			txStart=$(printf "$filtered_gene" | cut -f2)  # genelist col2
+			txEnd=$(printf "$filtered_gene" | cut -f3)  # genelist col3
+			geneid=$(printf "$filtered_gene" | cut -f4)  # genelist col4
+			strand=$(printf "$filtered_gene" | cut -f6)  # genelist col6
+			# search for each gene, only use $chr and $geneid due to peak annotations having multiple geneids per line (when split coordinates for each are not accurate)
+			#	this also addresses the same geneid on multiple chromosomes without using exact coordinates, since the nearest peaks to multiple genes much be co-localized (on same chr)
+			g=$(grep -P -m 1 "\t$geneid\t$chr\t" $exp)
+			if [[ $g == "" ]]; then
+				printf "\t\t\tWARNING, gene does not exist in expression data file: $geneid"
+			else
+				VST=$(printf "$g" | cut -f7)
+				# print formatted output for rna-seq experiments
+				printf "$genelist_number\t$genelist_name\t$experiment_type\t$sample_name\t$geneid\t$chr\t$txStart\t$txEnd\t$strand\tNA\t$VST\n" >> output_rna-seq.tmp
+			fi
+		done
+	fi
+done < master_samplesheet_vst.tsv
+
+cp output_rna-seq.tmp output_rna-seq-vst.tmp
+
+
+
+
+
+
+# ensure rows are unique
+head -1 output_rna-seq.tmp > output_rna-seq_raw.tsv
+tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq_raw.tsv
+
+
+
+
+# 	CLUSTERING by HOPACH method for each data type, for each genelist
+printf "\n\n"
+printf "\trunning hopach clustering per genelist\n"
+#		apply same rank orders (of each list and data type) to row metadata file
+
+# expression data clustering
+#	run cluster per gene list
+printf "\t\tdata type: rna-seq\n"
+#	print header for new rna-seq data file for heatmaps
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tVST\thopach_rank_expression\n" > output_rna-seq-cluster_data.tmp
+#	make another genelist counter, but start at 1, not 0, as leading zeros will be stripped in R after prepending to the cluster rank
+list_counter=1
+tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_number; do
+	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
+	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
+	printf "\t\t\tclustering for $genelist_number\n"
+	Rscript /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "VST"
+	# save a copy of hopach output
+	cp hopach_results.out hopach_results.out-rnaseq-${genelist_number}
+	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
+	#	for each sample, each gene should have the same rank order value
+	#	in awk, add zero padding up to 5 digits, very unlikely to have >99999 genes in a list
+	awk -F'\t' -v listnumber=$list_counter '{if(NR==FNR){rank_order[$2]=$7}else{if(rank_order[$5]!=""){printf("%s\t%s%05d\n",$0,listnumber,rank_order[$5])}}}' <(tail -n+2 hopach_results.out | sed 's/"//g') ${genelist_number}-cluster_data.tmp >> output_rna-seq-cluster_data.tmp
+	((list_counter++))
+done
+
+
+cp output_rna-seq-cluster_data.tmp output_rna-seq-vst-cluster_data.tmp
+
+
+
+
+
+# setup heatmap file variables
+data_rnaseq="output_rna-seq-cluster_data.tmp"			# expression rank col12 (for vst)
+cp output_rna-seq-cluster_data.tmp output_rna-seq-forheatmap.tsv
+
+
+
+
+#	HEATMAP no percentile normalization
+printf "\n\n"
+printf "make gct files for heatmap generation\n"
+
+# merge outputs into GCT formatted file for morpheus heatmap compatibility
+#	needs 3 files: counts matrix, row metadata, column metadata
+
+# GCT format:
+# line 1, version string "#1.3"
+# line 2, col1 (# rows in matrix), col2 (# cols in matrix), col3 (# columns of row metadata), col4 (# rows of col metadata)
+# col metadata (row4-a), sample metadata
+#		row4 - genelist_number
+#		row5 - genelist_name
+#		row6 - experiment_type
+#		row7 - sample_name
+#		row8 - tss_window		<- (REMOVING FOR EXP-ONLY)
+#		row9 - data_type (vst)
+# row metadata (col2-b), gene metadata
+#		col2 - chr (chr[n+])
+#		col3 - txStart (int)
+#		col4 - txEnd (int)
+#		col5 - strand (+ or -)
+
+# make unique row and column names with "value" as (vst)
+
+# count matrix data (rows (a+1)-x, cols (b+1)-y)
+printf "rid\tcid\tvalue\n" > output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+
+
+# row metadata file
+printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank_expression\n" > output_row_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$1,$2,$5,$6,$7,$8,$9,$12)}}' output_rna-seq-forheatmap.tsv > output_row_metadata.tmp
+# ensure data rows are unique
+sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
+
+# col metadata file
+printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+# get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
+sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
+
+# run r script to generate gct data file and morpheus heatmap
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+# make a copy of R inputs/outputs
+cp heatmap.gct heatmap_vst.gct
+cp output_row_metadata.tsv output_row_metadata-vst.tsv
+cp output_col_metadata.tsv output_col_metadata-vst.tsv
+cp output_counts.tsv output_counts_vst.tsv
+
+# inject javascript to configure the heatmap
+ed heatmap.html <<EOF
+/^<script>(function(global){"use strict";var morpheus=typeof morpheus!=="undefined"?morpheus:{}
+-2
+a
+setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.bootstrap-select.show-tick.form-control button[data-toggle="dropdown"]'); groupByBtn.click(); let groupRowSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let geneListOption = groupRowSelectionOptions.filter(function (el) { return el.textContent === 'genelist_name' })[0]; geneListOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); setTimeout( () => { let toolsBtn = document.getElementById("morpheus4"); toolsBtn.click(); let sortGroupBtn = document.querySelector('[data-action="Sort/Group"]'); sortGroupBtn.click(); document.querySelector('input[name="rowsOrColumns"][value="columns"]').click(); groupByBtn.click(); let groupColSelectionOptions = Array.from(document.querySelectorAll('ul.dropdown-menu.inner li a[role="option"] span.text')); let samplenameOption = groupColSelectionOptions.filter(function (el) { return el.textContent === 'sample_name' })[0]; samplenameOption.click(); let toolConfirmationBtn = document.getElementsByClassName('modal-footer')[0].querySelector('[name="ok"]'); toolConfirmationBtn.click(); }, 250); }, 1000);
+.
+wq
+EOF
+mv heatmap.html heatmap_vst.html
+
+
+
+
+
+
+
+
+
+
+
+#########################################################################################
+#					HEATMAPS FROM TOTALREADS & RPKM COUNT DATA							#
+#					SCALED EXPRESSION VALUES 0-99										#
+#########################################################################################
+
+printf "generating master samplesheet from all inputs using TotalReads and RPKM counts\n"
+#	start counter for genelist arrays (needs to start at 0 for getting correct values of names and annotations array indices)
+list_counter=0
+# 	set "internal field separator" to use comma on array string 'itemSeparator: ","'inputs from cwl (default is IFS=$' \t\n')
+IFS=$','
+#	turn genelist annotation files and genelist names into arrays
+annotations_array=($(echo "$GENELIST_ANNOTATION_FILES"))
+names_array=($(echo "$GENELIST_NAMES"))
+for f in ${GENELIST_FILTERED_FILES[@]}; do
+	# loop through RNA names
+	#	start counter for name array
+	name_counter=0
+	#	turn expression tsv files into an array
+	exp_array=($(echo "$FILES_RNASEQ_EXP"))
+	for n in ${NAMES_RNASEQ[@]}; do
+		# print formatted samplesheet row
+		if [[ ${exp_array[name_counter]} != "" ]]; then
+			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} ${exp_array[name_counter]}
+		fi
+		((name_counter++))
+	done
+	((list_counter++))
+done > master_samplesheet_scaled.tsv
+# reset IFS
+IFS=$' \t\n'
+
+
+
+
+# initialize output files with headers
+printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\n" > output_rna-seq.tmp
+printf "\n\n"
+printf "\trunning master_samplesheet_scaled.tsv through loop, organizing and filtering expression data...\n"
+while read master; do
+	printf "\t\tprocessing $master\n"
+	genelist_number=$(printf "$master" | cut -f1)
+	genelist_name=$(printf "$master" | cut -f2)
+	genelist_file_tmp=$(printf "$master" | cut -f3)
+	# ensure only 1 gene name per row (iaintersect can sometimes report 2+ comma separated genes on a single row)
+	awk -F'\t' '{split($4,col4,","); for(i in col4){printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,col4[i],$5,$6)}}' $genelist_file_tmp > genelist.tmp
+	# also ensure only a single geneid per chr (different chr can share a geneid)
+	cut -f1,4 genelist.tmp | sort | uniq | while read chr_geneid; do
+		chr=$(printf "$chr_geneid" | cut -f1)
+		geneid=$(printf "$chr_geneid" | cut -f2)
+		grep "$chr" genelist.tmp | grep -m1 "$geneid"
+	done > genelist.tsv
+	genelist_file="genelist.tsv"
+	genelist_annotation_file=$(printf "$master" | cut -f4)
+	experiment_type=$(printf "$master" | cut -f5)	# determines data extraction method of file at $6 ("na-binding" or "rna-seq" - all in this script should be "rna-seq")
+	sample_name=$(printf "$master" | cut -f6)
+	sample_data=$(printf "$master" | cut -f7)		# should all be *.genes.tsv files (expression data)
 
 	if [[ $experiment_type == "rna-seq" ]]; then
 		# user input variables
@@ -184,7 +439,7 @@ while read master; do
 			fi
 		done
 	fi
-done < master_samplesheet.tsv
+done < master_samplesheet_scaled.tsv
 
 
 
@@ -198,12 +453,12 @@ tail -n+2 output_rna-seq.tmp | sort | uniq >> output_rna-seq_raw.tsv
 
 # 	CLUSTERING by HOPACH method for each data type, for each genelist
 printf "\n\n"
-printf "running hopach clustering per genelist\n"
+printf "\trunning hopach clustering per genelist\n"
 #		apply same rank orders (of each list and data type) to row metadata file
 
 # expression data clustering
 #	run cluster per gene list
-printf "\tdata type: rna-seq\n"
+printf "\t\tdata type: rna-seq\n"
 #	print header for new rna-seq data file for heatmaps
 printf "genelist_number\tgenelist_name\texperiment_type\tsample_name\tgeneid\tchr\ttxStart\ttxEnd\tstrand\ttss_window\tTotalReads\tRpkm\thopach_rank_expression\n" > output_rna-seq-cluster_data.tmp
 #	make another genelist counter, but start at 1, not 0, as leading zeros will be stripped in R after prepending to the cluster rank
@@ -211,7 +466,7 @@ list_counter=1
 tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_number; do
 	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
-	printf "\t\tclustering for $genelist_number\n"
+	printf "\t\t\tclustering for $genelist_number\n"
 	Rscript /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "Rpkm"
 	# save a copy of hopach output
 	cp hopach_results.out hopach_results.out-rnaseq-${genelist_number}
@@ -227,8 +482,6 @@ done
 
 
 
-
-
 # setup heatmap file variables
 data_rnaseq="output_rna-seq-cluster_data.tmp"			# expression rank col13
 
@@ -237,7 +490,7 @@ data_rnaseq="output_rna-seq-cluster_data.tmp"			# expression rank col13
 #	HEATMAP 95th percentile data
 
 # normalize expression data within each sample and scale from 0-99 per sample (for better visualization)
-#	for each sample, find the 95th percentile average depth (pad), and apply normalization by changing:
+#	for each sample, find the 95th percentile average depth (pad) [or percentile rpkm], and apply normalization by changing:
 #		values >= pad to pad value
 #		values < 0-pad remain unchanged
 printf "\n\n"
@@ -314,7 +567,7 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 .
 wq
 EOF
-mv heatmap.html heatmap_peaknorm95.html
+mv heatmap.html heatmap_norm95.html
 
 
 
@@ -406,7 +659,7 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 .
 wq
 EOF
-mv heatmap.html heatmap_peaknorm99.html
+mv heatmap.html heatmap_norm99.html
 
 
 
@@ -421,7 +674,7 @@ mv heatmap.html heatmap_peaknorm99.html
 
 
 #	HEATMAP no percentile normalization
-# normalize peak data within each sample before scaling among ALL samples
+# still scaling among ALL samples
 printf "\n\n"
 printf "scaling expression data, no percentile normalization\n"
 
@@ -487,6 +740,9 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 .
 wq
 EOF
+mv heatmap.html heatmap_nonorm.html
+
+
 
 
 
