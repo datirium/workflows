@@ -132,6 +132,15 @@ inputs:
       Genes with absolute log2 fold change greater than this threshold will be considered.
       Default: 0.59 (about 1.5 fold change)
       
+  use_lfc_thresh:
+    type: boolean
+    inputBinding:
+      prefix: "--use_lfc_thresh"
+    default: true
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
+    'sd:layout':
+      advanced: true
+      
   regulation:
     type:
       - "null"
@@ -336,6 +345,7 @@ s:about: |
         [--regulation {both,up,down}]
         [--lfcthreshold LFCTHRESHOLD]
         [--batchcorrection {none, combatseq,limmaremovebatcheffect}]
+        [--use_lfc_thresh]
 
 
   Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups (condition-1-vs-
@@ -398,3 +408,4 @@ s:about: |
                           - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
                           - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
                           - Default: none
+    --use_lfc_thresh      Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE

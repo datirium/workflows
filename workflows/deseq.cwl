@@ -242,6 +242,13 @@ inputs:
       Default: 0.59 (about 1.5 fold change)
     'sd:layout':  
       advanced: true
+  
+  use_lfc_thresh:
+    type: boolean
+    default: true
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
+    'sd:layout':
+      advanced: true
       
   batchcorrection:
     type:
@@ -536,6 +543,7 @@ steps:
       fdr: fdr
       threads: threads
       lfcthreshold: lfcthreshold
+      use_lfc_thresh: use_lfc_thresh
       regulation: regulation
       batchcorrection: batchcorrection
     out:
