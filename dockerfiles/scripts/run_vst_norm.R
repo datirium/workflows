@@ -38,12 +38,39 @@ print("running VST")
 vst <- varianceStabilizingTransformation(dse)
 vst_counts <- assay(vst)
 
-print("exporting normalized count matrix")
-write.table(vst_counts, file = "vst_normalized_counts_matrix.tsv", sep = "\t", quote = FALSE, col.names = NA)
-print("VST normalized count matrix exported to 'vst_normalized_counts_matrix.tsv'")
+print("exporting VST count matrix")
+write.table(vst_counts, file = "vst_counts_matrix.tsv", sep = "\t", quote = FALSE, col.names = NA)
+print("VST matrix exported to 'vst_counts_matrix.tsv'")
 
-print("exporting normalized count table")
-vst_table <- melt(vst_counts, id = 'columns')
-colnames(vst_table) <- c("geneid","sample_name","vst_count")
-write.table(vst_table, file = "vst_normalized_counts_table.tsv", sep = "\t", quote = FALSE, row.names=FALSE)
-print("VST normalized count matrix exported to 'vst_normalized_counts_table.tsv'")
+print("exporting VST count table")
+table <- melt(vst_counts, id = 'columns')
+colnames(table) <- c("geneid","sample_name","vst_count")
+write.table(table, file = "vst_counts_table.tsv", sep = "\t", quote = FALSE, row.names=FALSE)
+print("VST table exported to 'vst_counts_table.tsv'")
+
+
+
+#   Z-SCORE calculations for each gene across all samples
+# Calculate row means and standard deviations
+print("running z-score calcs")
+gene_means <- rowMeans(vst_counts)
+gene_sds <- apply(vst_counts, 1, sd)
+# Calculate z-scores
+z_scores <- t((t(vst_counts) - gene_means) / gene_sds)
+
+# replace Inf or NaN with 0 (not appropriate to do, so will leave this step commented out)
+#z_scores[!is.finite(z_scores)] <- 0
+# but we ccould simply remove them, we must note that in the output file for z-score heatmap
+# leaving commented out for now, add this quote to workflow output if uncommented "(-Inf and Inf values are removed from the heatmap, these are due to near-zero or huge [relative to the mean] standard deviations, respectively)"
+#z_scores <- z_scores[!is.infinite(rowSums(z_scores)),]
+
+
+print("exporting VST z-score matrix")
+write.table(z_scores, file = "vst_z-score_matrix.tsv", sep = "\t", quote = FALSE, col.names = NA)
+print("VST z-score matrix exported to 'vst_zscore_matrix.tsv'")
+
+print("exporting VST z-score table")
+table <- melt(z_scores, id = 'columns')
+colnames(table) <- c("geneid","sample_name","vst_count")
+write.table(table, file = "vst_zscore_table.tsv", sep = "\t", quote = FALSE, row.names=FALSE)
+print("VST z-score table exported to 'vst_zscore_table.tsv'")

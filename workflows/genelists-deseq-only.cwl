@@ -114,69 +114,25 @@ outputs:
     doc: "contains formatted information of the input data and files for vst heatmap"
     outputSource: data_integration/master_samplesheet_vst
 
-  output_row_metadata:
+  master_samplesheet_vst_zscore:
     type: File
-    label: "row metadata for GCT formatter"
+    label: "contains formatted information of the input data and files for vst zscore heatmap"
     format: "http://edamontology.org/format_3475"
-    doc: "row metadata for GCT formatter"
-    outputSource: data_integration/output_row_metadata
+    doc: "contains formatted information of the input data and files for vst zscore heatmap"
+    outputSource: data_integration/master_samplesheet_vst_zscore
 
-  output_col_metadata:
-    type: File
-    label: "column metadata for GCT formatter"
-    format: "http://edamontology.org/format_3475"
-    doc: "column metadata for GCT formatter"
-    outputSource: data_integration/output_col_metadata
 
-  output_counts:
-    type: File
-    label: "gene expression RPKM counts matrix scaled to 0-99"
-    format: "http://edamontology.org/format_3475"
-    doc: "gene expression counts matrix"
-    outputSource: data_integration/output_counts
 
-  output_counts_vst:
-    type: File
-    label: "gene expression VST counts matrix"
-    format: "http://edamontology.org/format_3475"
-    doc: "gene expression counts matrix"
-    outputSource: data_integration/output_counts_vst
 
-  heatmap_gct_file:
-    type: File
-    label: "GCT formatted expression data for morpheus viewer"
-    format: "http://edamontology.org/format_3709"
-    doc: "GCT formatted expression data for morpheus viewer"
-    outputSource: data_integration/heatmap_gct
 
-  heatmap_nonorm_html:
+
+
+  heatmap_TotalReads_html:
     type: File
-    outputSource: data_integration/heatmap_html
-    label: "Heatmap of expression data scaled to 0-99"
+    outputSource: data_integration/heatmap_TotalReads_html
+    label: "Heatmap TotalReads (raw total read counts)"
     doc: |
-      Morpheus heatmap in HTML format scaled to 0-99 
-    'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
-  heatmap_norm95_html:
-    type: File
-    outputSource: data_integration/heatmap_norm95_html
-    label: "Heatmap of expression data scaled to 0-99 and 95th percentile)"
-    doc: |
-      Morpheus heatmap in HTML format, scaled to 0-99 per individual sample and to 95th percentile
-    'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
-  heatmap_norm99_html:
-    type: File
-    outputSource: data_integration/heatmap_norm99_html
-    label: "Heatmap of expression data (scaled to 0-99 and 99th percentile)"
-    doc: |
-      Morpheus heatmap in HTML format, scaled to 0-99 per individual sample and to 99th percentile
+      html of morpheus heatmap with preconfigured settings, TotalReads, no data scaling
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -185,9 +141,64 @@ outputs:
   heatmap_vst_html:
     type: File
     outputSource: data_integration/heatmap_vst_html
-    label: "Heatmap of expression data (vst normalized)"
+    label: "Heatmap VST (VST normalized TotalReads)"
     doc: |
-      Morpheus heatmap in HTML format, VST normalized expression data
+      html of morpheus heatmap with preconfigured settings, VST values, no data scaling
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_vst_zscore_html:
+    type: File
+    outputSource: data_integration/heatmap_vst_zscore_html
+    label: "Heatmap VST Z-scores (Z-score of VST)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, Z-scores of VST values, no data scaling (-Inf and Inf values are removed from the heatmap, these are due to near-zero or huge [relative to the mean] standard deviations, respectively)
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_Rpkm_html:
+    type: File
+    outputSource: data_integration/heatmap_Rpkm_html
+    label: "Heatmap RPKM (RPKM normalized TotalReads)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, no data scaling
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_scaled100_html:
+    type: File
+    outputSource: data_integration/heatmap_scaled100_html
+    label: "Heatmap RPKM (scaled 0-99, no percentile cutoff)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, data scaled 0-99, no percentile cutoff
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_scaled99_html:
+    type: File
+    outputSource: data_integration/heatmap_scaled99_html
+    label: "Heatmap RPKM (scaled 0-99, max value set to 99th percentile RPKM value)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, data scaled 0-99, max value set to 99th percentile RPKM value
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_scaled95_html:
+    type: File
+    outputSource: data_integration/heatmap_scaled95_html
+    label: "Heatmap RPKM (scaled 0-99, max value set to 95th percentile RPKM value)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, data scaled  0-99, max value set to 95th percentile RPKM value
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -218,16 +229,14 @@ steps:
     out:
       - master_samplesheet_scaled
       - master_samplesheet_vst
-      - output_row_metadata
-      - output_col_metadata
-      - output_counts
-      - output_counts_vst
-      - heatmap_gct
-      - heatmap_vst_gct
-      - heatmap_html
-      - heatmap_norm95_html
-      - heatmap_norm99_html
+      - master_samplesheet_vst_zscore
+      - heatmap_TotalReads_html
       - heatmap_vst_html
+      - heatmap_vst_zscore_html
+      - heatmap_Rpkm_html
+      - heatmap_scaled100_html
+      - heatmap_scaled99_html
+      - heatmap_scaled95_html
       - log_file_stdout
       - log_file_stderr
 
