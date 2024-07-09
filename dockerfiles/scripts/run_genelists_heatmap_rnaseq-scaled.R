@@ -17,6 +17,7 @@ Cstack_info()
 #
 # v0.0.1
 # - use function to covert counts, row metadata, and col metadata into GCT format
+# - for use with scaled data (0, 99)
 #
 ##########################################################################################
 

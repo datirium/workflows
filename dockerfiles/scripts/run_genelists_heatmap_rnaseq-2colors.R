@@ -17,7 +17,7 @@ Cstack_info()
 #
 # v0.0.1
 # - use function to covert counts, row metadata, and col metadata into GCT format
-# - for use with z-score data, variable limits (unlike scaled data), contains negative and positive values, so uses 3 instead of 2 colors
+# - for use with vst data, variable limits (unlike scaled data), only positive numbers though
 #
 ##########################################################################################
 
@@ -36,7 +36,9 @@ counts_mat <- acast(df, rid~cid, value.var="value")
 
 # get min/max values for coloring
 min_value_for_color <- min(df$value)
-max_value_for_color <- max(df$value)
+#   remove Inf values for max
+df_for_max <- df[!is.infinite(df$value),]
+max_value_for_color <- max(df_for_max$value)
 
 # export to GCT format function
 export_gct <- function(row_metadata=NULL, col_metadata=NULL, counts_mat, location){
@@ -90,7 +92,7 @@ morpheus_html <- morpheus(
     x=gct_data$data,
     rowAnnotations=if(nrow(gct_data$rowAnnotations) == 0) NULL else gct_data$rowAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
     columnAnnotations=if(nrow(gct_data$columnAnnotations) == 0) NULL else gct_data$columnAnnotations %>% dplyr::mutate_if(is_all_numeric, as.numeric),
-    colorScheme=list(scalingMode="fixed", stepped=FALSE, values=list(min_value_for_color, 0, max_value_for_color), colors=list("blue","white", "red")),
+    colorScheme=list(scalingMode="fixed", stepped=FALSE, values=list(min_value_for_color, max_value_for_color), colors=list("white", "red")),
     rowSortBy=list(list(field="genelist_name", order=0)),
     columnSortBy=list(
         list(field="data_type", order=0),

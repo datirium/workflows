@@ -320,7 +320,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-vst.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 
 # inject javascript to configure the heatmap
 ed heatmap.html <<EOF
@@ -517,7 +517,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-zscore.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-3colors.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 
 # inject javascript to configure the heatmap
 ed heatmap.html <<EOF
@@ -533,7 +533,7 @@ mv heatmap.html heatmap_vst_zscore.html
 
 
 
-
+exit
 
 
 
@@ -693,7 +693,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 # make a copy of R inputs
 cp output_row_metadata.tsv output_row_metadata-TotalReads.tsv
 cp output_col_metadata.tsv output_col_metadata-TotalReads.tsv
@@ -734,7 +734,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 # make a copy of R inputs
 cp output_row_metadata.tsv output_row_metadata-Rpkm.tsv
 cp output_col_metadata.tsv output_col_metadata-Rpkm.tsv
@@ -815,7 +815,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 
 # inject javascript to configure the heatmap
 ed heatmap.html <<EOF
@@ -895,7 +895,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 # make a copy of R inputs
 cp output_row_metadata.tsv output_row_metadata-99p.tsv
 cp output_col_metadata.tsv output_col_metadata-99p.tsv
@@ -979,7 +979,7 @@ awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm"
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
 # run r script to generate gct data file and morpheus heatmap
-Rscript /usr/local/bin/run_genelists_heatmap_rnaseq.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
+Rscript /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R output_row_metadata.tsv output_col_metadata.tsv output_counts.tsv ./
 # make a copy of R inputs
 cp output_row_metadata.tsv output_row_metadata-95p.tsv
 cp output_col_metadata.tsv output_col_metadata-95p.tsv

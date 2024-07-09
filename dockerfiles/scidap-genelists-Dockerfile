@@ -55,9 +55,9 @@ WORKDIR /tmp
 COPY ./scripts/run_genelists.sh /usr/local/bin/
 COPY ./scripts/run_genelists_rnaseq.sh /usr/local/bin/
 COPY ./scripts/run_genelists_heatmap.R /usr/local/bin/
-COPY ./scripts/run_genelists_heatmap_rnaseq.R /usr/local/bin/
-COPY ./scripts/run_genelists_heatmap_rnaseq-vst.R /usr/local/bin/
-COPY ./scripts/run_genelists_heatmap_rnaseq-zscore.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq-scaled.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq-2colors.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq-3colors.R /usr/local/bin/
 COPY ./scripts/run_hopach_clustering.R /usr/local/bin/
 COPY ./scripts/run_vst_norm.R /usr/local/bin/
 COPY ./scripts/fasta_rmlinebreaks.awk /usr/local/bin/
@@ -87,12 +87,12 @@ RUN apt-get update && \
     ls -la /usr/local/bin/run_genelists_rnaseq.sh && \
     chmod +x /usr/local/bin/run_genelists_heatmap.R && \
     ls -la /usr/local/bin/run_genelists_heatmap.R && \
-    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq.R && \
-    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq.R && \
-    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-vst.R && \
-    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-vst.R && \
-    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-zscore.R && \
-    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-zscore.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-3colors.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-3colors.R && \
     chmod +x /usr/local/bin/run_hopach_clustering.R && \
     ls -la /usr/local/bin/run_hopach_clustering.R && \
     chmod +x /usr/local/bin/run_vst_norm.R && \
