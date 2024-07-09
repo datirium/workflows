@@ -26,15 +26,33 @@ acast_value <- args[2]      # ex. acast_value <- 'VST' ('TotalReads', 'Rpkm', 'V
 # read in files to data frames (counts need to be in matrix)
 df <- read.table(input_file, header=T, sep='\t')
 
+
+
 #   acast (to matrix) opposed to dcast (as dataframe), to geneid-by-sample_name
 data <- acast(df, geneid ~ sample_name, value.var=acast_value)
+# replace NaN, Inf, -Inf with 0
+data[!is.finite(data)] <- 0
+
 
 # remove any rows with 1 or more NA values
-data <- data.frame(data)
-data <- drop_na(data)
+#no_na <- data.frame(data)
+#no_na <- drop_na(no_na)
+
+#       removing not optimal, will use cap values in place of NA, Inf, -Inf
+# Cap extreme values
+cap_value <- 2*max(data)
+# recast df to matrix (containing Inf values)
+data <- acast(df, geneid ~ sample_name, value.var=acast_value)
+# replace with cap value
+data_capped <- data
+data_capped[is.infinite(data_capped)] <- cap_value
+data_capped[is.nan(data_capped)] <- 0  # Replace NaN with 0 (if any)
+
+
+
 
 # cluster with hopach
-hopach_results <- hopach(data)
+hopach_results <- hopach(data_capped)
 
 # save results to file for parsing
-makeoutput(data, hopachobj=hopach_results, file="hopach_results.out")
+makeoutput(data_capped, hopachobj=hopach_results, file="hopach_results.out")
