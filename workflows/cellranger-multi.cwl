@@ -24,7 +24,7 @@ inputs:
     sd:preview:
       position: 1
 
-  gex_indices_folder:
+  rna_indices_folder:
     type: Directory
     label: "Cell Ranger Reference Sample"
     doc: |
@@ -56,23 +56,23 @@ inputs:
     "sd:upstreamSource": "vdj_indices/indices_folder"
     "sd:localLabel": true
 
-  gex_fastq_file_r1:
+  rna_fastq_file_r1:
     type:
     - File
     - type: array
       items: File
     format: "http://edamontology.org/format_1930"
-    label: "GEX FASTQ file(s) R1 (optionally compressed)"
-    doc: "GEX FASTQ file(s) R1 (optionally compressed)"
+    label: "RNA FASTQ file(s) R1 (optionally compressed)"
+    doc: "RNA FASTQ file(s) R1 (optionally compressed)"
 
-  gex_fastq_file_r2:
+  rna_fastq_file_r2:
     type:
     - File
     - type: array
       items: File
     format: "http://edamontology.org/format_1930"
-    label: "GEX FASTQ file(s) R2 (optionally compressed)"
-    doc: "GEX FASTQ file(s) R2 (optionally compressed)"
+    label: "RNA FASTQ file(s) R2 (optionally compressed)"
+    doc: "RNA FASTQ file(s) R2 (optionally compressed)"
 
   vdj_fastq_file_r1:
     type:
@@ -136,23 +136,23 @@ inputs:
 
 outputs:
 
-  fastqc_report_gex_fastq_r1:
+  fastqc_report_rna_fastq_r1:
     type: File
-    outputSource: run_fastqc_for_gex_fastq_r1/html_file
-    label: "FastqQC report for GEX FASTQ file R1"
+    outputSource: run_fastqc_for_rna_fastq_r1/html_file
+    label: "FastqQC report for RNA FASTQ file R1"
     doc: |
-      FastqQC report for GEX FASTQ file R1
+      FastqQC report for RNA FASTQ file R1
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
         target: "_blank"
 
-  fastqc_report_gex_fastq_r2:
+  fastqc_report_rna_fastq_r2:
     type: File
-    outputSource: run_fastqc_for_gex_fastq_r2/html_file
-    label: "FastqQC report for GEX FASTQ file R2"
+    outputSource: run_fastqc_for_rna_fastq_r2/html_file
+    label: "FastqQC report for RNA FASTQ file R2"
     doc: |
-      FastqQC report for GEX FASTQ file R2
+      FastqQC report for RNA FASTQ file R2
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
@@ -207,7 +207,7 @@ outputs:
     outputSource: cellranger_multi/possorted_genome_bam_bai
     label: "Unaligned and aligned to the genome and transcriptome indexed reads"
     doc: |
-      Indexed GEX BAM file containing position-sorted reads aligned
+      Indexed RNA BAM file containing position-sorted reads aligned
       to the genome and transcriptome, as well as unaligned reads.
 
   filtered_feature_bc_matrix_folder:
@@ -250,9 +250,9 @@ outputs:
   secondary_analysis_report_folder:
     type: File
     outputSource: compress_secondary_analysis_report_folder/compressed_folder
-    label: "Folder with secondary analysis of GEX data"
+    label: "Folder with secondary analysis of RNA data"
     doc: |
-      Folder with secondary analysis of GEX data including dimensionality
+      Folder with secondary analysis of RNA data including dimensionality
       reduction, cell clustering, and differential expression
 
   loupe_browser_track:
@@ -274,7 +274,7 @@ outputs:
       suitable as an archive of every single input read.
       This file includes reads from all cells barcodes identified by V(D)J algorithm including
       those ones that will be later discarded as non-viable cells by V(D)J algorithm and those
-      barcodes that will be later removed after overlapping with cells called by GEX algorithm.
+      barcodes that will be later removed after overlapping with cells called by RNA algorithm.
 
   all_contig_sequences_fasta:
     type: File
@@ -284,7 +284,7 @@ outputs:
       FASTA format sequence for ALL assembled contigs in the V(D)J library.
       This file includes both productive and non-productive contigs with high and low confidence
       assembled for all identified cells barcodes including those ones that will be later discarded
-      as non-viable cells by V(D)J algorithm or after overlapping with cells called by GEX algorithm.
+      as non-viable cells by V(D)J algorithm or after overlapping with cells called by RNA algorithm.
 
   all_contig_annotations_bed:
     type: File
@@ -296,7 +296,7 @@ outputs:
       out. This file includes both productive and non-productive contigs with high and low
       confidence assembled for all identified cells barcodes including those ones that will be
       later discarded as non-viable cells by V(D)J algorithm or after overlapping with cells
-      called by GEX algorithm.
+      called by RNA algorithm.
 
   all_contig_annotations_csv:
     type: File
@@ -308,7 +308,7 @@ outputs:
       out. This file includes both productive and non-productive contigs with high and low
       confidence assembled for all identified cells barcodes including those ones that will be
       later discarded as non-viable cells by V(D)J algorithm or after overlapping with cells
-      called by GEX algorithm.
+      called by RNA algorithm.
 
   airr_rearrangement_tsv:
     type: File
@@ -317,7 +317,7 @@ outputs:
     doc: |
       Annotated contigs and consensus sequences of V(D)J rearrangements
       in the AIRR format. It includes only viable cells identified by
-      both V(D)J and GEX algorithms.
+      both V(D)J and RNA algorithms.
 
   clonotypes_tsv:
     type: File
@@ -326,7 +326,7 @@ outputs:
     doc: |
       TSV file with high-level descriptions of each clonotype. During the clonotype
       grouping stage, cell barcodes are placed in groups called clonotypes. Only viable
-      cells identified by both V(D)J and GEX algorithms are used. Each clonotype consists
+      cells identified by both V(D)J and RNA algorithms are used. Each clonotype consists
       of all descendants of a single, fully rearranged common ancestor, as approximated
       computationally. During this process, some cell barcodes are flagged as likely
       artifacts and filtered out, meaning that they are no longer called as cells.
@@ -450,21 +450,21 @@ outputs:
 
 steps:
 
-  extract_gex_fastq_r1:
+  extract_rna_fastq_r1:
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: gex_fastq_file_r1
+      compressed_file: rna_fastq_file_r1
       output_prefix:
-        default: "gex_read_1"
+        default: "rna_read_1"
     out:
     - fastq_file
 
-  extract_gex_fastq_r2:
+  extract_rna_fastq_r2:
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: gex_fastq_file_r2
+      compressed_file: rna_fastq_file_r2
       output_prefix:
-        default: "gex_read_2"
+        default: "rna_read_2"
     out:
     - fastq_file
 
@@ -486,20 +486,20 @@ steps:
     out:
     - fastq_file
 
-  run_fastqc_for_gex_fastq_r1:
+  run_fastqc_for_rna_fastq_r1:
     run: ../tools/fastqc.cwl
     in:
-      reads_file: extract_gex_fastq_r1/fastq_file
+      reads_file: extract_rna_fastq_r1/fastq_file
       threads:
         source: threads
         valueFrom: $(parseInt(self))
     out:
     - html_file
 
-  run_fastqc_for_gex_fastq_r2:
+  run_fastqc_for_rna_fastq_r2:
     run: ../tools/fastqc.cwl
     in:
-      reads_file: extract_gex_fastq_r2/fastq_file
+      reads_file: extract_rna_fastq_r2/fastq_file
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -529,11 +529,11 @@ steps:
   cellranger_multi:
     run: ../tools/cellranger-multi.cwl
     in:
-      gex_fastq_file_r1: extract_gex_fastq_r1/fastq_file
-      gex_fastq_file_r2: extract_gex_fastq_r2/fastq_file
+      rna_fastq_file_r1: extract_rna_fastq_r1/fastq_file
+      rna_fastq_file_r2: extract_rna_fastq_r2/fastq_file
       vdj_fastq_file_r1: extract_vdj_fastq_r1/fastq_file
       vdj_fastq_file_r2: extract_vdj_fastq_r2/fastq_file
-      gex_indices_folder: gex_indices_folder
+      rna_indices_folder: rna_indices_folder
       vdj_indices_folder: vdj_indices_folder
       vdj_chain_type: vdj_chain_type
       threads:

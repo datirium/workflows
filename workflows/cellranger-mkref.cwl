@@ -64,7 +64,7 @@ inputs:
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
-      Default: 4
+      Default: 6
     "sd:layout":
       advanced: true
 

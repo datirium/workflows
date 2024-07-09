@@ -24,7 +24,7 @@ inputs:
     sd:preview:
       position: 1
 
-  gex_molecule_info_h5:
+  rna_molecule_info_h5:
     type: File[]
     label: "Cell Ranger RNA+ATAC Sample"
     doc: |
@@ -32,7 +32,7 @@ inputs:
       that produces both gene expression
       and chromatin accessibility data
       from a single 10x Genomics library
-    "sd:upstreamSource": "sc_arc_sample/gex_molecule_info_h5"
+    "sd:upstreamSource": "sc_arc_sample/rna_molecule_info_h5"
     "sd:localLabel": true
 
   gem_well_labels:
@@ -62,6 +62,10 @@ inputs:
       pipeline.
     "sd:upstreamSource": "genome_indices/arc_indices_folder"
     "sd:localLabel": true
+
+  annotation_gtf_file:
+    type: File
+    "sd:upstreamSource": "genome_indices/genome_indices/annotation_gtf"
 
   memory_limit:
     type: int?
@@ -296,7 +300,7 @@ steps:
     in:
       atac_fragments_file_from_count: atac_fragments_file_from_count
       barcode_metrics_report: barcode_metrics_report
-      gex_molecule_info_h5: gex_molecule_info_h5
+      rna_molecule_info_h5: rna_molecule_info_h5
       gem_well_labels: gem_well_labels
       indices_folder: indices_folder
       normalization_mode: normalization_mode
@@ -348,6 +352,7 @@ steps:
     in:
       secondary_analysis_report_folder: aggregate_counts/secondary_analysis_report_folder
       filtered_feature_bc_matrix_folder: aggregate_counts/filtered_feature_bc_matrix_folder
+      annotation_gtf_file: annotation_gtf_file
       aggregation_metadata: aggregate_counts/aggregation_metadata
     out:
     - html_data

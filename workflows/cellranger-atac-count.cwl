@@ -36,6 +36,10 @@ inputs:
     "sd:upstreamSource": "genome_indices/arc_indices_folder"
     "sd:localLabel": true
 
+  annotation_gtf_file:
+    type: File
+    "sd:upstreamSource": "genome_indices/genome_indices/annotation_gtf"
+
   memory_limit:
     type: int?
     default: 20
@@ -507,6 +511,7 @@ steps:
     in:
       secondary_analysis_report_folder: generate_counts_matrix/secondary_analysis_report_folder
       filtered_feature_bc_matrix_folder: generate_counts_matrix/filtered_feature_bc_matrix_folder
+      annotation_gtf_file: annotation_gtf_file
     out:
     - html_data
     - index_html_file

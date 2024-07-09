@@ -31,7 +31,7 @@ inputs:
     sd:preview:
       position: 1
 
-  gex_possorted_genome_bam_bai:
+  rna_possorted_genome_bam_bai:
     type: File
     secondaryFiles:
     - .bai
@@ -39,7 +39,7 @@ inputs:
     doc: |
       GEX position-sorted reads aligned to the genome and transcriptome
       annotated with barcode information in BAM format
-    'sd:upstreamSource': "sc_rnaseq_sample/gex_possorted_genome_bam_bai"
+    'sd:upstreamSource': "sc_rnaseq_sample/rna_possorted_genome_bam_bai"
     'sd:localLabel': true
 
   atac_possorted_genome_bam_bai:
@@ -349,7 +349,7 @@ steps:
   gex_souporcell:
     run: ../tools/souporcell.cwl
     in:
-      possorted_genome_bam_bai: gex_possorted_genome_bam_bai
+      possorted_genome_bam_bai: rna_possorted_genome_bam_bai
       barcodes_tsv_file: get_barcodes_tsv_file/barcodes_tsv_file
       genome_fasta_file: genome_fasta_file
       regions_bed_file: regions_bed_file

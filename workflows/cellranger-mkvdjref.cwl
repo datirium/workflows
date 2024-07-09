@@ -33,6 +33,36 @@ inputs:
       For example:
       https://ftp.ensembl.org/pub/current_gtf/homo_sapiens/Homo_sapiens.GRCh38.108.gtf.gz
 
+  memory_limit:
+    type: int?
+    default: 20
+    label: "Maximum memory used (GB)"
+    doc: |
+      Maximum memory used (GB).
+    "sd:layout":
+      advanced: true
+
+  threads:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+    default: "6"
+    label: "Cores/CPUs"
+    doc: |
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 6
+    "sd:layout":
+      advanced: true
+
 
 outputs:
 
@@ -84,6 +114,10 @@ steps:
     in:
       genome_fasta_file: extract_fasta/extracted_file
       annotation_gtf_file: extract_gtf/extracted_file
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
+      memory_limit: memory_limit
       output_folder_name:
         default: "cellranger_vdj_ref"
     out:
