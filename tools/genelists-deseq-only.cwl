@@ -134,10 +134,10 @@ outputs:
     doc: |
       html of morpheus heatmap with preconfigured settings, RPKM, data scaled  0-99, max value set to 95th percentile RPKM value
 
-  log_file_stdout:
+  log_stdout:
     type: stdout
 
-  log_file_stderr:
+  log_stderr:
     type: stderr
 
 

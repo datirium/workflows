@@ -154,7 +154,7 @@ outputs:
     outputSource: data_integration/heatmap_vst_zscore_html
     label: "Heatmap VST Z-scores (Z-score of VST)"
     doc: |
-      html of morpheus heatmap with preconfigured settings, Z-scores of VST values, no data scaling (-Inf and Inf values are removed from the heatmap, these are due to near-zero or huge [relative to the mean] standard deviations, respectively)
+      html of morpheus heatmap with preconfigured settings, Z-scores of VST values, no data scaling
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -204,14 +204,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  log_file_stdout:
+  log_stdout:
     type: File
-    outputSource: data_integration/log_file_stdout
+    outputSource: data_integration/log_stdout
     label: "log file stdout"
 
-  log_file_stderr:
+  log_stderr:
     type: File
-    outputSource: data_integration/log_file_stderr
+    outputSource: data_integration/log_stderr
     label: "log file stderr"
 
 
@@ -237,8 +237,8 @@ steps:
       - heatmap_scaled100_html
       - heatmap_scaled99_html
       - heatmap_scaled95_html
-      - log_file_stdout
-      - log_file_stderr
+      - log_stdout
+      - log_stderr
 
 
 $namespaces:
