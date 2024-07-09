@@ -533,7 +533,7 @@ mv heatmap.html heatmap_vst_zscore.html
 
 
 
-exit
+
 
 
 
