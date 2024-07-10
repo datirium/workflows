@@ -138,8 +138,7 @@ inputs:
       prefix: "--use_lfc_thresh"
     default: true
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
-    'sd:layout':
-      advanced: true
+
       
   regulation:
     type:
