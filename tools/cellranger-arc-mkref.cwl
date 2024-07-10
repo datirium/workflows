@@ -56,10 +56,11 @@ inputs:
       - "null"
       - string[]
     doc: |
-      Contigs that do not have any chromatin structure, for example,
-      mitochondria or plastids. These contigs are excluded from peak
-      calling since the entire contig will be "open" due to a lack of
-      chromatin structure
+      Contigs that do not have any chromatin structure,
+      for example, mitochondria or plastids. These
+      contigs are excluded from peak calling since the
+      entire contig will be "open" due to a lack of
+      chromatin structure.
 
   output_folder_name:
     type: string?
@@ -93,15 +94,16 @@ outputs:
     outputBinding:
       glob: $(get_output_folder_name())
     doc: |
-      Compatible with Cell Ranger ARC reference folder that includes
-      STAR and BWA indices
+      Compatible with Cell Ranger ARC reference
+      folder that includes STAR and BWA indices.
 
   chrom_length_file:
     type: File
     outputBinding:
       glob: $(get_output_folder_name() + "/star/chrNameLength.txt")
     doc: |
-      Chromosome length file in TSV format
+      Chromosome length file
+      in TSV format.
 
   stdout_log:
     type: stdout
@@ -123,9 +125,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger ARC Build Reference Indices"
-s:name: "Cell Ranger ARC Build Reference Indices"
-s:alternateName: "Builds Cell Ranger ARC compatible reference folder from the custom genome FASTA and gene GTF annotation files"
+s:name: "Cell Ranger Reference (RNA+ATAC)"
+label: "Cell Ranger Reference (RNA+ATAC)"
+s:alternateName: "Builds a reference genome of a selected species for quantifying gene expression and chromatin accessibility"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-arc-mkref.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -163,11 +165,10 @@ s:creator:
 
 
 doc: |
-  Cell Ranger ARC Build Reference Indices
-  ====================================================================
-  
-  Builds Cell Ranger ARC compatible reference folder from the custom
-  genome FASTA and gene GTF annotation files.
+  Cell Ranger Reference (RNA, ATAC, RNA+ATAC)
+
+  Builds a reference genome of a selected species for quantifying
+  gene expression and chromatin accessibility
   
   Notes:
   - `input_motifs` parameter in the `config.txt` file is not

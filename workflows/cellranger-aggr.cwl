@@ -188,6 +188,15 @@ outputs:
     label: "Loupe V(D)J Browser visualization and analysis file"
     doc: "Loupe V(D)J Browser visualization and analysis file"
 
+  airr_rearrangement_tsv:
+    type: File?
+    outputSource: aggregate_counts/airr_rearrangement_tsv
+    label: "Annotated contigs and consensus sequences of V(D)J rearrangements in the AIRR format"
+    doc: |
+      Annotated contigs and consensus sequences of V(D)J
+      rearrangements in the AIRR format. It includes only
+      viable cells identified by both V(D)J and RNA algorithms.
+
   compressed_html_data_folder:
     type: File
     outputSource: compress_html_data_folder/compressed_folder
@@ -250,6 +259,7 @@ steps:
     - consensus_annotations_csv
     - filtered_contig_annotations_csv
     - loupe_vdj_browser_track
+    - airr_rearrangement_tsv
     - stdout_log
     - stderr_log
 
