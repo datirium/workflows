@@ -56,24 +56,38 @@ steps:
   pipe:
     run:
       cwlVersion: v1.0
-      class: ExpressionTool
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/scidap:v0.0.3
       inputs:
+        script:
+          type: string?
+          default: |
+            cp $0 ./filtered_feature_bc_matrix_updated.tar.gz
+            if [[ -n $1 ]]; then
+              cat $1 | tr "," "\t" > ./aggregation.tsv
+            fi
+          inputBinding:
+            position: 1
         compressed_sparse_matrix:
           type: File
+          inputBinding:
+            position: 2
         metadata:
           type: File?
+          inputBinding:
+            position: 3
       outputs:
         filtered_feature_bc_matrix_folder:
           type: File
+          outputBinding:
+            glob: "filtered_feature_bc_matrix_updated.tar.gz"
         aggregation_metadata:
           type: File?
-      expression: |
-        ${
-          return {
-            "filtered_feature_bc_matrix_folder": inputs.compressed_sparse_matrix,
-            "aggregation_metadata": inputs.metadata
-          };
-        }
+          outputBinding:
+            glob: "aggregation.tsv"
+      baseCommand: [bash, '-c']
     in:
       compressed_sparse_matrix: compressed_sparse_matrix
       metadata: metadata
