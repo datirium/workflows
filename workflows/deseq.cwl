@@ -123,14 +123,6 @@ inputs:
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
 
-  rpkm_cutoff:
-    type: float?
-    default: 0
-    label: "Minimum rpkm cutoff. Applied before running DEseq"
-    doc: "Minimum threshold for rpkm filtering. Default: 5"
-    'sd:layout':
-      advanced: true
-
   batch_file:
     type: File?
     default: null
@@ -212,24 +204,76 @@ inputs:
     'sd:layout':
       advanced: true
 
-  center_row:
-    type: boolean?
-    default: false
-    label: "Apply mean centering for feature expression prior to running clustering by row"
+  regulation:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "both"
+          - "up"
+          - "down"
+    default: "both"
+    label: "Direction of Differential Expression"
+    inputBinding:
+      prefix: "--regulation"
     doc: |
-      Apply mean centering for feature expression prior to running
-      clustering by row. Ignored when --cluster is not row or both.
-      Default: do not centered
+      Direction of differential expression comparison. β is the log2 fold change.
+      - 'both' for both up and downregulated genes. This includes |β| > lfcThreshold (greaterAbs) with two-tailed p-values, and |β| < lfcThreshold (lessAbs) with p-values being the maximum of the upper and lower tests. This option considers both directions of regulation in the comparison between condition2 and condition1.
+      - 'up' for upregulated genes (β > lfcThreshold in condition2 compared to condition1). This identifies genes that are more highly expressed in condition2.
+      - 'down' for downregulated genes (β < -lfcThreshold in condition2 compared to condition1). This identifies genes that are less expressed in condition2.
+      Default: both
     'sd:layout':
       advanced: true
 
-  maximum_padj:
+  fdr:
     type: float?
-    default: 0.05
+    default: 0.1
     label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
     doc: |
-      In the exploratory visualization analysis output only features with
-      adjusted P-value not bigger than this value. Default: 0.05
+      In the exploratory visualization part of the analysis output only features,
+      with adjusted p-value (FDR) not bigger than this value. Also the significance,
+      cutoff used for optimizing the independent filtering. Default: 0.1.
+    'sd:layout':
+      advanced: true
+
+  lfcthreshold:
+    type: float?
+    default: 0.59
+    label: "Log2 Fold Change Threshold"
+    inputBinding:
+      prefix: "--lfcthreshold"
+    doc: |
+      Log2 fold change threshold for determining significant differential expression.
+      Genes with absolute log2 fold change greater than this threshold will be considered.
+      Default: 0.59 (about 1.5 fold change)
+    'sd:layout':
+      advanced: true
+
+  use_lfc_thresh:
+    type: boolean
+    default: true
+    label: "Use lfcthreshold as the null hypothesis value in the results function call"
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
+    'sd:layout':
+      advanced: true
+
+  batchcorrection:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "none"
+          - "combatseq"
+          - "limmaremovebatcheffect"
+    default: "combatseq"
+    label: "Batch Correction Method"
+    inputBinding:
+      prefix: "--batchcorrection"
+    doc: |
+      Specifies the batch correction method to be applied.
+      - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
+      - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
+      - Default: none
     'sd:layout':
       advanced: true
 
@@ -276,6 +320,19 @@ outputs:
     - syncfusiongrid:
         tab: 'Differential Expression Analysis'
         Title: 'Combined DESeq results'
+
+  deseq_summary_md:
+    type: File
+    label: "DESeq2 Results Summary"
+    doc: |
+      Markdown file that includes a warning message if batch_file is not provided
+      but batchcorrection is set to "combatseq" or "limmaremovebatcheffect". Additionally,
+      it contains a detailed summary of the DESeq2 analysis results, including total genes
+      with non-zero read count, log fold changes (LFC), outliers, and low count genes.
+    outputSource: deseq/deseq_summary_md
+    "sd:visualPlugins":
+      - markdownView:
+          tab: "Overview"
 
   read_counts_file:
     type: File
@@ -483,18 +540,21 @@ steps:
       treated_name: alias_cond_2
       untreated_sample_names: sample_names_cond_1
       treated_sample_names: sample_names_cond_2
-      rpkm_cutoff: rpkm_cutoff
       batch_file: batch_file
       cluster_method:
         source: cluster_method
         valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
       column_distance: column_distance
-      center_row: center_row
-      maximum_padj: maximum_padj
+      fdr: fdr
       threads: threads
+      lfcthreshold: lfcthreshold
+      use_lfc_thresh: use_lfc_thresh
+      regulation: regulation
+      batchcorrection: batchcorrection
     out:
       - diff_expr_file
+      - deseq_summary_md
       - plot_lfc_vs_mean
       - gene_expr_heatmap
       - plot_pca
