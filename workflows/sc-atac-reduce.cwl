@@ -20,6 +20,7 @@ requirements:
   sc_tools_sample:
   - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
+  - "sc-atac-filter.cwl"
   - "sc-multiome-filter.cwl"
 
 
@@ -514,7 +515,7 @@ steps:
       parallel_memory_limit:
         default: 32
       vector_memory_limit:
-        default: 96
+        default: 128
       threads:
         source: threads
         valueFrom: $(parseInt(self))

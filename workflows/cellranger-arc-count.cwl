@@ -36,12 +36,16 @@ inputs:
     "sd:upstreamSource": "genome_indices/arc_indices_folder"
     "sd:localLabel": true
 
+  annotation_gtf_file:
+    type: File
+    "sd:upstreamSource": "genome_indices/genome_indices/annotation_gtf"
+
   memory_limit:
     type: int?
     default: 20
     "sd:upstreamSource": "genome_indices/memory_limit"
 
-  gex_fastq_file_r1:
+  rna_fastq_file_r1:
     type:
     - File
     - type: array
@@ -54,7 +58,7 @@ inputs:
       If multiple files provided they
       will be merged.
 
-  gex_fastq_file_r2:
+  rna_fastq_file_r2:
     type:
     - File
     - type: array
@@ -166,9 +170,9 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
-  fastqc_report_gex_fastq_r1:
+  fastqc_report_rna_fastq_r1:
     type: File
-    outputSource: run_fastqc_for_gex_fastq_r1/html_file
+    outputSource: run_fastqc_for_rna_fastq_r1/html_file
     label: "QC report (RNA FASTQ, Read 1)"
     doc: |
       FastqQC report generated for
@@ -178,9 +182,9 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
-  fastqc_report_gex_fastq_r2:
+  fastqc_report_rna_fastq_r2:
     type: File
-    outputSource: run_fastqc_for_gex_fastq_r2/html_file
+    outputSource: run_fastqc_for_rna_fastq_r2/html_file
     label: "QC report (RNA FASTQ, Read 2)"
     doc: |
       FastqQC report generated for
@@ -249,9 +253,9 @@ outputs:
       identified as a cell-associated
       partition by the pipeline.
 
-  gex_possorted_genome_bam_bai:
+  rna_possorted_genome_bam_bai:
     type: File
-    outputSource: generate_counts_matrix/gex_possorted_genome_bam_bai
+    outputSource: generate_counts_matrix/rna_possorted_genome_bam_bai
     label: "RNA reads"
     doc: |
       Genome track of RNA reads aligned to
@@ -358,9 +362,9 @@ outputs:
       clustering results above and linkage
       between ATAC and RNA data.
 
-  gex_molecule_info_h5:
+  rna_molecule_info_h5:
     type: File
-    outputSource: generate_counts_matrix/gex_molecule_info_h5
+    outputSource: generate_counts_matrix/rna_molecule_info_h5
     label: "RNA molecule-level data"
     doc: |
       Count and barcode information for
@@ -480,19 +484,19 @@ outputs:
 
 steps:
 
-  extract_gex_fastq_r1:
+  extract_rna_fastq_r1:
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: gex_fastq_file_r1
+      compressed_file: rna_fastq_file_r1
       output_prefix:
         default: "rna_read_1"
     out:
     - fastq_file
 
-  extract_gex_fastq_r2:
+  extract_rna_fastq_r2:
     run: ../tools/extract-fastq.cwl
     in:
-      compressed_file: gex_fastq_file_r2
+      compressed_file: rna_fastq_file_r2
       output_prefix:
         default: "rna_read_2"
     out:
@@ -525,20 +529,20 @@ steps:
     out:
     - fastq_file
 
-  run_fastqc_for_gex_fastq_r1:
+  run_fastqc_for_rna_fastq_r1:
     run: ../tools/fastqc.cwl
     in:
-      reads_file: extract_gex_fastq_r1/fastq_file
+      reads_file: extract_rna_fastq_r1/fastq_file
       threads:
         source: threads
         valueFrom: $(parseInt(self))
     out:
     - html_file
 
-  run_fastqc_for_gex_fastq_r2:
+  run_fastqc_for_rna_fastq_r2:
     run: ../tools/fastqc.cwl
     in:
-      reads_file: extract_gex_fastq_r2/fastq_file
+      reads_file: extract_rna_fastq_r2/fastq_file
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -578,8 +582,8 @@ steps:
   generate_counts_matrix:
     run: ../tools/cellranger-arc-count.cwl
     in:
-      gex_fastq_file_r1: extract_gex_fastq_r1/fastq_file
-      gex_fastq_file_r2: extract_gex_fastq_r2/fastq_file
+      rna_fastq_file_r1: extract_rna_fastq_r1/fastq_file
+      rna_fastq_file_r2: extract_rna_fastq_r2/fastq_file
       atac_fastq_file_r1: extract_atac_fastq_r1/fastq_file
       atac_fastq_file_r2: extract_atac_fastq_r2/fastq_file
       atac_fastq_file_r3: extract_atac_fastq_r3/fastq_file
@@ -594,14 +598,14 @@ steps:
     - web_summary_report
     - metrics_summary_report
     - barcode_metrics_report
-    - gex_possorted_genome_bam_bai
+    - rna_possorted_genome_bam_bai
     - atac_possorted_genome_bam_bai
     - filtered_feature_bc_matrix_folder
     - filtered_feature_bc_matrix_h5
     - raw_feature_bc_matrices_folder
     - raw_feature_bc_matrices_h5
     - secondary_analysis_report_folder
-    - gex_molecule_info_h5
+    - rna_molecule_info_h5
     - loupe_browser_track
     - atac_fragments_file
     - atac_peaks_bed_file
@@ -645,6 +649,7 @@ steps:
     in:
       secondary_analysis_report_folder: generate_counts_matrix/secondary_analysis_report_folder
       filtered_feature_bc_matrix_folder: generate_counts_matrix/filtered_feature_bc_matrix_folder
+      annotation_gtf_file: annotation_gtf_file
     out:
     - html_data
     - index_html_file

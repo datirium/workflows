@@ -60,7 +60,7 @@ inputs:
     - File
     - type: array
       items: File
-    label: "FASTQ input file"
+    label: "FASTQ input file(s)"
     format: "http://edamontology.org/format_1930"
     doc: "Reads data in a FASTQ format"
 
@@ -176,7 +176,7 @@ outputs:
     doc: "STAR Log.progress.out"
     outputSource: star_aligner/log_progress
 
-  star_stdout_log_file:
+  star_stdout_log:
     type: File?
     format: "http://edamontology.org/format_2330"
     label: "STAR stdout log"
@@ -235,32 +235,25 @@ outputs:
     doc: "Bowtie alignment log file"
     outputSource: bowtie_aligner/log_file
 
-  rpkm_isoforms:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Transcript expression"
-    doc: "Transcript expression (not actually RPKM, name needed for deseq input)"
-    outputSource: group_transcript_expression/transcript_expression_file
-
-  rpkm_genes:
+  gene_expression_file:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Gene expression"
-    doc: "Gene expression (not actually RPKM, name needed for deseq input)"
+    doc: "Gene expression"
     outputSource: group_transcript_expression/gene_expression_file
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'Gene Expression'
         Title: 'Read counts grouped by gene'
 
-  rpkm_common_tss:
-    type: File
-    format: "http://edamontology.org/format_3475"
-    label: "Common TSS expression"
-    doc: "Common TSS expression (not actually RPKM, name needed for deseq input)"
-    outputSource: group_transcript_expression/common_tss_expression_file
+  # common_tss_expression_file:
+  #   type: File
+  #   format: "http://edamontology.org/format_3475"
+  #   label: "Common TSS expression"
+  #   doc: "Common TSS expression"
+  #   outputSource: group_transcript_expression/common_tss_expression_file
 
-  geep_gene_expression_file:
+  rpkm_genes:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "GEEP: expression grouped by gene name"
@@ -424,6 +417,8 @@ steps:
     run: ../tools/extract-fastq.cwl
     in:
       compressed_file: fastq_file
+      output_prefix:
+        default: "read_1"
     out:
     - fastq_file
 
@@ -559,7 +554,8 @@ steps:
         valueFrom: $(get_root(self.basename)+".bam")
       threads: threads
       trigger: use_umi
-    out: [bam_bai_pair]
+    out:
+    - bam_bai_pair
 
   htseq_count_transcript_expression:
     run: ../tools/htseq-count.cwl
@@ -860,8 +856,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "QuantSeq 3' mRNA-Seq single-read"
-label: "QuantSeq 3' mRNA-Seq single-read"
+s:name: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
+label: "QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data"
 s:alternateName: "Runs QuantSeq 3' FWD, FWD-UMI or REV analysis for single-read mRNA-Seq data"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/trim-quantseq-mrnaseq-se-strand-specific.cwl
@@ -893,4 +889,4 @@ s:creator:
 
 
 doc: |
-  ### QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data 
+  ### QuantSeq 3' FWD, FWD-UMI or REV for single-read mRNA-Seq data

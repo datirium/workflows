@@ -11,12 +11,12 @@ requirements:
             return (root == "")?inputs.genome_fasta_file.basename:root;
           } else {
             return inputs.output_folder_name;
-          }          
+          }
         };
 
 hints:
 - class: DockerRequirement
-  dockerPull: cumulusprod/cellranger:7.0.0
+  dockerPull: cumulusprod/cellranger:8.0.1
 
 
 inputs:
@@ -27,7 +27,8 @@ inputs:
       position: 5
       prefix: "--fasta"
     doc: |
-      Genome FASTA file. Hard/soft-masked files are not allowed.
+      Genome FASTA file. Hard/soft-masked
+      files are not allowed.
 
   annotation_gtf_file:
     type: File
@@ -35,7 +36,8 @@ inputs:
       position: 6
       prefix: "--genes"
     doc: |
-      GTF annotation file. Should include gene_biotype/transcript_biotype fields
+      GTF annotation file. Should include
+      gene_biotype/transcript_biotype fields
 
   output_folder_name:
     type: string?
@@ -45,7 +47,26 @@ inputs:
       valueFrom: $(get_output_folder_name())
     default: ""
     doc: |
-      Unique genome name, used to name output folder
+      Unique genome name, used
+      to name the output folder
+
+  threads:
+    type: int?
+    inputBinding:
+      position: 8
+      prefix: "--localcores"
+    doc: |
+      Set max cores the pipeline may request at one time.
+      Default: all available
+
+  memory_limit:
+    type: int?
+    inputBinding:
+      position: 9
+      prefix: "--memgb"
+    doc: |
+      Maximum memory (GB) used.
+      Defaults: 16
 
 
 outputs:
@@ -55,8 +76,9 @@ outputs:
     outputBinding:
       glob: $(get_output_folder_name())
     doc: |
-      Cell Ranger V(D)J-compatible reference folder.
-      This folder will include V(D)J segment FASTA file.
+      Cell Ranger V(D)J-compatible reference
+      folder. This folder will include V(D)J
+      segment FASTA file.
 
   stdout_log:
     type: stdout
@@ -78,9 +100,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Build V(D)J Reference Indices"
-s:name: "Cell Ranger Build V(D)J Reference Indices"
-s:alternateName: "Build a Cell Ranger V(D)J-compatible reference folder from a user-supplied genome FASTA and gene GTF files"
+label: "Cell Ranger Reference (VDJ)"
+s:name: "Cell Ranger Reference (VDJ)"
+s:alternateName: "Builds a reference genome of a selected species for V(D)J contigs assembly and clonotype calling"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-mkvdjref.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -118,59 +140,100 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Build V(D)J Reference Indices
-  
-  Build a Cell Ranger V(D)J-compatible reference folder from:
-  1) A user-supplied genome FASTA and gene GTF files.
-        For example, using files from ENSEMBL.
-  2) A FASTA file containing V(D)J segments as per the mkvdjref spec.
-        For example, using files from IMGT.
+  Cell Ranger Reference (VDJ)
 
-  For simplicity purpose only option 1) is supported - user need to
-  provide GTF annotation file, input --seqs is not implemented.
+  Builds a reference genome of a selected species for V(D)J
+  contigs assembly and clonotype calling.
+
+  Input --seqs is not implemented.
 
   Chromosome names in GTF file should correspond to the chromosome
   names in FASTA file.
 
 
 s:about: |
-  Reference preparation tool for 10x Genomics Cell Ranger V(D)J assembler.
+  Prepare a reference for use with CellRanger VDJ.
 
-  Build a Cell Ranger V(D)J-compatible reference folder from:
-  1) A user-supplied genome FASTA and gene GTF files.
-        For example, using files from ENSEMBL.
-      OR
-  2) A FASTA file containing V(D)J segments as per the mkvdjref spec.
-        For example, using files from IMGT.
+  Build a Cell Ranger V(D)J-compatible reference folder from: 1) A user-supplied genome FASTA and gene GTF files. For
+  example, using files from ENSEMBL. OR 2) A FASTA file containing V(D)J segments as per the mkvdjref spec. For example,
+  using files from IMGT.
 
   Creates a new folder named after the genome.
 
-  The commands below should be preceded by 'cellranger':
-
-  Usage:
-      mkvdjref --genome=NAME --fasta=PATH --genes=PATH ...[options]
-      mkvdjref --genome=NAME --seqs=PATH [options]
-      mkvdjref -h | --help | --version
-
-  Arguments:
-      genome              A unique genome name, used to name output folder
-                              [a-zA-Z0-9_-]+.
-      fasta               Path to FASTA file containing your genome reference.
-      genes               One or more GTF files containing annotated genes for
-                              your genome reference. Specify multiple files by
-                              specifying the --genes argument multiple times. The
-                              files will be concatenated.
-      seqs                A FASTA file that directly specifies V(D)J sequences.
-                              This is mutually exclusive with the the "fasta" and
-                              "genes" args above.
+  Usage: cellranger mkvdjref [OPTIONS] --genome <GENOME_NAME>
 
   Options:
-      --ref-version=<str>
-                          Optional reference version string to include.
-      --rm-transcripts=PATH
-                          Path to text file with transcript IDs to ignore. This
-                              file should have one transcript ID per line where
-                              the IDs correspond to the "transcript_id" key in the
-                              GTF info column.
-      -h --help           Show this message.
-      --version           Show version.
+        --genome <GENOME_NAME>
+            Unique genome name, used to name output folder [a-zA-Z0-9_-]+
+
+        --fasta <FASTA_FILE>
+            Path to FASTA file containing your genome reference
+
+        --genes <GTF_FILES>
+            Path to genes GTF file containing annotated genes for your genome reference. Specify multiple genomes by
+            specifying this argument multiple times
+
+        --seqs <SEQ_FILE>
+            Path to a FASTA file that directly specifies V(D)J sequences. This is mutually exclusive with the "fasta" and
+            "genes" args
+
+        --rm-transcripts <REMOVE_TRANSCRIPTS_FILE>
+            Path to text file with transcript IDs to ignore. This file should have one transcript ID per line where the IDs
+            correspond to the "transcript_id" key in the GTF info column
+
+        --memgb <MEM_GB>
+            Maximum memory (GB) used
+            
+            [default: 16]
+
+        --ref-version <REF_VERSION>
+            Optional reference version string to include with reference
+
+        --dry
+            Do not execute the pipeline. Generate a pipeline invocation (.mro) file and stop
+
+        --jobmode <MODE>
+            Job manager to use. Valid options: local (default), sge, lsf, slurm or path to a .template file. Search for help
+            on "Cluster Mode" at support.10xgenomics.com for more details on configuring the pipeline to use a compute
+            cluster
+
+        --localcores <NUM>
+            Set max cores the pipeline may request at one time. Only applies to local jobs
+
+        --localmem <NUM>
+            Set max GB the pipeline may request at one time. Only applies to local jobs
+
+        --localvmem <NUM>
+            Set max virtual address space in GB for the pipeline. Only applies to local jobs
+
+        --mempercore <NUM>
+            Reserve enough threads for each job to ensure enough memory will be available, assuming each core on your
+            cluster has at least this much memory available. Only applies to cluster jobmodes
+
+        --maxjobs <NUM>
+            Set max jobs submitted to cluster at one time. Only applies to cluster jobmodes
+
+        --jobinterval <NUM>
+            Set delay between submitting jobs to cluster, in ms. Only applies to cluster jobmodes
+
+        --overrides <PATH>
+            The path to a JSON file that specifies stage-level overrides for cores and memory. Finer-grained than
+            --localcores, --mempercore and --localmem. Consult https://support.10xgenomics.com/ for an example override file
+
+        --output-dir <PATH>
+            Output the results to this directory
+
+        --uiport <PORT>
+            Serve web UI at http://localhost:PORT
+
+        --disable-ui
+            Do not serve the web UI
+
+        --noexit
+            Keep web UI running after pipestance completes or fails
+
+        --nopreflight
+            Skip preflight checks
+
+    -h, --help
+            Print help (see a summary with '-h')

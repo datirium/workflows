@@ -174,6 +174,73 @@ inputs:
 
 outputs:
 
+  cell_cnts_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_cluster/cell_cnts_gr_clst_res_plot_png
+    label: "Number of cells per cluster (all cells)"
+    doc: |
+      Number of cells per cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Number of cells per cluster (all cells)"
+
+  qc_mtrcs_dnst_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_cluster/qc_mtrcs_dnst_gr_clst_res_plot_png
+    label: "Distribution of QC metrics per cell colored by cluster (all cells)"
+    doc: |
+      Distribution of QC metrics per cell
+      colored by cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Distribution of QC metrics per cell colored by cluster (all cells)"
+
+  tss_frgm_spl_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_cluster/tss_frgm_spl_clst_res_plot_png
+    label: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cluster, all cells)"
+    doc: |
+      TSS enrichment score vs ATAC
+      fragments in peaks per cell.
+      Split by cluster; all cells;
+      all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cluster, all cells)"
+
+  atacdbl_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_cluster/atacdbl_gr_clst_res_plot_png
+    label: "Percentage of ATAC doublets per cluster (all cells)"
+    doc: |
+      Percentage of ATAC doublets per cluster.
+      All cells; all resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Percentage of ATAC doublets per cluster (all cells)"
+
   umap_gr_clst_res_plot_png:
     type:
     - "null"
@@ -388,11 +455,15 @@ steps:
       parallel_memory_limit:
         default: 32
       vector_memory_limit:
-        default: 96
+        default: 128
       threads:
         source: threads
         valueFrom: $(parseInt(self))
     out:
+    - cell_cnts_gr_clst_res_plot_png
+    - tss_frgm_spl_clst_res_plot_png
+    - atacdbl_gr_clst_res_plot_png
+    - qc_mtrcs_dnst_gr_clst_res_plot_png
     - umap_gr_clst_res_plot_png
     - slh_gr_clst_res_plot_png
     - umap_gr_clst_spl_idnt_res_plot_png
@@ -400,15 +471,7 @@ steps:
     - umap_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_clst_spl_cnd_res_plot_png
     - cvrg_res_plot_png
-    - umap_gr_clst_res_plot_pdf
-    - slh_gr_clst_res_plot_pdf
-    - umap_gr_clst_spl_idnt_res_plot_pdf
-    - cmp_gr_clst_spl_idnt_res_plot_pdf
-    - cmp_gr_idnt_spl_clst_res_plot_pdf
-    - umap_gr_clst_spl_cnd_res_plot_pdf
-    - cmp_gr_clst_spl_cnd_res_plot_pdf
-    - cmp_gr_cnd_spl_clst_res_plot_pdf
-    - cvrg_res_plot_pdf
+    - all_plots_pdf
     - peak_markers_tsv
     - ucsc_cb_html_data
     - ucsc_cb_html_file
@@ -421,15 +484,7 @@ steps:
     in:
       input_files:
         source:
-        - sc_atac_cluster/umap_gr_clst_res_plot_pdf
-        - sc_atac_cluster/slh_gr_clst_res_plot_pdf
-        - sc_atac_cluster/umap_gr_clst_spl_idnt_res_plot_pdf
-        - sc_atac_cluster/cmp_gr_clst_spl_idnt_res_plot_pdf
-        - sc_atac_cluster/cmp_gr_idnt_spl_clst_res_plot_pdf
-        - sc_atac_cluster/umap_gr_clst_spl_cnd_res_plot_pdf
-        - sc_atac_cluster/cmp_gr_clst_spl_cnd_res_plot_pdf
-        - sc_atac_cluster/cmp_gr_cnd_spl_clst_res_plot_pdf
-        - sc_atac_cluster/cvrg_res_plot_pdf
+        - sc_atac_cluster/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"
