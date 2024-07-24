@@ -12,12 +12,6 @@ requirements:
 'sd:upstream':
   rnaseq_cond_1:
     - "mirna-mirdeep2-se.cwl"
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
@@ -28,12 +22,6 @@ requirements:
     - "trim-rnaseq-pe-ercc.cwl"
   rnaseq_cond_2:
     - "mirna-mirdeep2-se.cwl"
-    - "rnaseq-se.cwl"
-    - "rnaseq-pe.cwl"
-    - "rnaseq-se-dutp.cwl"
-    - "rnaseq-pe-dutp.cwl"
-    - "rnaseq-se-dutp-mitochondrial.cwl"
-    - "rnaseq-pe-dutp-mitochondrial.cwl"
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
     - "trim-rnaseq-pe-dutp.cwl"
@@ -46,7 +34,7 @@ requirements:
 
 inputs:
 
-  alias_name:
+  alias:
     type: string
     label: "Experiment short name/Alias"
     sd:preview:
@@ -58,8 +46,8 @@ inputs:
     - File[]
     default: null
     format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
-    doc: "CSV/TSV input files grouped by isoforms (condition 1, e.g. 'treatment')"
+    label: "RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "CSV/TSV input files grouped by isoforms (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
     'sd:localLabel': true
 
@@ -69,8 +57,8 @@ inputs:
     - File[]
     default: null
     format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
-    doc: "CSV/TSV input files grouped by genes (condition 1, e.g. 'treatment')"
+    label: "RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "CSV/TSV input files grouped by genes (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes"
 
   rpkm_common_tss_cond_1:
@@ -79,8 +67,8 @@ inputs:
     - File[]
     default: null
     format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
-    doc: "CSV/TSV input files grouped by common TSS (condition 1, e.g. 'treatment')"
+    label: "RNA-Seq experiments (condition 1, aka 'untreated')"
+    doc: "CSV/TSV input files grouped by common TSS (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss"
 
   rpkm_isoforms_cond_2:
@@ -89,8 +77,8 @@ inputs:
     - File[]
     default: null
     format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments (condition 2, e.g. 'control')"
-    doc: "CSV/TSV input files grouped by isoforms (condition 2, e.g. 'control')"
+    label: "RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "CSV/TSV input files grouped by isoforms (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms"
     'sd:localLabel': true
 
@@ -100,8 +88,8 @@ inputs:
     - File[]
     default: null
     format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments (condition 2, e.g. 'control')"
-    doc: "CSV/TSV input files grouped by genes (condition 2, e.g. 'control')"
+    label: "RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "CSV/TSV input files grouped by genes (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes"
 
   rpkm_common_tss_cond_2:
@@ -110,8 +98,8 @@ inputs:
     - File[]
     default: null
     format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments (condition 2, e.g. 'control')"
-    doc: "CSV/TSV input files grouped by common TSS (condition 2, e.g. 'control')"
+    label: "RNA-Seq experiments (condition 2, aka 'treated')"
+    doc: "CSV/TSV input files grouped by common TSS (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss"
 
   group_by:
@@ -135,17 +123,17 @@ inputs:
 
   alias_cond_1:
     type: string?
-    default: "treatment"
-    label: "Alias for condition 1, e.g. 'treatment' (letters and numbers only)"
-    doc: "Name to be displayed for condition 1, e.g. 'treatment' (letters and numbers only)"
+    default: "untreated"
+    label: "Alias for condition 1, aka 'untreated' (letters and numbers only)"
+    doc: "Name to be displayed for condition 1, aka 'untreated' (letters and numbers only)"
     'sd:layout':
       advanced: true
 
   alias_cond_2:
     type: string?
-    default: "control"
-    label: "Alias for condition 2, e.g. 'control' (letters and numbers only)"
-    doc: "Name to be displayed for condition 2, e.g. 'control' (letters and numbers only)"
+    default: "treated"
+    label: "Alias for condition 2, aka 'treated' (letters and numbers only)"
+    doc: "Name to be displayed for condition 2, aka 'treated' (letters and numbers only)"
     'sd:layout':
       advanced: true
 
@@ -203,7 +191,7 @@ inputs:
       provided. Default: euclid
     'sd:layout':
       advanced: true
-
+      
   regulation:
     type:
       - "null"
@@ -223,7 +211,7 @@ inputs:
       - 'down' for downregulated genes (β < -lfcThreshold in condition2 compared to condition1). This identifies genes that are less expressed in condition2.
       Default: both
     'sd:layout':
-      advanced: true
+      advanced: true   
 
   fdr:
     type: float?
@@ -235,7 +223,7 @@ inputs:
       cutoff used for optimizing the independent filtering. Default: 0.1.
     'sd:layout':
       advanced: true
-
+      
   lfcthreshold:
     type: float?
     default: 0.59
@@ -246,9 +234,9 @@ inputs:
       Log2 fold change threshold for determining significant differential expression.
       Genes with absolute log2 fold change greater than this threshold will be considered.
       Default: 0.59 (about 1.5 fold change)
-    'sd:layout':
+    'sd:layout':  
       advanced: true
-
+  
   use_lfc_thresh:
     type: boolean
     default: true
@@ -256,7 +244,7 @@ inputs:
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
     'sd:layout':
       advanced: true
-
+      
   batchcorrection:
     type:
       - "null"
@@ -282,9 +270,9 @@ inputs:
       - "null"
       - string[]
     default: null
-    label: "Sample names for RNA-Seq experiments (condition 1, e.g. 'treatment')"
+    label: "Sample names for RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: |
-      Aliases for RNA-Seq experiments (condition 1, e.g. 'treatment') to make the
+      Aliases for RNA-Seq experiments (condition 1, aka 'untreated') to make the
       legend for generated plots. Order corresponds to the rpkm_isoforms_cond_1
     'sd:upstreamSource': "rnaseq_cond_1/alias"
 
@@ -293,15 +281,15 @@ inputs:
       - "null"
       - string[]
     default: null 
-    label: "Sample names for RNA-Seq experiments (condition 2, e.g. 'control')"
+    label: "Sample names for RNA-Seq experiments (condition 2, aka 'treated')"
     doc: |
-      Aliases for RNA-Seq experiments (condition 2, e.g. 'control') to make the
+      Aliases for RNA-Seq experiments (condition 2, aka 'treated') to make the
       legend for generated plots. Order corresponds to the rpkm_isoforms_cond_2
     'sd:upstreamSource': "rnaseq_cond_2/alias"
 
   threads:
     type: int?
-    default: 1
+    default: 6
     label: "Number of threads"
     doc: "Number of threads for those steps that support multithreading"
     'sd:layout':
@@ -320,7 +308,15 @@ outputs:
     - syncfusiongrid:
         tab: 'Differential Expression Analysis'
         Title: 'Combined DESeq results'
-
+    - scatter:
+        tab: 'Volcano Plot'
+        Title: 'Volcano'
+        xAxisTitle: 'log fold change'
+        yAxisTitle: '-log10(pAdj)'
+        colors: ["#b3de69"]
+        height: 600
+        data: [$2, $9, $13]
+  
   deseq_summary_md:
     type: File
     label: "DESeq2 Results Summary"
@@ -331,22 +327,15 @@ outputs:
       with non-zero read count, log fold changes (LFC), outliers, and low count genes.
     outputSource: deseq/deseq_summary_md
     "sd:visualPlugins":
-      - markdownView:
-          tab: "Overview"
+    - markdownView:
+        tab: "Overview"
 
   read_counts_file:
     type: File
-    label: "Normalized read counts in GCT format no padj filtering. Compatible with GSEA"
+    label: "Normalized read counts in GCT format. Compatible with GSEA"
     format: "http://edamontology.org/format_3709"
-    doc: "DESeq generated file of all normalized read counts in GCT format. Compatible with GSEA"
-    outputSource: deseq/read_counts_file_all
-
-  read_counts_file_filtered:
-    type: File
-    label: "Normalized read counts in GCT format filtered by padj. Compatible with Morpheus heatmap"
-    format: "http://edamontology.org/format_3709"
-    doc: "DESeq generated file of padjfiltered normalized read counts in GCT format. Compatible with Morpheus heatmap"
-    outputSource: deseq/read_counts_file_filtered
+    doc: "DESeq generated file of with normalized read counts in GCT format. Compatible with GSEA"
+    outputSource: deseq/read_counts_file
 
   phenotypes_file:
     type: File
@@ -480,19 +469,19 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  deseq_stdout:
+  deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
-    outputSource: deseq/std_out_log
+    outputSource: deseq/stdout_log
 
-  deseq_stderr:
+  deseq_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
-    outputSource: deseq/std_err_log
+    outputSource: deseq/stderr_log
 
   morpheus_stdout_log:
     type: File
@@ -561,12 +550,11 @@ steps:
       - plot_lfc_vs_mean_pdf
       - gene_expr_heatmap_pdf
       - plot_pca_pdf
-      - read_counts_file_all
-      - read_counts_file_filtered
+      - read_counts_file
       - phenotypes_file
       - mds_plot_html
-      - std_out_log
-      - std_err_log
+      - stdout_log
+      - stderr_log
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
@@ -619,7 +607,7 @@ steps:
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
     in:
-     read_counts_gct: deseq/read_counts_file_filtered
+     read_counts_gct: deseq/read_counts_file
     out:
     - heatmap_html
     - stdout_log
@@ -659,42 +647,35 @@ s:creator:
           - id: http://orcid.org/0000-0001-9102-5681
 
 
+# doc:
+#   $include: ../descriptions/deseq.md
+
+
 doc: |
-  # Differential gene expression analysis
+  Differential gene expression analysis
+  =====================================
 
-  This differential gene expression (DGE) analysis takes as input samples from two experimental conditions that have been processed with an RNA-Seq workflow (see list of "Upstream workflows" below).
+  Differential gene expression analysis based on the negative binomial distribution
 
-  DESeq estimates variance-mean dependence in count data from high-throughput sequencing assays, then tests for DGE based on a model which assumes a negative binomial distribution of gene expression (aligned read count per gene).
+  Estimate variance-mean dependence in count data from high-throughput sequencing assays and test for differential expression based on a model using the negative binomial distribution.
 
-  ### Experimental Setup and Results Interpretation
+  DESeq1
+  ------
 
-  The workflow design uses as its fold change (FC) calculation: condition 1 (c1, e.g. treatment) over condition 2 (c2, e.g. control).
-  
-  In other words: `FC == (c1/c2)`
+  High-throughput sequencing assays such as RNA-Seq, ChIP-Seq or barcode counting provide quantitative readouts
+  in the form of count data. To infer differential signal in such data correctly and with good statistical power,
+  estimation of data variability throughout the dynamic range and a suitable error model are required.
+  Simon Anders and Wolfgang Huber propose a method based on the negative binomial distribution, with variance and mean
+  linked by local regression and present an implementation, [DESeq](http://bioconductor.org/packages/release/bioc/html/DESeq.html),
+  as an R/Bioconductor package 
 
-  Therefore:
+  DESeq2
+  ------
 
-  - if FC<1 the log2(FC) is <0 (negative), meaning expression in condition1<condition2 (gene is downregulated in c1)
-  - if FC>1 the log2(FC) is >0 (positive), meaning expression in condition1>condition2 (gene is upregulated in c1)
-
-  In other words, if you have input TREATMENT samples as condition 1, and CONTROL samples as condition 2, a positive L2FC for a gene indicates that expression of the gene in TREATMENT is greater (or upregulated) compared to CONTROL.
-  
-  Next, threshold the p-adjusted values with your FDR (false discovery rate) cutoff to determine if the change may be considered significant or not.
-
-  It is important to note when DESeq1 or DESeq2 is used in our DGE analysis workflow. If a user inputs only a single sample per condition DESeq1 is used for calculating DGE. In this experimental setup, there are no repeated measurements per gene per condition, therefore biological variability in each condition cannot be captured so the output p-values are assumed to be purely "technical". On the other hand, if >1 sample(s) are input per condition DESeq2 is used. In this case, biological variability per gene within each condition is available to be incorporated into the model, and resulting p-values are assumed to be "biological". Additionally, DESeq2 fold change is "shrunk" to account for sample variability, and as Michael Love (DESeq maintainer) puts it, "it looks at the largest fold changes that are not due to low counts and uses these to inform a prior distribution. So the large fold changes from genes with lots of statistical information are not shrunk, while the imprecise fold changes are shrunk. This allows you to compare all estimated LFC across experiments, for example, which is not really feasible without the use of a prior".
-
-  In either case, the null hypothesis (H0) tested is that there are no significantly differentially expressed genes between conditions, therefore a smaller p-value indicates a lower probability of the H0 occurring by random chance and therefore, below a certain threshold (traditionally <0.05), H0 should be rejected. Additionally, due to the many thousands of independent hypotheses being tested (each gene representing an independent test), the p-values attained by the Wald test are adjusted using the Benjamini and Hochberg method by default. These "padj" values should be used for determination of significance (a reasonable value here would be <0.10, i.e. below a 10% FDR).
-
-  Further Analysis: Output from the DESeq workflow may be used as input to the GSEA (Gene Set Enrichment Analysis) workflow for identifying enriched marker gene sets between conditions.
-
-  ### DESeq1
-
-  High-throughput sequencing assays such as RNA-Seq, ChIP-Seq or barcode counting provide quantitative readouts in the form of count data. To infer differential signal in such data correctly and with good statistical power, estimation of data variability throughout the dynamic range and a suitable error model are required. Simon Anders and Wolfgang Huber propose a method based on the negative binomial distribution, with variance and mean linked by local regression and present an implementation, [DESeq](http://www.bioconductor.org/packages/3.8/bioc/html/DESeq.html), as an R/Bioconductor package.
-
-  ### DESeq2
-
-  In comparative high-throughput sequencing assays, a fundamental task is the analysis of count data, such as read counts per gene in RNA-seq, for evidence of systematic changes across experimental conditions. Small replicate numbers, discreteness, large dynamic range and the presence of outliers require a suitable statistical approach. [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html), a method for differential analysis of count data, using shrinkage estimation for dispersions and fold changes to improve stability and interpretability of estimates. This enables a more quantitative analysis focused on the strength rather than the mere presence of differential expression.
-
-  ### __References__
-    - Anders S, Huber W (2010). “Differential expression analysis for sequence count data.” Genome Biology, 11, R106. doi: 10.1186/gb-2010-11-10-r106, http://genomebiology.com/2010/11/10/R106/.
-    - Love MI, Huber W, Anders S (2014). “Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2.” Genome Biology, 15, 550. doi: 10.1186/s13059-014-0550-8.
+  In comparative high-throughput sequencing assays, a fundamental task is the analysis of count data,
+  such as read counts per gene in RNA-seq, for evidence of systematic changes across experimental conditions.
+  Small replicate numbers, discreteness, large dynamic range and the presence of outliers require a
+  suitable statistical approach. [DESeq2](http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html),
+  a method for differential analysis of count data,
+  using shrinkage estimation for dispersions and fold changes to improve stability and interpretability of estimates.
+  This enables a more quantitative analysis focused on the strength rather than the mere presence of differential expression.
