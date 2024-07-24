@@ -65,7 +65,6 @@ inputs:
     doc: |
       Unique aliases for treated expression files. Default: basenames of -t without extensions
 
-
   cluster_method:
     type:
     - "null"
@@ -123,7 +122,7 @@ inputs:
       In the exploratory visualization part of the analysis output only features,
       with adjusted p-value (FDR) not bigger than this value. Also the significance,
       cutoff used for optimizing the independent filtering. Default: 0.1.
-
+  
   lfcthreshold:
     type: float?
     inputBinding:
@@ -132,7 +131,15 @@ inputs:
       Log2 fold change threshold for determining significant differential expression.
       Genes with absolute log2 fold change greater than this threshold will be considered.
       Default: 0.59 (about 1.5 fold change)
+      
+  use_lfc_thresh:
+    type: boolean
+    inputBinding:
+      prefix: "--use_lfc_thresh"
+    default: true
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
 
+      
   regulation:
     type:
       - "null"
@@ -150,7 +157,7 @@ inputs:
       - 'down' for downregulated genes (β < -lfcThreshold in condition2 compared to condition1).
       Default: both
     default: "both"
-
+    
   batchcorrection:
     type:
       - "null"
@@ -167,7 +174,7 @@ inputs:
       - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
       - Default: none
     default: "none"
-
+    
   batch_file:
     type: File?
     inputBinding:
@@ -198,21 +205,16 @@ outputs:
     type: File
     outputBinding:
       glob: "*report.tsv"
-
+      
   deseq_summary_md:
     type: File
     outputBinding:
       glob: "*summary.md"
 
-  read_counts_file_all:
+  read_counts_file:
     type: File
     outputBinding:
-      glob: "*counts_all.gct"
-
-  read_counts_file_filtered:
-    type: File
-    outputBinding:
-      glob: "*counts_filtered.gct"
+      glob: "*counts.gct"
 
   phenotypes_file:
     type: File
@@ -342,10 +344,8 @@ s:about: |
         [--regulation {both,up,down}]
         [--lfcthreshold LFCTHRESHOLD]
         [--batchcorrection {none, combatseq,limmaremovebatcheffect}]
-        [--cluster {row,column,both}]
-        [--rowdist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-        [--columndist {cosangle,abscosangle,euclid,abseuclid,cor,abscor}]
-        [-o OUTPUT] [-d DIGITS] [-p THREADS]
+        [--use_lfc_thresh]
+
 
   Run BioWardrobe DESeq/DESeq2 for untreated-vs-treated groups (condition-1-vs-
   condition-2)
@@ -395,15 +395,16 @@ s:about: |
     -p THREADS, --threads THREADS
                           Threads
     --lfcthreshold LFCTHRESHOLD
-                        Log2 fold change threshold for determining significant differential expression.
-                        Genes with absolute log2 fold change greater than this threshold will be considered.
-                        Default: 0.59 (about 1.5 fold change)
-  --regulation {both,up,down}
-                        Direction of differential expression comparison.
-                        'up' for upregulated genes, 'down' for downregulated genes,
-                        'both' for both up and downregulated genes. Default: both
-  --batchcorrection {none, combatseq,limmaremovebatcheffect}
-                        Specifies the batch correction method to be applied.
-                        - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
-                        - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
-                        - Default: none
+                          Log2 fold change threshold for determining significant differential expression.
+                          Genes with absolute log2 fold change greater than this threshold will be considered.
+                          Default: 0.59 (about 1.5 fold change)
+    --regulation {both,up,down}
+                          Direction of differential expression comparison.
+                          'up' for upregulated genes, 'down' for downregulated genes,
+                          'both' for both up and downregulated genes. Default: both
+    --batchcorrection {none, combatseq,limmaremovebatcheffect}
+                          Specifies the batch correction method to be applied.
+                          - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
+                          - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
+                          - Default: none
+    --use_lfc_thresh      Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE
