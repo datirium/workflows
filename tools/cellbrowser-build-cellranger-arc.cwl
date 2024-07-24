@@ -4,23 +4,25 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/cellbrowser:v0.0.2
+  dockerPull: biowardrobe2/sc-tools:v0.0.39
 
 
 requirements:
+- class: EnvVarRequirement
+  envDef:
+    CBDATAROOT: $(runtime.outdir)
 - class: InlineJavascriptRequirement
 - class: InitialWorkDirRequirement
   listing:
-  - entryname: cellbrowser_gex.conf
+  - entryname: cellbrowser_rna.conf
     entry: |
-      name = "GEX"
-      shortLabel="GEX"
+      name = "RNA"
+      shortLabel = "RNA"
       priority = 1
-      geneIdType="auto"
-      geneLabel="Gene"
-      exprMatrix="exprMatrix.tsv.gz"
-      meta="meta.csv"
-      coords=[
+      geneIdType = "auto"
+      exprMatrix = "exprMatrix.tsv.gz"
+      meta = "meta.csv"
+      coords = [
           {
               "file": "tsne.coords.csv",
               "shortLabel": "t-SNE"
@@ -30,26 +32,27 @@ requirements:
               "shortLabel": "UMAP"
           }
       ]
-      markers=[
-      {
-          "file":"markers.tsv",
-          "shortLabel":"Cluster-specific genes"
-      }
+      markers = [
+          {
+              "file": "markers.tsv",
+              "shortLabel": "Cluster-specific genes"
+          }
       ]
-      enumFields = ["Barcode"]
-      clusterField="Cluster"
-      labelField="Cluster"
-      dataRoot="../"
+      geneLabel = "Feature"
+      radius = 3
+      alpha = 0.5
+      clusterField = "Cluster"
+      labelField = "Cluster"
+      dataRoot = "../"
   - entryname: cellbrowser_atac.conf
     entry: |
       name = "ATAC"
-      shortLabel="ATAC"
+      shortLabel = "ATAC"
       priority = 1
-      geneIdType="auto"
-      geneLabel="Peak"
-      exprMatrix="exprMatrix.tsv.gz"
-      meta="meta.csv"
-      coords=[
+      geneIdType = "auto"
+      exprMatrix = "exprMatrix.tsv.gz"
+      meta = "meta.csv"
+      coords = [
           {
               "file": "tsne.coords.csv",
               "shortLabel": "t-SNE"
@@ -63,22 +66,25 @@ requirements:
               "shortLabel": "LSA"
           }
       ]
-      markers=[
-      {
-          "file":"markers.tsv",
-          "shortLabel":"Cluster-specific peaks"
-      }
+      markers = [
+          {
+              "file": "markers.tsv",
+              "shortLabel": "Cluster-specific peaks"
+          }
       ]
-      enumFields = ["Barcode"]
-      clusterField="Cluster"
-      labelField="Cluster"
-      dataRoot="../"
+      geneLabel = "Feature"
+      radius = 3
+      alpha = 0.5
+      clusterField = "Cluster"
+      labelField = "Cluster"
+      dataRoot = "../"
+      atacSearch = "genome.current"
   - entryname: cellbrowser.conf
     entry: |
-      shortLabel="Multiome"
-  - entryname: desc_gex.conf
+      shortLabel = "Multiple datasets"
+  - entryname: desc_rna.conf
     entry: |
-      title = "GEX"
+      title = "RNA"
       abstract = ""
       methods = ""
       biorxiv_url = ""
@@ -97,6 +103,10 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
+      echo "Splitting combined feature-barcode matrix into RNA and ATAC matrices"
+      sc_cb_utils_split_mex.R --mex $1 --output temp_sc
+      echo "Preparing ATAC search file"
+      sc_cb_utils_atac_search.R --annotations $2
       echo "Preparing ATAC data"
       mkdir -p ./atac_input/analysis/clustering/graphclust \
               ./atac_input/analysis/diffexp/graphclust \
@@ -109,7 +119,7 @@ inputs:
       cp -r $0/dimensionality_reduction/atac/umap_projection.csv ./atac_input/analysis/umap/2_components/projection.csv
       cp -r $0/dimensionality_reduction/atac/lsa_projection.csv ./atac_input/analysis/lsa/2_components/projection.csv
       mkdir -p ./atac_input/filtered_feature_bc_matrix
-      cp -r $1/* ./atac_input/filtered_feature_bc_matrix/
+      cp -r temp_sc_atac/* ./atac_input/filtered_feature_bc_matrix/
       echo "Importing ATAC data"
       cbImportCellranger -i atac_input -o atac --name atac
       cd ./atac
@@ -121,78 +131,92 @@ inputs:
       rm -f cellbrowser.conf desc.conf
       cp ../cellbrowser_atac.conf cellbrowser.conf
       cp ../desc_atac.conf desc.conf
-      if [[ -n $2 ]]; then
+      if [[ -n $3 ]]; then
           echo "Aggregation metadata file was provided. Adding initial cell identity classes"
-          cat $2 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
+          cat $3 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
           cat meta.csv | grep -v "Barcode" > meta_headerless.csv
-          echo "Barcode,Cluster,Identity" > meta.csv
+          echo "Barcode,Cluster,Dataset" > meta.csv
           awk -F, 'NR==FNR {identity[$1]=$2; next} {split($1,barcode,"-"); print $0","identity[barcode[2]]}' aggregation_metadata.csv meta_headerless.csv >> meta.csv
           rm -f aggregation_metadata.csv meta_headerless.csv
       fi
+      cbBuild -o ../html_data
       cd ..
-      echo "Preparing GEX data"
-      mkdir -p ./gex_input/analysis/clustering/graphclust \
-              ./gex_input/analysis/diffexp/graphclust \
-              ./gex_input/analysis/tsne/2_components \
-              ./gex_input/analysis/umap/2_components
-      cp -r $0/clustering/gex/graphclust/clusters.csv ./gex_input/analysis/clustering/graphclust/clusters.csv
-      cp -r $0/clustering/gex/graphclust/differential_expression.csv ./gex_input/analysis/diffexp/graphclust/differential_expression.csv
-      cp -r $0/dimensionality_reduction/gex/tsne_projection.csv ./gex_input/analysis/tsne/2_components/projection.csv
-      cp -r $0/dimensionality_reduction/gex/umap_projection.csv ./gex_input/analysis/umap/2_components/projection.csv
-      mkdir -p ./gex_input/filtered_feature_bc_matrix
-      cp -r $1/* ./gex_input/filtered_feature_bc_matrix/
-      echo "Importing GEX data"
-      cbImportCellranger -i gex_input -o gex --name gex
-      cd ./gex
+      echo "Preparing RNA data"
+      mkdir -p ./rna_input/analysis/clustering/graphclust \
+              ./rna_input/analysis/diffexp/graphclust \
+              ./rna_input/analysis/tsne/2_components \
+              ./rna_input/analysis/umap/2_components
+      cp -r $0/clustering/gex/graphclust/clusters.csv ./rna_input/analysis/clustering/graphclust/clusters.csv
+      cp -r $0/clustering/gex/graphclust/differential_expression.csv ./rna_input/analysis/diffexp/graphclust/differential_expression.csv
+      cp -r $0/dimensionality_reduction/gex/tsne_projection.csv ./rna_input/analysis/tsne/2_components/projection.csv
+      cp -r $0/dimensionality_reduction/gex/umap_projection.csv ./rna_input/analysis/umap/2_components/projection.csv
+      mkdir -p ./rna_input/filtered_feature_bc_matrix
+      cp -r temp_sc_rna/* ./rna_input/filtered_feature_bc_matrix/
+      echo "Importing RNA data"
+      cbImportCellranger -i rna_input -o rna --name rna
+      cd ./rna
       echo "Copying coordinates files"
-      cp ../gex_input/analysis/tsne/2_components/projection.csv tsne.coords.csv
-      cp ../gex_input/analysis/umap/2_components/projection.csv umap.coords.csv
+      cp ../rna_input/analysis/tsne/2_components/projection.csv tsne.coords.csv
+      cp ../rna_input/analysis/umap/2_components/projection.csv umap.coords.csv
       echo "Replacing configuration files"
       rm -f cellbrowser.conf desc.conf
-      cp ../cellbrowser_gex.conf cellbrowser.conf
-      cp ../desc_gex.conf desc.conf
-      if [[ -n $2 ]]; then
+      cp ../cellbrowser_rna.conf cellbrowser.conf
+      cp ../desc_rna.conf desc.conf
+      if [[ -n $3 ]]; then
           echo "Aggregation metadata file was provided. Adding initial cell identity classes"
-          cat $2 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
+          cat $3 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
           cat meta.csv | grep -v "Barcode" > meta_headerless.csv
-          echo "Barcode,Cluster,Identity" > meta.csv
+          echo "Barcode,Cluster,Dataset" > meta.csv
           awk -F, 'NR==FNR {identity[$1]=$2; next} {split($1,barcode,"-"); print $0","identity[barcode[2]]}' aggregation_metadata.csv meta_headerless.csv >> meta.csv
           rm -f aggregation_metadata.csv meta_headerless.csv
       fi
+      cbBuild -o ../html_data
       cd ..
-      echo "Building"
-      cbBuild -r -o html_data
       echo "Cleaning up temporary files"
-      rm -rf gex_input atac_input atac gex
+      rm -rf rna_input atac_input atac rna temp_sc_rna temp_sc_atac
     inputBinding:
       position: 5
     doc: |
-      Bash script to run cbImportCellranger and cbBuild commands
+      Bash script to run cbImportCellranger
+      and cbBuild commands.
 
   secondary_analysis_report_folder:
     type: Directory
     inputBinding:
       position: 6
     doc: |
-      Folder with secondary analysis results including dimensionality reduction,
-      cell clustering, and differential expression produced by Cellranger ARC
-      Count or Cellranger ARC Aggr
+      Folder with secondary analysis results
+      including dimensionality reduction, cell
+      clustering, and differential expression
+      produced by Cellranger ARC Count or
+      Cellranger ARC Aggr.
 
   filtered_feature_bc_matrix_folder:
     type: Directory
     inputBinding:
       position: 7
     doc: |
-      Folder with filtered feature-barcode matrices containing only cellular
-      barcodes in MEX format produced by Cellranger ARC Count or Cellranger ARC Aggr
+      Folder with filtered feature-barcode
+      matrices containing only cellular
+      barcodes in MEX format produced by
+      Cellranger ARC Count or Cellranger
+      ARC Aggr.
+
+  annotation_gtf_file:
+    type: File
+    inputBinding:
+      position: 8
+    doc: |
+      GTF annotation file.
 
   aggregation_metadata:
     type: File?
     inputBinding:
-      position: 8
+      position: 9
     doc: |
-      Cellranger aggregation CSV file. If provided, the Identity metadata
-      column will be added to the meta.csv
+      Cellranger aggregation CSV file. If
+      provided, the Dataset metadata column
+      will be added to the meta.csv.
 
 
 outputs:
@@ -270,7 +294,6 @@ s:creator:
 
 doc: |
   Cell Ranger ARC Count/Aggregate to UCSC Cell Browser
-  =====================================================
 
   Exports clustering results from Cell Ranger ARC Count
   Chromatin Accessibility and Gene Expression or Cell
@@ -294,12 +317,14 @@ s:about: |
     -m, --noMat           do not export the matrix again, saves some time if you
                           changed something small since the last run
 
-
   Usage: cbBuild [options] -i cellbrowser.conf -o outputDir - add a dataset to the single cell viewer directory
       If you have previously built into the same output directory with the same dataset and the
       expression matrix has not changed its filesize, this will be detected and the expression
       matrix will not be copied again. This means that an update of a few meta data attributes
       is quite quick.
+      Gene symbol/annotation files are downloaded to ~/cellbrowserData when
+      needed. Config defaults can be specified in ~/.cellbrowser. See
+      documentation at https://cellbrowser.readthedocs.io/
   Options:
     -h, --help            show this help message and exit
     --init                copy sample cellbrowser.conf and desc.conf to current
@@ -311,11 +336,14 @@ s:about: |
                           specified multiple times
     -o OUTDIR, --outDir=OUTDIR
                           output directory, default can be set through the env.
-                          variable CBOUT or ~/.cellbrowser.conf, current value:
-                          none
+                          variable CBOUT or ~/.cellbrowser, current value: none
     -p PORT, --port=PORT  if build is successful, start an http server on this
                           port and serve the result via http://localhost:port
     -r, --recursive       run in all subdirectories of the current directory.
-                          Useful when rebuilding a full hierarchy.
+                          Useful when rebuilding a full hierarchy. Cannot be
+                          used with -p.
+    --depth=DEPTH         when using -r: only go this many directories deep
     --redo=REDO           do not use cached old data. Can be: 'meta' or 'matrix'
-                          (matrix includes meta). 
+                          (matrix includes meta).
+    --force               ignore errors that usually stop the build and go ahead
+                          anyways.

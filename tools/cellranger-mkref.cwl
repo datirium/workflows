@@ -11,12 +11,12 @@ requirements:
             return (root == "")?inputs.genome_fasta_file.basename:root;
           } else {
             return inputs.output_folder_name;
-          }          
+          }
         };
 
 hints:
 - class: DockerRequirement
-  dockerPull: cumulusprod/cellranger:7.0.0
+  dockerPull: cumulusprod/cellranger:8.0.1
 
 
 inputs:
@@ -50,11 +50,14 @@ inputs:
   threads:
     type: int?
     inputBinding:
+      valueFrom: $(["--nthreads", self, "--localcores", self])
       position: 8
-      prefix: "--nthreads"
     doc: |
-      Number of threads used during STAR genome index
-      Default: 1
+      Number of threads used during STAR
+      genome index. And the max cores the
+      pipeline may request at one time.
+      Default: 1 for --nthreads and all
+      available for --localcores
 
   memory_limit:
     type: int?
@@ -103,9 +106,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-label: "Cell Ranger Build Reference Indices"
-s:name: "Cell Ranger Build Reference Indices"
-s:alternateName: "Builds Cell Ranger compatible reference folder from the custom genome FASTA and gene GTF annotation files"
+label: "Cell Ranger Reference (RNA)"
+s:name: "Cell Ranger Reference (RNA)"
+s:alternateName: "Builds a reference genome of a selected species for quantifying gene expression"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-mkref.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -143,44 +146,58 @@ s:creator:
 
 
 doc: |
-  Cell Ranger Build Reference Indices
+  Cell Ranger Reference (RNA)
 
-  Builds Cell Ranger compatible reference folder from
-  the custom genome FASTA and gene GTF annotation files.
+  Builds a reference genome of a selected species
+  for quantifying gene expression.
+
+  Both --nthreads and --localcores parameters are
+  configured through "threads" input.
 
 
 s:about: |
-  Build a Cell Ranger-compatible reference folder from user-supplied genome
-  FASTA and gene GTF files. Creates a new folder named after the genome.
+  Prepare a reference for use with 10x analysis software. Requires a GTF and FASTA
 
-  The commands below should be preceded by 'cellranger':
-
-  Usage:
-      mkref
-          --genome=NAME ...
-          --fasta=PATH ...
-          --genes=PATH ...
-          [options]
-      mkref -h | --help | --version
-
-  Arguments:
-      genome              Unique genome name(s), used to name output folder
-                              [a-zA-Z0-9_-]+. Specify multiple genomes by
-                              specifying the --genome argument multiple times; the
-                              output folder will be <name1>_and_<name2>.
-      fasta               Path(s) to FASTA file containing your genome reference.
-                              Specify multiple genomes by specifying the --fasta
-                              argument multiple times.
-      genes               Path(s) to genes GTF file(S) containing annotated genes
-                              for your genome reference. Specify multiple genomes
-                              by specifying the --genes argument multiple times.
+  Usage: cellranger mkref [OPTIONS] --genome <GENOME_NAMES> --fasta <FASTA_FILES> --genes <GTF_FILES>
 
   Options:
-      --nthreads=<num>    Number of threads used during STAR genome index
-                              generation. Defaults to 1.
-      --memgb=<num>       Maximum memory (GB) used when aligning reads with STAR.
-                              Defaults to 16.
-      --ref-version=<str> Optional reference version string to include with
-                              reference.
-      -h --help           Show this message.
-      --version           Show version.
+        --genome <GENOME_NAMES>     Unique genome name, used to name output folder [a-zA-Z0-9_-]+. Specify
+                                    multiple genomes by specifying this argument multiple times; the output
+                                    folder will be <name1>_and_<name2>
+        --fasta <FASTA_FILES>       Path to FASTA file containing your genome reference. Specify multiple
+                                    genomes by specifying this argument multiple times
+        --genes <GTF_FILES>         Path to genes GTF file containing annotated genes for your genome
+                                    reference. Specify multiple genomes by specifying this argument multiple
+                                    times
+        --nthreads <NUM_THREADS>    Number of threads used during STAR genome index generation. Defaults to 1
+                                    [default: 1]
+        --memgb <MEM_GB>            Maximum memory (GB) used [default: 16]
+        --ref-version <REF_VERSION> Optional reference version string to include with reference
+        --dry                       Do not execute the pipeline. Generate a pipeline invocation (.mro) file
+                                    and stop
+        --jobmode <MODE>            Job manager to use. Valid options: local (default), sge, lsf, slurm or
+                                    path to a .template file. Search for help on "Cluster Mode" at
+                                    support.10xgenomics.com for more details on configuring the pipeline to
+                                    use a compute cluster
+        --localcores <NUM>          Set max cores the pipeline may request at one time. Only applies to local
+                                    jobs
+        --localmem <NUM>            Set max GB the pipeline may request at one time. Only applies to local
+                                    jobs
+        --localvmem <NUM>           Set max virtual address space in GB for the pipeline. Only applies to
+                                    local jobs
+        --mempercore <NUM>          Reserve enough threads for each job to ensure enough memory will be
+                                    available, assuming each core on your cluster has at least this much
+                                    memory available. Only applies to cluster jobmodes
+        --maxjobs <NUM>             Set max jobs submitted to cluster at one time. Only applies to cluster
+                                    jobmodes
+        --jobinterval <NUM>         Set delay between submitting jobs to cluster, in ms. Only applies to
+                                    cluster jobmodes
+        --overrides <PATH>          The path to a JSON file that specifies stage-level overrides for cores
+                                    and memory. Finer-grained than --localcores, --mempercore and --localmem.
+                                    Consult https://support.10xgenomics.com/ for an example override file
+        --output-dir <PATH>         Output the results to this directory
+        --uiport <PORT>             Serve web UI at http://localhost:PORT
+        --disable-ui                Do not serve the web UI
+        --noexit                    Keep web UI running after pipestance completes or fails
+        --nopreflight               Skip preflight checks
+    -h, --help                      Print help

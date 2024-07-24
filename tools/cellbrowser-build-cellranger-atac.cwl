@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/cellbrowser:v0.0.2
+  dockerPull: biowardrobe2/sc-tools:v0.0.39
 
 
 requirements:
@@ -14,13 +14,12 @@ requirements:
   - entryname: cellbrowser.conf
     entry: |
       name = "ATAC"
-      shortLabel="ATAC"
+      shortLabel = "ATAC"
       priority = 1
-      geneIdType="auto"
-      geneLabel="Feature"
-      exprMatrix="exprMatrix.tsv.gz"
-      meta="meta.csv"
-      coords=[
+      geneIdType = "auto"
+      exprMatrix = "exprMatrix.tsv.gz"
+      meta = "meta.csv"
+      coords = [
           {
               "file": "tsne.coords.csv",
               "shortLabel": "t-SNE"
@@ -35,14 +34,17 @@ requirements:
           }
       ]
       markers=[
-      {
-          "file":"markers.tsv",
-          "shortLabel":"Cluster-specific peaks"
-      }
+          {
+              "file": "markers.tsv",
+              "shortLabel": "Cluster-specific peaks"
+          }
       ]
-      enumFields = ["Barcode"]
-      clusterField="Cluster"
-      labelField="Cluster"
+      geneLabel = "Feature"
+      radius = 3
+      alpha = 0.5
+      clusterField = "Cluster"
+      labelField = "Cluster"
+      atacSearch = "genome.current"
   - entryname: desc.conf
     entry: |
       title = "ATAC"
@@ -58,17 +60,17 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
+      echo "Preparing ATAC search file"
+      sc_cb_utils_atac_search.R --annotations $2
       echo "Prepare input data"
       mkdir -p ./cellbrowser_input/analysis/clustering/graphclust \
                ./cellbrowser_input/analysis/diffexp/graphclust \
                ./cellbrowser_input/filtered_feature_bc_matrix
-
       cp -r $0/clustering/graphclust/clusters.csv ./cellbrowser_input/analysis/clustering/graphclust/clusters.csv
       cp -r $0/enrichment/graphclust/differential_expression.csv ./cellbrowser_input/analysis/diffexp/graphclust/differential_expression.csv
       cp -r $0/tsne ./cellbrowser_input/analysis/
       cp -r $0/umap ./cellbrowser_input/analysis/
       cp -r $0/lsa ./cellbrowser_input/analysis/
-
       cp -r $1/* ./cellbrowser_input/filtered_feature_bc_matrix/
       cd ./cellbrowser_input/filtered_feature_bc_matrix/
       gzip barcodes.tsv
@@ -77,7 +79,6 @@ inputs:
       gzip features.tsv
       rm -f peaks.bed
       cd -
-
       echo "Run cbImportCellranger"
       cbImportCellranger -i cellbrowser_input -o cellbrowser_output --name cellbrowser
       cd ./cellbrowser_output
@@ -85,16 +86,15 @@ inputs:
       cp ../cellbrowser_input/analysis/tsne/*/projection.csv tsne.coords.csv
       cp ../cellbrowser_input/analysis/umap/*/projection.csv umap.coords.csv
       cp ../cellbrowser_input/analysis/lsa/*/projection.csv lsa.coords.csv
-
       echo "Replace configuration files"
       rm -f cellbrowser.conf desc.conf
       cp ../cellbrowser.conf .
       cp ../desc.conf .
-      if [[ -n $2 ]]; then
+      if [[ -n $3 ]]; then
         echo "Aggregation metadata file was provided. Adding initial cell identity classes"
-        cat $2 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
+        cat $3 | grep -v "library_id" | awk '{print NR","$0}' > aggregation_metadata.csv
         cat meta.csv | grep -v "Barcode" > meta_headerless.csv
-        echo "Barcode,Cluster,Identity" > meta.csv
+        echo "Barcode,Cluster,Dataset" > meta.csv
         awk -F, 'NR==FNR {identity[$1]=$2; next} {split($1,barcode,"-"); print $0","identity[barcode[2]]}' aggregation_metadata.csv meta_headerless.csv >> meta.csv
         rm -f aggregation_metadata.csv meta_headerless.csv
       fi
@@ -103,30 +103,41 @@ inputs:
     inputBinding:
       position: 5
     doc: |
-      Bash script to run cbImportCellranger and cbBuild commands
+      Bash script to run cbImportCellranger
+      and cbBuild commands.
 
   secondary_analysis_report_folder:
     type: Directory
     inputBinding:
       position: 6
     doc: |
-      Folder with secondary analysis results
+      Folder with secondary
+      analysis results.
 
   filtered_feature_bc_matrix_folder:
     type: Directory
     inputBinding:
       position: 7
     doc: |
-      Folder with filtered peak-barcode matrices containing only
-      cellular barcodes in MEX format
+      Folder with filtered peak-barcode matrices
+      containing only cellular barcodes
+      in MEX format.
+
+  annotation_gtf_file:
+    type: File
+    inputBinding:
+      position: 8
+    doc: |
+      GTF annotation file.
 
   aggregation_metadata:
     type: File?
     inputBinding:
-      position: 8
+      position: 9
     doc: |
-      Cellranger aggregation CSV file. If provided, the Identity metadata
-      column will be added to the meta.csv
+      Cellranger aggregation CSV file. If
+      provided, the Dataset metadata column
+      will be added to the meta.csv.
 
 
 outputs:
@@ -226,12 +237,14 @@ s:about: |
     -m, --noMat           do not export the matrix again, saves some time if you
                           changed something small since the last run
 
-
   Usage: cbBuild [options] -i cellbrowser.conf -o outputDir - add a dataset to the single cell viewer directory
       If you have previously built into the same output directory with the same dataset and the
       expression matrix has not changed its filesize, this will be detected and the expression
       matrix will not be copied again. This means that an update of a few meta data attributes
       is quite quick.
+      Gene symbol/annotation files are downloaded to ~/cellbrowserData when
+      needed. Config defaults can be specified in ~/.cellbrowser. See
+      documentation at https://cellbrowser.readthedocs.io/
   Options:
     -h, --help            show this help message and exit
     --init                copy sample cellbrowser.conf and desc.conf to current
@@ -243,11 +256,14 @@ s:about: |
                           specified multiple times
     -o OUTDIR, --outDir=OUTDIR
                           output directory, default can be set through the env.
-                          variable CBOUT or ~/.cellbrowser.conf, current value:
-                          none
+                          variable CBOUT or ~/.cellbrowser, current value: none
     -p PORT, --port=PORT  if build is successful, start an http server on this
                           port and serve the result via http://localhost:port
     -r, --recursive       run in all subdirectories of the current directory.
-                          Useful when rebuilding a full hierarchy.
+                          Useful when rebuilding a full hierarchy. Cannot be
+                          used with -p.
+    --depth=DEPTH         when using -r: only go this many directories deep
     --redo=REDO           do not use cached old data. Can be: 'meta' or 'matrix'
-                          (matrix includes meta). 
+                          (matrix includes meta).
+    --force               ignore errors that usually stop the build and go ahead
+                          anyways.
