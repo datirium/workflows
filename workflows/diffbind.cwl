@@ -51,7 +51,6 @@ inputs:
 
   read_files_cond_1:
     type: File[]
-    format: "http://edamontology.org/format_2572"
     label: "Biological condition 1 samples. Minimum 2 samples"
     doc: "Read files for condition 1. Minimim 2 files in BAM format"
     'sd:upstreamSource': "first_biological_condition/bambai_pair"
@@ -59,7 +58,6 @@ inputs:
 
   read_files_cond_2:
     type: File[]
-    format: "http://edamontology.org/format_2572"
     label: "Biological condition 2 samples. Minimum 2 samples"
     doc: "Read files for condition 2. Minimim 2 files in BAM format"
     'sd:upstreamSource': "second_biological_condition/bambai_pair"
@@ -67,28 +65,24 @@ inputs:
 
   peak_files_cond_1:
     type: File[]
-    format: "http://edamontology.org/format_3468"
     label: "Biological condition 1 samples. Minimum 2 samples"
     doc: "XLS peak files for condition 1 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_1"
     'sd:upstreamSource': "first_biological_condition/macs2_called_peaks"
 
   peak_files_cond_2:
     type: File[]
-    format: "http://edamontology.org/format_3468"
     label: "Biological condition 2 samples. Minimum 2 samples"
     doc: "XLS peak files for condition 2 from MACS2. Minimim 2 files. Order corresponds to read_files_cond_2"
     'sd:upstreamSource': "second_biological_condition/macs2_called_peaks"
 
   genome_coverage_files_cond_1:
     type: File[]
-    format: "http://edamontology.org/format_3006"
     label: "Genome coverage(s) for biological condition 1"
     doc: "Genome coverage bigWig file(s) for biological condition 1"
     'sd:upstreamSource': "first_biological_condition/bigwig"
 
   genome_coverage_files_cond_2:
     type: File[]
-    format: "http://edamontology.org/format_3006"
     label: "Genome coverage(s) for biological condition 2"
     doc: "Genome coverage bigWig file(s) for biological condition 2"
     'sd:upstreamSource': "second_biological_condition/bigwig"
@@ -97,7 +91,6 @@ inputs:
     type:
       - "null"
       - File[]
-    format: "http://edamontology.org/format_3613"
     label: "Called peaks for biological condition 1"
     doc: "Narrow peaks file(s) for biological condition 1"
     'sd:upstreamSource': "first_biological_condition/macs2_narrow_peaks"
@@ -106,7 +99,6 @@ inputs:
     type:
       - "null"
       - File[]
-    format: "http://edamontology.org/format_3613"
     label: "Called peaks for biological condition 2"
     doc: "Narrow peaks file(s) for biological condition 2"
     'sd:upstreamSource': "second_biological_condition/macs2_narrow_peaks"
@@ -115,7 +107,6 @@ inputs:
     type:
       - "null"
       - File[]
-    format: "http://edamontology.org/format_3614"
     label: "Called peaks for biological condition 1"
     doc: "Broad peaks file(s) for biological condition 1"
     'sd:upstreamSource': "first_biological_condition/macs2_broad_peaks"
@@ -124,7 +115,6 @@ inputs:
     type:
       - "null"
       - File[]
-    format: "http://edamontology.org/format_3614"
     label: "Called peaks for biological condition 2"
     doc: "Broad peaks file(s) for biological condition 2"
     'sd:upstreamSource': "second_biological_condition/macs2_broad_peaks"
@@ -178,7 +168,6 @@ inputs:
   blocked_file:
     type: File?
     label: "Blocking attribute headerless TSV/CSV file for multi-factor analysis with columns to set name and group. If this inputs is set, blocking attributes above are ignored"
-    format: "http://edamontology.org/format_2330"
     doc: |
       Blocking attribute metadata file for multi-factor analysis. Headerless TSV/CSV file.
       First column - names from --name1 and --name2, second column - group name. --block is ignored
@@ -186,13 +175,11 @@ inputs:
   annotation_file:
     type: File
     label: "Genome annotation"
-    format: "http://edamontology.org/format_3475"
     doc: "Genome annotation file in TSV format"
     'sd:upstreamSource': "genome_indices/annotation"
 
   chrom_length_file:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "Chromosome length file"
     doc: "Chromosome length file"
     'sd:upstreamSource': "genome_indices/chrom_length"   
@@ -966,15 +953,29 @@ steps:
         default: ["1,1","2,2n"]
     out: [sorted_file]
 
+  overlap_with_chr_length:
+    run: ../tools/custom-bedops.cwl
+    in:
+      input_file:
+      - chrom_length_file
+      - sort_bed/sorted_file
+      script:
+        default: |
+          cat "$0" | awk '{print $1"\t0\t"$2}' | sort-bed - > temp_chrom_length.bed
+          cat "$1" | awk '$2 >= 0' > temp_sorted.bed
+          bedops --element-of 100% temp_sorted.bed temp_chrom_length.bed > `basename $1`
+          rm -f temp_chrom_length.bed temp_sorted.bed
+    out: [output_file]
+
   bed_to_bigbed:
     run: ../tools/ucsc-bedtobigbed.cwl
     in:
-      input_bed: sort_bed/sorted_file
+      input_bed: overlap_with_chr_length/output_file
       bed_type:
         default: "bed4+5"
       chrom_length_file: chrom_length_file
       output_filename:
-        source: sort_bed/sorted_file
+        source: overlap_with_chr_length/output_file
         valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
     out: [bigbed_file]
 
