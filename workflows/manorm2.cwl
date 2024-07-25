@@ -19,11 +19,15 @@ requirements:
 
 "sd:upstream":
   control:
+  - "cutandrun-macs2-pe.cwl"
+  - "cutandrun-seacr-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
   - "trim-atacseq-pe.cwl"
   treatment:
+  - "cutandrun-macs2-pe.cwl"
+  - "cutandrun-seacr-pe.cwl"
   - "trim-chipseq-se.cwl"
   - "trim-chipseq-pe.cwl"
   - "trim-atacseq-se.cwl"
