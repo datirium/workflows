@@ -279,6 +279,16 @@ inputs:
     "sd:layout":
       advanced: true
 
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
+    "sd:layout":
+      advanced: true
+
   threads:
     type:
     - "null"
@@ -553,6 +563,18 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
+  sc_report_html_file:
+    type: File?
+    outputSource: de_pseudobulk/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   de_pseudobulk_stdout_log:
     type: File
     outputSource: de_pseudobulk/stdout_log
@@ -648,6 +670,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -679,6 +702,7 @@ steps:
       - bulk_read_counts_gct
       - bulk_phenotypes_cls
       - cell_read_counts_gct
+      - sc_report_html_file
       - stdout_log
       - stderr_log
 

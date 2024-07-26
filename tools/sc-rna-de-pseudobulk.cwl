@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.39
+  dockerPull: biowardrobe2/sc-tools:v0.0.40
 
 
 inputs:
@@ -297,6 +297,14 @@ inputs:
       prefix: "--verbose"
     doc: |
       Print debug information.
+      Default: false
+
+  export_html_report:
+    type: boolean?
+    default: false
+    doc: |
+      Export tehcnical report. HTML format.
+      Note, stdout will be less informative.
       Default: false
 
   output_prefix:
@@ -646,6 +654,14 @@ outputs:
       Filtered normalized reads counts per cell.
       GCT format.
 
+  sc_report_html_file:
+    type: File?
+    outputBinding:
+      glob: "sc_report.html"
+    doc: |
+      Tehcnical report.
+      HTML format.
+
   stdout_log:
     type: stdout
 
@@ -653,7 +669,9 @@ outputs:
     type: stderr
 
 
-baseCommand: ["sc_rna_de_pseudobulk.R"]
+baseCommand: ["Rscript"]
+arguments:
+- valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_de_pseudobulk.R"]:"/usr/local/bin/sc_rna_de_pseudobulk.R")
 
 stdout: sc_rna_de_pseudobulk_stdout.log
 stderr: sc_rna_de_pseudobulk_stderr.log
