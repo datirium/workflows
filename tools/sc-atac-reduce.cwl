@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.39
+  dockerPull: biowardrobe2/sc-tools:v0.0.40
 
 
 inputs:
@@ -260,6 +260,14 @@ inputs:
       prefix: "--cbbuild"
     doc: |
       Export results to UCSC Cell Browser. Default: false
+
+  export_html_report:
+    type: boolean?
+    default: false
+    doc: |
+      Export tehcnical report. HTML format.
+      Note, stdout will be less informative.
+      Default: false
 
   output_prefix:
     type: string?
@@ -647,6 +655,14 @@ outputs:
       Seurat object.
       H5AD format.
 
+  sc_report_html_file:
+    type: File?
+    outputBinding:
+      glob: "sc_report.html"
+    doc: |
+      Tehcnical report.
+      HTML format.
+
   stdout_log:
     type: stdout
 
@@ -654,7 +670,10 @@ outputs:
     type: stderr
 
 
-baseCommand: ["sc_atac_reduce.R"]
+baseCommand: ["Rscript"]
+arguments:
+- valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_atac_reduce.R"]:"/usr/local/bin/sc_atac_reduce.R")
+
 
 stdout: sc_atac_reduce_stdout.log
 stderr: sc_atac_reduce_stderr.log

@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.39
+  dockerPull: biowardrobe2/sc-tools:v0.0.40
 
 
 inputs:
@@ -351,6 +351,14 @@ inputs:
       with SCTransform algorithm (slows down the computation). Ignored if
       '--ntgr' is not set to 'seurat' or if '--norm' is not set to either
       'sct' or 'sctglm'.
+      Default: false
+
+  export_html_report:
+    type: boolean?
+    default: false
+    doc: |
+      Export tehcnical report. HTML format.
+      Note, stdout will be less informative.
       Default: false
 
   output_prefix:
@@ -752,6 +760,14 @@ outputs:
       SCope compatible.
       Loom format
 
+  sc_report_html_file:
+    type: File?
+    outputBinding:
+      glob: "sc_report.html"
+    doc: |
+      Tehcnical report.
+      HTML format.
+
   stdout_log:
     type: stdout
 
@@ -759,7 +775,10 @@ outputs:
     type: stderr
 
 
-baseCommand: ["sc_rna_reduce.R"]
+baseCommand: ["Rscript"]
+arguments:
+- valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_reduce.R"]:"/usr/local/bin/sc_rna_reduce.R")
+
 
 stdout: sc_rna_reduce_stdout.log
 stderr: sc_rna_reduce_stderr.log

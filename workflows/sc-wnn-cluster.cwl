@@ -166,6 +166,16 @@ inputs:
     "sd:layout":
       advanced: true
 
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
+    "sd:layout":
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -707,6 +717,18 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
+  sc_report_html_file:
+    type: File?
+    outputSource: sc_wnn_cluster/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   sc_wnn_cluster_stdout_log:
     type: File
     outputSource: sc_wnn_cluster/stdout_log
@@ -770,6 +792,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -808,6 +831,7 @@ steps:
     - seurat_data_rds
     - seurat_rna_data_cloupe
     - seurat_data_scope
+    - sc_report_html_file
     - stdout_log
     - stderr_log
 
