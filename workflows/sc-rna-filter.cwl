@@ -248,6 +248,16 @@ inputs:
     "sd:layout":
       advanced: true
 
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
+    "sd:layout":
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -267,16 +277,6 @@ inputs:
       Color theme for all generated plots. One of gray, bw, linedraw, light,
       dark, minimal, classic, void.
       Default: classic
-    "sd:layout":
-      advanced: true
-
-  export_html_report:
-    type: boolean?
-    default: true
-    label: "Show HTML report"
-    doc: |
-      Export tehcnical report in HTML format.
-      Default: true
     "sd:layout":
       advanced: true
 

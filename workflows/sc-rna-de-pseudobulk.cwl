@@ -257,6 +257,16 @@ inputs:
       RNA-Seq Datasets" and can be utilized in
       the current or future steps of analysis.
 
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
+    "sd:layout":
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -276,16 +286,6 @@ inputs:
       Color theme for all plots saved
       as PNG files.
       Default: classic
-    "sd:layout":
-      advanced: true
-
-  export_html_report:
-    type: boolean?
-    default: true
-    label: "Show HTML report"
-    doc: |
-      Export tehcnical report in HTML format.
-      Default: true
     "sd:layout":
       advanced: true
 
