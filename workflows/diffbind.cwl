@@ -672,14 +672,14 @@ outputs:
     doc: "Box plots of read distributions for significantly differentially bound sites"
     outputSource: select_files/selected_boxplot_pdf
 
-  diffbind_stdout_log:
+  diffbind_stdout_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stdout log"
     doc: "diffbind stdout log"
     outputSource: diffbind/stdout_log
 
-  diffbind_stderr_log:
+  diffbind_stderr_log_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "diffbind stderr log"
@@ -1003,7 +1003,7 @@ steps:
           type: string?
           default: |
             printf "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tchrom\tstart\tend\tlength\tabssummit\tpileup\tlog10p\tfoldenrich\tlog10q\tregion\n" > iaintersect_result_formatted_for_setops.tsv
-            awk -F'\t' '{len=$9-$8+1; printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$7,$8,$9,len,$8+(len/2),$10,$14,$13,$15,$6)}' <(tail -n+2 $0) >> iaintersect_result_formatted_for_setops.tsv
+            awk -F'\t' '{len=$9-$8+1; printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%.0f\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$7,$8,$9,len,$8+(len/2),$10,$14,$13,$15,$6)}' <(tail -n+2 $0) >> iaintersect_result_formatted_for_setops.tsv
           inputBinding:
             position: 1
         input_file_1:
