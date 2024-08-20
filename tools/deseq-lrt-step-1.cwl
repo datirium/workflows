@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.27
+  dockerPull: biowardrobe2/scidap-deseq:v0.0.28
 
 
 inputs:
@@ -34,6 +34,31 @@ inputs:
       prefix: "--meta"
     doc: "Metadata file to describe relation between samples, where first column corresponds to --name, formatted as CSV/TSV"
 
+  fdr:
+    type: float?
+    inputBinding:
+      prefix: "--fdr"
+    doc: |
+      In the exploratory visualization part of the analysis output only features,
+      with adjusted p-value (FDR) not bigger than this value. Also the significance,
+      cutoff used for optimizing the independent filtering. Default: 0.1.
+
+  lfcthreshold:
+    type: float?
+    inputBinding:
+      prefix: "--lfcthreshold"
+    doc: |
+      Log2 fold change threshold for determining significant differential expression.
+      Genes with absolute log2 fold change greater than this threshold will be considered.
+      Default: 0.59 (about 1.5 fold change)
+
+  use_lfc_thresh:
+    type: boolean
+    inputBinding:
+      prefix: "--use_lfc_thresh"
+    default: true
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
+
   design_formula:
     type: string
     inputBinding:
@@ -47,15 +72,6 @@ inputs:
       position: 9
       prefix: "--reduced"
     doc: "Reduced formula to compare against with the term(s) of interest removed. Should start with ~. See DeSeq2 manual for details"
-
-  contrast:
-    type:
-      - string
-      - string[]
-    inputBinding:
-      position: 10
-      prefix: "--contrast"
-    doc: "Contrast to be be applied for output, formatted as Factor Numerator Denominator or 'Factor Numerator Denominator'"
 
   output_prefix:
     type: string?
@@ -74,15 +90,15 @@ inputs:
 
 outputs:
 
+  contrasts_file:
+    type: File
+    outputBinding:
+      glob: "*_contrasts_table.tsv"
+
   diff_expr_file:
     type: File
     outputBinding:
       glob: "*_table.tsv"
-
-  ma_plot:
-    type: File
-    outputBinding:
-      glob: "*_ma_plot.png"
 
   stdout_log:
     type: stdout
@@ -91,7 +107,7 @@ outputs:
     type: stderr
 
 
-baseCommand: [run_deseq_lrt.R]
+baseCommand: [run_deseq_lrt_step_1.R]
 stdout: deseq_stdout.log
 stderr: deseq_stderr.log
 
@@ -108,7 +124,7 @@ label:  "DESeq2 (LRT) - differential gene expression analysis using likelihood r
 s:alternateName: "Differential gene expression analysis based on the LRT (likelihood ratio test)"
 
 
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/deseq-lrt.cwl
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/deseq-lrt-step-1.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -208,7 +224,7 @@ doc: |
 s:about: |
   usage: run_deseq_lrt.R
         [-h] -i INPUT [INPUT ...] -n NAME [NAME ...] -m META -d DESIGN -r
-        REDUCED -c CONTRAST [CONTRAST ...] [-o OUTPUT] [-p THREADS]
+        REDUCED [-o OUTPUT] [-p THREADS]
 
   Run DeSeq2 for multi-factor analysis using LRT (likelihood ratio or chi-
   squared test)
@@ -232,11 +248,15 @@ s:about: |
                           Reduced formula to compare against with the term(s) of
                           interest removed. Should start with ~. See DeSeq2
                           manual for details
-    -c CONTRAST [CONTRAST ...], --contrast CONTRAST [CONTRAST ...]
-                          Contrast to be be applied for output, formatted as
-                          Factor Numerator Denominator or "Factor Numerator
-                          Denominator"
     -o OUTPUT, --output OUTPUT
                           Output prefix for generated files
     -p THREADS, --threads THREADS
                           Threads number
+    --lfcthreshold LFCTHRESHOLD
+                          Log2 fold change threshold for determining significant differential expression.
+                          Genes with absolute log2 fold change greater than this threshold will be considered.
+                          Default: 0.59 (about 1.5 fold change)
+    --use_lfc_thresh      Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE
+    --fdr FDR             In the exploratory visualization part of the analysis output only features,
+                          with adjusted p-value (FDR) not bigger than this value. Also the significance,
+                          cutoff used for optimizing the independent filtering. Default: 0.1.

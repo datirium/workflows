@@ -70,10 +70,37 @@ inputs:
     label: "Reduced formula to compare against with the term(s) of interest removed. See workflow description for details"
     doc: "Reduced formula to compare against with the term(s) of interest removed. Should start with ~. See DeSeq2 manual for details"
 
-  contrast:
-    type: string
-    label: "Contrast to be be applied for output, formatted as Factor Numerator Denominator"
-    doc: "Contrast to be be applied for output, formatted as Factor Numerator Denominator or 'Factor Numerator Denominator'"
+  fdr:
+    type: float?
+    default: 0.1
+    label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
+    doc: |
+      In the exploratory visualization part of the analysis output only features,
+      with adjusted p-value (FDR) not bigger than this value. Also the significance,
+      cutoff used for optimizing the independent filtering. Default: 0.1.
+    'sd:layout':
+      advanced: true
+
+  lfcthreshold:
+    type: float?
+    default: 0.59
+    label: "Log2 Fold Change Threshold"
+    inputBinding:
+      prefix: "--lfcthreshold"
+    doc: |
+      Log2 fold change threshold for determining significant differential expression.
+      Genes with absolute log2 fold change greater than this threshold will be considered.
+      Default: 0.59 (about 1.5 fold change)
+    'sd:layout':
+      advanced: true
+
+  use_lfc_thresh:
+    type: boolean
+    default: true
+    label: "Use lfcthreshold as the null hypothesis value in the results function call"
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
+    'sd:layout':
+      advanced: true
 
   threads:
     type: int?
@@ -97,32 +124,12 @@ outputs:
         tab: 'Differential Expression Analysis'
         Title: 'Combined DESeq2 results'
 
-  volcano_plot:
+  contrasts_file:
     type: File
-    label: "Volcano plot"
+    label: "List of contrasts and amount of significant genes"
     format: "http://edamontology.org/format_3475"
-    doc: "TSV file with input data to build volcano plot - log2FoldChange vs -LOG10(padj)"
-    outputSource: make_volcano_plot/output_file
-    'sd:visualPlugins':
-    - scatter:
-        tab: 'Volcano Plot'
-        Title: 'Volcano'
-        xAxisTitle: 'log fold change'
-        yAxisTitle: '-log10(pAdj)'
-        colors: ["#b3de69"]
-        height: 600
-        data: [$1, $2]
-
-  ma_plot:
-    type: File
-    label: "Plot of normalised mean versus log2 fold change"
-    format: "http://edamontology.org/format_3603"
-    doc: "Plot of the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples"
-    outputSource: deseq/ma_plot
-    'sd:visualPlugins':
-    - image:
-        tab: 'Other Plots'
-        Caption: 'LFC vs mean'
+    doc: "DESeq2 generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
+    outputSource: deseq/contrasts_file
 
   deseq_stdout_log:
     type: File
@@ -150,7 +157,7 @@ steps:
       - common_tss_file
 
   deseq:
-    run: ../tools/deseq-lrt.cwl
+    run: ../tools/deseq-lrt-step-1.cwl
     in:
       expression_files:
         source: [group_by, expression_files, group_isoforms/genes_file, group_isoforms/common_tss_file]
@@ -166,20 +173,13 @@ steps:
           }
       expression_file_names: expression_file_names
       metadata_file: metadata_file
+      fdr: fdr
+      lfcthreshold: lfcthreshold
+      use_lfc_thresh: use_lfc_thresh
       design_formula: design_formula
       reduced_formula: reduced_formula
-      contrast: contrast
       threads: threads
-    out: [diff_expr_file, ma_plot, stdout_log, stderr_log]
-
-  make_volcano_plot:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: deseq/diff_expr_file
-      script:
-        default: |
-          cat "$0" | awk -F "\t" 'BEGIN {xl="log2FoldChange"; yl="-LOG10(padj)"} NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} print xl"\t"yl } NR>1 {print $ix[xl]"\t"$ix[yl]}' > volcano_plot_data.tsv
-    out: [output_file]
+    out: [diff_expr_file, contrasts_file, stdout_log, stderr_log]
 
 
 $namespaces:
@@ -192,7 +192,7 @@ s:name: "DESeq2 (LRT) - differential gene expression analysis using likelihood r
 label:  "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
 s:alternateName: "Differential gene expression analysis based on the LRT (likelihood ratio test)"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq-lrt.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq-lrt-step-1.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
