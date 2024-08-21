@@ -858,7 +858,7 @@ s:isPartOf:
 
 s:creator:
 - class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Cente"
+  s:legalName: "Cincinnati Children's Hospital Medical Center"
   s:location:
   - class: s:PostalAddress
     s:addressCountry: "USA"
