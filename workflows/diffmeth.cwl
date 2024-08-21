@@ -11,7 +11,6 @@ requirements:
 'sd:upstream':
   biological_condition1:
    - "bismark-methylation-pe.cwl"
-   - "bismark-methylation-se.cwl"
   biological_condition2:
    - "bismark-methylation-pe.cwl"
    - "bismark-methylation-se.cwl"
