@@ -19,6 +19,26 @@ requirements:
           let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var parse_range = function(line) {
+          if (line.includes("-")) {
+              const parts = line.split("-");
+              const start = parseFloat(parts[0].trim());
+              let end, step;
+              if (parts[1].includes(":")) {
+                  [end, step] = parts[1].split(":").map(Number);
+              } else {
+                  end = parseFloat(parts[1].trim());
+                  step = 0.1;
+              }
+              const result = [];
+              for (let i = start; i <= end; i = parseFloat((i + step).toFixed(10))) {
+                  result.push(parseFloat(i.toFixed(10)));
+              }
+              return result;
+          } else {
+              return [parseFloat(line)];
+          }
+      };
 
 
 "sd:upstream":
@@ -96,15 +116,18 @@ inputs:
       Default: 40
 
   resolution:
-    type: float?
-    default: 0.3
+    type: string?
+    default: "0.3"
     label: "Clustering resolution"
     doc: |
       The resolution defines the “granularity”
       of the clustered data. Larger resolution
       values lead to more clusters. The optimal
       resolution often increases with the number
-      of cells.
+      of cells. To run the analysis with multiple
+      resolutions, provide a range in a form of
+      start-end:step. Step parameter is optional
+      and equal to 0.1 by default.
       Default: 0.3
 
   identify_diff_genes:
@@ -757,7 +780,9 @@ steps:
       atac_dimensions: atac_dimensions
       cluster_algorithm:
         default: "slm"
-      resolution: resolution
+      resolution:
+        source: resolution
+        valueFrom: $(parse_range(self))
       atac_fragments_file: atac_fragments_file
       genes_of_interest:
         source: genes_of_interest
