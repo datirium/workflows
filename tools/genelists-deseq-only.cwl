@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-genelists:dev
+  dockerPull: robertplayer/scidap-genelists:v5.0.0
 
 
 inputs:
@@ -134,10 +134,10 @@ outputs:
     doc: |
       html of morpheus heatmap with preconfigured settings, RPKM, data scaled  0-99, max value set to 95th percentile RPKM value
 
-  log_stdout:
+  log_file_stdout:
     type: stdout
 
-  log_stderr:
+  log_file_stderr:
     type: stderr
 
 

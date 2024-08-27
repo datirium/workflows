@@ -121,6 +121,7 @@ printf "\n\n"
 
 printf "generating count matrix from all input sample expression data for VST\n"
 #	make list of all unique genes among all input samples expression tables
+#oIFS=$IFS
 IFS=$','
 printf "\tmaking unique geneid list\n"
 for n in ${FILES_RNASEQ_EXP[@]}; do tail -n+2 $n | cut -f2; done | sort | uniq > uniq.geneids.tsv
@@ -128,12 +129,14 @@ for n in ${FILES_RNASEQ_EXP[@]}; do tail -n+2 $n | cut -f2; done | sort | uniq >
 #		initialize with headers
 printf "\tmaking TotalReads count matrix\n"
 printf "geneid" > expression_matrix_totalreads.tsv
-for n in ${NAMES_RNASEQ[@]}; do printf "\t$n"; done >> expression_matrix_totalreads.tsv
+#for n in ${NAMES_RNASEQ[@]}; do printf "\t$n"; done >> expression_matrix_totalreads.tsv
+for n in ${NAMES_RNASEQ[@]}; do x=$(echo $n | sed 's/ /_/g'); printf "\t$x"; done >> expression_matrix_totalreads.tsv
 printf "\n" >> expression_matrix_totalreads.tsv
 #		loop through each gene, pull TotalReads from each sample expression tsv
 while read geneid; do printf "%s" $geneid; for n in ${FILES_RNASEQ_EXP[@]}; do printf "\t%s" $(grep -m 1 "`printf '\t'`$geneid`printf '\t'`" ${n} | cut -f7); done; printf "\n"; done < uniq.geneids.tsv >> expression_matrix_totalreads.tsv
 # 		reset IFS
 IFS=$' \t\n'
+#IFS=$oIFS
 
 # run Rscript to produce variance stabilized transformed (VST) count data matrix (vst_counts_matrix.tsv) and table (vst_counts_table.tsv)
 #		also produces z-score of VST matrix (vst_z-score_matrix.tsv) and table (vst_zscore_table.tsv)
@@ -162,11 +165,13 @@ for f in ${GENELIST_FILTERED_FILES[@]}; do
 	#	turn expression tsv files into an array
 	exp_array=($(echo "$FILES_RNASEQ_EXP"))
 	for n in ${NAMES_RNASEQ[@]}; do
+		# need to replace spaces with underscores in sample names before grepping the sample name in table output from 'run_vst_norm.R'
+		x=$(echo $n | sed 's/ /_/g')
         # replace TotalReads and RPKM with VST values, make new 'exp_array' file (genes.tsv) for samplesheet
 		#		replace or match geneids with other metadata from each individual sample file, while making the master samplesheet
 		#		these are then used in place of the 'exp_array=($(echo "$FILES_RNASEQ_EXP"))' in this section's 'master samplesheet')
         printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tVST\n" > "vst_"$(basename ${exp_array[name_counter]})
-        awk -F'\t' '{if(NR==FNR){vst[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vst[$2])}}' <(grep "${n}" vst_counts_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_"$(basename ${exp_array[name_counter]})
+        awk -F'\t' '{if(NR==FNR){vst[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vst[$2])}}' <(grep "${x}" vst_counts_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_"$(basename ${exp_array[name_counter]})
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
@@ -259,7 +264,7 @@ tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_n
 	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
 	printf "\t\t\tclustering for $genelist_number\n"
-	Rscript /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "VST"
+	R CMD /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "VST" 1> hopach_stdout.log 2> hopach_stderr.log
 	# save a copy of hopach output
 	cp hopach_results.out hopach_results.out-rnaseq-${genelist_number}
 	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
@@ -357,11 +362,13 @@ for f in ${GENELIST_FILTERED_FILES[@]}; do
 	#	turn expression tsv files into an array
 	exp_array=($(echo "$FILES_RNASEQ_EXP"))
 	for n in ${NAMES_RNASEQ[@]}; do
+		# need to replace spaces with underscores in sample names before grepping the sample name in table output from 'run_vst_norm.R'
+		x=$(echo $n | sed 's/ /_/g')
         # replace TotalReads and RPKM with VST z-scores, make new 'exp_array' file (genes.tsv) for samplesheet
 		#		replace or match geneids with other metadata from each individual sample file, while making the master samplesheet
 		#		these are then used in place of the 'exp_array=($(echo "$FILES_RNASEQ_EXP"))' in this section's 'master samplesheet')
         printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tzscore\n" > "vst_zscore_"$(basename ${exp_array[name_counter]})
-        awk -F'\t' '{if(NR==FNR){vzs[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vzs[$2])}}' <(grep "${n}" vst_zscore_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_zscore_"$(basename ${exp_array[name_counter]})
+        awk -F'\t' '{if(NR==FNR){vzs[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vzs[$2])}}' <(grep "${x}" vst_zscore_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_zscore_"$(basename ${exp_array[name_counter]})
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
@@ -456,7 +463,7 @@ tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_n
 	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
 	printf "\t\t\tclustering for $genelist_number\n"
-	Rscript /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "zscore"
+	R CMD /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "zscore" 1> hopach_stdout.log 2> hopach_stderr.log
 	# save a copy of hopach output
 	cp hopach_results.out hopach_results.out-rnaseq-${genelist_number}
 	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp
@@ -653,7 +660,7 @@ tail -n+2 output_rna-seq_raw.tsv | cut -f1 | sort | uniq | while read genelist_n
 	head -1 output_rna-seq_raw.tsv > ${genelist_number}-cluster_data.tmp
 	grep "$genelist_number" output_rna-seq_raw.tsv >> ${genelist_number}-cluster_data.tmp
 	printf "\t\t\tclustering for $genelist_number\n"
-	Rscript /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "Rpkm"
+	R CMD /usr/local/bin/run_hopach_clustering.R ${genelist_number}-cluster_data.tmp "Rpkm" 1> hopach_stdout.log 2> hopach_stderr.log
 	# save a copy of hopach output
 	cp hopach_results.out hopach_results.out-rnaseq-${genelist_number}
 	# use col2 "UID" (geneid) to add the rank order from col7 "Final.Level.Order" to both ${genelist_number}-cluster_data.tmp

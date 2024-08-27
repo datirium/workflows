@@ -17,7 +17,7 @@
 # Push for PR:      docker image push robertplayer/scidap-genelists:v5.0.0
 # Pull Cmd:         docker pull robertplayer/scidap-genelists:v5.0.0
 # Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v5.0.0 /bin/bash
-#           
+#
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future
 #   v1.0.0
@@ -36,14 +36,16 @@
 #   v5.0.0
 #       - adding script for VST of expression matrix (req DESeq2 lib)
 #       - full gene matrix from all samples combined, transformed, then parsed for visualization
+#       - new base image for Rscript hanging when dockerimage is run with toil
 #
 #################################################################
 
 
 ### Base Image
 #FROM biowardrobe2/morpheus:v0.0.2
+FROM rocker/r-ubuntu:jammy
 #   use for small script updates etc (shorter build time from dev)
-FROM robertplayer/scidap-genelists:dev
+#FROM robertplayer/scidap-genelists:dev
 LABEL maintainer="robert.player@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
 
