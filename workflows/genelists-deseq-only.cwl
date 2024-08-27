@@ -198,14 +198,14 @@ outputs:
         tab: 'Overview'
         target: "_blank"
 
-  log_stdout:
+  log_file_stdout:
     type: File
-    outputSource: data_integration/log_stdout
+    outputSource: data_integration/log_file_stdout
     label: "log file stdout"
 
-  log_stderr:
+  log_file_stderr:
     type: File
-    outputSource: data_integration/log_stderr
+    outputSource: data_integration/log_file_stderr
     label: "log file stderr"
 
 
