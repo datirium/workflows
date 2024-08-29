@@ -131,14 +131,13 @@ inputs:
       Log2 fold change threshold for determining significant differential expression.
       Genes with absolute log2 fold change greater than this threshold will be considered.
       Default: 0.59 (about 1.5 fold change)
-      
+
   use_lfc_thresh:
     type: boolean
     inputBinding:
       prefix: "--use_lfc_thresh"
     default: true
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
-
       
   regulation:
     type:
@@ -157,7 +156,7 @@ inputs:
       - 'down' for downregulated genes (β < -lfcThreshold in condition2 compared to condition1).
       Default: both
     default: "both"
-    
+
   batchcorrection:
     type:
       - "null"
@@ -174,7 +173,7 @@ inputs:
       - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
       - Default: none
     default: "none"
-    
+
   batch_file:
     type: File?
     inputBinding:
@@ -205,16 +204,21 @@ outputs:
     type: File
     outputBinding:
       glob: "*report.tsv"
-      
+
   deseq_summary_md:
     type: File
     outputBinding:
       glob: "*summary.md"
 
-  read_counts_file:
+  read_counts_file_all:
     type: File
     outputBinding:
-      glob: "*counts.gct"
+      glob: "*counts_all.gct"
+
+  read_counts_file_filtered:
+    type: File
+    outputBinding:
+      glob: "*counts_filtered.gct"
 
   phenotypes_file:
     type: File
