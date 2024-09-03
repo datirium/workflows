@@ -110,6 +110,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  test_mode:
+    type: boolean
+    inputBinding:
+      prefix: "--test_mode"
+  default: false
+  'sd:layout':
+    advanced: true
+
 
 outputs:
 
@@ -179,6 +187,7 @@ steps:
       design_formula: design_formula
       reduced_formula: reduced_formula
       threads: threads
+      test_mode: test_mode
     out: [diff_expr_file, contrasts_file, stdout_log, stderr_log]
 
 

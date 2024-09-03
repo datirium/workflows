@@ -12,7 +12,6 @@ hints:
 
 
 inputs:
-
   expression_files:
     type: File[]
     inputBinding:
@@ -37,6 +36,7 @@ inputs:
   fdr:
     type: float?
     inputBinding:
+      position: 8
       prefix: "--fdr"
     doc: |
       In the exploratory visualization part of the analysis output only features,
@@ -46,6 +46,7 @@ inputs:
   lfcthreshold:
     type: float?
     inputBinding:
+      position: 9
       prefix: "--lfcthreshold"
     doc: |
       Log2 fold change threshold for determining significant differential expression.
@@ -55,6 +56,7 @@ inputs:
   use_lfc_thresh:
     type: boolean
     inputBinding:
+      position: 10
       prefix: "--use_lfc_thresh"
     default: true
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
@@ -62,31 +64,38 @@ inputs:
   design_formula:
     type: string
     inputBinding:
-      position: 8
+      position: 11
       prefix: "--design"
     doc: "Design formula. Should start with ~. See DeSeq2 manual for details"
 
   reduced_formula:
     type: string
     inputBinding:
-      position: 9
+      position: 12
       prefix: "--reduced"
     doc: "Reduced formula to compare against with the term(s) of interest removed. Should start with ~. See DeSeq2 manual for details"
 
   output_prefix:
     type: string?
     inputBinding:
-      position: 9
+      position: 13
       prefix: "--output"
     doc: "Output prefix for generated files"
 
   threads:
     type: int?
     inputBinding:
-      position: 10
+      position: 14
       prefix: "--threads"
     doc: "Threads number"
 
+  test_mode:
+    type: boolean
+    inputBinding:
+      position: 15
+      prefix: "--test_mode"
+    default: false
+    doc: "Run for test, only first 100 rows"
 
 outputs:
 
@@ -98,7 +107,7 @@ outputs:
   diff_expr_file:
     type: File
     outputBinding:
-      glob: "*_table.tsv"
+      glob: "*_gene_exp_table.tsv"
 
   stdout_log:
     type: stdout
@@ -252,6 +261,8 @@ s:about: |
                           Output prefix for generated files
     -p THREADS, --threads THREADS
                           Threads number
+    --test_mode TEST_MODE
+                          Test mode. Default: FALSE
     --lfcthreshold LFCTHRESHOLD
                           Log2 fold change threshold for determining significant differential expression.
                           Genes with absolute log2 fold change greater than this threshold will be considered.
