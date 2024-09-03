@@ -85,8 +85,6 @@ inputs:
     type: float?
     default: 0.59
     label: "Log2 Fold Change Threshold"
-    inputBinding:
-      prefix: "--lfcthreshold"
     doc: |
       Log2 fold change threshold for determining significant differential expression.
       Genes with absolute log2 fold change greater than this threshold will be considered.
@@ -110,13 +108,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+
   test_mode:
     type: boolean
-    inputBinding:
-      prefix: "--test_mode"
-  default: false
-  'sd:layout':
-    advanced: true
+    default: false
+    label: "Run only 100 genes for testing purposes to speed up DESeq2"
+    'sd:layout':
+      advanced: true
+
 
 
 outputs:
