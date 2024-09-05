@@ -109,6 +109,11 @@ outputs:
     outputBinding:
       glob: "*_gene_exp_table.tsv"
 
+  lrt_summary_md:
+    type: File
+    outputBinding:
+      glob: "*_lrt_result.md"
+
   stdout_log:
     type: stdout
 
