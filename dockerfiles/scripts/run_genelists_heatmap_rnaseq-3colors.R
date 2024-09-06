@@ -35,10 +35,11 @@ df <- read.table(output_counts,header=T,sep='\t')
 counts_mat <- acast(df, rid~cid, value.var="value")
 
 # get min/max values for coloring
-min_value_for_color <- min(df$value)
 #   remove Inf values for max
 df_for_max <- df[!is.infinite(df$value),]
-max_value_for_color <- max(df_for_max$value)
+#   then use this for na.omit to remove NA values and find min/max
+min_value_for_color <- min(na.omit(df_for_max$value))
+max_value_for_color <- max(na.omit(df_for_max$value))
 
 # export to GCT format function
 export_gct <- function(row_metadata=NULL, col_metadata=NULL, counts_mat, location){

@@ -2,6 +2,7 @@
 options(warn=-1)
 options(width=200)
 options(scipen=999)
+#options(echo=TRUE)
 
 suppressMessages(library(argparse))
 suppressMessages(library(hopach))
@@ -27,7 +28,7 @@ acast_value <- args[2]      # ex. acast_value <- 'VST' ('TotalReads', 'Rpkm', 'V
 df <- read.table(input_file, header=T, sep='\t')
 
 
-
+print("run_hopach_clustering.R stdout: Formatting data...")
 #   acast (to matrix) opposed to dcast (as dataframe), to geneid-by-sample_name
 data <- acast(df, geneid ~ sample_name, value.var=acast_value)
 # replace NaN, Inf, -Inf with 0
@@ -52,7 +53,8 @@ data_capped[is.nan(data_capped)] <- 0  # Replace NaN with 0 (if any)
 
 
 # cluster with hopach
-hopach_results <- hopach(data_capped)
+print("run_hopach_clustering.R stdout: Running clusting with hopach...")
+hopach_results <- hopach(data_capped, verbose=TRUE)
 
 # save results to file for parsing
 makeoutput(data_capped, hopachobj=hopach_results, file="hopach_results.out")

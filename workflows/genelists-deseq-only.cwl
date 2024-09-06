@@ -89,7 +89,7 @@ inputs:
     doc: "Array of sample TSV files containing gene annotations with associated TotalReads and Rpkm counts, param (-g)"
     'sd:upstreamSource': "samples_rnaseq/rpkm_genes"
 
-  threads_no:
+  threads:
     type: int?
     default: 1
     label: "Number of threads"
@@ -120,12 +120,6 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "contains formatted information of the input data and files for vst zscore heatmap"
     outputSource: data_integration/master_samplesheet_vst_zscore
-
-
-
-
-
-
 
   heatmap_TotalReads_html:
     type: File
@@ -220,7 +214,7 @@ steps:
   data_integration:
     run: ../tools/genelists-deseq-only.cwl
     in:
-      threads: threads_no
+      threads: threads
       genelist_names: genelist_names
       feature_files: genelist_feature_files
       filtered_files: genelist_filtered_files
