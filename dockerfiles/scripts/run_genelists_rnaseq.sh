@@ -170,12 +170,12 @@ for f in ${GENELIST_FILTERED_FILES[@]}; do
         # replace TotalReads and RPKM with VST values, make new 'exp_array' file (genes.tsv) for samplesheet
 		#		replace or match geneids with other metadata from each individual sample file, while making the master samplesheet
 		#		these are then used in place of the 'exp_array=($(echo "$FILES_RNASEQ_EXP"))' in this section's 'master samplesheet')
-        printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tVST\n" > "vst_"$(basename ${exp_array[name_counter]})
-        awk -F'\t' '{if(NR==FNR){vst[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vst[$2])}}' <(grep "${x}" vst_counts_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_"$(basename ${exp_array[name_counter]})
+        printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tVST\n" > "sample${name_counter}-vst_"$(basename ${exp_array[name_counter]})
+        awk -F'\t' '{if(NR==FNR){vst[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vst[$2])}}' <(grep "${x}" vst_counts_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "sample${name_counter}-vst_"$(basename ${exp_array[name_counter]})
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
-			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} "vst_"$(basename ${exp_array[name_counter]})
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} "sample${name_counter}-vst_"$(basename ${exp_array[name_counter]})
 		fi
 		((name_counter++))
 	done
@@ -309,7 +309,7 @@ printf "make gct files for vst heatmap generation\n"
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 
 # row metadata file
@@ -320,7 +320,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
@@ -337,7 +337,6 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 wq
 EOF
 mv heatmap.html heatmap_vst.html
-
 
 
 
@@ -367,12 +366,12 @@ for f in ${GENELIST_FILTERED_FILES[@]}; do
         # replace TotalReads and RPKM with VST z-scores, make new 'exp_array' file (genes.tsv) for samplesheet
 		#		replace or match geneids with other metadata from each individual sample file, while making the master samplesheet
 		#		these are then used in place of the 'exp_array=($(echo "$FILES_RNASEQ_EXP"))' in this section's 'master samplesheet')
-        printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tzscore\n" > "vst_zscore_"$(basename ${exp_array[name_counter]})
-        awk -F'\t' '{if(NR==FNR){vzs[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vzs[$2])}}' <(grep "${x}" vst_zscore_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "vst_zscore_"$(basename ${exp_array[name_counter]})
+        printf "RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tzscore\n" > "sample${name_counter}-vst_zscore_"$(basename ${exp_array[name_counter]})
+        awk -F'\t' '{if(NR==FNR){vzs[$1]=$3}else{printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$5,$6,vzs[$2])}}' <(grep "${x}" vst_zscore_table.tsv) <(tail -n+2 ${exp_array[name_counter]}) >> "sample${name_counter}-vst_zscore_"$(basename ${exp_array[name_counter]})
 		# print formatted samplesheet row
 		if [[ ${exp_array[name_counter]} != "" ]]; then
 			# 20231102 - ensure sample name uniqueness, possible fix for duplicate rows > acast > aggregate length issue
-			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} "vst_zscore_"$(basename ${exp_array[name_counter]})
+			printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "genelist_${list_counter}" ${names_array[list_counter]} $f ${annotations_array[list_counter]} "rna-seq" ${name_counter}_${n} "sample${name_counter}-vst_zscore_"$(basename ${exp_array[name_counter]})
 		fi
 		((name_counter++))
 	done
@@ -508,7 +507,7 @@ printf "make gct files for vst z-score heatmap generation\n"
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 
 # row metadata file
@@ -519,7 +518,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
@@ -536,7 +535,6 @@ setTimeout( function() { let groupByBtn = document.querySelector('div.btn-group.
 wq
 EOF
 mv heatmap.html heatmap_vst_zscore.html
-
 
 
 
@@ -685,7 +683,7 @@ cp output_rna-seq.tsv output_rna-seq-forheatmap.tsv
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 # row metadata file
 printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank\n" > output_row_metadata.tsv
@@ -695,7 +693,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
@@ -726,7 +724,7 @@ cp output_rna-seq.tsv output_rna-seq-forheatmap.tsv
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 # row metadata file
 printf "rid\tgenelist_number\tgenelist_name\tgene\tchr\ttxStart\ttxEnd\tstrand\thopach_rank\n" > output_row_metadata.tsv
@@ -736,7 +734,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
@@ -806,7 +804,7 @@ cp output_rna-seq-forheatmap.tsv output_rna-seq-100.tsv
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 
 # row metadata file
@@ -817,7 +815,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
@@ -886,7 +884,7 @@ cp output_rna-seq.tsv output_rna-seq-forheatmap.tsv
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 
 # row metadata file
@@ -897,7 +895,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
@@ -970,7 +968,7 @@ cp output_rna-seq.tsv output_rna-seq-95.tsv
 
 # count matrix data (rows (a+1)-x, cols (b+1)-y)
 printf "rid\tcid\tvalue\n" > output_counts.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"Rpkm",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s:%s:%s:%s:%s:%s\t%s:%s:%s\t%s\n",$1,$2,$5,$6,$7,$8,$9,$12,$3,$4,"expression",$11)}}' output_rna-seq-forheatmap.tsv >> output_counts.tsv
 
 
 # row metadata file
@@ -981,7 +979,7 @@ sort output_row_metadata.tmp | uniq >> output_row_metadata.tsv
 
 # col metadata file
 printf "cid\texperiment_type\tsample_name\tdata_type\n" > output_col_metadata.tsv
-awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"Rpkm",$3,$4,"Rpkm")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
+awk -F'\t' '{if(NR!=1){printf("%s:%s:%s\t%s\t%s\t%s\n",$3,$4,"expression",$3,$4,"expression")}}' output_rna-seq-forheatmap.tsv > output_col_metadata.tmp
 # get unique rows of col metadata (many are repeated per gene, since that's part of row metadata and is omitted here)
 sort output_col_metadata.tmp | uniq >> output_col_metadata.tsv
 
