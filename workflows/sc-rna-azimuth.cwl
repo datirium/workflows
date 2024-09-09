@@ -30,8 +30,6 @@ requirements:
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
-  - "cellranger-atac-count.cwl"
-  - "cellranger-atac-aggr.cwl"
 
 
 inputs:
@@ -44,7 +42,7 @@ inputs:
 
   query_data_rds:
     type: File
-    label: "Single-cell Cluster Analysis"
+    label: "Single-cell Analysis with Filtered RNA-Seq Datasets"
     doc: |
       Analysis that includes filtered
       single-cell data and was run through
@@ -59,16 +57,14 @@ inputs:
     type: File?
     secondaryFiles:
     - .tbi
-    label: "Cell Ranger ATAC or RNA+ATAC Sample (optional)"
+    label: "Cell Ranger RNA+ATAC Sample (optional)"
     doc: |
-      Any "Cell Ranger ATAC or RNA+ATAC Sample"
-      for generating ATAC fragments coverage
-      plots over the genes of interest. This
-      sample can be obtained from one of the
-      following pipelines: "Cell Ranger Count
-      (RNA+ATAC)", "Cell Ranger Aggregate
-      (RNA+ATAC)", "Cell Ranger Count (ATAC)",
-      or "Cell Ranger Aggregate (ATAC)".
+      Any "Cell Ranger RNA+ATAC Sample" for 
+      generating ATAC fragments coverage plots
+      over the genes of interest. This sample
+      can be obtained from the "Cell Ranger
+      Count (RNA+ATAC)" or "Cell Ranger
+      Aggregate (RNA+ATAC)" pipelines.
     "sd:upstreamSource": "sc_atac_sample/atac_fragments_file"
     "sd:localLabel": true
 
@@ -128,8 +124,8 @@ inputs:
       Comma or space separated list of genes
       of interest to visualize expression and
       to generate ATAC fragments coverage plots.
-      Ignored if "Cell Ranger ATAC or RNA+ATAC
-      Sample (optional)" input is not provided.
+      Ignored if "Cell Ranger RNA+ATAC Sample
+      (optional)" input is not provided.
       Default: None
 
   reference_data_rds:
