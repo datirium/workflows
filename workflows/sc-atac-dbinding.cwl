@@ -29,6 +29,7 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-rna-azimuth.cwl"
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"

@@ -48,6 +48,7 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
+  - "sc-rna-azimuth.cwl"
   sc_arc_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
