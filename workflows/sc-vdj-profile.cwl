@@ -14,6 +14,7 @@ requirements:
   - "sc-rna-reduce.cwl"
   - "sc-rna-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-rna-azimuth.cwl"
   sc_vdj_sample:
   - "cellranger-multi.cwl"
   - "cellranger-aggr.cwl"

@@ -23,6 +23,7 @@ requirements:
   - "sc-atac-reduce.cwl"
   - "sc-rna-filter.cwl"
   - "sc-multiome-filter.cwl"
+  - "sc-rna-azimuth.cwl"
 
 
 inputs:

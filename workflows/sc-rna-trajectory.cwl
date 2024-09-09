@@ -23,6 +23,7 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-rna-azimuth.cwl"
 
 
 inputs:
