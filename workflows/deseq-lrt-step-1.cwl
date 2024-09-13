@@ -158,15 +158,15 @@ outputs:
   deseq_stdout_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "DeSeq2 stdout log"
-    doc: "DeSeq2 stdout log"
+    label: "DESeq2 stdout log"
+    doc: "DESeq2 stdout log"
     outputSource: deseq/stdout_log
 
   deseq_stderr_log:
     type: File
     format: "http://edamontology.org/format_2330"
-    label: "DeSeq2 stderr log"
-    doc: "DeSeq2 stderr log"
+    label: "DESeq2 stderr log"
+    doc: "DESeq2 stderr log"
     outputSource: deseq/stderr_log
 
 
@@ -213,8 +213,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
-label:  "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
+s:name: "DESeq2 (LRT, step 1) - differential gene expression analysis using likelihood ratio test"
+label: "DESeq2 (LRT, step 1) - differential gene expression analysis using likelihood ratio test"
 s:alternateName: "Differential gene expression analysis based on the LRT (likelihood ratio test)"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq-lrt-step-1.cwl
