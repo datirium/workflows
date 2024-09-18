@@ -133,7 +133,7 @@ inputs:
     'sd:layout':
       advanced: true
 
-  threads_count:
+  threads:
     type: int?
     default: 4
     label: "Number of threads"
@@ -221,7 +221,7 @@ steps:
       ranking_metrics: ranking_metrics
       graphs_pvalue: graphs_pvalue
       seed: seed
-      threads: threads_count
+      threads_count: threads
     out:
       - enrichment_report
       - report_summary

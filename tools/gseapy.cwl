@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: gseapy-dev
+  dockerPull: robertplayer/scidap-gseapy:dev
 
 
 inputs:
@@ -104,7 +104,7 @@ inputs:
       prefix: "-s"
     doc: "Number of random seed. Default: None"
 
-  threads:
+  threads_count:
     type: int?
     inputBinding:
       prefix: "-t"
