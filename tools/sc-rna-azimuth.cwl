@@ -56,6 +56,37 @@ inputs:
       Column from the metadata of the reference Seurat
       object to select the reference annotations.
 
+  minimum_confidence_score:
+    type: float?
+    inputBinding:
+      prefix: "--minconfscore"
+    doc: |
+      The minimum threshold for a prediction
+      confidence score is calculated at the cell
+      level. This metric ranges from 0 to 1 and
+      reflects the confidence associated with each
+      annotation. Only cells that meet both the
+      minimum prediction confidence score and the
+      minimum prediction mapping score thresholds
+      will be included in the analysis.
+      Default: 0.75
+
+  minimum_mapping_score:
+    type: float?
+    inputBinding:
+      prefix: "--minmapscore"
+    doc: |
+      The minimum threshold for a prediction
+      mapping score is calculated at the cell.
+      This metric ranges from 0 to 1 and reflects
+      how well the unique structure of a cell's
+      local neighborhood is preserved during
+      reference mapping. Only cells that meet both
+      the minimum prediction mapping score and the
+      minimum prediction confidence score thresholds
+      will be included in the analysis.
+      Default: 0.75
+
   identify_diff_genes:
     type: boolean?
     inputBinding:
@@ -355,87 +386,51 @@ inputs:
 
 outputs:
 
+  ref_cell_cnts_gr_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ref_cell_cnts_gr_ctyp.png"
+    doc: |
+      Number of cells per cell type.
+      All reference cells.
+      PNG format.
+
+  ref_umap_gr_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_ref_umap_gr_ctyp.png"
+    doc: |
+      Reference UMAP colored by cell type.
+      All reference cells.
+      PNG format.
+
   cell_cnts_gr_ctyp_plot_png:
     type: File?
     outputBinding:
-      glob: "*_cell_cnts_gr_ctyp.png"
+      glob: "*[!_ref]_cell_cnts_gr_ctyp.png"
     doc: |
       Number of cells per cell type.
-      All cells.
+      All query cells.
       PNG format.
 
-  umap_qc_mtrcs_plot_png:
+  umap_cnf_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_qc_mtrcs.png"
+      glob: "*_umap_cnf.png"
     doc: |
-      UMAP, QC metrics.
-      All cells.
+      Projected UMAP colored by
+      prediction confidence score.
+      All query cells.
       PNG format.
 
-  gene_umi_spl_ctyp_plot_png:
+  umap_map_plot_png:
     type: File?
     outputBinding:
-      glob: "*_gene_umi_spl_ctyp.png"
+      glob: "*_umap_map.png"
     doc: |
-      Genes vs RNA reads per cell.
-      Split by cell type; all cells.
-      PNG format.
-
-  umi_mito_spl_ctyp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umi_mito_spl_ctyp.png"
-    doc: |
-      RNA reads vs mitochondrial % per cell.
-      Split by cell type; all cells.
-      PNG format.
-
-  rnadbl_gr_ctyp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_rnadbl_gr_ctyp.png"
-    doc: |
-      Percentage of RNA doublets per cell type.
-      All cells.
-      PNG format.
-
-  tss_frgm_spl_ctyp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_tss_frgm_spl_ctyp.png"
-    doc: |
-      TSS enrichment score vs ATAC
-      fragments in peaks per cell.
-      Split by cell type; all cells.
-      PNG format.
-
-  atacdbl_gr_ctyp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_atacdbl_gr_ctyp.png"
-    doc: |
-      Percentage of ATAC doublets per cell type.
-      All cells.
-      PNG format.
-
-  rna_atac_cnts_spl_ctyp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_rna_atac_cnts_spl_ctyp.png"
-    doc: |
-      RNA reads vs ATAC fragments in peaks per cell.
-      Split by cell type; all cells.
-      PNG format.
-
-  vrlpdbl_gr_ctyp_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_vrlpdbl_gr_ctyp.png"
-    doc: |
-      Percentage of RNA and ATAC doublets
-      per cell type.
-      All cells.
+      Projected UMAP colored by
+      prediction mapping score.
+      All query cells.
       PNG format.
 
   qc_mtrcs_dnst_gr_ctyp_plot_png:
@@ -443,18 +438,130 @@ outputs:
     outputBinding:
       glob: "*_qc_mtrcs_dnst_gr_ctyp.png"
     doc: |
-      Distribution of QC metrics per cell
-      colored by cell type.
-      All cells.
+      Distribution of QC metrics per
+      cell colored by cell type.
+      All query cells.
+      PNG format.
+
+  gene_umi_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gene_umi_gr_cnf_spl_ctyp.png"
+    doc: |
+      Genes vs RNA reads per cell.
+      All query cells; split by cell type;
+      colored by prediction confidence score.
+      PNG format.
+
+  gene_umi_gr_map_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gene_umi_gr_map_spl_ctyp.png"
+    doc: |
+      Genes vs RNA reads per cell.
+      All query cells; split by cell type;
+      colored by prediction mapping score.
+      PNG format.
+
+  umi_mito_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umi_mito_gr_cnf_spl_ctyp.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell.
+      All query cells; split by cell type;
+      colored by prediction confidence score.
+      PNG format.
+
+  umi_mito_gr_map_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_umi_mito_gr_map_spl_ctyp.png"
+    doc: |
+      RNA reads vs mitochondrial % per cell.
+      All query cells; split by cell type;
+      colored by prediction mapping score.
+      PNG format.
+
+  tss_frgm_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_tss_frgm_gr_cnf_spl_ctyp.png"
+    doc: |
+      TSS enrichment score vs ATAC fragments
+      in peaks per cell.
+      All query cells; split by cell type;
+      colored by prediction confidence score.
+      PNG format.
+
+  tss_frgm_gr_map_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_tss_frgm_gr_map_spl_ctyp.png"
+    doc: |
+      TSS enrichment score vs ATAC fragments
+      in peaks per cell.
+      All query cells; split by cell type;
+      colored by prediction mapping score.
+      PNG format.
+
+  rna_atac_cnts_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_rna_atac_cnts_gr_cnf_spl_ctyp.png"
+    doc: |
+      RNA reads vs ATAC fragments in peaks per cell.
+      All query cells; split by cell type; colored
+      by prediction confidence score.
+      PNG format.
+
+  rna_atac_cnts_gr_map_spl_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_rna_atac_cnts_gr_map_spl_ctyp.png"
+    doc: |
+      RNA reads vs ATAC fragments in peaks per cell.
+      All query cells; split by cell type; colored
+      by prediction mapping score.
+      PNG format.
+
+  rnadbl_gr_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_rnadbl_gr_ctyp.png"
+    doc: |
+      Percentage of RNA doublets
+      per cell type.
+      All query cells.
+      PNG format.
+
+  atacdbl_gr_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_atacdbl_gr_ctyp.png"
+    doc: |
+      Percentage of ATAC doublets
+      per cell type.
+      All query cells.
+      PNG format.
+
+  vrlpdbl_gr_ctyp_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_vrlpdbl_gr_ctyp.png"
+    doc: |
+      Percentage of RNA and ATAC
+      doublets per cell type.
+      All query cells.
       PNG format.
 
   umap_gr_ctyp_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_gr_ctyp.png"
+      glob: "*[!_ref]_umap_gr_ctyp.png"
     doc: |
-      UMAP colored by cell type.
-      All cells.
+      Projected UMAP colored by cell type.
+      Filtered query cells.
       PNG format.
 
   umap_gr_ctyp_spl_idnt_plot_png:
@@ -462,9 +569,9 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_ctyp_spl_idnt.png"
     doc: |
-      UMAP colored by cell type.
-      Split by dataset; downsampled to the
-      smallest dataset.
+      Projected UMAP colored by cell type.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
 
   cmp_gr_ctyp_spl_idnt_plot_png:
@@ -473,8 +580,8 @@ outputs:
       glob: "*_cmp_gr_ctyp_spl_idnt.png"
     doc: |
       Composition plot colored by cell type.
-      Split by dataset; downsampled to the
-      smallest dataset.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
 
   cmp_gr_idnt_spl_ctyp_plot_png:
@@ -483,8 +590,8 @@ outputs:
       glob: "*_cmp_gr_idnt_spl_ctyp.png"
     doc: |
       Composition plot colored by dataset.
-      Split by cell type; downsampled to
-      the smallest dataset.
+      Filtered query cells; split by cell type;
+      downsampled to the smallest dataset.
       PNG format.
 
   umap_gr_ph_spl_idnt_plot_png:
@@ -492,9 +599,9 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_ph_spl_idnt.png"
     doc: |
-      UMAP colored by cell cycle phase.
-      Split by dataset; downsampled to the
-      smallest dataset.
+      Projected UMAP colored by cell cycle phase.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
 
   cmp_gr_ph_spl_idnt_plot_png:
@@ -503,8 +610,8 @@ outputs:
       glob: "*_cmp_gr_ph_spl_idnt.png"
     doc: |
       Composition plot colored by cell cycle phase.
-      Split by dataset; downsampled to the smallest
-      dataset.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
 
   umap_gr_ctyp_spl_ph_png:
@@ -512,10 +619,11 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_ctyp_spl_ph.png"
     doc: |
-      UMAP colored by cell type.
-      Split by cell cycle phase; downsampled
-      to the smallest dataset (if multiple
-      datasets are analyzed jointly).
+      Projected UMAP colored by cell type.
+      Filtered query cells; split by cell
+      cycle phase; downsampled to the
+      smallest dataset (if multiple datasets
+      are analyzed jointly).
       PNG format.
 
   cmp_gr_ph_spl_ctyp_png:
@@ -524,9 +632,9 @@ outputs:
       glob: "*_cmp_gr_ph_spl_ctyp.png"
     doc: |
       Composition plot colored by cell cycle phase.
-      Split by cell type; downsampled to the
-      smallest dataset (if multiple datasets are
-      analyzed jointly).
+      Filtered query cells; split by cell type;
+      downsampled to the smallest dataset (if
+      multiple datasets are analyzed jointly).
       PNG format.
 
   umap_gr_ctyp_spl_cnd_plot_png:
@@ -534,9 +642,10 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_ctyp_spl_cnd.png"
     doc: |
-      UMAP colored by cell type.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
+      Projected UMAP colored by cell type.
+      Filtered query cells; split by grouping
+      condition; first downsampled to the
+      smallest dataset, then downsampled to
       the smallest group.
       PNG format.
 
@@ -546,8 +655,9 @@ outputs:
       glob: "*_cmp_gr_ctyp_spl_cnd.png"
     doc: |
       Composition plot colored by cell type.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
+      Filtered query cells; split by grouping
+      condition; first downsampled to the
+      smallest dataset, then downsampled to
       the smallest group.
       PNG format.
 
@@ -557,9 +667,9 @@ outputs:
       glob: "*_cmp_gr_cnd_spl_ctyp.png"
     doc: |
       Composition plot colored by grouping condition.
-      Split by cell type; first downsampled to the
-      smallest dataset, then downsampled to the
-      smallest group.
+      Filtered query cells; split by cell type;
+      first downsampled to the smallest dataset,
+      then downsampled to the smallest group.
       PNG format.
 
   umap_gr_ph_spl_cnd_plot_png:
@@ -567,10 +677,10 @@ outputs:
     outputBinding:
       glob: "*_umap_gr_ph_spl_cnd.png"
     doc: |
-      UMAP colored by cell cycle phase.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group.
+      Projected UMAP colored by cell cycle phase.
+      Filtered query cells; split by grouping
+      condition; first downsampled to the smallest
+      dataset, then downsampled to the smallest group.
       PNG format.
 
   cmp_gr_ph_spl_cnd_plot_png:
@@ -579,9 +689,9 @@ outputs:
       glob: "*_cmp_gr_ph_spl_cnd.png"
     doc: |
       Composition plot colored by cell cycle phase.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group.
+      Filtered query cells; split by grouping condition;
+      first downsampled to the smallest dataset, then
+      downsampled to the smallest group.
       PNG format.
 
   xpr_avg_plot_png:
@@ -590,6 +700,16 @@ outputs:
       glob: "*_xpr_avg.png"
     doc: |
       Average gene expression.
+      Filtered query cells.
+      PNG format.
+
+  xpr_dnst_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_dnst.png"
+    doc: |
+      Gene expression density.
+      Filtered query cells.
       PNG format.
 
   xpr_per_cell_plot_png:
@@ -600,8 +720,8 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_[!sgnl_]*.png"
     doc: |
-      UMAP colored by gene expression.
-      All genes of interest.
+      Projected UMAP colored by gene expression.
+      Filtered query cells; all genes of interest.
       PNG format.
 
   xpr_per_cell_sgnl_plot_png:
@@ -612,16 +732,10 @@ outputs:
     outputBinding:
       glob: "*_xpr_per_cell_sgnl_*.png"
     doc: |
-      UMAP colored by gene expression density.
-      All genes of interest.
-      PNG format.
-
-  xpr_dnst_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_xpr_dnst.png"
-    doc: |
-      Gene expression density.
+      Projected UMAP colored by gene
+      expression density.
+      Filtered query cells; all genes
+      of interest.
       PNG format.
 
   xpr_htmp_plot_png:
@@ -629,7 +743,8 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.png"
     doc: |
-      Gene expression heatmap.
+      Gene expression heatmap from
+      the filtered query cells.
       Top gene markers.
       PNG format.
 
@@ -642,7 +757,8 @@ outputs:
       glob: "*_cvrg_*.png"
     doc: |
       ATAC fragment coverage.
-      All genes of interest.
+      Filtered query cells;
+      all genes of interest.
       PNG format.
 
   all_plots_pdf:
@@ -661,7 +777,8 @@ outputs:
     outputBinding:
       glob: "*_xpr_htmp.tsv"
     doc: |
-      Gene expression heatmap.
+      Gene expression heatmap from
+      the filtered query cells.
       Top gene markers.
       TSV format.
 
@@ -670,7 +787,8 @@ outputs:
     outputBinding:
       glob: "*_gene_markers.tsv"
     doc: |
-      Gene markers.
+      Gene markers from the filtered
+      query cells.
       TSV format.
 
   peak_markers_tsv:
@@ -678,7 +796,8 @@ outputs:
     outputBinding:
       glob: "*_peak_markers.tsv"
     doc: |
-      Peak markers.
+      Peak markers from the filtered
+      query cells.
       TSV format.
 
   ucsc_cb_config_data:
@@ -834,8 +953,10 @@ doc: |
 
 
 s:about: |
-  usage: /tmp/sc_tools/sc_rna_azimuth.R [-h] --query QUERY --reference REFERENCE
-                                        --annoyidx ANNOYIDX --source SOURCE
+  usage: /usr/local/bin/sc_rna_azimuth.R [-h] --query QUERY --reference
+                                        REFERENCE --annoyidx ANNOYIDX --source
+                                        SOURCE [--minconfscore MINCONFSCORE]
+                                        [--minmapscore MINMAPSCORE]
                                         [--diffgenes] [--diffpeaks]
                                         [--rnalogfc RNALOGFC]
                                         [--rnaminpct RNAMINPCT] [--rnaonlypos]
@@ -874,6 +995,23 @@ s:about: |
                           https://azimuth.hubmapconsortium.org/references/
     --source SOURCE       Column from the metadata of the reference Seurat
                           object to select the reference annotations.
+    --minconfscore MINCONFSCORE
+                          The minimum threshold for a prediction confidence
+                          score is calculated at the cell level. This metric
+                          ranges from 0 to 1 and reflects the confidence
+                          associated with each annotation. Only cells that meet
+                          both the minimum prediction confidence score and the
+                          minimum prediction mapping score thresholds will be
+                          included in the analysis. Default: 0.75
+    --minmapscore MINMAPSCORE
+                          The minimum threshold for a prediction mapping score
+                          is calculated at the cell. This metric ranges from 0
+                          to 1 and reflects how well the unique structure of a
+                          cell’s local neighborhood is preserved during
+                          reference mapping. Only cells that meet both the
+                          minimum prediction mapping score and the minimum
+                          prediction confidence score thresholds will be
+                          included in the analysis. Default: 0.75
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) for the predicted cell types. Default: false
     --diffpeaks           Identify differentially accessible peaks for the
