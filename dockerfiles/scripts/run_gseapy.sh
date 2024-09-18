@@ -84,23 +84,23 @@ if [[ "$PVALUE" == "" ]]; then echo "warning: optional param missing (-p), FLOAT
 #===============================================================================
 printf "Selecting dataset...\n"
 if [[ "$DATASETIN" == "H_hallmark_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.H_hallmark_gene_sets.gmt";
+	DATASET="/opt/gseapy/H_hallmark_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C1_positional_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C1_positional_gene_sets.gmt";
+	DATASET="/opt/gseapy/C1_positional_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C2_curated_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C2_curated_gene_sets.gmt";
+	DATASET="/opt/gseapy/C2_curated_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C3_regulatory_target_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C3_regulatory_target_gene_sets.gmt";
+	DATASET="/opt/gseapy/C3_regulatory_target_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C4_computational_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C4_computational_gene_sets.gmt";
+	DATASET="/opt/gseapy/C4_computational_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C5_ontology_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C5_ontology_gene_sets.gmt";
+	DATASET="/opt/gseapy/C5_ontology_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C6_oncogenic_signature_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C6_oncogenic_signature_gene_sets.gmt";
+	DATASET="/opt/gseapy/C6_oncogenic_signature_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C7_immunologic_signature_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C7_immunologic_signature_gene_sets.gmt";
+	DATASET="/opt/gseapy/C7_immunologic_signature_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "C8_cell_type_signature_gene_sets" ]]; then
-	DATASET="/opt/gseapy/enrichr.C8_cell_type_signature_gene_sets.gmt";
+	DATASET="/opt/gseapy/C8_cell_type_signature_gene_sets.v2024.1.gmt";
 elif [[ "$DATASETIN" == "KEGG_2021_Human" ]]; then
 	DATASET="/opt/gseapy/enrichr.KEGG_2021_Human.gmt";
 elif [[ "$DATASETIN" == "Reactome_2022" ]]; then
@@ -182,19 +182,19 @@ p1=$(tail -1 $PHENOFILE | awk -F' ' '{print($1)}')
 p2=$(tail -1 $PHENOFILE | awk -F' ' '{print($NF)}')
 #echo $p1 $p2
 # phenotype 1
-enriched=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){x++}}END{print(x)}')
-sigsets_fdr25=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){if($4<0.25){x++}}}END{print(x)}')
-sigsets_pv5=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){if($3<0.05){x++}}}END{print(x)}')
-sigsets_pv1=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1>0){if($3<0.01){x++}}}END{print(x)}')
+enriched=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1>0){x++}}END{print(x)}')
+sigsets_fdr25=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1>0){if($4<0.25){x++}}}END{print(x)}')
+sigsets_pv5=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1>0){if($3<0.05){x++}}}END{print(x)}')
+sigsets_pv1=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1>0){if($3<0.01){x++}}}END{print(x)}')
 printf "Gene sets enriched in phenotype $p1\t$enriched\n" >> reportsummary.tsv
 printf "%s\t%s\n" "Gene sets at FDR<25%" "$sigsets_fdr25" >> reportsummary.tsv
 printf "%s\t%s\n" "Gene sets w/ p-value<5%" "$sigsets_pv5" >> reportsummary.tsv
 printf "%s\t%s\n" "Gene sets w/ p-value <1%" "$sigsets_pv1" >> reportsummary.tsv
 # phenotype 2
-enriched=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){x++}}END{print(x)}')
-sigsets_fdr25=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){if($4<0.25){x++}}}END{print(x)}')
-sigsets_pv5=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){if($3<0.05){x++}}}END{print(x)}')
-sigsets_pv1=$(cut -f2-5 $report | tail -n+2 | awk -F'\t' 'BEGIN{x=0};{if($1<0){if($3<0.01){x++}}}END{print(x)}')
+enriched=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1<0){x++}}END{print(x)}')
+sigsets_fdr25=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1<0){if($4<0.25){x++}}}END{print(x)}')
+sigsets_pv5=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1<0){if($3<0.05){x++}}}END{print(x)}')
+sigsets_pv1=$(cut -d$',' -f2-5 $report | tail -n+2 | awk -F',' 'BEGIN{x=0};{if($1<0){if($3<0.01){x++}}}END{print(x)}')
 printf "Gene sets enriched in phenotype $p2\t$enriched\n" >> reportsummary.tsv
 printf "%s\t%s\n" "Gene sets at FDR<25%" "$sigsets_fdr25" >> reportsummary.tsv
 printf "%s\t%s\n" "Gene sets w/ p-value<5%" "$sigsets_pv5" >> reportsummary.tsv

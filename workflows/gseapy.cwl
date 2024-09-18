@@ -148,12 +148,19 @@ outputs:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Enrichment report"
-    doc: "Enrichment report"
+    doc: "Enrichment report in original csv format"
+    outputSource: run_gseapy/enrichment_report
+
+  gseapy_enrichment_report_tsv:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "Enrichment report"
+    doc: "Enrichment report converted to tsv format for scidap table"
     outputSource: convert_to_tsv/output_file
     "sd:visualPlugins":
     - syncfusiongrid:
-        tab: "Gene Set Enrichment"
-        Title: "Gene Set Enrichment"
+        tab: "Gene Set Enrichment Table"
+        Title: "Gene Set Enrichment Table"
 
   gseapy_report_summary:
     type: File?
@@ -163,7 +170,7 @@ outputs:
     outputSource: run_gseapy/report_summary
     'sd:visualPlugins':
     - markdownView:
-        tab: 'Overview'
+        tab: "Overview"
 
   gseapy_enrichment_plots:
     type: File
