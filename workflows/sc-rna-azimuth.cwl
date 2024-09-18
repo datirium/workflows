@@ -75,6 +75,37 @@ inputs:
       Column from the metadata of the reference Seurat
       object to select the reference annotations.
 
+  minimum_confidence_score:
+    type: float?
+    default: 0.75
+    label: "Minimum prediction confidence score"
+    doc: |
+      The minimum threshold for a prediction
+      confidence score is calculated at the cell
+      level. This metric ranges from 0 to 1 and
+      reflects the confidence associated with each
+      annotation. Only cells that meet both the
+      minimum prediction confidence score and the
+      minimum prediction mapping score thresholds
+      will be included in the analysis.
+      Default: 0.75
+
+  minimum_mapping_score:
+    type: float?
+    default: 0.75
+    label: "Minimum prediction mapping score"
+    doc: |
+      The minimum threshold for a prediction
+      mapping score is calculated at the cell.
+      This metric ranges from 0 to 1 and reflects
+      how well the unique structure of a cell's
+      local neighborhood is preserved during
+      reference mapping. Only cells that meet both
+      the minimum prediction mapping score and the
+      minimum prediction confidence score thresholds
+      will be included in the analysis.
+      Default: 0.75
+
   identify_diff_genes:
     type: boolean?
     default: true
@@ -212,321 +243,428 @@ inputs:
 
 outputs:
 
+  ref_cell_cnts_gr_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/ref_cell_cnts_gr_ctyp_plot_png
+    label: "Number of cells per cell type (all reference cells)"
+    doc: |
+      Number of cells per cell type.
+      All reference cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Reference"
+        Caption: "Number of cells per cell type (all reference cells)"
+
+  ref_umap_gr_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/ref_umap_gr_ctyp_plot_png
+    label: "Reference UMAP colored by cell type (all reference cells)"
+    doc: |
+      Reference UMAP colored by cell type.
+      All reference cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Reference"
+        Caption: "Reference UMAP colored by cell type (all reference cells)"
+
   cell_cnts_gr_ctyp_plot_png:
     type: File?
     outputSource: rna_azimuth/cell_cnts_gr_ctyp_plot_png
-    label: "Number of cells per cell type (all cells)"
+    label: "Number of cells per cell type (all query cells)"
     doc: |
       Number of cells per cell type.
-      All cells.
+      All query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "Number of cells per cell type (all cells)"
-
-  umap_qc_mtrcs_plot_png:
-    type: File?
-    outputSource: rna_azimuth/umap_qc_mtrcs_plot_png
-    label: "UMAP, QC metrics (all cells)"
-    doc: |
-      UMAP, QC metrics.
-      All cells.
-      PNG format.
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "UMAP, QC metrics (all cells)"
+        Caption: "Number of cells per cell type (all query cells)"
 
   qc_mtrcs_dnst_gr_ctyp_plot_png:
     type: File?
     outputSource: rna_azimuth/qc_mtrcs_dnst_gr_ctyp_plot_png
-    label: "Distribution of QC metrics per cell colored by cell type (all cells)"
+    label: "Distribution of QC metrics per cell colored by cell type (all query cells)"
     doc: |
-      Distribution of QC metrics per cell
-      colored by cell type.
-      All cells.
+      Distribution of QC metrics per
+      cell colored by cell type.
+      All query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "Distribution of QC metrics per cell colored by cell type (all cells)"
+        Caption: "Distribution of QC metrics per cell colored by cell type (all query cells)"
 
-  gene_umi_spl_ctyp_plot_png:
+  umap_cnf_plot_png:
     type: File?
-    outputSource: rna_azimuth/gene_umi_spl_ctyp_plot_png
-    label: "Genes vs RNA reads per cell (split by cell type, all cells)"
+    outputSource: rna_azimuth/umap_cnf_plot_png
+    label: "Projected UMAP colored by prediction confidence score (all query cells)"
+    doc: |
+      Projected UMAP colored by
+      prediction confidence score.
+      All query cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Projected UMAP colored by prediction confidence score (all query cells)"
+
+  umap_map_plot_png:
+    type: File?
+    outputSource: rna_azimuth/umap_map_plot_png
+    label: "Projected UMAP colored by prediction mapping score (all query cells)"
+    doc: |
+      Projected UMAP colored by
+      prediction mapping score.
+      All query cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Projected UMAP colored by prediction mapping score (all query cells)"
+
+  gene_umi_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/gene_umi_gr_cnf_spl_ctyp_plot_png
+    label: "Genes vs RNA reads per cell colored by prediction confidence score (split by cell type, all query cells)"
     doc: |
       Genes vs RNA reads per cell.
-      Split by cell type; all cells.
+      All query cells; split by cell type;
+      colored by prediction confidence score.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "Genes vs RNA reads per cell (split by cell type, all cells)"
+        Caption: "Genes vs RNA reads per cell colored by prediction confidence score (split by cell type, all query cells)"
 
-  umi_mito_spl_ctyp_plot_png:
+  gene_umi_gr_map_spl_ctyp_plot_png:
     type: File?
-    outputSource: rna_azimuth/umi_mito_spl_ctyp_plot_png
-    label: "RNA reads vs mitochondrial % per cell (split by cell type, all cells)"
+    outputSource: rna_azimuth/gene_umi_gr_map_spl_ctyp_plot_png
+    label: "Genes vs RNA reads per cell colored by prediction mapping score (split by cell type, all query cells)"
+    doc: |
+      Genes vs RNA reads per cell.
+      All query cells; split by cell type;
+      colored by prediction mapping score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Genes vs RNA reads per cell colored by prediction mapping score (split by cell type, all query cells)"
+
+  umi_mito_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/umi_mito_gr_cnf_spl_ctyp_plot_png
+    label: "RNA reads vs mitochondrial % per cell colored by prediction confidence score (split by cell type, all query cells)"
     doc: |
       RNA reads vs mitochondrial % per cell.
-      Split by cell type; all cells.
+      All query cells; split by cell type;
+      colored by prediction confidence score.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "RNA reads vs mitochondrial % per cell (split by cell type, all cells)"
+        Caption: "RNA reads vs mitochondrial % per cell colored by prediction confidence score (split by cell type, all query cells)"
 
-  tss_frgm_spl_ctyp_plot_png:
+  umi_mito_gr_map_spl_ctyp_plot_png:
     type: File?
-    outputSource: rna_azimuth/tss_frgm_spl_ctyp_plot_png
-    label: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+    outputSource: rna_azimuth/umi_mito_gr_map_spl_ctyp_plot_png
+    label: "RNA reads vs mitochondrial % per cell colored by prediction mapping score (split by cell type, all query cells)"
     doc: |
-      TSS enrichment score vs ATAC
-      fragments in peaks per cell.
-      Split by cell type; all cells.
+      RNA reads vs mitochondrial % per cell.
+      All query cells; split by cell type;
+      colored by prediction mapping score.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "TSS enrichment score vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+        Caption: "RNA reads vs mitochondrial % per cell colored by prediction mapping score (split by cell type, all query cells)"
 
-  rna_atac_cnts_spl_ctyp_plot_png:
+  tss_frgm_gr_cnf_spl_ctyp_plot_png:
     type: File?
-    outputSource: rna_azimuth/rna_atac_cnts_spl_ctyp_plot_png
-    label: "RNA reads vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+    outputSource: rna_azimuth/tss_frgm_gr_cnf_spl_ctyp_plot_png
+    label: "TSS enrichment score vs ATAC fragments in peaks per cell colored by prediction confidence score (split by cell type, all query cells)"
+    doc: |
+      TSS enrichment score vs ATAC fragments
+      in peaks per cell.
+      All query cells; split by cell type;
+      colored by prediction confidence score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "TSS enrichment score vs ATAC fragments in peaks per cell colored by prediction confidence score (split by cell type, all query cells)"
+
+  tss_frgm_gr_map_spl_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/tss_frgm_gr_map_spl_ctyp_plot_png
+    label: "TSS enrichment score vs ATAC fragments in peaks per cell colored by prediction mapping score (split by cell type, all query cells)"
+    doc: |
+      TSS enrichment score vs ATAC fragments
+      in peaks per cell.
+      All query cells; split by cell type;
+      colored by prediction mapping score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "TSS enrichment score vs ATAC fragments in peaks per cell colored by prediction mapping score (split by cell type, all query cells)"
+
+  rna_atac_cnts_gr_cnf_spl_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/rna_atac_cnts_gr_cnf_spl_ctyp_plot_png
+    label: "RNA reads vs ATAC fragments in peaks per cell colored by prediction confidence score (split by cell type, all query cells)"
     doc: |
       RNA reads vs ATAC fragments in peaks per cell.
-      Split by cell type; all cells.
+      All query cells; split by cell type; colored
+      by prediction confidence score.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "RNA reads vs ATAC fragments in peaks per cell (split by cell type, all cells)"
+        Caption: "RNA reads vs ATAC fragments in peaks per cell colored by prediction confidence score (split by cell type, all query cells)"
+
+  rna_atac_cnts_gr_map_spl_ctyp_plot_png:
+    type: File?
+    outputSource: rna_azimuth/rna_atac_cnts_gr_map_spl_ctyp_plot_png
+    label: "RNA reads vs ATAC fragments in peaks per cell colored by prediction mapping score (split by cell type, all query cells)"
+    doc: |
+      RNA reads vs ATAC fragments in peaks per cell.
+      All query cells; split by cell type; colored
+      by prediction mapping score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "RNA reads vs ATAC fragments in peaks per cell colored by prediction mapping score (split by cell type, all query cells)"
 
   rnadbl_gr_ctyp_plot_png:
     type: File?
     outputSource: rna_azimuth/rnadbl_gr_ctyp_plot_png
-    label: "Percentage of RNA doublets per cell type (all cells)"
+    label: "Percentage of RNA doublets per cell type (all query cells)"
     doc: |
-      Percentage of RNA doublets per cell type.
-      All cells.
+      Percentage of RNA doublets
+      per cell type.
+      All query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "Percentage of RNA doublets per cell type (all cells)"
+        Caption: "Percentage of RNA doublets per cell type (all query cells)"
 
   atacdbl_gr_ctyp_plot_png:
     type: File?
     outputSource: rna_azimuth/atacdbl_gr_ctyp_plot_png
-    label: "Percentage of ATAC doublets per cell type (all cells)"
+    label: "Percentage of ATAC doublets per cell type (all query cells)"
     doc: |
-      Percentage of ATAC doublets per cell type.
-      All cells.
+      Percentage of ATAC doublets
+      per cell type.
+      All query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "Percentage of ATAC doublets per cell type (all cells)"
+        Caption: "Percentage of ATAC doublets per cell type (all query cells)"
 
   vrlpdbl_gr_ctyp_plot_png:
     type: File?
     outputSource: rna_azimuth/vrlpdbl_gr_ctyp_plot_png
-    label: "Percentage of RNA and ATAC doublets per cell type (all cells)"
+    label: "Percentage of RNA and ATAC doublets per cell type (all query cells)"
     doc: |
-      Percentage of RNA and ATAC doublets
-      per cell type.
-      All cells.
+      Percentage of RNA and ATAC
+      doublets per cell type.
+      All query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "QC"
-        Caption: "Percentage of RNA and ATAC doublets per cell type (all cells)"
+        Caption: "Percentage of RNA and ATAC doublets per cell type (all query cells)"
 
   umap_gr_ctyp_plot_png:
     type: File?
     outputSource: rna_azimuth/umap_gr_ctyp_plot_png
-    label: "UMAP colored by cell type (all cells)"
+    label: "Projected UMAP colored by cell type (filtered query cells)"
     doc: |
-      UMAP colored by cell type.
-      All cells.
+      Projected UMAP colored by cell type.
+      Filtered query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by cell type"
-        Caption: "UMAP colored by cell type (all cells)"
+        Caption: "Projected UMAP colored by cell type (filtered query cells)"
 
   umap_gr_ctyp_spl_ph_png:
     type: File?
     outputSource: rna_azimuth/umap_gr_ctyp_spl_ph_png
-    label: "UMAP colored by cell type (split by cell cycle phase, optionally downsampled)"
+    label: "Projected UMAP colored by cell type (split by cell cycle phase, optionally downsampled filtered query cells)"
     doc: |
-      UMAP colored by cell type.
-      Split by cell cycle phase; downsampled
-      to the smallest dataset (if multiple
-      datasets are analyzed jointly).
+      Projected UMAP colored by cell type.
+      Filtered query cells; split by cell
+      cycle phase; downsampled to the
+      smallest dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by cell type"
-        Caption: "UMAP colored by cell type (split by cell cycle phase, optionally downsampled)"
+        Caption: "Projected UMAP colored by cell type (split by cell cycle phase, optionally downsampled filtered query cells)"
 
   cmp_gr_ph_spl_ctyp_png:
     type: File?
     outputSource: rna_azimuth/cmp_gr_ph_spl_ctyp_png
-    label: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled)"
+    label: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled filtered query cells)"
     doc: |
       Composition plot colored by cell cycle phase.
-      Split by cell type; downsampled to the
-      smallest dataset (if multiple datasets are
-      analyzed jointly).
+      Filtered query cells; split by cell type;
+      downsampled to the smallest dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by cell type"
-        Caption: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled)"
+        Caption: "Composition plot colored by cell cycle phase (split by cell type, optionally downsampled filtered query cells)"
 
   umap_gr_ctyp_spl_idnt_plot_png:
     type: File?
     outputSource: rna_azimuth/umap_gr_ctyp_spl_idnt_plot_png
-    label: "UMAP colored by cell type (split by dataset, downsampled)"
+    label: "Projected UMAP colored by cell type (split by dataset, downsampled filtered query cells)"
     doc: |
-      UMAP colored by cell type.
-      Split by dataset; downsampled to the
-      smallest dataset.
+      Projected UMAP colored by cell type.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by dataset"
-        Caption: "UMAP colored by cell type (split by dataset, downsampled)"
+        Caption: "Projected UMAP colored by cell type (split by dataset, downsampled filtered query cells)"
 
   cmp_gr_ctyp_spl_idnt_plot_png:
     type: File?
     outputSource: rna_azimuth/cmp_gr_ctyp_spl_idnt_plot_png
-    label: "Composition plot colored by cell type (split by dataset, downsampled)"
+    label: "Composition plot colored by cell type (split by dataset, downsampled filtered query cells)"
     doc: |
       Composition plot colored by cell type.
-      Split by dataset; downsampled to the
-      smallest dataset.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by dataset"
-        Caption: "Composition plot colored by cell type (split by dataset, downsampled)"
+        Caption: "Composition plot colored by cell type (split by dataset, downsampled filtered query cells)"
 
   umap_gr_ph_spl_idnt_plot_png:
     type: File?
     outputSource: rna_azimuth/umap_gr_ph_spl_idnt_plot_png
-    label: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
+    label: "Projected UMAP colored by cell cycle phase (split by dataset, downsampled filtered query cells)"
     doc: |
-      UMAP colored by cell cycle phase.
-      Split by dataset; downsampled to the
-      smallest dataset.
+      Projected UMAP colored by cell cycle phase.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by dataset"
-        Caption: "UMAP colored by cell cycle phase (split by dataset, downsampled)"
+        Caption: "Projected UMAP colored by cell cycle phase (split by dataset, downsampled filtered query cells)"
 
   cmp_gr_ph_spl_idnt_plot_png:
     type: File?
     outputSource: rna_azimuth/cmp_gr_ph_spl_idnt_plot_png
-    label: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
+    label: "Composition plot colored by cell cycle phase (split by dataset, downsampled filtered query cells)"
     doc: |
       Composition plot colored by cell cycle phase.
-      Split by dataset; downsampled to the smallest
-      dataset.
+      Filtered query cells; split by dataset;
+      downsampled to the smallest dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by dataset"
-        Caption: "Composition plot colored by cell cycle phase (split by dataset, downsampled)"
+        Caption: "Composition plot colored by cell cycle phase (split by dataset, downsampled filtered query cells)"
 
   umap_gr_ctyp_spl_cnd_plot_png:
     type: File?
     outputSource: rna_azimuth/umap_gr_ctyp_spl_cnd_plot_png
-    label: "UMAP colored by cell type (split by grouping condition, downsampled)"
+    label: "Projected UMAP colored by cell type (split by grouping condition, downsampled filtered query cells)"
     doc: |
-      UMAP colored by cell type.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
+      Projected UMAP colored by cell type.
+      Filtered query cells; split by grouping
+      condition; first downsampled to the
+      smallest dataset, then downsampled to
       the smallest group.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by group"
-        Caption: "UMAP colored by cell type (split by grouping condition, downsampled)"
+        Caption: "Projected UMAP colored by cell type (split by grouping condition, downsampled filtered query cells)"
 
   cmp_gr_ctyp_spl_cnd_plot_png:
     type: File?
     outputSource: rna_azimuth/cmp_gr_ctyp_spl_cnd_plot_png
-    label: "Composition plot colored by cell type (split by grouping condition, downsampled)"
+    label: "Composition plot colored by cell type (split by grouping condition, downsampled filtered query cells)"
     doc: |
       Composition plot colored by cell type.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
+      Filtered query cells; split by grouping
+      condition; first downsampled to the
+      smallest dataset, then downsampled to
       the smallest group.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by group"
-        Caption: "Composition plot colored by cell type (split by grouping condition, downsampled)"
+        Caption: "Composition plot colored by cell type (split by grouping condition, downsampled filtered query cells)"
 
   umap_gr_ph_spl_cnd_plot_png:
     type: File?
     outputSource: rna_azimuth/umap_gr_ph_spl_cnd_plot_png
-    label: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
+    label: "Projected UMAP colored by cell cycle phase (split by grouping condition, downsampled filtered query cells)"
     doc: |
-      UMAP colored by cell cycle phase.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group.
+      Projected UMAP colored by cell cycle phase.
+      Filtered query cells; split by grouping
+      condition; first downsampled to the smallest
+      dataset, then downsampled to the smallest group.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by group"
-        Caption: "UMAP colored by cell cycle phase (split by grouping condition, downsampled)"
+        Caption: "Projected UMAP colored by cell cycle phase (split by grouping condition, downsampled filtered query cells)"
 
   cmp_gr_ph_spl_cnd_plot_png:
     type: File?
     outputSource: rna_azimuth/cmp_gr_ph_spl_cnd_plot_png
-    label: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
+    label: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled filtered query cells)"
     doc: |
       Composition plot colored by cell cycle phase.
-      Split by grouping condition; first downsampled
-      to the smallest dataset, then downsampled to
-      the smallest group.
+      Filtered query cells; split by grouping condition;
+      first downsampled to the smallest dataset, then
+      downsampled to the smallest group.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Split by group"
-        Caption: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled)"
+        Caption: "Composition plot colored by cell cycle phase (split by grouping condition, downsampled filtered query cells)"
 
   xpr_avg_plot_png:
     type: File?
     outputSource: rna_azimuth/xpr_avg_plot_png
-    label: "Average gene expression"
+    label: "Average gene expression (filtered query cells)"
     doc: |
       Average gene expression.
+      Filtered query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Genes of interest (expression)"
-        Caption: "Average gene expression"
+        Caption: "Average gene expression (filtered query cells)"
 
   xpr_dnst_plot_png:
     type: File?
     outputSource: rna_azimuth/xpr_dnst_plot_png
-    label: "Gene expression density"
+    label: "Gene expression density (filtered query cells)"
     doc: |
       Gene expression density.
+      Filtered query cells.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Genes of interest (expression)"
-        Caption: "Gene expression density"
+        Caption: "Gene expression density (filtered query cells)"
 
   xpr_per_cell_plot_png:
     type:
@@ -534,15 +672,15 @@ outputs:
     - type: array
       items: File
     outputSource: rna_azimuth/xpr_per_cell_plot_png
-    label: "UMAP colored by gene expression (per gene)"
+    label: "Projected UMAP colored by gene expression (per gene, filtered query cells)"
     doc: |
-      UMAP colored by gene expression.
-      All genes of interest.
+      Projected UMAP colored by gene expression.
+      Filtered query cells; all genes of interest.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Genes of interest (expression)"
-        Caption: "UMAP colored by gene expression (per gene)"
+        Caption: "Projected UMAP colored by gene expression (per gene, filtered query cells)"
 
   cvrg_plot_png:
     type:
@@ -550,61 +688,66 @@ outputs:
     - type: array
       items: File
     outputSource: rna_azimuth/cvrg_plot_png
-    label: "ATAC fragment coverage (per gene)"
+    label: "ATAC fragment coverage (per gene, filtered query cells)"
     doc: |
       ATAC fragment coverage.
-      All genes of interest.
+      Filtered query cells;
+      all genes of interest.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Genes of interest (coverage)"
-        Caption: "ATAC fragment coverage (per gene)"
+        Caption: "ATAC fragment coverage (per gene, filtered query cells)"
 
   xpr_htmp_plot_png:
     type: File?
     outputSource: rna_azimuth/xpr_htmp_plot_png
-    label: "Gene expression heatmap (top gene markers)"
+    label: "Gene expression heatmap (top gene markers, filtered query cells)"
     doc: |
-      Gene expression heatmap.
+      Gene expression heatmap from
+      the filtered query cells.
       Top gene markers.
       PNG format.
     "sd:visualPlugins":
     - image:
         tab: "Gene markers heatmap"
-        Caption: "Gene expression heatmap (top gene markers)"
+        Caption: "Gene expression heatmap (top gene markers, filtered query cells)"
 
   xpr_htmp_tsv:
     type: File?
     outputSource: rna_azimuth/xpr_htmp_tsv
-    label: "Gene expression heatmap (top gene markers)"
+    label: "Gene expression heatmap (top gene markers, filtered query cells)"
     doc: |
-      Gene expression heatmap.
+      Gene expression heatmap from
+      the filtered query cells.
       Top gene markers.
       TSV format.
 
   gene_markers_tsv:
     type: File?
     outputSource: rna_azimuth/gene_markers_tsv
-    label: "Gene markers"
+    label: "Gene markers (filtered query cells)"
     doc: |
-      Gene markers.
+      Gene markers from the filtered
+      query cells.
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
         tab: "Gene markers table"
-        Title: "Gene markers"
+        Title: "Gene markers (filtered query cells)"
 
   peak_markers_tsv:
     type: File?
     outputSource: rna_azimuth/peak_markers_tsv
-    label: "Peak markers"
+    label: "Peak markers (filtered query cells)"
     doc: |
-      Peak markers.
+      Peak markers from the filtered
+      query cells.
       TSV format.
     "sd:visualPlugins":
     - syncfusiongrid:
         tab: "Peak markers table"
-        Title: "Peak markers"
+        Title: "Peak markers (filtered query cells)"
 
   ucsc_cb_html_data:
     type: Directory?
@@ -693,6 +836,8 @@ steps:
       reference_data_rds: reference_data_rds
       reference_data_index: reference_data_index
       reference_source_column: reference_source_column
+      minimum_confidence_score: minimum_confidence_score
+      minimum_mapping_score: minimum_mapping_score
       atac_fragments_file: atac_fragments_file
       genes_of_interest:
         source: genes_of_interest
@@ -732,36 +877,43 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
+    - ref_cell_cnts_gr_ctyp_plot_png
+    - ref_umap_gr_ctyp_plot_png
     - cell_cnts_gr_ctyp_plot_png
-    - umap_qc_mtrcs_plot_png
-    - gene_umi_spl_ctyp_plot_png
-    - umi_mito_spl_ctyp_plot_png
-    - rnadbl_gr_ctyp_plot_png
-    - tss_frgm_spl_ctyp_plot_png
-    - atacdbl_gr_ctyp_plot_png
-    - rna_atac_cnts_spl_ctyp_plot_png
-    - vrlpdbl_gr_ctyp_plot_png
     - qc_mtrcs_dnst_gr_ctyp_plot_png
+    - umap_cnf_plot_png
+    - umap_map_plot_png
+    - gene_umi_gr_cnf_spl_ctyp_plot_png
+    - gene_umi_gr_map_spl_ctyp_plot_png
+    - umi_mito_gr_cnf_spl_ctyp_plot_png
+    - umi_mito_gr_map_spl_ctyp_plot_png
+    - tss_frgm_gr_cnf_spl_ctyp_plot_png
+    - tss_frgm_gr_map_spl_ctyp_plot_png
+    - rna_atac_cnts_gr_cnf_spl_ctyp_plot_png
+    - rna_atac_cnts_gr_map_spl_ctyp_plot_png
+    - rnadbl_gr_ctyp_plot_png
+    - atacdbl_gr_ctyp_plot_png
+    - vrlpdbl_gr_ctyp_plot_png
     - umap_gr_ctyp_plot_png
+    - umap_gr_ctyp_spl_ph_png
+    - cmp_gr_ph_spl_ctyp_png
     - umap_gr_ctyp_spl_idnt_plot_png
     - cmp_gr_ctyp_spl_idnt_plot_png
     - umap_gr_ph_spl_idnt_plot_png
     - cmp_gr_ph_spl_idnt_plot_png
-    - umap_gr_ctyp_spl_ph_png
-    - cmp_gr_ph_spl_ctyp_png
     - umap_gr_ctyp_spl_cnd_plot_png
     - cmp_gr_ctyp_spl_cnd_plot_png
     - umap_gr_ph_spl_cnd_plot_png
     - cmp_gr_ph_spl_cnd_plot_png
     - xpr_avg_plot_png
-    - xpr_per_cell_plot_png
     - xpr_dnst_plot_png
-    - xpr_htmp_plot_png
+    - xpr_per_cell_plot_png
     - cvrg_plot_png
-    - all_plots_pdf
+    - xpr_htmp_plot_png
     - xpr_htmp_tsv
     - gene_markers_tsv
     - peak_markers_tsv
+    - all_plots_pdf
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
