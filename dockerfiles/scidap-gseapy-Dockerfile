@@ -1,0 +1,86 @@
+#################################################################
+# Dockerfile
+#
+# Software:         GSEApy tool
+# Software Version: R v4.0.4, gseapy 0.9.18
+# Description:      Gene Set Enrichment Analysis (GSEA) is a computational method that determines whether an a priori defined set of genes shows statistically significant, concordant differences between two biological states (e.g. phenotypes).
+# Website:          https://github.com/datirium/workflows
+# Provides:         samtools, R
+# Base Image:       python:3.7
+# Build Cmd:        docker build --platform linux/amd64 --no-cache --rm -t gseapy-dev -f scidap-gseapy-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti gseapy-dev /bin/bash
+# Push Cmd1:        docker tag gseapy-dev robertplayer/scidap-gseapy:dev
+#      Cmd2:        docker image push robertplayer/scidap-gseapy:dev
+# Pull Cmd:         docker pull robertplayer/scidap-gseapy:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-gseapy:dev /bin/bash
+# re-tag for PR:    docker tag gseapy-dev robertplayer/scidap-gseapy:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-gseapy:v1.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-gseapy:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-gseapy:v1.0.0 /bin/bash
+#
+#   NOTES:
+#
+#   v1.0.0
+#       - original script
+#       - replacing biowardrobe gseapy with this new scidap instance
+#       - includes updates for filtering plots by p-value, and updated overview table
+#
+#################################################################
+
+
+### Base Image
+FROM python:3.7
+#       ubuntu base image
+#FROM rocker/r-ubuntu:jammy
+#   use for small script updates etc (shorter build time from dev)
+#FROM robertplayer/scidap-gseapy:dev
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+ENV COMMIT_GSEAPY="88af566f4148cda61d7269b654ba8776ff67a188"
+ENV URL_GSEAPY="https://github.com/michael-kotliar/GSEApy.git"
+
+COPY ./scripts/download_datasets_gsea.sh /usr/local/bin/
+COPY ./scripts/download_datasets_gseapy.py /usr/local/bin/
+COPY ./scripts/run_gseapy.sh /usr/local/bin/
+COPY ./scripts/run_tsv_to_kable.R /usr/local/bin/
+
+### Installing dependencies etc
+RUN apt-get update && \
+    apt upgrade r-base -y && \
+    # R libraries ( BiocManager::version()   )
+    R -e 'install.packages("reshape2", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("argparse", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("tidyr", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("kableExtra", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("dplyr", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("tibble", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("htmlwidgets", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+### Installing GSEApy
+    pip install tqdm && \
+    git clone ${URL_GSEAPY} && \
+    cd GSEApy && \
+    git checkout ${COMMIT_GSEAPY} && \
+    pip install . && \
+    cd .. && \
+### Downloading genesets
+    mkdir /opt/gseapy/ && \
+    cd /opt/gseapy/ && \
+    chmod +x /usr/local/bin/download_datasets_gsea.sh && \
+    /usr/local/bin/download_datasets_gsea.sh && \
+    chmod +x /usr/local/bin/download_datasets_gseapy.py && \
+    python3 /usr/local/bin/download_datasets_gseapy.py --libraries KEGG_2021_Human Reactome_2022 WikiPathway_2023_Human --names KEGG_2021_Human Reactome_2022 WikiPathway_2023_Human && \
+    cd /tmp && \
+### permitting scripts
+    chmod +x /usr/local/bin/run_gseapy.sh && \
+    chmod +x /usr/local/bin/run_tsv_to_kable.R && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
