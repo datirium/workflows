@@ -23,10 +23,8 @@ output_file <- args[2]      # ex. output_file <- 'reportsummary.md'
 
 df <- read.table(input_file, sep="\t", header=T)
 
-summary_output_md <- paste0(
-  "# GSEApy Results Summary\n\n---\n\n",
-  kableExtra::kable(df, format = "html", escape = FALSE)
-)
+# make kable
+summary_output_md <- kableExtra::kable(df, format = "html", escape = FALSE)
 
 # Write the content to the output file
 writeLines(summary_output_md, con = output_file)

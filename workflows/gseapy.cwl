@@ -133,18 +133,18 @@ inputs:
     'sd:layout':
       advanced: true
 
-  threads:
+  threads_count:
     type: int?
     default: 4
     label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
+    doc: "Number of threads for steps that support multithreading"
     'sd:layout':
       advanced: true
 
 
 outputs:
 
-  gseapy_enrichment_report:
+  gseapy_enrichment_report_csv:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Enrichment report"
@@ -228,7 +228,7 @@ steps:
       ranking_metrics: ranking_metrics
       graphs_pvalue: graphs_pvalue
       seed: seed
-      threads_count: threads
+      threads: threads_count
     out:
       - enrichment_report
       - report_summary
@@ -239,7 +239,6 @@ steps:
       - stdout_log
       - stderr_log
 
-
   convert_to_tsv:
     run: ../tools/custom-bash.cwl
     in:
@@ -248,8 +247,6 @@ steps:
         default: |
           cat "$0" | tr "," "\t" > `basename $0 csv`tsv
     out: [output_file]
-
-
 
 
 $namespaces:

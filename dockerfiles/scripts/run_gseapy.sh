@@ -154,7 +154,7 @@ log=GSEApy_reports/gseapy.*.log
 # total unique genes in rna-seq analysis (remove first 3 rows of header info)
 total_unique_genes=$(cut -f1 $EXPDATA | tail -n+4 | sort | uniq | awk 'END{print(NR)}')
 # total unique genes among all leading edge genes of all marker datasets
-ledge_genes=$(cut -f9 $report | tail -n+2 | sed 's/;/\n/g' | sort | uniq | awk 'END{print(NR)}')
+ledge_genes=$(cut -d$',' -f9 $report | tail -n+2 | sed 's/;/\n/g' | sort | uniq | awk 'END{print(NR)}')
 # get total number of gene sets in selected dataset
 total_gene_sets=$(grep -i "gene_sets" $log | sed -e 's/.*] \+//' -e 's/ .*//' | awk '{x+=$0+0}END{print x}')
 # get number of filtered gene sets
@@ -162,11 +162,11 @@ total_filtered=$(grep -i "gene_sets" $log | sed -e 's/.*] \+//' -e 's/ .*//' | a
 # get number of gene sets used for statistical testing
 total_analyzed=$(grep -i "gene_sets" $log | sed -e 's/.*] \+//' -e 's/ .*//' | awk '{x=$0+0;print x}' | tail -1)
 # total unique genes in remaining marker gene datasets
-feature_genes=$(cut -f8 $report | tail -n+2 | sed 's/;/\n/g' | sort | uniq | awk 'END{print(NR)}')
+feature_genes=$(cut -d$',' -f8 $report | tail -n+2 | sed 's/;/\n/g' | sort | uniq | awk 'END{print(NR)}')
 
 #   FORMATTING OUTPUT
 # header for kable
-printf "%s\t%s\n" "Description:" "Value" > reportsummary.tsv
+printf "%s\t%s\n" "GSEApy Result" "Value" > reportsummary.tsv
 
 # totals
 dataset_name=$(basename "$DATASET" | sed 's/\.gmt//')
