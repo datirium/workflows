@@ -64,12 +64,14 @@ inputs:
   design_formula:
     type: string
     label: "Design formula. See workflow description for details"
-    doc: "Design formula. Should start with ~. See DeSeq2 manual for details"
+    default: "~ condition + celltype + condition:celltype (Example of multi-factor design with interaction term)"
+    doc: "Design formula. Should start with ~. See DESeq2 manual for details"
 
   contrast_indices:
     type: string
     label: "Comma-separated list of integers representing contrast indices"
-    doc: "Comma-separated list of integers representing contrast indices (e.g., 1,2,3)"
+    default: "1,5,13 (Example of list of 3 contrasts)"
+    doc: "Comma-separated list of integers representing contrast indices (e.g., 1,5,13)"
 
   batch_file:
     type: File?
@@ -80,22 +82,6 @@ inputs:
       Metadata file for multi-factor analysis. Headerless TSV/CSV file.
       First column - names from --ua and --ta, second column - batch name.
       Default: None
-
-  alias_cond_1:
-    type: string?
-    default: "untreated"
-    label: "Alias for condition 1, aka 'untreated' (letters and numbers only)"
-    doc: "Name to be displayed for condition 1, aka 'untreated' (letters and numbers only)"
-    'sd:layout':
-      advanced: true
-
-  alias_cond_2:
-    type: string?
-    default: "treated"
-    label: "Alias for condition 2, aka 'treated' (letters and numbers only)"
-    doc: "Name to be displayed for condition 2, aka 'treated' (letters and numbers only)"
-    'sd:layout':
-      advanced: true
 
   cluster_method:
     type:
@@ -190,7 +176,7 @@ inputs:
           - "none"
           - "combatseq"
           - "limmaremovebatcheffect"
-    default: "combatseq"
+    default: "none"
     label: "Batch Correction Method"
     doc: |
       Specifies the batch correction method to be applied.
