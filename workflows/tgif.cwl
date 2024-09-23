@@ -49,7 +49,6 @@ inputs:
     'sd:upstreamSource': "genome_indices/fasta_output"
     label: "Reference Genome FASTA"
     doc: "Reads will be aligned against this reference. Select from the dropdown if not uploading your own custom reference genome FASTA."
-    'sd:localLabel': true
 
   reference_fasta_file:
     type: File?
@@ -75,6 +74,8 @@ inputs:
     default: "y"
     label: "Include IGV output?"
     doc: "Output sorted bam of downselected reads for IGV? Default: y"
+    'sd:layout':
+      advanced: true
 
   yn_plot_output:
     type:
@@ -86,6 +87,8 @@ inputs:
     default: "y"
     label: "Include pileup plots output?"
     doc: "Output read pileup plot per probable insertion site? Default: y"
+    'sd:layout':
+      advanced: true
 
   threads:
     type: int?
@@ -162,7 +165,7 @@ outputs:
     doc: "stderr log for primer3 tool"
     outputSource: run_tgif_primer3/stderr_log
 
-  tgif_summary_md:
+  tgif_summary:
     type: File?
     label: "Markdown formatted table with summary stats"
     format: "http://edamontology.org/format_3835"
