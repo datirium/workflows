@@ -66,21 +66,23 @@ inputs:
 
   yn_igv_output:
     type:
+    - "null"
     - type: enum
-      name: "permutationtype"
+      name: "igvoutput"
       symbols:
       - y
       - n
     default: "y"
-    label: "Include IGV output?"
+    label: "Include alignment output for IGV?"
     doc: "Output sorted bam of downselected reads for IGV? Default: y"
     'sd:layout':
       advanced: true
 
   yn_plot_output:
     type:
+    - "null"
     - type: enum
-      name: "permutationtype"
+      name: "plot output"
       symbols:
       - y
       - n
@@ -165,7 +167,7 @@ outputs:
     doc: "stderr log for primer3 tool"
     outputSource: run_tgif_primer3/stderr_log
 
-  tgif_summary:
+  tgif_summary_md:
     type: File?
     label: "Markdown formatted table with summary stats"
     format: "http://edamontology.org/format_3835"
