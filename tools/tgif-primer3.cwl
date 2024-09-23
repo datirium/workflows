@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-tgif:dev
+  dockerPull: robertplayer/scidap-tgif:v1.0.0
 
 
 inputs:
@@ -34,7 +34,7 @@ inputs:
 
 outputs:
 
-  primer3_output_dir:
+  primer3_output:
     type: File?
     outputBinding:
       glob: "primer3.tar"

@@ -9,12 +9,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-tgif:dev
+  dockerPull: robertplayer/scidap-tgif:v1.0.0
 
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash

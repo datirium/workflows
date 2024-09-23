@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-tgif:dev
+  dockerPull: robertplayer/scidap-tgif:v1.0.0
 
 
 inputs:
@@ -66,7 +66,7 @@ inputs:
       prefix: "-p"
     doc: "Output read pileup plot per probable insertion site? Default: y"
 
-  threads:
+  threads_count:
     type: int?
     inputBinding:
       prefix: "-t"

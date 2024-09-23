@@ -85,7 +85,7 @@ inputs:
     'sd:layout':
       advanced: true
 
-  threads:
+  threads_count:
     type: int?
     default: 4
     label: "Number of threads"
@@ -144,7 +144,7 @@ outputs:
     type: File
     label: "TAR containing primer3 output"
     doc: "TAR containing primer3 output"
-    outputSource: run_tgif_primer3/primer3_output_dir
+    outputSource: run_tgif_primer3/primer3_output
 
   primer3_stdout_log:
     type: File
@@ -196,7 +196,7 @@ steps:
       plasmid_fasta: plasmid_fasta
       yn_igv_output: yn_igv_output
       yn_plot_output: yn_plot_output
-      threads: threads
+      threads_count: threads_count
     out:
       - tgif_insertions_all
       - tgif_insertions_filtered
@@ -211,9 +211,9 @@ steps:
     in:
       insertions_filtered: run_tgif_ncats/tgif_insertions_filtered
       reference_fasta: reference_fasta
-      threads_count: threads
+      threads_count: threads_count
     out:
-      - primer3_output_dir
+      - primer3_output
       - stdout_log
       - stderr_log
 
