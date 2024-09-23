@@ -25,7 +25,7 @@ inputs:
       prefix: "-r"
     doc: "reference fasta file for mapping"
 
-  threads:
+  threads_count:
     type: int?
     inputBinding:
       prefix: "-t"
@@ -58,8 +58,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "gseapy"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/gseapy.cwl
+s:name: "tgif-primer3"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/tgif-primer3.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -95,99 +95,30 @@ s:creator:
 
       
 doc: |
-  GSEAPY: Gene Set Enrichment Analysis using Python
+  TgIF Primer3 module
   ==============================================
 
-  Gene Set Enrichment Analysis is a computational method that determines whether an a priori
-  defined set of genes shows statistically significant, concordant differences between two
-  biological states (e.g. phenotypes).
+  This tgif module is used to design primers for validation of potential insertion sites identified by the primary tgif algorithm (tgif_ncats.sh).
 
-  GSEA requires as input an expression dataset, which contains expression profiles for multiple samples.
-  While the software supports multiple input file formats for these datasets, the tab-delimited GCT format
-  is the most common. The first column of the GCT file contains feature identifiers (gene ids or symbols in
-  the case of data derived from RNA-Seq experiments). The second column contains a description of the feature;
-  this column is ignored by GSEA and may be filled with “NA”s. Subsequent columns contain the expression
-  values for each feature, with one sample's expression value per column. It is important to note that there
-  are no hard and fast rules regarding how a GCT file's expression values are derived. The important point is
-  that they are comparable to one another across features within a sample and comparable to one another
-  across samples. Tools such as DESeq2 can be made to produce properly normalized data (normalized counts)
-  which are compatible with GSEA.
+  DEPENDENCIES:
+          GNU Parallel
+                  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+                  ;login: The USENIX Magazine, February 2011:42-47.
+          Primer3
+                  please symlink 'primer3_core' to 'tgif/bin/' (see Installation section of README)
+                  http://primer3.org/manual.html
 
-  Primary Output files:
-  - gseapy.gsea.gene_set.report.csv, table of gene set enrichment scores and pvalues in CSV format
-  - enrichment plots and heatmaps per gene set, depending on user-selected dataset
+  HELP/OUTFMT:
+          -h      help    show this message
+          -f        format        format of input
+  REQUIRED:
+          -t      INT     number of threads to GNU parallel over
+          -i      TGIF    full path to output from primary tgif algorithm (insertions_filtered.tgif)
+          -r      FASTA   fasta reference of insert target organism (used to generate -i)
+  OPTIONAL:
+          -g      INT             if GAP_LENGTH of insertion site is greater than INT bp (-g), no primers will be generated for the site [default 5000]
 
-  Secondary Output files:
-  - reportsummary.md, markdown with general filtering and analysis statistics
-
-  PARAMS:
-      SECTION 1: general
-    -h	help		show this message
-    -t  INT			number of threads
-    -c  FILE		Input class vector (phenotype) file in CLS format (from DESeq workflow)
-    -d	FILE		Input gene expression dataset file in txt or gct format (from DESeq workflow)
-    -g	FILE		Gene set database, from prefilled dropdown or use-provided .gmt file
-    -r	STRING		Permutation type. Default: "gene_set"
-    -n	INT			Number of random permutations. For calculating esnulls. Default: 1000
-    -w	INT			Min size of input genes presented in Gene Sets. Default: 15
-    -x	INT			Max size of input genes presented in Gene Sets. Default: 500
-    -m	STRING		Methods to calculate correlations of ranking metrics. Default: log2_ratio_of_classes
-    -s	INT			Number of random seed. Default: None
-    -p	FLOAT		Output only graphs from gene sets with less than thsi set p-value. Default: 1.00
-
-
-s:about: |
-  usage: gseapy gsea [-h] -d DATA -c CLS -g GMT [-t perType] [-o] [-f]
-                    [--fs width height] [--graph int] [--no-plot] [-v]
-                    [-n nperm] [--min-size int] [--max-size int] [-w float]
-                    [-m] [-a] [-s] [-p procs]
-
-  optional arguments:
-    -h, --help            show this help message and exit
-
-  Input files arguments:
-    -d DATA, --data DATA  Input gene expression dataset file in txt format.Same
-                          with GSEA.
-    -c CLS, --cls CLS     Input class vector (phenotype) file in CLS format.
-                          Same with GSEA.
-    -g GMT, --gmt GMT     Gene set database in GMT format. Same with GSEA.
-    -t perType, --permu-type perType
-                          Permutation type. Same with GSEA, choose from
-                          {'gene_set', 'phenotype'}
-
-  Output arguments:
-    -o , --outdir         The GSEApy output directory. Default: the current
-                          working directory
-    -f , --format         File extensions supported by Matplotlib active
-                          backend, choose from {'pdf', 'png', 'jpeg','ps',
-                          'eps','svg'}. Default: 'pdf'.
-    --fs width height, --figsize width height
-                          The figsize keyword argument need two parameters to
-                          define. Default: (6.5, 6)
-    --graph int           Numbers of top graphs produced. Default: 20
-    --no-plot             Speed up computing by suppressing the plot output.This
-                          is useful only if data are interested. Default: False.
-    -v, --verbose         Increase output verbosity, print out progress of your
-                          job
-
-  GSEA advanced arguments:
-    -n nperm, --permu-num nperm
-                          Number of random permutations. For calculating
-                          esnulls. Default: 1000
-    --min-size int        Min size of input genes presented in Gene Sets.
-                          Default: 15
-    --max-size int        Max size of input genes presented in Gene Sets.
-                          Default: 500
-    -w float, --weight float
-                          Weighted_score of rank_metrics. For weighting input
-                          genes. Choose from {0, 1, 1.5, 2}. Default: 1
-    -m , --method         Methods to calculate correlations of ranking metrics.
-                          Choose from {'signal_to_noise', 't_test',
-                          'ratio_of_classes',
-                          'diff_of_classes','log2_ratio_of_classes'}. Default:
-                          'log2_ratio_of_classes'
-    -a, --ascending       Rank metric sorting order. If the -a flag was chosen,
-                          then ascending equals to True. Default: False.
-    -s , --seed           Number of random seed. Default: None
-    -p procs, --threads procs
-                          Number of Processes you are going to use. Default: 1
+  USAGE:
+  i="/data/project/tgif_ncats-reads.fastq/insertions_filtered.tgif"
+  r="/data/project/org_reference.fna"
+  bash tgif_primer3.sh -t 10 -i "$i" -r "$r"

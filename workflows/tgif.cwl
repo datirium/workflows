@@ -162,7 +162,7 @@ outputs:
     doc: "stderr log for primer3 tool"
     outputSource: run_tgif_primer3/stderr_log
 
-  tgif_summary:
+  tgif_summary_md:
     type: File?
     label: "Markdown formatted table with summary stats"
     format: "http://edamontology.org/format_3835"
@@ -200,7 +200,7 @@ steps:
       plasmid_fasta: plasmid_fasta
       yn_igv_output: yn_igv_output
       yn_plot_output: yn_plot_output
-      threads: threads
+      threads_count: threads
     out:
       - tgif_insertions_all
       - tgif_insertions_filtered
@@ -217,7 +217,7 @@ steps:
       reference_fasta:
         source: [reference_fasta, reference_fasta_file]
         valueFrom: $(self[1]?self[1]:self[0])
-      threads: threads
+      threads_count: threads
     out:
       - primer3_output_dir
       - stdout_log
@@ -241,11 +241,11 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "GSEApy - Gene Set Enrichment Analysis in Python"
-label: "GSEApy - Gene Set Enrichment Analysis in Python"
-s:alternateName: "GSEApy - Gene Set Enrichment Analysis in Python"
+s:name: "TgIF - Transgene Insertion Finder"
+label: "TgIF - Transgene Insertion Finder"
+s:alternateName: "TgIF - Transgene Insertion Finder"
 
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/gseapy.cwl
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/tgif.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -256,28 +256,28 @@ s:isPartOf:
 
 s:creator:
 - class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
+  s:legalName: "Datirium LLC"
   s:location:
   - class: s:PostalAddress
     s:addressCountry: "USA"
     s:addressLocality: "Cincinnati"
     s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
+    s:postalCode: ""
+    s:streetAddress: ""
+    s:telephone: ""
+  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
   s:department:
   - class: s:Organization
-    s:legalName: "Allergy and Immunology"
+    s:legalName: "Datirium LLC"
     s:department:
     - class: s:Organization
-      s:legalName: "Barski Research Lab"
+      s:legalName: "Bioinformatics"
       s:member:
       - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
+        s:name: Robert Player
+        s:email: mailto:support@datirium.com
         s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
+        - id: https://orcid.org/0000-0001-5872-259X
 
 
 doc: |
@@ -287,6 +287,15 @@ doc: |
 
   The basic workflow of TgIF is alignment (using minimap2[2]) of reads (-f) to a combined reference of the Tg vector (containing the desired insertion sequence) and target organism (ie. -i and -r are concatenated), and then searching for valleys (or gaps) in the resulting pileup of reads that map to both references at MAPQ>=30. A starting position (ps) of a valley is where the depth (d) at dp=0 and dp-1>0, an ending position (pe) of a valley is where the depth at dp=0 and dp+1>0, and a potential insertion scar is the gap between and including ps and pe.
 
+  Primary Output files:
+  - insertions_all.tsv, all probable insertion sites identified from the input fastq data
+  - insertions_filtered.tgif, filtered sites that are most probable based on logic (4) above
+  - reportsummary.md, summary of alignment metrics and insertion sites found
+
+  Secondary Output files:
+  - insertion_site_plots.tar, package of probable insertion site pileup plots
+  - alignment_files.tar.gz, contains bam/bai for visualizing aligned reads to reference genome and vector sequence
+  - primer3.tar, contains F/R primers for each filtered insertion site designed by primer3
 
   Documents
   ==============================================

@@ -66,7 +66,7 @@ inputs:
       prefix: "-p"
     doc: "Output read pileup plot per probable insertion site? Default: y"
 
-  threads:
+  threads_count:
     type: int?
     inputBinding:
       prefix: "-t"
@@ -88,12 +88,12 @@ outputs:
   insertion_site_plots:
     type: File?
     outputBinding:
-      glob: "tgif_ncats-*/insertion_site_plots.tar.gz"
+      glob: "insertion_site_plots.tar.gz"
 
   alignment_files:
     type: File?
     outputBinding:
-      glob: "tgif_ncats-*/alignment_files.tar.gz"
+      glob: "alignment_files.tar.gz"
 
   script_log_file:
     type: File?
@@ -119,8 +119,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "gseapy"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/tgif-main.cwl
+s:name: "tgif-ncats"
+s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/tgif-ncats.cwl
 s:codeRepository: https://github.com/datirium/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -176,22 +176,14 @@ doc: |
     - these are the potential insertion sites, likely most will have flanking position depths of 1 and the gap length will be large (>5000 bp)
   4. Filter and apply confidence estimate to detected sites based on flanking depth and strandedness of aligned reads (see output format col11 for details)
 
-  Primary Output files:
-  - insertions_all.tsv, all probable insertion sites identified from the input fastq data
-  - insertions_filtered.tsv, filtered sites that are most probable based on logic (4) above
-
-  Secondary Output files:
-  - insertion_site_plots.tar.gz, package of probable insertion site pileup plots
-  - downselected_reads_to_r.sorted.bam, for visualizing aligned reads to reference genome
-  - downselected_reads_to_i.sorted.bam, for visualizing aligned reads to plasmid sequence
-
   PARAMS:
     HELP/OUTFMT
       -h      help	show this message
       -o		format	format of tsv output
     REQUIRED
-      -t	INT	number of threads to GNU parallel over
+      -t	INT	  number of threads to GNU parallel over
       -f	READS	sequencing reads fasta/q file run NCATS enriched library
+      -x  TYPE  sequencing read type (minimap2 param: map-ont, map-pb, sr)
       -r	FASTA	fasta reference of target organism
       -i	FASTA	fasta of plasmid/inserted gene(s)
     OPTIONAL
