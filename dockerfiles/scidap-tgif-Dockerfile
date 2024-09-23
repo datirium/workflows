@@ -1,0 +1,74 @@
+#################################################################
+# Dockerfile
+#
+# Software:         TgIF tool
+# Software Version: tgif v1.0.0
+# Description:      Transgene Insertion Finder tool for localizing gene insertions and generating primer sets for validation
+# Website:          https://github.com/datirium/workflows
+# Provides:         TgIF, samtools, parallel, primer3, minimap2, R
+# Base Image:       rocker/r-ubuntu:jammy
+# Build Cmd:        docker build --platform linux/amd64 --no-cache --rm -t tgif-dev -f scidap-tgif-Dockerfile . > ~/Desktop/dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti tgif-dev /bin/bash
+# Push Cmd1:        docker tag tgif-dev robertplayer/scidap-tgif:dev
+#      Cmd2:        docker image push robertplayer/scidap-tgif:dev
+# Pull Cmd:         docker pull robertplayer/scidap-tgif:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-tgif:dev /bin/bash
+# re-tag for PR:    docker tag tgif-dev robertplayer/scidap-tgif:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-tgif:v1.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-tgif:v1.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-tgif:v1.0.0 /bin/bash
+#
+#   NOTES:
+#
+#   v1.0.0
+#       - original script, for accessibility of tool when published
+#
+#################################################################
+
+
+### Base Image
+#       ubuntu base image
+FROM rocker/r-ubuntu:jammy
+#   use for small script updates etc (shorter build time from dev)
+#FROM robertplayer/scidap-tgif:dev
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND=noninteractive
+
+COPY ./scripts/run_tsv_to_kable.R /usr/local/bin/
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+#COPY ./scripts/example.sh /usr/local/bin/
+
+### Installing dependencies etc
+RUN apt-get -y update && \
+    apt upgrade r-base -y && \
+    apt install -y libgtextutils-dev git primer3 parallel  minimap2 samtools && \
+    apt-get install -y vim pandoc gcc-10-base libgcc-10-dev python3-dev python3-pip libxml2-dev libssl-dev \
+                       libcurl4-openssl-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+                       libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev && \
+    R -e 'install.packages("ggplot2", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("argparse", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("kableExtra", dependencies=TRUE, repo = "https://cloud.r-project.org/")'
+### Installing TgIF
+RUN git clone https://github.com/jhuapl-bio/TgIF /TgIF && \
+    mkdir -p /TgIF/bin && \
+    cd /TgIF && \
+    binpath="/TgIF/bin/"  && \
+    ln -s $(which minimap2) $binpath  && \
+    ln -s $(which samtools) $binpath  && \
+    ln -s $(which Rscript) $binpath  && \
+    ln -s $(which primer3_core) $binpath
+### permitting scripts
+RUN chmod +x /TgIF/tgif_ncats.sh && \
+    chmod +x /TgIF/tgif_plot.sh && \
+    chmod +x /TgIF/tgif_plot.R && \
+    chmod +x /TgIF/tgif_primer3.sh && \
+    chmod +x /usr/local/bin/run_tsv_to_kable.R && \
+### Cleaning
+RUN apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true
