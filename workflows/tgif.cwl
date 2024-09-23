@@ -50,13 +50,6 @@ inputs:
     label: "Reference Genome FASTA"
     doc: "Reads will be aligned against this reference. Select from the dropdown if not uploading your own custom reference genome FASTA."
 
-  reference_fasta_file:
-    type: File?
-    format: "http://edamontology.org/format_1929"
-    default: null
-    label: "Custom Reference Genome FASTA"
-    doc: "Reads will be aligned against this reference. Upload your own custom reference genome FASTA if not selecting one from the Reference Genome dropdown."
-
   plasmid_fasta:
     type: File?
     format: "http://edamontology.org/format_1929"
@@ -199,9 +192,7 @@ steps:
     in:
       input_fastq: fastq_file
       read_type: read_type
-      reference_fasta:
-        source: [reference_fasta, reference_fasta_file]
-        valueFrom: $(self[1]?self[1]:self[0])
+      reference_fasta: reference_fasta
       plasmid_fasta: plasmid_fasta
       yn_igv_output: yn_igv_output
       yn_plot_output: yn_plot_output
@@ -219,9 +210,7 @@ steps:
     run: ../tools/tgif-primer3.cwl
     in:
       insertions_filtered: run_tgif_ncats/tgif_insertions_filtered
-      reference_fasta:
-        source: [reference_fasta, reference_fasta_file]
-        valueFrom: $(self[1]?self[1]:self[0])
+      reference_fasta: reference_fasta
       threads_count: threads
     out:
       - primer3_output_dir
