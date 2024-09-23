@@ -27,6 +27,7 @@ requirements:
   - "sc-atac-reduce.cwl"
   - "sc-atac-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-rna-load-rhapsody.cwl"
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"

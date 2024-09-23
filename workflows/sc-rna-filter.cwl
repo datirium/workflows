@@ -20,6 +20,7 @@ requirements:
   - "single-cell-preprocess-cellranger.cwl"
   - "cellranger-multi.cwl"
   - "sc-format-transform.cwl"
+  - "sc-rna-load-rhapsody.cwl"
 
 
 inputs:
