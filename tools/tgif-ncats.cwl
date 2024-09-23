@@ -66,7 +66,7 @@ inputs:
       prefix: "-p"
     doc: "Output read pileup plot per probable insertion site? Default: y"
 
-  threads_count:
+  threads:
     type: int?
     inputBinding:
       prefix: "-t"
@@ -88,7 +88,7 @@ outputs:
   insertion_site_plots:
     type: File?
     outputBinding:
-      glob: "insertion_site_plots.tar.gz"
+      glob: "insertion_site_plots.tar"
 
   alignment_files:
     type: File?

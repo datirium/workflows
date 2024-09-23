@@ -167,7 +167,7 @@ outputs:
     doc: "stderr log for primer3 tool"
     outputSource: run_tgif_primer3/stderr_log
 
-  tgif_summary_md:
+  tgif_summary:
     type: File?
     label: "Markdown formatted table with summary stats"
     format: "http://edamontology.org/format_3835"
@@ -205,7 +205,7 @@ steps:
       plasmid_fasta: plasmid_fasta
       yn_igv_output: yn_igv_output
       yn_plot_output: yn_plot_output
-      threads_count: threads
+      threads: threads
     out:
       - tgif_insertions_all
       - tgif_insertions_filtered
