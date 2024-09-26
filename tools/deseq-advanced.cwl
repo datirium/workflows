@@ -131,14 +131,13 @@ inputs:
       Log2 fold change threshold for determining significant differential expression.
       Genes with absolute log2 fold change greater than this threshold will be considered.
       Default: 0.59 (about 1.5 fold change)
-      
+
   use_lfc_thresh:
     type: boolean
     inputBinding:
       prefix: "--use_lfc_thresh"
     default: true
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
-
       
   regulation:
     type:
@@ -211,10 +210,15 @@ outputs:
     outputBinding:
       glob: "*summary.md"
 
-  read_counts_file:
+  read_counts_file_all:
     type: File
     outputBinding:
-      glob: "*counts.gct"
+      glob: "*counts_all.gct"
+
+  read_counts_file_filtered:
+    type: File
+    outputBinding:
+      glob: "*counts_filtered.gct"
 
   phenotypes_file:
     type: File
