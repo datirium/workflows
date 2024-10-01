@@ -661,6 +661,25 @@ outputs:
       SCope compatible.
       Loom format.
 
+  reference_data_rds:
+    type: File?
+    outputSource: ctype_assign/reference_data_rds
+    label: "Seurat object formatted as an Azimuth reference model"
+    doc: |
+      Seurat object with assigned cell
+      types formatted as an Azimuth
+      reference model.
+      RDS format.
+
+  reference_data_index:
+    type: File?
+    outputSource: ctype_assign/reference_data_index
+    label: "Annoy index for the Azimuth reference model"
+    doc: |
+      Annoy index generated for the
+      Azimuth reference model.
+      Annoy format.
+
   seurat_rna_data_cloupe:
     type: File?
     outputSource: ctype_assign/seurat_rna_data_cloupe
@@ -763,6 +782,8 @@ steps:
         default: LR
       verbose:
         default: true
+      export_azimuth_ref:
+        default: true
       export_ucsc_cb:
         default: true
       export_scope_data:
@@ -813,6 +834,8 @@ steps:
     - ucsc_cb_html_file
     - seurat_data_rds
     - seurat_data_scope
+    - reference_data_rds
+    - reference_data_index
     - seurat_rna_data_cloupe
     - sc_report_html_file
     - stdout_log

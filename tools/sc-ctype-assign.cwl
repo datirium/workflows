@@ -301,6 +301,17 @@ inputs:
       have RNA assay this parameter will be
       ignored. Default: false
 
+  export_azimuth_ref:
+    type: boolean?
+    inputBinding:
+      prefix: "--azimuth"
+    doc: |
+      Save Seurat object with the assigned cell
+      types as model for the reference mapping
+      in Azimuth. Both RDS and annoy index files
+      will be created.
+      Default: false
+
   export_ucsc_cb:
     type: boolean?
     inputBinding:
@@ -700,7 +711,7 @@ outputs:
   seurat_data_rds:
     type: File
     outputBinding:
-      glob: "*_data.rds"
+      glob: "*[!_ref]_data.rds"
     doc: |
       Seurat object.
       RDS format.
@@ -748,6 +759,25 @@ outputs:
       Seurat object.
       SCope compatible.
       Loom format.
+
+  reference_data_rds:
+    type: File?
+    outputBinding:
+      glob: "*_ref_data.rds"
+    doc: |
+      Seurat object with assigned cell
+      types formatted as an Azimuth
+      reference model.
+      RDS format.
+
+  reference_data_index:
+    type: File?
+    outputBinding:
+      glob: "*_ref_data.annoy"
+    doc: |
+      Annoy index generated for the
+      Azimuth reference model.
+      Annoy format.
 
   sc_report_html_file:
     type: File?
@@ -842,8 +872,8 @@ s:about: |
                                           [--upstream UPSTREAM]
                                           [--downstream DOWNSTREAM] [--pdf]
                                           [--verbose] [--h5seurat] [--h5ad]
-                                          [--cbbuild] [--scope]
-                                          [--output OUTPUT]
+                                          [--loupe] [--azimuth] [--cbbuild]
+                                          [--scope] [--output OUTPUT]
                                           [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                           [--cpus CPUS] [--memory MEMORY]
                                           [--seed SEED]
@@ -948,6 +978,9 @@ s:about: |
                           enabling this feature you accept the End-User License
                           Agreement available at https://10xgen.com/EULA.
                           Default: false
+    --azimuth             Save Seurat object with the assigned cell types as
+                          model for the reference mapping in Azimuth. Both RDS
+                          and annoy index files will be created. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --scope               Save Seurat data to SCope compatible loom file. Only
                           not normalized raw counts from the RNA assay will be
