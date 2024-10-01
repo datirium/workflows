@@ -15,6 +15,15 @@ requirements:
           var splitted_line = line?line.split(/[\s,]+/).filter(get_unique):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var get_source_column = function(prefix, reduction, resolution) {
+          if (reduction == "RNA" && resolution != null) {
+            return prefix + "rna_res." + resolution;
+          } else if (reduction == "WNN" && resolution != null) {
+            return prefix + "wsnn_res." + resolution;
+          } else {
+            return null;
+          }
+      };
 
 
 "sd:upstream":
@@ -31,6 +40,8 @@ requirements:
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
+  sc_reference_model:
+  - "sc-ctype-assign.cwl"
 
 
 inputs:
@@ -69,12 +80,58 @@ inputs:
     "sd:upstreamSource": "sc_atac_sample/atac_fragments_file"
     "sd:localLabel": true
 
-  reference_source_column:
-    type: string
-    label: "Reference Seurat Object annotation column"
+  reference_data_rds:
+    type: File?
+    label: "Reference Single-cell Analysis with Assigned Cell Types (for a custom reference attach files below)"
     doc: |
-      Column from the metadata of the reference Seurat
-      object to select the reference annotations.
+      Analysis that includes single-cell
+      RNA-Seq datasets run through the
+      "Single-Cell Manual Cell Type
+      Assignment" pipeline based on the
+      RNA or WNN clustering results.
+    "sd:upstreamSource": "sc_reference_model/reference_data_rds"
+    "sd:localLabel": true
+
+  reference_data_index:
+    type: File?
+    "sd:upstreamSource": "sc_reference_model/reference_data_index"
+
+  query_reduction:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "RNA"
+      - "ATAC"
+      - "WNN"
+    "sd:upstreamSource": "sc_reference_model/query_reduction"
+
+  query_resolution:
+    type: float?
+    "sd:upstreamSource": "sc_reference_model/query_resolution"
+
+  custom_reference_data_rds:
+    type: File?
+    label: "Custom reference Seurat Object (optional)"
+    doc: |
+      RDS file to load the reference Seurat object from.
+      This file can be downloaded as ref.Rds from the
+      https://azimuth.hubmapconsortium.org/references/
+
+  custom_reference_data_index:
+    type: File?
+    label: "Custom reference Annoy Index (optional)"
+    doc: |
+      Annoy index file for the provided reference RDS file.
+      This file can be downloaded as idx.annoy from the
+      https://azimuth.hubmapconsortium.org/references/
+
+  custom_reference_source_column:
+    type: string?
+    label: "Custom reference annotation column to select cell types (optional)"
+    doc: |
+      Column from the metadata of the custom reference
+      Seurat object to select the reference annotations.
 
   minimum_confidence_score:
     type: float?
@@ -159,22 +216,6 @@ inputs:
       Ignored if "Cell Ranger RNA+ATAC Sample
       (optional)" input is not provided.
       Default: None
-
-  reference_data_rds:
-    type: File
-    label: "Reference Seurat Object (ref.Rds) file"
-    doc: |
-      RDS file to load the reference Seurat object from.
-      This file can be downloaded as ref.Rds from the
-      https://azimuth.hubmapconsortium.org/references/
-
-  reference_data_index:
-    type: File
-    label: "Reference Annoy Index (idx.annoy) file"
-    doc: |
-      Annoy index file for the provided reference RDS file.
-      This file can be downloaded as idx.annoy from the
-      https://azimuth.hubmapconsortium.org/references/
 
   export_loupe_data:
     type: boolean?
@@ -834,9 +875,48 @@ steps:
     run: ../tools/sc-rna-azimuth.cwl
     in:
       query_data_rds: query_data_rds
-      reference_data_rds: reference_data_rds
-      reference_data_index: reference_data_index
-      reference_source_column: reference_source_column
+      reference_data_rds:
+        source: [reference_data_rds, custom_reference_data_rds, custom_reference_data_index, custom_reference_source_column]
+        valueFrom: |
+          ${
+            if (
+              self[1] != null && self[1].class == "File" &&
+              self[2] != null && self[2].class == "File" &&
+              self[3] != null
+            ){
+              return self[1];
+            } else {
+              return self[0];
+            }
+          }
+      reference_data_index:
+        source: [reference_data_index, custom_reference_data_rds, custom_reference_data_index, custom_reference_source_column]
+        valueFrom: |
+          ${
+            if (
+              self[1] != null && self[1].class == "File" &&
+              self[2] != null && self[2].class == "File" &&
+              self[3] != null
+            ){
+              return self[2];
+            } else {
+              return self[0];
+            }
+          }
+      reference_source_column:
+        source: [query_reduction, query_resolution, custom_reference_data_rds, custom_reference_data_index, custom_reference_source_column]
+        valueFrom: |
+          ${
+            if (
+              self[2] != null && self[2].class == "File" &&
+              self[3] != null && self[3].class == "File" &&
+              self[4] != null
+            ){
+              return self[4];
+            } else {
+              return get_source_column("custom_", self[0], self[1]);
+            }
+          }
       minimum_confidence_score: minimum_confidence_score
       minimum_mapping_score: minimum_mapping_score
       atac_fragments_file: atac_fragments_file
@@ -992,21 +1072,22 @@ s:creator:
 doc: |
   Single-Cell RNA-Seq Reference Mapping
 
-  Assigns identities to cells based on the reference annotation
-  using the Azimuth R package. Reference models can be downloaded
-  from the https://azimuth.hubmapconsortium.org/ website. This
-  workflow can be run with the outputs of the following pipelines:
-  "Single-Cell RNA-Seq Filtering Analysis", "Single-Cell Multiome
-  ATAC-Seq and RNA-Seq Filtering Analysis", "Single-Cell RNA-Seq
-  Dimensionality Reduction Analysis", "Single-Cell RNA-Seq Cluster
-  Analysis", and "Single-Cell WNN Cluster Analysis". It can also be
-  used with the outputs of: "Single-Cell ATAC-Seq Dimensionality
-  Reduction Analysis", "Single-Cell ATAC-Seq Cluster Analysis",
-  "Single-Cell Manual Cell Type Assignment" pipelines if these were
-  part of the multiome data analysis. The results of this workflow
-  are compatible with any single cell pipeline normally used after
-  the "Single-Cell RNA-Seq Filtering Analysis" or "Single-Cell
-  Multiome ATAC-Seq and RNA-Seq Filtering Analysis" pipelines,
-  depending on the preceding analysis step. In other words, this
-  pipeline predicts cell types for high-quality cells without
-  impacting subsequent data analysis steps.
+  Uses Azimuth R package to assign identities to cells based on the
+  reference annotation from the results of the "Single-Cell Manual
+  Cell Type Assignment" pipeline. Alternatively, custom reference
+  models can be downloaded from the
+  https://azimuth.hubmapconsortium.org/ website. This workflow can
+  be run with the outputs of the following pipelines: "Single-Cell
+  RNA-Seq Filtering Analysis", "Single-Cell Multiome ATAC-Seq and
+  RNA-Seq Filtering Analysis", "Single-Cell RNA-Seq Dimensionality
+  Reduction Analysis", "Single-Cell RNA-Seq Cluster Analysis", and
+  "Single-Cell WNN Cluster Analysis". It can also be used with the
+  outputs of: "Single-Cell ATAC-Seq Dimensionality Reduction Analysis",
+  "Single-Cell ATAC-Seq Cluster Analysis", "Single-Cell Manual Cell
+  Type Assignment" pipelines if these were part of the multiome data
+  analysis. The results of this workflow are compatible with any
+  single cell pipeline normally used after the "Single-Cell RNA-Seq
+  Filtering Analysis" or "Single-Cell Multiome ATAC-Seq and RNA-Seq
+  Filtering Analysis" pipelines, depending on the preceding analysis
+  step. In other words, this pipeline predicts cell types for
+  high-quality cells without impacting subsequent data analysis steps.
