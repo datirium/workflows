@@ -104,6 +104,7 @@ inputs:
       - "RNA"
       - "ATAC"
       - "WNN"
+    default: "RNA"
     "sd:upstreamSource": "sc_reference_model/query_reduction"
 
   query_resolution:
