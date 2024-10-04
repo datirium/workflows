@@ -29,7 +29,8 @@ requirements:
       }`
       return [{
         "entry": entry,
-        "entryname": "config.txt"
+        "entryname": "config.txt",
+        "writable": true
       }];
     }
 
