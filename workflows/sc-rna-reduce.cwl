@@ -23,6 +23,7 @@ requirements:
   - "sc-atac-reduce.cwl"
   - "sc-rna-filter.cwl"
   - "sc-multiome-filter.cwl"
+  - "sc-rna-azimuth.cwl"
 
 
 inputs:
@@ -266,6 +267,16 @@ inputs:
       enabling this feature you accept the End-User License
       Agreement available at https://10xgen.com/EULA.
       Default: false
+    "sd:layout":
+      advanced: true
+
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
     "sd:layout":
       advanced: true
 
@@ -557,6 +568,18 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
+  sc_report_html_file:
+    type: File?
+    outputSource: sc_rna_reduce/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   sc_rna_reduce_stdout_log:
     type: File
     outputSource: sc_rna_reduce/stdout_log
@@ -638,6 +661,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -680,6 +704,7 @@ steps:
     - ucsc_cb_html_file
     - seurat_data_rds
     - seurat_data_cloupe
+    - sc_report_html_file
     - stdout_log
     - stderr_log
 

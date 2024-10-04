@@ -19,6 +19,26 @@ requirements:
           let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var parse_range = function(line) {
+          if (line.includes("-")) {
+              const parts = line.split("-");
+              const start = parseFloat(parts[0].trim());
+              let end, step;
+              if (parts[1].includes(":")) {
+                  [end, step] = parts[1].split(":").map(Number);
+              } else {
+                  end = parseFloat(parts[1].trim());
+                  step = 0.1;
+              }
+              const result = [];
+              for (let i = start; i <= end; i = parseFloat((i + step).toFixed(10))) {
+                  result.push(parseFloat(i.toFixed(10)));
+              }
+              return result;
+          } else {
+              return [parseFloat(line)];
+          }
+      };
 
 
 "sd:upstream":
@@ -27,6 +47,7 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
+  - "sc-rna-azimuth.cwl"
 
 
 inputs:
@@ -65,8 +86,8 @@ inputs:
       Default: 40
 
   resolution:
-    type: float?
-    default: 0.3
+    type: string?
+    default: "0.3"
     label: "Clustering resolution"
     doc: |
       The resolution defines the “granularity”
@@ -75,7 +96,10 @@ inputs:
       resolution often increases with the number
       of cells. For a dataset of 3,000 cells, a
       value within the 0.3-1.2 range usually
-      returns good results.
+      returns good results. To run the analysis
+      with multiple resolutions, provide a range
+      in a form of start-end:step. Step parameter
+      is optional and equal to 0.1 by default.
       Default: 0.3
 
   identify_diff_genes:
@@ -114,6 +138,16 @@ inputs:
       enabling this feature you accept the End-User License
       Agreement available at https://10xgen.com/EULA.
       Default: false
+    "sd:layout":
+      advanced: true
+
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
     "sd:layout":
       advanced: true
 
@@ -578,6 +612,18 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
+  sc_report_html_file:
+    type: File?
+    outputSource: sc_rna_cluster/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   sc_rna_cluster_stdout_log:
     type: File
     outputSource: sc_rna_cluster/stdout_log
@@ -606,7 +652,9 @@ steps:
         default: euclidean
       cluster_algorithm:
         default: "louvain"
-      resolution: resolution
+      resolution:
+        source: resolution
+        valueFrom: $(parse_range(self))
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
@@ -633,6 +681,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -666,6 +715,7 @@ steps:
     - seurat_data_rds
     - seurat_data_cloupe
     - seurat_data_scope
+    - sc_report_html_file
     - stdout_log
     - stderr_log
 

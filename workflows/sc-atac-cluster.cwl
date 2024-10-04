@@ -19,6 +19,26 @@ requirements:
           let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
           return (splitted_line && !!splitted_line.length)?splitted_line:null;
       };
+    - var parse_range = function(line) {
+          if (line.includes("-")) {
+              const parts = line.split("-");
+              const start = parseFloat(parts[0].trim());
+              let end, step;
+              if (parts[1].includes(":")) {
+                  [end, step] = parts[1].split(":").map(Number);
+              } else {
+                  end = parseFloat(parts[1].trim());
+                  step = 0.1;
+              }
+              const result = [];
+              for (let i = start; i <= end; i = parseFloat((i + step).toFixed(10))) {
+                  result.push(parseFloat(i.toFixed(10)));
+              }
+              return result;
+          } else {
+              return [parseFloat(line)];
+          }
+      };
 
 
 "sd:upstream":
@@ -27,6 +47,7 @@ requirements:
   - "sc-rna-cluster.cwl"
   - "sc-rna-reduce.cwl"
   - "sc-atac-reduce.cwl"
+  - "sc-rna-azimuth.cwl"
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
@@ -85,15 +106,19 @@ inputs:
       Default: 40
 
   resolution:
-    type: float?
-    default: 0.3
+    type: string?
+    default: "0.3"
     label: "Clustering resolution"
     doc: |
       Resolution to define the "granularity"
       of the clustered data. Larger values
       lead to a bigger number of clusters.
       Optimal resolution often increases
-      with the number of cells.
+      with the number of cells. To run the
+      analysis with multiple resolutions,
+      provide a range in a form of
+      start-end:step. Step parameter is
+      optional and equal to 0.1 by default.
       Default: 0.3
 
   identify_diff_peaks:
@@ -127,6 +152,16 @@ inputs:
       ATAC or RNA+ATAC (optional)" input is
       not provided.
       Default: None
+
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
+    "sd:layout":
+      advanced: true
 
   color_theme:
     type:
@@ -404,6 +439,18 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
+  sc_report_html_file:
+    type: File?
+    outputSource: sc_atac_cluster/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   sc_atac_cluster_stdout_log:
     type: File
     outputSource: sc_atac_cluster/stdout_log
@@ -433,7 +480,9 @@ steps:
         default: euclidean
       cluster_algorithm:
         default: "slm"
-      resolution: resolution
+      resolution:
+        source: resolution
+        valueFrom: $(parse_range(self))
       atac_fragments_file: atac_fragments_file
       genes_of_interest:
         source: genes_of_interest
@@ -456,6 +505,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -476,6 +526,7 @@ steps:
     - ucsc_cb_html_data
     - ucsc_cb_html_file
     - seurat_data_rds
+    - sc_report_html_file
     - stdout_log
     - stderr_log
 
