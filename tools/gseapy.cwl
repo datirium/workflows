@@ -4,6 +4,9 @@ class: CommandLineTool
 
 requirements:
 - class: InlineJavascriptRequirement
+- class: ResourceRequirement
+  ramMin: 30518                                     # equal to 32GB
+  coresMin: $(inputs.threads?inputs.threads:1)
 
 
 hints:
