@@ -432,9 +432,13 @@ steps:
 
   make_ma_plot:
     run: ../tools/ma-plot.cwl
-    scatter: diff_expr_file
+    scatter:
+      - diff_expr_file
+      - contrast_indices
+    scatterMethod: dotproduct
     in:
-      diff_expr_file: deseq/diff_expr_file
+      diff_expr_file: deseq/diff_expr_file  # Should be an array of Files
+      contrast_indices: contrast_indices     # Should be an array of strings (e.g., ["1", "4", "7"])
       x_axis_column:
         default: "baseMean"
       y_axis_column:
@@ -443,17 +447,23 @@ steps:
         source: group_by
         valueFrom: |
           ${
-              if (self == "isoforms") {
-                return "RefseqId";
-              } else if (self == "genes") {
-                return "GeneId";
-              } else {
-                return "GeneId";
-              }
+            if (self == "isoforms") {
+              return "RefseqId";
+            } else if (self == "genes") {
+              return "GeneId";
+            } else {
+              return "GeneId";
+            }
           }
+      output_filename:
+        valueFrom: |
+          ${
+            return "_" + self + ".html";
+          }
+        source: contrast_indices
     out:
-      - html_data
       - html_file
+      - html_data
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl

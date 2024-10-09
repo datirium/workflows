@@ -1,11 +1,9 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
-
 hints:
-- class: DockerRequirement
-  dockerPull: biowardrobe2/visualization:v0.0.8
-
+  - class: DockerRequirement
+    dockerPull: biowardrobe2/visualization:v0.0.9
 
 inputs:
 
@@ -21,49 +19,64 @@ inputs:
     inputBinding:
       position: 6
     doc: |
-      Name of column in file for the plots x-axis (ex: "baseMean")
+      Name of column in file for the plot's x-axis (e.g., "baseMean")
 
   y_axis_column:
     type: string
     inputBinding:
       position: 7
     doc: |
-      Name of column in file for the plots y-axis (ex: "log2FoldChange")
+      Name of column in file for the plot's y-axis (e.g., "log2FoldChange")
 
   label_column:
     type: string
     inputBinding:
       position: 8
     doc: |
-      Name of column in file for each data points 'name' (ex: "GeneId")
+      Name of column in file for each data point's 'name' (e.g., "GeneId")
 
+  output_filename:
+    type: string?
+    default: "index.html"
+    inputBinding:
+      position: 9
+    doc: |
+      Desired output HTML filename.
 
 outputs:
 
   html_data:
     type: Directory
     outputBinding:
-      glob: "./volcano_plot/MD-MA_plot"
+      glob: |
+        ${
+          var fn = inputs.output_filename || 'index.html';
+          return "volcano_plot/MD-MA_plot_" + fn.replace('.html', '');
+        }
     doc: |
-      Directory html data for MA-plot
+      Directory containing HTML data for MA-plot
 
   html_file:
     type: File
     outputBinding:
-      glob: "./volcano_plot/MD-MA_plot/html_data/index.html"
+      glob: |
+        ${
+          var fn = inputs.output_filename || 'index.html';
+          var dir = "volcano_plot/MD-MA_plot_" + fn.replace('.html', '');
+          return dir + "/html_data/" + fn;
+        }
     doc: |
-      HTML index file for MA-plot
-
+      HTML output file for MA-plot
 
 baseCommand: ["ma_plot.sh"]
 
+# Removed the arguments field since inputs are bound directly via inputBinding
 
 $namespaces:
   s: http://schema.org/
 
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
 
 label: "MA-plot"
 s:name: "MA-plot"
@@ -106,4 +119,4 @@ s:creator:
 doc: |
   MA-plot
 
-  Builds ma-plot from the DESeq output
+  Builds MA-plot from the DESeq output
