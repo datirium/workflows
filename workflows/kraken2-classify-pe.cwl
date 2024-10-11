@@ -182,14 +182,24 @@ outputs:
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
     doc: "captures standard output from k2-classify-pe.cwl"
-    outputSource: kraken2_classify/log_file_stdout
+    outputSource: kraken2_classify/stdout_log
 
   kraken2_classify_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
     doc: "captures standard error from k2-classify-pe.cwl"
-    outputSource: kraken2_classify/log_file_stderr
+    outputSource: kraken2_classify/stderr_log
+
+  krona_plot:
+    type: File
+    format: "http://edamontology.org/format_2331"
+    label: "krona output html file"
+    doc: "hierarchical visualization of taxonomic classifications"
+    outputSource: kraken2_classify/krona_html
+    'sd:visualPlugins':
+    - markdownView:
+        tab: 'Krona Plot'
 
 
 steps:
@@ -316,8 +326,16 @@ steps:
       read1file: rename_upstream/target_file
       read2file: rename_downstream/target_file
       threads: threads
-    out: [classified_R1, classified_R2, k2_output, k2_report, k2_report_tsv, k2_stderr, log_file_stdout, log_file_stderr]
-
+    out:
+      - classified_R1
+      - classified_R2
+      - k2_output
+      - k2_report
+      - k2_report_tsv
+      - k2_stderr
+      - krona_html
+      - stdout_log
+      - stderr_log
 
 $namespaces:
   s: http://schema.org/

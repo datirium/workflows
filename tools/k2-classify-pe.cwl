@@ -9,7 +9,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-kraken2:dev
+  dockerPull: robertplayer/scidap-kraken2:v1.0.0
 
 
 inputs:
@@ -27,14 +27,18 @@ inputs:
       printf "\$3 - $THREADS\n\n"
       printf "EXECUTION:\n"
       #   commands start
-      # run classification for PE reads
+      printf "\trun classification for PE reads\n"
       kraken2 --db $DATABASE --threads $THREADS --paired  --classified-out classified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
+      printf "\tformatting outputs\n"
       # make stderr output markdown compatible for overview tab view
       head -1 k2.stderr > parsed.stderr
       tail -n+2 k2.stderr | sed 's/^ *//' | awk '{printf(" - %s\n",$0)}' >> parsed.stderr
       # format report into tsv for table tab view
       printf "percent_classified\treads_assigned_at_and_below_taxid\treads_assigned_directly_to_taxid\ttaxonomic_rank\ttaxid\tname\n" > k2_report.tsv
       sed 's/^ *//' k2.report | sed 's/\t  */\t/' >> k2_report.tsv
+      printf "\tgenerate krona plot\n"
+      python3 /usr/local/src/KrakenTools/kreport2krona.py -r k2.report -o k2.krona --no-intermediate-ranks
+      perl /usr/local/src/Krona/KronaTools/scripts/ImportText.pl -o krona.html k2.krona
       printf "END OF SCRIPT\n"
     inputBinding:
         position: 1
@@ -100,24 +104,24 @@ outputs:
     outputBinding:
       glob: "parsed.stderr"
 
-  log_file_stdout:
+  krona_html:
     type: File
     outputBinding:
-      glob: "log.stdout"
-    doc: |
-      log for stdout
+      glob: "krona.html"
 
-  log_file_stderr:
-    type: File
-    outputBinding:
-      glob: "log.stderr"
-    doc: |
-      log for stderr
+  stdout_log:
+    type: stdout
+
+  stderr_log:
+    type: stderr
 
 
 baseCommand: ["bash", "-c"]
-stdout: 'log.stdout'
-stderr: 'log.stderr'
+stdout: k2-stdout.log
+stderr: k2-stderr.log
+
+
+
 
 
 $namespaces:
