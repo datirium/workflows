@@ -104,6 +104,11 @@ outputs:
     outputBinding:
       glob: "*_contrasts_table.tsv"
 
+  contrasts_rds:
+    type: File
+    outputBinding:
+      glob: "*_contrasts.rds"
+
   diff_expr_file:
     type: File
     outputBinding:

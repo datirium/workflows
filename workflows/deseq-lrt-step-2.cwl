@@ -434,15 +434,40 @@ steps:
     run: ../tools/ma-plot.cwl
     scatter:
       - diff_expr_file
-      - contrast_indices
-    scatterMethod: dotproduct
+      - contrast_index  # Scatter over 'contrast_index'
+    scatterMethod: dotproduct  # Use a valid scatter method in CWL v1.0
     in:
       diff_expr_file: deseq/diff_expr_file  # Should be an array of Files
-      contrast_indices: contrast_indices     # Should be an array of strings (e.g., ["1", "4", "7"])
+
+      contrast_index:
+        source: contrast_indices
+        valueFrom: |
+          ${
+            if (self != "") {
+              // Split the comma-separated string into an array
+              return self.split(',').map(function(item) { return item.trim(); });
+            } else {
+              // Default to a single empty string if not provided
+              return [""];
+            }
+          }
+
+      output_filename:
+        valueFrom: |
+          ${
+            if (inputs.contrast_index != "") {
+              return "contrast_" + inputs.contrast_index + ".html";
+            } else {
+              return "index.html";
+            }
+          }
+
       x_axis_column:
         default: "baseMean"
+
       y_axis_column:
         default: "log2FoldChange"
+
       label_column:
         source: group_by
         valueFrom: |
@@ -455,12 +480,7 @@ steps:
               return "GeneId";
             }
           }
-      output_filename:
-        valueFrom: |
-          ${
-            return "_" + self + ".html";
-          }
-        source: contrast_indices
+
     out:
       - html_file
       - html_data
