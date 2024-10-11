@@ -81,50 +81,6 @@ inputs:
       Sensible values are in the range 0.001 to 0.5.
       Default:  0.3
 
-  umap_neighbors:
-    type: int?
-    inputBinding:
-      prefix: "--uneighbors"
-    doc: |
-      Determines the number of neighboring points used in UMAP. Larger values will result
-      in more global structure being preserved at the loss of detailed local structure.
-      In general this parameter should often be in the range 5 to 50.
-      Default: 30
-
-  umap_metric:
-    type:
-    - "null"
-    - type: enum
-      symbols:
-      - "euclidean"
-      - "manhattan"
-      - "chebyshev"
-      - "minkowski"
-      - "canberra"
-      - "braycurtis"
-      - "mahalanobis"
-      - "wminkowski"
-      - "seuclidean"
-      - "cosine"
-      - "correlation"
-      - "haversine"
-      - "hamming"
-      - "jaccard"
-      - "dice"
-      - "russelrao"
-      - "kulsinski"
-      - "ll_dirichlet"
-      - "hellinger"
-      - "rogerstanimoto"
-      - "sokalmichener"
-      - "sokalsneath"
-      - "yule"
-    inputBinding:
-      prefix: "--umetric"
-    doc: |
-      The metric to use to compute distances in high dimensional space for UMAP.
-      Default: cosine
-
   umap_method:
     type:
     - "null"
@@ -175,6 +131,17 @@ inputs:
       for the nearest peaks. If '--fragments' is not provided only gene expression
       plots will be built.
       Default: None
+
+  genesets_data:
+    type: File?
+    inputBinding:
+      prefix: "--genesets"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb.
+      Default: do not calculate gene set expression scores.
 
   cvrg_upstream_bp:
     type: int?
@@ -601,6 +568,18 @@ outputs:
       All cells; all resolutions.
       PNG format
 
+  slh_gr_clst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_slh_gr_clst_res_*.png"
+    doc: |
+      Silhouette scores.
+      All cells; all resolutions.
+      PNG format.
+
   umap_gr_clst_spl_idnt_res_plot_png:
     type:
     - "null"
@@ -710,6 +689,38 @@ outputs:
       Split by cluster; first downsampled to the
       smallest dataset, then downsampled to the
       smallest group; all resolutions.
+      PNG format.
+
+  gse_per_cell_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_per_cell.png"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+
+  gse_avg_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_gse_avg_res_*.png"
+    doc: |
+      Average gene set expression score.
+      All resolutions.
+      PNG format.
+
+  gse_dnst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_gse_dnst_res_*.png"
+    doc: |
+      Gene set expression score density.
+      All resolutions.
       PNG format.
 
   xpr_per_cell_plot_png:
@@ -982,12 +993,11 @@ s:about: |
                                         [--algorithm {louvain,mult-louvain,slm,leiden}]
                                         [--uspread USPREAD]
                                         [--umindist UMINDIST]
-                                        [--uneighbors UNEIGHBORS]
-                                        [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
                                         [--umethod {uwot,uwot-learn,umap-learn}]
                                         [--resolution [RESOLUTION [RESOLUTION ...]]]
                                         [--fragments FRAGMENTS]
                                         [--genes [GENES [GENES ...]]]
+                                        [--genesets GENESETS]
                                         [--upstream UPSTREAM]
                                         [--downstream DOWNSTREAM] [--diffgenes]
                                         [--diffpeaks] [--rnalogfc RNALOGFC]
@@ -997,8 +1007,8 @@ s:about: |
                                         [--atacminpct ATACMINPCT]
                                         [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                         [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--scope]
-                                        [--output OUTPUT]
+                                        [--h5ad] [--loupe] [--cbbuild]
+                                        [--scope] [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
                                         [--seed SEED]
@@ -1026,7 +1036,7 @@ s:about: |
                           integrated with Harmony. Default: 10
     --algorithm {louvain,mult-louvain,slm,leiden}
                           Algorithm for modularity optimization when running
-                          clustering. Default: louvain
+                          clustering. Default: slm
     --uspread USPREAD     The effective scale of embedded points on UMAP. In
                           combination with '--mindist' it determines how
                           clustered/clumped the embedded points are. Default: 1
@@ -1036,15 +1046,6 @@ s:about: |
                           values allow the algorithm to optimise more accurately
                           with regard to local structure. Sensible values are in
                           the range 0.001 to 0.5. Default: 0.3
-    --uneighbors UNEIGHBORS
-                          Determines the number of neighboring points used in
-                          UMAP. Larger values will result in more global
-                          structure being preserved at the loss of detailed
-                          local structure. In general this parameter should
-                          often be in the range 5 to 50. Default: 30
-    --umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}
-                          The metric to use to compute distances in high
-                          dimensional space for UMAP. Default: cosine
     --umethod {uwot,uwot-learn,umap-learn}
                           UMAP implementation to run. If set to 'umap-learn' use
                           --umetric 'correlation' Default: uwot
@@ -1065,6 +1066,12 @@ s:about: |
                           insertion frequency plots for the nearest peaks. If '
                           --fragments' is not provided only gene expression
                           plots will be built. Default: None
+    --genesets GENESETS   Path to the GMT file for calculating average
+                          expression levels (module scores) per gene set. This
+                          file can be downloaded from the Molecular Signatures
+                          Database (MSigDB) following the link https://www.gsea-
+                          msigdb.org/gsea/msigdb. Default: do not calculate gene
+                          set expression scores.
     --upstream UPSTREAM   Number of bases to extend the genome coverage region
                           for a specific gene upstream. Ignored if --genes or
                           --fragments parameters are not provided. Default: 2500

@@ -218,6 +218,16 @@ inputs:
       (optional)" input is not provided.
       Default: None
 
+  genesets_data:
+    type: File?
+    label: "GMT file for calculating average expression levels per gene set (optional)"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb.
+      Default: do not calculate gene set expression scores.
+
   export_loupe_data:
     type: boolean?
     default: false
@@ -742,6 +752,46 @@ outputs:
         tab: "Genes of interest (coverage)"
         Caption: "ATAC fragment coverage (per gene, filtered query cells)"
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputSource: rna_azimuth/gse_per_cell_plot_png
+    label: "Projected UMAP colored by gene set expression score (all query cells)"
+    doc: |
+      Projected UMAP colored by
+      gene set expression score.
+      All query cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Projected UMAP colored by gene set expression score (all query cells)"
+
+  gse_avg_plot_png:
+    type: File?
+    outputSource: rna_azimuth/gse_avg_plot_png
+    label: "Average gene set expression score (all query cells)"
+    doc: |
+      Average gene set expression score.
+      All query cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Average gene set expression score (all query cells)"
+
+  gse_dnst_plot_png:
+    type: File?
+    outputSource: rna_azimuth/gse_dnst_plot_png
+    label: "Gene set expression score density (all query cells)"
+    doc: |
+      Gene set expression score density.
+      All query cells.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Gene set expression score density (all query cells)"
+
   xpr_htmp_plot_png:
     type: File?
     outputSource: rna_azimuth/xpr_htmp_plot_png
@@ -924,6 +974,7 @@ steps:
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
+      genesets_data: genesets_data
       identify_diff_genes: identify_diff_genes
       identify_diff_peaks: identify_diff_peaks
       rna_minimum_logfc:
@@ -987,6 +1038,9 @@ steps:
     - cmp_gr_ctyp_spl_cnd_plot_png
     - umap_gr_ph_spl_cnd_plot_png
     - cmp_gr_ph_spl_cnd_plot_png
+    - gse_per_cell_plot_png
+    - gse_avg_plot_png
+    - gse_dnst_plot_png
     - xpr_avg_plot_png
     - xpr_dnst_plot_png
     - xpr_per_cell_plot_png
