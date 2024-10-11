@@ -234,6 +234,17 @@ inputs:
       and the --fragments file should be provided.
       Default: None
 
+  genesets_data:
+    type: File?
+    inputBinding:
+      prefix: "--genesets"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb.
+      Default: do not calculate gene set expression scores.
+
   cvrg_upstream_bp:
     type: int?
     inputBinding:
@@ -694,6 +705,34 @@ outputs:
       downsampled to the smallest group.
       PNG format.
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_per_cell.png"
+    doc: |
+      Projected UMAP colored by
+      gene set expression score.
+      All query cells.
+      PNG format.
+
+  gse_avg_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_avg.png"
+    doc: |
+      Average gene set expression score.
+      All query cells.
+      PNG format.
+
+  gse_dnst_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_dnst.png"
+    doc: |
+      Gene set expression score density.
+      All query cells.
+      PNG format.
+
   xpr_avg_plot_png:
     type: File?
     outputBinding:
@@ -966,6 +1005,7 @@ s:about: |
                                         [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                         [--fragments FRAGMENTS]
                                         [--genes [GENES [GENES ...]]]
+                                        [--genesets GENESETS]
                                         [--upstream UPSTREAM]
                                         [--downstream DOWNSTREAM] [--pdf]
                                         [--verbose] [--h5seurat] [--h5ad]
@@ -1007,7 +1047,7 @@ s:about: |
                           The minimum threshold for a prediction mapping score
                           is calculated at the cell. This metric ranges from 0
                           to 1 and reflects how well the unique structure of a
-                          cell’s local neighborhood is preserved during
+                          cell's local neighborhood is preserved during
                           reference mapping. Only cells that meet both the
                           minimum prediction mapping score and the minimum
                           prediction confidence score thresholds will be
@@ -1068,6 +1108,12 @@ s:about: |
                           peaks the query Seurat object should include ATAC
                           assay as well as the --fragments file should be
                           provided. Default: None
+    --genesets GENESETS   Path to the GMT file for calculating average
+                          expression levels (module scores) per gene set. This
+                          file can be downloaded from the Molecular Signatures
+                          Database (MSigDB) following the link https://www.gsea-
+                          msigdb.org/gsea/msigdb. Default: do not calculate gene
+                          set expression scores.
     --upstream UPSTREAM   Number of bases to extend the genome coverage region
                           for a specific gene upstream. Ignored if --genes or
                           --fragments parameters are not provided or when the

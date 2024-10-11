@@ -129,6 +129,16 @@ inputs:
       of interest to visualize expression.
       Default: None
 
+  genesets_data:
+    type: File?
+    label: "GMT file for calculating average expression levels per gene set (optional)"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb.
+      Default: do not calculate gene set expression scores.
+
   export_loupe_data:
     type: boolean?
     default: false
@@ -522,6 +532,50 @@ outputs:
         tab: "Genes of interest (expression)"
         Caption: "UMAP colored by gene expression (per gene)"
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputSource: sc_rna_cluster/gse_per_cell_plot_png
+    label: "UMAP colored by gene set expression score"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "UMAP colored by gene set expression score"
+
+  gse_avg_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/gse_avg_res_plot_png
+    label: "Average gene set expression score"
+    doc: |
+      Average gene set expression score.
+      All resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Average gene set expression score"
+
+  gse_dnst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_rna_cluster/gse_dnst_res_plot_png
+    label: "Gene set expression score density"
+    doc: |
+      Gene set expression score density.
+      All resolutions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Gene set expression score density"
+
   xpr_htmp_res_plot_png:
     type:
     - "null"
@@ -658,6 +712,7 @@ steps:
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
+      genesets_data: genesets_data
       identify_diff_genes: identify_diff_genes
       only_positive_diff_genes:
         default: true
@@ -703,6 +758,9 @@ steps:
     - cmp_gr_ph_spl_clst_res_plot_png
     - umap_gr_clst_spl_cnd_res_plot_png
     - cmp_gr_clst_spl_cnd_res_plot_png
+    - gse_per_cell_plot_png
+    - gse_avg_res_plot_png
+    - gse_dnst_res_plot_png
     - xpr_per_cell_plot_png
     - xpr_avg_res_plot_png
     - xpr_dnst_res_plot_png

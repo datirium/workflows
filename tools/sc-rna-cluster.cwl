@@ -90,6 +90,17 @@ inputs:
       Genes of interest to build genes expression plots.
       Default: None
 
+  genesets_data:
+    type: File?
+    inputBinding:
+      prefix: "--genesets"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb.
+      Default: do not calculate gene set expression scores.
+
   identify_diff_genes:
     type: boolean?
     inputBinding:
@@ -517,6 +528,38 @@ outputs:
       smallest group; all resolutions.
       PNG format.
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_per_cell.png"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+
+  gse_avg_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_gse_avg_res_*.png"
+    doc: |
+      Average gene set expression score.
+      All resolutions.
+      PNG format.
+
+  gse_dnst_res_plot_png:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_gse_dnst_res_*.png"
+    doc: |
+      Gene set expression score density.
+      All resolutions.
+      PNG format.
+
   xpr_per_cell_plot_png:
     type:
     - "null"
@@ -753,12 +796,13 @@ s:about: |
                                         [--algorithm {louvain,mult-louvain,slm,leiden}]
                                         [--resolution [RESOLUTION [RESOLUTION ...]]]
                                         [--genes [GENES [GENES ...]]]
-                                        [--diffgenes] [--logfc LOGFC]
-                                        [--minpct MINPCT] [--onlypos]
+                                        [--genesets GENESETS] [--diffgenes]
+                                        [--logfc LOGFC] [--minpct MINPCT]
+                                        [--onlypos]
                                         [--testuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                         [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--cbbuild] [--scope]
-                                        [--output OUTPUT]
+                                        [--h5ad] [--loupe] [--cbbuild]
+                                        [--scope] [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
                                         [--seed SEED]
@@ -792,6 +836,12 @@ s:about: |
     --genes [GENES [GENES ...]]
                           Genes of interest to build genes expression plots.
                           Default: None
+    --genesets GENESETS   Path to the GMT file for calculating average
+                          expression levels (module scores) per gene set. This
+                          file can be downloaded from the Molecular Signatures
+                          Database (MSigDB) following the link https://www.gsea-
+                          msigdb.org/gsea/msigdb. Default: do not calculate gene
+                          set expression scores.
     --diffgenes           Identify differentially expressed genes (putative gene
                           markers) between each pair of clusters for all
                           resolutions. Default: false

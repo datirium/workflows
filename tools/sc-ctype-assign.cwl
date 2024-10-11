@@ -209,6 +209,18 @@ inputs:
       file should be provided.
       Default: None
 
+  genesets_data:
+    type: File?
+    inputBinding:
+      prefix: "--genesets"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb. To calculate module
+      scores the loaded Seurat object should include RNA assay.
+      Default: do not calculate gene set expression scores.
+
   cvrg_upstream_bp:
     type: int?
     inputBinding:
@@ -590,6 +602,30 @@ outputs:
       the smallest group.
       PNG format.
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_per_cell.png"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+
+  gse_avg_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_avg.png"
+    doc: |
+      Average gene set expression score.
+      PNG format.
+
+  gse_dnst_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_dnst.png"
+    doc: |
+      Gene set expression score density.
+      PNG format.
+
   xpr_avg_plot_png:
     type: File?
     outputBinding:
@@ -869,6 +905,7 @@ s:about: |
                                           [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                           [--fragments FRAGMENTS]
                                           [--genes [GENES [GENES ...]]]
+                                          [--genesets GENESETS]
                                           [--upstream UPSTREAM]
                                           [--downstream DOWNSTREAM] [--pdf]
                                           [--verbose] [--h5seurat] [--h5ad]
@@ -962,6 +999,13 @@ s:about: |
                           frequency plots for the nearest peaks the loaded
                           Seurat object should include ATAC assay as well as the
                           --fragments file should be provided. Default: None
+    --genesets GENESETS   Path to the GMT file for calculating average
+                          expression levels (module scores) per gene set. This
+                          file can be downloaded from the Molecular Signatures
+                          Database (MSigDB) following the link https://www.gsea-
+                          msigdb.org/gsea/msigdb. To calculate module scores the
+                          loaded Seurat object should include RNA assay.
+                          Default: do not calculate gene set expression scores.
     --upstream UPSTREAM   Number of bases to extend the genome coverage region
                           for a specific gene upstream. Ignored if --genes or
                           --fragments parameters are not provided. Default: 2500

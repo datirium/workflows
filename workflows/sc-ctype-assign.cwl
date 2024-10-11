@@ -177,6 +177,17 @@ inputs:
       The file should have two columns named
       'cluster' and 'celltype'.
 
+  genesets_data:
+    type: File?
+    label: "GMT file for calculating average expression levels per gene set (optional)"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb. To calculate module
+      scores the loaded Seurat object should include RNA assay.
+      Default: do not calculate gene set expression scores.
+
   export_loupe_data:
     type: boolean?
     default: false
@@ -580,6 +591,42 @@ outputs:
         tab: "Genes of interest (coverage)"
         Caption: "ATAC fragment coverage (per gene)"
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputSource: ctype_assign/gse_per_cell_plot_png
+    label: "UMAP colored by gene set expression score"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "UMAP colored by gene set expression score"
+
+  gse_avg_plot_png:
+    type: File?
+    outputSource: ctype_assign/gse_avg_plot_png
+    label: "Average gene set expression score"
+    doc: |
+      Average gene set expression score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Average gene set expression score"
+
+  gse_dnst_plot_png:
+    type: File?
+    outputSource: ctype_assign/gse_dnst_plot_png
+    label: "Gene set expression score density"
+    doc: |
+      Gene set expression score density.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Gene set expression score density"
+
   xpr_htmp_plot_png:
     type: File?
     outputSource: ctype_assign/xpr_htmp_plot_png
@@ -764,6 +811,7 @@ steps:
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
+      genesets_data: genesets_data
       identify_diff_genes: identify_diff_genes
       identify_diff_peaks: identify_diff_peaks
       rna_minimum_logfc:
@@ -821,6 +869,9 @@ steps:
     - cmp_gr_ctyp_spl_cnd_plot_png
     - umap_gr_ph_spl_cnd_plot_png
     - cmp_gr_ph_spl_cnd_plot_png
+    - gse_per_cell_plot_png
+    - gse_avg_plot_png
+    - gse_dnst_plot_png
     - xpr_avg_plot_png
     - xpr_per_cell_plot_png
     - xpr_dnst_plot_png
