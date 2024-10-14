@@ -68,23 +68,41 @@ inputs:
 
 outputs:
 
-  classified_reads_R1:
+  k2_classified_reads_R1:
     type:
       - "null"
       - File
     format: "http://edamontology.org/format_1930"
-    label: "Unaligned FASTQ file(s)"
-    doc: "Unaligned FASTQ file(s)"
-    outputSource: kraken2_classify/classified_R1
+    label: "classified r1 FASTQ file"
+    doc: "classified r1 FASTQ file"
+    outputSource: kraken2_classify/k2_classified_R1
 
-  classified_reads_R2:
+  k2_classified_reads_R2:
     type:
       - "null"
       - File
     format: "http://edamontology.org/format_1930"
-    label: "Unaligned FASTQ file(s)"
-    doc: "Unaligned FASTQ file(s)"
-    outputSource: kraken2_classify/classified_R2
+    label: "classified r2 FASTQ file"
+    doc: "classified r2 FASTQ file"
+    outputSource: kraken2_classify/k2_classified_R2
+
+  k2_unclassified_reads_R1:
+    type:
+      - "null"
+      - File
+    format: "http://edamontology.org/format_1930"
+    label: "unclassified r1 FASTQ file"
+    doc: "unclassified r1 FASTQ file"
+    outputSource: kraken2_classify/k2_unclassified_R1
+
+  k2_unclassified_reads_R2:
+    type:
+      - "null"
+      - File
+    format: "http://edamontology.org/format_1930"
+    label: "unclassified r2 FASTQ file"
+    doc: "unclassified r2 FASTQ file"
+    outputSource: kraken2_classify/k2_unclassified_R2
 
   fastx_statistics_upstream:
     type: File
@@ -191,15 +209,16 @@ outputs:
     doc: "captures standard error from k2-classify-pe.cwl"
     outputSource: kraken2_classify/stderr_log
 
-  krona_plot:
+  krona_plot_link:
     type: File
     format: "http://edamontology.org/format_2331"
-    label: "krona output html file"
+    label: "Krona plot - hierarchical visualization of taxonomic classifications"
     doc: "hierarchical visualization of taxonomic classifications"
     outputSource: kraken2_classify/krona_html
     'sd:visualPlugins':
-    - markdownView:
-        tab: 'Krona Plot'
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
 
 
 steps:
@@ -327,8 +346,10 @@ steps:
       read2file: rename_downstream/target_file
       threads: threads
     out:
-      - classified_R1
-      - classified_R2
+      - k2_classified_R1
+      - k2_classified_R2
+      - k2_unclassified_R1
+      - k2_unclassified_R2
       - k2_output
       - k2_report
       - k2_report_tsv

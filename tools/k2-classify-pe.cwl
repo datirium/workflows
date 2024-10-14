@@ -28,7 +28,7 @@ inputs:
       printf "EXECUTION:\n"
       #   commands start
       printf "\trun classification for PE reads\n"
-      kraken2 --db $DATABASE --threads $THREADS --paired  --classified-out classified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
+      kraken2 --db $DATABASE --threads $THREADS --paired --classified-out k2_classified_reads#.fastq --unclassified-out k2_unclassified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
       printf "\tformatting outputs\n"
       # make stderr output markdown compatible for overview tab view
       head -1 k2.stderr > parsed.stderr
@@ -74,15 +74,25 @@ inputs:
 
 outputs:
 
-  classified_R1:
+  k2_classified_R1:
     type: File
     outputBinding:
-      glob: "classified_reads_1.fastq"
+      glob: "k2_classified_reads_1.fastq"
 
-  classified_R2:
+  k2_classified_R2:
     type: File
     outputBinding:
-      glob: "classified_reads_2.fastq"
+      glob: "k2_classified_reads_2.fastq"
+
+  k2_unclassified_R1:
+    type: File
+    outputBinding:
+      glob: "k2_unclassified_reads_1.fastq"
+
+  k2_unclassified_R2:
+    type: File
+    outputBinding:
+      glob: "k2_unclassified_reads_2.fastq"
 
   k2_output:
     type: File
