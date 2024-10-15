@@ -443,9 +443,11 @@ steps:
         source: contrast_indices
         valueFrom: |
           ${
-            if (self != "") {
-              // Split the comma-separated string into an array
-              return self.split(',').map(function(item) { return item.trim(); });
+            if (self && self.trim() !== "") {
+              // Split the comma-separated string into an array, trim each element, and filter out empty strings
+              return self.split(',')
+                         .map(function(item) { return item.trim(); })
+                         .filter(function(item) { return item !== ""; });
             } else {
               // Default to a single empty string if not provided
               return [""];
@@ -455,8 +457,8 @@ steps:
       output_filename:
         valueFrom: |
           ${
-            if (inputs.contrast_index != "") {
-              return "contrast_" + inputs.contrast_index + ".html";
+            if (self != "") {
+              return "contrast_" + self + ".html";
             } else {
               return "index.html";
             }

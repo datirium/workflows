@@ -59,18 +59,6 @@ outputs:
 
 baseCommand: ["ma_plot.sh"]
 
-#arguments:
-#  - valueFrom: "$(inputs.diff_expr_file.path)"
-#    position: 1
-#  - valueFrom: "$(inputs.x_axis_column)"
-#    position: 2
-#  - valueFrom: "$(inputs.y_axis_column)"
-#    position: 3
-#  - valueFrom: "$(inputs.label_column)"
-#    position: 4
-#  - valueFrom: "$(inputs.output_filename)"
-#    position: 5
-
 $namespaces:
   s: http://schema.org/
 
