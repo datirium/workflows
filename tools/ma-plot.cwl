@@ -45,17 +45,27 @@ inputs:
       position: 5
 
 outputs:
+
   html_data:
     type: Directory
     outputBinding:
-      glob: "volcano_plot/MD-MA_plot_*/html_data"
-    doc: "Directory containing HTML data for MA-plot."
+      glob: |
+        ${
+          var output_basename = (inputs.output_filename || "index.html").replace(/\.html$/, '');
+          return "volcano_plot/MD-MA_plot_" + output_basename;
+        }
+    doc: "Directory containing MA-plot and related files."
 
   html_file:
     type: File
     outputBinding:
-      glob: "volcano_plot/MD-MA_plot_*/html_data/*.html"
+      glob: |
+        ${
+          var output_basename = (inputs.output_filename || "index.html").replace(/\.html$/, '');
+          return "volcano_plot/MD-MA_plot_" + output_basename + "/html_data/" + inputs.output_filename;
+        }
     doc: "HTML output file for MA-plot."
+
 
 baseCommand: ["ma_plot.sh"]
 

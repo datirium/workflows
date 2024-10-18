@@ -405,6 +405,44 @@ steps:
       - stdout_log
       - stderr_log
 
+  prepare_inputs:
+    run:
+      class: ExpressionTool
+      inputs:
+        diff_expr_files: File[]
+        contrast_indices: string
+      outputs:
+        diff_expr_files:
+          type: File[]
+        output_filenames:
+          type: string[]
+      expression: |
+        ${
+          var indices = inputs.contrast_indices.split(",").map(idx => idx.trim());
+          var output_filenames = [];
+          for (var i = 0; i < inputs.diff_expr_files.length; i++) {
+            var index = indices[i] || "";
+            var output_filename = "index.html";
+            if (index !== "") {
+              output_filename = "contrast_" + index + ".html";
+            } else {
+              var nameroot = inputs.diff_expr_files[i].basename.replace(/\.[^/.]+$/, "");
+              output_filename = nameroot + ".html";
+            }
+            output_filenames.push(output_filename);
+          }
+          return {
+            diff_expr_files: inputs.diff_expr_files,
+            output_filenames: output_filenames
+          };
+        }
+    in:
+      diff_expr_files: diff_expr_file
+      contrast_indices: contrast_indices
+    out:
+      - diff_expr_files
+      - output_filenames
+
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
     scatter: diff_expr_file
@@ -434,42 +472,15 @@ steps:
     run: ../tools/ma-plot.cwl
     scatter:
       - diff_expr_file
-      - contrast_index  # Scatter over 'contrast_index'
-    scatterMethod: dotproduct  # Use a valid scatter method in CWL v1.0
+      - output_filename
+    scatterMethod: dotproduct
     in:
-      diff_expr_file: deseq/diff_expr_file  # Should be an array of Files
-
-      contrast_index:
-        source: contrast_indices
-        valueFrom: |
-          ${
-            if (self && self.trim() !== "") {
-              // Split the comma-separated string into an array, trim each element, and filter out empty strings
-              return self.split(',')
-                         .map(function(item) { return item.trim(); })
-                         .filter(function(item) { return item !== ""; });
-            } else {
-              // Default to a single empty string if not provided
-              return [""];
-            }
-          }
-
-      output_filename:
-        valueFrom: |
-          ${
-            if (self != "") {
-              return "contrast_" + self + ".html";
-            } else {
-              return "index.html";
-            }
-          }
-
+      diff_expr_file: prepare_inputs/diff_expr_files
+      output_filename: prepare_inputs/output_filenames
       x_axis_column:
         default: "baseMean"
-
       y_axis_column:
         default: "log2FoldChange"
-
       label_column:
         source: group_by
         valueFrom: |
@@ -482,10 +493,9 @@ steps:
               return "GeneId";
             }
           }
-
     out:
-      - html_file
       - html_data
+      - html_file
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
