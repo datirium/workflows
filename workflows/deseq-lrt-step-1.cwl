@@ -209,7 +209,7 @@ steps:
       reduced_formula: reduced_formula
       threads: threads
       test_mode: test_mode
-    out: [ diff_expr_file, lrt_summary_md, contrasts_file, contrasts_file, stdout_log, stderr_log ]
+    out: [ diff_expr_file, lrt_summary_md, contrasts_file, contrasts_file, contrasts_rds, stdout_log, stderr_log ]
 
 
 $namespaces:
