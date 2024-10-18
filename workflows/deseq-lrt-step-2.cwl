@@ -437,7 +437,7 @@ steps:
           };
         }
     in:
-      diff_expr_files: diff_expr_file
+      diff_expr_files: deseq/diff_expr_file
       contrast_indices: contrast_indices
     out:
       - diff_expr_files
