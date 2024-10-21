@@ -9,12 +9,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-kraken2:dev
+  dockerPull: robertplayer/scidap-kraken2:v1.0.0
 
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -25,23 +25,26 @@ inputs:
       printf "EXECUTION:\n\n"
       # commands start
       if [[ "$DATABASE" == "Viral" ]]; then
-        url="https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20221209.tar.gz"
-        db="k2_viral_20221209"
+        url="https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20240904.tar.gz"
+        db="k2_viral_20240904"
+      elif [[ "$DATABASE" == "Standard" ]]; then
+        url="https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20240904.tar.gz"
+        db="k2_standard_20240904"
       elif [[ "$DATABASE" == "MinusB" ]]; then
-        url="https://genome-idx.s3.amazonaws.com/kraken/k2_minusb_20221209.tar.gz"
-        db="k2_minusb_20221209"
+        url="https://genome-idx.s3.amazonaws.com/kraken/k2_minusb_20240904.tar.gz"
+        db="k2_minusb_20240904"
       elif [[ "$DATABASE" == "PlusPFP-16" ]]; then
-        url="https://genome-idx.s3.amazonaws.com/kraken/k2_pluspfp_16gb_20221209.tar.gz"
-        db="k2_pluspfp_16gb_20221209"
+        url="https://genome-idx.s3.amazonaws.com/kraken/k2_pluspfp_16gb_20240904.tar.gz"
+        db="k2_pluspfp_16gb_20240904"
       elif [[ "$DATABASE" == "EuPathDB46" ]]; then
-        url="https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20201113.tar.gz"
-        db="k2_eupathdb48_20201113"
-      elif [[ "$DATABASE" == "16S_gg_13_5" ]]; then
+        url="https://genome-idx.s3.amazonaws.com/kraken/k2_eupathdb48_20230407.tar.gz"
+        db="k2_eupathdb48_20230107"
+      elif [[ "$DATABASE" == "16S_Greengenes" ]]; then
         url="https://genome-idx.s3.amazonaws.com/kraken/16S_Greengenes13.5_20200326.tgz"
-        db="k2_16S_gg_13_5_20200326"
-      elif [[ "$DATABASE" == "16S_silva_138" ]]; then
+        db="k2_16S_Greengenes_20200326"
+      elif [[ "$DATABASE" == "16S_Silva_138" ]]; then
         url="https://genome-idx.s3.amazonaws.com/kraken/16S_Silva138_20200326.tgz"
-        db="k2_16S_silva_138_20200326"
+        db="k2_16S_Silva_138_20200326"
       fi
       printf "Downloading Kraken2 $DATABASE database from: $url\n\n"
       wget $url
