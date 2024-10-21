@@ -445,9 +445,12 @@ steps:
 
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
-    scatter: diff_expr_file
+    scatter:
+      - diff_expr_file
+      - output_filename
     in:
-      diff_expr_file: deseq/diff_expr_file
+      diff_expr_file: prepare_inputs/diff_expr_files
+      output_filename: prepare_inputs/output_filenames
       x_axis_column:
         default: "log2FoldChange"
       y_axis_column:
