@@ -4,6 +4,9 @@ class: Workflow
 
 requirements:
   - class: StepInputExpressionRequirement
+  - class: ResourceRequirement
+    ramMin: 257024                                     # equal to ~264GB
+    coresMin: $(inputs.threads?inputs.threads:1)
 
 
 'sd:upstream':
