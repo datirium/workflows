@@ -12,16 +12,16 @@ requirements:
 
 'sd:upstream':
   rnaseq_experiment:
-  - "trim-rnaseq-pe.cwl"
-  - "trim-rnaseq-se.cwl"
-  - "trim-rnaseq-pe-dutp.cwl"
-  - "trim-rnaseq-pe-smarter-dutp.cwl"
-  - "trim-rnaseq-se-dutp.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-smarter-dutp.cwl"
-  - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
+    - "trim-rnaseq-pe.cwl"
+    - "trim-rnaseq-se.cwl"
+    - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
+    - "trim-rnaseq-se-dutp.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-smarter-dutp.cwl"
+    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
 
 
 inputs:
@@ -50,7 +50,7 @@ inputs:
     type:
       - "null"
       - type: enum
-        symbols: ["isoforms", "genes", "common tss"]
+        symbols: [ "isoforms", "genes", "common tss" ]
     default: "genes"
     label: "Group by"
     doc: "Grouping method for features: isoforms, genes or common tss"
@@ -85,13 +85,13 @@ inputs:
 
   cluster_method:
     type:
-    - "null"
-    - type: enum
-      symbols:
-      - "row"
-      - "column"
-      - "both"
-      - "none"
+      - "null"
+      - type: enum
+        symbols:
+          - "row"
+          - "column"
+          - "both"
+          - "none"
     default: "none"
     label: "Hopach clustering method to be run on normalized read counts"
     doc: |
@@ -102,15 +102,15 @@ inputs:
 
   row_distance:
     type:
-    - "null"
-    - type: enum
-      symbols:
-      - "cosangle"
-      - "abscosangle"
-      - "euclid"
-      - "abseuclid"
-      - "cor"
-      - "abscor"
+      - "null"
+      - type: enum
+        symbols:
+          - "cosangle"
+          - "abscosangle"
+          - "euclid"
+          - "abseuclid"
+          - "cor"
+          - "abscor"
     default: "cosangle"
     label: "Distance metric for HOPACH row clustering"
     doc: |
@@ -121,15 +121,15 @@ inputs:
 
   column_distance:
     type:
-    - "null"
-    - type: enum
-      symbols:
-      - "cosangle"
-      - "abscosangle"
-      - "euclid"
-      - "abseuclid"
-      - "cor"
-      - "abscor"
+      - "null"
+      - type: enum
+        symbols:
+          - "cosangle"
+          - "abscosangle"
+          - "euclid"
+          - "abseuclid"
+          - "cor"
+          - "abscor"
     default: "euclid"
     label: "Distance metric for HOPACH column clustering"
     doc: |
@@ -204,6 +204,7 @@ inputs:
 
 outputs:
 
+  # TODO: Provide upstream for diff_expr_file as RDS input from step 1 LRT instead of current solution
   diff_expr_file:
     type: File[]
     label: "Differentially expressed features grouped by isoforms, genes or common TSS"
@@ -211,9 +212,9 @@ outputs:
     doc: "DESeq2 generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
     outputSource: deseq/diff_expr_file
     'sd:visualPlugins':
-    - syncfusiongrid:
-        tab: 'Differential Expression Analysis'
-        Title: 'Combined DESeq results for all contrasts'
+      - syncfusiongrid:
+          tab: 'Differential Expression Analysis'
+          Title: 'Combined DESeq results for all contrasts'
 
   read_counts_file_all:
     type: File[]
@@ -237,9 +238,9 @@ outputs:
       MDS plot of normalized counts
       HTML format
     'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
+      - linkList:
+          tab: 'Overview'
+          target: "_blank"
 
   plot_lfc_vs_mean:
     type: File[]
@@ -250,9 +251,9 @@ outputs:
       over the mean of normalized counts for all the samples
     outputSource: deseq/plot_lfc_vs_mean
     'sd:visualPlugins':
-    - image:
-        tab: 'Other Plots'
-        Caption: 'LFC vs mean'
+      - image:
+          tab: 'Other Plots'
+          Caption: 'LFC vs mean'
 
   gene_expr_heatmap:
     type: File[]
@@ -263,9 +264,9 @@ outputs:
       isoforms, genes or common TSS, based on the variance stabilisation transformed data
     outputSource: deseq/gene_expr_heatmap
     'sd:visualPlugins':
-    - image:
-        tab: 'Other Plots'
-        Caption: 'The 30 most highly expressed features'
+      - image:
+          tab: 'Other Plots'
+          Caption: 'The 30 most highly expressed features'
 
   plot_lfc_vs_mean_pdf:
     type: File[]
@@ -292,9 +293,9 @@ outputs:
     doc: |
       HTML index file for Volcano Plot
     'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
+      - linkList:
+          tab: 'Overview'
+          target: "_blank"
 
   volcano_plot_html_data:
     type: Directory[]
@@ -310,9 +311,9 @@ outputs:
     doc: |
       HTML index file for MA-plot
     'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
+      - linkList:
+          tab: 'Overview'
+          target: "_blank"
 
   ma_plot_html_data:
     type: Directory[]
@@ -322,15 +323,15 @@ outputs:
       Directory html data for MA-plot
 
   heatmap_html:
-    type: File[]
+    type: File
     outputSource: morpheus_heatmap/heatmap_html
     label: "Heatmap of normalized counts"
     doc: |
       Morpheus heatmap in HTML format
     'sd:visualPlugins':
-    - linkList:
-        tab: 'Overview'
-        target: "_blank"
+      - linkList:
+          tab: 'Overview'
+          target: "_blank"
 
   deseq_stdout_log:
     type: File
@@ -347,13 +348,13 @@ outputs:
     outputSource: deseq/stderr_log
 
   morpheus_stdout_log:
-    type: File[]
+    type: File
     outputSource: morpheus_heatmap/stdout_log
     label: "Morpheus heatmap stdout log"
     doc: "Morpheus heatmap stdout log"
 
   morpheus_stderr_log:
-    type: File[]
+    type: File
     outputSource: morpheus_heatmap/stderr_log
     label: "Morpheus heatmap stderr log"
     doc: "Morpheus heatmap stderr log"
@@ -443,6 +444,14 @@ steps:
       - diff_expr_files
       - output_filenames
 
+  merge_gct_files:
+    run: ../tools/merge_gct_files.cwl
+    in:
+      gct_files: deseq/read_counts_file_filtered
+    out:
+      - merged_gct_file
+
+  # TODO: Fix diff_expr_files colnames to properly handle it the bash scripts to avoid blank plot
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
     scatterMethod: dotproduct
@@ -472,6 +481,7 @@ steps:
       - html_data
       - html_file
 
+  # TODO: Fix diff_expr_files colnames to properly handle it the bash scripts to avoid blank plot
   make_ma_plot:
     run: ../tools/ma-plot.cwl
     scatter:
@@ -503,9 +513,8 @@ steps:
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
-    scatter: read_counts_gct
     in:
-      read_counts_gct: deseq/read_counts_file_filtered
+      read_counts_gct: merge_gct_files/merged_gct_file
     out:
       - heatmap_html
       - stdout_log
@@ -515,7 +524,7 @@ $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
+  - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 s:name: "DESeq2 (LRT, step 2) - differential gene expression analysis using likelihood ratio test"
 label: "DESeq2 (LRT, step 2) - differential gene expression analysis using likelihood ratio test"
