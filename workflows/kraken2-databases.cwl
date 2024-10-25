@@ -26,6 +26,7 @@ inputs:
       symbols:
       - Viral
       - Standard
+      - Standard-16
       - MinusB
       - PlusPFP-16
       - EuPathDB46
@@ -36,8 +37,9 @@ inputs:
     doc: "Database details:\n
        - Viral (500 MB), all refseq viral genomes\n
        - Standard (80 GB), Refeq archaea, bacteria, viral, plasmid, human, UniVec_Core
+       - Standard-16 (15 GB), Refeq archaea, bacteria, viral, plasmid, human, UniVec_Core, capped at 16 GB (shrunk via random kmer downselect)
        - MinusB (9 GB), Standard minus bacteria\n
-       - PlusPFP-16 (15 GB), Standard + protozoa, fungi & plant, all capped at 16 GB (shrunk via random kmer downselect)\n
+       - PlusPFP-16 (15 GB), Standard + protozoa, fungi & plant, capped at 16 GB (shrunk via random kmer downselect)\n
        - EuPathDB46 (11 GB), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)\n
        - 16S_Greengenes (73 MB), Greengenes 16S rRNA database (release 13.5, 20200326)\n
        - 16S_Silva_138 (112 MB), SILVA 16S rRNA database (release 138, 20200326)"

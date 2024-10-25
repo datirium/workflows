@@ -30,6 +30,9 @@ inputs:
       elif [[ "$DATABASE" == "Standard" ]]; then
         url="https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20240904.tar.gz"
         db="k2_standard_20240904"
+      elif [[ "$DATABASE" == "Standard-16" ]]; then
+        url="https://genome-idx.s3.amazonaws.com/kraken/k2_standard_16gb_20240904.tar.gz"
+        db="k2_standard_16gb_20240904"
       elif [[ "$DATABASE" == "MinusB" ]]; then
         url="https://genome-idx.s3.amazonaws.com/kraken/k2_minusb_20240904.tar.gz"
         db="k2_minusb_20240904"
