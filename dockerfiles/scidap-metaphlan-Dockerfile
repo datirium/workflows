@@ -64,6 +64,7 @@ RUN apt-get update && \
     cd /dockerdata/databases && \
     kneaddata_database --download human_genome bowtie2 human_genome_bowtie2 && \
     humann_databases --download uniref uniref90_ec_filtered_diamond uniref_uniref90_ec_filtered_diamond && \
+    humann_databases --download chocophlan full chocophlan_full && \
 #    metaphlan --install --index mpa_vJan21_CHOCOPhlAnSGB_202103 --bowtie2db index-mpa_vJan21_CHOCOPhlAnSGB_202103 && \
     printf "@read1\nAAAATTTTCCCGCTCGCGCGCGCGCTATATAATATATATAGCAGCATACCAGCATAGTGATCGAAAATTTTCCCGCTCGCGCGCGCGCTATATAATATATATAGCAGCATACCAGCATAGTGATCGAAAATTTTCCCGCTCGCGCGCGCGCTATATAATATATATAGCAGCATACCAGCATAGTGATCG\n+\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n" > test.fastq && \
     metaphlan test.fastq --bowtie2out metagenome.bowtie2.bz2 --nproc 4 --input_type fastq -o profiled_metagenome.txt && \
