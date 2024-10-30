@@ -1,53 +1,93 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
-
 requirements:
-- class: InlineJavascriptRequirement
-
+  - class: InlineJavascriptRequirement
 
 hints:
-- class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.29
-
+  - class: DockerRequirement
+    dockerPull: biowardrobe2/scidap-deseq:v0.0.30
 
 inputs:
+
   expression_files:
     type: File[]
     inputBinding:
-      position: 5
+      position: 1
       prefix: "--input"
     doc: "Grouped by gene / TSS/ isoform expression files, formatted as CSV/TSV"
 
   expression_file_names:
     type: string[]
     inputBinding:
-      position: 6
+      position: 2
       prefix: "--name"
     doc: "Unique names for input files, no special characters, spaces are allowed. Number and order corresponds to --input"
 
   metadata_file:
     type: File
     inputBinding:
-      position: 7
+      position: 3
       prefix: "--meta"
     doc: "Metadata file to describe relation between samples, where first column corresponds to --name, formatted as CSV/TSV"
+
+  design_formula:
+    type: string
+    inputBinding:
+      position: 4
+      prefix: "--design"
+    doc: "Design formula. Should start with ~. See DESeq2 manual for details"
+
+  reduced_formula:
+    type: string
+    inputBinding:
+      position: 5
+      prefix: "--reduced"
+    doc: "Reduced formula to compare against with the term(s) of interest removed. Should start with ~. See DESeq2 manual for details"
+
+  batchcorrection:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "none"
+          - "combatseq"
+          - "limmaremovebatcheffect"
+    inputBinding:
+      position: 6
+      prefix: "--batchcorrection"
+    default: "none"
+    doc: |
+      Specifies the batch correction method to be applied.
+      - 'combatseq' applies ComBat_seq at the beginning of the analysis.
+      - 'limmaremovebatcheffect' notes the batch correction to be applied in step 2.
+      - Default: none
+
+  batchfile:
+    type: File?
+    inputBinding:
+      position: 7
+      prefix: "-bf"
+    doc: |
+      Metadata file for batch correction. Headerless TSV/CSV file.
+      First column - sample names matching --name, second column - batch group name.
 
   fdr:
     type: float?
     inputBinding:
       position: 8
       prefix: "--fdr"
+    default: 0.1
     doc: |
-      In the exploratory visualization part of the analysis output only features,
-      with adjusted p-value (FDR) not bigger than this value. Also the significance,
-      cutoff used for optimizing the independent filtering. Default: 0.1.
+      In the exploratory visualization part of the analysis, output only features with adjusted p-value (FDR) not bigger than this value.
+      Also, the significance cutoff used for optimizing the independent filtering. Default: 0.1.
 
   lfcthreshold:
     type: float?
     inputBinding:
       position: 9
       prefix: "--lfcthreshold"
+    default: 0.59
     doc: |
       Log2 fold change threshold for determining significant differential expression.
       Genes with absolute log2 fold change greater than this threshold will be considered.
@@ -61,38 +101,26 @@ inputs:
     default: true
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
 
-  design_formula:
-    type: string
-    inputBinding:
-      position: 11
-      prefix: "--design"
-    doc: "Design formula. Should start with ~. See DeSeq2 manual for details"
-
-  reduced_formula:
-    type: string
-    inputBinding:
-      position: 12
-      prefix: "--reduced"
-    doc: "Reduced formula to compare against with the term(s) of interest removed. Should start with ~. See DeSeq2 manual for details"
-
   output_prefix:
     type: string?
     inputBinding:
-      position: 13
+      position: 11
       prefix: "--output"
+    default: "./deseq"
     doc: "Output prefix for generated files"
 
   threads:
     type: int?
     inputBinding:
-      position: 14
+      position: 12
       prefix: "--threads"
-    doc: "Threads number"
+    default: 1
+    doc: "Number of threads"
 
   test_mode:
     type: boolean
     inputBinding:
-      position: 15
+      position: 13
       prefix: "--test_mode"
     default: false
     doc: "Run for test, only first 100 rows"
@@ -114,10 +142,40 @@ outputs:
     outputBinding:
       glob: "*_gene_exp_table.tsv"
 
-  lrt_summary_md:
+  expression_data_rds:
     type: File
     outputBinding:
-      glob: "*_lrt_result.md"
+      glob: "*_expression_data.rds"
+
+  metadata_rds:
+    type: File
+    outputBinding:
+      glob: "*_metadata.rds"
+
+  read_counts_rds:
+    type: File
+    outputBinding:
+      glob: "*_read_counts.rds"
+
+  dsq_wald_rds:
+    type: File
+    outputBinding:
+      glob: "*_dsq_wald.rds"
+
+  dsq_lrt_rds:
+    type: File
+    outputBinding:
+      glob: "*_dsq_lrt.rds"
+
+  dsq_lrt_res_rds:
+    type: File
+    outputBinding:
+      glob: "*_dsq_lrt_res.rds"
+
+  batch_correction_method_rds:
+    type: File
+    outputBinding:
+      glob: "*_batch_correction_method.rds"
 
   stdout_log:
     type: stdout
@@ -125,23 +183,19 @@ outputs:
   stderr_log:
     type: stderr
 
-
-baseCommand: [run_deseq_lrt_step_1.R]
+baseCommand: [ run_deseq_lrt_step_1.R ]
 stdout: deseq_stdout.log
 stderr: deseq_stderr.log
-
 
 $namespaces:
   s: http://schema.org/
 
 $schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
+  - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
 s:name: "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
-label:  "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
+label: "DESeq2 (LRT) - differential gene expression analysis using likelihood ratio test"
 s:alternateName: "Differential gene expression analysis based on the LRT (likelihood ratio test)"
-
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/deseq-lrt-step-1.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -153,29 +207,29 @@ s:isPartOf:
   s:url: http://commonwl.org/
 
 s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
   - class: s:Organization
-    s:legalName: "Allergy and Immunology"
+    s:legalName: "Cincinnati Children's Hospital Medical Center"
+    s:location:
+      - class: s:PostalAddress
+        s:addressCountry: "USA"
+        s:addressLocality: "Cincinnati"
+        s:addressRegion: "OH"
+        s:postalCode: "45229"
+        s:streetAddress: "3333 Burnet Ave"
+        s:telephone: "+1(513)636-4200"
+    s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
     s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
+      - class: s:Organization
+        s:legalName: "Allergy and Immunology"
+        s:department:
+          - class: s:Organization
+            s:legalName: "Barski Research Lab"
+            s:member:
+              - class: s:Person
+                s:name: Michael Kotliar
+                s:email: mailto:misha.kotliar@gmail.com
+                s:sameAs:
+                  - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
   Runs DESeq2 using LRT (Likelihood Ratio Test)
@@ -201,83 +255,27 @@ doc: |
   tested in the likelihood ratio test). This indicates that the p value is for the likelihood ratio test of all the
   variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
 
-  Note: at least two biological replicates are required for every compared category.
+  **Note:** At least two biological replicates are required for every compared category.
 
-  All input CSV/TSV files should have the following header (case-sensitive)
-  <RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm>         - CSV
-  <RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm>  - TSV
+  **Input Files:**
 
-  Format of the input files is identified based on file's extension
-  *.csv - CSV
-  *.tsv - TSV
-  Otherwise used CSV by default
+  All input CSV/TSV files should have the following header (case-sensitive):
 
-  The output file's rows order corresponds to the rows order of the first CSV/TSV file.
-  Output file is always saved in TSV format
+  - CSV: `RefseqId,GeneId,Chrom,TxStart,TxEnd,Strand,TotalReads,Rpkm`
+  - TSV: `RefseqId\tGeneId\tChrom\tTxStart\tTxEnd\tStrand\tTotalReads\tRpkm`
 
-  Output file includes only intersected rows from all input files. Intersected by
-  RefseqId, GeneId, Chrom, TxStart, TxEnd, Strand
+  The format of the input files is identified based on the file's extension:
 
-  Additionally we calculate -LOG10(pval) and -LOG10(padj)
+  - `*.csv` - CSV
+  - `*.tsv` - TSV
+  - Otherwise, CSV format is assumed by default.
 
-  Example of CSV metadata file set with --meta
+  **Metadata File Example:**
 
+  ```csv
   ,time,condition
   DH1,day5,WT
   DH2,day5,KO
   DH3,day7,WT
   DH4,day7,KO
   DH5,day7,KO
-
-  where time, condition, day5, day7, WT, KO should be a single words (without spaces)
-  and DH1, DH2, DH3, DH4, DH5 correspond to the --names (spaces are allowed)
-
-  --contrast should be set based on your metadata file in a form of Factor Numerator Denominator
-  where Factor      - columns name from metadata file
-        Numerator   - category from metadata file to be used as numerator in fold change calculation
-        Denominator - category from metadata file to be used as denominator in fold change calculation
-  for example condition WT KO
-  if --contrast is set as a single string "condition WT KO" then is will be splitted by space
-
-
-s:about: |
-  usage: run_deseq_lrt.R
-        [-h] -i INPUT [INPUT ...] -n NAME [NAME ...] -m META -d DESIGN -r
-        REDUCED [-o OUTPUT] [-p THREADS]
-
-  Run DeSeq2 for multi-factor analysis using LRT (likelihood ratio or chi-
-  squared test)
-
-  optional arguments:
-    -h, --help            show this help message and exit
-    -i INPUT [INPUT ...], --input INPUT [INPUT ...]
-                          Grouped by gene / TSS/ isoform expression files,
-                          formatted as CSV/TSV
-    -n NAME [NAME ...], --name NAME [NAME ...]
-                          Unique names for input files, no special characters,
-                          spaces are allowed. Number and order corresponds to
-                          --input
-    -m META, --meta META  Metadata file to describe relation between samples,
-                          where first column corresponds to --name, formatted as
-                          CSV/TSV
-    -d DESIGN, --design DESIGN
-                          Design formula. Should start with ~. See DeSeq2 manual
-                          for details
-    -r REDUCED, --reduced REDUCED
-                          Reduced formula to compare against with the term(s) of
-                          interest removed. Should start with ~. See DeSeq2
-                          manual for details
-    -o OUTPUT, --output OUTPUT
-                          Output prefix for generated files
-    -p THREADS, --threads THREADS
-                          Threads number
-    --test_mode TEST_MODE
-                          Test mode. Default: FALSE
-    --lfcthreshold LFCTHRESHOLD
-                          Log2 fold change threshold for determining significant differential expression.
-                          Genes with absolute log2 fold change greater than this threshold will be considered.
-                          Default: 0.59 (about 1.5 fold change)
-    --use_lfc_thresh      Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE
-    --fdr FDR             In the exploratory visualization part of the analysis output only features,
-                          with adjusted p-value (FDR) not bigger than this value. Also the significance,
-                          cutoff used for optimizing the independent filtering. Default: 0.1.

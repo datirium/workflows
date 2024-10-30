@@ -1,14 +1,12 @@
 cwlVersion: v1.0
 class: Workflow
 
-
 requirements:
   - class: SubworkflowFeatureRequirement
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
   - class: ScatterFeatureRequirement
-
 
 'sd:upstream':
   rnaseq_experiment:
@@ -22,50 +20,12 @@ requirements:
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-smarter-dutp.cwl"
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
+  deseq_lrt_step1:
+    - "deseq-lrt-step-1.cwl"
+    - "https://github.com/datirium/workflows/workflows/deseq-lrt-step-1.cwl"
 
 
 inputs:
-
-  alias:
-    type: string
-    label: "Experiment short name/Alias"
-    sd:preview:
-      position: 1
-
-  expression_files:
-    type: File[]
-    format: "http://edamontology.org/format_3752"
-    label: "RNA-Seq experiments"
-    doc: "CSV/TSV input files grouped by isoforms"
-    'sd:upstreamSource': "rnaseq_experiment/rpkm_isoforms"
-    'sd:localLabel': true
-
-  expression_file_names:
-    type: string[]
-    label: "RNA-Seq experiments"
-    doc: "Aliases for RNA-Seq experiments. The same aliases should be used in metadata file"
-    'sd:upstreamSource': "rnaseq_experiment/alias"
-
-  group_by:
-    type:
-      - "null"
-      - type: enum
-        symbols: [ "isoforms", "genes", "common tss" ]
-    default: "genes"
-    label: "Group by"
-    doc: "Grouping method for features: isoforms, genes or common tss"
-
-  metadata_file:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "Metadata file to describe categories. See workflow description for details"
-    doc: "Metadata file to describe relation between samples, formatted as CSV/TSV"
-
-  design_formula:
-    type: string
-    label: "Design formula. See workflow description for details"
-    default: "~ condition + celltype + condition:celltype (Example of multi-factor design with interaction term)"
-    doc: "Design formula. Should start with ~. See DESeq2 manual for details"
 
   contrast_indices:
     type: string
@@ -73,78 +33,13 @@ inputs:
     default: "1,5,13 (Example of list of 3 contrasts)"
     doc: "Comma-separated list of integers representing contrast indices (e.g., 1,5,13)"
 
-  batch_file:
-    type: File?
-    default: null
-    label: "Headerless TSV/CSV file for multi-factor analysis. First column - experiments' names from condition 1 and 2, second column - batch name"
-    format: "http://edamontology.org/format_2330"
-    doc: |
-      Metadata file for multi-factor analysis. Headerless TSV/CSV file.
-      First column - names from --ua and --ta, second column - batch name.
-      Default: None
-
-  cluster_method:
-    type:
-      - "null"
-      - type: enum
-        symbols:
-          - "row"
-          - "column"
-          - "both"
-          - "none"
-    default: "none"
-    label: "Hopach clustering method to be run on normalized read counts"
-    doc: |
-      Hopach clustering method to be run on normalized read counts for the
-      exploratory visualization analysis. Default: do not run clustering
-    'sd:layout':
-      advanced: true
-
-  row_distance:
-    type:
-      - "null"
-      - type: enum
-        symbols:
-          - "cosangle"
-          - "abscosangle"
-          - "euclid"
-          - "abseuclid"
-          - "cor"
-          - "abscor"
-    default: "cosangle"
-    label: "Distance metric for HOPACH row clustering"
-    doc: |
-      Distance metric for HOPACH row clustering. Ignored if --cluster is not
-      provided. Default: cosangle
-    'sd:layout':
-      advanced: true
-
-  column_distance:
-    type:
-      - "null"
-      - type: enum
-        symbols:
-          - "cosangle"
-          - "abscosangle"
-          - "euclid"
-          - "abseuclid"
-          - "cor"
-          - "abscor"
-    default: "euclid"
-    label: "Distance metric for HOPACH column clustering"
-    doc: |
-      Distance metric for HOPACH column clustering. Ignored if --cluster is not
-      provided. Default: euclid
-    'sd:layout':
-      advanced: true
-
   fdr:
     type: float?
     default: 0.1
     label: "Maximum P-adjusted to show features in the exploratory visualization analysis"
     doc: |
-      In the exploratory visualization part of the analysis output only features,
-      with adjusted p-value (FDR) not bigger than this value. Also the significance,
+      In the exploratory visualization part of the analysis, output only features
+      with adjusted p-value (FDR) not bigger than this value. Also, the significance
       cutoff used for optimizing the independent filtering. Default: 0.1.
     'sd:layout':
       advanced: true
@@ -168,21 +63,22 @@ inputs:
     'sd:layout':
       advanced: true
 
-  batchcorrection:
+  regulation:
     type:
       - "null"
       - type: enum
         symbols:
-          - "none"
-          - "combatseq"
-          - "limmaremovebatcheffect"
-    default: "none"
-    label: "Batch Correction Method"
+          - "both"
+          - "up"
+          - "down"
+    default: "both"
+    label: "Direction of differential expression comparison"
     doc: |
-      Specifies the batch correction method to be applied.
-      - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
-      - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
-      - Default: none
+      Direction of differential expression comparison. β is the log2 fold change.
+      - 'both' for both up and downregulated genes (|β| > lfcThreshold);
+      - 'up' for upregulated genes (β > lfcThreshold);
+      - 'down' for downregulated genes (β < -lfcThreshold).
+      Default: both
     'sd:layout':
       advanced: true
 
@@ -201,16 +97,45 @@ inputs:
     'sd:layout':
       advanced: true
 
+    # Inputs sourced from upstream workflow (deseq-lrt-step-1.cwl)
+    expression_data_rds:
+      type: File
+      label: "Expression Data RDS File"
+      doc: "RDS file containing the expression data from step 1."
+      sd:upstreamSource: "deseq_lrt_step1/expression_data_rds"
+
+    contrasts_rds:
+      type: File
+      label: "Contrasts RDS File"
+      doc: "RDS file containing the contrasts list from step 1."
+      sd:upstreamSource: "deseq_lrt_step1/contrasts_rds"
+
+    dsq_wald_rds:
+      type: File
+      label: "DESeq2 Wald Test RDS Object"
+      doc: "RDS file containing the DESeq2 object from the Wald test in step 1."
+      sd:upstreamSource: "deseq_lrt_step1/dsq_wald_rds"
+
+    metadata_rds:
+      type: File
+      label: "Metadata RDS File"
+      doc: "RDS file containing the metadata from step 1."
+      sd:upstreamSource: "deseq_lrt_step1/metadata_rds"
+
+    batch_correction_method_rds:
+      type: File
+      label: "Batch Correction Method RDS File"
+      doc: "RDS file containing the batch correction method used in step 1."
+      sd:upstreamSource: "deseq_lrt_step1/batch_correction_method_rds"
 
 outputs:
 
-  # TODO: Provide upstream for diff_expr_file as RDS input from step 1 LRT instead of current solution
-  diff_expr_file:
+  diff_expr_files:
     type: File[]
     label: "Differentially expressed features grouped by isoforms, genes or common TSS"
     format: "http://edamontology.org/format_3475"
-    doc: "DESeq2 generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
-    outputSource: deseq/diff_expr_file
+    doc: "DESeq2 generated files of differentially expressed features for each contrast in TSV format"
+    outputSource: deseq/diff_expr_files
     'sd:visualPlugins':
       - syncfusiongrid:
           tab: 'Differential Expression Analysis'
@@ -218,116 +143,83 @@ outputs:
 
   read_counts_file_all:
     type: File[]
-    label: "Normalized read counts in GCT format no padj filtering. Compatible with GSEA"
+    label: "Normalized read counts in GCT format without padj filtering"
     format: "http://edamontology.org/format_3709"
-    doc: "DESeq generated file of all normalized read counts in GCT format. Compatible with GSEA"
-    outputSource: deseq/read_counts_file_all
+    doc: "DESeq generated files of all normalized read counts in GCT format. Compatible with GSEA"
+    outputSource: deseq/counts_all_gct
 
   read_counts_file_filtered:
     type: File[]
-    label: "Normalized read counts in GCT format filtered by padj. Compatible with Morpheus heatmap"
+    label: "Normalized read counts in GCT format filtered by padj"
     format: "http://edamontology.org/format_3709"
-    doc: "DESeq generated file of padjfiltered normalized read counts in GCT format. Compatible with Morpheus heatmap"
-    outputSource: deseq/read_counts_file_filtered
+    doc: "DESeq generated files of padj-filtered normalized read counts in GCT format. Compatible with Morpheus heatmap"
+    outputSource: deseq/counts_filtered_gct
 
-  mds_plot_html:
+  mds_plots_html:
     type: File[]
-    outputSource: deseq/mds_plot_html
-    label: "MDS plot of normalized counts"
+    outputSource: deseq/mds_plots_html
+    label: "MDS plots of normalized counts"
     doc: |
-      MDS plot of normalized counts
+      MDS plots of normalized counts for each contrast
       HTML format
     'sd:visualPlugins':
       - linkList:
           tab: 'Overview'
           target: "_blank"
 
-  plot_lfc_vs_mean:
+  ma_plots_png:
     type: File[]
-    label: "Plot of normalised mean versus log2 fold change"
+    label: "MA plots in PNG format"
     format: "http://edamontology.org/format_3603"
-    doc: |
-      Plot of the log2 fold changes attributable to a given variable
-      over the mean of normalized counts for all the samples
-    outputSource: deseq/plot_lfc_vs_mean
+    doc: "MA plots showing log2 fold changes over the mean of normalized counts for each contrast"
+    outputSource: deseq/ma_plots_png
     'sd:visualPlugins':
       - image:
           tab: 'Other Plots'
-          Caption: 'LFC vs mean'
+          Caption: 'MA Plots'
 
-  gene_expr_heatmap:
+  ma_plots_pdf:
     type: File[]
-    label: "Heatmap of the 30 most highly expressed features"
+    label: "MA plots in PDF format"
+    format: "http://edamontology.org/format_3508"
+    doc: "MA plots in PDF format for each contrast"
+    outputSource: deseq/ma_plots_pdf
+
+  heatmaps_png:
+    type: File[]
+    label: "Heatmaps of the most highly expressed features (PNG)"
     format: "http://edamontology.org/format_3603"
-    doc: |
-      Heatmap showing the expression data of the 30 most highly expressed features grouped by
-      isoforms, genes or common TSS, based on the variance stabilisation transformed data
-    outputSource: deseq/gene_expr_heatmap
+    doc: "Heatmaps showing expression data of the most highly expressed features for each contrast"
+    outputSource: deseq/heatmaps_png
     'sd:visualPlugins':
       - image:
           tab: 'Other Plots'
-          Caption: 'The 30 most highly expressed features'
+          Caption: 'Heatmaps'
 
-  plot_lfc_vs_mean_pdf:
+  heatmaps_pdf:
     type: File[]
-    label: "Plot of normalised mean versus log2 fold change"
+    label: "Heatmaps of the most highly expressed features (PDF)"
     format: "http://edamontology.org/format_3508"
-    doc: |
-      Plot of the log2 fold changes attributable to a given variable
-      over the mean of normalized counts for all the samples
-    outputSource: deseq/plot_lfc_vs_mean_pdf
+    doc: "Heatmaps in PDF format for each contrast"
+    outputSource: deseq/heatmaps_pdf
 
-  gene_expr_heatmap_pdf:
+  volcano_plots_html:
     type: File[]
-    label: "Heatmap of the 30 most highly expressed features"
-    format: "http://edamontology.org/format_3508"
+    outputSource: make_volcano_plot/html_files
+    label: "Volcano Plots"
     doc: |
-      Heatmap showing the expression data of the 30 most highly expressed features grouped by
-      isoforms, genes or common TSS, based on the variance stabilisation transformed data
-    outputSource: deseq/gene_expr_heatmap_pdf
-
-  volcano_plot_html_file:
-    type: File[]
-    outputSource: make_volcano_plot/html_file
-    label: "Volcano Plot"
-    doc: |
-      HTML index file for Volcano Plot
+      HTML files for Volcano Plots for each contrast
     'sd:visualPlugins':
       - linkList:
           tab: 'Overview'
           target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory[]
-    outputSource: make_volcano_plot/html_data
-    label: "Directory html data for Volcano Plot"
-    doc: |
-      Directory html data for Volcano Plot
-
-  ma_plot_html_file:
-    type: File[]
-    outputSource: make_ma_plot/html_file
-    label: "MA-plot"
-    doc: |
-      HTML index file for MA-plot
-    'sd:visualPlugins':
-      - linkList:
-          tab: 'Overview'
-          target: "_blank"
-
-  ma_plot_html_data:
-    type: Directory[]
-    outputSource: make_ma_plot/html_data
-    label: "Directory html data for Volcano Plot"
-    doc: |
-      Directory html data for MA-plot
 
   heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
-    label: "Heatmap of normalized counts"
+    label: "Combined Heatmap of normalized counts"
     doc: |
-      Morpheus heatmap in HTML format
+      Morpheus heatmap in HTML format combining all contrasts
     'sd:visualPlugins':
       - linkList:
           tab: 'Overview'
@@ -359,7 +251,6 @@ outputs:
     label: "Morpheus heatmap stderr log"
     doc: "Morpheus heatmap stderr log"
 
-
 steps:
 
   group_isoforms:
@@ -370,131 +261,89 @@ steps:
       - genes_file
       - common_tss_file
 
-  deseq:
-    run: ../tools/deseq-lrt-step-2.cwl
+  deseq_step1:
+    run: deseq-lrt-step-1.cwl
     in:
       expression_files:
         source: [ group_by, expression_files, group_isoforms/genes_file, group_isoforms/common_tss_file ]
         valueFrom: |
           ${
-              if (self[0] == "isoforms") {
-                return self[1];
-              } else if (self[0] == "genes") {
-                return self[2];
-              } else {
-                return self[3];
-              }
+            if (self[0] == "isoforms") {
+              return self[1];
+            } else if (self[0] == "genes") {
+              return [self[2]];
+            } else {
+              return [self[3]];
+            }
           }
       expression_file_names: expression_file_names
       metadata_file: metadata_file
-      contrast_indices: contrast_indices
+      design_formula: design_formula
+      reduced_formula: reduced_formula
+      batchcorrection: batchcorrection
+      batchfile: batch_file
       fdr: fdr
       lfcthreshold: lfcthreshold
       use_lfc_thresh: use_lfc_thresh
-      design_formula: design_formula
+      output_prefix: alias
       threads: threads
       test_mode: test_mode
     out:
-      - diff_expr_file
-      - plot_lfc_vs_mean
-      - gene_expr_heatmap
-      - plot_lfc_vs_mean_pdf
-      - gene_expr_heatmap_pdf
-      - read_counts_file_all
-      - read_counts_file_filtered
-      - mds_plot_html
+      - expression_data_rds
+      - contrasts_rds
+      - dsq_wald_rds
+      - metadata_rds
+      - batch_correction_method_rds
       - stdout_log
       - stderr_log
 
-  prepare_inputs:
-    run:
-      class: ExpressionTool
-      inputs:
-        diff_expr_files: File[]
-        contrast_indices: string
-      outputs:
-        diff_expr_files:
-          type: File[]
-        output_filenames:
-          type: string[]
-      expression: |
-        ${
-          var indices = inputs.contrast_indices.split(",").map(idx => idx.trim());
-          var output_filenames = [];
-          for (var i = 0; i < inputs.diff_expr_files.length; i++) {
-            var index = indices[i] || "";
-            var output_filename = "index.html";
-            if (index !== "") {
-              output_filename = "contrast_" + index + ".html";
-            } else {
-              var nameroot = inputs.diff_expr_files[i].basename.replace(/\.[^/.]+$/, "");
-              output_filename = nameroot + ".html";
-            }
-            output_filenames.push(output_filename);
-          }
-          return {
-            diff_expr_files: inputs.diff_expr_files,
-            output_filenames: output_filenames
-          };
-        }
+  deseq:
+    run: deseq-lrt-step-2.cwl
     in:
-      diff_expr_files: deseq/diff_expr_file
+      expression_data_rds: deseq_step1/expression_data_rds
+      contrasts_rds: deseq_step1/contrasts_rds
+      dsq_wald_rds: deseq_step1/dsq_wald_rds
+      metadata_rds: deseq_step1/metadata_rds
+      batch_correction_method_rds: deseq_step1/batch_correction_method_rds
       contrast_indices: contrast_indices
+      fdr: fdr
+      lfcthreshold: lfcthreshold
+      regulation: regulation
+      output_prefix: alias
+      threads: threads
+      test_mode: test_mode
     out:
       - diff_expr_files
-      - output_filenames
+      - ma_plots_png
+      - ma_plots_pdf
+      - heatmaps_png
+      - heatmaps_pdf
+      - mds_plots_html
+      - counts_all_gct
+      - counts_filtered_gct
+      - stdout_log
+      - stderr_log
 
   merge_gct_files:
     run: ../tools/merge_gct_files.cwl
     in:
-      gct_files: deseq/read_counts_file_filtered
+      gct_files: deseq/counts_filtered_gct
     out:
       - merged_gct_file
 
-  # TODO: Fix diff_expr_files colnames to properly handle it the bash scripts to avoid blank plot
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
     scatterMethod: dotproduct
     scatter:
       - diff_expr_file
-      - output_filename
     in:
-      diff_expr_file: prepare_inputs/diff_expr_files
-      output_filename: prepare_inputs/output_filenames
+      diff_expr_file: deseq/diff_expr_files
+      output_filename:
+        valueFrom: $(self.basename.replace(/\.tsv$/, '.html'))
       x_axis_column:
         default: "log2FoldChange"
       y_axis_column:
         default: "padj"
-      label_column:
-        source: group_by
-        valueFrom: |
-          ${
-              if (self == "isoforms") {
-                return "RefseqId";
-              } else if (self == "genes") {
-                return "GeneId";
-              } else {
-                return "GeneId";
-              }
-          }
-    out:
-      - html_data
-      - html_file
-
-  # TODO: Fix diff_expr_files colnames to properly handle it the bash scripts to avoid blank plot
-  make_ma_plot:
-    run: ../tools/ma-plot.cwl
-    scatter:
-      - diff_expr_file
-      - output_filename
-    scatterMethod: dotproduct
-    in:
-      diff_expr_file: prepare_inputs/diff_expr_files
-      output_filename: prepare_inputs/output_filenames
-      x_axis_column:
-        default: "baseMean"
-      y_axis_column:
-        default: "log2FoldChange"
       label_column:
         source: group_by
         valueFrom: |
@@ -508,8 +357,8 @@ steps:
             }
           }
     out:
-      - html_data
       - html_file
+      - html_data
 
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
@@ -526,8 +375,8 @@ $namespaces:
 $schemas:
   - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "DESeq2 (LRT, step 2) - differential gene expression analysis using likelihood ratio test"
-label: "DESeq2 (LRT, step 2) - differential gene expression analysis using likelihood ratio test"
+s:name: "DESeq2 (LRT, step 2) - Differential gene expression analysis using likelihood ratio test"
+label: "DESeq2 (LRT, step 2) - Differential gene expression analysis using likelihood ratio test"
 s:alternateName: "Differential gene expression analysis based on the LRT (likelihood ratio test)"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq-lrt-step-2.cwl
@@ -547,9 +396,9 @@ s:creator:
         s:addressCountry: "USA"
         s:addressLocality: "Cincinnati"
         s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
+        s:postalCode: "45229"
+        s:streetAddress: "3333 Burnet Ave"
+        s:telephone: "+1(513)636-4200"
     s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
     s:department:
       - class: s:Organization
@@ -564,11 +413,6 @@ s:creator:
             s:sameAs:
               - id: http://orcid.org/0000-0002-6486-3898
 
-
-# doc:
-#   $include: ../descriptions/deseq-lrt.md
-
-
 doc: |
   Runs DESeq2 using LRT (Likelihood Ratio Test)
   =============================================
@@ -577,23 +421,23 @@ doc: |
 
   The LRT is therefore useful for testing multiple terms at once, for example testing 3 or more levels of a factor at once, or all interactions between two variables. The LRT for count data is conceptually similar to an analysis of variance (ANOVA) calculation in linear regression, except that in the case of the Negative Binomial GLM, we use an analysis of deviance (ANODEV), where the deviance captures the difference in likelihood between a full and a reduced model.
 
-  When one performs a likelihood ratio test, the p values and the test statistic (the stat column) are values for the test that removes all of the variables which are present in the full design and not in the reduced design. This tests the null hypothesis that all the coefficients from these variables and levels of these factors are equal to zero.
+  When one performs a likelihood ratio test, the p-values and the test statistic (the 'stat' column) are values for the test that removes all of the variables which are present in the full design and not in the reduced design. This tests the null hypothesis that all the coefficients from these variables and levels of these factors are equal to zero.
 
-  The likelihood ratio test p values therefore represent a test of all the variables and all the levels of factors which are among these variables. However, the results table only has space for one column of log fold change, so a single variable and a single comparison is shown (among the potentially multiple log fold changes which were tested in the likelihood ratio test). This indicates that the p value is for the likelihood ratio test of all the variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
+  The likelihood ratio test p-values therefore represent a test of all the variables and all the levels of factors which are among these variables. However, the results table only has space for one column of log fold change, so a single variable and a single comparison is shown (among the potentially multiple log fold changes which were tested in the likelihood ratio test). This indicates that the p-value is for the likelihood ratio test of all the variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
 
   **Technical notes**
 
-  1. At least two biological replicates are required for every compared category
-  2. Metadata file describes relations between compared experiments, for example
+  1. At least two biological replicates are required for every compared category.
+  2. The metadata file describes relations between compared experiments. For example:
 
      ```
-      ,time,condition
-      DH1,day5,WT
-      DH2,day5,KO
-      DH3,day7,WT
-      DH4,day7,KO
-      DH5,day7,KO
+     ,time,condition
+     DH1,day5,WT
+     DH2,day5,KO
+     DH3,day7,WT
+     DH4,day7,KO
+     DH5,day7,KO
      ```
-     where `time, condition, day5, day7, WT, KO` should be a single words (without spaces) and `DH1, DH2, DH3, DH4, DH5` correspond to the experiment aliases set in **RNA-Seq experiments** input.
-  3. Design and reduced formulas should start with **~** and include categories or, optionally, their interactions from the metadata file header. See details in DESeq2 manual [here](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#interactions) and [here](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#likelihood-ratio-test)
-  4. Contrast should be set based on your metadata file header and available categories in a form of `Factor Numerator Denominator`, where `Factor` - column name from metadata file, `Numerator`  - category from metadata file to be used as numerator in fold change calculation, `Denominator` - category from metadata file to be used as denominator in fold change calculation. For example `condition WT KO`.
+     where `time`, `condition`, `day5`, `day7`, `WT`, `KO` should be single words (without spaces), and `DH1`, `DH2`, `DH3`, `DH4`, `DH5` correspond to the experiment aliases set in **RNA-Seq experiments** input.
+  3. Design and reduced formulas should start with `~` and include categories or, optionally, their interactions from the metadata file header. See details in the DESeq2 manual [here](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#interactions) and [here](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#likelihood-ratio-test).
+  4. Contrast indices should correspond to the contrasts generated in the first step, allowing for specific comparisons in the differential expression analysis.
