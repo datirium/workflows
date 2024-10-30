@@ -98,7 +98,7 @@ inputs:
     inputBinding:
       position: 10
       prefix: "--use_lfc_thresh"
-    default: true
+    default: false
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
 
   output_prefix:

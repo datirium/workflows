@@ -247,9 +247,9 @@ steps:
             if (self[0] == "isoforms") {
               return self[1];
             } else if (self[0] == "genes") {
-              return [self[2]];
+              return self[2];
             } else {
-              return [self[3]];
+              return self[3];
             }
           }
       expression_file_names: expression_file_names

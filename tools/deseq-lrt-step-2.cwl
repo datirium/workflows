@@ -97,13 +97,21 @@ inputs:
     inputBinding:
       position: 10
       prefix: "--output"
-    default: "./deseq"
+    default: "deseq-lrt-step-2"
     doc: "Output prefix"
+
+  use_lfc_thresh:
+    type: boolean
+    inputBinding:
+      position: 11
+      prefix: "--use_lfc_thresh"
+    default: false
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
 
   threads:
     type: int?
     inputBinding:
-      position: 11
+      position: 12
       prefix: "--threads"
     default: 1
     doc: "Number of threads"
@@ -111,7 +119,7 @@ inputs:
   test_mode:
     type: boolean
     inputBinding:
-      position: 12
+      position: 13
       prefix: "--test_mode"
     default: false
     doc: "Run for test, only first 100 rows"

@@ -8,7 +8,7 @@ requirements:
   - class: MultipleInputFeatureRequirement
   - class: ScatterFeatureRequirement
 
-'sd:upstream':
+"sd:upstream":
   rnaseq_experiment:
     - "trim-rnaseq-pe.cwl"
     - "trim-rnaseq-se.cwl"
@@ -22,10 +22,23 @@ requirements:
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
   deseq_lrt_step1:
     - "deseq-lrt-step-1.cwl"
-    - "https://github.com/datirium/workflows/workflows/deseq-lrt-step-1.cwl"
-
 
 inputs:
+
+  alias:
+    type: string
+    label: "Experiment short name/Alias"
+    sd:preview:
+      position: 1
+
+  group_by:
+    type:
+      - "null"
+      - type: enum
+        symbols: [ "isoforms", "genes", "common tss" ]
+    default: "genes"
+    label: "Group by"
+    doc: "Grouping method for features: isoforms, genes or common tss"
 
   contrast_indices:
     type: string
@@ -97,36 +110,36 @@ inputs:
     'sd:layout':
       advanced: true
 
-    # Inputs sourced from upstream workflow (deseq-lrt-step-1.cwl)
-    expression_data_rds:
-      type: File
-      label: "Expression Data RDS File"
-      doc: "RDS file containing the expression data from step 1."
-      sd:upstreamSource: "deseq_lrt_step1/expression_data_rds"
+  # Inputs sourced from upstream workflow (deseq-lrt-step-1.cwl)
+  expression_data_rds:
+    type: File
+    label: "Expression Data RDS File"
+    doc: "RDS file containing the expression data from step 1."
+    "sd:upstreamSource": "deseq_lrt_step1/expression_data_rds"
 
-    contrasts_rds:
-      type: File
-      label: "Contrasts RDS File"
-      doc: "RDS file containing the contrasts list from step 1."
-      sd:upstreamSource: "deseq_lrt_step1/contrasts_rds"
+  contrasts_rds:
+    type: File
+    label: "Contrasts RDS File"
+    doc: "RDS file containing the contrasts list from step 1."
+    "sd:upstreamSource": "deseq_lrt_step1/contrasts_rds"
 
-    dsq_wald_rds:
-      type: File
-      label: "DESeq2 Wald Test RDS Object"
-      doc: "RDS file containing the DESeq2 object from the Wald test in step 1."
-      sd:upstreamSource: "deseq_lrt_step1/dsq_wald_rds"
+  dsq_wald_rds:
+    type: File
+    label: "DESeq2 Wald Test RDS Object"
+    doc: "RDS file containing the DESeq2 object from the Wald test in step 1."
+    "sd:upstreamSource": "deseq_lrt_step1/dsq_wald_rds"
 
-    metadata_rds:
-      type: File
-      label: "Metadata RDS File"
-      doc: "RDS file containing the metadata from step 1."
-      sd:upstreamSource: "deseq_lrt_step1/metadata_rds"
+  metadata_rds:
+    type: File
+    label: "Metadata RDS File"
+    doc: "RDS file containing the metadata from step 1."
+    "sd:upstreamSource": "deseq_lrt_step1/metadata_rds"
 
-    batch_correction_method_rds:
-      type: File
-      label: "Batch Correction Method RDS File"
-      doc: "RDS file containing the batch correction method used in step 1."
-      sd:upstreamSource: "deseq_lrt_step1/batch_correction_method_rds"
+  batch_correction_method_rds:
+    type: File
+    label: "Batch Correction Method RDS File"
+    doc: "RDS file containing the batch correction method used in step 1."
+    "sd:upstreamSource": "deseq_lrt_step1/batch_correction_method_rds"
 
 outputs:
 
@@ -205,7 +218,7 @@ outputs:
 
   volcano_plots_html:
     type: File[]
-    outputSource: make_volcano_plot/html_files
+    outputSource: make_volcano_plot/html_file
     label: "Volcano Plots"
     doc: |
       HTML files for Volcano Plots for each contrast
@@ -252,50 +265,6 @@ outputs:
     doc: "Morpheus heatmap stderr log"
 
 steps:
-
-  group_isoforms:
-    run: ../tools/group-isoforms-batch.cwl
-    in:
-      isoforms_file: expression_files
-    out:
-      - genes_file
-      - common_tss_file
-
-  deseq_step1:
-    run: deseq-lrt-step-1.cwl
-    in:
-      expression_files:
-        source: [ group_by, expression_files, group_isoforms/genes_file, group_isoforms/common_tss_file ]
-        valueFrom: |
-          ${
-            if (self[0] == "isoforms") {
-              return self[1];
-            } else if (self[0] == "genes") {
-              return [self[2]];
-            } else {
-              return [self[3]];
-            }
-          }
-      expression_file_names: expression_file_names
-      metadata_file: metadata_file
-      design_formula: design_formula
-      reduced_formula: reduced_formula
-      batchcorrection: batchcorrection
-      batchfile: batch_file
-      fdr: fdr
-      lfcthreshold: lfcthreshold
-      use_lfc_thresh: use_lfc_thresh
-      output_prefix: alias
-      threads: threads
-      test_mode: test_mode
-    out:
-      - expression_data_rds
-      - contrasts_rds
-      - dsq_wald_rds
-      - metadata_rds
-      - batch_correction_method_rds
-      - stdout_log
-      - stderr_log
 
   deseq:
     run: deseq-lrt-step-2.cwl
