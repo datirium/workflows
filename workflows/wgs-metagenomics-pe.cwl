@@ -10,6 +10,10 @@ requirements:
     coresMin: $(inputs.threads?inputs.threads:1)
 
 
+'sd:upstream':
+  database: "kraken2-databases.cwl"
+
+
 inputs:
 
   alias:
@@ -170,7 +174,7 @@ outputs:
     doc: "raw per read taxonomic classifications from kraken2"
     outputSource: kraken2_classify/k2_output
 
-  k2_report:
+  k2_report_file:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "kraken2 report file"
