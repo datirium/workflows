@@ -167,6 +167,11 @@ outputs:
     outputBinding:
       glob: "*_dsq_lrt.rds"
 
+  lrt_summary_md:
+    type: File
+    outputBinding:
+      glob: "*_lrt_result.md"
+
   dsq_lrt_res_rds:
     type: File
     outputBinding:
