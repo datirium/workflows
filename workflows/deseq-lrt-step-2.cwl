@@ -22,6 +22,7 @@ requirements:
     - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
   deseq_lrt_step1:
     - "deseq-lrt-step-1.cwl"
+    - "https://github.com/Barski-lab/workflows-datirium/blob/master/workflows/deseq-lrt-step-1.cwl"
 
 
 inputs:
