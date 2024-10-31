@@ -198,9 +198,6 @@ outputs:
     label: "parsed k2 stderr"
     doc: "markdown parsed standard error captured directly from kraken2 classify command in k2-classify-pe.cwl"
     outputSource: kraken2_classify/k2_stderr
-    'sd:visualPlugins':
-    - markdownView:
-        tab: 'Overview'
 
   kraken2_classify_stdout:
     type: File
@@ -240,6 +237,13 @@ outputs:
     label: "metagenomic abundance profile"
     doc: "metagenomic abundance profile of kneaddata decontaminated reads"
     outputSource: classify_cleaned_reads_with_metaphlan/abundance_profile
+
+  metaphlan_cleaned_reads_profile_scidap:
+    type: File
+    format: "http://edamontology.org/format_3475"
+    label: "metagenomic abundance profile"
+    doc: "metagenomic abundance profile of kneaddata decontaminated reads headers cleaned for scidap output tab"
+    outputSource: classify_cleaned_reads_with_metaphlan/abundance_profile_scidap
     'sd:visualPlugins':
     - syncfusiongrid:
         tab: 'MetaPhlAn Profile'
@@ -487,6 +491,7 @@ steps:
     out:
       - classification_alignments_bowtie2
       - abundance_profile
+      - abundance_profile_scidap
       - abundance_table
       - abundance_table_species
       - stdout_log
@@ -504,6 +509,7 @@ steps:
     out:
       - classification_alignments_bowtie2
       - abundance_profile
+      - abundance_profile_scidap
       - abundance_table
       - abundance_table_species
       - stdout_log

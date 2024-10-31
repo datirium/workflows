@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
@@ -36,8 +36,12 @@ inputs:
         | grep -v "t__" \
         | sed "s/^.*|//g" \
           > merged_abundance_table_species.txt
-      echo "cleaning up tmp files"
+      echo "cleaning up tmp files and rename outputs"
+      mv profiled_metagenome.txt profiled_metagenome-$RANDOM.txt
+      # clean header for scidap output tab
+      tail -n+5 profiled_metagenome.txt > profiled_metagenome_scidap.txt
       rm combined.fq
+
       printf "END OF SCRIPT\n"
     inputBinding:
         position: 1
@@ -74,7 +78,12 @@ outputs:
   abundance_profile:
     type: File
     outputBinding:
-      glob: "profiled_metagenome.txt"
+      glob: "profiled_metagenome-*.txt"
+
+  abundance_profile_scidap:
+    type: File
+    outputBinding:
+      glob: "profiled_metagenome_scidap.txt"
 
   abundance_table:
     type: File
