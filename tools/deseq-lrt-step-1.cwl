@@ -284,3 +284,6 @@ doc: |
   DH3,day7,WT
   DH4,day7,KO
   DH5,day7,KO
+  
+  Added text to test the repository rights
+  ```
