@@ -14,7 +14,7 @@ hints:
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash
@@ -29,6 +29,8 @@ inputs:
       cp $R1 combined.fq
       cat $R2 >> combined.fq
       metaphlan combined.fq --bowtie2out metagenome.bowtie2.bz2 --nproc $THREADS --input_type fastq -o profiled_metagenome.txt
+      # clean header for scidap output tab
+      tail -n+5 profiled_metagenome.txt > profiled_metagenome_scidap.txt
       echo "need to make a merged table for heatmap - just a single sample so not super interesting"
       merge_metaphlan_tables.py profiled_metagenome.txt > merged_abundance_table.txt
       echo "generate species-only abundance table"
@@ -36,12 +38,8 @@ inputs:
         | grep -v "t__" \
         | sed "s/^.*|//g" \
           > merged_abundance_table_species.txt
-      echo "cleaning up tmp files and rename outputs"
-      mv profiled_metagenome.txt profiled_metagenome-$RANDOM.txt
-      # clean header for scidap output tab
-      tail -n+5 profiled_metagenome.txt > profiled_metagenome_scidap.txt
+      echo "cleaning up tmp files"
       rm combined.fq
-
       printf "END OF SCRIPT\n"
     inputBinding:
         position: 1
@@ -78,7 +76,7 @@ outputs:
   abundance_profile:
     type: File
     outputBinding:
-      glob: "profiled_metagenome-*.txt"
+      glob: "profiled_metagenome.txt"
 
   abundance_profile_scidap:
     type: File

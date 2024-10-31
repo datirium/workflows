@@ -238,7 +238,7 @@ outputs:
     doc: "metagenomic abundance profile of kneaddata decontaminated reads"
     outputSource: classify_cleaned_reads_with_metaphlan/abundance_profile
 
-  metaphlan_cleaned_reads_profile_scidap:
+  metaphlan_cleaned_reads_profile_scidap_tab:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "metagenomic abundance profile"
