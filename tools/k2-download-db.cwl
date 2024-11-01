@@ -53,7 +53,6 @@ inputs:
       wget $url
       mkdir ./k2db
       tar -xf *.tar.gz -C ./k2db
-      rm *.tar.gz
       printf "END OF SCRIPT\n\n"
     inputBinding:
         position: 4
@@ -72,6 +71,11 @@ outputs:
     type: Directory
     outputBinding:
       glob: "k2db"
+
+  compressed_k2db_tar:
+    type: File
+    outputBinding:
+      glob: "*.tar.gz"
 
   log_file_stdout:
     type: File

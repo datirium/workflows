@@ -51,8 +51,13 @@ outputs:
 
   k2db:
     type: Directory
-    label: "stderr logfile"
+    label: "decompressed and untarred kraken2 database directory used as input for kraken2 classification"
     outputSource: download_k2db/k2db
+
+  compressed_k2db_tar:
+    type: File
+    label: "compressed and tarred kraken2 database directory file for download and use outside of scidap"
+    outputSource: download_k2db/compressed_k2db_tar
 
   log_stdout:
     type: File
@@ -78,7 +83,11 @@ steps:
       user_selection:
         source: database_name
         valueFrom: $(self)
-    out: [k2db, log_file_stdout, log_file_stderr]
+    out:
+      - k2db
+      - compressed_k2db_tar
+      - log_file_stdout
+      - log_file_stderr
 
 
 $namespaces:
@@ -141,6 +150,7 @@ doc: |
 
   ### __Outputs__
    - k2db, an upstream database used by kraken2 classification tool
+   - compressed_k2db_tar, compressed and tarred kraken2 database directory file for download and use outside of scidap
 
   ### __Data Analysis Steps__
   1. download selected pre-built kraken2 database.
