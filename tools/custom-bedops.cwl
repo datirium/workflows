@@ -2,20 +2,9 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
-requirements:
-  - class: ResourceRequirement
-    ramMin: 7024
-    coresMin: 1
-  - class: InlineJavascriptRequirement
-    expressionLib:
-    - var get_target_name = function() {
-          return inputs.target_filename.split('/').slice(-1)[0];
-      }
-
-
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap:v0.0.3
+  dockerPull: biowardrobe2/bedops:v2.4.34
 
 
 inputs:
@@ -23,40 +12,31 @@ inputs:
   script:
     type: string?
     default: |
-      #!/bin/bash
-      cp $0 $1
-      if [ -f $0.bai ]; then
-        cp $0.bai $1.bai
-      fi
+      cat "$0" > `basename $0`
     inputBinding:
       position: 1
 
-  source_file:
-    type: File
+  input_file:
+    type:
+      - File
+      - File[]
     inputBinding:
-      position: 5
+      position: 2
 
-  target_filename:
-    type: string
+  param:
+    type:
+    - string?
+    - string[]
     inputBinding:
-      position: 6
-      valueFrom: $(get_target_name())
+      position: 3
 
 
 outputs:
 
-  target_file:
+  output_file:
     type: File
     outputBinding:
-      glob: $(get_target_name())
-    secondaryFiles: |
-      ${
-          if (inputs.source_file.secondaryFiles && inputs.source_file.secondaryFiles.length > 0){
-            return inputs.target_filename+".bai";
-          } else {
-            return "null";
-          }
-        }
+      glob: "*"
 
 
 baseCommand: [bash, '-c']
@@ -68,8 +48,8 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "rename"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/rename.cwl
+s:name: "custom-bedops"
+s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/custom-bedops.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
 s:license: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -99,14 +79,14 @@ s:creator:
       s:member:
       - class: s:Person
         s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
+        s:email: mailto:michael.kotliar@cchmc.org
         s:sameAs:
         - id: http://orcid.org/0000-0002-6486-3898
 
 doc: |
-  Tool renames `source_file` to `target_filename`.
-  Input `target_filename` should be set as string. If it's a full path, only basename will be used.
-  If BAI file is present, it will be renamed too
+  Tool to run custom script set as `script`
+  input with arguments from `param`. Based
+  on bedops Dockerfile.
 
 s:about: |
-  cp source target
+  Custom bash script runner

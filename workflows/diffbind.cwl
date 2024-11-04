@@ -1038,15 +1038,29 @@ steps:
         default: ["1,1","2,2n"]
     out: [sorted_file]
 
+  overlap_with_chr_length:
+    run: ../tools/custom-bedops.cwl
+    in:
+      input_file:
+      - chrom_length_file
+      - sort_bed/sorted_file
+      script:
+        default: |
+          cat "$0" | awk '{print $1"\t0\t"$2}' | sort-bed - > temp_chrom_length.bed
+          cat "$1" | awk '$2 >= 0' > temp_sorted.bed
+          bedops --element-of 100% temp_sorted.bed temp_chrom_length.bed > `basename $1`
+          rm -f temp_chrom_length.bed temp_sorted.bed
+    out: [output_file]
+
   bed_to_bigbed:
     run: ../tools/ucsc-bedtobigbed.cwl
     in:
-      input_bed: sort_bed/sorted_file
+      input_bed: overlap_with_chr_length/output_file
       bed_type:
         default: "bed4+5"
       chrom_length_file: chrom_length_file
       output_filename:
-        source: sort_bed/sorted_file
+        source: overlap_with_chr_length/output_file
         valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
     out: [bigbed_file]
 
