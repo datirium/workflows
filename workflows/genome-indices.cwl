@@ -131,13 +131,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  threads:
-    type: int?
-    label: "Number of threads to run tools"
-    doc: "Number of threads for those steps that support multithreading"
-    'sd:layout':
-      advanced: true
-
 
 outputs:
 
@@ -402,7 +395,6 @@ steps:
       genome_dir:
         source: genome
         valueFrom: $(self + "_star_genome")
-      threads: threads
     out:
     - indices_folder
     - chrom_length
@@ -419,7 +411,6 @@ steps:
       genome_dir:
         source: genome
         valueFrom: $(self + "_star_mitochondrial")
-      threads: threads
     out:
     - indices_folder
     - chrom_length

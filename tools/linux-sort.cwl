@@ -2,6 +2,9 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
+  - class: ResourceRequirement
+    ramMin: 7620
+    coresMin: 1
   - class: InlineJavascriptRequirement
     expressionLib:
     - var get_output_filename = function() {
