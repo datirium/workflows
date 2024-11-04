@@ -186,13 +186,13 @@ outputs:
     label: "Bowtie genome indices"
     doc: "Bowtie generated genome indices folder"
 
-  bowtie_indices_stdout_log:
+  bowtie_indices_stdout_log_file:
     type: File
     outputSource: bowtie_generate_indices/stdout_log
     label: "Bowtie stdout log for genome indices"
     doc: "Bowtie generated stdout log for genome indices"
     
-  bowtie_indices_stderr_log:
+  bowtie_indices_stderr_log_file:
     type: File
     outputSource: bowtie_generate_indices/stderr_log
     label: "Bowtie stderr log genome indices"
@@ -353,7 +353,6 @@ steps:
       input_file: cytoband
     out:
     - output_file
-
 
   prepare_annotation:
     run:
