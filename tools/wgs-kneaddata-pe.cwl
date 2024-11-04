@@ -6,7 +6,7 @@ requirements:
   - class: ShellCommandRequirement
   - class: InlineJavascriptRequirement
   - class: ResourceRequirement
-    ramMin: 31024                                     # equal to ~32GB
+    ramMin: 30510                                     # equal to ~32GB
     coresMin: 8
 
 
