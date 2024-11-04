@@ -12,12 +12,12 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-metaphlan:dev
+  dockerPull: robertplayer/scidap-metaphlan:v1.0.0
 
 
 inputs:
 
-  script_command:
+  script:
     type: string?
     default: |
       #!/bin/bash

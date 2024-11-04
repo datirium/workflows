@@ -298,14 +298,14 @@ outputs:
         tab: 'HUMAnN Functional Catagories'
         Title: 'Functional Catagories from HUMAnN'
 
-  humannn_cleaned_reads_stdout:
+  humannn_cleaned_reads_stdout_log:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "stdout logfile"
     doc: "captures stdout from wgs-humann-pe.cwl"
     outputSource: functional_assignment_with_humann/stdout_log
 
-  humann_cleaned_reads_stderr:
+  humann_cleaned_reads_stderr_log:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "stderr logfile"
