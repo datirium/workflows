@@ -1,12 +1,18 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+
 requirements:
-- class: InlineJavascriptRequirement
-  expressionLib:
-  - var default_output_filename = function() {
-          return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ".fastxstat"
-        };
+  - class: ResourceRequirement
+    ramMin: 7024
+    coresMin: 1
+  - class: InlineJavascriptRequirement
+    expressionLib:
+    - var default_output_filename = function() {
+            return inputs.input_file.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.') + ".fastxstat"
+          };
+
+
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/fastx_toolkit:v0.0.14

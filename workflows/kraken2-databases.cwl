@@ -4,6 +4,7 @@ class: Workflow
 
 requirements:
   - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
 
 
 inputs:
@@ -21,20 +22,24 @@ inputs:
       name: "name of Kraken2 database to download"
       symbols:
       - Viral
+      - Standard
+      - Standard-16
       - MinusB
       - PlusPFP-16
       - EuPathDB46
-      - 16S_gg_13_5
-      - 16S_silva_138
-    label: "Reference genome database for download and classification:"
+      - 16S_Greengenes
+      - 16S_Silva_138
+    label: "Select Kraken2 database for download:"
     'sd:localLabel': true
     doc: "Database details:\n
-       - Viral (0.5 GB), all refseq viral genomes\n
-       - MinusB (8.7 GB), standard minus bacteria (archaea, viral, plasmid, human1, UniVec_Core)\n
-       - PlusPFP-16 (15.0 GB), standard (archaea, bacteria, viral, plasmid, human1, UniVec_Core) + (protozoa, fungi & plant) capped at 16 GB (shrunk via random kmer downselect)\n
-       - EuPathDB46 (34.1 GB), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)\n
-       - 16S_gg_13_5 (73 MB), Greengenes 16S rRNA database (release 13.5, 20200326)\n
-       - 16S_silva_138 (112 MB), SILVA 16S rRNA database (release 138, 20200326)"
+       - Viral (500 MB), all refseq viral genomes\n
+       - Standard (80 GB), Refeq archaea, bacteria, viral, plasmid, human, UniVec_Core
+       - Standard-16 (15 GB), Refeq archaea, bacteria, viral, plasmid, human, UniVec_Core, capped at 16 GB (shrunk via random kmer downselect)
+       - MinusB (9 GB), Standard minus bacteria\n
+       - PlusPFP-16 (15 GB), Standard + protozoa, fungi & plant, capped at 16 GB (shrunk via random kmer downselect)\n
+       - EuPathDB46 (11 GB), eukaryotic pathogen genomes with contaminants removed (https://veupathdb.org/veupathdb/app)\n
+       - 16S_Greengenes (73 MB), Greengenes 16S rRNA database (release 13.5, 20200326)\n
+       - 16S_Silva_138 (112 MB), SILVA 16S rRNA database (release 138, 20200326)"
     sd:preview:
       position: 2
 
@@ -43,10 +48,15 @@ outputs:
 
   k2db:
     type: Directory
-    label: "stderr logfile"
+    label: "decompressed and untarred kraken2 database directory used as input for kraken2 classification"
     outputSource: download_k2db/k2db
 
-  log_file_stdout:
+  compressed_k2db_tar:
+    type: File
+    label: "compressed and tarred kraken2 database directory file for download and use outside of scidap"
+    outputSource: download_k2db/compressed_k2db_tar
+
+  log_stdout:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stdout logfile"
@@ -55,7 +65,7 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  log_file_stderr:
+  log_stderr:
     type: File
     format: "http://edamontology.org/format_2330"
     label: "stderr logfile"
@@ -70,7 +80,11 @@ steps:
       user_selection:
         source: database_name
         valueFrom: $(self)
-    out: [k2db, log_file_stdout, log_file_stderr]
+    out:
+      - k2db
+      - compressed_k2db_tar
+      - log_file_stdout
+      - log_file_stderr
 
 
 $namespaces:
@@ -133,6 +147,7 @@ doc: |
 
   ### __Outputs__
    - k2db, an upstream database used by kraken2 classification tool
+   - compressed_k2db_tar, compressed and tarred kraken2 database directory file for download and use outside of scidap
 
   ### __Data Analysis Steps__
   1. download selected pre-built kraken2 database.

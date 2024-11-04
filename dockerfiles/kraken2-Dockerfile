@@ -38,8 +38,11 @@ RUN apt-get update && \
     git clone https://github.com/jenniferlu717/KrakenTools.git && \
     mv KrakenTools/ /usr/local/src/ && \
     pip install biopython && \
+    cd /usr/local/src/ && \
+    git clone https://github.com/marbl/Krona.git && \
+    cd Krona/KronaTools/ && \
+    ./install.pl && \
 ### Installing and permitting scripts
-
 ### Cleaning
     apt-get clean && \
     apt-get purge && \

@@ -2,6 +2,12 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 
+requirements:
+  - class: ResourceRequirement
+    ramMin: 7024
+    coresMin: 1
+
+
 hints:
 - class: DockerRequirement
   dockerPull: scidap/scidap:v0.0.4

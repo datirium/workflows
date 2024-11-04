@@ -168,10 +168,10 @@ outputs:
           return (!!splitted_line.length)?splitted_line:null;
         }
 
-  stdout_log:
+  log_stdout:
     type: stdout
 
-  stderr_log:
+  log_stderr:
     type: stderr
 
 
