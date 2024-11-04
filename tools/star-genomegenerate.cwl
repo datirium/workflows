@@ -3,18 +3,21 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return [
-        {
-          "class": "Directory",
-          "basename": inputs.genome_dir,
-          "listing": [],
-          "writable": true}
-      ]
-    }
+  - class: ResourceRequirement
+    ramMin: 30510
+    coresMin: 8
+  - class: InlineJavascriptRequirement
+  - class: InitialWorkDirRequirement
+    listing: |
+      ${
+        return [
+          {
+            "class": "Directory",
+            "basename": inputs.genome_dir,
+            "listing": [],
+            "writable": true}
+        ]
+      }
 
 
 hints:
@@ -160,15 +163,6 @@ inputs:
       string: tag name to be used as exons'' gene-parents (default "gene_id" works
       for GTF files)
 
-  threads:
-    type: int?
-    inputBinding:
-      position: 1
-      prefix: --runThreadN
-    doc: |
-      1
-      int: number of threads to run STAR
-
   sjdb_gtf_file:
     type: File?
     inputBinding:
@@ -225,7 +219,7 @@ outputs:
     type: stderr
 
 
-baseCommand: ["STAR", "--runMode", "genomeGenerate"]
+baseCommand: ["STAR", "--runMode", "genomeGenerate", "--runThreadN 8"]
 stdout: star_build_stdout.log
 stderr: star_build_stderr.log
 
