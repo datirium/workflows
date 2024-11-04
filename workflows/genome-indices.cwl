@@ -354,6 +354,7 @@ steps:
     out:
     - output_file
 
+
   prepare_annotation:
     run:
       cwlVersion: v1.0
