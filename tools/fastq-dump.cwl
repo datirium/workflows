@@ -2,11 +2,14 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-- class: InlineJavascriptRequirement
-- class: EnvVarRequirement
-  envDef:
-    http_proxy: $(inputs.http_proxy?inputs.http_proxy:"")
-    https_proxy: $(inputs.https_proxy?inputs.https_proxy:"")
+  - class: InlineJavascriptRequirement
+  - class: EnvVarRequirement
+    envDef:
+      http_proxy: $(inputs.http_proxy?inputs.http_proxy:"")
+      https_proxy: $(inputs.https_proxy?inputs.https_proxy:"")
+  - class: ResourceRequirement
+    ramMin: 7024                    # equal to ~8GB
+    coresMin: 1
 
 hints:
 - class: DockerRequirement
@@ -168,10 +171,10 @@ outputs:
           return (!!splitted_line.length)?splitted_line:null;
         }
 
-  stdout_log:
+  log_stdout:
     type: stdout
 
-  stderr_log:
+  log_stderr:
     type: stderr
 
 

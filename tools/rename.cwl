@@ -3,11 +3,14 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
-  expressionLib:
-  - var get_target_name = function() {
-        return inputs.target_filename.split('/').slice(-1)[0];
-    }
+  - class: ResourceRequirement
+    ramMin: 7024
+    coresMin: 1
+  - class: InlineJavascriptRequirement
+    expressionLib:
+    - var get_target_name = function() {
+          return inputs.target_filename.split('/').slice(-1)[0];
+      }
 
 
 hints:

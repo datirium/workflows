@@ -3,8 +3,10 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-
+  - class: ShellCommandRequirement
+  - class: ResourceRequirement
+    ramMin: 7024                    # equal to ~8GB
+    coresMin: 1
 
 hints:
 - class: DockerRequirement
