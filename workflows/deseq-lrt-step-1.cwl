@@ -85,17 +85,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  batch_file:
-    type: File?
-    default: null
-    label: "Batch correction metadata file"
-    format: "http://edamontology.org/format_2330"
-    doc: |
-      Metadata file for batch correction. Headerless TSV/CSV file.
-      First column - sample names matching expression_file_names, second column - batch group name.
-    'sd:layout':
-      advanced: true
-
   fdr:
     type: float?
     default: 0.1
@@ -270,7 +259,6 @@ steps:
       design_formula: design_formula
       reduced_formula: reduced_formula
       batchcorrection: batchcorrection
-      batchfile: batch_file
       fdr: fdr
       lfcthreshold: lfcthreshold
       use_lfc_thresh: use_lfc_thresh

@@ -9,17 +9,6 @@ requirements:
   - class: ScatterFeatureRequirement
 
 "sd:upstream":
-  rnaseq_experiment:
-    - "trim-rnaseq-pe.cwl"
-    - "trim-rnaseq-se.cwl"
-    - "trim-rnaseq-pe-dutp.cwl"
-    - "trim-rnaseq-pe-smarter-dutp.cwl"
-    - "trim-rnaseq-se-dutp.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-dutp.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-pe-smarter-dutp.cwl"
-    - "https://github.com/datirium/workflows/workflows/trim-rnaseq-se-dutp.cwl"
   deseq_lrt_step1:
     - "deseq-lrt-step-1.cwl"
     - "https://github.com/Barski-lab/workflows-datirium/blob/master/workflows/deseq-lrt-step-1.cwl"
@@ -310,7 +299,7 @@ steps:
     in:
       diff_expr_file: deseq/diff_expr_files
       output_filename:
-        valueFrom: $(self.basename.replace(/\.tsv$/, '.html'))
+        valueFrom: $(inputs.diff_expr_file.basename.replace(/\.tsv$/, '.html'))
       x_axis_column:
         default: "log2FoldChange"
       y_axis_column:

@@ -29,7 +29,9 @@ inputs:
     inputBinding:
       position: 3
       prefix: "--meta"
-    doc: "Metadata file to describe relation between samples, where first column corresponds to --name, formatted as CSV/TSV"
+    doc: |
+      Metadata file to describe relation between samples, where the first column corresponds to --name, formatted as CSV/TSV.
+      **Note:** If batch correction is required, the metadata file must include a 'batch' column named exactly as 'batch', and it must be numeric.
 
   design_formula:
     type: string
@@ -59,23 +61,15 @@ inputs:
     default: "none"
     doc: |
       Specifies the batch correction method to be applied.
-      - 'combatseq' applies ComBat_seq at the beginning of the analysis.
-      - 'limmaremovebatcheffect' notes the batch correction to be applied in step 2.
-      - Default: none
-
-  batchfile:
-    type: File?
-    inputBinding:
-      position: 7
-      prefix: "-bf"
-    doc: |
-      Metadata file for batch correction. Headerless TSV/CSV file.
-      First column - sample names matching --name, second column - batch group name.
+      - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the counts before differential expression analysis.
+      - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis.
+      - Default: none.
+      **Note:** The metadata file must include a 'batch' column if batch correction is specified.
 
   fdr:
     type: float?
     inputBinding:
-      position: 8
+      position: 7
       prefix: "--fdr"
     default: 0.1
     doc: |
@@ -85,7 +79,7 @@ inputs:
   lfcthreshold:
     type: float?
     inputBinding:
-      position: 9
+      position: 8
       prefix: "--lfcthreshold"
     default: 0.59
     doc: |
@@ -96,15 +90,15 @@ inputs:
   use_lfc_thresh:
     type: boolean
     inputBinding:
-      position: 10
+      position: 9
       prefix: "--use_lfc_thresh"
     default: false
-    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
+    doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: FALSE"
 
   output_prefix:
     type: string?
     inputBinding:
-      position: 11
+      position: 10
       prefix: "--output"
     default: "./deseq"
     doc: "Output prefix for generated files"
@@ -112,7 +106,7 @@ inputs:
   threads:
     type: int?
     inputBinding:
-      position: 12
+      position: 11
       prefix: "--threads"
     default: 1
     doc: "Number of threads"
@@ -120,10 +114,10 @@ inputs:
   test_mode:
     type: boolean
     inputBinding:
-      position: 13
+      position: 12
       prefix: "--test_mode"
     default: false
-    doc: "Run for test, only first 100 rows"
+    doc: "Run for test, only first 500 rows"
 
 outputs:
 
@@ -239,26 +233,13 @@ s:creator:
 doc: |
   Runs DESeq2 using LRT (Likelihood Ratio Test)
 
-  The LRT examines two models for the counts, a full model with a certain number of terms and a reduced model,
-  in which some of the terms of the full model are removed. The test determines if the increased likelihood of
-  the data using the extra terms in the full model is more than expected if those extra terms are truly zero.
+  The LRT examines two models for the counts: a full model with a certain number of terms and a reduced model, in which some of the terms of the full model are removed. The test determines if the increased likelihood of the data using the extra terms in the full model is more than expected if those extra terms are truly zero.
 
-  The LRT is therefore useful for testing multiple terms at once, for example testing 3 or more levels of a factor
-  at once, or all interactions between two variables. The LRT for count data is conceptually similar to an analysis
-  of variance (ANOVA) calculation in linear regression, except that in the case of the Negative Binomial GLM, we use
-  an analysis of deviance (ANODEV), where the deviance captures the difference in likelihood between a full and a
-  reduced model.
+  The LRT is useful for testing multiple terms at once, for example, testing 3 or more levels of a factor at once or all interactions between two variables. The LRT for count data is conceptually similar to an analysis of variance (ANOVA) calculation in linear regression, except that in the case of the Negative Binomial GLM, we use an analysis of deviance (ANODEV), where the deviance captures the difference in likelihood between a full and a reduced model.
 
-  When one performs a likelihood ratio test, the p values and the test statistic (the stat column) are values for
-  the test that removes all of the variables which are present in the full design and not in the reduced design.
-  This tests the null hypothesis that all the coefficients from these variables and levels of these factors are
-  equal to zero.
+  When performing a likelihood ratio test, the p-values and the test statistic (the 'stat' column) are values for the test that removes all of the variables which are present in the full design and not in the reduced design. This tests the null hypothesis that all the coefficients from these variables and levels of these factors are equal to zero.
 
-  The likelihood ratio test p values therefore represent a test of all the variables and all the levels of factors
-  which are among these variables. However, the results table only has space for one column of log fold change, so
-  a single variable and a single comparison is shown (among the potentially multiple log fold changes which were
-  tested in the likelihood ratio test). This indicates that the p value is for the likelihood ratio test of all the
-  variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
+  The likelihood ratio test p-values therefore represent a test of all the variables and all the levels of factors which are among these variables. However, the results table only has space for one column of log fold change, so a single variable and a single comparison is shown (among the potentially multiple log fold changes which were tested in the likelihood ratio test). This indicates that the p-value is for the likelihood ratio test of all the variables and all the levels, while the log fold change is a single comparison from among those variables and levels.
 
   **Note:** At least two biological replicates are required for every compared category.
 
@@ -275,15 +256,20 @@ doc: |
   - `*.tsv` - TSV
   - Otherwise, CSV format is assumed by default.
 
-  **Metadata File Example:**
+  **Metadata File:**
+
+  The metadata file describes relations between samples and must include the following:
+
+  - The first column corresponds to the sample names provided in `--name`.
+  - Additional columns represent experimental factors (e.g., time, condition).
+  - **If batch correction is required**, the metadata file must include a **'batch'** column named exactly as such, and it must be numeric.
+
+  **Example Metadata File:**
 
   ```csv
-  ,time,condition
-  DH1,day5,WT
-  DH2,day5,KO
-  DH3,day7,WT
-  DH4,day7,KO
-  DH5,day7,KO
-  
-  Added text to test the repository rights
-  ```
+  ,time,condition,batch
+  DH1,day5,WT,1
+  DH2,day5,KO,1
+  DH3,day7,WT,2
+  DH4,day7,KO,2
+  DH5,day7,KO,2
