@@ -8,18 +8,21 @@ hints:
 
 
 requirements:
-- class: InlineJavascriptRequirement
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return  [
-                {
-                  "entry": inputs.reference_file,
-                  "entryname": inputs.reference_file.basename,
-                  "writable": true
-                }
-              ]
-    }
+  - class: ResourceRequirement
+    ramMin: 7620
+    coresMin: 1
+  - class: InlineJavascriptRequirement
+  - class: InitialWorkDirRequirement
+    listing: |
+      ${
+        return  [
+                  {
+                    "entry": inputs.reference_file,
+                    "entryname": inputs.reference_file.basename,
+                    "writable": true
+                  }
+                ]
+      }
 
 inputs:
 
