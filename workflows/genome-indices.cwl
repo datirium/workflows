@@ -168,13 +168,13 @@ outputs:
     label: "STAR genome indices"
     doc: "STAR generated genome indices folder"
 
-  star_indices_stdout_log:
+  star_indices_stdout_log_file:
     type: File
     outputSource: star_generate_indices/stdout_log
     label: "STAR stdout log for genome indices"
     doc: "STAR generated stdout log for genome indices"
     
-  star_indices_stderr_log:
+  star_indices_stderr_log_file:
     type: File
     outputSource: star_generate_indices/stderr_log
     label: "STAR stderr log for genome indices"
