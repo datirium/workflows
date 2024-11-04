@@ -186,13 +186,13 @@ outputs:
     label: "Bowtie genome indices"
     doc: "Bowtie generated genome indices folder"
 
-  bowtie_indices_stdout_log_file:
+  bowtie_indices_stdout_log:
     type: File
     outputSource: bowtie_generate_indices/stdout_log
     label: "Bowtie stdout log for genome indices"
     doc: "Bowtie generated stdout log for genome indices"
     
-  bowtie_indices_stderr_log_file:
+  bowtie_indices_stderr_log:
     type: File
     outputSource: bowtie_generate_indices/stderr_log
     label: "Bowtie stderr log genome indices"
@@ -1119,13 +1119,12 @@ steps:
         - class: ResourceRequirement
           ramMin: 7620
           coresMin: 1
-      requirements:
-      - class: InlineJavascriptRequirement
-        expressionLib:
-        - var default_output_filename = function() {
-                var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
-                return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
-              };
+        - class: InlineJavascriptRequirement
+          expressionLib:
+          - var default_output_filename = function() {
+                  var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
+                  return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
+                };
       hints:
       - class: DockerRequirement
         dockerPull: biowardrobe2/scidap:v0.0.3
