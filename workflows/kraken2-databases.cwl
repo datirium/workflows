@@ -5,9 +5,6 @@ class: Workflow
 requirements:
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
-  - class: ResourceRequirement
-    ramMin: 4024                                     # equal to ~4GB
-    coresMin: $(inputs.threads?inputs.threads:1)
 
 
 inputs:

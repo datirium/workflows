@@ -3,8 +3,11 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-- class: InlineJavascriptRequirement
+  - class: ShellCommandRequirement
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    ramMin: 7024                                     # equal to ~8GB
+    coresMin: 1
 
 
 hints:

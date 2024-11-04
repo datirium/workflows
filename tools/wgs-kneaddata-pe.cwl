@@ -3,8 +3,11 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-- class: InlineJavascriptRequirement
+  - class: ShellCommandRequirement
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    ramMin: 31024                                     # equal to ~32GB
+    coresMin: 8
 
 
 hints:
@@ -21,14 +24,13 @@ inputs:
       printf "$(date)\n\nStdout log file for wgs-kneaddata-pe.cwl tool:\n\n"
       R1=$0
       R2=$1
-      THREADS=$2
       printf "EXECUTION:\n\n"
       # commands start
       #   rename input files for kneaddata
       cp $R1 input_for_kd.1.fastq
       cp $R2 input_for_kd.2.fastq
       mkdir kd_output
-      kneaddata -t $THREADS --input1 input_for_kd.1.fastq --input2 input_for_kd.2.fastq -db /dockerdata/databases/human_genome_bowtie2/ --bypass-trim -o kd_output
+      kneaddata -t 8 --input1 input_for_kd.1.fastq --input2 input_for_kd.2.fastq -db /dockerdata/databases/human_genome_bowtie2/ --bypass-trim -o kd_output
       echo "cleaning up tmp files"
       rm input_for_kd.1.fastq
       rm input_for_kd.2.fastq
@@ -49,13 +51,6 @@ inputs:
     inputBinding:
       position: 7
     doc: "FASTQ file 2 of paired end read data."
-
-  threads:
-    type: int
-    label: "threads"
-    inputBinding:
-      position: 8
-    doc: "Number of threads for steps that support multithreading."
 
 
 outputs:

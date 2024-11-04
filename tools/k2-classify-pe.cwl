@@ -3,8 +3,11 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-- class: InlineJavascriptRequirement
+  - class: ShellCommandRequirement
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    ramMin: 257024                                     # equal to ~264GB
+    coresMin: 20
 
 
 hints:
@@ -19,16 +22,15 @@ inputs:
     default: |
       #!/bin/bash
       printf "$(date)\nStdout log file for k2-classify-pe.cwl tool:\n"
-      DATABASE=$0; R1=$1; R2=$2; THREADS=$3
+      DATABASE=$0; R1=$1; R2=$2
       printf "INPUTS:\n"
       printf "\$0 - $DATABASE\n"
       printf "\$1 - $R1\n"
       printf "\$2 - $R2\n"
-      printf "\$3 - $THREADS\n\n"
       printf "EXECUTION:\n"
       #   commands start
       printf "\trun classification for PE reads\n"
-      kraken2 --db $DATABASE --threads $THREADS --paired --classified-out k2_classified_reads#.fastq --unclassified-out k2_unclassified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
+      kraken2 --db $DATABASE --threads 20 --paired --classified-out k2_classified_reads#.fastq --unclassified-out k2_unclassified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
       printf "\tformatting outputs\n"
       # make stderr output markdown compatible for overview tab view
       head -1 k2.stderr > parsed.stderr
@@ -63,13 +65,6 @@ inputs:
     inputBinding:
       position: 7
     doc: "FASTQ file 2 of paired end read data."
-
-  threads:
-    type: int
-    label: "threads"
-    inputBinding:
-      position: 8
-    doc: "Number of threads for steps that support multithreading."
 
 
 outputs:

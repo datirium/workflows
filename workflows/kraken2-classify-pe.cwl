@@ -5,9 +5,6 @@ class: Workflow
 requirements:
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
-  - class: ResourceRequirement
-    ramMin: 257024                                     # equal to ~264GB
-    coresMin: $(inputs.threads?inputs.threads:1)
 
 
 'sd:upstream':
@@ -61,14 +58,6 @@ inputs:
     sd:preview:
       position: 5
 
-  threads:
-    type: int?
-    default: 4
-    label: "threads"
-    'sd:localLabel': true
-    doc: "Number of threads for steps that support multithreading"
-    'sd:layout':
-      advanced: true
 
 outputs:
 
@@ -348,7 +337,6 @@ steps:
       k2db: k2db
       read1file: rename_upstream/target_file
       read2file: rename_downstream/target_file
-      threads: threads
     out:
       - k2_classified_R1
       - k2_classified_R2
@@ -424,8 +412,6 @@ doc: |
     - FASTA/Q input R1 from a paired end library
   Read 2 file:
     - FASTA/Q input R2 from a paired end library
-  Number of threads for steps that support multithreading:
-     - Number of threads for steps that support multithreading - default set to `4`
   Advanced Inputs Tab (Optional):
      - Number of bases to clip from the 3p end
      - Number of bases to clip from the 5p end

@@ -5,9 +5,6 @@ class: Workflow
 requirements:
   - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
-  - class: ResourceRequirement
-    ramMin: 257024                                     # equal to ~264GB
-    coresMin: $(inputs.threads?inputs.threads:1)
 
 
 'sd:upstream':
@@ -61,14 +58,6 @@ inputs:
     sd:preview:
       position: 3
 
-  threads:
-    type: int?
-    default: 4
-    label: "threads"
-    'sd:localLabel': true
-    doc: "Number of threads for steps that support multithreading"
-    'sd:layout':
-      advanced: true
 
 outputs:
 
@@ -445,7 +434,6 @@ steps:
     in:
       read1file: rename_upstream/target_file
       read2file: rename_downstream/target_file
-      threads: threads
     out:
       - kneaddata_cleaned_R1
       - kneaddata_cleaned_R2
@@ -465,7 +453,6 @@ steps:
       k2db: k2db
       read1file: decontaminate_with_kneaddata/kneaddata_cleaned_R1
       read2file: decontaminate_with_kneaddata/kneaddata_cleaned_R2
-      threads: threads
     out:
       - k2_classified_R1
       - k2_classified_R2
@@ -487,7 +474,6 @@ steps:
     in:
       read1file: kraken2_classify/k2_unclassified_R1
       read2file: kraken2_classify/k2_unclassified_R2
-      threads: threads
     out:
       - classification_alignments_bowtie2
       - abundance_profile
@@ -505,7 +491,6 @@ steps:
     in:
       read1file: decontaminate_with_kneaddata/kneaddata_cleaned_R1
       read2file: decontaminate_with_kneaddata/kneaddata_cleaned_R2
-      threads: threads
     out:
       - classification_alignments_bowtie2
       - abundance_profile
@@ -523,7 +508,6 @@ steps:
     in:
       read1file: decontaminate_with_kneaddata/kneaddata_cleaned_R1
       read2file: decontaminate_with_kneaddata/kneaddata_cleaned_R2
-      threads: threads
     out:
       - genefamilies_rpk
       - genefamilies_cpm

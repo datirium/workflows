@@ -3,9 +3,11 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-- class: InlineJavascriptRequirement
-
+  - class: ShellCommandRequirement
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    ramMin: 31024
+    coresMin: 8
 
 hints:
 - class: DockerRequirement
@@ -21,14 +23,13 @@ inputs:
       printf "$(date)\nStdout log file for wgs-metaphlan-pe.cwl tool:\n"
       R1=$0
       R2=$1
-      THREADS=$2
       printf "EXECUTION:\n"
       #   commands start
       printf "\trun metaphlan analysis for PE reads\n"
       echo "concat paired reads together (metaphlan does not take paired information into account)"
       cp $R1 combined.fq
       cat $R2 >> combined.fq
-      metaphlan combined.fq --bowtie2out metagenome.bowtie2.bz2 --nproc $THREADS --input_type fastq -o profiled_metagenome.txt
+      metaphlan combined.fq --bowtie2out metagenome.bowtie2.bz2 --nproc 8 --input_type fastq -o profiled_metagenome.txt
       # clean header for scidap output tab
       tail -n+5 profiled_metagenome.txt > profiled_metagenome_scidap.txt
       echo "need to make a merged table for heatmap - just a single sample so not super interesting"
@@ -57,13 +58,6 @@ inputs:
     inputBinding:
       position: 7
     doc: "FASTQ file 2 of paired end read data."
-
-  threads:
-    type: int
-    label: "threads"
-    inputBinding:
-      position: 8
-    doc: "Number of threads for steps that support multithreading."
 
 
 outputs:

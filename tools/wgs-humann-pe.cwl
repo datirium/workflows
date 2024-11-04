@@ -3,9 +3,11 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-- class: InlineJavascriptRequirement
-
+  - class: ShellCommandRequirement
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    ramMin: 31024
+    coresMin: 8
 
 hints:
 - class: DockerRequirement
@@ -21,14 +23,13 @@ inputs:
       printf "$(date)\nStdout log file for wgs-humann-pe.cwl tool:\n"
       R1=$0
       R2=$1
-      THREADS=$2
       printf "EXECUTION:\n"
       #   commands start
       printf "\trun humann analysis for PE reads\n"
       echo "concat paired reads together (humann does not take paired information into account)"
       cp $R1 combined.fq
       cat $R2 >> combined.fq
-      humann --threads $THREADS --input combined.fq --output humann_outdir
+      humann --threads 8 --input combined.fq --output humann_outdir
       echo "normalize RPKs to relative abundance"
       humann_renorm_table --input humann_outdir/*_genefamilies.tsv \
         --output humann_outdir/normalized_genefamilies-cpm.tsv --units cpm --update-snames
@@ -57,13 +58,6 @@ inputs:
     inputBinding:
       position: 7
     doc: "FASTQ file 2 of paired end read data."
-
-  threads:
-    type: int
-    label: "threads"
-    inputBinding:
-      position: 8
-    doc: "Number of threads for steps that support multithreading."
 
 
 outputs:
