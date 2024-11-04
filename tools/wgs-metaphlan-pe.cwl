@@ -6,17 +6,17 @@ requirements:
   - class: ShellCommandRequirement
   - class: InlineJavascriptRequirement
   - class: ResourceRequirement
-    ramMin: 31024
+    ramMin: 30510
     coresMin: 8
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-metaphlan:dev
+  dockerPull: robertplayer/scidap-metaphlan:v1.0.0
 
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
