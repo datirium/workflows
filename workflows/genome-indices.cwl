@@ -168,13 +168,13 @@ outputs:
     label: "STAR genome indices"
     doc: "STAR generated genome indices folder"
 
-  star_indices_stdout_log:
+  star_indices_stdout_log_file:
     type: File
     outputSource: star_generate_indices/stdout_log
     label: "STAR stdout log for genome indices"
     doc: "STAR generated stdout log for genome indices"
     
-  star_indices_stderr_log:
+  star_indices_stderr_log_file:
     type: File
     outputSource: star_generate_indices/stderr_log
     label: "STAR stderr log for genome indices"
@@ -1119,13 +1119,12 @@ steps:
         - class: ResourceRequirement
           ramMin: 7620
           coresMin: 1
-      requirements:
-      - class: InlineJavascriptRequirement
-        expressionLib:
-        - var default_output_filename = function() {
-                var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
-                return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
-              };
+        - class: InlineJavascriptRequirement
+          expressionLib:
+          - var default_output_filename = function() {
+                  var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
+                  return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
+                };
       hints:
       - class: DockerRequirement
         dockerPull: biowardrobe2/scidap:v0.0.3
