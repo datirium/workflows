@@ -3,19 +3,22 @@ class: CommandLineTool
 
 
 requirements:
-- class: ShellCommandRequirement
-- class: InlineJavascriptRequirement
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      return [
-        {
-          "class": "Directory",
-          "basename": inputs.index_base_name,
-          "listing": [],
-          "writable": true}
-      ]
-    }
+  - class: ResourceRequirement
+    ramMin: 15250
+    coresMin: 1
+  - class: ShellCommandRequirement
+  - class: InlineJavascriptRequirement
+  - class: InitialWorkDirRequirement
+    listing: |
+      ${
+        return [
+          {
+            "class": "Directory",
+            "basename": inputs.index_base_name,
+            "listing": [],
+            "writable": true}
+        ]
+      }
 
 
 hints:

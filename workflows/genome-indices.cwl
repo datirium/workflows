@@ -49,6 +49,34 @@ inputs:
     type:
       - "null"
       - string[]
+    default:
+      [
+        "chr1",
+        "chr2",
+        "chr3",
+        "chr4",
+        "chr5",
+        "chr6",
+        "chr7",
+        "chr8",
+        "chr9",
+        "chr10",
+        "chr11",
+        "chr12",
+        "chr13",
+        "chr14",
+        "chr15",
+        "chr16",
+        "chr17",
+        "chr18",
+        "chr19",
+        "chr20",
+        "chr21",
+        "chr22",
+        "chrX",
+        "chrY",
+        "chrM"
+      ]
     label: "Chromosome list to be included into the reference genome FASTA file"
     doc: "Filter chromosomes while extracting FASTA from 2bit"
   
@@ -128,13 +156,6 @@ inputs:
     type: long?
     label: "Limit maximum available RAM (bytes) for reference genome indices generation"
     doc: "Maximum available RAM (bytes) for genome generation. Default 31000000000"
-    'sd:layout':
-      advanced: true
-
-  threads:
-    type: int?
-    label: "Number of threads to run tools"
-    doc: "Number of threads for those steps that support multithreading"
     'sd:layout':
       advanced: true
 
@@ -300,17 +321,20 @@ steps:
       cwlVersion: v1.0
       class: CommandLineTool
       requirements:
-      - class: InitialWorkDirRequirement
-        listing: |
-          ${
-            return  [
-                      {
-                        "entry": inputs.input_file,
-                        "entryname": inputs.input_file.basename,
-                        "writable": true
-                      }
-                    ]
-          }
+        - class: ResourceRequirement
+          ramMin: 7620
+          coresMin: 1
+        - class: InitialWorkDirRequirement
+          listing: |
+            ${
+              return  [
+                        {
+                          "entry": inputs.input_file,
+                          "entryname": inputs.input_file.basename,
+                          "writable": true
+                        }
+                      ]
+            }
       hints:
       - class: DockerRequirement
         dockerPull: biowardrobe2/scidap:v0.0.3
@@ -334,6 +358,10 @@ steps:
     run:
       cwlVersion: v1.0
       class: CommandLineTool
+      requirements:
+        - class: ResourceRequirement
+          ramMin: 7620
+          coresMin: 1
       hints:
       - class: DockerRequirement
         dockerPull: biowardrobe2/ucscuserapps:v358
@@ -402,7 +430,6 @@ steps:
       genome_dir:
         source: genome
         valueFrom: $(self + "_star_genome")
-      threads: threads
     out:
     - indices_folder
     - chrom_length
@@ -419,7 +446,6 @@ steps:
       genome_dir:
         source: genome
         valueFrom: $(self + "_star_mitochondrial")
-      threads: threads
     out:
     - indices_folder
     - chrom_length
@@ -1090,12 +1116,15 @@ steps:
       cwlVersion: v1.0
       class: CommandLineTool
       requirements:
-      - class: InlineJavascriptRequirement
-        expressionLib:
-        - var default_output_filename = function() {
-                var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
-                return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
-              };
+        - class: ResourceRequirement
+          ramMin: 7620
+          coresMin: 1
+        - class: InlineJavascriptRequirement
+          expressionLib:
+          - var default_output_filename = function() {
+                  var root = inputs.annotation_tsv_file.basename.split('.').slice(0,-1).join('.');
+                  return (root == "")?inputs.annotation_tsv_file.basename+".bed":root+".bed";
+                };
       hints:
       - class: DockerRequirement
         dockerPull: biowardrobe2/scidap:v0.0.3
