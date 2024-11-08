@@ -189,24 +189,6 @@ outputs:
     doc: "MA plots in PDF format for each contrast"
     outputSource: deseq/ma_plots_pdf
 
-  heatmaps_png:
-    type: File[]
-    label: "Heatmaps of the most highly expressed features (PNG)"
-    format: "http://edamontology.org/format_3603"
-    doc: "Heatmaps showing expression data of the most highly expressed features for each contrast"
-    outputSource: deseq/heatmaps_png
-    'sd:visualPlugins':
-      - image:
-          tab: 'Other Plots'
-          Caption: 'Heatmaps'
-
-  heatmaps_pdf:
-    type: File[]
-    label: "Heatmaps of the most highly expressed features (PDF)"
-    format: "http://edamontology.org/format_3508"
-    doc: "Heatmaps in PDF format for each contrast"
-    outputSource: deseq/heatmaps_pdf
-
   volcano_plots_html:
     type: File[]
     outputSource: make_volcano_plot/html_file
@@ -276,8 +258,6 @@ steps:
       - diff_expr_files
       - ma_plots_png
       - ma_plots_pdf
-      - heatmaps_png
-      - heatmaps_pdf
       - mds_plots_html
       - counts_all_gct
       - counts_filtered_gct

@@ -173,6 +173,61 @@ outputs:
       - markdownView:
           tab: "Overview"
 
+  read_counts_file_all:
+    type: File
+    label: "Normalized read counts in GCT format without padj filtering"
+    format: "http://edamontology.org/format_3709"
+    doc: "DESeq generated files of all normalized read counts in GCT format. Compatible with GSEA"
+    outputSource: deseq/counts_all_gct
+
+  read_counts_file_filtered:
+    type: File
+    label: "Normalized read counts in GCT format filtered by padj"
+    format: "http://edamontology.org/format_3709"
+    doc: "DESeq generated files of padj-filtered normalized read counts in GCT format. Compatible with Morpheus heatmap"
+    outputSource: deseq/counts_filtered_gct
+
+  mds_plots_html:
+    type: File
+    outputSource: deseq/mds_plots_html
+    label: "MDS plots of normalized counts"
+    doc: |
+      MDS plots of normalized counts for each contrast
+      HTML format
+    'sd:visualPlugins':
+      - linkList:
+          tab: 'Overview'
+          target: "_blank"
+
+  ma_plots_png:
+    type: File
+    label: "MA plots in PNG format"
+    format: "http://edamontology.org/format_3603"
+    doc: "MA plots showing log2 fold changes over the mean of normalized counts for each contrast"
+    outputSource: deseq/ma_plots_png
+    'sd:visualPlugins':
+      - image:
+          tab: 'Other Plots'
+          Caption: 'MA Plots'
+
+  ma_plots_pdf:
+    type: File
+    label: "MA plots in PDF format"
+    format: "http://edamontology.org/format_3508"
+    doc: "MA plots in PDF format for each contrast"
+    outputSource: deseq/ma_plots_pdf
+
+  heatmap_html:
+    type: File
+    outputSource: morpheus_heatmap/heatmap_html
+    label: "Combined Heatmap of normalized counts"
+    doc: |
+      Morpheus heatmap in HTML format combining all contrasts
+    'sd:visualPlugins':
+      - linkList:
+          tab: 'Overview'
+          target: "_blank"
+
   expression_data_rds:
     type: File
     label: "Expression data RDS file"
@@ -270,6 +325,11 @@ steps:
       - contrasts_file
       - contrasts_rds
       - expression_data_rds
+      - ma_plots_png
+      - ma_plots_pdf
+      - mds_plots_html
+      - counts_all_gct
+      - counts_filtered_gct
       - metadata_rds
       - read_counts_rds
       - dsq_wald_rds
@@ -277,6 +337,15 @@ steps:
       - dsq_lrt_res_rds
       - lrt_summary_md
       - batch_correction_method_rds
+      - stdout_log
+      - stderr_log
+
+  morpheus_heatmap:
+    run: ../tools/morpheus-heatmap.cwl
+    in:
+      read_counts_gct: deseq/counts_filtered_gct
+    out:
+      - heatmap_html
       - stdout_log
       - stderr_log
 

@@ -141,16 +141,6 @@ outputs:
     outputBinding:
       glob: "*_contrast_*_ma_plot.pdf"
 
-  heatmaps_png:
-    type: File[]
-    outputBinding:
-      glob: "*_contrast_*_heatmap.png"
-
-  heatmaps_pdf:
-    type: File[]
-    outputBinding:
-      glob: "*_contrast_*_heatmap.pdf"
-
   mds_plots_html:
     type: File[]
     outputBinding:
@@ -241,6 +231,5 @@ doc: |
 
   - Differential expression reports for each contrast.
   - MA plots (PNG and PDF) for each contrast.
-  - Heatmaps (PNG and PDF) for each contrast.
   - MDS plots (HTML) for each contrast.
   - GCT files (counts_all.gct and counts_filtered.gct) for each contrast.

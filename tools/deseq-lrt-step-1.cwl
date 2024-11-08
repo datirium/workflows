@@ -141,6 +141,31 @@ outputs:
     outputBinding:
       glob: "*_expression_data.rds"
 
+  ma_plots_png:
+    type: File
+    outputBinding:
+      glob: "*_ma_plot.png"
+
+  ma_plots_pdf:
+    type: File
+    outputBinding:
+      glob: "*_ma_plot.pdf"
+
+  mds_plots_html:
+    type: File
+    outputBinding:
+      glob: "*_mds_plot.html"
+
+  counts_all_gct:
+    type: File
+    outputBinding:
+      glob: "*_counts_all.gct"
+
+  counts_filtered_gct:
+    type: File
+    outputBinding:
+      glob: "*_counts_filtered.gct"
+
   metadata_rds:
     type: File
     outputBinding:
