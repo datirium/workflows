@@ -31,6 +31,7 @@ requirements:
   - "sc-rna-cluster.cwl"
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
+  - "sc-rna-azimuth.cwl"
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
@@ -176,6 +177,17 @@ inputs:
       The file should have two columns named
       'cluster' and 'celltype'.
 
+  genesets_data:
+    type: File?
+    label: "GMT file for calculating average expression levels per gene set (optional)"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb. To calculate module
+      scores the loaded Seurat object should include RNA assay.
+      Default: do not calculate gene set expression scores.
+
   export_loupe_data:
     type: boolean?
     default: false
@@ -185,6 +197,16 @@ inputs:
       enabling this feature you accept the End-User License
       Agreement available at https://10xgen.com/EULA.
       Default: false
+    "sd:layout":
+      advanced: true
+
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
     "sd:layout":
       advanced: true
 
@@ -569,6 +591,42 @@ outputs:
         tab: "Genes of interest (coverage)"
         Caption: "ATAC fragment coverage (per gene)"
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputSource: ctype_assign/gse_per_cell_plot_png
+    label: "UMAP colored by gene set expression score"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "UMAP colored by gene set expression score"
+
+  gse_avg_plot_png:
+    type: File?
+    outputSource: ctype_assign/gse_avg_plot_png
+    label: "Average gene set expression score"
+    doc: |
+      Average gene set expression score.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Average gene set expression score"
+
+  gse_dnst_plot_png:
+    type: File?
+    outputSource: ctype_assign/gse_dnst_plot_png
+    label: "Gene set expression score density"
+    doc: |
+      Gene set expression score density.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Gene sets of interest (expression)"
+        Caption: "Gene set expression score density"
+
   xpr_htmp_plot_png:
     type: File?
     outputSource: ctype_assign/xpr_htmp_plot_png
@@ -650,6 +708,25 @@ outputs:
       SCope compatible.
       Loom format.
 
+  reference_data_rds:
+    type: File?
+    outputSource: ctype_assign/reference_data_rds
+    label: "Seurat object formatted as an Azimuth reference model"
+    doc: |
+      Seurat object with assigned cell
+      types formatted as an Azimuth
+      reference model.
+      RDS format.
+
+  reference_data_index:
+    type: File?
+    outputSource: ctype_assign/reference_data_index
+    label: "Annoy index for the Azimuth reference model"
+    doc: |
+      Annoy index generated for the
+      Azimuth reference model.
+      Annoy format.
+
   seurat_rna_data_cloupe:
     type: File?
     outputSource: ctype_assign/seurat_rna_data_cloupe
@@ -665,6 +742,18 @@ outputs:
     label: "Compressed folder with all PDF plots"
     doc: |
       Compressed folder with all PDF plots.
+
+  sc_report_html_file:
+    type: File?
+    outputSource: ctype_assign/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
 
   ctype_assign_stdout_log:
     type: File
@@ -722,6 +811,7 @@ steps:
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))
+      genesets_data: genesets_data
       identify_diff_genes: identify_diff_genes
       identify_diff_peaks: identify_diff_peaks
       rna_minimum_logfc:
@@ -740,6 +830,8 @@ steps:
         default: LR
       verbose:
         default: true
+      export_azimuth_ref:
+        default: true
       export_ucsc_cb:
         default: true
       export_scope_data:
@@ -752,6 +844,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -776,6 +869,9 @@ steps:
     - cmp_gr_ctyp_spl_cnd_plot_png
     - umap_gr_ph_spl_cnd_plot_png
     - cmp_gr_ph_spl_cnd_plot_png
+    - gse_per_cell_plot_png
+    - gse_avg_plot_png
+    - gse_dnst_plot_png
     - xpr_avg_plot_png
     - xpr_per_cell_plot_png
     - xpr_dnst_plot_png
@@ -789,7 +885,10 @@ steps:
     - ucsc_cb_html_file
     - seurat_data_rds
     - seurat_data_scope
+    - reference_data_rds
+    - reference_data_index
     - seurat_rna_data_cloupe
+    - sc_report_html_file
     - stdout_log
     - stderr_log
 

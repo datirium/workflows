@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.39
+  dockerPull: biowardrobe2/sc-tools:v0.0.41
 
 
 inputs:
@@ -209,6 +209,18 @@ inputs:
       file should be provided.
       Default: None
 
+  genesets_data:
+    type: File?
+    inputBinding:
+      prefix: "--genesets"
+    doc: |
+      Path to the GMT file for calculating average expression levels
+      (module scores) per gene set. This file can be downloaded from
+      the Molecular Signatures Database (MSigDB) following the link
+      https://www.gsea-msigdb.org/gsea/msigdb. To calculate module
+      scores the loaded Seurat object should include RNA assay.
+      Default: do not calculate gene set expression scores.
+
   cvrg_upstream_bp:
     type: int?
     inputBinding:
@@ -301,12 +313,31 @@ inputs:
       have RNA assay this parameter will be
       ignored. Default: false
 
+  export_azimuth_ref:
+    type: boolean?
+    inputBinding:
+      prefix: "--azimuth"
+    doc: |
+      Save Seurat object with the assigned cell
+      types as model for the reference mapping
+      in Azimuth. Both RDS and annoy index files
+      will be created.
+      Default: false
+
   export_ucsc_cb:
     type: boolean?
     inputBinding:
       prefix: "--cbbuild"
     doc: |
       Export results to UCSC Cell Browser. Default: false
+
+  export_html_report:
+    type: boolean?
+    default: false
+    doc: |
+      Export tehcnical report. HTML format.
+      Note, stdout will be less informative.
+      Default: false
 
   output_prefix:
     type: string?
@@ -571,6 +602,30 @@ outputs:
       the smallest group.
       PNG format.
 
+  gse_per_cell_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_per_cell.png"
+    doc: |
+      UMAP colored by gene set expression score.
+      PNG format.
+
+  gse_avg_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_avg.png"
+    doc: |
+      Average gene set expression score.
+      PNG format.
+
+  gse_dnst_plot_png:
+    type: File?
+    outputBinding:
+      glob: "*_gse_dnst.png"
+    doc: |
+      Gene set expression score density.
+      PNG format.
+
   xpr_avg_plot_png:
     type: File?
     outputBinding:
@@ -692,7 +747,7 @@ outputs:
   seurat_data_rds:
     type: File
     outputBinding:
-      glob: "*_data.rds"
+      glob: "*[!_ref]_data.rds"
     doc: |
       Seurat object.
       RDS format.
@@ -741,6 +796,33 @@ outputs:
       SCope compatible.
       Loom format.
 
+  reference_data_rds:
+    type: File?
+    outputBinding:
+      glob: "*_ref_data.rds"
+    doc: |
+      Seurat object with assigned cell
+      types formatted as an Azimuth
+      reference model.
+      RDS format.
+
+  reference_data_index:
+    type: File?
+    outputBinding:
+      glob: "*_ref_data.annoy"
+    doc: |
+      Annoy index generated for the
+      Azimuth reference model.
+      Annoy format.
+
+  sc_report_html_file:
+    type: File?
+    outputBinding:
+      glob: "sc_report.html"
+    doc: |
+      Tehcnical report.
+      HTML format.
+
   stdout_log:
     type: stdout
 
@@ -748,7 +830,10 @@ outputs:
     type: stderr
 
 
-baseCommand: ["sc_ctype_assign.R"]
+baseCommand: ["Rscript"]
+arguments:
+- valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_ctype_assign.R"]:"/usr/local/bin/sc_ctype_assign.R")
+
 
 stdout: sc_ctype_assign_stdout.log
 stderr: sc_ctype_assign_stderr.log
@@ -820,11 +905,12 @@ s:about: |
                                           [--atactestuse {wilcox,bimod,roc,t,negbinom,poisson,LR,MAST,DESeq2}]
                                           [--fragments FRAGMENTS]
                                           [--genes [GENES [GENES ...]]]
+                                          [--genesets GENESETS]
                                           [--upstream UPSTREAM]
                                           [--downstream DOWNSTREAM] [--pdf]
                                           [--verbose] [--h5seurat] [--h5ad]
-                                          [--cbbuild] [--scope]
-                                          [--output OUTPUT]
+                                          [--loupe] [--azimuth] [--cbbuild]
+                                          [--scope] [--output OUTPUT]
                                           [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                           [--cpus CPUS] [--memory MEMORY]
                                           [--seed SEED]
@@ -913,6 +999,13 @@ s:about: |
                           frequency plots for the nearest peaks the loaded
                           Seurat object should include ATAC assay as well as the
                           --fragments file should be provided. Default: None
+    --genesets GENESETS   Path to the GMT file for calculating average
+                          expression levels (module scores) per gene set. This
+                          file can be downloaded from the Molecular Signatures
+                          Database (MSigDB) following the link https://www.gsea-
+                          msigdb.org/gsea/msigdb. To calculate module scores the
+                          loaded Seurat object should include RNA assay.
+                          Default: do not calculate gene set expression scores.
     --upstream UPSTREAM   Number of bases to extend the genome coverage region
                           for a specific gene upstream. Ignored if --genes or
                           --fragments parameters are not provided. Default: 2500
@@ -929,6 +1022,9 @@ s:about: |
                           enabling this feature you accept the End-User License
                           Agreement available at https://10xgen.com/EULA.
                           Default: false
+    --azimuth             Save Seurat object with the assigned cell types as
+                          model for the reference mapping in Azimuth. Both RDS
+                          and annoy index files will be created. Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
     --scope               Save Seurat data to SCope compatible loom file. Only
                           not normalized raw counts from the RNA assay will be
