@@ -10,7 +10,7 @@ hints:
 
 inputs:
 
-  expression_files:
+  test_expression_files:
     type: File[]
     inputBinding:
       position: 1
