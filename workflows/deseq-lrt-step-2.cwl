@@ -22,15 +22,6 @@ inputs:
     sd:preview:
       position: 1
 
-  group_by:
-    type:
-      - "null"
-      - type: enum
-        symbols: [ "isoforms", "genes", "common tss" ]
-    default: "genes"
-    label: "Group by"
-    doc: "Grouping method for features: isoforms, genes or common tss"
-
   contrast_indices:
     type: string
     label: "Comma-separated list of integers representing contrast indices"
@@ -102,35 +93,33 @@ inputs:
       advanced: true
 
   # Inputs sourced from upstream workflow (deseq-lrt-step-1.cwl)
+  group_by:
+    type:
+      - "null"
+      - type: enum
+        symbols: [ "isoforms", "genes", "common tss" ]
+    default: "genes"
+    label: "Group by"
+    doc: "Grouping method for features: isoforms, genes or common tss"
+    "sd:upstreamSource": "deseq_lrt_step1/group_by"
+
   expression_data_rds:
     type: File
     label: "Expression Data RDS File"
     doc: "RDS file containing the expression data from step 1."
     "sd:upstreamSource": "deseq_lrt_step1/expression_data_rds"
 
-  contrasts_rds:
+  dsq_obj_data:
     type: File
     label: "Contrasts RDS File"
     doc: "RDS file containing the contrasts list from step 1."
-    "sd:upstreamSource": "deseq_lrt_step1/contrasts_rds"
+    "sd:upstreamSource": "deseq_lrt_step1/dsq_obj_data"
 
-  dsq_wald_rds:
-    type: File
-    label: "DESeq2 Wald Test RDS Object"
-    doc: "RDS file containing the DESeq2 object from the Wald test in step 1."
-    "sd:upstreamSource": "deseq_lrt_step1/dsq_wald_rds"
-
-  metadata_rds:
-    type: File
-    label: "Metadata RDS File"
-    doc: "RDS file containing the metadata from step 1."
-    "sd:upstreamSource": "deseq_lrt_step1/metadata_rds"
-
-  batch_correction_method_rds:
+  batchcorrection:
     type: File
     label: "Batch Correction Method RDS File"
     doc: "RDS file containing the batch correction method used in step 1."
-    "sd:upstreamSource": "deseq_lrt_step1/batch_correction_method_rds"
+    "sd:upstreamSource": "deseq_lrt_step1/batchcorrection"
 
 outputs:
 
@@ -170,24 +159,6 @@ outputs:
       - linkList:
           tab: 'Overview'
           target: "_blank"
-
-  ma_plots_png:
-    type: File[]
-    label: "MA plots in PNG format"
-    format: "http://edamontology.org/format_3603"
-    doc: "MA plots showing log2 fold changes over the mean of normalized counts for each contrast"
-    outputSource: deseq/ma_plots_png
-    'sd:visualPlugins':
-      - image:
-          tab: 'Other Plots'
-          Caption: 'MA Plots'
-
-  ma_plots_pdf:
-    type: File[]
-    label: "MA plots in PDF format"
-    format: "http://edamontology.org/format_3508"
-    doc: "MA plots in PDF format for each contrast"
-    outputSource: deseq/ma_plots_pdf
 
   volcano_plots_html:
     type: File[]
@@ -242,11 +213,7 @@ steps:
   deseq:
     run: ../tools/deseq-lrt-step-2.cwl
     in:
-      expression_data_rds: expression_data_rds
-      contrasts_rds: contrasts_rds
-      dsq_wald_rds: dsq_wald_rds
-      metadata_rds: metadata_rds
-      batch_correction_method_rds: batch_correction_method_rds
+      dsq_obj_data: dsq_obj_data
       contrast_indices: contrast_indices
       fdr: fdr
       lfcthreshold: lfcthreshold
@@ -256,8 +223,6 @@ steps:
       test_mode: test_mode
     out:
       - diff_expr_files
-      - ma_plots_png
-      - ma_plots_pdf
       - mds_plots_html
       - counts_all_gct
       - counts_filtered_gct

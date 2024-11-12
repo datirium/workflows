@@ -121,35 +121,20 @@ inputs:
 
 outputs:
 
-  contrasts_file:
+  contrasts_table:
     type: File
     outputBinding:
       glob: "*_contrasts_table.tsv"
 
-  contrasts_rds:
+  dsq_obj_data:
     type: File
     outputBinding:
       glob: "*_contrasts.rds"
 
-  diff_expr_file:
+  lrt_diff_expr:
     type: File
     outputBinding:
       glob: "*_gene_exp_table.tsv"
-
-  expression_data_rds:
-    type: File
-    outputBinding:
-      glob: "*_expression_data.rds"
-
-  ma_plots_png:
-    type: File
-    outputBinding:
-      glob: "*_ma_plot.png"
-
-  ma_plots_pdf:
-    type: File
-    outputBinding:
-      glob: "*_ma_plot.pdf"
 
   mds_plots_html:
     type: File
@@ -166,40 +151,10 @@ outputs:
     outputBinding:
       glob: "*_counts_filtered.gct"
 
-  metadata_rds:
-    type: File
-    outputBinding:
-      glob: "*_metadata.rds"
-
-  read_counts_rds:
-    type: File
-    outputBinding:
-      glob: "*_read_counts.rds"
-
-  dsq_wald_rds:
-    type: File
-    outputBinding:
-      glob: "*_dsq_wald.rds"
-
-  dsq_lrt_rds:
-    type: File
-    outputBinding:
-      glob: "*_dsq_lrt.rds"
-
   lrt_summary_md:
     type: File
     outputBinding:
       glob: "*_lrt_result.md"
-
-  dsq_lrt_res_rds:
-    type: File
-    outputBinding:
-      glob: "*_dsq_lrt_res.rds"
-
-  batch_correction_method_rds:
-    type: File
-    outputBinding:
-      glob: "*_batch_correction_method.rds"
 
   stdout_log:
     type: stdout

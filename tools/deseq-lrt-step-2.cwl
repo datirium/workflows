@@ -10,40 +10,12 @@ hints:
 
 inputs:
 
-  expression_data_rds:
-    type: File
-    inputBinding:
-      position: 1
-      prefix: "--expression_data_rds"
-    doc: "RDS file containing the expression data from step 1"
-
-  contrasts_rds:
+  dsq_obj_data:
     type: File
     inputBinding:
       position: 2
-      prefix: "--contrasts_rds"
+      prefix: "--dsq_obj_data"
     doc: "RDS file containing the contrasts list from step 1"
-
-  dsq_wald_rds:
-    type: File
-    inputBinding:
-      position: 3
-      prefix: "--dsq_wald_rds"
-    doc: "RDS file containing the DESeq2 object from the Wald test in step 1"
-
-  metadata_rds:
-    type: File
-    inputBinding:
-      position: 4
-      prefix: "--metadata_rds"
-    doc: "RDS file containing the metadata from step 1"
-
-  batch_correction_method_rds:
-    type: File
-    inputBinding:
-      position: 5
-      prefix: "--batch_correction_method_rds"
-    doc: "RDS file containing the batch correction method used in step 1"
 
   contrast_indices:
     type: string
@@ -131,16 +103,6 @@ outputs:
     outputBinding:
       glob: "*_contrast_*_gene_exp_table.tsv"
 
-  ma_plots_png:
-    type: File[]
-    outputBinding:
-      glob: "*_contrast_*_ma_plot.png"
-
-  ma_plots_pdf:
-    type: File[]
-    outputBinding:
-      glob: "*_contrast_*_ma_plot.pdf"
-
   mds_plots_html:
     type: File[]
     outputBinding:
@@ -221,7 +183,6 @@ doc: |
   - `contrasts_rds`: RDS file containing the contrasts list from step 1.
   - `dsq_wald_rds`: RDS file containing the DESeq2 object from the Wald test in step 1.
   - `metadata_rds`: RDS file containing the metadata from step 1.
-  - `batch_correction_method_rds`: RDS file containing the batch correction method used in step 1.
   - `contrast_indices`: Comma-separated list of integers representing contrast indices (e.g., 1,2,3).
   - `fdr`: Adjusted p-value (FDR) threshold for significance. Default: 0.1.
   - `lfcthreshold`: Log2 fold change threshold for significance. Default: 0.59.
