@@ -116,7 +116,7 @@ inputs:
     "sd:upstreamSource": "deseq_lrt_step1/dsq_obj_data"
 
   batchcorrection:
-    type: File
+    type: string
     label: "Batch Correction Method RDS File"
     doc: "RDS file containing the batch correction method used in step 1."
     "sd:upstreamSource": "deseq_lrt_step1/batchcorrection"
@@ -171,6 +171,13 @@ outputs:
           tab: 'Overview'
           target: "_blank"
 
+  volcano_plots_html_data:
+    type: Directory[]
+    outputSource: make_volcano_plot/html_data
+    label: "Volcano Plots"
+    doc: |
+      HTML data for Volcano Plots for each contrast
+
   heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
@@ -214,6 +221,7 @@ steps:
     run: ../tools/deseq-lrt-step-2.cwl
     in:
       dsq_obj_data: dsq_obj_data
+      batchcorrection: batchcorrection
       contrast_indices: contrast_indices
       fdr: fdr
       lfcthreshold: lfcthreshold

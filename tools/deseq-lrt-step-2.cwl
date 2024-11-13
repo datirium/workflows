@@ -13,21 +13,26 @@ inputs:
   dsq_obj_data:
     type: File
     inputBinding:
-      position: 2
       prefix: "--dsq_obj_data"
     doc: "RDS file containing the contrasts list from step 1"
+
+
+  batchcorrection:
+    type: string
+    inputBinding:
+      prefix: "--batchcorrection"
+    default: "none"
+    doc: "Batch correction method. Default: none"
 
   contrast_indices:
     type: string
     inputBinding:
-      position: 6
       prefix: "--contrast_indices"
     doc: "Comma-separated list of integers representing contrast indices (e.g., 1,2,3)"
 
   fdr:
     type: float?
     inputBinding:
-      position: 7
       prefix: "--fdr"
     default: 0.1
     doc: |
@@ -37,7 +42,6 @@ inputs:
   lfcthreshold:
     type: float?
     inputBinding:
-      position: 8
       prefix: "--lfcthreshold"
     default: 0.59
     doc: |
@@ -54,7 +58,6 @@ inputs:
           - "up"
           - "down"
     inputBinding:
-      position: 9
       prefix: "--regulation"
     default: "both"
     doc: |
@@ -67,7 +70,6 @@ inputs:
   output_prefix:
     type: string?
     inputBinding:
-      position: 10
       prefix: "--output"
     default: "deseq-lrt-step-2"
     doc: "Output prefix"
@@ -75,7 +77,6 @@ inputs:
   use_lfc_thresh:
     type: boolean
     inputBinding:
-      position: 11
       prefix: "--use_lfc_thresh"
     default: false
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
@@ -83,7 +84,6 @@ inputs:
   threads:
     type: int?
     inputBinding:
-      position: 12
       prefix: "--threads"
     default: 1
     doc: "Number of threads"
@@ -91,7 +91,6 @@ inputs:
   test_mode:
     type: boolean
     inputBinding:
-      position: 13
       prefix: "--test_mode"
     default: false
     doc: "Run for test, only first 100 rows"
