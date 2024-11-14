@@ -81,6 +81,21 @@ inputs:
     default: false
     doc: "Use lfcthreshold as the null hypothesis value in the results function call. Default: TRUE"
 
+  cluster_method:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "row"
+          - "column"
+          - "both"
+    inputBinding:
+      prefix: "--cluster"
+    doc: |
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization part of the analysis. Default: do not run
+      clustering
+
   threads:
     type: int?
     inputBinding:

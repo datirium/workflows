@@ -116,6 +116,23 @@ inputs:
     'sd:layout':
       advanced: true
 
+  cluster_method:
+    type:
+      - "null"
+      - type: enum
+        symbols:
+          - "row"
+          - "column"
+          - "both"
+          - "none"
+    default: "none"
+    label: "Hopach clustering method to be run on normalized read counts"
+    doc: |
+      Hopach clustering method to be run on normalized read counts for the
+      exploratory visualization analysis. Default: do not run clustering
+    'sd:layout':
+      advanced: true
+
   threads:
     type: int?
     default: 6
@@ -258,6 +275,9 @@ steps:
       fdr: fdr
       lfcthreshold: lfcthreshold
       use_lfc_thresh: use_lfc_thresh
+      cluster_method:
+        source: cluster_method
+        valueFrom: $(self=="none"?null:self)
       output_prefix: alias
       threads: threads
       test_mode: test_mode
