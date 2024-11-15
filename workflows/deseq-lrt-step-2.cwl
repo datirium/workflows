@@ -13,7 +13,6 @@ requirements:
     - "deseq-lrt-step-1.cwl"
     - "https://github.com/Barski-lab/workflows-datirium/blob/master/workflows/deseq-lrt-step-1.cwl"
 
-
 inputs:
 
   alias:
@@ -152,21 +151,21 @@ outputs:
           Title: 'Combined DESeq results for all contrasts'
 
   read_counts_file_all:
-    type: File[]
+    type: File
     label: "Normalized read counts in GCT format without padj filtering"
     format: "http://edamontology.org/format_3709"
     doc: "DESeq generated files of all normalized read counts in GCT format. Compatible with GSEA"
     outputSource: deseq/counts_all_gct
 
   read_counts_file_filtered:
-    type: File[]
+    type: File
     label: "Normalized read counts in GCT format filtered by padj"
     format: "http://edamontology.org/format_3709"
     doc: "DESeq generated files of padj-filtered normalized read counts in GCT format. Compatible with Morpheus heatmap"
     outputSource: deseq/counts_filtered_gct
 
   mds_plots_html:
-    type: File[]
+    type: File
     outputSource: deseq/mds_plots_html
     label: "MDS plots of normalized counts"
     doc: |
@@ -258,13 +257,6 @@ steps:
       - stdout_log
       - stderr_log
 
-  merge_gct_files:
-    run: ../tools/merge_gct_files.cwl
-    in:
-      gct_files: deseq/counts_filtered_gct
-    out:
-      - merged_gct_file
-
   make_volcano_plot:
     run: ../tools/volcano-plot.cwl
     scatterMethod: dotproduct
@@ -297,7 +289,7 @@ steps:
   morpheus_heatmap:
     run: ../tools/morpheus-heatmap.cwl
     in:
-      read_counts_gct: merge_gct_files/merged_gct_file
+      read_counts_gct: deseq/counts_filtered_gct
     out:
       - heatmap_html
       - stdout_log

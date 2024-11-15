@@ -91,6 +91,7 @@ inputs:
           - "both"
     inputBinding:
       prefix: "--cluster"
+    default: "row"
     doc: |
       Hopach clustering method to be run on normalized read counts for the
       exploratory visualization part of the analysis. Default: do not run
@@ -118,19 +119,19 @@ outputs:
       glob: "*_contrast_*_gene_exp_table.tsv"
 
   mds_plots_html:
-    type: File[]
+    type: File
     outputBinding:
-      glob: "*_contrast_*_mds_plot.html"
+      glob: "*_mds_plot.html"
 
   counts_all_gct:
-    type: File[]
+    type: File
     outputBinding:
-      glob: "*_contrast_*_counts_all.gct"
+      glob: "*_counts_all.gct"
 
   counts_filtered_gct:
-    type: File[]
+    type: File
     outputBinding:
-      glob: "*_contrast_*_counts_filtered.gct"
+      glob: "*_counts_filtered.gct"
 
   stdout_log:
     type: stdout
