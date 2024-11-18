@@ -119,12 +119,6 @@ inputs:
     doc: "Grouping method for features: isoforms, genes or common tss"
     "sd:upstreamSource": "deseq_lrt_step1/group_by"
 
-  expression_data_rds:
-    type: File
-    label: "Expression Data RDS File"
-    doc: "RDS file containing the expression data from step 1."
-    "sd:upstreamSource": "deseq_lrt_step1/expression_data_rds"
-
   dsq_obj_data:
     type: File
     label: "Contrasts RDS File"
