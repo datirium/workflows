@@ -275,9 +275,7 @@ steps:
       fdr: fdr
       lfcthreshold: lfcthreshold
       use_lfc_thresh: use_lfc_thresh
-      cluster_method:
-        source: cluster_method
-        valueFrom: $(self=="none"?null:self)
+      cluster_method: cluster_method
       output_prefix: alias
       threads: threads
       test_mode: test_mode

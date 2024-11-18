@@ -103,9 +103,10 @@ inputs:
           - "row"
           - "column"
           - "both"
+          - "none"
     inputBinding:
       prefix: "--cluster"
-    default: "row"
+    default: "none"
     doc: |
       Hopach clustering method to be run on normalized read counts for the
       exploratory visualization part of the analysis. Default: do not run
