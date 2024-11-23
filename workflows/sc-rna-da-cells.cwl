@@ -335,8 +335,7 @@ outputs:
     doc: |
       Composition box plot colored by tested condition.
       Split by cluster; downsampled to the smallest
-      dataset. P-values were adjusted by the Benjamini–
-      Hochberg procedure.
+      dataset.
       PNG format.
     "sd:visualPlugins":
     - image:
