@@ -1,0 +1,97 @@
+test_expression_files:
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_TCM5HGFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2N_5H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2TEM_5H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4TCM_5H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/S1m2_TCM5HAFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_TEM0HGFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2TCM_0H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4N_0H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4TEM_0H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_N0HGFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_N5HGFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_TEM5HAFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2TCM_5H_AFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2TCM_5H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4N_5H_AFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4TEM_5H_AFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_N5HAFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_TEM5HGFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2N_0H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2TEM_0H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4TCM_0H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_TCM0HGFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2N_5H_AFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d2TEM_5H_AFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4TCM_5H_AFOS.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4N_5H_GFP.isoforms.csv"
+  - class: File
+    path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/s1m2_d4TEM_5H_GFP.isoforms.csv"
+expression_file_names:
+  - "s1m2_TCM5HGFP"
+  - "s1m2_d2N_5H_GFP"
+  - "s1m2_d2TEM_5H_GFP"
+  - "s1m2_d4TCM_5H_GFP"
+  - "S1m2_TCM5HAFOS"
+  - "s1m2_TEM0HGFP"
+  - "s1m2_d2TCM_0H_GFP"
+  - "s1m2_d4N_0H_GFP"
+  - "s1m2_d4TEM_0H_GFP"
+  - "s1m2_N0HGFP"
+  - "s1m2_N5HGFP"
+  - "s1m2_TEM5HAFOS"
+  - "s1m2_d2TCM_5H_AFOS"
+  - "s1m2_d2TCM_5H_GFP"
+  - "s1m2_d4N_5H_AFOS"
+  - "s1m2_d4TEM_5H_AFOS"
+  - "s1m2_N5HAFOS"
+  - "s1m2_TEM5HGFP"
+  - "s1m2_d2N_0H_GFP"
+  - "s1m2_d2TEM_0H_GFP"
+  - "s1m2_d4TCM_0H_GFP"
+  - "s1m2_TCM0HGFP"
+  - "s1m2_d2N_5H_AFOS"
+  - "s1m2_d2TEM_5H_AFOS"
+  - "s1m2_d4TCM_5H_AFOS"
+  - "s1m2_d4N_5H_GFP"
+  - "s1m2_d4TEM_5H_GFP"
+metadata_file:
+  class: File
+  path: "/Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows/tests/data/dm3_chr4/main_inputs/geep/AFOS_LRT_step_1_test/AFOS_colData.csv"
+design_formula: "~condition*celltype"
+reduced_formula: "~condition+celltype"
+test_mode: true
+use_lfc_thresh: true
+threads: 6
+lfcthreshold: 0.59
+group_by: "genes"
+fdr: 0.1
+cluster_method: "none"
+batchcorrection: "limmaremovebatcheffect"
+alias: "AFOS_LRT_step_1_test"

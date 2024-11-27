@@ -1,0 +1,20 @@
+use_lfc_thresh: false  # type 'boolean'
+threads: 1  # default value of type 'int'. (optional)
+test_mode: false  # type 'boolean'
+regulation: "both"  # enum; valid values: "file:///Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows-datirium/tools/deseq-lrt-step-2.cwl#regulation/both", "file:///Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows-datirium/tools/deseq-lrt-step-2.cwl#regulation/up", "file:///Users/biocode/Documents/GitHub/CCHMC/BarskiiLab/workflows-datirium/tools/deseq-lrt-step-2.cwl#regulation/down" (optional)
+output_prefix: "deseq-lrt-step-2"  # default value of type 'string'. (optional)
+lfcthreshold: 0.59  # default value of type 'float'. (optional)
+fdr: 0.1  # default value of type 'float'. (optional)
+expression_data_rds: # type 'File'
+  class: File
+  path: a/file/path
+dsq_wald_rds: # type 'File'
+  class: File
+  path: a/file/path
+contrasts_rds: # type 'File'
+  class: File
+  path: a/file/path
+contrast_indices: a_string  # type 'string'
+batch_correction_method_rds: # type 'File'
+  class: File
+  path: a/file/path
