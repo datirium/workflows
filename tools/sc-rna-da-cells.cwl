@@ -21,39 +21,37 @@ inputs:
     inputBinding:
       prefix: "--query"
     doc: |
-      Path to the RDS file to load Seurat object from. This file should include genes
-      expression information stored in the RNA assay and selected with the --reduction
-      parameter dimensionality reduction. Additionally, 'rnaumap', and/or 'atacumap',
-      and/or 'wnnumap' dimensionality reductions should be present.
+      Path to the RDS file to load Seurat object from. This file should include
+      genes expression and/or chromatin accessibility information stored in the RNA
+      and ATAC assays correspondingly. Both dimensionality reductions selected in
+      the --reduction and --embeddings parameters should be present in the loaded
+      Seurat object.
 
   reduction:
-    type: string?
+    type: string
     inputBinding:
       prefix: "--reduction"
     doc: |
-      Dimensionality reduction to be used for DA analysis.
-      Default: pca
+      Dimensionality reduction to be used for generating UMAP plots.
+
+  embeddings:
+    type: string?
+    inputBinding:
+      prefix: "--embeddings"
+    doc: |
+      Dimensionality reduction to extract embeddings
+      for differential abundance analysis run with DAseq.
+      Default: automatically selected based on the
+      --reduction parameter.
 
   dimensions:
     type: int?
     inputBinding:
       prefix: "--dimensions"
     doc: |
-      Dimensionality to use when running DA analysis (from 1 to 50).
+      Dimensionality to be used when running differential
+      abundance analysis with DAseq (from 1 to 50).
       Default: 10
-
-  score_vector_knn:
-    type:
-    - "null"
-    - int
-    - int[]
-    inputBinding:
-      prefix: "--knn"
-    doc: |
-      Array of k values for kNN graph construction when calculating the
-      score vector for each cell to represent the DA behavior in the
-      neighborhood.
-      Default: calculated based on the cells number
 
   datasets_metadata:
     type: File?
@@ -65,7 +63,18 @@ inputs:
       should correspond to all unique values from the 'new.ident' column of the
       loaded Seurat object. If any of the provided in this file columns are already
       present in the Seurat object metadata, they will be overwritten.
-      Default: no extra metadata is added
+      Default: no extra metadata is added.
+
+  barcodes_data:
+    type: File?
+    inputBinding:
+      prefix: "--barcodes"
+    doc: |
+      Path to the TSV/CSV file to optionally prefilter and extend Seurat object
+      metadata by selected barcodes. First column should be named as barcode.
+      If file includes any other columns they will be added to the Seurat object
+      metadata ovewriting the existing ones if those are present.
+      Default: all cells used, no extra metadata is added.
 
   splitby:
     type: string
@@ -73,8 +82,9 @@ inputs:
       prefix: "--splitby"
     doc: |
       Column from the Seurat object metadata to split cells into two groups
-      to run --second vs --first DA analysis. May include columns from the
-      extra metadata added with --metadata parameter.
+      to run --second vs --first differential abundance analysis. May include
+      columns from the extra metadata added with --metadata or --barcodes
+      parameters.
 
   first_cond:
     type: string
@@ -82,7 +92,7 @@ inputs:
       prefix: "--first"
     doc: |
       Value from the Seurat object metadata column set with --splitby to define
-      the first group of cells for DA analysis.
+      the first group of cells for differential abundance analysis.
 
   second_cond:
     type: string
@@ -90,19 +100,16 @@ inputs:
       prefix: "--second"
     doc: |
       Value from the Seurat object metadata column set with --splitby to define
-      the second group of cells for DA analysis.
+      the second group of cells for differential abundance analysis.
 
-  resolution:
-    type:
-    - "null"
-    - float
-    - float[]
+  groupby:
+    type: string
     inputBinding:
-      prefix: "--resolution"
+      prefix: "--groupby"
     doc: |
-      Clustering resolution applied to DA cells to identify DA cells populations.
-      Can be set as an array.
-      Default: 0.01, 0.03, 0.05
+      Column from the Seurat object metadata to group cells
+      by categories, such as clusters, cell types, etc., when
+      generating UMAP and composition plots.
 
   ranges:
     type:
@@ -111,8 +118,9 @@ inputs:
     inputBinding:
       prefix: "--ranges"
     doc: |
-      DA scores ranges for to filter out not significant cells.
-      Default: calculated based on the permutation test
+      Minimum and maximum thresholds to filter out cells with
+      the low (by absolute values) differential abundance scores.
+      Default: calculated based on the permutation test.
 
   export_pdf_plots:
     type: boolean?
@@ -163,7 +171,8 @@ inputs:
     inputBinding:
       prefix: "--h5ad"
     doc: |
-      Save raw counts from the RNA assay to h5ad file.
+      Save raw counts from the RNA and/or
+      ATAC assay(s) to h5ad file(s).
       Default: false
 
   export_loupe_data:
@@ -174,6 +183,17 @@ inputs:
       Save raw counts from the RNA assay to Loupe file. By
       enabling this feature you accept the End-User License
       Agreement available at https://10xgen.com/EULA.
+      Default: false
+
+  export_scope_data:
+    type: boolean?
+    inputBinding:
+      prefix: "--scope"
+    doc: |
+      Save Seurat data to SCope compatible loom file. Only
+      not normalized raw counts from the RNA assay will be
+      saved. If loaded Seurat object doesn't have RNA assay
+      this parameter will be ignored.
       Default: false
 
   export_ucsc_cb:
@@ -234,215 +254,96 @@ inputs:
 
 outputs:
 
-  da_perm_plot_png:
+  cmp_bp_gr_tst_spl_clst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_da_perm.png"
+      glob: "*_cmp_bp_gr_tst_spl_clst.png"
     doc: |
-      DA scores random permutations plot for second
-      vs first biological conditions comparison.
-      PNG format
+      Composition box plot colored by tested condition.
+      Split by cluster; downsampled to the smallest
+      dataset.
+      PNG format.
 
-  da_perm_plot_pdf:
+  umap_gr_tst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_da_perm.pdf"
+      glob: "*_umap_gr_tst.png"
     doc: |
-      DA scores random permutations plot for second
-      vs first biological conditions comparison.
-      PDF format
+      UMAP colored by tested condition. First downsampled
+      to the smallest dataset, then downsampled to the
+      smallest tested condition group.
+      PNG format.
 
-  umap_rd_rnaumap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_rd_rnaumap_res_*.png"
-    doc: |
-      Clustered DA cells subpopulations UMAP (rnaumap dim. reduction).
-      PNG format
-
-  umap_rd_rnaumap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_rd_rnaumap_res_*.pdf"
-    doc: |
-      Clustered DA cells subpopulations UMAP (rnaumap dim. reduction).
-      PDF format
-
-  umap_rd_atacumap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_rd_atacumap_res_*.png"
-    doc: |
-      Clustered DA cells subpopulations UMAP (atacumap dim. reduction).
-      PNG format
-
-  umap_rd_atacumap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_rd_atacumap_res_*.pdf"
-    doc: |
-      Clustered DA cells subpopulations UMAP (atacumap dim. reduction).
-      PDF format
-
-  umap_rd_wnnumap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_rd_wnnumap_res_*.png"
-    doc: |
-      Clustered DA cells subpopulations UMAP (wnnumap dim. reduction).
-      PNG format
-
-  umap_rd_wnnumap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_rd_wnnumap_res_*.pdf"
-    doc: |
-      Clustered DA cells subpopulations UMAP (wnnumap dim. reduction).
-      PDF format
-
-  umap_spl_cnd_rd_rnaumap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_spl_cnd_rd_rnaumap_res_*.png"
-    doc: |
-      Split by grouping condition clustered DA cells subpopulations UMAP
-      (rnaumap dim. reduction).
-      PNG format
-
-  umap_spl_cnd_rd_rnaumap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_spl_cnd_rd_rnaumap_res_*.pdf"
-    doc: |
-      Split by grouping condition clustered DA cells subpopulations UMAP
-      (rnaumap dim. reduction).
-      PDF format
-
-  umap_spl_cnd_rd_atacumap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_spl_cnd_rd_atacumap_res_*.png"
-    doc: |
-      Split by grouping condition clustered DA cells subpopulations UMAP
-      (atacumap dim. reduction).
-      PNG format
-
-  umap_spl_cnd_rd_atacumap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_spl_cnd_rd_atacumap_res_*.pdf"
-    doc: |
-      Split by grouping condition clustered DA cells subpopulations UMAP
-      (atacumap dim. reduction).
-      PDF format
-
-  umap_spl_cnd_rd_wnnumap_res_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_spl_cnd_rd_wnnumap_res_*.png"
-    doc: |
-      Split by grouping condition clustered DA cells subpopulations UMAP
-      (wnnumap dim. reduction).
-      PNG format
-
-  umap_spl_cnd_rd_wnnumap_res_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_umap_spl_cnd_rd_wnnumap_res_*.pdf"
-    doc: |
-      Split by grouping condition clustered DA cells subpopulations UMAP
-      (wnnumap dim. reduction).
-      PDF format
-
-  umap_spl_idnt_rd_rnaumap_da_scr_plot_png:
+  umap_da_scr_ctg_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_idnt_rd_rnaumap_da_scr.png"
+      glob: "*_umap_da_scr_ctg.png"
     doc: |
-      Split by dataset cells UMAP with DA scores for second vs first
-      biological conditions comparison (rnaumap dim. reduction).
-      PNG format
+      UMAP colored by differential abundance score,
+      categorical scale. All cells; categories are
+      defined based on the selected ranges for
+      the differential abundance score.
+      PNG format.
 
-  umap_spl_idnt_rd_rnaumap_da_scr_plot_pdf:
+  umap_da_scr_cnt_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_idnt_rd_rnaumap_da_scr.pdf"
+      glob: "*_umap_da_scr_cnt.png"
     doc: |
-      Split by dataset cells UMAP with DA scores for second vs first
-      biological conditions comparison (rnaumap dim. reduction).
-      PDF format
+      UMAP colored by differential abundance score,
+      continuous scale. All cells.
+      PNG format.
 
-  umap_spl_idnt_rd_atacumap_da_scr_plot_png:
+  umap_gr_clst_spl_tst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_idnt_rd_atacumap_da_scr.png"
+      glob: "*_umap_gr_clst_spl_tst.png"
     doc: |
-      Split by dataset cells UMAP with DA scores for second vs first
-      biological conditions comparison (atacumap dim. reduction).
-      PNG format
+      UMAP colored by cluster. Split by tested condition;
+      first downsampled to the smallest dataset, then
+      downsampled to the smallest tested condition group.
+      PNG format.
 
-  umap_spl_idnt_rd_atacumap_da_scr_plot_pdf:
+  cmp_gr_clst_spl_tst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_idnt_rd_atacumap_da_scr.pdf"
+      glob: "*_cmp_gr_clst_spl_tst.png"
     doc: |
-      Split by dataset cells UMAP with DA scores for second vs first
-      biological conditions comparison (atacumap dim. reduction).
-      PDF format
+      Composition plot colored by cluster. Split by tested
+      condition; first downsampled to the smallest dataset,
+      then downsampled to the smallest tested condition group.
+      PNG format.
 
-  umap_spl_idnt_rd_wnnumap_da_scr_plot_png:
+  cmp_gr_tst_spl_clst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_idnt_rd_wnnumap_da_scr.png"
+      glob: "*_cmp_gr_tst_spl_clst.png"
     doc: |
-      Split by dataset cells UMAP with DA scores for second vs first
-      biological conditions comparison (wnnumap dim. reduction).
-      PNG format
+      Composition plot colored by tested condition. Split by
+      cluster; first downsampled to the smallest dataset,
+      then downsampled to the smallest tested condition group.
+      PNG format.
 
-  umap_spl_idnt_rd_wnnumap_da_scr_plot_pdf:
+  rank_da_scr_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_spl_idnt_rd_wnnumap_da_scr.pdf"
+      glob: "*_rank_da_scr.png"
     doc: |
-      Split by dataset cells UMAP with DA scores for second vs first
-      biological conditions comparison (wnnumap dim. reduction).
-      PDF format
+      Estimated thresholds for
+      differential abundance score.
+      All cells.
+      PNG format.
+
+  all_plots_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*.pdf"
+    doc: |
+      All generated plots.
+      PDF format.
 
   ucsc_cb_config_data:
     type: Directory?
@@ -471,7 +372,7 @@ outputs:
       glob: "*_data.rds"
     doc: |
       Seurat object.
-      RDS format
+      RDS format.
 
   seurat_data_h5seurat:
     type: File?
@@ -479,23 +380,43 @@ outputs:
       glob: "*_data.h5seurat"
     doc: |
       Seurat object.
-      h5Seurat format
+      h5Seurat format.
 
-  seurat_data_h5ad:
+  seurat_rna_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_counts.h5ad"
+      glob: "*_rna_counts.h5ad"
     doc: |
       Seurat object.
-      H5AD format
+      RNA counts.
+      H5AD format.
 
-  seurat_data_cloupe:
+  seurat_atac_data_h5ad:
     type: File?
     outputBinding:
-      glob: "*_counts.cloupe"
+      glob: "*_atac_counts.h5ad"
     doc: |
       Seurat object.
-      Loupe format
+      ATAC counts.
+      H5AD format.
+
+  seurat_rna_data_cloupe:
+    type: File?
+    outputBinding:
+      glob: "*_rna_counts.cloupe"
+    doc: |
+      Seurat object.
+      RNA counts.
+      Loupe format.
+
+  seurat_data_scope:
+    type: File?
+    outputBinding:
+      glob: "*_data.loom"
+    doc: |
+      Seurat object.
+      SCope compatible.
+      Loom format.
 
   sc_report_html_file:
     type: File?
@@ -504,6 +425,14 @@ outputs:
     doc: |
       Tehcnical report.
       HTML format.
+
+  human_log:
+    type: File
+    outputBinding:
+      glob: "*_hlog.txt"
+    doc: |
+      Human readable error log.
+      TXT format.
 
   stdout_log:
     type: stdout
@@ -529,7 +458,7 @@ $schemas:
 
 label: "Single-Cell Differential Abundance Analysis"
 s:name: "Single-Cell Differential Abundance Analysis"
-s:alternateName: "Detects cell subpopulations with differential abundance between datasets split by biological condition"
+s:alternateName: "Single-Cell Differential Abundance Analysis"
 
 s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/sc-rna-da-cells.cwl
 s:codeRepository: https://github.com/Barski-lab/workflows
@@ -569,21 +498,22 @@ s:creator:
 doc: |
   Single-Cell Differential Abundance Analysis
 
-  Detects cell subpopulations with differential abundance
-  between datasets split by biological condition.
+  Compares the composition of cell types between
+  two tested conditions
 
 
 s:about: |
-  usage: /usr/local/bin/sc_rna_da_cells.R [-h] --query QUERY
-                                          [--reduction REDUCTION]
+  usage: /usr/local/bin/sc_rna_da_cells.R [-h] --query QUERY --reduction
+                                          REDUCTION [--embeddings EMBEDDINGS]
                                           [--dimensions DIMENSIONS]
-                                          [--knn [KNN [KNN ...]]]
-                                          [--metadata METADATA] --splitby
+                                          [--metadata METADATA]
+                                          [--barcodes BARCODES] --splitby
                                           SPLITBY --first FIRST --second SECOND
-                                          [--resolution [RESOLUTION [RESOLUTION ...]]]
+                                          --groupby GROUPBY
                                           [--ranges RANGES RANGES] [--pdf]
                                           [--verbose] [--h5seurat] [--h5ad]
-                                          [--cbbuild] [--output OUTPUT]
+                                          [--loupe] [--cbbuild] [--scope]
+                                          [--output OUTPUT]
                                           [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                           [--cpus CPUS] [--memory MEMORY]
                                           [--seed SEED]
@@ -593,22 +523,24 @@ s:about: |
   optional arguments:
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
-                          file should include genes expression information
-                          stored in the RNA assay and selected with the
-                          --reduction parameter dimensionality reduction.
-                          Additionally, 'rnaumap', and/or 'atacumap', and/or
-                          'wnnumap' dimensionality reductions should be present.
+                          file should include genes expression and/or chromatin
+                          accessibility information stored in the RNA and ATAC
+                          assays correspondingly. Both dimensionality reductions
+                          selected in the --reduction and --embeddings
+                          parameters should be present in the loaded Seurat
+                          object.
     --reduction REDUCTION
-                          Dimensionality reduction to be used for DA analysis.
-                          Default: pca
+                          Dimensionality reduction to be used for generating
+                          UMAP plots.
+    --embeddings EMBEDDINGS
+                          Dimensionality reduction to extract embeddings for
+                          differential abundance analysis run with DAseq.
+                          Default: automatically selected based on the
+                          --reduction parameter.
     --dimensions DIMENSIONS
-                          Dimensionality to use when running DA analysis (from 1
-                          to 50). Default: 10
-    --knn [KNN [KNN ...]]
-                          Array of k values for kNN graph construction when
-                          calculating the score vector for each cell to
-                          represent the DA behavior in the neighborhood.
-                          Default: calculated based on the cells number
+                          Dimensionality to be used when running differential
+                          abundance analysis with DAseq (from 1 to 50). Default:
+                          10
     --metadata METADATA   Path to the TSV/CSV file to optionally extend Seurat
                           object metadata with categorical values using samples
                           identities. First column - 'library_id' should
@@ -616,35 +548,47 @@ s:about: |
                           column of the loaded Seurat object. If any of the
                           provided in this file columns are already present in
                           the Seurat object metadata, they will be overwritten.
-                          Default: no extra metadata is added
+                          Default: no extra metadata is added.
+    --barcodes BARCODES   Path to the TSV/CSV file to optionally prefilter and
+                          extend Seurat object metadata by selected barcodes.
+                          First column should be named as barcode. If file
+                          includes any other columns they will be added to the
+                          Seurat object metadata ovewriting the existing ones if
+                          those are present. Default: all cells used, no extra
+                          metadata is added.
     --splitby SPLITBY     Column from the Seurat object metadata to split cells
-                          into two groups to run --second vs --first DA
-                          analysis. May include columns from the extra metadata
-                          added with --metadata parameter.
+                          into two groups to run --second vs --first
+                          differential abundance analysis. May include columns
+                          from the extra metadata added with --metadata or
+                          --barcodes parameters.
     --first FIRST         Value from the Seurat object metadata column set with
-                          --splitby to define the first group of cells for DA
-                          analysis.
+                          --splitby to define the first group of cells for
+                          differential abundance analysis.
     --second SECOND       Value from the Seurat object metadata column set with
-                          --splitby to define the second group of cells for DA
-                          analysis.
-    --resolution [RESOLUTION [RESOLUTION ...]]
-                          Clustering resolution applied to DA cells to identify
-                          DA cells populations. Can be set as an array. Default:
-                          0.01, 0.03, 0.05
+                          --splitby to define the second group of cells for
+                          differential abundance analysis.
+    --groupby GROUPBY     Column from the Seurat object metadata to group cells
+                          by categories, such as clusters, cell types, etc.,
+                          when generating UMAP and composition plots.
     --ranges RANGES RANGES
-                          DA scores ranges for to filter out not significant
-                          cells. Default: calculated based on the permutation
-                          test
+                          Minimum and maximum thresholds to filter out cells
+                          with the low (by absolute values) differential
+                          abundance scores. Default: calculated based on the
+                          permutation test.
     --pdf                 Export plots in PDF. Default: false
     --verbose             Print debug information. Default: false
     --h5seurat            Save Seurat data to h5seurat file. Default: false
-    --h5ad                Save raw counts from the RNA assay to h5ad file.
-                          Default: false
+    --h5ad                Save raw counts from the RNA and/or ATAC assay(s) to
+                          h5ad file(s). Default: false
     --loupe               Save raw counts from the RNA assay to Loupe file. By
                           enabling this feature you accept the End-User License
                           Agreement available at https://10xgen.com/EULA.
                           Default: false
     --cbbuild             Export results to UCSC Cell Browser. Default: false
+    --scope               Save Seurat data to SCope compatible loom file. Only
+                          not normalized raw counts from the RNA assay will be
+                          saved. If loaded Seurat object doesn't have RNA assay
+                          this parameter will be ignored. Default: false
     --output OUTPUT       Output prefix. Default: ./sc
     --theme {gray,bw,linedraw,light,dark,minimal,classic,void}
                           Color theme for all generated plots. Default: classic
