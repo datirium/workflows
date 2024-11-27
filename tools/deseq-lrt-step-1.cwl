@@ -158,6 +158,11 @@ outputs:
     outputBinding:
       glob: "*_mds_plot.html"
 
+  mds_plots_corrected_html:
+    type: File
+    outputBinding:
+      glob: "*_mds_plot_corrected.html"
+
   counts_all_gct:
     type: File
     outputBinding:

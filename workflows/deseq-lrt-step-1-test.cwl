@@ -216,6 +216,20 @@ outputs:
   #          tab: 'Overview'
   #          target: "_blank"
 
+  mds_plots_corrected_html:
+    type: File
+    outputSource: deseq/mds_plots_corrected_html
+    label: "MDS plots of normalized counts"
+    doc: |
+      MDS plots of normalized counts for each contrast
+      HTML format
+  #    'sd:visualPlugins':
+  #      - linkList:
+  #          tab: 'Overview'
+  #          target: "_blank"
+
+
+
   heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
@@ -284,6 +298,7 @@ steps:
       - dsq_obj_data
       - lrt_summary_md
       - mds_plots_html
+      - mds_plots_corrected_html
       - counts_all_gct
       - counts_filtered_gct
       - lrt_summary_md
