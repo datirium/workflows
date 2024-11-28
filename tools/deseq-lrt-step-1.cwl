@@ -159,7 +159,7 @@ outputs:
       glob: "*_mds_plot.html"
 
   mds_plots_corrected_html:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_mds_plot_corrected.html"
 
