@@ -217,7 +217,7 @@ outputs:
   #          target: "_blank"
 
   mds_plots_corrected_html:
-    type: File
+    type: File?
     outputSource: deseq/mds_plots_corrected_html
     label: "MDS plots of normalized counts"
     doc: |
