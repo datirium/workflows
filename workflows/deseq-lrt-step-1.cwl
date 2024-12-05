@@ -37,6 +37,14 @@ inputs:
     'sd:upstreamSource': "rnaseq_experiment/rpkm_isoforms"
     'sd:localLabel': true
 
+  get_stat_markdowns:
+    type: File[]
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments"
+    doc: "CSV/TSV input files grouped by isoforms"
+    'sd:upstreamSource': "rnaseq_experiment/get_stat_markdown"
+    'sd:localLabel': true
+
   expression_file_names:
     type: string[]
     label: "RNA-Seq experiments"
@@ -220,7 +228,7 @@ outputs:
   mds_plots_corrected_html:
     type: File?
     outputSource: deseq/mds_plots_corrected_html
-    label: "MDS plots of normalized counts"
+    label: "MDS plots of normalized counts corrected after batch effect removal"
     doc: |
       MDS plots of normalized counts for each contrast
       HTML format
@@ -263,6 +271,14 @@ steps:
     out:
       - genes_file
       - common_tss_file
+
+  generate_reads_barplot:
+    run: ../tools/generate-counts-barplot.cwl
+    in:
+      read_counts_gct: get_stat_markdowns
+      filenames: expression_file_names
+    out:
+      - reads_barplot
 
   deseq:
     run: ../tools/deseq-lrt-step-1.cwl
