@@ -93,6 +93,19 @@ inputs:
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
 
+  minimum_length:
+    type: int?
+    default: 30
+    label: "Mimimum allowed read length after adapter trimming"
+    doc: |
+      Discard reads that became shorter than the
+      specified length because of either quality
+      or adapter trimming. A value of 0 effectively
+      disables this behaviour.
+      Default: 30
+    'sd:layout':
+      advanced: true
+
   minimum_rpkm:
     type: float?
     default: 1
@@ -431,8 +444,7 @@ steps:
       input_file_pair: extract_fastq_downstream/fastq_file
       dont_gzip:
         default: true
-      length:
-        default: 30
+      length: minimum_length
       trim1:
         default: true
       paired:

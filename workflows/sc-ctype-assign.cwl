@@ -177,6 +177,21 @@ inputs:
       The file should have two columns named
       'cluster' and 'celltype'.
 
+  barcodes_data:
+    type: File?
+    label: "Selected cell barcodes (optional)"
+    doc: |
+      A TSV/CSV file to optionally extend
+      the single cell metadata with the custom
+      values per each barcode. The provided
+      file should include the first column
+      named "barcode", with one cell barcode
+      per line. All other columns, except for
+      the "barcode", will be added to the single
+      cell metadata loaded from the "Single-cell
+      Cluster Analysis" and can be utilized in
+      the current or future steps of analysis.
+
   genesets_data:
     type: File?
     label: "GMT file for calculating average expression levels per gene set (optional)"
@@ -755,6 +770,14 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
+  ctype_assign_human_log:
+    type: File
+    outputSource: ctype_assign/human_log
+    label: "Human readable error log"
+    doc: |
+      Human readable error log
+      from the ctype_assign step.
+
   ctype_assign_stdout_log:
     type: File
     outputSource: ctype_assign/stdout_log
@@ -777,6 +800,7 @@ steps:
     in:
       query_data_rds: query_data_rds
       cell_type_data: cell_type_data
+      barcodes_data: barcodes_data
       query_source_column:
         source: [query_reduction, query_resolution]
         valueFrom: $(get_query_column("", self[0], self[1]))
@@ -889,6 +913,7 @@ steps:
     - reference_data_index
     - seurat_rna_data_cloupe
     - sc_report_html_file
+    - human_log
     - stdout_log
     - stderr_log
 

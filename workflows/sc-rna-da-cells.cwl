@@ -492,7 +492,6 @@ steps:
       - cmp_gr_clst_spl_tst_plot_png
       - cmp_gr_tst_spl_clst_plot_png
       - rank_da_scr_plot_png
-
       - all_plots_pdf
       - ucsc_cb_html_data
       - ucsc_cb_html_file

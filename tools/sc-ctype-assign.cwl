@@ -33,12 +33,25 @@ inputs:
       Path to the TSV/CSV file for manual cell type assignment for each of the clusters.
       First column - 'cluster', second column may have arbitrary name.
 
+  barcodes_data:
+    type: File?
+    inputBinding:
+      prefix: "--barcodes"
+    doc: |
+      Path to the TSV/CSV file to optionally extend Seurat object metadata
+      by the selected barcodes. First column should be named as 'barcode'.
+      Other columns will be added to the Seurat object metadata ovewriting
+      the existing ones if those are present.
+      Default: no extra metadata is added
+
   query_source_column:
     type: string
     inputBinding:
       prefix: "--source"
     doc: |
-      Column from the metadata of the loaded Seurat object to select clusters from.
+      Column from the metadata of the loaded Seurat object to
+      select clusters from. May be one of the columns added
+      with the --barcodes parameter.
 
   query_target_column:
     type: string
@@ -67,6 +80,7 @@ inputs:
     doc: |
       Column from the Seurat object metadata to additionally split
       every cluster selected with --source into smaller groups.
+      May be one of the columns added with the --barcodes parameter.
       Default: do not split
 
   identify_diff_genes:
@@ -823,6 +837,14 @@ outputs:
       Tehcnical report.
       HTML format.
 
+  human_log:
+    type: File
+    outputBinding:
+      glob: "*_hlog.txt"
+    doc: |
+      Human readable error log.
+      TXT format.
+
   stdout_log:
     type: stdout
 
@@ -894,8 +916,9 @@ doc: |
 
 s:about: |
   usage: /usr/local/bin/sc_ctype_assign.R [-h] --query QUERY --celltypes
-                                          CELLTYPES --source SOURCE --target
-                                          TARGET [--splitby SPLITBY]
+                                          CELLTYPES [--barcodes BARCODES]
+                                          --source SOURCE --target TARGET
+                                          [--splitby SPLITBY]
                                           [--reduction REDUCTION] [--diffgenes]
                                           [--diffpeaks] [--rnalogfc RNALOGFC]
                                           [--rnaminpct RNAMINPCT] [--rnaonlypos]
@@ -927,15 +950,23 @@ s:about: |
                           Path to the TSV/CSV file for manual cell type
                           assignment for each of the clusters. First column -
                           'cluster', second column may have arbitrary name.
+    --barcodes BARCODES   Path to the TSV/CSV file to optionally extend Seurat
+                          object metadata by the selected barcodes. First column
+                          should be named as 'barcode'. Other columns will be
+                          added to the Seurat object metadata ovewriting the
+                          existing ones if those are present. Default: no extra
+                          metadata is added
     --source SOURCE       Column from the metadata of the loaded Seurat object
-                          to select clusters from.
+                          to select clusters from. May be one of the columns
+                          added with the --barcodes parameter.
     --target TARGET       Column from the metadata of the loaded Seurat object
                           to save manually assigned cell types. Should start
                           with 'custom_', otherwise, it won't be shown in UCSC
                           Cell Browser.
     --splitby SPLITBY     Column from the Seurat object metadata to additionally
                           split every cluster selected with --source into
-                          smaller groups. Default: do not split
+                          smaller groups. May be one of the columns added with
+                          the --barcodes parameter. Default: do not split
     --reduction REDUCTION
                           Dimensionality reduction to be used in the generated
                           plots. If not provided it will be automatically
