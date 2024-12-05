@@ -21,16 +21,21 @@ inputs:
     type: string?
     default: |
       #!/bin/bash
-      printf "$(date)\nStdout log file for k2-classify-pe.cwl tool:\n"
+      exec 1> error_msg.txt 2>&1
+      printf "k2-classify-pe.cwl\n$(date)\n"
       DATABASE=$0; R1=$1; R2=$2
       printf "INPUTS:\n"
       printf "\$0 - $DATABASE\n"
       printf "\$1 - $R1\n"
-      printf "\$2 - $R2\n"
-      printf "EXECUTION:\n"
+      printf "\$2 - $R2\n\n"
       #   commands start
       printf "\trun classification for PE reads\n"
       kraken2 --db $DATABASE --threads 20 --paired --classified-out k2_classified_reads#.fastq --unclassified-out k2_unclassified_reads#.fastq --output k2.output --report k2.report $R1 $R2 2> k2.stderr
+      # check that k2 output is not empty
+      if [[ $(awk 'END{print(NR)}' k2.report) == "0" ]]; then
+        echo "k2.report file is empty; exiting" >> error_report.txt
+        exit 1
+      fi
       printf "\tformatting outputs\n"
       # make stderr output markdown compatible for overview tab view
       head -1 k2.stderr > parsed.stderr
@@ -40,8 +45,25 @@ inputs:
       sed 's/^ *//' k2.report | sed 's/\t  */\t/' >> k2_report.tsv
       printf "\tgenerate krona plot\n"
       python3 /usr/local/src/KrakenTools/kreport2krona.py -r k2.report -o k2.krona --no-intermediate-ranks
+      # check that kreport2krona didn't produce no or empty output
+      if [[ ! -f k2.krona ]]; then
+        echo "k2.krona file was not produced; exiting" >> error_report.txt
+        exit 1
+      fi
+      if [[ $(awk 'END{print(NR)}' k2.krona) == "0" ]]; then
+        echo "k2.krona file is empty; exiting" >> error_report.txt
+        exit 1
+      fi
       perl /usr/local/src/Krona/KronaTools/scripts/ImportText.pl -o krona.html k2.krona
-      printf "END OF SCRIPT\n"
+      # check that transform to html didn't produce no or empty output
+      if [[ ! -f krona.html ]]; then
+        echo "krona.html file was not produced; exiting" >> error_report.txt
+        exit 1
+      fi
+      if [[ $(awk 'END{print(NR)}' krona.html) == "0" ]]; then
+        echo "krona.html file is empty; exiting" >> error_report.txt
+        exit 1
+      fi
     inputBinding:
         position: 1
 
@@ -68,6 +90,16 @@ inputs:
 
 
 outputs:
+
+  error_msg:
+    type: File?
+    outputBinding:
+      glob: "error_msg.txt"
+
+  error_report:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
 
   k2_classified_R1:
     type: File
@@ -114,62 +146,11 @@ outputs:
     outputBinding:
       glob: "krona.html"
 
-  stdout_log:
-    type: stdout
-
-  stderr_log:
-    type: stderr
-
 
 baseCommand: ["bash", "-c"]
-stdout: k2-stdout.log
-stderr: k2-stderr.log
 
 
-
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "k2-classify-pe"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/k2-classify-pe.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
+label: "k2-classify-pe"
 doc: |
     Tool downloads specified kraken2 database from https://benlangmead.github.io/aws-indexes/k2.
     Resulting directory is used as upstream input to kraken2 classify tools.

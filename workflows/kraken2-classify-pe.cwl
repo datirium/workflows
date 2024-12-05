@@ -188,20 +188,6 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  kraken2_classify_stdout:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "stdout logfile"
-    doc: "captures standard output from k2-classify-pe.cwl"
-    outputSource: kraken2_classify/stdout_log
-
-  kraken2_classify_stderr:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "stderr logfile"
-    doc: "captures standard error from k2-classify-pe.cwl"
-    outputSource: kraken2_classify/stderr_log
-
   krona_plot_link:
     type: File
     format: "http://edamontology.org/format_2331"
@@ -347,54 +333,8 @@ steps:
       - k2_report_tsv
       - k2_stderr
       - krona_html
-      - stdout_log
-      - stderr_log
 
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "Kraken2 Metagenomic pipeline paired-end"
 label: "Kraken2 Metagenomic pipeline paired-end"
-s:alternateName: "Taxonomic Read Classification Workflow with Kraken2 for a paired-end experiment with Trim Galore"
-
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
-
 doc: |
   This workflow taxonomically classifies paired-end sequencing reads in FASTQ format, that have been optionally
   adapter trimmed with trimgalore, using Kraken2 and a user-selected pre-built database from a list of
