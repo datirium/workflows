@@ -228,8 +228,6 @@ outputs:
   #          tab: 'Overview'
   #          target: "_blank"
 
-
-
   heatmap_html:
     type: File
     outputSource: morpheus_heatmap/heatmap_html
@@ -240,6 +238,12 @@ outputs:
   #      - linkList:
   #          tab: 'Overview'
   #          target: "_blank"
+
+  alignment_stats_barchart:
+    type: File
+    label: "Alignment statistics bar chart"
+    doc: "Alignment statistics bar chart"
+    outputSource: deseq/alignment_stats_barchart
 
   deseq_stdout_log:
     type: File
@@ -302,6 +306,7 @@ steps:
       - counts_all_gct
       - counts_filtered_gct
       - lrt_summary_md
+      - alignment_stats_barchart
       - stdout_log
       - stderr_log
 

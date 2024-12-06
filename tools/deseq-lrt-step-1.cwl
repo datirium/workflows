@@ -178,6 +178,11 @@ outputs:
     outputBinding:
       glob: "*_lrt_result.md"
 
+  alignment_stats_barchart:
+    type: File
+    outputBinding:
+      glob: "alignment_stats_barchart.png"
+
   stdout_log:
     type: stdout
 
