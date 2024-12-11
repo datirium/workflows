@@ -109,6 +109,32 @@ inputs:
     'sd:layout':
       advanced: true
 
+  outFilterMatchNminOverLread:
+    type: float?
+    default: 0.66
+    label: "The minimum required matches as a fraction of the read length to filter alignments (from 0 to 1)"
+    doc: |
+      A fraction that sets the minimum length of a read
+      required to align, relative to the read's length.
+      It is used in filtering out alignments that do
+      not meet this minimum threshold.
+      Default: 0.66
+    'sd:layout':
+      advanced: true
+
+  outFilterScoreMinOverLread:
+    type: float?
+    default: 0.66
+    label: "The minimum required alignment score as a fraction of the read length to filter alignments (from 0 to 1)"
+    doc: |
+      A fractional threshold that determines the minimum
+      alignment score required for a read, relative to the
+      read length. It helps filter out alignments that do
+      not meet this score threshold.
+      Default: 0.66
+    'sd:layout':
+      advanced: true
+
   minimum_rpkm:
     type: float?
     default: 1
@@ -503,6 +529,8 @@ steps:
         default: 15
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
+      outFilterMatchNminOverLread: outFilterMatchNminOverLread
+      outFilterScoreMinOverLread: outFilterScoreMinOverLread
       threads: threads
     out:
       - aligned_file
