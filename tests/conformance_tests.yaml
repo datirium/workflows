@@ -347,6 +347,9 @@
       location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
+    unmapped_fastq:
+      location: read_1.Unmapped.out.mate1.bz2
+      class: File
     trim_report:
       location: read_1.fastq_trimming_report.txt
       class: File
@@ -428,6 +431,9 @@
       location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
+    unmapped_fastq:
+      location: read_1.Unmapped.out.mate1.bz2
+      class: File
     trim_report:
       location: read_1.fastq_trimming_report.txt
       class: File
@@ -510,6 +516,12 @@
       location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
+    unmapped_fastq_r1:
+      location: read_1.Unmapped.out.mate1.bz2
+      class: File
+    unmapped_fastq_r2:
+      location: read_1.Unmapped.out.mate2.bz2
+      class: File
     trim_report_downstream:
       location: read_2.fastq_trimming_report.txt
       class: File
@@ -600,6 +612,12 @@
       location: read_1.SJ.out.tab
       class: File
     star_stdout_log: null
+    unmapped_fastq_r1:
+      location: read_1.Unmapped.out.mate1.bz2
+      class: File
+    unmapped_fastq_r2:
+      location: read_1.Unmapped.out.mate2.bz2
+      class: File
     trim_report_downstream:
       location: read_2.fastq_trimming_report.txt
       class: File

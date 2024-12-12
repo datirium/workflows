@@ -159,6 +159,14 @@ inputs:
     'sd:layout':
       advanced: true
 
+  max_mismatch:
+    type: int?
+    default: 5
+    label: "Maximum number of mismatches the read is allowed to have"
+    doc: "Maximum number of mismatches the read is allowed to have"
+    'sd:layout':
+      advanced: true
+
   max_cycles:
     type: int?
     default: 2000
@@ -242,6 +250,18 @@ outputs:
     label: "STAR sj log"
     doc: "STAR SJ.out.tab"
     outputSource: star_aligner/log_sj
+
+  unmapped_fastq_r1:
+    type: File
+    label: "Unmapped reads from FASTQ read 1 input file(s)"
+    doc: "Unmapped reads from FASTQ read 1 input file(s)"
+    outputSource: compress_unmapped_mate_1_file/output_file
+
+  unmapped_fastq_r2:
+    type: File
+    label: "Unmapped reads from FASTQ read 2 input file(s)"
+    doc: "Unmapped reads from FASTQ read 2 input file(s)"
+    outputSource: compress_unmapped_mate_2_file/output_file
 
   fastx_statistics_upstream:
     type: File
@@ -536,8 +556,7 @@ steps:
       genomeDir: star_indices_folder
       outFilterMultimapNmax: max_multimap
       winAnchorMultimapNmax: max_multimap_anchor
-      outFilterMismatchNmax:
-        default: 5
+      outFilterMismatchNmax: max_mismatch
       alignSJDBoverhangMin:
         default: 1
       seedSearchStartLmax:
@@ -546,15 +565,33 @@ steps:
       clip5pNbases: clip_5p_end
       outFilterMatchNminOverLread: outFilterMatchNminOverLread
       outFilterScoreMinOverLread: outFilterScoreMinOverLread
+      outReadsUnmapped:
+        default: "Fastx"
       threads: threads
     out:
       - aligned_file
+      - unmapped_mate_1_file
+      - unmapped_mate_2_file
       - log_final
       - uniquely_mapped_reads_number
       - log_out
       - log_progress
       - log_std
       - log_sj
+
+  compress_unmapped_mate_1_file:
+    run: ../tools/bzip2-compress.cwl
+    in:
+      input_file: star_aligner/unmapped_mate_1_file
+    out:
+    - output_file
+
+  compress_unmapped_mate_2_file:
+    run: ../tools/bzip2-compress.cwl
+    in:
+      input_file: star_aligner/unmapped_mate_2_file
+    out:
+    - output_file
 
   fastx_quality_stats_upstream:
     run: ../tools/fastx-quality-stats.cwl
