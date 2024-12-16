@@ -10,7 +10,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/fastqdwnld:v0.0.4
+  dockerPull: biowardrobe2/fastqdwnld:v0.0.5
 
 
 inputs:
