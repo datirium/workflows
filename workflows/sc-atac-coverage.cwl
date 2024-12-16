@@ -30,6 +30,9 @@ requirements:
   - "cellranger-arc-aggr.cwl"
   - "cellranger-atac-count.cwl"
   - "cellranger-atac-aggr.cwl"
+  genome_indices:
+  - "genome-indices.cwl"
+  - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
 
 
 inputs:
@@ -68,7 +71,11 @@ inputs:
 
   chrom_length_file:                                                         # not used - need it only for IGV
     type: File
-    "sd:upstreamSource": "sc_atac_sample/genome_indices/genome_indices/chrom_length"
+    label: "Genome"
+    doc: |
+      Reference genome
+    "sd:upstreamSource": "genome_indices/chrom_length"
+    "sd:localLabel": true
 
   splitby:
     type: string?
