@@ -35,8 +35,6 @@ requirements:
   - "cellranger-arc-aggr.cwl"
   - "cellranger-atac-count.cwl"
   - "cellranger-atac-aggr.cwl"
-  genome_indices:
-  - "genome-indices.cwl"
 
 
 inputs:
@@ -77,11 +75,7 @@ inputs:
 
   genome_type:
     type: string
-    label: "Genome"
-    doc: |
-      Reference genome
-    "sd:upstreamSource": "genome_indices/genome"
-    "sd:localLabel": true
+    "sd:upstreamSource": "sc_atac_sample/genome_indices/genome_indices/genome"
 
   datasets_metadata:
     type: File?
