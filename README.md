@@ -152,6 +152,39 @@ outputs:
     ...
 ```
 
+A new VisualPlugin of type ```queryRedirect``` now exists. which allows a base url, and query builder to be utilized.
+The query build has the method "getSampleValue" for including cwl/sample data in the query.
+
+- getSampleValue(loc,name):  gets value of sample input/output 
+  (files have location as download link)
+  - loc = 'inputs' or 'outputs'
+  - name = name of sample input/output to get value from
+
+
+> 'query_eval_string' should be a string with double quotes, where the inner value uses JS string injection of the form: \`staticString_${evaluatedStr()}\`  
+
+(surrounded by backticks)
+
+so if the only query param to send is "data_file", which is the download link to the samples "tsvFile" output, then the field will look like: ```"`data_file=${getSampleValue('outputs', 'tsvFile')}`"```
+```yaml
+
+    ...
+    deseqTSV:
+        type: File
+        label: "Deseq TSV"
+        doc: "TSV from deseq for volcano plot"
+        outputSource: step_name/output_name
+        'sd:visualPlugins':
+        - queryRedirect:
+            label: '<What link should say>'
+            url: 'https://scidap.com/vp/volcano'
+            query_eval_string: "`data_file=${this.getSampleValue('outputs', 'deseqTSV')}&data_col=GeneId&x_col=log2FoldChange&y_col=padj`"
+            target: '_blank'
+            tab: '(optional) <which tab this link hsould appear on>'
+    ...
+```
+
+
 ### Service Tags for workflows
 The ```'sd:serviceTag'```keyword enables new workflows to be added for the creation of:
 - samples: uses keyword ```'sample'```
