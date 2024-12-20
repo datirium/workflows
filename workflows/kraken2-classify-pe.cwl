@@ -61,6 +61,62 @@ inputs:
 
 outputs:
 
+  fastx_statistics_r1:
+    type: File
+    label: "FASTQ 1 statistics"
+    format: "http://edamontology.org/format_2330"
+    doc: "fastx_quality_stats generated FASTQ 1 quality statistics file"
+    outputSource: extract_and_trim/statistics_file_r1
+    'sd:visualPlugins':
+    - line:
+        tab: 'QC Plots'
+        Title: 'FASTQ 1 Base frequency plot'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Frequency'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$13, $14, $15, $16, $17]
+    - boxplot:
+        tab: 'QC Plots'
+        Title: 'FASTQ 1 Quality Control'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Quality score'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$11, $7, $8, $9, $12]
+
+  fastx_statistics_r2:
+    type: File
+    label: "FASTQ 2 statistics"
+    format: "http://edamontology.org/format_2330"
+    doc: "fastx_quality_stats generated FASTQ 2 quality statistics file"
+    outputSource: extract_and_trim/statistics_file_r2
+    'sd:visualPlugins':
+    - line:
+        tab: 'QC Plots'
+        Title: 'FASTQ 2 Base frequency plot'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Frequency'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$13, $14, $15, $16, $17]
+    - boxplot:
+        tab: 'QC Plots'
+        Title: 'FASTQ 2 Quality Control'
+        xAxisTitle: 'Nucleotide position'
+        yAxisTitle: 'Quality score'
+        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
+        data: [$11, $7, $8, $9, $12]
+
+  trim_report_r1:
+    type: File
+    label: "TrimGalore report for read 1"
+    doc: "TrimGalore generated log for FASTQ 1"
+    outputSource: extract_and_trim/trimmed_fastq_r1_report
+
+  trim_report_r2:
+    type: File
+    label: "TrimGalore report for read 2"
+    doc: "TrimGalore generated log for FASTQ 2"
+    outputSource: extract_and_trim/trimmed_fastq_r2_report
+
   k2_classified_reads_R1:
     type:
       - "null"
@@ -97,62 +153,6 @@ outputs:
     doc: "unclassified r2 FASTQ file"
     outputSource: kraken2_classify/k2_unclassified_R2
 
-  fastx_statistics_upstream:
-    type: File
-    label: "FASTQ 1 statistics"
-    format: "http://edamontology.org/format_2330"
-    doc: "fastx_quality_stats generated FASTQ 1 quality statistics file"
-    outputSource: fastx_quality_stats_upstream/statistics_file
-    'sd:visualPlugins':
-    - line:
-        tab: 'QC Plots'
-        Title: 'FASTQ 1 Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-        data: [$13, $14, $15, $16, $17]
-    - boxplot:
-        tab: 'QC Plots'
-        Title: 'FASTQ 1 Quality Control'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Quality score'
-        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-        data: [$11, $7, $8, $9, $12]
-
-  fastx_statistics_downstream:
-    type: File
-    label: "FASTQ 2 statistics"
-    format: "http://edamontology.org/format_2330"
-    doc: "fastx_quality_stats generated FASTQ 2 quality statistics file"
-    outputSource: fastx_quality_stats_downstream/statistics_file
-    'sd:visualPlugins':
-    - line:
-        tab: 'QC Plots'
-        Title: 'FASTQ 2 Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
-        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-        data: [$13, $14, $15, $16, $17]
-    - boxplot:
-        tab: 'QC Plots'
-        Title: 'FASTQ 2 Quality Control'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Quality score'
-        colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
-        data: [$11, $7, $8, $9, $12]
-
-  trim_report_upstream:
-    type: File
-    label: "TrimGalore report Upstream"
-    doc: "TrimGalore generated log for FASTQ 1"
-    outputSource: trim_fastq/report_file
-
-  trim_report_downstream:
-    type: File
-    label: "TrimGalore report Downstream"
-    doc: "TrimGalore generated log for FASTQ 2"
-    outputSource: trim_fastq/report_file_pair
-
   k2_output:
     type: File
     format: "http://edamontology.org/format_3475"
@@ -188,20 +188,6 @@ outputs:
     - markdownView:
         tab: 'Overview'
 
-  kraken2_classify_stdout:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "stdout logfile"
-    doc: "captures standard output from k2-classify-pe.cwl"
-    outputSource: kraken2_classify/stdout_log
-
-  kraken2_classify_stderr:
-    type: File
-    format: "http://edamontology.org/format_2330"
-    label: "stderr logfile"
-    doc: "captures standard error from k2-classify-pe.cwl"
-    outputSource: kraken2_classify/stderr_log
-
   krona_plot_link:
     type: File
     format: "http://edamontology.org/format_2331"
@@ -216,116 +202,21 @@ outputs:
 
 steps:
 
-  extract_fastq_R1:
-    label: "Loading unmapped sequence data for read 1"
+  extract_and_trim:
+    label: "Extract compressed reads if needed, concatentate multi-files per pair, trim each paired read file, then collect qc statistics"
     doc: |
-      Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
-      The data can be uploaded from users computer, downloaded directly from an ftp server of
-      the core facility by providing a URL or from GEO by providing SRA accession number.
-    run: ../tools/extract-fastq.cwl
+      Extract compressed reads if needed, concatentate multi-files per pair, trim each paired read file, then collect qc statistics
+    run: ../tools/extractandtrim-pe.cwl
     in:
-      compressed_file: fastq_file_R1
-      output_prefix:
-        default: "merged_R1"
-    out: [fastq_file]
-
-  extract_fastq_R2:
-    label: "Loading unmapped sequence data for read 2"
-    doc: |
-      Most DNA cores and commercial NGS companies return unmapped sequence data in FASTQ format.
-      The data can be uploaded from users computer, downloaded directly from an ftp server of
-      the core facility by providing a URL or from GEO by providing SRA accession number.
-    run: ../tools/extract-fastq.cwl
-    in:
-      compressed_file: fastq_file_R2
-      output_prefix:
-        default: "merged_R2"
-    out: [fastq_file]
-
-  trim_fastq:
-    label: "Adapter trimming"
-    doc: |
-      For libraries sequenced on the Illumina platform it’s recommended to remove adapter sequences
-      from the reads. If adapters are not trimmed there is a high risk of reads being unmapped to a
-      reference genome. This becomes particularly important when the reads are long and the fragments
-      are short - resulting in sequencing adapters at the end of read. If adapter trimming will cause
-      all the reads become too short (<30bp), this step will be skipped.
-    run: ../tools/trimgalore.cwl
-    in:
-      input_file: extract_fastq_R1/fastq_file
-      input_file_pair: extract_fastq_R2/fastq_file
-      dont_gzip:
-        default: true
-      length:
-        default: 30
-      trim1:
-        default: false
-      paired:
-        default: true
+      read1file: fastq_file_R1
+      read2file: fastq_file_R2
     out:
-      - trimmed_file
-      - trimmed_file_pair
-      - report_file
-      - report_file_pair
-
-  bypass_trim:
-    run: ../tools/bypass-trimgalore-pe.cwl
-    in:
-      original_fastq_file_1: extract_fastq_R1/fastq_file
-      trimmed_fastq_file_1: trim_fastq/trimmed_file
-      trimming_report_file_1: trim_fastq/report_file
-      original_fastq_file_2: extract_fastq_R2/fastq_file
-      trimmed_fastq_file_2: trim_fastq/trimmed_file_pair
-      trimming_report_file_2: trim_fastq/report_file_pair
-      min_reads_count:
-        default: 100  # any small number should be good, as we are catching the case when trimgalore discarded all reads
-    out:
-      - selected_fastq_file_1
-      - selected_report_file_1
-      - selected_fastq_file_2
-      - selected_report_file_2
-
-  rename_upstream:
-    run: ../tools/rename.cwl
-    in:
-      source_file: bypass_trim/selected_fastq_file_1
-      target_filename:
-        source: extract_fastq_R1/fastq_file
-        valueFrom: $(self.basename)
-    out:
-      - target_file
-
-  rename_downstream:
-    run: ../tools/rename.cwl
-    in:
-      source_file: bypass_trim/selected_fastq_file_2
-      target_filename:
-        source: extract_fastq_R2/fastq_file
-        valueFrom: $(self.basename)
-    out:
-      - target_file
-
-  fastx_quality_stats_upstream:
-    label: "Quality control of unmapped sequence data for read 1"
-    doc: |
-      Evaluates the quality of your sequence data. Provides per base quality scores as well as
-      base frequencies along the reads. These metrics can be used to identify whether your data
-      has any problems that should be taken into account in the subsequent analysis steps.
-    run: ../tools/fastx-quality-stats.cwl
-    in:
-      input_file: rename_upstream/target_file
-    out: [statistics_file]
-
-  fastx_quality_stats_downstream:
-    label: "Quality control of unmapped sequence data for read 2"
-    doc: |
-      Evaluates the quality of your sequence data. Provides per base quality scores as well as
-      base frequencies along the reads. These metrics can be used to identify whether your data
-      has any problems that should be taken into account in the subsequent analysis steps.
-    run: ../tools/fastx-quality-stats.cwl
-    in:
-      input_file: rename_downstream/target_file
-    out: [statistics_file]
+      - trimmed_fastq_r1
+      - trimmed_fastq_r2
+      - trimmed_fastq_r1_report
+      - trimmed_fastq_r2_report
+      - statistics_file_r1
+      - statistics_file_r2
 
   kraken2_classify:
     label: "Kraken2 taxonomic classification of sequence reads"
@@ -335,8 +226,8 @@ steps:
     run: ../tools/k2-classify-pe.cwl
     in:
       k2db: k2db
-      read1file: rename_upstream/target_file
-      read2file: rename_downstream/target_file
+      read1file: extract_and_trim/trimmed_fastq_r1
+      read2file: extract_and_trim/trimmed_fastq_r2
     out:
       - k2_classified_R1
       - k2_classified_R2
@@ -347,57 +238,11 @@ steps:
       - k2_report_tsv
       - k2_stderr
       - krona_html
-      - stdout_log
-      - stderr_log
 
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "Kraken2 Metagenomic pipeline paired-end"
 label: "Kraken2 Metagenomic pipeline paired-end"
-s:alternateName: "Taxonomic Read Classification Workflow with Kraken2 for a paired-end experiment with Trim Galore"
-
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/kraken2-classify-pe.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
-
 doc: |
-  This workflow taxonomically classifies paired-end sequencing reads in FASTQ format, that have been optionally
-  adapter trimmed with trimgalore, using Kraken2 and a user-selected pre-built database from a list of
+  This workflow taxonomically classifies paired-end sequencing reads in FASTQ format, that have been 
+  adapter trimmed with trimgalore, using Kraken2 with a user-selected pre-built database from a list of
   [genomic index files](https://benlangmead.github.io/aws-indexes/k2).
 
   ### __Inputs__
@@ -412,19 +257,12 @@ doc: |
     - FASTA/Q input R1 from a paired end library
   Read 2 file:
     - FASTA/Q input R2 from a paired end library
-  Advanced Inputs Tab (Optional):
-     - Number of bases to clip from the 3p end
-     - Number of bases to clip from the 5p end
-
-  ### __Outputs__
-   - k2db, an upstream database used by kraken2 classifier
 
   ### __Data Analysis Steps__
   1. Trimming the adapters with TrimGalore.
       - This step is particularly important when the reads are long and the fragments are short - resulting in sequencing adapters at the ends of reads. If adapter is not removed the read will not map. TrimGalore can recognize standard adapters, such as Illumina or Nextera/Tn5 adapters.
   2. Generate quality control statistics of trimmed, unmapped sequence data
-  3. (Optional) Clipping of 5' and/or 3' end by the specified number of bases.
-  4. Mapping reads to primary genome index with Bowtie.
+  3. Classify trimmed reads with kraken2 and selected kraken database
 
   ### __References__
     - Wood, D.E., Lu, J. & Langmead, B. Improved metagenomic analysis with Kraken 2. Genome Biol 20, 257 (2019). https://doi.org/10.1186/s13059-019-1891-0

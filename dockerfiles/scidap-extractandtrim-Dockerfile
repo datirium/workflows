@@ -1,0 +1,59 @@
+#################################################################
+# Dockerfile
+#
+# Software:         Extract and trim fastq paired-end files with trimgalore
+# Software Version: version 2.1.2
+# Description:      Dockerized version of extractandtrim
+# Website:          https://github.com/datirium/workflows
+# Provides:         PE FASTQ extraction and trimming
+# Base Image:       biowardrobe2/fastx_toolkit:v0.0.14
+# Build Cmd:        docker build --no-cache --rm -t extractandtrim-dev -f scidap-extractandtrim-Dockerfile . > ../../dockerbuild-extractandtrim.log 2>&1
+# Run Cmd:          docker run --rm -ti extractandtrim-dev /bin/bash
+# Push Cmd1:        docker tag extractandtrim-dev robertplayer/scidap-extractandtrim:dev
+#      Cmd2:        docker image push robertplayer/scidap-extractandtrim:dev
+# Pull Cmd:         docker pull robertplayer/scidap-extractandtrim:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-extractandtrim:dev /bin/bash
+# re-tag for PR:    docker tag extractandtrim-dev robertplayer/scidap-extractandtrim:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-extractandtrim:v1.0.0
+#           
+#   NOTES:  
+#           
+#################################################################
+
+
+### Base Image
+FROM scidap/trimgalore:v0.6.6
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+### fastx toolkit related ENV variables
+ENV VERSION 0.0.14
+ENV NAME fastx_toolkit
+ENV URL "https://github.com/agordon/fastx_toolkit/releases/download/${VERSION}/${NAME}-${VERSION}.tar.bz2"
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+COPY ./scripts/run_extractandtrimpe.sh /usr/local/bin/
+
+### Installing and permitting scripts
+RUN chmod +x /usr/local/bin/run_extractandtrimpe.sh && \
+    ls -la /usr/local/bin/run_extractandtrimpe.sh
+
+### Installing 7z package and other dependencies
+RUN apt-get clean all && \
+    apt-get update && \
+    apt-get install -y libgtextutils-dev p7zip-full pigz && \
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+### Installing fastx toolkit
+RUN cd /usr/local/bin && \
+    wget -q -O - $URL | tar -jxv && \
+    cd ${NAME}-${VERSION} && \
+    ./configure --prefix=/usr/local/ && \
+    make || true && \
+    ln -s /usr/local/bin/${NAME}-${VERSION}/src/fastx_quality_stats/fastx_quality_stats /usr/local/bin/fastx_quality_stats
