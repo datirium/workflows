@@ -106,6 +106,32 @@ inputs:
     'sd:layout':
       advanced: true
 
+  outFilterMatchNminOverLread:
+    type: float?
+    default: 0.66
+    label: "The minimum required matches as a fraction of the read length to filter alignments (from 0 to 1)"
+    doc: |
+      A fraction that sets the minimum length of a read
+      required to align, relative to the read's length.
+      It is used in filtering out alignments that do
+      not meet this minimum threshold.
+      Default: 0.66
+    'sd:layout':
+      advanced: true
+
+  outFilterScoreMinOverLread:
+    type: float?
+    default: 0.66
+    label: "The minimum required alignment score as a fraction of the read length to filter alignments (from 0 to 1)"
+    doc: |
+      A fractional threshold that determines the minimum
+      alignment score required for a read, relative to the
+      read length. It helps filter out alignments that do
+      not meet this score threshold.
+      Default: 0.66
+    'sd:layout':
+      advanced: true
+
   minimum_rpkm:
     type: float?
     default: 1
@@ -127,6 +153,14 @@ inputs:
     default: 50
     label: "Maximum number of loci anchors are allowed to map to"
     doc: "Maximum number of loci anchors are allowed to map to"
+    'sd:layout':
+      advanced: true
+
+  max_mismatch:
+    type: int?
+    default: 5
+    label: "Maximum number of mismatches the read is allowed to have"
+    doc: "Maximum number of mismatches the read is allowed to have"
     'sd:layout':
       advanced: true
 
@@ -205,6 +239,18 @@ outputs:
     label: "STAR sj log"
     doc: "STAR SJ.out.tab"
     outputSource: star_aligner/log_sj
+
+  unmapped_fastq_r1:
+    type: File
+    label: "Unmapped reads from FASTQ read 1 input file(s)"
+    doc: "Unmapped reads from FASTQ read 1 input file(s)"
+    outputSource: compress_unmapped_mate_1_file/output_file
+
+  unmapped_fastq_r2:
+    type: File
+    label: "Unmapped reads from FASTQ read 2 input file(s)"
+    doc: "Unmapped reads from FASTQ read 2 input file(s)"
+    outputSource: compress_unmapped_mate_2_file/output_file
 
   fastx_statistics_upstream:
     type: File
@@ -499,23 +545,42 @@ steps:
       genomeDir: star_indices_folder
       outFilterMultimapNmax: max_multimap
       winAnchorMultimapNmax: max_multimap_anchor
-      outFilterMismatchNmax:
-        default: 5
+      outFilterMismatchNmax: max_mismatch
       alignSJDBoverhangMin:
         default: 1
       seedSearchStartLmax:
         default: 15
       clip3pNbases: clip_3p_end
       clip5pNbases: clip_5p_end
+      outFilterMatchNminOverLread: outFilterMatchNminOverLread
+      outFilterScoreMinOverLread: outFilterScoreMinOverLread
+      outReadsUnmapped:
+        default: "Fastx"
       threads: threads
     out:
       - aligned_file
+      - unmapped_mate_1_file
+      - unmapped_mate_2_file
       - log_final
       - uniquely_mapped_reads_number
       - log_out
       - log_progress
       - log_std
       - log_sj
+
+  compress_unmapped_mate_1_file:
+    run: ../tools/bzip2-compress.cwl
+    in:
+      input_file: star_aligner/unmapped_mate_1_file
+    out:
+    - output_file
+
+  compress_unmapped_mate_2_file:
+    run: ../tools/bzip2-compress.cwl
+    in:
+      input_file: star_aligner/unmapped_mate_2_file
+    out:
+    - output_file
 
   fastx_quality_stats_upstream:
     run: ../tools/fastx-quality-stats.cwl
