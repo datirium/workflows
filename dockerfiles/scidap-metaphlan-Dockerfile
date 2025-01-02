@@ -1,0 +1,76 @@
+#################################################################
+# Dockerfile
+#
+# Software:         MetaPhlAn
+# Software Version: version 4.1
+# Description:      Dockerized version of MetaPhlAn
+# Website:          https://github.com/datirium/workflows
+# Provides:         MetaPhlAn for species-level microbial profiling of metagenomic shotgun sequencing data
+# Base Image:       ubuntu:22.04
+# Build Cmd:        docker build --no-cache --rm -t metaphlan-dev -f scidap-metaphlan-Dockerfile . > ~/docker_build_logs/scidap-metaphlan-dockerbuild.log 2>&1
+# Run Cmd:          docker run --rm -ti metaphlan-dev /bin/bash
+# Push Cmd1:        docker tag metaphlan-dev robertplayer/scidap-metaphlan:dev
+#      Cmd2:        docker image push robertplayer/scidap-metaphlan:dev
+# Pull Cmd:         docker pull robertplayer/scidap-metaphlan:dev
+# Test dev:         docker run --rm -ti robertplayer/scidap-metaphlan:dev /bin/bash
+# re-tag for PR:    docker tag metaphlan-dev robertplayer/scidap-metaphlan:v1.0.0
+# Push for PR:      docker image push robertplayer/scidap-metaphlan:v1.0.0
+#           
+#   NOTES: 
+#
+#   v1.0.0
+#       - MetaPhlAn v4.1
+#           
+#################################################################
+
+
+### Base Image
+FROM ubuntu:22.04
+LABEL maintainer="robert.player@datirium.com"
+ENV DEBIAN_FRONTEND noninteractive
+
+
+################## BEGIN INSTALLATION ######################
+
+WORKDIR /tmp
+
+### Installing dependencies
+RUN apt-get update && \
+    apt -y install libgcc-10-dev libxml2-dev libcurl4-openssl-dev libssl-dev pandoc && \
+    apt -y install wget git pip bowtie2 ncbi-blast+ && \
+    ### Installing and permitting scripts
+    pip install humann && \
+    pip install kneaddata && \
+    cd /usr/local/src/ && \
+    wget https://github.com/Benson-Genomics-Lab/TRF/archive/refs/tags/v4.09.1.tar.gz && \
+    tar xzvf v4.09.1.tar.gz && \
+    rm v4.09.1.tar.gz && \
+    cd TRF-4.09.1/ && \
+    mkdir build && \
+    cd build && \
+    ../configure && \
+    make && \
+    make install && \
+    mkdir -p /dockerdata/databases && \
+    mkdir -p /dockerdata/src && \
+    cd /dockerdata/src && \
+    git clone https://github.com/biobakery/MetaPhlAn.git && \
+    cd MetaPhlAn/ && \
+    pip install . && \
+    cd /dockerdata/src && \
+    git clone https://github.com/biobakery/graphlan.git && \
+    cd graphlan/ && \
+    pip install . && \
+    cd /dockerdata/databases && \
+    kneaddata_database --download human_genome bowtie2 human_genome_bowtie2 && \
+    humann_databases --download chocophlan full chocophlan_full && \
+    humann_databases --download uniref uniref90_ec_filtered_diamond uniref_uniref90_ec_filtered_diamond && \
+    humann_databases --download utility_mapping full utility_mapping_full && \
+#    metaphlan --install --index mpa_vJan21_CHOCOPhlAnSGB_202103 --bowtie2db index-mpa_vJan21_CHOCOPhlAnSGB_202103 && \
+    printf "@read1\nAAAATTTTCCCGCTCGCGCGCGCGCTATATAATATATATAGCAGCATACCAGCATAGTGATCGAAAATTTTCCCGCTCGCGCGCGCGCTATATAATATATATAGCAGCATACCAGCATAGTGATCGAAAATTTTCCCGCTCGCGCGCGCGCTATATAATATATATAGCAGCATACCAGCATAGTGATCG\n+\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n" > test.fastq && \
+    metaphlan test.fastq --bowtie2out metagenome.bowtie2.bz2 --nproc 4 --input_type fastq -o profiled_metagenome.txt && \
+### Cleaning
+    apt-get clean && \
+    apt-get purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
+    strip /usr/local/bin/*; true

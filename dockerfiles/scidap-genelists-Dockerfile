@@ -13,11 +13,11 @@
 #      Cmd2:        docker image push robertplayer/scidap-genelists:dev
 # Pull Cmd:         docker pull robertplayer/scidap-genelists:dev
 # Test dev:         docker run --rm -ti robertplayer/scidap-genelists:dev /bin/bash
-# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v4.0.0
-# Push for PR:      docker image push robertplayer/scidap-genelists:v4.0.0
-# Pull Cmd:         docker pull robertplayer/scidap-genelists:v4.0.0
-# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v4.0.0 /bin/bash
-#           
+# re-tag for PR:    docker tag genelists-dev robertplayer/scidap-genelists:v5.0.0
+# Push for PR:      docker image push robertplayer/scidap-genelists:v5.0.0
+# Pull Cmd:         docker pull robertplayer/scidap-genelists:v5.0.0
+# Test vx.x.x:      docker run --rm -ti robertplayer/scidap-genelists:v5.0.0 /bin/bash
+#
 #   NOTES:
 #           This dockerfile may be updated to include a run_* script for se fastq input in the future
 #   v1.0.0
@@ -33,13 +33,20 @@
 #   v4.0.0
 #       - adding script for processing rna-seq data only
 #
+#   v5.0.0
+#       - adding script for VST of expression matrix (req DESeq2 lib)
+#       - full gene matrix from all samples combined, transformed, then parsed for visualization
+#       - new base image for Rscript hanging when dockerimage is run with toil
+#
 #################################################################
 
 
 ### Base Image
-FROM biowardrobe2/morpheus:v0.0.2
+#FROM biowardrobe2/morpheus:v0.0.2
+#       using new ubuntu base image to help troubleshooting of hopach hang issue
+#FROM rocker/r-ubuntu:jammy
 #   use for small script updates etc (shorter build time from dev)
-#FROM robertplayer/scidap-genelists:dev
+FROM robertplayer/scidap-genelists:dev
 LABEL maintainer="robert.player@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -51,31 +58,43 @@ WORKDIR /tmp
 COPY ./scripts/run_genelists.sh /usr/local/bin/
 COPY ./scripts/run_genelists_rnaseq.sh /usr/local/bin/
 COPY ./scripts/run_genelists_heatmap.R /usr/local/bin/
-COPY ./scripts/run_genelists_heatmap_rnaseq.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq-scaled.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq-2colors.R /usr/local/bin/
+COPY ./scripts/run_genelists_heatmap_rnaseq-3colors.R /usr/local/bin/
 COPY ./scripts/run_hopach_clustering.R /usr/local/bin/
+COPY ./scripts/run_vst_norm.R /usr/local/bin/
 COPY ./scripts/fasta_rmlinebreaks.awk /usr/local/bin/
 COPY ./scripts/fasta_2col.sh /usr/local/bin/
 
 ### Installing dependencies etc
 RUN apt-get update && \
-    # R libraries
+#    apt-get install -y libcurl4-openssl-dev libxml2-dev libssl-dev && \
+    apt-get install -y vim pandoc gcc-10-base libgcc-10-dev python3-dev python3-pip libxml2-dev libssl-dev \
+                       libcurl4-openssl-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+                       libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev && \
+
+#    apt upgrade r-base -y && \
+    # R libraries ( BiocManager::version()   )
+    R -e 'install.packages("reshape2", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("argparse", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("tidyr", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
     R -e 'install.packages("BiocManager", repo = "https://cloud.r-project.org/")' && \
-    R -e 'BiocManager::install("hopach")' && \
-    R -e 'install.packages("reshape2", repo = "https://cloud.r-project.org/")' && \
+    R -e 'BiocManager::install(version="3.18", ask=FALSE)' && \
+    R -e 'BiocManager::install("DESeq2", dependencies=TRUE)' && \
+    R -e 'BiocManager::install("hopach", dependencies=TRUE)' && \
+    R -e 'BiocManager::install("cmapR", dependencies=TRUE)' && \
+    R -e 'install.packages("devtools", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'devtools::install_github("michael-kotliar/morpheus.R")' && \
+    R -e 'install.packages("dplyr", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("tibble", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+    R -e 'install.packages("htmlwidgets", dependencies=TRUE, repo = "https://cloud.r-project.org/")' && \
+
     # samtools
     wget https://github.com/samtools/samtools/releases/download/1.17/samtools-1.17.tar.bz2 && \
     tar -xf samtools-1.17.tar.bz2 && \
     cd samtools-1.17 && \
     ./configure --prefix=/usr/local/bin/samtools-1.17 && \
     make && \
-    make install && \
-    # bash/core utils
-    apt-get install ed && \
-    wget http://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2 && \
-    tar xjf parallel-latest.tar.bz2 && \
-    rm parallel-latest.tar.bz2 && \
-    cd parallel-* && \
-    ./configure && make && \
     make install && \
     # adding reference data
     mkdir -p /dockerdata/refs && \
@@ -87,16 +106,24 @@ RUN apt-get update && \
     ls -la /usr/local/bin/run_genelists_rnaseq.sh && \
     chmod +x /usr/local/bin/run_genelists_heatmap.R && \
     ls -la /usr/local/bin/run_genelists_heatmap.R && \
-    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq.R && \
-    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-scaled.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-2colors.R && \
+    chmod +x /usr/local/bin/run_genelists_heatmap_rnaseq-3colors.R && \
+    ls -la /usr/local/bin/run_genelists_heatmap_rnaseq-3colors.R && \
     chmod +x /usr/local/bin/run_hopach_clustering.R && \
     ls -la /usr/local/bin/run_hopach_clustering.R && \
+    chmod +x /usr/local/bin/run_vst_norm.R && \
+    ls -la /usr/local/bin/run_vst_norm.R && \
     chmod +x /usr/local/bin/fasta_rmlinebreaks.awk && \
     ls -la /usr/local/bin/fasta_rmlinebreaks.awk && \
     chmod +x /usr/local/bin/fasta_2col.sh && \
     ls -la /usr/local/bin/fasta_2col.sh && \
     chmod +x /usr/local/bin/samtools-1.17/bin/samtools && \
     ln -s /usr/local/bin/samtools-1.17/bin/samtools /usr/local/bin/ && \
+    # bash/core utils
+    apt-get install ed && \
 ### Cleaning
     apt-get clean && \
     apt-get purge && \

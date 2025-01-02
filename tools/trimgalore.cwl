@@ -3,23 +3,26 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
-  expressionLib:
-  - var default_log_name = function() {
-      var lognames = {};
-      lognames["pair"] = (inputs.paired && inputs.input_file_pair) ? inputs.input_file_pair.basename+'_trimming_report.txt':null;
-      lognames["single"] = inputs.input_file.basename+'_trimming_report.txt';
-      return lognames;
-    }
-- class: InitialWorkDirRequirement
-  listing: |
-    ${
-      var listing = [inputs.input_file]
-      if (inputs.input_file_pair){
-        listing.push(inputs.input_file_pair);
+  - class: ResourceRequirement
+    ramMin: 7024                    # equal to ~8GB
+    coresMin: 1
+  - class: InlineJavascriptRequirement
+    expressionLib:
+    - var default_log_name = function() {
+        var lognames = {};
+        lognames["pair"] = (inputs.paired && inputs.input_file_pair) ? inputs.input_file_pair.basename+'_trimming_report.txt':null;
+        lognames["single"] = inputs.input_file.basename+'_trimming_report.txt';
+        return lognames;
       }
-      return listing;
-    }
+  - class: InitialWorkDirRequirement
+    listing: |
+      ${
+        var listing = [inputs.input_file]
+        if (inputs.input_file_pair){
+          listing.push(inputs.input_file_pair);
+        }
+        return listing;
+      }
 
 
 hints:

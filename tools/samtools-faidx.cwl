@@ -3,7 +3,10 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    ramMin: 7620
+    coresMin: 1
+  - class: InlineJavascriptRequirement
 
 
 hints:

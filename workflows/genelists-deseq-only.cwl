@@ -89,7 +89,7 @@ inputs:
     doc: "Array of sample TSV files containing gene annotations with associated TotalReads and Rpkm counts, param (-g)"
     'sd:upstreamSource': "samples_rnaseq/rpkm_genes"
 
-  threads_no:
+  threads:
     type: int?
     default: 1
     label: "Number of threads"
@@ -100,69 +100,99 @@ inputs:
 
 outputs:
 
-  master_samplesheet:
+  master_samplesheet_scaled:
     type: File
-    label: "contains formatted information of the input data and files"
+    label: "contains formatted information of the input data and files for scaled heatmaps"
     format: "http://edamontology.org/format_3475"
-    doc: "contains formatted information of the input data and files"
-    outputSource: data_integration/master_samplesheet
+    doc: "contains formatted information of the input data and files for scaled heatmaps"
+    outputSource: data_integration/master_samplesheet_scaled
 
-  output_row_metadata:
+  master_samplesheet_vst:
     type: File
-    label: "row metadata for GCT formatter"
+    label: "contains formatted information of the input data and files for vst heatmap"
     format: "http://edamontology.org/format_3475"
-    doc: "row metadata for GCT formatter"
-    outputSource: data_integration/output_row_metadata
+    doc: "contains formatted information of the input data and files for vst heatmap"
+    outputSource: data_integration/master_samplesheet_vst
 
-  output_col_metadata:
+  master_samplesheet_vst_zscore:
     type: File
-    label: "column metadata for GCT formatter"
+    label: "contains formatted information of the input data and files for vst zscore heatmap"
     format: "http://edamontology.org/format_3475"
-    doc: "column metadata for GCT formatter"
-    outputSource: data_integration/output_col_metadata
+    doc: "contains formatted information of the input data and files for vst zscore heatmap"
+    outputSource: data_integration/master_samplesheet_vst_zscore
 
-  output_counts:
+  heatmap_TotalReads_html:
     type: File
-    label: "peak average read depth per TSS window and gene expression counts matrix"
-    format: "http://edamontology.org/format_3475"
-    doc: "peak average read depth per TSS window and gene expression counts matrix"
-    outputSource: data_integration/output_counts
-
-  heatmap_gct_file:
-    type: File
-    label: "GCT formatted peak and expression data for morpheus viewer"
-    format: "http://edamontology.org/format_3709"
-    doc: "GCT formatted peak and expression data for morpheus viewer"
-    outputSource: data_integration/heatmap_gct
-
-  heatmap_nonorm_html:
-    type: File
-    outputSource: data_integration/heatmap_html
-    label: "Heatmap of peak and expression data"
+    outputSource: data_integration/heatmap_TotalReads_html
+    label: "Heatmap TotalReads (raw total read counts)"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled among all samples
+      html of morpheus heatmap with preconfigured settings, TotalReads, no data scaling
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
         target: "_blank"
 
-  heatmap_peaknorm95_html:
+  heatmap_vst_html:
     type: File
-    outputSource: data_integration/heatmap_peaknorm95_html
-    label: "Heatmap of peak and expression data (scaled peak data to 95th percentile)"
+    outputSource: data_integration/heatmap_vst_html
+    label: "Heatmap VST (VST normalized TotalReads)"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled per individual sample to 95th percentile
+      html of morpheus heatmap with preconfigured settings, VST values, no data scaling
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
         target: "_blank"
 
-  heatmap_peaknorm99_html:
+  heatmap_vst_zscore_html:
     type: File
-    outputSource: data_integration/heatmap_peaknorm99_html
-    label: "Heatmap of peak and expression data (scaled peak data to 99th percentile)"
+    outputSource: data_integration/heatmap_vst_zscore_html
+    label: "Heatmap VST Z-scores (Z-score of VST)"
     doc: |
-      Morpheus heatmap in HTML format, peak data scaled per individual sample to 99th percentile
+      html of morpheus heatmap with preconfigured settings, Z-scores of VST values, no data scaling
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_Rpkm_html:
+    type: File
+    outputSource: data_integration/heatmap_Rpkm_html
+    label: "Heatmap RPKM (RPKM normalized TotalReads)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, no data scaling
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_scaled100_html:
+    type: File
+    outputSource: data_integration/heatmap_scaled100_html
+    label: "Heatmap RPKM (scaled 0-99, no percentile cutoff)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, data scaled 0-99, no percentile cutoff
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_scaled99_html:
+    type: File
+    outputSource: data_integration/heatmap_scaled99_html
+    label: "Heatmap RPKM (scaled 0-99, max value set to 99th percentile RPKM value)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, data scaled 0-99, max value set to 99th percentile RPKM value
+    'sd:visualPlugins':
+    - linkList:
+        tab: 'Overview'
+        target: "_blank"
+
+  heatmap_scaled95_html:
+    type: File
+    outputSource: data_integration/heatmap_scaled95_html
+    label: "Heatmap RPKM (scaled 0-99, max value set to 95th percentile RPKM value)"
+    doc: |
+      html of morpheus heatmap with preconfigured settings, RPKM, data scaled  0-99, max value set to 95th percentile RPKM value
     'sd:visualPlugins':
     - linkList:
         tab: 'Overview'
@@ -184,21 +214,23 @@ steps:
   data_integration:
     run: ../tools/genelists-deseq-only.cwl
     in:
-      threads: threads_no
+      threads: threads
       genelist_names: genelist_names
       feature_files: genelist_feature_files
       filtered_files: genelist_filtered_files
       sample_names_rnaseq: sample_names_rnaseq
       expression_files: datafiles_rnaseq
     out:
-      - master_samplesheet
-      - output_row_metadata
-      - output_col_metadata
-      - output_counts
-      - heatmap_gct
-      - heatmap_html
-      - heatmap_peaknorm95_html
-      - heatmap_peaknorm99_html
+      - master_samplesheet_scaled
+      - master_samplesheet_vst
+      - master_samplesheet_vst_zscore
+      - heatmap_TotalReads_html
+      - heatmap_vst_html
+      - heatmap_vst_zscore_html
+      - heatmap_Rpkm_html
+      - heatmap_scaled100_html
+      - heatmap_scaled99_html
+      - heatmap_scaled95_html
       - log_file_stdout
       - log_file_stderr
 
