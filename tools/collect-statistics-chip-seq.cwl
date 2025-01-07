@@ -332,6 +332,10 @@ inputs:
                 prev_start, prev_end, prev_chr = start, end, chr
             collected_results[header]["number of peaks called"] = count
             collected_results[header]["mean peak size"] = round(float(length)/float(count), 2)
+            if not collected_results[header].get("reads/pairs after filtering in treatment", None):
+                # when MACS2 is called with keep_dup set to all, there is no filtering performed
+                collected_results[header]["reads/pairs after filtering in treatment"] = collected_results[header]["total reads/pairs in treatment"]
+                collected_results[header]["redundant rate in treatment"] = 0
             in_treatment = collected_results[header]["reads/pairs after filtering in treatment"]
             mapped = collected_results["BAM statistics after filtering"]["reads/pairs mapped"]
             collected_results[header]["fraction of reads in peaks"] = round(float(in_treatment)/float(mapped),2)

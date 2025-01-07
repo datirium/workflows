@@ -9,14 +9,14 @@ requirements:
   - class: InlineJavascriptRequirement
     expressionLib:
     - var get_root = function(basename) {
-          return basename.split('.').slice(0,1).join('.');
+          return basename.split(".").slice(0,1).join(".");
       };
 
 
-'sd:metadata':
+"sd:metadata":
   - "../metadata/chipseq-header.cwl"
 
-'sd:upstream':
+"sd:upstream":
   genome_indices:
   - "genome-indices.cwl"
   - "https://github.com/datirium/workflows/workflows/genome-indices.cwl"
@@ -29,26 +29,26 @@ inputs:
 
   indices_folder:
     type: Directory
-    'sd:upstreamSource': "genome_indices/bowtie_indices"
+    "sd:upstreamSource": "genome_indices/bowtie_indices"
     label: "Indexed genome folder (bowtie)"
     doc: "Path to indexed genome folder by **bowtie**"
 
   annotation_file:
     type: File
-    'sd:upstreamSource': "genome_indices/annotation"
+    "sd:upstreamSource": "genome_indices/annotation"
     label: "Annotation file"
     format: "http://edamontology.org/format_3475"
     doc: "Tab-separated annotation file"
 
   genome_size:
     type: string
-    'sd:upstreamSource': "genome_indices/genome_size"
+    "sd:upstreamSource": "genome_indices/genome_size"
     label: "Effective genome size"
     doc: "MACS2 effective genome size: hs, mm, ce, dm or number, for example 2.7e9"
 
   chrom_length:
     type: File
-    'sd:upstreamSource': "genome_indices/chrom_length"
+    "sd:upstreamSource": "genome_indices/chrom_length"
     label: "Chromosomes length file"
     format: "http://edamontology.org/format_2330"
     doc: "Chromosomes length file"
@@ -56,17 +56,11 @@ inputs:
   control_file:
     type: File?
     default: null
-    'sd:upstreamSource': "control_file/bambai_pair"
-    'sd:localLabel': true
+    "sd:upstreamSource": "control_file/bambai_pair"
+    "sd:localLabel": true
     label: "Use experiment as a control"
     format: "http://edamontology.org/format_2572"
     doc: "Use experiment as a control for MACS2 peak calling"
-
-  broad_peak:
-    type: boolean?
-    default: False
-    label: "Callpeak broad"
-    doc: "Set to call broad peak for MACS2"
 
   fastq_file_upstream:
     type:
@@ -88,24 +82,16 @@ inputs:
 
   exp_fragment_size:
     type: int?
-    default: 150
-    'sd:layout':
+    default: 40
+    "sd:layout":
       advanced: true
     label: "Expected fragment size"
     doc: "Expected fragment size for MACS2"
 
-  force_fragment_size:
-    type: boolean?
-    default: false
-    'sd:layout':
-      advanced: true
-    label: "Force fragment size"
-    doc: "Force MACS2 to use exp_fragment_size"
-
   clip_3p_end:
     type: int?
     default: 0
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Clip from 3p end"
     doc: "Number of bases to clip from the 3p end"
@@ -113,7 +99,7 @@ inputs:
   clip_5p_end:
     type: int?
     default: 0
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Clip from 5p end"
     doc: "Number of bases to clip from the 5p end"
@@ -128,21 +114,21 @@ inputs:
       or adapter trimming. A value of 0 effectively
       disables this behaviour.
       Default: 30
-    'sd:layout':
+    "sd:layout":
       advanced: true
 
   remove_duplicates:
     type: boolean?
     default: false
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Remove duplicates"
     doc: "Calls samtools rmdup to remove duplicates from sortesd BAM file"
 
   peak_calling_fdr:
     type: float?
-    default: 0.05
-    'sd:layout':
+    default: 0.01
+    "sd:layout":
       advanced: true
     label: "Minimum FDR (q-value) cutoff for peak detection"
     doc: |
@@ -152,7 +138,7 @@ inputs:
   exclude_chromosome:
     type: string?
     default: "chrM"
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Exclude chromosomes"
     doc: "Space separated list of chromosomes to be excluded"
@@ -160,7 +146,7 @@ inputs:
   do_not_scale:
     type: boolean?
     default: false
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Do not scale genome coverage based on mapped reads number"
     doc: "When converting BAM to bigWig, the scale will be set to 1 by default"
@@ -168,7 +154,7 @@ inputs:
   promoter_dist:
     type: int?
     default: 1000
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
     doc: "Max distance from gene TSS (in both direction) overlapping which the peak will be assigned to the promoter region"
@@ -176,7 +162,7 @@ inputs:
   upstream_dist:
     type: int?
     default: 20000
-    'sd:layout':
+    "sd:layout":
       advanced: true
     label: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
     doc: "Max distance from the promoter (only in upstream direction) overlapping which the peak will be assigned to the upstream region"
@@ -184,7 +170,7 @@ inputs:
   threads:
     type: int?
     default: 6
-    'sd:layout':
+    "sd:layout":
       advanced: true
     doc: "Number of threads for those steps that support multithreading"
     label: "Number of threads"
@@ -214,12 +200,12 @@ outputs:
     format: "http://edamontology.org/format_3006"
     label: "BigWig file"
     doc: "Generated BigWig file"
-    outputSource: bam_to_bigwig/bigwig_file
-    'sd:visualPlugins':
+    outputSource: convert_bedgraph_to_bigwig/bigwig_file
+    "sd:visualPlugins":
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
+        type: "wig"
         name: "BigWig Track"
         height: 120
 
@@ -229,19 +215,19 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated FASTQ 1 quality statistics file"
     outputSource: fastx_quality_stats_upstream/statistics_file
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - line:
-        tab: 'QC Plots'
-        Title: 'FASTQ 1 Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
+        tab: "QC Plots"
+        Title: "FASTQ 1 Base frequency plot"
+        xAxisTitle: "Nucleotide position"
+        yAxisTitle: "Frequency"
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
-        tab: 'QC Plots'
-        Title: 'FASTQ 1 Quality Control'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Quality score'
+        tab: "QC Plots"
+        Title: "FASTQ 1 Quality Control"
+        xAxisTitle: "Nucleotide position"
+        yAxisTitle: "Quality score"
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
@@ -251,19 +237,19 @@ outputs:
     format: "http://edamontology.org/format_2330"
     doc: "fastx_quality_stats generated FASTQ 2 quality statistics file"
     outputSource: fastx_quality_stats_downstream/statistics_file
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - line:
-        tab: 'QC Plots'
-        Title: 'FASTQ 2 Base frequency plot'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Frequency'
+        tab: "QC Plots"
+        Title: "FASTQ 2 Base frequency plot"
+        xAxisTitle: "Nucleotide position"
+        yAxisTitle: "Frequency"
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$13, $14, $15, $16, $17]
     - boxplot:
-        tab: 'QC Plots'
-        Title: 'FASTQ 2 Quality Control'
-        xAxisTitle: 'Nucleotide position'
-        yAxisTitle: 'Quality score'
+        tab: "QC Plots"
+        Title: "FASTQ 2 Quality Control"
+        xAxisTitle: "Nucleotide position"
+        yAxisTitle: "Quality score"
         colors: ["#b3de69", "#888888", "#fb8072", "#fdc381", "#99c0db"]
         data: [$11, $7, $8, $9, $12]
 
@@ -287,10 +273,10 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Iaintersect generated results"
     outputSource: island_intersect/result_file
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - syncfusiongrid:
-        tab: 'Peak Calling'
-        Title: 'Islands list'
+        tab: "Peak Calling"
+        Title: "Islands list"
 
   atdp_log:
     type: File
@@ -305,12 +291,12 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Average Tag Density generated results"
     outputSource: average_tag_density/result_file
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - scatter:
-        tab: 'QC Plots'
-        Title: 'Average Tag Density'
-        xAxisTitle: 'Distance From TSS (bases)'
-        yAxisTitle: 'Average Tag Density (per bp)'
+        tab: "QC Plots"
+        Title: "Average Tag Density"
+        xAxisTitle: "Distance From TSS (bases)"
+        yAxisTitle: "Average Tag Density (per bp)"
         colors: ["#b3de69"]
         height: 500
         data: [$1, $2]
@@ -322,84 +308,47 @@ outputs:
     label: "Coordinate sorted BAM alignment file (+index BAI)"
     doc: "Coordinate sorted BAM file and BAI index file"
     outputSource: samtools_remove_duplicates/deduplicated_bam_bai_pair
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
         optional: true
-        type: 'alignment'
-        format: 'bam'
+        type: "alignment"
+        format: "bam"
         name: "BAM Track"
         displayMode: "SQUISHED"
 
   macs2_called_peaks:
-    type: File?
+    type: File
     label: "Called peaks"
     format: "http://edamontology.org/format_3468"
     doc: "XLS file to include information about called peaks"
     outputSource: macs2_callpeak/peak_xls_file
 
   macs2_narrow_peaks:
-    type: File?
+    type: File
     label: "Narrow peaks"
     format: "http://edamontology.org/format_3613"
     doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
     outputSource: macs2_callpeak/narrow_peak_file
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'annotation'
+        tab: "IGV Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
         name: "Narrow peaks"
         displayMode: "COLLAPSE"
         height: 40
 
-  macs2_broad_peaks:
-    type: File?
-    label: "Broad peaks"
-    format: "http://edamontology.org/format_3614"
-    doc: "Contains the peak locations together with peak summit, pvalue and qvalue"
-    outputSource: macs2_callpeak/broad_peak_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'annotation'
-        name: "Broad peaks"
-        displayMode: "COLLAPSE"
-        height: 40
-
   macs2_peak_summits:
-    type: File?
+    type: File
     label: "Peak summits"
     format: "http://edamontology.org/format_3003"
     doc: "Contains the peak summits locations for every peaks"
     outputSource: macs2_callpeak/peak_summits_file
 
-  macs2_moder_r:
-    type: File?
-    label: "MACS2 generated R script"
-    format: "http://edamontology.org/format_2330"
-    doc: "R script to produce a PDF image about the model based on your data"
-    outputSource: macs2_callpeak/moder_r_file
-
-  macs2_gapped_peak:
-    type: File?
-    label: "Gapped peaks"
-    format: "http://edamontology.org/format_3586"
-    doc: "Contains both the broad region and narrow peaks"
-    outputSource: macs2_callpeak/gapped_peak_file
-    'sd:visualPlugins':
-    - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'annotation'
-        name: "Gapped peaks"
-        displayMode: "COLLAPSE"
-        height: 40
-
   macs2_log:
-    type: File?
+    type: File
     label: "MACS2 log"
     format: "http://edamontology.org/format_2330"
     doc: "MACS2 output log"
@@ -418,9 +367,9 @@ outputs:
     format: "http://edamontology.org/format_3835"
     doc: "Markdown formatted combined log"
     outputSource: get_stat/collected_statistics_md
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - markdownView:
-        tab: 'Overview'    
+        tab: "Overview"
 
   get_stat_formatted_log:
     type: File?
@@ -428,14 +377,14 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Processed and combined Bowtie aligner and Samtools rmdup formatted log"
     outputSource: get_stat/collected_statistics_tsv
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - tableView:
         vertical: true
-        tab: 'Overview'
-    'sd:preview':
-      'sd:visualPlugins':
+        tab: "Overview"
+    "sd:preview":
+      "sd:visualPlugins":
       - pie:
-          colors: ['#b3de69', '#99c0db', '#fb8072', '#fdc381']
+          colors: ["#b3de69", "#99c0db", "#fb8072", "#fdc381"]
           data: [$2, $3, $4, $5]
 
   bam_statistics_report:
@@ -458,23 +407,16 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Insert size distribution report (after all filters applied)"
     outputSource: get_bam_statistics_after_filtering/ext_is_section
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - scatter:
-        tab: 'QC Plots'
-        Title: 'Insert Size Distribution (after filtering)'
-        xAxisTitle: 'Insert size'
-        yAxisTitle: 'Pairs total'
+        tab: "QC Plots"
+        Title: "Insert Size Distribution (after filtering)"
+        xAxisTitle: "Insert size"
+        yAxisTitle: "Pairs total"
         colors: ["#4b78a3"]
         height: 500
         data: [$1, $2]
         comparable: "isdp"
-
-  macs2_fragment_stat:
-    type: File?
-    label: "FRAGMENT, FRAGMENTE, ISLANDS"
-    format: "http://edamontology.org/format_2330"
-    doc: "fragment, calculated fragment, islands count from MACS2 results"
-    outputSource: macs2_callpeak/macs2_stat_file
 
   trim_report_upstream:
     type: File
@@ -494,12 +436,12 @@ outputs:
     format: "http://edamontology.org/format_3475"
     doc: "Preseq estimated results"
     outputSource: preseq_plot_data/estimates_file_plot_data
-    'sd:visualPlugins':
+    "sd:visualPlugins":
     - line:
-        tab: 'QC Plots'
-        Title: 'Distinct Read Counts Estimates'
-        xAxisTitle: 'Mapped Reads/Fragments/Tags (millions)'
-        yAxisTitle: 'Distinct Reads Count'
+        tab: "QC Plots"
+        Title: "Distinct Read Counts Estimates"
+        xAxisTitle: "Mapped Reads/Fragments/Tags (millions)"
+        yAxisTitle: "Distinct Reads Count"
         colors: ["#4b78a3", "#a3514b"]
         height: 500
         data: [$2, $5]
@@ -508,7 +450,7 @@ outputs:
     type: int
     label: "Estimated fragment size"
     doc: "Estimated fragment size for downstream analyses"
-    outputSource: macs2_callpeak/macs2_fragments_calculated
+    outputSource: exp_fragment_size
 
   mapped_reads_number:
     type: int
@@ -717,61 +659,130 @@ steps:
       threads: threads
     out: [deduplicated_bam_bai_pair]
 
-  macs2_callpeak:
-    label: "Peak detection"
+  convert_bam_to_bed:
     doc: |
-      Identifies enriched with aligned reads genome areas. Those areas correspond to the
-      transcription factor binding sites.
-    run: ../tools/macs2-callpeak-biowardrobe-only.cwl
+      Converts coordinate sorted filtered deduplicated BAM to
+      BED format. Reads sequences are removed. We don't split
+      reads by N or D in CIGAR (do we really have them in ATAC?)
+    run: ../tools/bedtools-bamtobed.cwl
     in:
-      treatment_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
+      bam_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
+    out:
+    - bed_file
+
+  get_tn5_cut_sites:
+    doc: |
+      Infers 1 bp resolved Tn5 cut sites. Returns sorted by -k1,1
+      -k2,2n -k3,3n results.
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: convert_bam_to_bed/bed_file
+      param:
+        source: convert_bam_to_bed/bed_file
+        valueFrom: $(get_root(self.basename)+"_tn5_cut.bed")
+      script:
+        default: cat "$0" | awk 'BEGIN {OFS = "\t"} ; {if ($6 == "+") print $1, $2 + 4, $2 + 5, $4, $5, $6; else print $1, $3 - 5, $3 - 4, $4, $5, $6}' | sort -k1,1 -k2,2n -k3,3n > $1
+    out:
+    - output_file
+
+  get_tn5_binding_sites:
+    doc: |
+      Increases the size of each Tn5 cut site by a 20 bp
+      in two directions. Each region becomes 2 x 20 + 1 long,
+      because the original Tn5 cut site was 1 bp long.
+    run: ../tools/bedtools-slop.cwl
+    in:
+      bed_file: get_tn5_cut_sites/output_file
+      chrom_length_file: chrom_length
+      bi_direction:
+        default: 20
+    out:
+    - extended_bed_file
+
+  sort_bed:
+    doc: |
+      Sorts Tn5 binding sites by -k1,1 -k2,2n -k3,3n
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: get_tn5_binding_sites/extended_bed_file
+      key:
+        default: ["1,1","2,2n","3,3n"]
+      output_filename:
+        source: get_tn5_binding_sites/extended_bed_file
+        valueFrom: $(get_root(self.basename)+"_tn5_sorted.bed")
+    out:
+    - sorted_file
+
+  macs2_callpeak:
+    doc: |
+      Calls peaks with MACS2
+    run: ../tools/macs2-callpeak.cwl
+    in:
+      treatment_file: sort_bed/sorted_file
+      format_mode:
+        default: "BED"
+      genome_size: genome_size
+      keep_dup:
+        default: "all"
+      nomodel:
+        default: true
+      shift:
+        default: 0
+      extsize: exp_fragment_size
+      q_value: peak_calling_fdr
       control_file: control_file
       nolambda:
         source: control_file
         valueFrom: $(!self)
-      genome_size: genome_size
-      mfold:
-        default: "4 40"
-      verbose:
-        default: 3
-      nomodel: force_fragment_size
-      extsize: exp_fragment_size
-      bw: exp_fragment_size
-      broad: broad_peak
       call_summits:
-        source: broad_peak
-        valueFrom: $(!self)
-      keep_dup:
-        default: auto
-      q_value: peak_calling_fdr
-      format_mode:
-        default: BAMPE
+        default: true
       buffer_size:
         default: 10000
+      verbose:
+        default: 3
     out:
-      - peak_xls_file
-      - narrow_peak_file
-      - peak_summits_file
-      - broad_peak_file
-      - moder_r_file
-      - gapped_peak_file
-      - treat_pileup_bdg_file
-      - control_lambda_bdg_file
-      - macs_log
-      - macs2_stat_file
-      - macs2_fragments_calculated
+    - peak_xls_file
+    - narrow_peak_file
+    - peak_summits_file
+    - macs_log
 
-  bam_to_bigwig:
-    run: ../tools/bam-bedgraph-bigwig.cwl
+  convert_bed_to_bedgraph:
+    doc: |
+      Calculates genome coverage from Tn5 binding sites
+      without blacklisted regions
+    run: ../tools/bedtools-genomecov.cwl
     in:
-      bam_file: samtools_remove_duplicates/deduplicated_bam_bai_pair
-      chrom_length_file: chrom_length
+      input_file: sort_bed/sorted_file
+      depth:
+        default: "-bg"
       mapped_reads_number:
         source: [do_not_scale, get_stat/mapped_reads]
         valueFrom: $(self[0]?null:self[1])
-      fragment_size:
-        default: 9
-    out: [bigwig_file]
+      chrom_length_file: chrom_length
+    out:
+    - genome_coverage_file
+
+  sort_bedgraph:
+    doc: |
+      Returns coordinate sorted genome coverage of Tn5 binding sites
+    run: ../tools/linux-sort.cwl
+    in:
+      unsorted_file: convert_bed_to_bedgraph/genome_coverage_file
+      key:
+        default: ["1,1","2,2n","3,3n"]
+    out:
+    - sorted_file
+
+  convert_bedgraph_to_bigwig:
+    doc: |
+      Converts coordinate sorted genome coverage of Tn5 binding
+      sites to bigwig
+    run: ../tools/ucsc-bedgraphtobigwig.cwl
+    in:
+      bedgraph_file: sort_bedgraph/sorted_file
+      chrom_length_file: chrom_length
+    out:
+    - bigwig_file
 
   get_bam_statistics:
     label: "Quality control of aligned sequence data"
@@ -851,7 +862,7 @@ steps:
     in:
       input_file: samtools_sort_index_for_atdp/bam_bai_pair
       annotation_filename: annotation_file
-      fragmentsize_bp: macs2_callpeak/macs2_fragments_calculated
+      fragmentsize_bp: exp_fragment_size
       avd_window_bp:
         default: 5000
       avd_smooth_bp:
@@ -913,10 +924,6 @@ s:creator:
         - id: http://orcid.org/0000-0002-6486-3898
 
 
-# doc:
-#   $include: ../descriptions/trim-atacseq-pe.md
-
-
 doc: |
   This ATAC pipeline is based on original [BioWardrobe's](https://biowardrobe.com) [PubMed ID:26248465](https://www.ncbi.nlm.nih.gov/pubmed/26248465)
   **ChIP-Seq** basic analysis workflow for a **paired-end** experiment with Trim Galore. The pipeline was adapted for
@@ -929,7 +936,7 @@ doc: |
   3. (Optional) trimming adapters on 5' or 3' end by the specified number of bases.
   4. Mapping reads with BowTie. Only uniquely mapped reads with less than 3 mismatches are used in the downstream analysis. Results are saved as a .bam file.
   5. Reads mapping to chromosome M are removed. Since there are many copies of chromosome M in the cell and it is not protected by histones, some ATAC libraries have up to 50% of reads mapping to chrM. We recommend using OMNI-ATAC protocol that reduces chrM reads and provides better specificity. 
-  6.  (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly same location). This step is used to remove reads overamplified in PCR. Unfortunately, it may also remove "good" reads. We usually do not remove duplicates unless the library is heavily duplicated. Please note that MACS2 will remove 'excessive' duplicates during peak calling ina smart way (those not supported by other nearby reads).
+  6.  (Optional) Removal of duplicates (reads/pairs of reads mapping to exactly same location). This step is used to remove reads overamplified in PCR. Unfortunately, it may also remove "good" reads. We usually do not remove duplicates unless the library is heavily duplicated. Please note that MACS2 will remove "excessive" duplicates during peak calling ina smart way (those not supported by other nearby reads).
   7.  Peakcalling by MACS2. (Optionally), it is possible to specify read extension length for MACS2 to use if the length determined automatically is wrong. 
   8.  Generation of BigWig coverage files for display on the browser. Since the cuts by the Tn5 transposome are 9bp apart, we show coverage by 9bp reads rather than fragments as in ChIP-Seq. The coverage shows the number of fragments at each base in the genome normalized to the number of millions of mapped reads. This way the peak of coverage will be located at the most accessible site. 
 
