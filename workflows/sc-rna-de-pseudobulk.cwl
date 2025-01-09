@@ -338,24 +338,6 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
-  volcano_plot_html_file:
-    type: File
-    outputSource: make_volcano_plot/html_file
-    label: "Volcano Plot"
-    doc: |
-      HTML index file for Volcano Plot
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory
-    outputSource: make_volcano_plot/html_data
-    label: "Volcano Plot data"
-    doc: |
-      Directory html data for Volcano Plot
-
   pca_1_2_plot_png:
     type: File?
     outputSource: de_pseudobulk/pca_1_2_plot_png
@@ -531,6 +513,11 @@ outputs:
     - syncfusiongrid:
         tab: "Diff. expressed genes"
         Title: "Differentially expressed genes"
+    - queryRedirect:
+        tab: "Overview"
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_expr_genes')}&data_col_name=gene&x_col=log2FoldChange&y_col=padj`"
 
   read_counts_file:
     type: File?
@@ -743,20 +730,6 @@ steps:
      read_counts_gct: de_pseudobulk/cell_read_counts_gct
     out:
     - heatmap_html
-
-  make_volcano_plot:
-    run: ../tools/volcano-plot.cwl
-    in:
-      diff_expr_file: de_pseudobulk/diff_expr_genes
-      x_axis_column:
-        default: "log2FoldChange"
-      y_axis_column:
-        default: "padj"
-      label_column:
-        default: "gene"
-    out:
-    - html_data
-    - html_file
 
 
 $namespaces:

@@ -520,6 +520,12 @@ outputs:
     doc: |
       Not filtered differentially accessible regions
       with labels in TSV format
+    'sd:visualPlugins':
+    - queryRedirect:
+        tab: "Overview"
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col_name=label&x_col=log2FoldChange&y_col=padj`"
 
   first_enrch_bigbed_file:
     type: File?
@@ -576,24 +582,6 @@ outputs:
       --padj and --logfc thresholds enriched
       in the group of cells defined by the
       --second and --groupby parameters.
-
-  volcano_plot_html_file:
-    type: File
-    outputSource: make_volcano_plot/html_file
-    label: "Volcano Plot"
-    doc: |
-      HTML index file for Volcano Plot
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory
-    outputSource: make_volcano_plot/html_data
-    label: "Directory html data for Volcano Plot"
-    doc: |
-      Directory html data for Volcano Plot
 
   tag_density_matrix:
     type: File
@@ -757,20 +745,6 @@ steps:
           cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"-"$NF"\t"$0}' >> diff_sts_labeled.tsv
     out:
     - output_file
-
-  make_volcano_plot:
-    run: ../tools/volcano-plot.cwl
-    in:
-      diff_expr_file: add_label_column/output_file
-      x_axis_column:
-        default: "log2FoldChange"
-      y_axis_column:
-        default: "padj"
-      label_column:
-        default: "label"
-    out:
-    - html_data
-    - html_file
 
   recenter_first_enrch_bed:
     run:
