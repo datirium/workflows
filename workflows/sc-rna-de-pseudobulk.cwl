@@ -517,7 +517,7 @@ outputs:
         tab: "Overview"
         label: "Volcano Plot"
         url: "https://scidap.com/vp/volcano"
-        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_expr_genes')}&data_col_name=gene&x_col=log2FoldChange&y_col=padj`"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_expr_genes')}&data_col=gene&x_col=log2FoldChange&y_col=padj`"
 
   read_counts_file:
     type: File?

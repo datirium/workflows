@@ -525,7 +525,7 @@ outputs:
         tab: "Overview"
         label: "Volcano Plot"
         url: "https://scidap.com/vp/volcano"
-        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col_name=label&x_col=log2FoldChange&y_col=padj`"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
 
   first_enrch_bigbed_file:
     type: File?
