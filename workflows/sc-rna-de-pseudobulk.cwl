@@ -30,6 +30,7 @@ requirements:
   - "sc-ctype-assign.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-rna-da-cells.cwl"
+  - "sc-rna-azimuth.cwl"
 
 
 inputs:
@@ -257,6 +258,16 @@ inputs:
       RNA-Seq Datasets" and can be utilized in
       the current or future steps of analysis.
 
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
+    "sd:layout":
+      advanced: true
+
   color_theme:
     type:
     - "null"
@@ -326,24 +337,6 @@ outputs:
     - linkList:
         tab: "Overview"
         target: "_blank"
-
-  volcano_plot_html_file:
-    type: File
-    outputSource: make_volcano_plot/html_file
-    label: "Volcano Plot"
-    doc: |
-      HTML index file for Volcano Plot
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory
-    outputSource: make_volcano_plot/html_data
-    label: "Volcano Plot data"
-    doc: |
-      Directory html data for Volcano Plot
 
   pca_1_2_plot_png:
     type: File?
@@ -520,6 +513,11 @@ outputs:
     - syncfusiongrid:
         tab: "Diff. expressed genes"
         Title: "Differentially expressed genes"
+    - queryRedirect:
+        tab: "Overview"
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_expr_genes')}&data_col=gene&x_col=log2FoldChange&y_col=padj`"
 
   read_counts_file:
     type: File?
@@ -552,6 +550,18 @@ outputs:
     label: "Compressed folder with all PDF plots"
     doc: |
       Compressed folder with all PDF plots.
+
+  sc_report_html_file:
+    type: File?
+    outputSource: de_pseudobulk/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
 
   de_pseudobulk_stdout_log:
     type: File
@@ -648,6 +658,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -679,6 +690,7 @@ steps:
       - bulk_read_counts_gct
       - bulk_phenotypes_cls
       - cell_read_counts_gct
+      - sc_report_html_file
       - stdout_log
       - stderr_log
 
@@ -718,20 +730,6 @@ steps:
      read_counts_gct: de_pseudobulk/cell_read_counts_gct
     out:
     - heatmap_html
-
-  make_volcano_plot:
-    run: ../tools/volcano-plot.cwl
-    in:
-      diff_expr_file: de_pseudobulk/diff_expr_genes
-      x_axis_column:
-        default: "log2FoldChange"
-      y_axis_column:
-        default: "padj"
-      label_column:
-        default: "gene"
-    out:
-    - html_data
-    - html_file
 
 
 $namespaces:

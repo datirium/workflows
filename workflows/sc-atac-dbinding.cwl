@@ -29,6 +29,7 @@ requirements:
   - "sc-atac-cluster.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-ctype-assign.cwl"
+  - "sc-rna-azimuth.cwl"
   sc_atac_sample:
   - "cellranger-arc-count.cwl"
   - "cellranger-arc-aggr.cwl"
@@ -248,6 +249,16 @@ inputs:
       qvalue) peaks to keep from each group of cells when
       constructing reference genomic bins. Ignored if --test
       is not set to manorm2. Default: keep all peaks
+    "sd:layout":
+      advanced: true
+
+  export_html_report:
+    type: boolean?
+    default: true
+    label: "Show HTML report"
+    doc: |
+      Export tehcnical report in HTML format.
+      Default: true
     "sd:layout":
       advanced: true
 
@@ -509,6 +520,12 @@ outputs:
     doc: |
       Not filtered differentially accessible regions
       with labels in TSV format
+    'sd:visualPlugins':
+    - queryRedirect:
+        tab: "Overview"
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
 
   first_enrch_bigbed_file:
     type: File?
@@ -566,24 +583,6 @@ outputs:
       in the group of cells defined by the
       --second and --groupby parameters.
 
-  volcano_plot_html_file:
-    type: File
-    outputSource: make_volcano_plot/html_file
-    label: "Volcano Plot"
-    doc: |
-      HTML index file for Volcano Plot
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory
-    outputSource: make_volcano_plot/html_data
-    label: "Directory html data for Volcano Plot"
-    doc: |
-      Directory html data for Volcano Plot
-
   tag_density_matrix:
     type: File
     outputSource: compute_score_matrix/scores_matrix
@@ -613,6 +612,18 @@ outputs:
     label: "Compressed folder with all PDF plots"
     doc: |
       Compressed folder with all PDF plots.
+
+  sc_report_html_file:
+    type: File?
+    outputSource: sc_atac_dbinding/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
 
   sc_atac_dbinding_stdout_log:
     type: File
@@ -668,6 +679,7 @@ steps:
         default: 32
       vector_memory_limit:
         default: 128
+      export_html_report: export_html_report
       threads:
         source: threads
         valueFrom: $(parseInt(self))
@@ -696,6 +708,7 @@ steps:
     - umap_rd_atacumap_plot_pdf
     - umap_rd_wnnumap_plot_pdf
     - dbnd_vlcn_plot_pdf
+    - sc_report_html_file
     - stdout_log
     - stderr_log
 
@@ -732,20 +745,6 @@ steps:
           cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"-"$NF"\t"$0}' >> diff_sts_labeled.tsv
     out:
     - output_file
-
-  make_volcano_plot:
-    run: ../tools/volcano-plot.cwl
-    in:
-      diff_expr_file: add_label_column/output_file
-      x_axis_column:
-        default: "log2FoldChange"
-      y_axis_column:
-        default: "padj"
-      label_column:
-        default: "label"
-    out:
-    - html_data
-    - html_file
 
   recenter_first_enrch_bed:
     run:
