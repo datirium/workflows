@@ -127,30 +127,6 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
-  fastqc_report_fastq_r1:
-    type: File
-    outputSource: run_fastqc_for_fastq_r1/html_file
-    label: "QC report (RNA FASTQ, Read 1)"
-    doc: |
-      FastqQC report generated for
-      RNA FASTQ file, Read 1
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  fastqc_report_fastq_r2:
-    type: File
-    outputSource: run_fastqc_for_fastq_r2/html_file
-    label: "QC report (RNA FASTQ, Read 2)"
-    doc: |
-      FastqQC report generated for
-      RNA FASTQ file, Read 2
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
   metrics_summary_report:
     type: File
     outputSource: generate_counts_matrix/metrics_summary_report
@@ -320,26 +296,6 @@ steps:
         default: "read_2"
     out:
     - fastq_file
-
-  run_fastqc_for_fastq_r1:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_fastq_r1/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
-
-  run_fastqc_for_fastq_r2:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_fastq_r2/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
 
   generate_counts_matrix:
     run: ../tools/cellranger-count.cwl

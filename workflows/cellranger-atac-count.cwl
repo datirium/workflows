@@ -113,39 +113,6 @@ inputs:
 
 outputs:
 
-  fastqc_report_fastq_r1:
-    type: File
-    outputSource: run_fastqc_for_fastq_r1/html_file
-    label: "FastqQC report for FASTQ file R1"
-    doc: |
-      FastqQC report for FASTQ file R1
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  fastqc_report_fastq_r2:
-    type: File
-    outputSource: run_fastqc_for_fastq_r2/html_file
-    label: "FastqQC report for FASTQ file R2"
-    doc: |
-      FastqQC report for FASTQ file R2
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  fastqc_report_fastq_r3:
-    type: File
-    outputSource: run_fastqc_for_fastq_r3/html_file
-    label: "FastqQC report for FASTQ file R3"
-    doc: |
-      FastqQC report for FASTQ file R3
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
   web_summary_report:
     type: File
     outputSource: generate_counts_matrix/web_summary_report
@@ -400,36 +367,6 @@ steps:
         default: "read_3"
     out:
     - fastq_file
-
-  run_fastqc_for_fastq_r1:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_fastq_r1/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
-
-  run_fastqc_for_fastq_r2:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_fastq_r2/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
-
-  run_fastqc_for_fastq_r3:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_fastq_r3/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
 
   generate_counts_matrix:
     run: ../tools/cellranger-atac-count.cwl

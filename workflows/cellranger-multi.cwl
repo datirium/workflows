@@ -136,50 +136,6 @@ inputs:
 
 outputs:
 
-  fastqc_report_rna_fastq_r1:
-    type: File
-    outputSource: run_fastqc_for_rna_fastq_r1/html_file
-    label: "FastqQC report for RNA FASTQ file R1"
-    doc: |
-      FastqQC report for RNA FASTQ file R1
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  fastqc_report_rna_fastq_r2:
-    type: File
-    outputSource: run_fastqc_for_rna_fastq_r2/html_file
-    label: "FastqQC report for RNA FASTQ file R2"
-    doc: |
-      FastqQC report for RNA FASTQ file R2
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  fastqc_report_vdj_fastq_r1:
-    type: File
-    outputSource: run_fastqc_for_vdj_fastq_r1/html_file
-    label: "FastqQC report for V(D)J FASTQ file R1"
-    doc: |
-      FastqQC report for V(D)J FASTQ file R1
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
-  fastqc_report_vdj_fastq_r2:
-    type: File
-    outputSource: run_fastqc_for_vdj_fastq_r2/html_file
-    label: "FastqQC report for V(D)J FASTQ file R2"
-    doc: |
-      FastqQC report for V(D)J FASTQ file R2
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
-
   web_summary_report:
     type: File
     outputSource: cellranger_multi/web_summary_report
@@ -485,46 +441,6 @@ steps:
         default: "vdj_read_2"
     out:
     - fastq_file
-
-  run_fastqc_for_rna_fastq_r1:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_rna_fastq_r1/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
-
-  run_fastqc_for_rna_fastq_r2:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_rna_fastq_r2/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
-
-  run_fastqc_for_vdj_fastq_r1:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_vdj_fastq_r1/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
-
-  run_fastqc_for_vdj_fastq_r2:
-    run: ../tools/fastqc.cwl
-    in:
-      reads_file: extract_vdj_fastq_r2/fastq_file
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
-    out:
-    - html_file
 
   cellranger_multi:
     run: ../tools/cellranger-multi.cwl
