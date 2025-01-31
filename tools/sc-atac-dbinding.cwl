@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.41
+  dockerPull: biowardrobe2/sc-tools:v0.0.42
 
 
 inputs:
@@ -194,16 +194,41 @@ inputs:
       is not set to manorm2. Default: keep all peaks
 
   blacklist_regions_file:
-    type: File?
+    type:
+    - "null"
+    - File
+    - type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
     inputBinding:
       prefix: "--blacklist"
+      valueFrom: |
+        ${
+          if (self.class && self.class == "File"){
+            return self;
+          } else if (self == "hg19") {
+            return "/opt/sc_tools/hg19-blacklist.v2.bed";
+          } else if (self == "hg38") {
+            return "/opt/sc_tools/hg38-blacklist.v2.bed";
+          } else if (self == "mm10") {
+            return "/opt/sc_tools/mm10-blacklist.v2.bed";
+          } else {
+            return null;
+          }
+        }
     doc: |
-      Path to the optional BED file with the genomic
-      blacklist regions to be filtered out before running
-      differential binding analysis. Any reference genomic
-      bin overlapping a blacklist region will be removed
-      from the output. Ignored if --test is not set to
-      manorm2.
+      Path to the optional BED file with the
+      genomic blacklist regions to be filtered
+      out before running differential binding
+      analysis. Any reference genomic bin
+      overlapping a blacklist region will be
+      removed from the output. Ignored if --test
+      is not set to manorm2. If a string value
+      provided, it should be one of the hg19, hg38,
+      or mm10 as we replace it with the file
+      location from docker image.
 
   maximum_padj:
     type: float?
@@ -320,16 +345,6 @@ outputs:
       group (rnaumap dim. reduction).
       PNG format.
 
-  umap_rd_rnaumap_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_rnaumap.pdf"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (rnaumap dim. reduction).
-      PDF format.
-
   umap_rd_atacumap_plot_png:
     type: File?
     outputBinding:
@@ -339,16 +354,6 @@ outputs:
       optionally subsetted to the specific
       group (atacumap dim. reduction).
       PNG format.
-
-  umap_rd_atacumap_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_atacumap.pdf"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (atacumap dim. reduction).
-      PDF format.
 
   umap_rd_wnnumap_plot_png:
     type: File?
@@ -360,14 +365,23 @@ outputs:
       group (wnnumap dim. reduction).
       PNG format.
 
-  umap_rd_wnnumap_plot_pdf:
+  dbnd_vlcn_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_wnnumap.pdf"
+      glob: "*_dbnd_vlcn.png"
     doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (wnnumap dim. reduction).
+      Volcano plot of differentially accessible regions.
+      PNG format.
+
+  all_plots_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*.pdf"
+    doc: |
+      All generated plots.
       PDF format.
 
   seurat_peaks_bigbed_file:
@@ -397,26 +411,6 @@ outputs:
       Genome coverage in bigWig format calculated
       for ATAC fragments from the cells that belong to
       the group defined by the --second and
-      --groupby parameters.
-
-  first_tn5ct_bigwig_file:
-    type: File?
-    outputBinding:
-      glob: "*_first_tn5ct.bigWig"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for Tn5 cut sites from the cells that belong
-      to the group defined by the --first and
-      --groupby parameters.
-
-  second_tn5ct_bigwig_file:
-    type: File?
-    outputBinding:
-      glob: "*_second_tn5ct.bigWig"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for Tn5 cut sites from the cells that belong
-      to the group defined by the --second and
       --groupby parameters.
 
   first_peaks_xls_file:
@@ -486,22 +480,6 @@ outputs:
     doc: |
       Not filtered differentially accessible regions.
       TSV format.
-
-  dbnd_vlcn_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_dbnd_vlcn.png"
-    doc: |
-      Volcano plot of differentially accessible regions.
-      PNG format.
-
-  dbnd_vlcn_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_dbnd_vlcn.pdf"
-    doc: |
-      Volcano plot of differentially accessible regions.
-      PDF format.
 
   first_enrch_bigbed_file:
     type: File?
