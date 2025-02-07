@@ -116,7 +116,7 @@ outputs:
         displayMode: "COLLAPSE"
         height: 40
 
-  annotated_peaks_file:
+  iaintersect_result:
     type: File?
     format: "http://edamontology.org/format_3475"
     label: "gene annotated filtered peaks file"
