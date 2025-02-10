@@ -12,7 +12,7 @@ requirements:
   kallisto_index: "kallisto-index.cwl"
 
 
-inputs:
+inputs: 
 
   kallisto_index:
     type: File
