@@ -23,7 +23,7 @@ suppressMessages(library(data.table))
 
 
 load_isoform <- function(filename, combine_type) {
-    isoforms <- setDT(read.table(filename, sep=",", header=TRUE, stringsAsFactors=FALSE))
+    isoforms <- setDT(read.table(filename, sep=",", header=TRUE, stringsAsFactors=FALSE, quote=""))
     if (combine_type == "gene") {
         isoforms <- isoforms[, .(RefseqId = paste(sort(unique(RefseqId)), collapse = ","),
                                  Chrom = Chrom[1],

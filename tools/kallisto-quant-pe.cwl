@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-kallisto:v1.0.0
+  dockerPull: scrowley1/scidap-kallisto:v1.0.0
 
 
 inputs:
