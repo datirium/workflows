@@ -424,6 +424,30 @@ outputs:
       the specific group.
       PNG format.
 
+  tag_dnst_htmp_gct:
+    type: File?
+    outputBinding:
+      glob: "*_tag_dnst_htmp.gct"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by adjusted p-value, sorted by
+      log2FoldChange. Optionally subsetted to
+      the specific group.
+      GCT format.
+
+  tag_dnst_htmp_html:
+    type: File?
+    outputBinding:
+      glob: "*_tag_dnst_htmp.html"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by adjusted p-value, sorted by
+      log2FoldChange. Optionally subsetted to
+      the specific group.
+      HTML format.
+
   diff_bound_sites:
     type: File
     outputBinding:

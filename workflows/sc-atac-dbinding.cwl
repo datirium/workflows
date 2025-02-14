@@ -414,6 +414,53 @@ inputs:
 
 outputs:
 
+  diff_bound_sites_with_labels:
+    type: File
+    outputSource: add_label_column/output_file
+    label: "Differentially accessible regions with labels (not filtered)"
+    doc: |
+      Not filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute value"
+      differentially accessible regions with labels.
+      TSV format.
+    "sd:visualPlugins":
+    - queryRedirect:
+        tab: "Overview"
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
+
+  tag_dnst_htmp_html:
+    type: File?
+    outputSource: sc_atac_dbinding/tag_dnst_htmp_html
+    label: "Tag Density Heatmap"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value"; optionally subsetted to include
+      only cells with "Subsetting values
+      (optional)" from the "Subsetting category
+      (optional)".
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
+  sc_report_html_file:
+    type: File?
+    outputSource: sc_atac_dbinding/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
   experiment_info:
     type: File
     label: "Outputs order for IGV"
@@ -489,6 +536,21 @@ outputs:
     - image:
         tab: "Heatmap"
         Caption: "Tag density heatmap around the centers of filtered diff. accessible regions"
+
+  tag_dnst_htmp_gct:
+    type: File?
+    outputSource: sc_atac_dbinding/tag_dnst_htmp_gct
+    label: "Tag density heatmap around the centers of filtered diff. accessible regions"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value"; optionally subsetted to include
+      only cells with "Subsetting values
+      (optional)" from the "Subsetting category
+      (optional)".
+      GCT format.
 
   fragments_bigwig_file:
     type:
@@ -603,22 +665,6 @@ outputs:
         tab: "Diff. accessible regions"
         Title: "Differentially accessible regions (not filtered)"
 
-  diff_bound_sites_with_labels:
-    type: File
-    outputSource: add_label_column/output_file
-    label: "Differentially accessible regions with labels (not filtered)"
-    doc: |
-      Not filtered by "Maximum adjusted p-value"
-      and "Minimum log2 fold change absolute value"
-      differentially accessible regions with labels.
-      TSV format.
-    "sd:visualPlugins":
-    - queryRedirect:
-        tab: "Overview"
-        label: "Volcano Plot"
-        url: "https://scidap.com/vp/volcano"
-        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
-
   diff_bound_sites_bigbed:
     type: File
     outputSource: bed_to_bigbed/bigbed_file
@@ -677,18 +723,6 @@ outputs:
     label: "Compressed folder with all PDF plots"
     doc: |
       Compressed folder with all PDF plots.
-
-  sc_report_html_file:
-    type: File?
-    outputSource: sc_atac_dbinding/sc_report_html_file
-    label: "Analysis log"
-    doc: |
-      Tehcnical report.
-      HTML format.
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
 
   sc_atac_dbinding_human_log:
     type: File
@@ -796,6 +830,8 @@ steps:
     - cell_cnts_plot_png
     - vlcn_plot_png
     - tag_dnst_htmp_plot_png
+    - tag_dnst_htmp_gct
+    - tag_dnst_htmp_html
     - diff_bound_sites
     - first_enrch_bed_file
     - second_enrch_bed_file
