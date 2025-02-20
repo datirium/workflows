@@ -664,6 +664,28 @@ outputs:
       Top gene markers.
       TSV format.
 
+  xpr_htmp_html:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_html
+    label: "Gene Markers Heatmap"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      PNG format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
+  xpr_htmp_gct:
+    type: File?
+    outputSource: ctype_assign/xpr_htmp_gct
+    label: "Gene expression heatmap (top gene markers)"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      GCT format.
+
   gene_markers_tsv:
     type: File?
     outputSource: ctype_assign/gene_markers_tsv
@@ -903,6 +925,8 @@ steps:
     - cvrg_plot_png
     - all_plots_pdf
     - xpr_htmp_tsv
+    - xpr_htmp_gct
+    - xpr_htmp_html
     - gene_markers_tsv
     - peak_markers_tsv
     - ucsc_cb_html_data

@@ -721,6 +721,24 @@ outputs:
       Top gene markers.
       TSV format.
 
+  xpr_htmp_gct:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.gct"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      GCT format.
+
+  xpr_htmp_html:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.html"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      HTML format.
+
   gene_markers_tsv:
     type: File?
     outputBinding:
