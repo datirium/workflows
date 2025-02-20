@@ -190,6 +190,14 @@ inputs:
       mode the reads positions are not shifted.
       Default: treat all reads as single-end.
 
+  use_peak_centers:
+    type: boolean?
+    default: false
+    label: "Use peak centers instead of the summits"
+    doc: |
+      Forces MAnorm2 to use the peak
+      centers instead of the summits.
+
   annotation_file:
     type: File
     label: "Genome type"
@@ -980,8 +988,12 @@ steps:
           }
       sample_names_cond_1: sample_names_cond_1
       sample_names_cond_2: sample_names_cond_2
-      summit_files_cond_1: summit_files_cond_1
-      summit_files_cond_2: summit_files_cond_2
+      summit_files_cond_1:
+        source: [use_peak_centers, summit_files_cond_1]
+        valueFrom: $(self[0]?null:self[1])
+      summit_files_cond_2:
+        source: [use_peak_centers, summit_files_cond_2]
+        valueFrom: $(self[0]?null:self[1])
       condition_1: condition_1
       condition_2: condition_2
       minimum_overlap: minimum_overlap
