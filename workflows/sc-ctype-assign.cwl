@@ -793,7 +793,7 @@ outputs:
         target: "_blank"
 
   ctype_assign_human_log:
-    type: File
+    type: File?
     outputSource: ctype_assign/human_log
     label: "Human readable error log"
     doc: |

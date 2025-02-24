@@ -725,7 +725,7 @@ outputs:
       Compressed folder with all PDF plots.
 
   sc_atac_dbinding_human_log:
-    type: File
+    type: File?
     outputSource: sc_atac_dbinding/human_log
     label: "Human readable error log"
     doc: |
