@@ -745,24 +745,12 @@ outputs:
       labels.
       TSV format.
     outputSource: add_label_column/output_file
-
-  volcano_plot_html_file:
-    type: File
-    label: "Volcano Plot"
-    doc: |
-      Volcano Plot html index.
-    outputSource: make_volcano_plot/html_file
     "sd:visualPlugins":
-    - linkList:
+    - queryRedirect:
         tab: "Overview"
-        target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory
-    label: "Volcano Plot (data)"
-    doc: |
-      Volcano Plot html data.
-    outputSource: make_volcano_plot/html_data
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_rgns_labeled_tsv')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
 
   ma_plot_html_file:
     type: File
@@ -1143,28 +1131,14 @@ steps:
   add_label_column:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: manorm/diff_rgns_tsv
+      input_file: restore_columns/output_file
       script:
         default: |
           HEADER=`head -n 1 $0`;
           echo -e "label\t${HEADER}" > diff_rgns_labeled.tsv;
-          cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"\t"$0}' >> diff_rgns_labeled.tsv
+          cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> diff_rgns_labeled.tsv
     out:
     - output_file
-
-  make_volcano_plot:
-    run: ../tools/volcano-plot.cwl
-    in:
-      diff_expr_file: add_label_column/output_file
-      x_axis_column:
-        default: "log2FoldChange"
-      y_axis_column:
-        default: "padj"
-      label_column:
-        default: "label"
-    out:
-    - html_data
-    - html_file
 
   make_ma_plot:
     run: ../tools/ma-plot.cwl
