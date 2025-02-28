@@ -406,7 +406,7 @@ outputs:
         target: "_blank"
 
   da_cells_human_log:
-    type: File
+    type: File?
     outputSource: da_cells/human_log
     label: "Human readable error log"
     doc: |
