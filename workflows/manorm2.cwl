@@ -809,6 +809,14 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
+  manorm_human_log:
+    type: File?
+    outputSource: manorm/human_log
+    label: "Human readable error log"
+    doc: |
+      Human readable error log
+      from the manorm step.
+
   manorm_stdout_log:
     type: File
     label: "MAnorm output log"
@@ -1032,6 +1040,7 @@ steps:
     - mds_plot_html
     - read_cnts_gct
     - all_plots_pdf
+    - human_log
     - stderr_log
     - stdout_log
 
