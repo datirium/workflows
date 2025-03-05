@@ -26,6 +26,7 @@ requirements:
   - "filter-peaks-for-heatmap.cwl"
   - "filter-deseq-for-heatmap.cwl"
   - "filter-diffbind-for-heatmap.cwl"
+  - "filter-peaks-by-overlap.cwl"
   - "genelists-sets.cwl"
 
 
