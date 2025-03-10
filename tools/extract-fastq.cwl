@@ -5,7 +5,7 @@ class: CommandLineTool
 requirements:
   - class: ShellCommandRequirement
   - class: ResourceRequirement
-    ramMin: 7024                    # equal to ~8GB
+    ramMin: 7024
     coresMin: 1
 
 hints:
@@ -15,10 +15,16 @@ hints:
 
 inputs:
 
-  script:
+  script_command:
     type: string?
     default: |
       #!/bin/bash
+      exec 1> error_msg.txt 2>&1
+      printf "extract-fastq.cwl\n$(date)\n"
+      printf "INPUTS:\n"
+      printf "\$0 - $0\n"
+      printf "\$1 - $1\n\n"
+
       shopt -s nocaseglob
 
       COMBINED="$0".fastq
@@ -35,7 +41,7 @@ inputs:
             cat "${FILE}" >> "${COMBINED}" || true
             ;;
           *)
-            echo "Error: file type unknown"
+            echo "Error: file type '${T}' unknown" > error_report.txt
             rm -f "${COMBINED}"
             exit 1
         esac
@@ -48,16 +54,14 @@ inputs:
 
     inputBinding:
       position: 5
-    doc: |
-      Bash script to extract compressed FASTQ file
+    doc: "Bash script to extract compressed FASTQ file"
 
   output_prefix:
     type: string?
     inputBinding:
       position: 6
     default: "merged"
-    doc: |
-      Output prefix for extracted file
+    doc: "Output prefix for extracted file"
 
   compressed_file:
     type:
@@ -66,61 +70,31 @@ inputs:
       items: File
     inputBinding:
       position: 7
-    doc: |
-      Compressed or uncompressed FASTQ file(s)
+    doc: "Compressed or uncompressed FASTQ file(s)"
 
 
 outputs:
 
+  error_msg:
+    type: File?
+    outputBinding:
+      glob: "error_msg.txt"
+
+  error_report:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
+
   fastq_file:
     type: File
     outputBinding:
-      glob: "*"
+      glob: "*.fastq"
+
 
 baseCommand: [bash, '-c']
 
 
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "extract-fastq"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/extract-fastq.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-
+label: "extract-fastq"
 doc: |
   Tool to decompress input FASTQ file(s).
   If several FASTQ files are provided, they will be concatenated in the order that corresponds to files in input.
@@ -131,6 +105,3 @@ doc: |
   - check file type, decompress if needed
   - return 1, if file type is not recognized
   This script also works of input file doesn't have any extension at all
-
-s:about: |
-  Tool to decompress input FASTQ file
