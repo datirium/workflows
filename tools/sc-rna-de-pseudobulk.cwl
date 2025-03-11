@@ -23,9 +23,17 @@ inputs:
     doc: |
       Path to the RDS file to load Seurat object from. This
       file should include genes expression information
-      stored in the RNA assay. Additionally, rnaumap,
-      and/or atacumap, and/or wnnumap dimensionality
-      reductions should be present.
+      stored in the RNA assay. The dimensionality reductions
+      selected in the --reduction parameter should be
+      present in the loaded Seurat object.
+
+  reduction:
+    type: string
+    inputBinding:
+      prefix: "--reduction"
+    doc: |
+      Dimensionality reduction to be
+      used for generating UMAP plots.
 
   datasets_metadata:
     type: File?
@@ -88,9 +96,12 @@ inputs:
     doc: |
       Column from the Seurat object metadata to split cells
       into two groups to run --second vs --first
-      differential expression analysis. May be one of the
-      extra metadata columns added with --metadata or
-      --barcodes parameters.
+      differential expression analysis. If --test parameter
+      is set to deseq or deseq-lrt, the --splitby shouldn't
+      put cells from the same dataset into the different
+      comparison groups. May be one of the extra metadata
+      columns added with --metadata or --barcodes
+      parameters.
 
   first_cond:
     type: string
@@ -149,8 +160,10 @@ inputs:
       Column from the Seurat object metadata to group cells
       into batches. If --test is set to deseq or deseq-lrt
       the --batchby parameter will be used in the design
-      formula in the following way ~splitby+batchby. If
-      --test is set to negative-binomial, poisson, logistic-
+      formula in the following way ~splitby+batchby.
+      Additionally, the --batchby shouldn't put cells from
+      the same dataset into the different batches. If --test
+      is set to negative-binomial, poisson, logistic-
       regression, or mast it will be used as a latent
       variable in the FindMarkers function. Not supported
       for --test values equal to wilcoxon, likelihood-ratio,
@@ -350,71 +363,27 @@ inputs:
 
 outputs:
 
-  umap_rd_rnaumap_plot_png:
+  umap_spl_tst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_rnaumap.png"
+      glob: "*_umap_spl_tst.png"
     doc: |
-      UMAP with cells selected for analysis.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction rnaumap.
+      UMAP colored by selected for
+      analysis cells. Split by tested
+      condition; optionally subsetted
+      to the specific group.
       PNG format.
 
-  umap_rd_rnaumap_plot_pdf:
+  cell_cnts_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_rnaumap.pdf"
+      glob: "*_cell_cnts.png"
     doc: |
-      UMAP with cells selected for analysis.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction rnaumap.
-      PDF format.
-
-  umap_rd_atacumap_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_atacumap.png"
-    doc: |
-      UMAP with cells selected for analysis.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction atacumap.
+      Number of cells per dataset or
+      tested condition. Colored by tested
+      condition; optionally subsetted to
+      the specific group.
       PNG format.
-
-  umap_rd_atacumap_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_atacumap.pdf"
-    doc: |
-      UMAP with cells selected for analysis.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction atacumap.
-      PDF format.
-
-  umap_rd_wnnumap_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_wnnumap.png"
-    doc: |
-      UMAP with cells selected for analysis.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction wnnumap.
-      PNG format.
-
-  umap_rd_wnnumap_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_wnnumap.pdf"
-    doc: |
-      UMAP with cells selected for analysis.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction wnnumap.
-      PDF format.
 
   mds_plot_html:
     type: File?
@@ -433,14 +402,6 @@ outputs:
       Gene expression PCA (1,2).
       PNG format.
 
-  pca_1_2_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_pca_1_2.pdf"
-    doc: |
-      Gene expression PCA (1,2).
-      PDF format.
-
   pca_2_3_plot_png:
     type: File?
     outputBinding:
@@ -448,14 +409,6 @@ outputs:
     doc: |
       Gene expression PCA (2,3).
       PNG format
-
-  pca_2_3_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_pca_2_3.pdf"
-    doc: |
-      Gene expression PCA (2,3).
-      PDF format.
 
   dxpr_vlcn_plot_png:
     type: File?
@@ -472,27 +425,22 @@ outputs:
       coerced to the pseudobulk form.
       PNG format.
 
-  dxpr_vlcn_plot_pdf:
+  xpr_avg_plot_png:
     type: File?
     outputBinding:
-      glob: "*_dxpr_vlcn.pdf"
+      glob: "*_xpr_avg.png"
     doc: |
-      Differentially expressed genes.
-      Volcano plot of differentially expressed genes.
-      Highlighed genes are either provided by user or
-      top 10 genes with the highest log2FoldChange
-      values. The direction of comparison is defined
-      as --second vs --first. Cells are optionally
-      subsetted to the specific group and optionally
-      coerced to the pseudobulk form.
-      PDF format.
+      Average gene expression plots split by dataset
+      or tested condition for either user provided
+      or top 10 differentially expressed genes with
+      the highest log2FoldChange values.
+      PNG format.
 
   xpr_dnst_plot_png:
     type: File?
     outputBinding:
       glob: "*_xpr_dnst.png"
     doc: |
-      Gene expression density.
       Gene expression violin plots for either user
       provided or top 10 differentially expressed
       genes with the highest log2FoldChange values.
@@ -500,102 +448,18 @@ outputs:
       --second vs --first.
       PNG format.
 
-  xpr_dnst_plot_pdf:
-    type: File?
-    outputBinding:
-      glob: "*_xpr_dnst.pdf"
-    doc: |
-      Gene expression density.
-      Gene expression violin plots for either user
-      provided or top 10 differentially expressed
-      genes with the highest log2FoldChange values.
-      The direction of comparison is defined as
-      --second vs --first.
-      PDF format.
-
-  xpr_per_cell_rd_rnaumap_plot_png:
+  xpr_per_cell_plot_png:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_xpr_per_cell_rd_rnaumap_*.png"
+      glob: "*_xpr_per_cell_*.png"
     doc: |
       UMAP colored by gene expression.
       Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction rnaumap.
+      subsetted to the specific group.
       PNG format.
-
-  xpr_per_cell_rd_rnaumap_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_rd_rnaumap_*.pdf"
-    doc: |
-      UMAP colored by gene expression.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction rnaumap.
-      PDF format.
-
-  xpr_per_cell_rd_atacumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_rd_atacumap_*.png"
-    doc: |
-      UMAP colored by gene expression.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction atacumap.
-      PNG format.
-
-  xpr_per_cell_rd_atacumap_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_rd_atacumap_*.pdf"
-    doc: |
-      UMAP colored by gene expression.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction atacumap.
-      PDF format.
-
-  xpr_per_cell_rd_wnnumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_rd_wnnumap_*.png"
-    doc: |
-      UMAP colored by gene expression.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction wnnumap.
-      PNG format.
-
-  xpr_per_cell_rd_wnnumap_plot_pdf:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputBinding:
-      glob: "*_xpr_per_cell_rd_wnnumap_*.pdf"
-    doc: |
-      UMAP colored by gene expression.
-      Split by selected criteria; optionally
-      subsetted to the specific group;
-      reduction wnnumap.
-      PDF format.
 
   xpr_htmp_plot_png:
     type: File?
@@ -607,15 +471,35 @@ outputs:
       subsetted to the specific groups.
       PNG format.
 
-  xpr_htmp_plot_pdf:
+  xpr_htmp_tsv:
     type: File?
     outputBinding:
-      glob: "*_xpr_htmp.pdf"
+      glob: "*_xpr_htmp.tsv"
     doc: |
       Gene expression heatmap.
       Filtered by adjusted p-value; optionally
       subsetted to the specific groups.
-      PDF format.
+      TSV format.
+
+  xpr_htmp_gct:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.gct"
+    doc: |
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      GCT format.
+
+  xpr_htmp_html:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.html"
+    doc: |
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      HTML format.
 
   diff_expr_genes:
     type: File?
@@ -626,7 +510,7 @@ outputs:
       Not filtered by adjusted p-value.
       TSV format.
 
-  bulk_read_counts_gct:
+  bulk_counts_gct:
     type: File?
     outputBinding:
       glob: "*_bulk_counts.gct"
@@ -636,7 +520,7 @@ outputs:
       form.
       GCT format.
 
-  bulk_phenotypes_cls:
+  bulk_phntps_cls:
     type: File?
     outputBinding:
       glob: "*_bulk_phntps.cls"
@@ -646,13 +530,16 @@ outputs:
       parameters.
       CLS format.
 
-  cell_read_counts_gct:
-    type: File?
+  all_plots_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
-      glob: "*_cell_counts.gct"
+      glob: "*.pdf"
     doc: |
-      Filtered normalized reads counts per cell.
-      GCT format.
+      All generated plots.
+      PDF format.
 
   sc_report_html_file:
     type: File?
@@ -661,6 +548,14 @@ outputs:
     doc: |
       Tehcnical report.
       HTML format.
+
+  human_log:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
+    doc: |
+      Human readable error log.
+      TXT format.
 
   stdout_log:
     type: stdout
@@ -732,8 +627,8 @@ doc: |
 
 
 s:about: |
-  usage: sc_rna_de_pseudobulk.R [-h] --query QUERY
-                                              [--metadata METADATA]
+  usage: /usr/local/bin/sc_rna_de_pseudobulk.R [-h] --query QUERY --reduction
+                                              REDUCTION [--metadata METADATA]
                                               [--barcodes BARCODES]
                                               [--groupby GROUPBY]
                                               [--subset [SUBSET [SUBSET ...]]]
@@ -759,9 +654,12 @@ s:about: |
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include genes expression information
-                          stored in the RNA assay. Additionally, rnaumap, and/or
-                          atacumap, and/or wnnumap dimensionality reductions
-                          should be present.
+                          stored in the RNA assay. The dimensionality reductions
+                          selected in the --reduction parameter should be
+                          present in the loaded Seurat object.
+    --reduction REDUCTION
+                          Dimensionality reduction to be used for generating
+                          UMAP plots.
     --metadata METADATA   Path to the TSV/CSV file to optionally extend Seurat
                           object metadata with categorical values using samples
                           identities. First column - library_id should
@@ -792,9 +690,12 @@ s:about: |
                           Default: do not subset cells, include all of them.
     --splitby SPLITBY     Column from the Seurat object metadata to split cells
                           into two groups to run --second vs --first
-                          differential expression analysis. May be one of the
-                          extra metadata columns added with --metadata or
-                          --barcodes parameters.
+                          differential expression analysis. If --test parameter
+                          is set to deseq or deseq-lrt, the --splitby shouldn't
+                          put cells from the same dataset into the different
+                          comparison groups. May be one of the extra metadata
+                          columns added with --metadata or --barcodes
+                          parameters.
     --first FIRST         Value from the Seurat object metadata column set with
                           --splitby parameter to define the first group of cells
                           for differential expression analysis.
@@ -818,8 +719,10 @@ s:about: |
     --batchby BATCHBY     Column from the Seurat object metadata to group cells
                           into batches. If --test is set to deseq or deseq-lrt
                           the --batchby parameter will be used in the design
-                          formula in the following way ~splitby+batchby. If
-                          --test is set to negative-binomial, poisson, logistic-
+                          formula in the following way ~splitby+batchby.
+                          Additionally, the --batchby shouldn't put cells from
+                          the same dataset into the different batches. If --test
+                          is set to negative-binomial, poisson, logistic-
                           regression, or mast it will be used as a latent
                           variable in the FindMarkers function. Not supported
                           for --test values equal to wilcoxon, likelihood-ratio,
