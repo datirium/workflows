@@ -41,5 +41,5 @@ subprocess32==3.5.4
 umap-learn==0.3.10
 urllib3==1.25.10
 Werkzeug==1.0.1
-wheel==0.35.1
+wheel==0.38.1
 pycairo==1.18.2
