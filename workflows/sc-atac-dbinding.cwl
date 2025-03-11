@@ -280,7 +280,7 @@ inputs:
   minimum_qvalue:
     type: float?
     default: 0.05
-    label: "Minimum peak calling FDR (for manorm2)"
+    label: "Minimum MACS2 peak calling FDR (ignored if statistical test is not set to manorm2)"
     doc: |
       Minimum FDR (q-value) cutoff for MACS2
       peak detection. Ignored if "Statistical
@@ -292,7 +292,7 @@ inputs:
   maximum_peaks:
     type: int?
     default: 0
-    label: "Maximum number of peaks to keep, set to 0 to keep all (for manorm2)"
+    label: "Maximum number of peaks to keep, set to 0 to keep all (ignored if statistical test is not set to manorm2)"
     doc: |
       The maximum number of the most significant
       peaks to select for each of the comparison
@@ -309,7 +309,7 @@ inputs:
   minimum_peak_gap:
     type: int?
     default: 150
-    label: "Minimum distance for merging peaks (for manorm2)"
+    label: "Minimum distance for merging peaks (ignored if statistical test is not set to manorm2)"
     doc: |
       Peaks remained after optional filtering
       by the "Maximum number of peaks to keep"
@@ -328,7 +328,7 @@ inputs:
   bin_size:
     type: int?
     default: 1000
-    label: "Bin size (for manorm2)"
+    label: "Bin size (ignored if statistical test is not set to manorm2)"
     doc: |
       The size of non-overlapping reference
       genomic bins used by MAnorm2 when
@@ -341,8 +341,8 @@ inputs:
 
   minimum_overlap:
     type: float?
-    default: 1
-    label: "Minimum overlap fraction between the datasets (for manorm2)"
+    default: 0.5
+    label: "Minimum overlap fraction between the datasets (ignored if statistical test is not set to manorm2)"
     doc: |
       Keep only those reference genomic
       bins that are present in at least
