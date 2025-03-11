@@ -50,11 +50,27 @@ inputs:
       RNA-Seq datasets run through either
       "Single-Cell Manual Cell Type
       Assignment", "Single-Cell RNA-Seq
-      Cluster Analysis", or "Single-Cell
-      WNN Cluster Analysis" at any of the
-      processing stages.
+      Cluster Analysis", "Single-Cell
+      WNN Cluster Analysis", or "Single-Cell
+      RNA-Seq Reference Mapping" pipeline
+      at any of the processing stages.
     "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
     "sd:localLabel": true
+
+  query_reduction:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "RNA"
+      - "ATAC"
+      - "WNN"
+      - "REF"                                # from the sc-rna-azimuth.cwl pipeline
+    default: "RNA"
+    label: "Dimensionality reduction"
+    doc: |
+      Dimensionality reduction to be used
+      for generating UMAP plots.
 
   groupby:
     type: string?
@@ -327,16 +343,79 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
-  heatmap_html:
+  diff_expr_genes:
     type: File
-    outputSource: morpheus_heatmap/heatmap_html
-    label: "Heatmap"
+    outputSource: de_pseudobulk/diff_expr_genes
+    label: "Differentially expressed genes"
     doc: |
-      Morpheus heatmap in HTML format
+      Not filtered by adjusted p-value
+      differentially expressed genes in
+      TSV format
+    "sd:visualPlugins":
+    - syncfusiongrid:
+        tab: "Diff. expressed genes"
+        Title: "Differentially expressed genes"
+    - queryRedirect:
+        tab: "Overview"
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_expr_genes')}&data_col=gene&x_col=log2FoldChange&y_col=padj`"
+
+  xpr_htmp_html:
+    type: File?
+    outputSource: de_pseudobulk/xpr_htmp_html
+    label: "Gene Expression Heatmap"
+    doc: |
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      HTML format.
     "sd:visualPlugins":
     - linkList:
         tab: "Overview"
         target: "_blank"
+
+  sc_report_html_file:
+    type: File?
+    outputSource: de_pseudobulk/sc_report_html_file
+    label: "Analysis log"
+    doc: |
+      Tehcnical report.
+      HTML format.
+    "sd:visualPlugins":
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
+
+  cell_cnts_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/cell_cnts_plot_png
+    label: "Number of cells per dataset or comparison group"
+    doc: |
+      Number of cells per dataset or
+      tested condition. Colored by tested
+      condition; optionally subsetted to
+      the specific group.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Number of cells per dataset or comparison group"
+
+  umap_spl_tst_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/umap_spl_tst_plot_png
+    label: "UMAP colored by selected for analysis cells"
+    doc: |
+      UMAP colored by selected for
+      analysis cells. Split by tested
+      condition; optionally subsetted
+      to the specific group.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "UMAP colored by selected for analysis cells"
 
   pca_1_2_plot_png:
     type: File?
@@ -362,58 +441,10 @@ outputs:
         tab: "QC"
         Caption: "Gene expression PCA (2,3)"
 
-  umap_rd_rnaumap_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/umap_rd_rnaumap_plot_png
-    label: "UMAP, split by comparison category, RNA"
-    doc: |
-      UMAP, split by the single cell metadata
-      column defined in the "Comparison category",
-      optionally subsetted to include only cells
-      with "Subsetting values (optional)" from
-      the "Subsetting category (optional)", RNA
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "UMAP, split by comparison category, RNA"
-
-  umap_rd_atacumap_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/umap_rd_atacumap_plot_png
-    label: "UMAP, split by comparison category, ATAC"
-    doc: |
-      UMAP, split by the single cell metadata
-      column defined in the "Comparison category",
-      optionally subsetted to include only cells
-      with "Subsetting values (optional)" from
-      the "Subsetting category (optional)", ATAC
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "UMAP, split by comparison category, ATAC"
-
-  umap_rd_wnnumap_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/umap_rd_wnnumap_plot_png
-    label: "UMAP, split by comparison category, WNN"
-    doc: |
-      UMAP, split by the single cell metadata
-      column defined in the "Comparison category",
-      optionally subsetted to include only cells
-      with "Subsetting values (optional)" from
-      the "Subsetting category (optional)", WNN
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "QC"
-        Caption: "UMAP, split by comparison category, WNN"
-
   dxpr_vlcn_plot_png:
     type: File?
     outputSource: de_pseudobulk/dxpr_vlcn_plot_png
-    label: "Gene expression volcano plot"
+    label: "Volcano plot of differentially expressed genes"
     doc: |
       Volcano plot of differentially expressed
       genes. Highlighed genes are either provided
@@ -421,8 +452,57 @@ outputs:
       log2FoldChange values. PNG format
     "sd:visualPlugins":
     - image:
-        tab: "Genes of interest"
+        tab: "Volcano plot"
         Caption: "Volcano plot of differentially expressed genes"
+
+  xpr_htmp_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/xpr_htmp_plot_png
+    label: "Gene expression heatmap"
+    doc: |
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Heatmap"
+        Caption: "Gene expression heatmap"
+
+  xpr_htmp_tsv:
+    type: File?
+    outputSource: de_pseudobulk/xpr_htmp_tsv
+    label: "Gene expression heatmap (top gene markers)"
+    doc: |
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      TSV format.
+
+  xpr_htmp_gct:
+    type: File?
+    outputSource: de_pseudobulk/xpr_htmp_gct
+    label: "Gene expression heatmap"
+    doc: |
+      Gene expression heatmap.
+      Filtered by adjusted p-value; optionally
+      subsetted to the specific groups.
+      GCT format.
+
+  xpr_avg_plot_png:
+    type: File?
+    outputSource: de_pseudobulk/xpr_avg_plot_png
+    label: "Average gene expression"
+    doc: |
+      Average gene expression plots split by dataset
+      or tested condition for either user provided
+      or top 10 differentially expressed genes with
+      the highest log2FoldChange values.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Genes of interest"
+        Caption: "Average gene expression"
 
   xpr_dnst_plot_png:
     type: File?
@@ -439,110 +519,42 @@ outputs:
         tab: "Genes of interest"
         Caption: "Gene expression violin plot"
 
-  xpr_htmp_plot_png:
-    type: File?
-    outputSource: de_pseudobulk/xpr_htmp_plot_png
-    label: "Gene expression heatmap"
-    doc: |
-      Gene expression heatmap, filtered
-      by adjusted p-value, optionally
-      subsetted to the specific groups
-      of cells in PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Heatmap"
-        Caption: "Gene expression heatmap"
-
-  xpr_per_cell_rd_rnaumap_plot_png:
+  xpr_per_cell_plot_png:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: de_pseudobulk/xpr_per_cell_rd_rnaumap_plot_png
-    label: "UMAP, gene expression, RNA"
+    outputSource: de_pseudobulk/xpr_per_cell_plot_png
+    label: "UMAP colored by gene expression"
     doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, RNA, PNG format
+      UMAP colored by gene expression.
+      Split by selected criteria; optionally
+      subsetted to the specific group.
+      PNG format.
     "sd:visualPlugins":
     - image:
-        tab: "Gene expression, RNA"
-        Caption: "UMAP, gene expression, RNA"
-
-  xpr_per_cell_rd_atacumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: de_pseudobulk/xpr_per_cell_rd_atacumap_plot_png
-    label: "UMAP, gene expression, ATAC"
-    doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, ATAC, PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Gene expression, ATAC"
-        Caption: "UMAP, gene expression, ATAC"
-
-  xpr_per_cell_rd_wnnumap_plot_png:
-    type:
-    - "null"
-    - type: array
-      items: File
-    outputSource: de_pseudobulk/xpr_per_cell_rd_wnnumap_plot_png
-    label: "UMAP, gene expression, WNN"
-    doc: |
-      UMAP, gene expression, split by selected
-      criteria, optionally subsetted to the
-      specific group, WNN, PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Gene expression, WNN"
-        Caption: "UMAP, gene expression, WNN"
-
-  diff_expr_genes:
-    type: File
-    outputSource: de_pseudobulk/diff_expr_genes
-    label: "Differentially expressed genes"
-    doc: |
-      Not filtered by adjusted p-value
-      differentially expressed genes in
-      TSV format
-    "sd:visualPlugins":
-    - syncfusiongrid:
-        tab: "Diff. expressed genes"
-        Title: "Differentially expressed genes"
-    - queryRedirect:
-        tab: "Overview"
-        label: "Volcano Plot"
-        url: "https://scidap.com/vp/volcano"
-        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_expr_genes')}&data_col=gene&x_col=log2FoldChange&y_col=padj`"
+        tab: "Genes of interest"
+        Caption: "UMAP colored by gene expression"
 
   read_counts_file:
     type: File?
-    outputSource: de_pseudobulk/bulk_read_counts_gct
-    label: "GSEA compatible reads counts"
+    outputSource: de_pseudobulk/bulk_counts_gct
+    label: "GSEA compatible bulk reads counts"
     doc: |
       GSEA compatible not filtered normalized
       reads counts aggregated to pseudobulk
-      form in GCT format
+      form.
+      GCT format.
 
   phenotypes_file:
     type: File?
-    outputSource: de_pseudobulk/bulk_phenotypes_cls
+    outputSource: de_pseudobulk/bulk_phntps_cls
     label: "GSEA compatible phenotypes"
     doc: |
-      GSEA compatible phenotypes file
-      in CLS format
-
-  cell_read_counts_gct:
-    type: File
-    outputSource: de_pseudobulk/cell_read_counts_gct
-    label: "Morpheus compatible reads counts"
-    doc: |
-      Filtered normalized reads counts
-      per cell in GCT format
+      GSEA compatible phenotypes file defined
+      based on --splitby, --first, and --second
+      parameters.
+      CLS format.
 
   pdf_plots:
     type: File
@@ -551,17 +563,13 @@ outputs:
     doc: |
       Compressed folder with all PDF plots.
 
-  sc_report_html_file:
+  de_pseudobulk_human_log:
     type: File?
-    outputSource: de_pseudobulk/sc_report_html_file
-    label: "Analysis log"
+    outputSource: de_pseudobulk/human_log
+    label: "Human readable error log"
     doc: |
-      Tehcnical report.
-      HTML format.
-    "sd:visualPlugins":
-    - linkList:
-        tab: "Overview"
-        target: "_blank"
+      Human readable error log
+      from the de_pseudobulk step.
 
   de_pseudobulk_stdout_log:
     type: File
@@ -584,6 +592,20 @@ steps:
     run: ../tools/sc-rna-de-pseudobulk.cwl
     in:
       query_data_rds: query_data_rds
+      reduction:
+        source: query_reduction
+        valueFrom: |
+          ${
+            if (self == "RNA") {
+              return "rnaumap";
+            } else if (self == "ATAC") {
+              return "atacumap";
+            } else if (self == "WNN") {
+              return "wnnumap";
+            } else {
+              return "refumap";
+            }
+          }
       datasets_metadata: datasets_metadata
       barcodes_data: barcodes_data
       groupby:
@@ -663,34 +685,25 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-      - umap_rd_rnaumap_plot_png
-      - umap_rd_atacumap_plot_png
-      - umap_rd_wnnumap_plot_png
+      - umap_spl_tst_plot_png
+      - cell_cnts_plot_png
       - pca_1_2_plot_png
       - pca_2_3_plot_png
       - dxpr_vlcn_plot_png
+      - xpr_avg_plot_png
       - xpr_dnst_plot_png
-      - xpr_per_cell_rd_rnaumap_plot_png
-      - xpr_per_cell_rd_atacumap_plot_png
-      - xpr_per_cell_rd_wnnumap_plot_png
+      - xpr_per_cell_plot_png
       - xpr_htmp_plot_png
-      - umap_rd_rnaumap_plot_pdf
-      - umap_rd_atacumap_plot_pdf
-      - umap_rd_wnnumap_plot_pdf
+      - xpr_htmp_tsv
       - mds_plot_html
-      - pca_1_2_plot_pdf
-      - pca_2_3_plot_pdf
-      - dxpr_vlcn_plot_pdf
-      - xpr_dnst_plot_pdf
-      - xpr_per_cell_rd_rnaumap_plot_pdf
-      - xpr_per_cell_rd_atacumap_plot_pdf
-      - xpr_per_cell_rd_wnnumap_plot_pdf
-      - xpr_htmp_plot_pdf
       - diff_expr_genes
-      - bulk_read_counts_gct
-      - bulk_phenotypes_cls
-      - cell_read_counts_gct
+      - bulk_counts_gct
+      - bulk_phntps_cls
+      - xpr_htmp_gct
+      - xpr_htmp_html
+      - all_plots_pdf
       - sc_report_html_file
+      - human_log
       - stdout_log
       - stderr_log
 
@@ -699,18 +712,7 @@ steps:
     in:
       input_files:
         source:
-        - de_pseudobulk/umap_rd_rnaumap_plot_pdf
-        - de_pseudobulk/umap_rd_atacumap_plot_pdf
-        - de_pseudobulk/umap_rd_wnnumap_plot_pdf
-        - de_pseudobulk/mds_plot_html
-        - de_pseudobulk/pca_1_2_plot_pdf
-        - de_pseudobulk/pca_2_3_plot_pdf
-        - de_pseudobulk/dxpr_vlcn_plot_pdf
-        - de_pseudobulk/xpr_dnst_plot_pdf
-        - de_pseudobulk/xpr_per_cell_rd_rnaumap_plot_pdf
-        - de_pseudobulk/xpr_per_cell_rd_atacumap_plot_pdf
-        - de_pseudobulk/xpr_per_cell_rd_wnnumap_plot_pdf
-        - de_pseudobulk/xpr_htmp_plot_pdf
+        - de_pseudobulk/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"
@@ -723,13 +725,6 @@ steps:
       folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
-
-  morpheus_heatmap:
-    run: ../tools/morpheus-heatmap.cwl
-    in:
-     read_counts_gct: de_pseudobulk/cell_read_counts_gct
-    out:
-    - heatmap_html
 
 
 $namespaces:
