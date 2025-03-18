@@ -994,12 +994,12 @@ steps:
   add_label_column:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: sc_atac_dbinding/diff_bound_sites
+      input_file: restore_columns/output_file
       script:
         default: |
           HEADER=`head -n 1 $0`;
           echo -e "label\t${HEADER}" > sc_db_sites_labeled.tsv;
-          cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"-"$NF"\t"$0}' >> sc_db_sites_labeled.tsv
+          cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> sc_db_sites_labeled.tsv
     out:
     - output_file
 
