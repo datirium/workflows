@@ -63,7 +63,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, e.g. 'control')"
     doc: "CSV/TSV input files grouped by isoforms (condition 2, e.g. 'control')"
-    'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms_ercc_normalized"
     'sd:localLabel': true
 
   rpkm_genes_cond_2:
@@ -74,7 +74,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, e.g. 'control')"
     doc: "CSV/TSV input files grouped by genes (condition 2, e.g. 'control')"
-    'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes_ercc_normalized"
 
   rpkm_common_tss_cond_2:
     type:
@@ -84,7 +84,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, e.g. 'control')"
     doc: "CSV/TSV input files grouped by common TSS (condition 2, e.g. 'control')"
-    'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss_ercc_normalized"
 
   group_by:
     type:
