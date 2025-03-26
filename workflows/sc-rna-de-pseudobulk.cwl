@@ -215,6 +215,17 @@ inputs:
       should be expressed to be included into
       analysis.
 
+  minimum_logfc:
+    type: float?
+    default: 0.585
+    label: "Minimum log2 fold change absolute value"
+    doc: |
+      In the exploratory visualization part of
+      the analysis output only differentially
+      expressed genes with log2 Fold Change
+      not smaller than this value.
+      Default: 0.585 (1.5 folds)
+
   enable_clustering:
     type: boolean?
     default: false
@@ -367,8 +378,8 @@ outputs:
     label: "Gene Expression Heatmap"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       HTML format.
     "sd:visualPlugins":
     - linkList:
@@ -461,8 +472,8 @@ outputs:
     label: "Gene expression heatmap"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       PNG format.
     "sd:visualPlugins":
     - image:
@@ -475,8 +486,8 @@ outputs:
     label: "Gene expression heatmap (top gene markers)"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       TSV format.
 
   xpr_htmp_gct:
@@ -485,8 +496,8 @@ outputs:
     label: "Gene expression heatmap"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       GCT format.
 
   xpr_avg_plot_png:
@@ -643,6 +654,7 @@ steps:
         valueFrom: $(self==""?null:self)            # safety measure
       maximum_padj: maximum_padj
       minimum_pct: minimum_pct
+      minimum_logfc: minimum_logfc
       genes_of_interest:
         source: genes_of_interest
         valueFrom: $(split_features(self))

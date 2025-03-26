@@ -190,6 +190,17 @@ inputs:
       fraction of cells in either of the two tested conditions.
       Default: 0.1
 
+  minimum_logfc:
+    type: float?
+    inputBinding:
+      prefix: "--logfc"
+    doc: |
+      In the exploratory visualization part of
+      the analysis output only differentially
+      expressed genes with log2 Fold Change
+      not smaller than this value.
+      Default: 0.585 (1.5 folds)
+
   genes_of_interest:
     type:
     - "null"
@@ -467,8 +478,8 @@ outputs:
       glob: "*_xpr_htmp.png"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       PNG format.
 
   xpr_htmp_tsv:
@@ -477,8 +488,8 @@ outputs:
       glob: "*_xpr_htmp.tsv"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       TSV format.
 
   xpr_htmp_gct:
@@ -487,8 +498,8 @@ outputs:
       glob: "*_xpr_htmp.gct"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       GCT format.
 
   xpr_htmp_html:
@@ -497,8 +508,8 @@ outputs:
       glob: "*_xpr_htmp.html"
     doc: |
       Gene expression heatmap.
-      Filtered by adjusted p-value; optionally
-      subsetted to the specific groups.
+      Filtered by adjusted p-value and log2FC;
+      optionally subsetted to the specific groups.
       HTML format.
 
   diff_expr_genes:
@@ -636,7 +647,7 @@ s:about: |
                                               --second SECOND
                                               [--test {wilcoxon,likelihood-ratio,t-test,negative-binomial,poisson,logistic-regression,mast,deseq,deseq-lrt}]
                                               [--batchby BATCHBY] [--padj PADJ]
-                                              [--minpct MINPCT]
+                                              [--minpct MINPCT] [--logfc LOGFC]
                                               [--genes [GENES [GENES ...]]]
                                               [--exclude EXCLUDE]
                                               [--cluster {row,column,both}]
@@ -736,6 +747,10 @@ s:about: |
     --minpct MINPCT       Include only those genes that are detected in not
                           lower than this fraction of cells in either of the two
                           tested conditions. Default: 0.1
+    --logfc LOGFC         In the exploratory visualization part of the analysis
+                          output only differentially expressed genes with log2
+                          Fold Change not smaller than this value. Default:
+                          0.585 (1.5 folds)
     --genes [GENES [GENES ...]]
                           Genes of interest to label on the generated plots.
                           Default: top 10 genes with the highest and the lowest
