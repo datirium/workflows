@@ -190,6 +190,14 @@ inputs:
       mode the reads positions are not shifted.
       Default: treat all reads as single-end.
 
+  use_peak_centers:
+    type: boolean?
+    default: false
+    label: "Use peak centers instead of the summits"
+    doc: |
+      Forces MAnorm2 to use the peak
+      centers instead of the summits.
+
   annotation_file:
     type: File
     label: "Genome type"
@@ -737,24 +745,12 @@ outputs:
       labels.
       TSV format.
     outputSource: add_label_column/output_file
-
-  volcano_plot_html_file:
-    type: File
-    label: "Volcano Plot"
-    doc: |
-      Volcano Plot html index.
-    outputSource: make_volcano_plot/html_file
     "sd:visualPlugins":
-    - linkList:
+    - queryRedirect:
         tab: "Overview"
-        target: "_blank"
-
-  volcano_plot_html_data:
-    type: Directory
-    label: "Volcano Plot (data)"
-    doc: |
-      Volcano Plot html data.
-    outputSource: make_volcano_plot/html_data
+        label: "Volcano Plot"
+        url: "https://scidap.com/vp/volcano"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_rgns_labeled_tsv')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
 
   ma_plot_html_file:
     type: File
@@ -812,6 +808,14 @@ outputs:
     label: "Compressed folder with all PDF plots"
     doc: |
       Compressed folder with all PDF plots.
+
+  manorm_human_log:
+    type: File?
+    outputSource: manorm/human_log
+    label: "Human readable error log"
+    doc: |
+      Human readable error log
+      from the manorm step.
 
   manorm_stdout_log:
     type: File
@@ -980,8 +984,12 @@ steps:
           }
       sample_names_cond_1: sample_names_cond_1
       sample_names_cond_2: sample_names_cond_2
-      summit_files_cond_1: summit_files_cond_1
-      summit_files_cond_2: summit_files_cond_2
+      summit_files_cond_1:
+        source: [use_peak_centers, summit_files_cond_1]
+        valueFrom: $(self[0]?null:self[1])
+      summit_files_cond_2:
+        source: [use_peak_centers, summit_files_cond_2]
+        valueFrom: $(self[0]?null:self[1])
       condition_1: condition_1
       condition_2: condition_2
       minimum_overlap: minimum_overlap
@@ -1032,6 +1040,7 @@ steps:
     - mds_plot_html
     - read_cnts_gct
     - all_plots_pdf
+    - human_log
     - stderr_log
     - stdout_log
 
@@ -1131,28 +1140,14 @@ steps:
   add_label_column:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: manorm/diff_rgns_tsv
+      input_file: restore_columns/output_file
       script:
         default: |
           HEADER=`head -n 1 $0`;
           echo -e "label\t${HEADER}" > diff_rgns_labeled.tsv;
-          cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"\t"$0}' >> diff_rgns_labeled.tsv
+          cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> diff_rgns_labeled.tsv
     out:
     - output_file
-
-  make_volcano_plot:
-    run: ../tools/volcano-plot.cwl
-    in:
-      diff_expr_file: add_label_column/output_file
-      x_axis_column:
-        default: "log2FoldChange"
-      y_axis_column:
-        default: "padj"
-      label_column:
-        default: "label"
-    out:
-    - html_data
-    - html_file
 
   make_ma_plot:
     run: ../tools/ma-plot.cwl
