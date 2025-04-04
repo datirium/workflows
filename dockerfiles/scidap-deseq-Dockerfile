@@ -15,10 +15,14 @@
 #                   argparse          latest
 #                   pheatmap          latest
 # Base Image:       r-base:4.4.0
-# Build Cmd:        docker build --no-cache --platform linux/amd64 --rm -t biowardrobe2/scidap-deseq:v0.0.28 -f scidap-deseq-Dockerfile .
+# Build Cmd:        docker build --no-cache --platform linux/amd64 --rm -t scrowley1/scidap-deseq:v0.1.0 -f scidap-deseq-Dockerfile .
 # Pull Cmd:         docker pull biowardrobe2/scidap-deseq:v0.0.28
 # Run Cmd:          docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.28 /bin/bash
 #################################################################
+#
+# v0.1.0
+# 
+# - update get_gene_n_tss.R to account for quotes in gene ids
 #
 # v0.0.28
 #
@@ -163,7 +167,7 @@
 # Base Image
 FROM r-base:4.4.0
 LABEL maintainer="pavlvalera3301@gmail.com"
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 ################## BEGIN INSTALLATION ######################
 
@@ -196,8 +200,8 @@ RUN apt-get install -y -f python3 python3-pip \
                           libcairo2-dev \
                           pkg-config \
                           libjpeg-dev \
-                          libgit2-dev && \
-    pip3 install --break-system-packages argparse && \
+                          libgit2-dev # && \
+RUN    pip3 install --break-system-packages argparse && \
 # Installing R packages
     Rscript /tmp/scidap-deseq-R-packages.R
 # Installing run_deseq.R, get_gene_n_tss.R, run_deseq_lrt.R scripts

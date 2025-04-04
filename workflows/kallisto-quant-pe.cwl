@@ -309,7 +309,7 @@ steps:
       threads: threads
     out: [overview, pie_stats, kallisto_abundance_file, kallisto_runinfo_file, transcript_counts, transcript_counts_standard, log_file_stdout, log_file_stderr]
 
-  group_isoforms:
+  group_isoforms: 
     run: ../tools/group-isoforms.cwl
     in:
       isoforms_file: kallisto_quant/transcript_counts
