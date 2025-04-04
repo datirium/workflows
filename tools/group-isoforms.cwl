@@ -3,7 +3,7 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
+- class: InlineJavascriptRequirement 
 
 
 hints:
