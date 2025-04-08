@@ -3,7 +3,6 @@ options(warn=-1)
 options("width"=300)
 options(error=function(){traceback(3); quit(save="no", status=1, runLast=FALSE)})
 
-
 suppressMessages(library(argparse))
 suppressMessages(library(BiocParallel))
 suppressMessages(library(pheatmap))
@@ -483,21 +482,42 @@ get_args <- function(){
         help="Threads", 
         type="integer", default=1
     )
+    parser$add_argument( # ERCC counts for the untreated
+        "-uer", "--untreated_ercc_counts", # args$untreated_ercc_counts
+        help="Untreated (condition 1) TSV ERCC raw count files",
+        type="character",required="True",
+        nargs="+"
+    )
+    parser$add_argument( # ERCC counts for the treated
+        "-ter", "--treated_ercc_counts", # args$treated_ercc_counts
+        help="Treated (condition 2) TSV ERCC raw count files",
+        type="character", required="True",
+        nargs="+"
+    )
+    parser$add_argument(
+      "-uaer", "--uerccalias",
+      help="Unique aliases for untreated (condition 1) ERCC files. Default: basenames of -u without extensions",
+      type="character", required="True",
+      nargs="*"
+    )
+    parser$add_argument(
+      "-taer", "--terccalias",
+      help="Unique aliases for treated (condition 2) ERCC files. Default: basenames of -t without extensions",
+      type="character", required="True",
+      nargs="*"
+    )
     args <- assert_args(parser$parse_args(gsub("'|\"| ", "_", commandArgs(trailingOnly = TRUE))))
     return (args)
 }
 
-
 args <- get_args()
-
 
 # Set threads
 register(MulticoreParam(args$threads))
 
-
 # Load isoforms/genes/tss files
 raw_data <- load_isoform_set(args$treated, args$talias, READ_COL, RPKM_COL, RPKM_TREATED_ALIAS, args$tname, INTERSECT_BY, args$digits, args$batchfile, load_isoform_set(args$untreated, args$ualias, READ_COL, RPKM_COL, RPKM_UNTREATED_ALIAS, args$uname, INTERSECT_BY, args$digits, args$batchfile))
-collected_isoforms <- apply_cutoff(raw_data$collected_isoforms, args$cutoff, raw_data$rpkm_colnames)
+collected_isoforms <- apply_cutoff(raw_data$collected_isoforms, args$cutoff, raw_data$rpkm_colnames) 
 read_count_cols = raw_data$read_colnames
 column_data = raw_data$column_data
 print(paste("Number of rows common for all input files ", nrow(collected_isoforms), sep=""))
@@ -507,6 +527,50 @@ print(column_data)
 print("DESeq count data")
 countData = collected_isoforms[read_count_cols]
 print(head(countData))
+
+# HERE WE GENERATE THE ERCC READ TABLE, WHICH WILL BE USED BY DESEQ2 TO CALCULATE THE SIZE FACTORS ----
+# A function to collect and merge ercc count tables
+merge_ercc_counts <- function(ercc_file_paths, ercc_file_names) {
+  if (length(ercc_file_paths) != length(ercc_file_names)) {
+    stop("Number of file paths and file names must be equal.")
+  }
+  
+  # Read each file and rename the 'count' column to the corresponding file name.
+  ercc_data_list <- lapply(seq_along(ercc_file_paths), function(i) {
+    df <- read.table(ercc_file_paths[i], header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+    names(df)[names(df) == "count"] <- ercc_file_names[i]
+    return(df)
+  })
+  
+  # Merge all data frames by the 'ERCC_ID' column.
+  merged_df <- Reduce(function(x, y) merge(x, y, by = "ERCC_ID", all = TRUE), ercc_data_list)
+  
+  # Remove rows with any NA values.
+  merged_df <- merged_df[complete.cases(merged_df), ]
+  
+  # Set the row names to the ERCC_ID column and then remove the column.
+  rownames(merged_df) <- merged_df$ERCC_ID
+  merged_df$ERCC_ID <- NULL
+  
+  return(merged_df)
+}
+
+# Run the function and generate the table ----
+uer_files <- args$untreated_ercc_counts
+ter_files <- args$treated_ercc_counts
+all_files <- c(uer_files, ter_files)
+uer_names <- paste0(args$uerccalias, "_", args$uname) # c("MH_Control_8h_S1", "MH_Control_8h_S2", "MH_Control_8h_S3")
+ter_names <- paste0(args$terccalias, "_", args$tname) # c("MH_5uMNTC8_8h_S1", "MH_5uMNTC8_8h_S2", "MH_5uMNTC8_8h_S3")
+all_names <- c(uer_names, ter_names)
+
+result_table <- merge_ercc_counts(all_files, all_names) # THIS IS THE ERCC COUNT TABLE
+# Filtering the ercc data table (keep rows with at least one value >=5, as the value of --cutoff)
+result_table <- result_table[apply(result_table, 1, max) >= 5, ]
+
+
+countData <- rbind(countData, result_table)
+grep("ERCC-", rownames(countData), value = T)
+print(paste("There are ERCC control genes: ", length(grep("ERCC-", rownames(countData)))))
 
 # Run DESeq or DESeq2
 if (length(args$treated) > 1 && length(args$untreated) > 1){
@@ -521,17 +585,32 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
         design=~conditions
     }
     
-    # set DESeq matrix
+    
+    # Set the DESeq matrix
     dse <- DESeqDataSetFromMatrix(countData=countData, colData=column_data, design=design)
-    # disable normalization by setting size factors to 1 for all samples
-    sizeFactors(dse) <- 1
+    # Here we let DESeq2 estimate the size factors based on ERCC counts
+    dse <- estimateSizeFactors(dse, controlGenes = min(grep("ERCC-",
+                        rownames(countData))):max(grep("ERCC-", rownames(countData))))
+    
+    # check size/normalization factors
+    print("DESeq sizeFactor prior to DGE run")
+    print(dse$sizeFactor)
+    
+    # Disable normalization by setting size factors to 1 for all samples
+    # We now use the ERCC to estimate the size factors
+    #sizeFactors(dse) <- 1
+    
+    # Removing spike-in genes from the analysis before running DESeq2
+    dse <- dse[!rownames(dse) %in% rownames(result_table), ]
+    
     # run DESeq
     dsq <- DESeq(dse)
-    # check size/normalization factors
+    
+    # Check size/normalization factors after DGE
     print("DESeq sizeFactor (dsq)")
     print(dsq$sizeFactor)
 
-    # for norm count file. Batch correction doens't influence it
+    # for norm count file. Batch correction doesn't influence it
     normCounts <- counts(dsq, normalized=TRUE)
     rownames(normCounts) <- toupper(collected_isoforms[,c("GeneId")])
 
