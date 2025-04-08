@@ -559,8 +559,8 @@ merge_ercc_counts <- function(ercc_file_paths, ercc_file_names) {
 uer_files <- args$untreated_ercc_counts
 ter_files <- args$treated_ercc_counts
 all_files <- c(uer_files, ter_files)
-uer_names <- paste0(args$uerccalias, "_", args$uname) # c("MH_Control_8h_S1", "MH_Control_8h_S2", "MH_Control_8h_S3")
-ter_names <- paste0(args$terccalias, "_", args$tname) # c("MH_5uMNTC8_8h_S1", "MH_5uMNTC8_8h_S2", "MH_5uMNTC8_8h_S3")
+uer_names <- paste0(args$ualias, "_", args$uname) # c("MH_Control_8h_S1", "MH_Control_8h_S2", "MH_Control_8h_S3")
+ter_names <- paste0(args$talias, "_", args$tname) # c("MH_5uMNTC8_8h_S1", "MH_5uMNTC8_8h_S2", "MH_5uMNTC8_8h_S3")
 all_names <- c(uer_names, ter_names)
 
 result_table <- merge_ercc_counts(all_files, all_names) # THIS IS THE ERCC COUNT TABLE
