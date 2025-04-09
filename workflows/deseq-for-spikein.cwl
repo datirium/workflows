@@ -18,6 +18,28 @@ requirements:
 
 inputs:
 
+  ercc_counts_cond_1:
+    type:
+    - "null"
+    - File[]
+    default: null
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
+    doc: "CSV/TSV input files grouped by isoforms (condition 1, e.g. 'treatment')"
+    'sd:upstreamSource': "rnaseq_cond_1/ercc_counts"
+    'sd:localLabel': true
+
+  ercc_counts_cond_2:
+    type:
+    - "null"
+    - File[]
+    default: null
+    format: "http://edamontology.org/format_3752"
+    label: "RNA-Seq experiments (condition 2, e.g. 'control')"
+    doc: "CSV/TSV input files grouped by isoforms (condition 2, e.g. 'control')"
+    'sd:upstreamSource': "rnaseq_cond_2/ercc_counts"
+    'sd:localLabel': true
+
   alias_name:
     type: string
     label: "Experiment short name/Alias"
@@ -451,6 +473,8 @@ steps:
                 return self[3];
               }
           }
+      ercc_counts_untreated: ercc_counts_cond_1
+      ercc_counts_treated: ercc_counts_cond_2
       untreated_name: alias_cond_1
       treated_name: alias_cond_2
       untreated_sample_names: sample_names_cond_1
