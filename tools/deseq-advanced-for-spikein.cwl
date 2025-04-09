@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: robertplayer/scidap-deseqspikein:v1.0.0
+  dockerPull: avivdemorgan/scidap-deseqspikein:v1.0.0
 
 
 inputs:
@@ -30,6 +30,24 @@ inputs:
       prefix: "-t"
     doc: |
       Treated input CSV/TSV files
+  
+  ercc_counts_treated:
+    type:
+      - File
+      - File[]
+    inputBinding:
+      prefix: "-ter"
+    doc: |
+      Untreated input CSV/TSV files
+
+  ercc_counts_untreated:
+    type:
+      - File
+      - File[]
+    inputBinding:
+      prefix: "-uer"
+    doc: |
+      Untreated input CSV/TSV files
 
   untreated_name:
     type: string?
@@ -230,7 +248,7 @@ outputs:
     type: stderr
 
 
-baseCommand: [run_deseq_for_spikein.R]
+baseCommand: [/usr/local/bin/run_deseq_for_spikein.R]
 stdout: deseq_stdout.log
 stderr: deseq_stderr.log
 
