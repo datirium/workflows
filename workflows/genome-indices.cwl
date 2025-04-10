@@ -80,27 +80,59 @@ inputs:
     label: "Chromosome list to be included into the reference genome FASTA file"
     doc: "Filter chromosomes while extracting FASTA from 2bit"
   
-  # chromosome_list:
-  #   type: string?
-  #   label: "Comma or space separated chromosome list to be used in indices"
-  #   doc: "Filter chromosomes while extracting FASTA from 2bit"
-
   effective_genome_size:
     type: string
     label: "Effective genome size"
     doc: "MACS2 effective genome sizes: hs, mm, ce, dm or number, for example 2.7e9"
 
+  gtf_annotation:
+    type: File?
+    format: "http://edamontology.org/format_2306"
+    label: "GTF annotation file (gzip compressed, from Gencode)"
+    doc: |
+      GTF genome annotation file. Primary assembly with
+      the reference chromosomes and scaffolds prefixed
+      with "chr", excluding the haplotypes and patches.
+      This annotation file should include chrM. It can
+      be downloaded from the Gencode database (for example,
+      gencode.v44.primary_assembly.annotation.gtf.gz).
+      If both GTF and TSV annotation files are provided,
+      the GTF input will have a higher priority.
+
+  remove_par_y_genes:
+    type: boolean?
+    default: false
+    label: "Exclude PAR locus genes from the GTF annotation file (for hg38 only)"
+    doc: |
+      Since Ensembl 110, the PAR locus genes
+      are included on chrY as copies of chrX.
+      Removing the chrY PAR genes is desirable
+      so they do not end up as extra entries in
+      the output. In accordance to the 10x
+      guidelines, it's needed only for hg38.
+      Ignored if annotation is loaded not from
+      the GTF file.
+
   annotation_tab:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3475"
     label: "Compressed tsv.gz annotation file"
-    doc: "Compressed tab-separated annotation file. Doesn't include chrM"
+    doc: |
+      Compressed tab-separated annotation file.
+      Shouldn't include chrM as it will be loaded
+      separately. Ignored if annotation is loaded
+      from the GTF file.
 
   mitochondrial_annotation_tab:
-    type: File
+    type: File?
     format: "http://edamontology.org/format_3475"
     label: "Compressed tsv.gz mitochondrial DNA annotation file"
-    doc: "Compressed mitochondrial DNA tab-separated annotation file. Includes only chrM"
+    doc: |
+      Compressed mitochondrial DNA tab-separated
+      annotation file. Should include chrM as only
+      this chromosome will be loaded from it.
+      Ignored if annotation is loaded from the
+      GTF file.
 
   cytoband:
     type: File
@@ -370,36 +402,141 @@ steps:
           type: string?
           default: |
             #!/bin/bash
-            gunzip $0 -c | grep -v "exonCount" > refgene.txt
-            gunzip $1 -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> refgene.txt
-            if [ "$#" -ge 2 ]; then
-              FILTER=${@:2}
-              FILTER=$( IFS=$','; echo "${FILTER[*]}" )
-              FILTER=(${FILTER//, / })
-              echo "Filtering by" ${FILTER[*]}
-              cat refgene.txt | awk -v filter="${FILTER[*]}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > refgene_filtered.txt  
-              mv refgene_filtered.txt refgene.txt
+            set -- "$0" "$@"
+            CHR=()
+            RM_PAR=false
+            for arg in "$@"; do
+              case $arg in
+                --tab=*)
+                  TAB="${arg#*=}"
+                  ;;
+                --mt=*)
+                  MT="${arg#*=}"
+                  ;;
+                --gtf=*)
+                  GTF="${arg#*=}"
+                  ;;
+                --rmpar)
+                  RM_PAR=true
+                  ;;
+                *)
+                  CHR+=("$arg")
+                  ;;
+              esac
+            done
+
+            if [[ -n "$GTF" ]]; then
+
+              echo "Extracting GTF annotation"
+              echo "Removing version suffix from transcript, gene, and exon IDs"
+              echo "Example: gene_id ENSG00000223972.5 -> gene_id ENSG00000223972 gene_version 5"
+              ID="(ENS(MUS)?[GTE][0-9]+)\.([0-9]+)"
+              zcat "$GTF" \
+                | sed -E 's/gene_id "'"$ID"'";/gene_id "\1"; gene_version "\3";/' \
+                | sed -E 's/transcript_id "'"$ID"'";/transcript_id "\1"; transcript_version "\3";/' \
+                | sed -E 's/exon_id "'"$ID"'";/exon_id "\1"; exon_version "\3";/' \
+                > refgene.gtf
+
+              BIOTYPE_PATTERN="(protein_coding|protein_coding_LoF|lncRNA|IG_C_gene|IG_D_gene|IG_J_gene|IG_LV_gene|IG_V_gene|IG_V_pseudogene|IG_J_pseudogene|IG_C_pseudogene|TR_C_gene|TR_D_gene|TR_J_gene|TR_V_gene|TR_V_pseudogene|TR_J_pseudogene)"
+              GENE_PATTERN="gene_type \"${BIOTYPE_PATTERN}\""
+              TX_PATTERN="transcript_type \"${BIOTYPE_PATTERN}\""
+              READTHROUGH_PATTERN="tag \"readthrough_transcript\""
+
+              echo "Filtering GTF annotation to include only specific gene and transcript biotypes"
+              cat refgene.gtf \
+                | awk '$3 == "transcript"' \
+                | grep -E "$GENE_PATTERN" \
+                | grep -E "$TX_PATTERN" \
+                | grep -Ev "$READTHROUGH_PATTERN" \
+                | sed -E 's/.*(gene_id "[^"]+").*/\1/' \
+                | sort \
+                | uniq \
+                > gene_allowlist.txt
+
+              grep -E "^#" refgene.gtf > filtered_refgene.gtf
+
+              if [[ "$RM_PAR" = true ]]; then
+                echo "Removing PAR locus genes from the chrY"
+                grep -Ff gene_allowlist.txt refgene.gtf \
+                  | awk -F "\t" '$1 != "chrY" || $1 == "chrY" && $4 >= 2752083 && $4 < 56887903 && !/ENSG00000290840/' \
+                  >> filtered_refgene.gtf
+              else
+                grep -Ff gene_allowlist.txt refgene.gtf >> filtered_refgene.gtf
+              fi
+
+              rm -f gene_allowlist.txt refgene.gtf
+              mv filtered_refgene.gtf refgene.gtf
+
+              echo "Renaming gene_type to gene_biotype, transcript_type to transcript_biotype"
+              sed -i 's/gene_type/gene_biotype/g' refgene.gtf
+              sed -i 's/transcript_type/transcript_biotype/g' refgene.gtf
+
+              if [[ ${#CHR[@]} -gt 0 ]]; then
+                grep -E "^#" refgene.gtf > filtered_refgene.gtf
+                echo "Subsetting by" ${CHR[*]}
+                cat refgene.gtf | grep -E -v "^#" | awk -v filter="${CHR[*]}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($1 in d) print $0}' >> filtered_refgene.gtf
+                rm -f refgene.gtf
+                mv filtered_refgene.gtf refgene.gtf
+              fi
+
+              echo "Converting refgene.gtf to refgene.genepred"
+              gtfToGenePred -genePredExt -geneNameAsName2 refgene.gtf refgene.genepred
+
+              echo "Converting refgene.genepred to refgene.tsv (refGene table format)"
+              echo -e "bin\tname\tchrom\tstrand\ttxStart\ttxEnd\tcdsStart\tcdsEnd\texonCount\texonStarts\texonEnds\tscore\tname2\tcdsStartStat\tcdsEndStat\texonFrames" > refgene.tsv
+              cat refgene.genepred | awk 'BEGIN{srand()} {print int(rand()*100)+1"\t"$0}' >> refgene.tsv
+              rm -f refgene.genepred
+            elif [[ -n "$TAB" ]] && [[ -n "$MT" ]]; then
+              echo "Extracting TAB annotation"
+              gunzip $TAB -c | grep -v "exonCount" > temp_refgene.tsv
+              gunzip $MT -c | grep -v "exonCount" | awk '{ if ($3=="chrM") print $0 }' >> temp_refgene.tsv
+              if [[ ${#CHR[@]} -gt 0 ]]; then
+                echo "Subsetting by" ${CHR[*]}
+                cat temp_refgene.tsv | awk -v filter="${CHR[*]}" 'BEGIN {split(filter, f); for (i in f) d[f[i]]} {if ($3 in d) print $0}' > filtered_temp_refgene.tsv
+                rm -f temp_refgene.tsv
+                mv filtered_temp_refgene.tsv temp_refgene.tsv
+              fi
+              echo "Converting to GTF format"
+              cut -f 2- temp_refgene.tsv | genePredToGtf file stdin refgene.gtf
+              echo -e "bin\tname\tchrom\tstrand\ttxStart\ttxEnd\tcdsStart\tcdsEnd\texonCount\texonStarts\texonEnds\tscore\tname2\tcdsStartStat\tcdsEndStat\texonFrames" > refgene.tsv
+              cat temp_refgene.tsv >> refgene.tsv
+              rm -f temp_refgene.tsv
+            else
+              echo "Either a pair of --tab and --mt or --gtf parameter should be provided"
+              exit 1
             fi
-            cut -f 2- refgene.txt | genePredToGtf file stdin refgene.gtf
-            echo -e "bin\tname\tchrom\tstrand\ttxStart\ttxEnd\tcdsStart\tcdsEnd\texonCount\texonStarts\texonEnds\tscore\tname2\tcdsStartStat\tcdsEndStat\texonFrames" > refgene.tsv
-            cat refgene.txt >> refgene.tsv
           inputBinding:
             position: 5
         genome_annotation:
-          type: File
+          type: File?
           inputBinding:
             position: 6
+            prefix: "--tab="
+            separate: false
         mitochondrial_annotation:
-          type: File
+          type: File?
           inputBinding:
             position: 7
+            prefix: "--mt="
+            separate: false
+        gtf_annotation:
+          type: File?
+          inputBinding:
+            position: 8
+            prefix: "--gtf="
+            separate: false
+        remove_par_y_genes:
+          type: boolean?
+          inputBinding:
+            position: 9
+            prefix: "--rmpar"
         chromosome_list:
           type:
             - "null"
             - string
             - string[]
           inputBinding:
-            position: 8
+            position: 10
       outputs:
         annotation_tsv_file:
           type: File
@@ -413,6 +550,8 @@ steps:
     in:
       genome_annotation:  annotation_tab
       mitochondrial_annotation: mitochondrial_annotation_tab
+      gtf_annotation: gtf_annotation
+      remove_par_y_genes: remove_par_y_genes
       chromosome_list: chromosome_list
     out:
     - annotation_tsv_file
