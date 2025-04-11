@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.41
+  dockerPull: biowardrobe2/sc-tools:v0.0.42
 
 
 inputs:
@@ -427,9 +427,9 @@ outputs:
       HTML format.
 
   human_log:
-    type: File
+    type: File?
     outputBinding:
-      glob: "*_hlog.txt"
+      glob: "error_report.txt"
     doc: |
       Human readable error log.
       TXT format.

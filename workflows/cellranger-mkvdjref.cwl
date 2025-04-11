@@ -9,29 +9,32 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
+"sd:upstream":
+  genome_indices:
+  - "genome-indices.cwl"
+
+
 inputs:
 
   alias:
     type: string
-    label: "Experiment short name/alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   genome_fasta_file:
     type: File
-    label: "Genome FASTA file. Hard/soft-masked files are not allowed."
+    label: "Genome type"
     doc: |
-      Genome FASTA file. Hard/soft-masked files are not allowed.
-      For example:
-      https://ftp.ensembl.org/pub/current_fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+      Genome type to be used for
+      generating reference genome
+      indices
+    "sd:upstreamSource": "genome_indices/fasta_output"
+    "sd:localLabel": true
 
   annotation_gtf_file:
     type: File
-    label: "GTF annotation file. Should include gene_biotype/transcript_biotype fields."
-    doc: |
-      GTF annotation file. Should include gene_biotype/transcript_biotype fields.
-      For example:
-      https://ftp.ensembl.org/pub/current_gtf/homo_sapiens/Homo_sapiens.GRCh38.108.gtf.gz
+    "sd:upstreamSource": "genome_indices/annotation_gtf"
 
   memory_limit:
     type: int?

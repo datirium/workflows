@@ -166,7 +166,8 @@ steps:
                 return "\t".join(self.gtf_list)
             records = []
             for gtf_line in fileinput.input():
-              records.append(Gtf(gtf_line))
+              if not gtf_line.strip().startswith("#"):
+                records.append(Gtf(gtf_line))
             records.sort(key=lambda x: (x.attribute["gene_id"]))
             for l in records:
               print(l, end="")
