@@ -94,29 +94,21 @@ outputs:
 
 steps:
 
-  extract_fasta:
-    run: ../tools/extract-7z.cwl
+  unmask_fasta:
+    run: ../tools/custom-bash.cwl
     in:
-      file_to_extract: genome_fasta_file
-      output_filename:
-        default: "annotation.fasta"
+      input_file: genome_fasta_file
+      script:
+        default: >
+          cat $0 | awk '{if($0 ~ /^>/) print $0; else print toupper($0)}' > `basename $0`
     out:
-    - extracted_file
-
-  extract_gtf:
-    run: ../tools/extract-7z.cwl
-    in:
-      file_to_extract: annotation_gtf_file
-      output_filename:
-        default: "annotation.gtf"
-    out:
-    - extracted_file
+    - output_file
 
   cellranger_mkvdjref:
     run: ../tools/cellranger-mkvdjref.cwl
     in:
-      genome_fasta_file: extract_fasta/extracted_file
-      annotation_gtf_file: extract_gtf/extracted_file
+      genome_fasta_file: unmask_fasta/output_file
+      annotation_gtf_file: annotation_gtf_file
       threads:
         source: threads
         valueFrom: $(parseInt(self))

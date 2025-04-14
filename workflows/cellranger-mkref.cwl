@@ -122,10 +122,20 @@ outputs:
 
 steps:
 
+  unmask_fasta:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file: genome_fasta_file
+      script:
+        default: >
+          cat $0 | awk '{if($0 ~ /^>/) print $0; else print toupper($0)}' > `basename $0`
+    out:
+    - output_file
+
   cellranger_mkref:
     run: ../tools/cellranger-mkref.cwl
     in:
-      genome_fasta_file: genome_fasta_file
+      genome_fasta_file: unmask_fasta/output_file
       annotation_gtf_file: annotation_gtf_file
       threads:
         source: threads
@@ -190,7 +200,7 @@ steps:
   cellranger_arc_mkref:
     run: ../tools/cellranger-arc-mkref.cwl
     in:
-      genome_fasta_file: genome_fasta_file
+      genome_fasta_file: unmask_fasta/output_file
       annotation_gtf_file: sort_annotation_gtf/sorted_annotation_gtf_file
       exclude_chr:
         default: ["chrM"]                        # as recommended in Cell Ranger ARC manual
