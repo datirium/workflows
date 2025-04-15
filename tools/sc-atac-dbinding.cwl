@@ -450,95 +450,144 @@ outputs:
       subsetted to the specific group.
       TSV format.
 
-  diff_bound_sites:
+  all_db_sites_tsv:
     type: File
     outputBinding:
-      glob: "*_db_sites.tsv"
+      glob: "*_all_db_sites.tsv"
     doc: |
       Not filtered differentially
       accessible regions.
       TSV format.
 
-  first_enrch_bed_file:
-    type: File?
+  all_db_sites_bed:
+    type: File
     outputBinding:
-      glob: "*_first_enrch.bed"
+      glob: "*_all_db_sites.bed"
     doc: |
-      Differentially accessible regions
-      enriched in the cells from the first
-      comparison group. Filtered by adjusted
-      p-value and log2FoldChange thresholds.
-      Optionally subsetted to the specific
-      group. Sorted by log2FoldChange in the
-      ascendant order to correspond to the
-      tag density heatmap.
+      Not filtered differentially
+      accessible regions.
       BED format.
 
-  second_enrch_bed_file:
-    type: File?
+  fltr_db_sites_bed:
+    type: File
     outputBinding:
-      glob: "*_second_enrch.bed"
+      glob: "*_fltr_db_sites.bed"
     doc: |
-      Differentially accessible regions
-      enriched in the cells from the second
-      comparison group. Filtered by adjusted
-      p-value and log2FoldChange thresholds.
-      Optionally subsetted to the specific
-      group. Sorted by log2FoldChange in the
-      descendant order to correspond to the
-      tag density heatmap.
+      Differentially accessible regions.
+      Filtered by adjusted p-value and
+      log2FoldChange thresholds.
       BED format.
 
-  fragments_bigwig_file:
+  fragments_first_bigwig_file:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*.bigWig"
+      glob: "*_first.bigWig"
     doc: |
       Normalized genome coverage calculated
       from the ATAC fragments split either
       by dataset or tested condition.
+      First comparison group.
       BigWig format.
 
-  peaks_bed_file:
+  fragments_second_bigwig_file:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_peaks.narrowPeak"
+      glob: "*_second.bigWig"
+    doc: |
+      Normalized genome coverage calculated
+      from the ATAC fragments split either
+      by dataset or tested condition.
+      Second comparison group.
+      BigWig format.
+
+  peaks_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_first_peaks.narrowPeak"
     doc: |
       Peaks called by MACS2 from the Tn5
       cut sites split either by dataset
       or tested condition.
+      First comparison group.
       NarrowPeak format.
 
-  peaks_xls_file:
+  peaks_second_bed_file:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_peaks.xls"
+      glob: "*_second_peaks.narrowPeak"
     doc: |
       Peaks called by MACS2 from the Tn5
       cut sites split either by dataset
       or tested condition.
-      XLS format.
+      Second comparison group.
+      NarrowPeak format.
 
-  summits_bed_file:
+  peaks_first_xls_file:
     type:
     - "null"
     - type: array
       items: File
     outputBinding:
-      glob: "*_summits.bed"
+      glob: "*_first_peaks.xls"
+    doc: |
+      Peaks called by MACS2 from the Tn5
+      cut sites split either by dataset
+      or tested condition.
+      First comparison group.
+      XLS format.
+
+  peaks_second_xls_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_second_peaks.xls"
+    doc: |
+      Peaks called by MACS2 from the Tn5
+      cut sites split either by dataset
+      or tested condition.
+      Second comparison group.
+      XLS format.
+
+  summits_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_first_summits.bed"
     doc: |
       Summits of the peaks called by MACS2
       from the Tn5 cut sites split either
       by dataset or tested condition.
+      First comparison group.
+      BED format.
+
+  summits_second_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_second_summits.bed"
+    doc: |
+      Summits of the peaks called by MACS2
+      from the Tn5 cut sites split either
+      by dataset or tested condition.
+      Second comparison group.
       BED format.
 
   dflt_peaks_bigbed_file:

@@ -110,8 +110,8 @@ inputs:
     type: File
     "sd:upstreamSource": "genome_indices/annotation"
 
-  chrom_length_file:
-    type: File
+  chrom_length_file:                                            # not used, but removing it prevents SciDAP from rerunning old samples. Keeping it for now.
+    type: File?
     "sd:upstreamSource": "genome_indices/chrom_length"
 
   blacklist_regions_file:
@@ -427,7 +427,7 @@ inputs:
 
 outputs:
 
-  diff_bound_sites_with_labels:
+  all_db_sites_tsv_with_labels:
     type: File
     outputSource: add_label_column/output_file
     label: "Differentially accessible regions with labels (not filtered)"
@@ -441,7 +441,7 @@ outputs:
         tab: "Overview"
         label: "Volcano Plot"
         url: "https://scidap.com/vp/volcano"
-        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'all_db_sites_tsv_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
 
   tag_dnst_htmp_html:
     type: File?
@@ -473,17 +473,6 @@ outputs:
     - linkList:
         tab: "Overview"
         target: "_blank"
-
-  experiment_info:
-    type: File
-    label: "Outputs order for IGV"
-    doc: |
-      Markdown file to explain the
-      outputs order for IGV
-    outputSource: create_metadata/output_file
-    "sd:visualPlugins":
-    - markdownView:
-        tab: "Overview"
 
   cell_cnts_plot_png:
     type: File?
@@ -580,13 +569,13 @@ outputs:
       (optional)".
       TSV format.
 
-  fragments_bigwig_file:
+  fragments_first_bigwig_file:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_dbinding/fragments_bigwig_file
-    label: "Genome coverage"
+    outputSource: sc_atac_dbinding/fragments_first_bigwig_file
+    label: "Genome coverage (first)"
     doc: |
       Normalized genome coverage calculated
       from the ATAC fragments split either
@@ -594,22 +583,47 @@ outputs:
       Optionally subsetted to include only
       cells with "Subsetting values (optional)"
       from the "Subsetting category (optional)".
+      First comparison group.
       BigWig format.
     "sd:visualPlugins":
     - igvbrowser:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "wig"
-        name: "Genome coverage"
+        name: "Genome coverage (first)"
         height: 120
 
-  peaks_bed_file:
+  fragments_second_bigwig_file:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_dbinding/peaks_bed_file
-    label: "Called peaks"
+    outputSource: sc_atac_dbinding/fragments_second_bigwig_file
+    label: "Genome coverage (second)"
+    doc: |
+      Normalized genome coverage calculated
+      from the ATAC fragments split either
+      by dataset or by "Comparison category".
+      Optionally subsetted to include only
+      cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)".
+      Second comparison group.
+      BigWig format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "wig"
+        name: "Genome coverage (second)"
+        height: 120
+
+  peaks_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/peaks_first_bed_file
+    label: "Called peaks (first)"
     doc: |
       Peaks called by MACS2 from the Tn5 cut
       sites split either by dataset or by
@@ -617,23 +631,24 @@ outputs:
       subsetted to include only cells with
       "Subsetting values (optional)" from
       the "Subsetting category (optional)".
+      First comparison group.
       NarrowPeak format.
     "sd:visualPlugins":
     - igvbrowser:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "annotation"
-        name: "Called peaks"
+        name: "Called peaks (first)"
         displayMode: "COLLAPSE"
         height: 40
 
-  peaks_xls_file:
+  peaks_second_bed_file:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_dbinding/peaks_xls_file
-    label: "Called peaks (xls format)"
+    outputSource: sc_atac_dbinding/peaks_second_bed_file
+    label: "Called peaks (second)"
     doc: |
       Peaks called by MACS2 from the Tn5 cut
       sites split either by dataset or by
@@ -641,15 +656,58 @@ outputs:
       subsetted to include only cells with
       "Subsetting values (optional)" from
       the "Subsetting category (optional)".
-      XLS format.
+      Second comparison group.
+      NarrowPeak format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "Called peaks (second)"
+        displayMode: "COLLAPSE"
+        height: 40
 
-  summits_bed_file:
+  peaks_first_xls_file:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_dbinding/summits_bed_file
-    label: "Peaks summits"
+    outputSource: sc_atac_dbinding/peaks_first_xls_file
+    label: "Called peaks (first, xls format)"
+    doc: |
+      Peaks called by MACS2 from the Tn5 cut
+      sites split either by dataset or by
+      "Comparison category". Optionally
+      subsetted to include only cells with
+      "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      First comparison group.
+      XLS format.
+
+  peaks_second_xls_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/peaks_second_xls_file
+    label: "Called peaks (second, xls format)"
+    doc: |
+      Peaks called by MACS2 from the Tn5 cut
+      sites split either by dataset or by
+      "Comparison category". Optionally
+      subsetted to include only cells with
+      "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      Second comparison group.
+      XLS format.
+
+  summits_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/summits_first_bed_file
+    label: "Peaks summits (first)"
     doc: |
       Summits of the peaks called by MACS2
       from the Tn5 cut sites split either
@@ -657,12 +715,30 @@ outputs:
       Optionally subsetted to include only
       cells with "Subsetting values (optional)"
       from the "Subsetting category (optional)".
+      First comparison group.
+      BED format.
+
+  summits_second_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/summits_second_bed_file
+    label: "Peaks summits (second)"
+    doc: |
+      Summits of the peaks called by MACS2
+      from the Tn5 cut sites split either
+      by dataset or by "Comparison category".
+      Optionally subsetted to include only
+      cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)".
+      Second comparison group.
       BED format.
 
   dflt_peaks_bigbed_file:
     type: File?
     outputSource: sc_atac_dbinding/dflt_peaks_bigbed_file
-    label: "Default peaks"
+    label: "Seurat or Cell Ranger peaks"
     doc: |
       Peaks extracted from the loaded
       "Single-cell Analysis with ATAC-Seq
@@ -674,11 +750,11 @@ outputs:
         id: "igvbrowser"
         type: "annotation"
         format: "bigbed"
-        name: "Default peaks"
+        name: "Seurat or Cell Ranger peaks"
         displayMode: "COLLAPSE"
         height: 40
 
-  diff_bound_sites:
+  all_db_sites_tsv:
     type: File
     outputSource: restore_columns/output_file
     label: "Differentially accessible regions (not filtered)"
@@ -693,57 +769,41 @@ outputs:
         tab: "Diff. accessible regions"
         Title: "Differentially accessible regions (not filtered)"
 
-  diff_bound_sites_bigbed:
+  all_db_sites_bed:
     type: File
-    outputSource: bed_to_bigbed/bigbed_file
+    outputSource: sc_atac_dbinding/all_db_sites_bed
     label: "Differentially accessible regions (not filtered)"
     doc: |
       Not filtered by "Maximum adjusted p-value"
       and "Minimum log2 fold change absolute value"
-      differentially accessible regions with the
-      nearest genes assigned.
-      BigBed format.
+      differentially accessible regions.
+      BED format.
     "sd:visualPlugins":
     - igvbrowser:
         tab: "Genome Browser"
         id: "igvbrowser"
         type: "annotation"
-        format: "bigbed"
         name: "Differentially accessible regions (not filtered)"
         displayMode: "COLLAPSE"
         height: 40
 
-  first_enrch_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/first_enrch_bed_file
-    label: "Differentially accessible regions (first comparison group, filtered)"
+  fltr_db_sites_bed:
+    type: File
+    outputSource: sc_atac_dbinding/fltr_db_sites_bed
+    label: "Differentially accessible regions (filtered)"
     doc: |
-      Differentially accessible regions from
-      the "First comparison group". Filtered
-      by "Maximum adjusted p-value" and
-      "Minimum log2 fold change absolute value";
-      sorted by log2FoldChange in the ascendant
-      order to correspond to the tag density
-      heatmap; optionally subsetted to include
-      only cells with "Subsetting values (optional)"
-      from the "Subsetting category (optional)".
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value" differentially accessible regions.
       BED format.
-
-  second_enrch_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_enrch_bed_file
-    label: "Differentially accessible regions (second comparison group, filtered)"
-    doc: |
-      Differentially accessible regions from
-      the "Second comparison group". Filtered
-      by "Maximum adjusted p-value" and
-      "Minimum log2 fold change absolute value";
-      sorted by log2FoldChange in the descendant
-      order to correspond to the tag density
-      heatmap; optionally subsetted to include
-      only cells with "Subsetting values (optional)"
-      from the "Subsetting category (optional)".
-      BED format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "Differentially accessible regions (filtered)"
+        displayMode: "COLLAPSE"
+        height: 40
 
   pdf_plots:
     type: File
@@ -872,13 +932,17 @@ steps:
     - tag_dnst_htmp_gct
     - tag_dnst_htmp_html
     - tag_dnst_htmp_tsv
-    - diff_bound_sites
-    - first_enrch_bed_file
-    - second_enrch_bed_file
-    - fragments_bigwig_file
-    - peaks_bed_file
-    - peaks_xls_file
-    - summits_bed_file
+    - all_db_sites_tsv
+    - all_db_sites_bed
+    - fltr_db_sites_bed
+    - fragments_first_bigwig_file
+    - fragments_second_bigwig_file
+    - peaks_first_bed_file
+    - peaks_second_bed_file
+    - peaks_first_xls_file
+    - peaks_second_xls_file
+    - summits_first_bed_file
+    - summits_second_bed_file
     - dflt_peaks_bigbed_file
     - all_plots_pdf
     - sc_report_html_file
@@ -908,7 +972,7 @@ steps:
   filter_columns:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: sc_atac_dbinding/diff_bound_sites
+      input_file: sc_atac_dbinding/all_db_sites_tsv
       script:
         default: >
           cat $0 | grep -v "start" | awk
@@ -932,64 +996,17 @@ steps:
     in:
       input_file:
       - assign_genes/result_file
-      - sc_atac_dbinding/diff_bound_sites
+      - sc_atac_dbinding/all_db_sites_tsv
       script:
         default: |
-          cat $0 | grep -v "start" | sort -k 11n | cut -f 1-5,15 > iaintersect_result.tsv
-          cat $1 | grep -v "start" > sc_atac_dbinding_result.tsv
+          cat $0 | grep -v "start" | sort -k 11n | cut -f 1-5,15 > tmp_iaintersect_result.tsv
+          cat $1 | grep -v "start" > tmp_sc_atac_dbinding_result.tsv
           HEADER=`head -n 1 $1`;
-          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tregion\t${HEADER}" > `basename $0`;
-          cat iaintersect_result.tsv | paste - sc_atac_dbinding_result.tsv >> `basename $0`
-          rm iaintersect_result.tsv sc_atac_dbinding_result.tsv
+          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tregion\t${HEADER}" > `basename $1`;
+          cat tmp_iaintersect_result.tsv | paste - tmp_sc_atac_dbinding_result.tsv >> `basename $1`
+          rm tmp_iaintersect_result.tsv tmp_sc_atac_dbinding_result.tsv
     out:
     - output_file
-
-  convert_to_bed:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: restore_columns/output_file
-      script:
-        default: |
-          cat "$0" | awk -F "\t" 'NR==1 {for (i=1; i<=NF; i++) {ix[$i]=i} } NR>1 {color="255,0,0"; if ($ix["log2FoldChange"]<0) color="0,255,0"; print $ix["chr"]"\t"$ix["start"]"\t"$ix["end"]"\tpvalue="$ix["pvalue"]+0.0";padj="$ix["padj"]+0.0";log2FC="$ix["log2FoldChange"]"\t"1000"\t"$ix["strand"]"\t"$ix["start"]"\t"$ix["end"]"\t"color}' > `basename $0`
-    out:
-    - output_file
-
-  sort_bed:
-    run: ../tools/linux-sort.cwl
-    in:
-      unsorted_file: convert_to_bed/output_file
-      key:
-        default: ["1,1","2,2n"]
-    out:
-    - sorted_file
-
-  overlap_with_chr_length:
-    run: ../tools/custom-bedops.cwl
-    in:
-      input_file:
-      - chrom_length_file
-      - sort_bed/sorted_file
-      script:
-        default: |
-          cat "$0" | awk '{print $1"\t0\t"$2}' | sort-bed - > temp_chrom_length.bed
-          cat "$1" | awk '$2 >= 0' > temp_sorted.bed
-          bedops --element-of 100% temp_sorted.bed temp_chrom_length.bed > `basename $1`
-          rm -f temp_chrom_length.bed temp_sorted.bed
-    out:
-    - output_file
-
-  bed_to_bigbed:
-    run: ../tools/ucsc-bedtobigbed.cwl
-    in:
-      input_bed: overlap_with_chr_length/output_file
-      bed_type:
-        default: "bed4+5"
-      chrom_length_file: chrom_length_file
-      output_filename:
-        source: overlap_with_chr_length/output_file
-        valueFrom: $(self.basename.split('.').slice(0,-1).join('.') + ".bigBed")
-    out: 
-    - bigbed_file
 
   add_label_column:
     run: ../tools/custom-bash.cwl
@@ -998,26 +1015,8 @@ steps:
       script:
         default: |
           HEADER=`head -n 1 $0`;
-          echo -e "label\t${HEADER}" > sc_db_sites_labeled.tsv;
-          cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> sc_db_sites_labeled.tsv
-    out:
-    - output_file
-
-  create_metadata:
-    run: ../tools/custom-bash.cwl
-    in:
-      input_file: sc_atac_dbinding/fragments_bigwig_file
-      script:
-        default: |
-          #!/bin/bash
-          set -- "$0" "$@"
-          echo "| File | Index |" > experiment_info.md
-          echo "| :-- | --: |" >> experiment_info.md
-          j=1
-          for i in "${@}"; do
-            echo "| `basename $i` | $j |" >> experiment_info.md
-            (( j++ ))
-          done;
+          echo -e "label\t${HEADER}" > sc_all_db_sites_labeled.tsv;
+          cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> sc_all_db_sites_labeled.tsv
     out:
     - output_file
 
