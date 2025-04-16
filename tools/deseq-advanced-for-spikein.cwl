@@ -247,6 +247,15 @@ outputs:
   stderr_log:
     type: stderr
 
+  error_msg:
+    type: File?
+    outputBinding:
+      glob: "error_msg.txt"
+
+  error_report:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
 
 baseCommand: [/usr/local/bin/run_deseq_for_spikein.R]
 stdout: deseq_stdout.log
