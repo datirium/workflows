@@ -445,7 +445,7 @@ outputs:
 
   tag_dnst_htmp_html:
     type: File?
-    outputSource: sc_atac_dbinding/tag_dnst_htmp_html
+    outputSource: extend_htmp/tag_dnst_htmp_html
     label: "Tag Density Heatmap"
     doc: |
       Tag density heatmap around the centers
@@ -473,6 +473,18 @@ outputs:
     - linkList:
         tab: "Overview"
         target: "_blank"
+
+  experiment_info:
+    type: File
+    label: "Genome coverage tracks order"
+    doc: |
+      Markdown file to explain
+      the order of genome coverage
+      tracks in the IGV browser.
+    outputSource: create_metadata/output_file
+    "sd:visualPlugins":
+    - markdownView:
+        tab: "Overview"
 
   cell_cnts_plot_png:
     type: File?
@@ -541,7 +553,7 @@ outputs:
 
   tag_dnst_htmp_gct:
     type: File?
-    outputSource: sc_atac_dbinding/tag_dnst_htmp_gct
+    outputSource: extend_htmp/tag_dnst_htmp_gct
     label: "Tag density heatmap around the centers of filtered diff. accessible regions"
     doc: |
       Tag density heatmap around the centers
@@ -556,7 +568,7 @@ outputs:
 
   tag_dnst_htmp_tsv:
     type: File?
-    outputSource: sc_atac_dbinding/tag_dnst_htmp_tsv
+    outputSource: extend_htmp/tag_dnst_htmp_tsv
     label: "Tag density heatmap around the centers of filtered diff. accessible regions"
     doc: |
       Tag density heatmap around the centers
@@ -788,7 +800,7 @@ outputs:
         height: 40
 
   fltr_db_sites_bed:
-    type: File
+    type: File?
     outputSource: sc_atac_dbinding/fltr_db_sites_bed
     label: "Differentially accessible regions (filtered)"
     doc: |
@@ -930,8 +942,6 @@ steps:
     - vlcn_plot_png
     - tag_dnst_htmp_plot_png
     - tag_dnst_htmp_gct
-    - tag_dnst_htmp_html
-    - tag_dnst_htmp_tsv
     - all_db_sites_tsv
     - all_db_sites_bed
     - fltr_db_sites_bed
@@ -1017,6 +1027,140 @@ steps:
           HEADER=`head -n 1 $0`;
           echo -e "label\t${HEADER}" > sc_all_db_sites_labeled.tsv;
           cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> sc_all_db_sites_labeled.tsv
+    out:
+    - output_file
+
+  extend_htmp:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/sc-tools:v0.0.42
+      - class: InitialWorkDirRequirement
+        listing:
+        - entryname: extend_htmp.R
+          entry: |
+            #!/usr/bin/env Rscript
+            options(warn=-1)
+            options("width"=200)
+            options(error=function(){traceback(3); quit(save="no", status=1, runLast=FALSE)})
+            suppressMessages(library(tools))
+            suppressMessages(library(modules))
+            suppressMessages(library(tidyverse))
+            suppressMessages(io <- modules::use("/usr/local/bin/modules/io.R"))
+            suppressMessages(graphics <- modules::use("/usr/local/bin/modules/graphics.R"))
+            args = commandArgs(trailingOnly=TRUE)
+            if(length(args) != 2){
+                print("Not enough input parameters. Exiting without throwing the error.")
+                quit(save="no", status=0, runLast=FALSE)
+            }
+            gct_location <- args[1]
+            metadata_location <- args[2]
+            gct_data <- morpheus::read.gct(gct_location)
+            metadata <- read.table(
+                            metadata_location,
+                            sep="\t",
+                            header=TRUE,
+                            check.names=FALSE,
+                            stringsAsFactors=FALSE,
+                            quote=""
+                        ) %>%
+                        mutate(label=paste(chr, paste(start, end, sep="-"), sep=":"))    # we need to overwrite the labels to include only chr:start-end 
+            row_metadata <- gct_data$rowAnnotations %>%
+                            select("regions_group") %>%                                  # this is the only column we don't have in the metadata
+                            rownames_to_column("label") %>%
+                            left_join(metadata, by="label") %>%
+                            remove_rownames() %>%
+                            column_to_rownames("label") %>%
+                            select(c("gene_id", "region", "log2FoldChange", "padj", "regions_group")) %>%
+                            rename(category = regions_group)
+            io$export_gct(
+                counts_mat=gct_data$data,
+                row_metadata=row_metadata,
+                col_metadata=gct_data$columnAnnotations,
+                location=basename(gct_location)
+            )
+            score_limits <- stats::quantile(
+                gct_data$data,
+                c(0.01, 0.98),
+                na.rm=TRUE, names=FALSE
+            )
+            graphics$morpheus_html_heatmap(
+                gct_location=basename(gct_location),
+                rootname=file_path_sans_ext(basename(gct_location)),
+                color_scheme=list(
+                    scalingMode="fixed",
+                    stepped=FALSE,
+                    values=as.list(score_limits),
+                    colors=c("white", "darkblue")
+                )
+            )
+            io$export_data(
+                row_metadata %>% tibble::rownames_to_column(var="feature"),
+                paste0(file_path_sans_ext(basename(gct_location)), ".tsv")
+            )
+      inputs:
+        gct_file:
+          type: File?
+          inputBinding:
+            position: 5
+        tsv_file:
+          type: File
+          inputBinding:
+            position: 7
+      outputs:
+        tag_dnst_htmp_gct:
+          type: File?
+          outputBinding:
+            glob: "*_tag_dnst_htmp.gct"
+        tag_dnst_htmp_html:
+          type: File?
+          outputBinding:
+            glob: "*_tag_dnst_htmp.html"
+        tag_dnst_htmp_tsv:
+          type: File?
+          outputBinding:
+            glob: "*_tag_dnst_htmp.tsv"
+      baseCommand: ["Rscript", "extend_htmp.R"]
+    in:
+      gct_file: sc_atac_dbinding/tag_dnst_htmp_gct
+      tsv_file: add_label_column/output_file
+    out:
+    - tag_dnst_htmp_gct
+    - tag_dnst_htmp_html
+    - tag_dnst_htmp_tsv
+
+  create_metadata:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file:
+        source:
+        - sc_atac_dbinding/fragments_first_bigwig_file
+        - sc_atac_dbinding/fragments_second_bigwig_file
+        valueFrom: $(self.flat())
+      param:
+        source:
+        - sc_atac_dbinding/fragments_first_bigwig_file
+        - sc_atac_dbinding/fragments_second_bigwig_file
+        valueFrom: $(self[0].length + "," + self[1].length)
+      script:
+        default: |
+          #!/bin/bash
+          set -- "$0" "$@"
+          IFS=',' read -r FIRST_N SECOND_N <<< "${!#}"
+          FILES=("${@:1:$(($#-1))}")
+          echo "| File | Position |" > experiment_info.md
+          echo "| :-- | --: |" >> experiment_info.md
+          echo "| _First comparison group_ | |" >> experiment_info.md
+          for ((i = 0; i < FIRST_N; i++)); do
+            echo "| $(basename "${FILES[i]}") | $((i+1)) |" >> experiment_info.md
+          done
+          echo "| _Second comparison group_ | |" >> experiment_info.md
+          for ((i = 0; i < SECOND_N; i++)); do
+            j=$((FIRST_N + i))
+            echo "| $(basename "${FILES[j]}") | $((i+1)) |" >> experiment_info.md
+          done
     out:
     - output_file
 

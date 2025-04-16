@@ -469,7 +469,7 @@ outputs:
       BED format.
 
   fltr_db_sites_bed:
-    type: File
+    type: File?
     outputBinding:
       glob: "*_fltr_db_sites.bed"
     doc: |
