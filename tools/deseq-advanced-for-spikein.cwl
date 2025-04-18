@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: avivdemorgan/scidap-deseqspikein:v1.0.0
+  dockerPull: avivdemorgan/scidap-deseqspikein:v1.1.0
 
 
 inputs:
