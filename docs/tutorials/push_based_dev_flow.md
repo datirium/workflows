@@ -65,7 +65,13 @@ Pushes will trigger automatic version updated, and samples can be updated or cre
 
 ## Create PR
 
-If all is good in the custom testing, then you can create a PR from the branch you did local development on, from your forked repo (via github UI).
+> NOTE: its worth checking if there have been approved PR's since you created this branch, if there have been, you'll want to:
+> - checkout master
+> - pull from origin
+> - and merge master into your dev/testing branch
+
+
+If all is good in custom testing, then you can create a PR from the branch you did local development on, from your forked repo (via github UI).
 
 
 If custom testing requires changes and you commit directly to the "main" branch to make these changes (which is valid), then you will need to include these changes in the PR branch.

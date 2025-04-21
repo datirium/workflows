@@ -32,4 +32,14 @@ All other branches are for making PR's from the forked repo to datiriums repo
 ```git push CUSTOM_REPO main```
 ![set default branch image](../images/set_default_branch.png)
 
+
+At this point, the output of ```git remote -v``` should be:
+```
+origin  git@github.com:datirium/workflows.git (fetch)
+origin  git@github.com:datirium/workflows.git (push)
+CUSTOM_REPO      git@github.com:<USERNAME>/<CUSTOM_NAME>.git (fetch)
+CUSTOM_REPO      git@github.com:<USERNAME>/<CUSTOM_NAME>.git (push)
+PR_REPO    git@github.com:<USERNAME>/<FORK_NAME>.git (fetch)
+PR_REPO    git@github.com:<USERNAME>/<FORK_NAME>.git (push)
+```
 Now you are ready to follow the [push-based developer flow](./push_based_dev_flow.md)
