@@ -1,0 +1,43 @@
+{
+    "untreated_files": [
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_Control_8h_S1/tsvs/read_1.genes.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_Control_8h_S2/tsvs/read_1.genes.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_Control_8h_S3/tsvs/read_1.genes.tsv"
+        }
+    ],
+    "treated_files": [
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S1/tsvs/read_1.genes.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S2/tsvs/read_1.genes.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S3/tsvs/read_1.genes.tsv"
+        }
+    ],
+    "untreated_name": "control",
+    "treated_name": "treatment",
+    "untreated_sample_names": [
+        "MH_Control_8h_S1", "MH_Control_8h_S2", "MH_Control_8h_S3",
+    ],
+    "treated_sample_names": [
+        "MH_5uMNTC8_8h_S1", "MH_5uMNTC8_8h_S2", "MH_5uMNTC8_8h_S3",
+    ],
+    "rpkm_cutoff": 10,
+    "row_distance": "cosangle",
+    "column_distance": "euclid",
+    "center_row": false,
+    "maximum_padj": 0.05
+}

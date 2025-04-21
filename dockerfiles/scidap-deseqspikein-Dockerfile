@@ -66,6 +66,7 @@ COPY ./scripts/run_deseq_for_spikein.R /usr/local/bin/run_deseq_for_spikein.R
 #	dpkg --configure -a && \
 #	apt-get -f install && \
 #	apt-get update
+# RUN chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
 RUN chmod +x /tmp/install_from_source.R && chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
     ls -la /usr/local/bin/run_deseq_for_spikein.R
     #chmod +x /usr/local/bin/run_deseq_lrt.R && \
@@ -110,6 +111,7 @@ RUN R -e "BiocManager::install(c('BiocParallel', 'DESeq', 'DESeq2', 'limma', 'En
 # RUN R -e 'devtools::install_github("RGLab/cytolib")'
 # RUN R -e 'devtools::install_github("RGLab/flowCore")'
 # RUN R -e 'devtools::install_github("cmap/cmapR")'
+
 
     # make script executable from $PATH
     #chmod +x /usr/local/bin/run_deseq.R && \

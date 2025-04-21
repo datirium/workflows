@@ -3,12 +3,12 @@ class: CommandLineTool
 
 
 requirements:
-- class: InlineJavascriptRequirement
+- class: InlineJavascriptRequirement 
 
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/scidap-deseq:v0.0.27
+  dockerPull: scrowley1/scidap-deseq:v0.1.0 #biowardrobe2/scidap-deseq:v0.0.27
 
 
 inputs:
