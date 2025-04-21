@@ -27,6 +27,6 @@ git commit -m "some commit message"
 ```
 6. push to forked repo: ```git push origin <BRANCH_NAME>```
 7. create PR 
-from link in CLI: ```https://github.com/<USERNAME>/<REPO_NAME>/pull/new/<BRANCH_NAME>```
-from github UI:
+from link in CLI: ```https://github.com/<USERNAME>/<REPO_NAME>/pull/new/<BRANCH_NAME>```  
+or from github UI:
 ![make_pr](./images/make_pr.png)
