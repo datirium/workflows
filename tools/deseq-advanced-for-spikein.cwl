@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: avivdemorgan/scidap-deseqspikein:v1.0.0
+  dockerPull: avivdemorgan/scidap-deseqspikein:v1.1.0
 
 
 inputs:
@@ -247,6 +247,15 @@ outputs:
   stderr_log:
     type: stderr
 
+  error_msg:
+    type: File?
+    outputBinding:
+      glob: "error_msg.txt"
+
+  error_report:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
 
 baseCommand: [/usr/local/bin/run_deseq_for_spikein.R]
 stdout: deseq_stdout.log
