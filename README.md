@@ -2,6 +2,9 @@
 
 # Bioinformatics Workflows by Datirium LLC
 
+[how to contribute]()
+
+
 - [Repository folder structure](#repo-structure)
 <!-- - [Contributing](#contributing) -->
 - [CWL for SciDAP](#augmented-cwl-standard-for-scidap)
@@ -32,13 +35,13 @@ Workflows available on SciDAP are automatically updated and version controlled b
 ├── tools
 ├── dockerfiles
 │   ├── scripts
-├── docs
-│   ├── contributing
-│   ├── tutorials
-│   ├── cwl_examples
 ├── tests
 │   ├── data
 ```
+<!-- ├── docs
+│   ├── contributing
+│   ├── tutorials
+│   ├── cwl_examples -->
 <!-- ├── .github -->
 
 - The **workflows** directory is the home for all of the CWL files that makeup individual workflows. Workflows will use **tools** for running individual steps.
@@ -50,9 +53,9 @@ Workflows available on SciDAP are automatically updated and version controlled b
 
 <!-- - is home to 3 folders: -->
   <!-- - **contributing**: docs related to contributing to the open-source workflows, or documentation, of this repo. -->
-- The **docs** directory:
+<!-- - The **docs** directory:
   - [**cwl_examples**](./docs/cwl_examples/): docs with examples of specific aspects of contributing or development
-  - [**tutorials**](./docs/tutorials/github_flow_for_workflows.md): docs with tutorials on different aspects of using / [developing](./docs/tutorials/push_based_dev_flow.md) / testing workflows
+  - [**tutorials**](./docs/tutorials/github_flow_for_workflows.md): docs with tutorials on different aspects of using / [developing](./docs/tutorials/push_based_dev_flow.md) / testing workflows -->
 
 - The **tests** directory is home to json files (jobs) for each workflow/tool. These job files are what are used in order to test individual workflows. Using these tests requires data, which the child folder **data** contains through a repo-reference to [Barski-Labs workflow_tests](https://github.com/Barski-lab/workflows_test/tree/305adf1fd61a08dff5e3f348296a1b246fc8683a)
 
