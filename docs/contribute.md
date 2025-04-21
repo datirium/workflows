@@ -31,7 +31,7 @@ from link in CLI: ```https://github.com/<USERNAME>/<REPO_NAME>/pull/new/<BRANCH_
 ![alt text](./images/pr_link.png)  
 or from github UI:
 ![make_pr](./images/make_pr.png)
-8. check for merge conflicts
+8. check for merge conflicts (at the bottom of the PR's "conversation" tab)
 ![alt text](./images/merge_conflict.png)  
 9. resolve merge conflicts   (if needed)
 - in UI:  
@@ -40,7 +40,7 @@ or from github UI:
     ![alt text](./images/merge_conflict_editor.png)  
     the highlighted section is the "incoming" changes that your PR wants to make.  
     The section under the ```======``` is the content that already exists
-    3. delete one of the sections, as well as the lines including ```<<<<<<``` and ```>>>>>>```
+    3. delete one of the sections, as well as the lines including ```<<<<<<```, ```======``` and ```>>>>>>```
 - in CLI: 
     1. sync the forks master branch with datiriums master branch (step 1 above)
     2. pull locally (step 2 above)
