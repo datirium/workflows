@@ -43,7 +43,7 @@
 # for even faster build tests, run from latest stable build
 #FROM avivdemorgan/scidap-deseqspikein:dev
 #FROM robertplayer/scidap-deseq:dev
-FROM ubuntu:latest
+FROM ubuntu:latest 
 LABEL maintainer="aviv.de.morgan@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
 
