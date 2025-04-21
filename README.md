@@ -2,7 +2,7 @@
 
 # Bioinformatics Workflows by Datirium LLC
 
-[how to contribute]()
+[how to contribute](./docs/contribute.md)
 
 
 - [Repository folder structure](#repo-structure)
