@@ -494,18 +494,6 @@ get_args <- function(){
         type="character", required="True",
         nargs="+"
     )
-    parser$add_argument(
-      "-uaer", "--uerccalias",
-      help="Unique aliases for untreated (condition 1) ERCC files. Default: basenames of -u without extensions",
-      type="character", required="True",
-      nargs="*"
-    )
-    parser$add_argument(
-      "-taer", "--terccalias",
-      help="Unique aliases for treated (condition 2) ERCC files. Default: basenames of -t without extensions",
-      type="character", required="True",
-      nargs="*"
-    )
     args <- assert_args(parser$parse_args(gsub("'|\"| ", "_", commandArgs(trailingOnly = TRUE))))
     return (args)
 }
