@@ -84,6 +84,13 @@ outputs:
     doc: |
       Chromosome length file in TSV format
 
+  unmasked_fasta:
+    type: File
+    outputSource: unmask_fasta/unmasked_fasta
+    label: "Unmasked genome FASTA file"
+    doc: |
+      Indexed unmasked reference genome FASTA file
+
   stdout_log:
     type: File
     outputSource: cellranger_mkref/stdout_log
@@ -123,19 +130,41 @@ outputs:
 steps:
 
   unmask_fasta:
-    run: ../tools/custom-bash.cwl
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/samtools:v1.11
+      inputs:
+        script:
+          type: string?
+          default: |
+            cat $0 | awk '{if($0 ~ /^>/) print $0; else print toupper($0)}' > genome.fa
+            samtools faidx genome.fa
+          inputBinding:
+            position: 1
+        genome_fasta_file:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        unmasked_fasta:
+          type: File
+          outputBinding:
+            glob: "genome.fa"
+          secondaryFiles:
+          - .fai
+      baseCommand: ["bash", "-c"]
     in:
-      input_file: genome_fasta_file
-      script:
-        default: >
-          cat $0 | awk '{if($0 ~ /^>/) print $0; else print toupper($0)}' > `basename $0`
+      genome_fasta_file: genome_fasta_file
     out:
-    - output_file
+    - unmasked_fasta
 
   cellranger_mkref:
     run: ../tools/cellranger-mkref.cwl
     in:
-      genome_fasta_file: unmask_fasta/output_file
+      genome_fasta_file: unmask_fasta/unmasked_fasta
       annotation_gtf_file: annotation_gtf_file
       threads:
         source: threads
@@ -200,7 +229,7 @@ steps:
   cellranger_arc_mkref:
     run: ../tools/cellranger-arc-mkref.cwl
     in:
-      genome_fasta_file: unmask_fasta/output_file
+      genome_fasta_file: unmask_fasta/unmasked_fasta
       annotation_gtf_file: sort_annotation_gtf/sorted_annotation_gtf_file
       exclude_chr:
         default: ["chrM"]                        # as recommended in Cell Ranger ARC manual
