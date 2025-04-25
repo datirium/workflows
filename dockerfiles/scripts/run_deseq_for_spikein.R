@@ -1,4 +1,23 @@
 #!/usr/bin/env Rscript
+
+# Diverting R console errors into a log file ----
+# open a log connection
+log_dir <- "/tmp/log"
+if (!dir.exists(log_dir)) {
+  dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
+}
+logfile <- file("/tmp/log/R_spikein.log", open = "wt")
+# redirect both regular output and messages (warnings/errors)
+sink(logfile, type = "output", split = TRUE)   # :contentReference[oaicite:2]{index=2}
+sink(logfile, type = "message")
+
+# make any unhandled error abort with a traceback
+options(error = function() {
+  traceback()
+  quit(status = 1)
+})
+
+
 options(warn=-1)
 options("width"=300)
 options(error=function(){traceback(3); quit(save="no", status=1, runLast=FALSE)})
@@ -17,9 +36,6 @@ suppressMessages(library(ggrepel))
 
 
 ##########################################################################################
-#
-#
-#
 # v0.0.1
 #   - base script copied from `datirium/workflows/dockerfiles/scripts/run_deseq.R` (at v1.0.0)
 #   - if both groups have >1 samples, runs DESeq without calculating sizeFactors by default, they are instead set manually to 1 for all samples
@@ -770,3 +786,8 @@ export_cls(
     categories=col_metadata[, "conditions"],
     paste(args$output, "_phenotypes.cls", sep="")
 )
+
+# When you’re done, restore the sinks
+sink(type = "message")
+sink(type = "output")
+close(logfile)

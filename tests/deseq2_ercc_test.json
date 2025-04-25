@@ -27,6 +27,34 @@
             "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S3/tsvs/read_1.genes.tsv"
         }
     ],
+    "ercc_counts_treated": [
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S1/tsvs/ercc_counts.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S2/tsvs/ercc_counts.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_5uMNTC8_8h_S3/tsvs/ercc_counts.tsv"
+        }
+    ],
+    "ercc_counts_untreated": [
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_Control_8h_S1/tsvs/ercc_counts.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_Control_8h_S2/tsvs/ercc_counts.tsv"
+        },
+        {
+            "class": "File",
+            "location": "/home/avivdm/projects/min_xue_spikein/ERCC_SAMPLES/MH_Control_8h_S3/tsvs/ercc_counts.tsv"
+        }
+    ],
     "untreated_name": "control",
     "treated_name": "treatment",
     "untreated_sample_names": [
