@@ -1,10 +1,11 @@
 #################################################################
 # Dockerfile
-# Version v1.3.0
+# Version v1.4.0
 # Build date: 2025-04-23
 # Uses ubuntu:latest
 # This image runs run_deseq_for_spikein.R which now uses ERCC counts to calculate size factors
 # See ref of the rationale here: https://support.bioconductor.org/p/9149231/
+# Version 1.4.0 includes a shell script to capture worklow failures
 #################################################################
 
 
@@ -56,16 +57,11 @@ ENV LC_ALL=C.UTF-8
 
 WORKDIR /tmp
 
-COPY ./scripts/install_from_source.R /tmp/install_from_source.R
 COPY ./scripts/run_deseq_for_spikein.R /usr/local/bin/run_deseq_for_spikein.R
 COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN chmod +x /usr/local/bin/*.sh \
-    && chmod +x /usr/local/bin/entrypoint.sh && \
-    ls -la /usr/local/bin/entrypoint.sh
-
-RUN chmod +x /tmp/install_from_source.R && chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
-    ls -la /usr/local/bin/run_deseq_for_spikein.R
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/run_deseq_for_spikein.R
 
 # 1) Install build tools, locale, lsb-release, and ALL required dev headers
 RUN apt-get update \
@@ -119,5 +115,5 @@ RUN Rscript -e "install.packages(c('EnhancedVolcano', 'remotes', 'tidyverse', 'p
 RUN export PATH="$PATH:/usr/local/bin"
 
 # The container's entrypoint
-# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-# ENTRYPOINT ["/tmp/scripts/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# no CMD needed — CWL’s baseCommand will be the .R script itself

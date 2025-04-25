@@ -258,7 +258,6 @@ outputs:
       glob: "error_report.txt"
 
 baseCommand: [/usr/local/bin/run_deseq_for_spikein.R]
-# baseCommand: [/usr/local/bin/entrypoint.sh]
 stdout: deseq_stdout.log
 stderr: deseq_stderr.log
 

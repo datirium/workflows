@@ -1,28 +1,16 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+trap 'echo "[ERROR] $0:$LINENO: \"$BASH_COMMAND\" failed" >&2' ERR
 
-# 1) catch any error and report line/command
-trap 'echo "[ERROR] $0 failed on line $LINENO: \"$BASH_COMMAND\"" >&2' ERR  # :contentReference[oaicite:0]{index=0}
-
-# 2) prepare log directory
-LOG_DIR=/tmp/entrylog
+LOG_DIR=/tmp/log
 mkdir -p "$LOG_DIR"
 
-# 3) redirect stdout/stderr to both console and log files
 TS=$(date '+%Y%m%d-%H%M%S')
-exec > >(tee -a "$LOG_DIR/app_$TS.log") 2> >(tee -a "$LOG_DIR/app-error_$TS.log" >&2)
+LOG_OUT="$LOG_DIR/run-$TS.log"
+LOG_ERR="$LOG_DIR/run-$TS-error.log"
 
-echo "[INFO] Starting at $(date)"
+# tee stdout → console + $LOG_OUT; tee stderr → console + $LOG_ERR
+exec > >(tee -a "$LOG_OUT") 2> >(tee -a "$LOG_ERR" >&2)
 
-Rscript /usr/local/bin/run_deseq_for_spikein.R "$@"
-
-# 4) run each script in turn
-# for SCRIPT in /usr/local/bin/*; do
-#   echo "[INFO] Running $SCRIPT"
-#   case "$SCRIPT" in
-#     *.R)   Rscript "$SCRIPT"    ;;
-#     *)     echo "[WARN] Skipping $SCRIPT" ;;
-#   esac
-# done
-
-echo "[INFO] All done at $(date)"
+# finally, run whatever was passed in (your R script + its args)
+exec "$@"
