@@ -1,6 +1,6 @@
 #################################################################
 # Dockerfile
-# Version v1.2.0
+# Version v1.3.0
 # Build date: 2025-04-23
 # Uses ubuntu:latest
 # This image runs run_deseq_for_spikein.R which now uses ERCC counts to calculate size factors
