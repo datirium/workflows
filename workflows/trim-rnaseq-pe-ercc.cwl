@@ -728,13 +728,13 @@ steps:
       - log_file_stdout
       - log_file_stderr
 
-  # group_isoforms_ercc:
-  #   run: ../tools/group-isoforms.cwl
-  #   in:
-  #     isoforms_file: ercc_spikein_norm/rpkm_isoforms_ercc_norm
-  #   out:
-  #     - genes_file
-  #     - common_tss_file
+  group_isoforms_ercc:
+    run: ../tools/group-isoforms.cwl
+    in:
+      isoforms_file: ercc_spikein_norm/rpkm_isoforms_ercc_norm
+    out:
+      - genes_file
+      - common_tss_file
 
 
 $namespaces:
