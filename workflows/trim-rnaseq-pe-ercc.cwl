@@ -419,23 +419,23 @@ outputs:
     doc: "scaled read counts grouped by isoforms"
     outputSource: ercc_spikein_norm/rpkm_isoforms_ercc_norm
 
-  # rpkm_genes_ercc_normalized:  # KEEP THIS?
-  #   type: File
-  #   format: "http://edamontology.org/format_3475"
-  #   label: "scaled read counts grouped by gene name"
-  #   doc: "Scaled read counts grouped by gene name"
-  #   outputSource: group_isoforms_ercc/genes_file
-  #   'sd:visualPlugins': # maybe to renove the visual plugin for this file - misleading
-  #   - syncfusiongrid:
-  #       tab: 'Gene Expression Scaled'
-  #       Title: 'Scaled read counts grouped by gene name'
+  rpkm_genes_ercc_normalized:  # KEEP THIS?
+     type: File
+     format: "http://edamontology.org/format_3475"
+     label: "scaled read counts grouped by gene name"
+     doc: "Scaled read counts grouped by gene name"
+     outputSource: group_isoforms_ercc/genes_file
+     'sd:visualPlugins': # maybe to renove the visual plugin for this file - misleading
+     - syncfusiongrid:
+         tab: 'Gene Expression Scaled'
+         Title: 'Scaled read counts grouped by gene name'
 
-  # rpkm_common_tss_ercc_normalized:  # KEEP THIS?
-  #   type: File
-  #   format: "http://edamontology.org/format_3475"
-  #   label: "scaled read counts grouped by common TSS"
-  #   doc: "scaled read counts grouped by common TSS"
-  #   outputSource: group_isoforms_ercc/common_tss_file
+  rpkm_common_tss_ercc_normalized:  # KEEP THIS?
+     type: File
+     format: "http://edamontology.org/format_3475"
+     label: "scaled read counts grouped by common TSS"
+     doc: "scaled read counts grouped by common TSS"
+     outputSource: group_isoforms_ercc/common_tss_file
 
   ercc_sam:
     type: File

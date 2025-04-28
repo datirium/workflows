@@ -1,5 +1,16 @@
 #################################################################
 # Dockerfile
+# Version v1.4.0
+# Build date: 2025-04-23
+# Uses ubuntu:latest
+# This image runs run_deseq_for_spikein.R which now uses ERCC counts to calculate size factors
+# See ref of the rationale here: https://support.bioconductor.org/p/9149231/
+# Version 1.4.0 includes a shell script to capture worklow failures
+#################################################################
+
+
+#################################################################
+# Dockerfile
 #
 # Software:         BioWardrobe DESeq/DESeq2 script
 # Software Version: v0.0.27
@@ -36,86 +47,73 @@
 #
 #################################################################
 
-
-### Base Image
-# FROM r-base:4.0.4     # this is the original, initial base image; pulled from Barski lab repo, so building from that base
-# FROM biowardrobe2/scidap-deseq:v0.0.27    # for faster build tests
-# for even faster build tests, run from latest stable build
-# FROM avivdemorgan/scidap-deseqspikein:dev
 FROM ubuntu:latest
 LABEL maintainer="aviv.de.morgan@datirium.com"
 ENV DEBIAN_FRONTEND noninteractive
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 ################## BEGIN INSTALLATION ######################
 
 WORKDIR /tmp
 
-ENV VERSION_BIOCMANAGER 1.30.25
-ENV URL_BIOCMANAGER "https://cran.r-project.org/src/contrib/BiocManager_${VERSION_BIOCMANAGER}.tar.gz"
-#ENV VERSION_LOCFIT 1.5-9.4
-ENV VERSION_LOCFIT 1.5-9.12
-#ENV URL_LOCFIT "https://cran.r-project.org/src/contrib/Archive/locfit/locfit_${VERSION_LOCFIT}.tar.gz"
-ENV URL_LOCFIT "https://cran.r-project.org/src/contrib/locfit_${VERSION_LOCFIT}.tar.gz"
-COPY ./scripts/install_from_source.R /tmp/install_from_source.R
-#COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq.R
 COPY ./scripts/run_deseq_for_spikein.R /usr/local/bin/run_deseq_for_spikein.R
-#COPY ./scripts/run_deseq_lrt.R /usr/local/bin/run_deseq_lrt.R
-#COPY ./scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
-#RUN chmod +x /tmp/install_from_source.R
-#RUN apt-get clean && \
-#	dpkg --configure -a && \
-#	apt-get -f install && \
-#	apt-get update
-# RUN chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
-RUN chmod +x /tmp/install_from_source.R && chmod +x /usr/local/bin/run_deseq_for_spikein.R && \
-    ls -la /usr/local/bin/run_deseq_for_spikein.R
-    #chmod +x /usr/local/bin/run_deseq_lrt.R && \
-    #ls -la /usr/local/bin/run_deseq_lrt.R && \
-    #chmod +x /usr/local/bin/get_gene_n_tss.R && \
-    #ls -la /usr/local/bin/get_gene_n_tss.R && \
-    # Cleaning
-    #apt-get clean && \
-    #apt-get purge && \
-    #rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-    #strip /usr/local/bin/*; true
+COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/run_deseq_for_spikein.R
 
-RUN apt-get update && apt-get -f install && apt-get install -y \
-    gcc-10-base libgcc-10-dev python3-dev python3-pip libxml2-dev libssl-dev libcurl4-openssl-dev pandoc \
-    libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype-dev libpng-dev \
-    libtiff5-dev libjpeg-dev vim r-base-dev && \
-    pip3 install argparse --break-system-packages
+# 1) Install build tools, locale, lsb-release, and ALL required dev headers
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      build-essential \
+      ca-certificates \
+      wget \
+      gnupg2 \
+      dirmngr \
+      lsb-release \
+      apt-transport-https \
+      software-properties-common \
+      locales \
+      # R package system dependencies:
+      libgit2-dev \
+      libssh2-1-dev \
+      libhdf5-dev \
+      zlib1g-dev \
+      libbz2-dev \
+      liblzma-dev \
+      libpcre2-dev \
+      pkg-config \
+      gcc-10-base libgcc-10-dev python3-dev python3-pip libxml2-dev libssl-dev libcurl4-openssl-dev pandoc libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype-dev libpng-dev     libtiff5-dev libjpeg-dev vim && locale-gen en_US.UTF-8 && rm -rf /var/lib/apt/lists/* \
+      && pip3 install argparse --break-system-packages
 
-RUN Rscript /tmp/install_from_source.R "${URL_BIOCMANAGER}" && Rscript /tmp/install_from_source.R "${URL_LOCFIT}"
+# 2) Add CRAN’s GPG key & apt repo
+RUN wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc \
+      | gpg --dearmor \
+      > /usr/share/keyrings/cran_ubuntu_key.gpg \
+ && echo "deb [signed-by=/usr/share/keyrings/cran_ubuntu_key.gpg] \
+      https://cloud.r-project.org/bin/linux/ubuntu \
+      $(lsb_release -cs)-cran40/" \
+    > /etc/apt/sources.list.d/cran.list \
+ && apt-get update
 
-#RUN R -e "BiocManager::install(version = '3.11', update=FALSE, ask=FALSE)"
-#RUN R -e "BiocManager::install()"
-# RUN R -e "BiocManager::install(c('BiocParallel', 'DESeq', 'DESeq2', 'limma', 'EnhancedVolcano', 'hopach'), update=TRUE, ask=FALSE)" && R -e 'install.packages("remotes", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("tidyverse", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("patchwork", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("argparse", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("data.table", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("pheatmap", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("ggrepel", repo = "https://cloud.r-project.org/")' && R -e 'install.packages("htmlwidgets", repo = "https://cloud.r-project.org/")' && R -e 'BiocManager::install("devtools")' && R -e 'devtools::install_github("hasaru-k/GlimmaV2")' && R -e 'devtools::install_github("RGLab/RProtoBufLib")' && R -e 'devtools::install_github("RGLab/cytolib")' && R -e 'devtools::install_github("RGLab/flowCore")' 
+# 3) Install R
+RUN apt-get install -y --no-install-recommends \
+      r-base \
+      r-base-dev \
+ && rm -rf /var/lib/apt/lists/*
 
-# THIS NEEDS TO RUN IN A SEPARATE LINE, ELSE IT WILL FAIL
-# RUN R -e 'devtools::install_github("cmap/cmapR")'
+# 4) Install BiocManager
+RUN Rscript -e "install.packages('BiocManager', repos='https://cloud.r-project.org')"
 
-RUN R -e "BiocManager::install(c('BiocParallel', 'DESeq', 'DESeq2', 'limma', 'EnhancedVolcano', 'hopach', 'remotes', 'tidyverse', 'patchwork', 'argparse', 'data.table', 'pheatmap', 'ggrepel', 'htmlwidgets', 'devtools'), update=TRUE, ask=FALSE)" && R -e 'devtools::install_github("hasaru-k/GlimmaV2")' && R -e 'devtools::install_github("RGLab/RProtoBufLib")' && R -e 'devtools::install_github("RGLab/cytolib")' && R -e 'devtools::install_github("RGLab/flowCore")' && R -e 'devtools::install_github("cmap/cmapR")' 
-
-# RUN R -e 'install.packages("remotes", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("tidyverse", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("patchwork", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("argparse", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("data.table", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("pheatmap", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("ggrepel", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("htmlwidgets", repo = "https://cloud.r-project.org/")'  
-# RUN R -e 'install.packages("devtools", repo = "https://cloud.r-project.org/")'
-# RUN R -e 'devtools::install_github("hasaru-k/GlimmaV2")'
-# RUN R -e 'devtools::install_github("RGLab/RProtoBufLib")'
-# RUN R -e 'devtools::install_github("RGLab/cytolib")'
-# RUN R -e 'devtools::install_github("RGLab/flowCore")'
-# RUN R -e 'devtools::install_github("cmap/cmapR")'
-
-
-    # make script executable from $PATH
-    #chmod +x /usr/local/bin/run_deseq.R && \
-    #ls -la /usr/local/bin/run_deseq.R && \
+# 5) Install Bioconductor packages (BioC 3.21)
+RUN Rscript -e "BiocManager::install(c('BiocParallel','DESeq2','limma','edgeR', 'SummarizedExperiment','S4Vectors','Rhdf5lib', 'BiocGenerics', 'Biobase', 'rhdf5', 'flowCore', 'cytolib', 'Glimma', 'hopach', 'cmapR'), ask=FALSE, update=FALSE)"
+      
+# 6) Install CRAN packages
+RUN Rscript -e "install.packages(c('EnhancedVolcano', 'remotes', 'tidyverse', 'patchwork', 'argparse', 'data.table', 'pheatmap', 'ggrepel', 'htmlwidgets', 'devtools', 'RProtoBufLib', 'locfit'), repos='https://cloud.r-project.org', dependencies=TRUE)"
 
 RUN export PATH="$PATH:/usr/local/bin"
-#RUN chown -R docker:docker /usr/local/bin
+
+# The container's entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# no CMD needed — CWL’s baseCommand will be the .R script itself
