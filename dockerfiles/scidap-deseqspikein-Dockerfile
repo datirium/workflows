@@ -1,6 +1,6 @@
 #################################################################
 # Dockerfile
-# Version v1.4.0
+# Version v1.5.0
 # Build date: 2025-04-23
 # Uses ubuntu:latest
 # This image runs run_deseq_for_spikein.R which now uses ERCC counts to calculate size factors
@@ -49,7 +49,7 @@
 
 FROM ubuntu:latest
 LABEL maintainer="aviv.de.morgan@datirium.com"
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 

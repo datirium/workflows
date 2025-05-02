@@ -595,9 +595,7 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
     
     # Set the DESeq matrix
     dse <- DESeqDataSetFromMatrix(countData=countData, colData=column_data, design=design)
-    # Here we let DESeq2 estimate the size factors based on ERCC counts
-    # dse <- estimateSizeFactors(dse, controlGenes = min(grep("ERCC-",
-                        # rownames(countData))):max(grep("ERCC-", rownames(countData))))
+    # Here we let DESeq2 estimate the size factors based on ERCC counts and all genes
     
     # Estimate default size factors (using all genes)
     dse_default <- estimateSizeFactors(dse)
@@ -614,21 +612,12 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
 
     # Estimating size factors using ercc indices
     dse <- estimateSizeFactors(dse, controlGenes = ercc_indices)
-
-    # # check size/normalization factors
-    # print("DESeq sizeFactor prior to DGE run")
-    # print(dse$sizeFactor)
-    
+  
     # Removing spike-in genes from the analysis before running DESeq2
-    # dse <- dse[!rownames(dse) %in% rownames(result_table), ]
     dse <- dse[!rownames(dse) %in% rownames(countData)[ercc_indices], ]
     
     # run DESeq
     dsq <- DESeq(dse)
-    
-    # # Check size/normalization factors after DGE
-    # print("DESeq sizeFactor (dsq)")
-    # print(dsq$sizeFactor)
 
     # for norm count file. Batch correction doesn't influence it
     normCounts <- counts(dsq, normalized=TRUE)
