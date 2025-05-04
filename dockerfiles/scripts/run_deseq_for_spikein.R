@@ -595,27 +595,29 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
     
     # Set the DESeq matrix
     dse <- DESeqDataSetFromMatrix(countData=countData, colData=column_data, design=design)
-    # Here we let DESeq2 estimate the size factors based on ERCC counts
-    dse <- estimateSizeFactors(dse, controlGenes = min(grep("ERCC-",
-                        rownames(countData))):max(grep("ERCC-", rownames(countData))))
+    # Here we let DESeq2 estimate the size factors based on ERCC counts and all genes
     
-    # check size/normalization factors
-    print("DESeq sizeFactor prior to DGE run")
-    print(dse$sizeFactor)
-    
-    # Disable normalization by setting size factors to 1 for all samples
-    # We now use the ERCC to estimate the size factors
-    #sizeFactors(dse) <- 1
-    
+    # Estimate default size factors (using all genes)
+    dse_default <- estimateSizeFactors(dse)
+    default_factors <- sizeFactors(dse_default)
+    print("Size factors using ALL genes:")
+    print(default_factors)
+
+    # Estimate size factors using only ERCC spike-ins
+    ercc_indices <- grep("^ERCC-", rownames(countData))
+    dse_ercc <- estimateSizeFactors(dse, controlGenes = ercc_indices)
+    ercc_factors <- sizeFactors(dse_ercc)
+    print("Size factors using ONLY ERCC spike-ins:")
+    print(ercc_factors)
+
+    # Estimating size factors using ercc indices
+    dse <- estimateSizeFactors(dse, controlGenes = ercc_indices)
+  
     # Removing spike-in genes from the analysis before running DESeq2
-    dse <- dse[!rownames(dse) %in% rownames(result_table), ]
+    dse <- dse[!rownames(dse) %in% rownames(countData)[ercc_indices], ]
     
     # run DESeq
     dsq <- DESeq(dse)
-    
-    # Check size/normalization factors after DGE
-    print("DESeq sizeFactor (dsq)")
-    print(dsq$sizeFactor)
 
     # for norm count file. Batch correction doesn't influence it
     normCounts <- counts(dsq, normalized=TRUE)
