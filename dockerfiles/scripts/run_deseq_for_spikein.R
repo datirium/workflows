@@ -1,4 +1,23 @@
 #!/usr/bin/env Rscript
+
+# Diverting R console errors into a log file ----
+# open a log connection
+log_dir <- "/tmp/log"
+if (!dir.exists(log_dir)) {
+  dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
+}
+logfile <- file("/tmp/log/R_spikein.log", open = "wt")
+# redirect both regular output and messages (warnings/errors)
+sink(logfile, type = "output", split = TRUE)   # :contentReference[oaicite:2]{index=2}
+sink(logfile, type = "message")
+
+# make any unhandled error abort with a traceback
+options(error = function() {
+  traceback()
+  quit(status = 1)
+})
+
+
 options(warn=-1)
 options("width"=300)
 options(error=function(){traceback(3); quit(save="no", status=1, runLast=FALSE)})
@@ -17,9 +36,6 @@ suppressMessages(library(ggrepel))
 
 
 ##########################################################################################
-#
-#
-#
 # v0.0.1
 #   - base script copied from `datirium/workflows/dockerfiles/scripts/run_deseq.R` (at v1.0.0)
 #   - if both groups have >1 samples, runs DESeq without calculating sizeFactors by default, they are instead set manually to 1 for all samples
@@ -579,27 +595,29 @@ if (length(args$treated) > 1 && length(args$untreated) > 1){
     
     # Set the DESeq matrix
     dse <- DESeqDataSetFromMatrix(countData=countData, colData=column_data, design=design)
-    # Here we let DESeq2 estimate the size factors based on ERCC counts
-    dse <- estimateSizeFactors(dse, controlGenes = min(grep("ERCC-",
-                        rownames(countData))):max(grep("ERCC-", rownames(countData))))
+    # Here we let DESeq2 estimate the size factors based on ERCC counts and all genes
     
-    # check size/normalization factors
-    print("DESeq sizeFactor prior to DGE run")
-    print(dse$sizeFactor)
-    
-    # Disable normalization by setting size factors to 1 for all samples
-    # We now use the ERCC to estimate the size factors
-    #sizeFactors(dse) <- 1
-    
+    # Estimate default size factors (using all genes)
+    dse_default <- estimateSizeFactors(dse)
+    default_factors <- sizeFactors(dse_default)
+    print("Size factors using ALL genes:")
+    print(default_factors)
+
+    # Estimate size factors using only ERCC spike-ins
+    ercc_indices <- grep("^ERCC-", rownames(countData))
+    dse_ercc <- estimateSizeFactors(dse, controlGenes = ercc_indices)
+    ercc_factors <- sizeFactors(dse_ercc)
+    print("Size factors using ONLY ERCC spike-ins:")
+    print(ercc_factors)
+
+    # Estimating size factors using ercc indices
+    dse <- estimateSizeFactors(dse, controlGenes = ercc_indices)
+  
     # Removing spike-in genes from the analysis before running DESeq2
-    dse <- dse[!rownames(dse) %in% rownames(result_table), ]
+    dse <- dse[!rownames(dse) %in% rownames(countData)[ercc_indices], ]
     
     # run DESeq
     dsq <- DESeq(dse)
-    
-    # Check size/normalization factors after DGE
-    print("DESeq sizeFactor (dsq)")
-    print(dsq$sizeFactor)
 
     # for norm count file. Batch correction doesn't influence it
     normCounts <- counts(dsq, normalized=TRUE)
@@ -770,3 +788,8 @@ export_cls(
     categories=col_metadata[, "conditions"],
     paste(args$output, "_phenotypes.cls", sep="")
 )
+
+# When you’re done, restore the sinks
+sink(type = "message")
+sink(type = "output")
+close(logfile)
