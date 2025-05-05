@@ -8,7 +8,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: avivdemorgan/scidap-deseqspikein:v1.5.0
+  dockerPull: avivdemorgan/scidap-deseqspikein:v1.6.0
 
 
 inputs:
@@ -332,6 +332,7 @@ doc: |
 s:about: |
   usage: /Users/kot4or/workspaces/cwl_ws/workflows/tools/dockerfiles/scripts/run_deseq.R
         [-h] -u UNTREATED [UNTREATED ...] -t TREATED [TREATED ...]
+        -uer UNTREATED_ERCC [UNTREATED_ERCC ...] -ter TREATED_ERCC [TREATED_ERCC ...]
         [-ua [UALIAS ...]] [-ta [TALIAS ...]] [-un UNAME] [-tn TNAME]
         [-bf BATCHFILE] [-cu CUTOFF] [--padj PADJ]
         [--cluster {row,column,both}]
@@ -345,11 +346,17 @@ s:about: |
   options:
     -h, --help            show this help message and exit
     -u UNTREATED [UNTREATED ...], --untreated UNTREATED [UNTREATED ...]
-                          Untreated (condition 1) CSV/TSV isoforms expression
+                          Untreated (condition 1) CSV/TSV gene expression
                           files
     -t TREATED [TREATED ...], --treated TREATED [TREATED ...]
-                          Treated (condition 2) CSV/TSV isoforms expression
+                          Treated (condition 2) CSV/TSV gene expression
                           files
+    -uer UNTREATED_ERCC [UNTREATED_ERCC ...], --untreated_ercc_counts UNTREATED_ERCC [UNTREATED_ERCC ...]
+                          Untreated (condition 1) CSV/TSV ERCC expression
+                          files
+    -ter TREATED_ERCC [TREATED_ERCC ...], --treated_ercc_counts TREATED_ERCC [TREATED_ERCC ...]
+                          Treated (condition 2) CSV/TSV ERCC expression
+                          files                      
     -ua [UALIAS ...], --ualias [UALIAS ...]
                           Unique aliases for untreated (condition 1) expression
                           files. Default: basenames of -u without extensions

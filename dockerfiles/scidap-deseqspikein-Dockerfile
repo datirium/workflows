@@ -1,12 +1,15 @@
-#################################################################
+##############################################################################################
 # Dockerfile
-# Version v1.5.0
-# Build date: 2025-04-23
+# Version v1.6.0
+# Build date: 2025-05-05
 # Uses ubuntu:latest
 # This image runs run_deseq_for_spikein.R which now uses ERCC counts to calculate size factors
 # See ref of the rationale here: https://support.bioconductor.org/p/9149231/
 # Version 1.4.0 includes a shell script to capture worklow failures
-#################################################################
+# Build command: docker build --no-cache --rm -t deseqspikein-dev -f scidap-deseqspikein-Dockerfile
+# Tag: docker tag deseqspikein-dev avivdemorgan/scidap-deseqspikein:v1.6.0
+# Push command: docker image push avivdemorgan/scidap-deseqspikein:v1.6.0
+###############################################################################################
 
 
 #################################################################
