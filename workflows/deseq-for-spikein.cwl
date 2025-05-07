@@ -54,7 +54,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by isoforms (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms_ercc_normalized"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
     'sd:localLabel': true
 
   rpkm_genes_cond_1:
@@ -65,7 +65,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by genes (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes_ercc_normalized"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes"
 
   rpkm_common_tss_cond_1:
     type:
@@ -75,7 +75,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, e.g. 'treatment')"
     doc: "CSV/TSV input files grouped by common TSS (condition 1, e.g. 'treatment')"
-    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss_ercc_normalized"
+    'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss"
 
   rpkm_isoforms_cond_2:
     type:
@@ -85,7 +85,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, e.g. 'control')"
     doc: "CSV/TSV input files grouped by isoforms (condition 2, e.g. 'control')"
-    'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms_ercc_normalized"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms"
     'sd:localLabel': true
 
   rpkm_genes_cond_2:
@@ -96,7 +96,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, e.g. 'control')"
     doc: "CSV/TSV input files grouped by genes (condition 2, e.g. 'control')"
-    'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes_ercc_normalized"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes"
 
   rpkm_common_tss_cond_2:
     type:
@@ -106,7 +106,7 @@ inputs:
     format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, e.g. 'control')"
     doc: "CSV/TSV input files grouped by common TSS (condition 2, e.g. 'control')"
-    'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss_ercc_normalized"
+    'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss"
 
   group_by:
     type:
