@@ -46,6 +46,10 @@ inputs:
     type: string[]
     "sd:upstreamSource": "sc_experiment/alias"
 
+  genome_bam_bai:    # we can't have the same name as the output
+    type: File[]
+    "sd:upstreamSource": "sc_experiment/possorted_genome_bam_bai"
+
   normalization_mode:
     type:
     - "null"
@@ -77,11 +81,17 @@ inputs:
     "sd:layout":
       advanced: true
 
-  threads:
-    type: int?
-    default: 4
-    label: "Number of threads"
-    doc: "Number of threads for those steps that support multithreading"
+  skip_merge_bams:
+    type: boolean?
+    default: true
+    label: "Do not merge RNA reads"
+    doc: |
+      When disabled, the genome track of the
+      merged RNA reads will not be produced.
+      Enable this feature, when planning to
+      cluster the workflow execution results
+      by genotype with the "Souporcell Cluster
+      by Genotype for RNA" pipeline.
     "sd:layout":
       advanced: true
 
@@ -90,6 +100,27 @@ inputs:
     default: 30
     label: "Maximum memory used (GB)"
     doc: "Maximum memory used (GB). The same will be applied to virtual memory"
+    "sd:layout":
+      advanced: true
+
+  threads:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+    default: "4"
+    label: "Cores/CPUs"
+    doc: |
+      Parallelization parameter to define the
+      number of cores/CPUs that can be utilized
+      simultaneously.
+      Default: 4
     "sd:layout":
       advanced: true
 
@@ -119,6 +150,18 @@ outputs:
     doc: |
       Compressed folder with secondary analysis of GEX data including dimensionality
       reduction, cell clustering, and differential expression
+
+  possorted_genome_bam_bai:
+    type: File?
+    outputSource: merge_bams/merged_possorted_genome_bam_bai
+    label: "RNA reads"
+    doc: |
+      Genome track of merged RNA reads aligned
+      to the reference genome. Each read has
+      an updated 10x Chromium cellular
+      (associated with a 10x Genomics gel bead)
+      barcode and molecular barcode information
+      attached.
 
   filtered_feature_bc_matrix_folder:
     type: File
@@ -242,7 +285,9 @@ steps:
       gem_well_labels: gem_well_labels
       normalization_mode: normalization_mode
       clonotype_grouping: clonotype_grouping
-      threads: threads
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
       memory_limit: memory_limit
       virt_memory_limit: memory_limit
     out:
@@ -260,6 +305,21 @@ steps:
     - filtered_contig_annotations_csv
     - loupe_vdj_browser_track
     - airr_rearrangement_tsv
+    - stdout_log
+    - stderr_log
+
+  merge_bams:
+    run: ../tools/mergebams.cwl
+    in:
+      possorted_genome_bam_bai: genome_bam_bai
+      output_filename:
+        default: "possorted_genome_bam.bam"
+      skip: skip_merge_bams
+      threads:
+        source: threads
+        valueFrom: $(parseInt(self))
+    out:
+    - merged_possorted_genome_bam_bai
     - stdout_log
     - stderr_log
 

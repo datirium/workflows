@@ -9,29 +9,32 @@ requirements:
   - class: MultipleInputFeatureRequirement
 
 
+"sd:upstream":
+  genome_indices:
+  - "genome-indices.cwl"
+
+
 inputs:
 
   alias:
     type: string
-    label: "Experiment short name/alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   genome_fasta_file:
     type: File
-    label: "Genome FASTA file. Hard/soft-masked files are not allowed."
+    label: "Genome type"
     doc: |
-      Genome FASTA file. Hard/soft-masked files are not allowed.
-      For example:
-      https://ftp.ensembl.org/pub/current_fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+      Genome type to be used for
+      generating reference genome
+      indices
+    "sd:upstreamSource": "genome_indices/fasta_output"
+    "sd:localLabel": true
 
   annotation_gtf_file:
     type: File
-    label: "GTF annotation file. Should include gene_biotype/transcript_biotype fields."
-    doc: |
-      GTF annotation file. Should include gene_biotype/transcript_biotype fields.
-      For example:
-      https://ftp.ensembl.org/pub/current_gtf/homo_sapiens/Homo_sapiens.GRCh38.108.gtf.gz
+    "sd:upstreamSource": "genome_indices/annotation_gtf"
 
   memory_limit:
     type: int?
@@ -74,6 +77,13 @@ outputs:
       Cell Ranger V(D)J-compatible reference folder.
       This folder will include V(D)J segment FASTA file.
 
+  unmasked_fasta:
+    type: File
+    outputSource: unmask_fasta/unmasked_fasta
+    label: "Unmasked genome FASTA file"
+    doc: |
+      Indexed unmasked reference genome FASTA file
+
   stdout_log:
     type: File
     outputSource: cellranger_mkvdjref/stdout_log
@@ -91,29 +101,43 @@ outputs:
 
 steps:
 
-  extract_fasta:
-    run: ../tools/extract-7z.cwl
+  unmask_fasta:
+    run:
+      cwlVersion: v1.0
+      class: CommandLineTool
+      hints:
+      - class: DockerRequirement
+        dockerPull: biowardrobe2/samtools:v1.11
+      inputs:
+        script:
+          type: string?
+          default: |
+            cat $0 | awk '{if($0 ~ /^>/) print $0; else print toupper($0)}' > genome.fa
+            samtools faidx genome.fa
+          inputBinding:
+            position: 1
+        genome_fasta_file:
+          type: File
+          inputBinding:
+            position: 2
+      outputs:
+        unmasked_fasta:
+          type: File
+          outputBinding:
+            glob: "genome.fa"
+          secondaryFiles:
+          - .fai
+      baseCommand: ["bash", "-c"]
     in:
-      file_to_extract: genome_fasta_file
-      output_filename:
-        default: "annotation.fasta"
+      genome_fasta_file: genome_fasta_file
     out:
-    - extracted_file
-
-  extract_gtf:
-    run: ../tools/extract-7z.cwl
-    in:
-      file_to_extract: annotation_gtf_file
-      output_filename:
-        default: "annotation.gtf"
-    out:
-    - extracted_file
+    - unmasked_fasta
 
   cellranger_mkvdjref:
     run: ../tools/cellranger-mkvdjref.cwl
     in:
-      genome_fasta_file: extract_fasta/extracted_file
-      annotation_gtf_file: extract_gtf/extracted_file
+      genome_fasta_file: unmask_fasta/unmasked_fasta
+      annotation_gtf_file: annotation_gtf_file
       threads:
         source: threads
         valueFrom: $(parseInt(self))

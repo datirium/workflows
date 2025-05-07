@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/manorm2:v0.0.1
+  dockerPull: biowardrobe2/manorm2:v0.0.2
 
 
 inputs:
@@ -528,6 +528,14 @@ outputs:
     doc: |
       All generated plots.
       PDF format.
+
+  human_log:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
+    doc: |
+      Human readable error log.
+      TXT format.
 
   stdout_log:
     type: stdout
