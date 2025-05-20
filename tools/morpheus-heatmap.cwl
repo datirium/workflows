@@ -14,7 +14,7 @@ hints:
 inputs:
 
   read_counts_gct:
-    type: File
+    type: File?
     inputBinding:
       prefix: "--gct"
     doc: |
@@ -44,7 +44,20 @@ outputs:
     type: stderr
 
 
-baseCommand: [run_morpheus.R]
+baseCommand: [ "bash", "-c" ]
+arguments:
+  - valueFrom: |
+      ${
+        var gct_path = (inputs.read_counts_gct && inputs.read_counts_gct.path) ? inputs.read_counts_gct.path : null;
+        var output_prefix = (inputs.output_prefix) ? "--output " + inputs.output_prefix : "";
+        if (gct_path && gct_path.length > 0) {
+          return "run_morpheus.R --gct \"" + gct_path + "\" " + output_prefix;
+        } else {
+          return "echo 'Input GCT file is missing or empty, skipping heatmap generation.' > morpheus_stdout.log; touch morpheus_stderr.log; touch heatmap.html";
+        }
+      }
+    shellQuote: false
+
 stdout: morpheus_stdout.log
 stderr: morpheus_stderr.log
 
