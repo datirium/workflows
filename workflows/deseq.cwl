@@ -11,19 +11,25 @@ requirements:
 
 'sd:upstream':
   rnaseq_cond_1:
-  - "trim-rnaseq-pe.cwl"
-  - "trim-rnaseq-se.cwl"
-  - "trim-rnaseq-pe-dutp.cwl"
-  - "trim-rnaseq-pe-smarter-dutp.cwl"
-  - "trim-rnaseq-se-dutp.cwl"
-  - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+    - "mirna-mirdeep2-se.cwl"
+    - "trim-rnaseq-pe.cwl"
+    - "trim-rnaseq-se.cwl"
+    - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
+    - "trim-rnaseq-se-dutp.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+    - "kallisto-quant-pe.cwl"
+    - "trim-rnaseq-pe-ercc.cwl"
   rnaseq_cond_2:
-  - "trim-rnaseq-pe.cwl"
-  - "trim-rnaseq-se.cwl"
-  - "trim-rnaseq-pe-dutp.cwl"
-  - "trim-rnaseq-pe-smarter-dutp.cwl"
-  - "trim-rnaseq-se-dutp.cwl"
-  - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+    - "mirna-mirdeep2-se.cwl"
+    - "trim-rnaseq-pe.cwl"
+    - "trim-rnaseq-se.cwl"
+    - "trim-rnaseq-pe-dutp.cwl"
+    - "trim-rnaseq-pe-smarter-dutp.cwl"
+    - "trim-rnaseq-se-dutp.cwl"
+    - "trim-quantseq-mrnaseq-se-strand-specific.cwl"
+    - "kallisto-quant-pe.cwl"
+    - "trim-rnaseq-pe-ercc.cwl"
 
 
 inputs:
@@ -148,22 +154,6 @@ inputs:
     'sd:layout':
       advanced: true
 
-  k_hopach:
-    type: int?
-    default: 3
-    label: "Number of levels for HOPACH clustering"
-    doc: "Number of levels (depth) for Hopach clustering: min - 1, max - 15. Default: 3."
-    'sd:layout':
-      advanced: true
-
-  kmax_hopach:
-    type: int?
-    default: 5
-    label: "Maximum number of clusters at each level for HOPACH clustering"
-    doc: "Maximum number of clusters at each level for Hopach clustering: min - 2, max - 9. Default: 5."
-    'sd:layout':
-      advanced: true
-
   row_distance:
     type:
     - "null"
@@ -172,6 +162,7 @@ inputs:
       - "cosangle"
       - "abscosangle"
       - "euclid"
+      - "abseuclid"
       - "cor"
       - "abscor"
     default: "cosangle"
@@ -190,6 +181,7 @@ inputs:
       - "cosangle"
       - "abscosangle"
       - "euclid"
+      - "abseuclid"
       - "cor"
       - "abscor"
     default: "euclid"
@@ -197,18 +189,6 @@ inputs:
     doc: |
       Distance metric for HOPACH column clustering. Ignored if --cluster is not
       provided. Default: euclid
-    'sd:layout':
-      advanced: true
-
-  rpkm_cutoff:
-    type: int?
-    default: null
-    label: "RPKM cutoff for filtering expression data"
-    doc: |
-      Integer cutoff for filtering rows in the expression data.
-      Rows will be retained if any column with "Rpkm" in its name exceeds this cutoff.
-      If not provided (i.e. remains null), no filtering is applied.
-      Recommended values are: 3, 5.
     'sd:layout':
       advanced: true
       
@@ -282,23 +262,6 @@ inputs:
       - 'combatseq' applies ComBat_seq at the beginning of the analysis, removing batch effects from the design formula before differential expression analysis.
       - 'limmaremovebatcheffect' applies removeBatchEffect from the limma package after differential expression analysis, incorporating batch effects into the model during DE analysis.
       - Default: none
-    'sd:layout':
-      advanced: true
-
-  scaling_type:
-    type:
-      - "null"
-      - type: enum
-        symbols:
-          - "minmax"
-          - "zscore"
-    default: "zscore"
-    label: "Expression Data Scaling Method"
-    doc: |
-      Specifies the type of scaling to be applied to the expression data.
-      - 'minmax' applies Min-Max scaling, normalizing values to a range of [-2, 2].
-      - 'zscore' applies Z-score standardization, centering data to mean = 0 and standard deviation = 1.
-      - Default: none (no scaling applied).
     'sd:layout':
       advanced: true
 
@@ -578,14 +541,10 @@ steps:
         source: cluster_method
         valueFrom: $(self=="none"?null:self)
       row_distance: row_distance
-      scaling_type: scaling_type
       column_distance: column_distance
       fdr: fdr
       threads: threads
-      rpkm_cutoff: rpkm_cutoff
       lfcthreshold: lfcthreshold
-      k_hopach: k_hopach
-      kmax_hopach: kmax_hopach
       use_lfc_thresh: use_lfc_thresh
       regulation: regulation
       batchcorrection: batchcorrection
@@ -663,7 +622,38 @@ steps:
     - stderr_log
 
 
-label: "DESeq2 Pairwise Wald test - differential gene expression analysis"
+$namespaces:
+  s: http://schema.org/
+
+$schemas:
+- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
+
+s:name: "DESeq - differential gene expression analysis"
+label: "DESeq - differential gene expression analysis"
+s:alternateName: "Differential gene expression analysis based on the negative binomial distribution"
+
+s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq.cwl
+s:codeRepository: https://github.com/datirium/workflows
+s:license: http://www.apache.org/licenses/LICENSE-2.0
+
+s:isPartOf:
+  class: s:CreativeWork
+  s:name: Common Workflow Language
+  s:url: http://commonwl.org/
+
+s:creator:
+  - class: s:Organization
+    s:legalName: "Datirium, LLC"
+    s:member:
+      - class: s:Person
+        s:name: Artem BArski
+        s:email: mailto:Artem.Barski@datirum.com
+      - class: s:Person
+        s:name: Andrey Kartashov
+        s:email: mailto:Andrey.Kartashov@datirium.com
+        s:sameAs:
+          - id: http://orcid.org/0000-0001-9102-5681
+
 
 # doc:
 #   $include: ../descriptions/deseq.md
@@ -676,6 +666,16 @@ doc: |
   Differential gene expression analysis based on the negative binomial distribution
 
   Estimate variance-mean dependence in count data from high-throughput sequencing assays and test for differential expression based on a model using the negative binomial distribution.
+
+  DESeq1
+  ------
+
+  High-throughput sequencing assays such as RNA-Seq, ChIP-Seq or barcode counting provide quantitative readouts
+  in the form of count data. To infer differential signal in such data correctly and with good statistical power,
+  estimation of data variability throughout the dynamic range and a suitable error model are required.
+  Simon Anders and Wolfgang Huber propose a method based on the negative binomial distribution, with variance and mean
+  linked by local regression and present an implementation, [DESeq](http://bioconductor.org/packages/release/bioc/html/DESeq.html),
+  as an R/Bioconductor package 
 
   DESeq2
   ------

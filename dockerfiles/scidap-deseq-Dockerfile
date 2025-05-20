@@ -1,59 +1,27 @@
 #################################################################
-# Dockerfile - DESeq/DESeq2 Analysis Container
+# Dockerfile
 #
 # Software:         BioWardrobe DESeq/DESeq2 script
-# Software Version: v0.0.33
+# Software Version: v0.0.28
 # Description:      Dockerized version of DESeq/DESeq2 script from BioWardrobe
 # Website:          https://github.com/Barski-lab/workflows
-#
-# VERSIONING GUIDELINES:
-# 1. ALWAYS update "Software Version" above when making changes
-# 2. For script-only updates: increment third number (v0.0.32 → v0.0.33)
-# 3. For new packages: increment third number and document additions
-# 4. For major R version changes: increment second number (v0.0.x → v0.1.0)
-#
-# BUILD STRATEGIES:
-# - For script updates only: Use incremental build from previous version
-# - For adding single packages: Use incremental build with specific install
-# - For major updates: Uncomment full installation commands and rebuild from base
-#
+# Provides:         run_deseq.R
+#                   run_deseq_lrt.R
+#                   get_gene_n_tss.R
+#                   run_deseq_manual.R
+#                   BiocManager       1.30.23
+#                   BiocParallel      1.38.0
+#                   DESeq2            1.44.0
+#                   argparse          latest
+#                   pheatmap          latest
+# Base Image:       r-base:4.4.0
+# Build Cmd:        docker build --no-cache --platform linux/amd64 --rm -t biowardrobe2/scidap-deseq:v0.0.28 -f scidap-deseq-Dockerfile .
+# Pull Cmd:         docker pull biowardrobe2/scidap-deseq:v0.0.28
+# Run Cmd:          docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.28 /bin/bash
 #################################################################
-
-# Provided components
-# ------------------
-# run_deseq.R
-# run_deseq_lrt_step_1.R
-# run_deseq_lrt_step_2.R
-# get_gene_n_tss.R
-# 
-# Key packages:
-# ------------------
-# BiocManager       1.30.23
-# BiocParallel      1.38.0
-# DESeq2            1.44.0
-# logger            newest (added in v0.0.33)
-# argparse          latest
-# pheatmap          latest
-# 
-# Build Commands:
-# ------------------
-# Full build: docker build --no-cache --platform linux/amd64 --rm -t biowardrobe2/scidap-deseq:v0.0.33 -f scidap-deseq-Dockerfile .
-# Pull:       docker pull biowardrobe2/scidap-deseq:v0.0.33
-# Run:        docker run --rm -ti biowardrobe2/scidap-deseq:v0.0.33 /bin/bash
-#################################################################
-
-#################################################################
-# VERSION HISTORY
-#################################################################
-#
-# v0.0.32
-# - Reorganized Dockerfile structure for better maintenance
-# - Added logger R package for improved logging capabilities
-#
-# v0.0.31
-# - Updated R scripts for LRT analysis
 #
 # v0.0.28
+#
 # - Added optional --batchcorrection parameter for DESeq2 (combatseq (provided design-formula) or limma)
 # - Changed default adjusted p-value to 0.1 (in correspondance with alpha)
 # - Added regulation parameter for DESeq2 (up, down, both) and appropriate altHypothesis
@@ -67,90 +35,178 @@
 #   needed for MA-plot
 #
 # v0.0.26
+#
 # - Updated run_deseq.R with MDS plot and updated GCT export
 # - Remove run_deseq_manual.R script
 # - Need to install GlimmaV2 from GitHub as on official repo it's old
 #
-# Earlier version history omitted for brevity
+# v0.0.25
+#
+# - Added run_deseq_manual.R script
+#
+# v0.0.24
+#
+# - Fix bug with pval in DESeq and pvalue in DESeq2. Now all it pvalue
+#
+# v0.0.23
+#
+# - Use RpkmCondition1 and RpkmCondition2 for RPKM columns in the output TSV file
+#   We need hardcoded values for later filtering.
+#
+# v0.0.22
+#
+# - Column names for RPKM don't include spaces and brackets anymore
+# - use r-base:4.0.4
+# - Need to downgrade to Bioconductor 3.11, as DESeq is not available
+#   in the newer versions
+#
+# v0.0.21
+#
+# - Add ggrepel for proper label positioning
+#
+# v0.0.20
+#
+# - Add --batchfile parameter to run_deseq.R to compensate batch effect
+#
+# v0.0.19
+#
+# - Update run_deseq.R (sets precision with --digits parameter)
+#
+# v0.0.18
+#
+# - Fix bug in get_gene_n_tss.R: works good for duplucate gene names
+#
+# v0.0.17
+#
+# - Update labels in cls, replaces n/a with na in gct files
+#
+# v0.0.16
+#
+# - Add max(rpkm) cutoff filtering
+#
+# v0.0.15
+#
+# - fix bug with " and ' in arguments. Replace all with ""
+#
+# v0.0.14
+#
+# - add PCA plot
+#
+# v0.0.13
+#
+# - Fix bug in phenotype.cls column order
+# - Fix bug in logFC sign for DESeq2
+#
+# v0.0.12
+#
+# - Update run_deseq.R (v0.0.8)
+#   * Export CLS file to be used by GSEA
+#
+# v0.0.11
+#
+# - Update run_deseq.R (v0.0.7)
+#   * Use -ua and -ta to set aliases for input expression files. Should be unique
+#   * Export GCT file to be used by GSEA
+#
+# v0.0.10
+#
+# - add run_deseq_lrt.R (v0.0.1)
+#   * Run DeSeq2 for multi-factor analysis using LRT (likelihood ratio or chi-squared test)
+#
+# v0.0.9
+#
+# - update run_deseq.R (v0.0.6)
+#   * proper way to set custom column names for outputs
+#
+# v0.0.8
+#   switch to r-base:3.6.0
+#   install
+#     BiocManager   1.30.4
+#     BiocParallel  1.18.0
+#     DESeq         1.36.0
+#     DESeq2        1.24.0
+#     argparse      latest
+#     pheatmap      latest
+#
+# v0.0.7
+# - update run_deseq.R (v0.0.5)
+#   * add -LOG10(pval) and -LOG10(padj) columns
+#
+# v0.0.6
+# - update run_deseq.R (v0.0.4)
+#   * generate heatmap to show the expression data of the 30 most highly expressed genes
+#   * build plot to show the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples
+#
+# v0.0.5
+# Update get_gene_n_tss.R to v0.0.2.
+# If arguments --gene and --tss are not provided, generate default values
+# based on the --isoforms input
+#
+# v0.0.4
+# - fix bug when loading TSV files by run_deseq.R (v0.0.3) script
+# - support loading both *.csv and *.tsv files
+#   file type is identified from file's extension,
+#   by default csv
+#
+# v0.0.3
+# - add get_gene_n_tss.R script to group isoforms CSV file by
+#   gene and common tss
+#
+# v0.0.2
+# - the output file's rows order corresponds to the rows order of
+#   the first CSV file in the untreated group
+# - DESeq/DESeq2 always compares untreated_vs_treated groups
+# - fixed sign for log2FoldChange column
 #################################################################
 
 
-#############################################
-# BASE IMAGE SELECTION
-#############################################
-# Incremental build from previous version
-FROM biowardrobe2/scidap-deseq:v0.0.31
+# Base Image
+FROM r-base:4.4.0
 LABEL maintainer="pavlvalera3301@gmail.com"
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND noninteractive
 
-#############################################
-# PACKAGE INSTALLATIONS (NEW PACKAGES ONLY)
-#############################################
-# Install only new R packages for this version
-RUN R -e 'install.packages("logger", repos="https://cloud.r-project.org/", dependencies=TRUE)'
-RUN R -e 'install.packages("params", repos="https://cloud.r-project.org/", dependencies=TRUE)'
+################## BEGIN INSTALLATION ######################
 
-#############################################
-# SCRIPT UPDATES
-#############################################
-# Copy updated script files
-COPY scripts/run_deseq_lrt_step_1.R /usr/local/bin/run_deseq_lrt_step_1.R
-COPY scripts/run_deseq_lrt_step_2.R /usr/local/bin/run_deseq_lrt_step_2.R
-COPY scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
-COPY scripts/run_deseq.R /usr/local/bin/run_deseq.R
-COPY scripts/install_from_source.R /tmp/install_from_source.R
+WORKDIR /tmp
 
+# Copying scripts
+COPY ./scripts/install_from_source.R /tmp/install_from_source.R
+COPY ./scripts/run_deseq.R /usr/local/bin/run_deseq.R
+COPY ./scripts/run_deseq_lrt.R /usr/local/bin/run_deseq_lrt.R
+COPY ./scripts/get_gene_n_tss.R /usr/local/bin/get_gene_n_tss.R
+# Copy the install_packages.R script into the Docker image
+COPY ./scripts/docker_R_packages_installation/scidap-deseq-R-packages.R /tmp/scidap-deseq-R-packages.R
 
-# Copy function directories
-COPY scripts/functions/ /usr/local/bin/functions/
+# Update the sources list to use the Debian Bullseye repository
+RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list
 
-#############################################
-# FINALIZE IMAGE
-#############################################
-# Setting permissions
-RUN chmod +x /usr/local/bin/run_deseq.R && \
-    chmod +x /usr/local/bin/run_deseq_lrt_step_1.R && \
-    chmod +x /usr/local/bin/run_deseq_lrt_step_2.R && \
-    chmod +x /usr/local/bin/get_gene_n_tss.R && \
-    # Set permissions for function files
-    chmod -R +r /usr/local/bin/functions/ && \
-    find /usr/local/bin/functions -name "*.R" -exec chmod +x {} \; && \
-    # Cleaning
+# Installing python3, pip3 and argparse and other dependencies
+RUN apt-get update --fix-missing && apt-get install -f -y
+
+RUN apt-get install -y -f python3 python3-pip \
+                          build-essential \
+                          libcurl4-openssl-dev \
+                          libssl-dev \
+                          libxml2-dev \
+                          libharfbuzz-dev \
+                          libfribidi-dev \
+                          libpng-dev \
+                          libfontconfig1-dev \
+                          libtiff5-dev \
+                          libcairo2-dev \
+                          pkg-config \
+                          libjpeg-dev \
+                          libgit2-dev && \
+    pip3 install --break-system-packages argparse && \
+# Installing R packages
+    Rscript /tmp/scidap-deseq-R-packages.R
+# Installing run_deseq.R, get_gene_n_tss.R, run_deseq_lrt.R scripts
+# and setting permissions to make them executable
+RUN  chmod +x /usr/local/bin/run_deseq.R && \
+     chmod +x /usr/local/bin/run_deseq_lrt.R && \
+     chmod +x /usr/local/bin/get_gene_n_tss.R && \
+# Cleaning
     apt-get clean && \
     apt-get purge && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \
     strip /usr/local/bin/*; true
-
-#############################################
-# FULL BUILD INSTRUCTIONS (COMMENTED)
-#############################################
-# The following sections are for full rebuilds only.
-# Uncomment when starting from a fresh r-base image.
-
-# For full build, use this base instead:
-# FROM r-base:4.4.0
-
-# Uncomment for full installation
-# WORKDIR /tmp
-
-# System dependencies
-# RUN apt-get update --fix-missing && apt-get install -f -y && \
-#    apt-get install -y -f python3 python3-pip \
-#                         build-essential \
-#                         pandoc \
-#                         libcurl4-openssl-dev \
-#                         libssl-dev \
-#                         libxml2-dev \
-#                         libharfbuzz-dev \
-#                         libfribidi-dev \
-#                         libpng-dev \
-#                         libfontconfig1-dev \
-#                         libtiff5-dev \
-#                         libcairo2-dev \
-#                         pkg-config \
-#                         libjpeg-dev \
-#                         libgit2-dev && \
-#    pip3 install --break-system-packages argparse
-
-# R packages installation
-# RUN Rscript /usr/local/bin/functions/common/packages_installation.R
