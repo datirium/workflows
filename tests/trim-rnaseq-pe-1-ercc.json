@@ -1,0 +1,33 @@
+{
+  "star_indices_folder": {
+    "class": "Directory",
+    "location": "./data/dm3_chr4/generated_inputs/indices/star_dm3_chr4_v2.7.5c/dm3"
+  },
+  "bowtie_indices_folder": {
+    "class": "Directory",
+    "location": "/home/avivdm/projects/local_test_data/hg38bowtieDir"
+  },
+  "chrom_length_file": {
+    "class": "File",
+    "location": "/home/avivdm/projects/local_test_data/chrNameLength.txt",
+    "format": "http://edamontology.org/format_2330"
+  },
+  "annotation_file": {
+    "class": "File",
+    "location": "/home/avivdm/projects/local_test_data/refgene.tsv",
+    "format": "http://edamontology.org/format_3475"
+  },
+  "fastq_file_upstream": {
+    "class": "File",
+    "location": "/home/avivdm/projects/local_test_data/RESUB-MH-CONTROL-24H-S3_R1_001.fastq.gz",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "fastq_file_downstream": {
+    "class": "File",
+    "location": "/home/avivdm/projects/local_test_data/RESUB-MH-CONTROL-24H-S3_R2_001.fastq.gz",
+    "format": "http://edamontology.org/format_1930"
+  },
+  "threads": 2,
+  "dilution_factor": 1.0,
+  "uL_per_M_cells": 10.0
+}

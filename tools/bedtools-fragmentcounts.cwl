@@ -27,8 +27,10 @@ inputs:
       echo "\$4 filter - $4"
       # inputs
       bam="$0"; scale="$1"; prefix="$2"; genome="$3"; filter="$4"
+      # sort the bam file by name: required to generate correct bed and bedgraph
+      samtools sort -n $bam 2> /dev/null -o $bam.sorted.bam
       # generate paired end (pe) bed from bam
-      bedtools bamtobed -i $bam -bedpe 2> /dev/null > mapped_pairs.bed
+      bedtools bamtobed -i $bam.sorted.bam -bedpe 2> /dev/null > mapped_pairs.bed
       # filter based on user input fragment length type selection
       if [[ "$filter" == "default_below_1000" ]]; then
         awk '$1==$4 && $6-$2 < 1001 {print $0}' mapped_pairs.bed | grep -v "^\." > mapped_pairs.clean.bed
@@ -39,11 +41,11 @@ inputs:
       fi
       # sort and count per base coverage per genome
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed
-      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g $genome > $prefix.fragmentcounts.bed
+      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g $genome > $prefix.fragmentcounts.bedgraph
       # apply scale for normalization to spike-in (or ecoli mapped read count by default)
       awk -F'\t' -v scale=$scale '{
         printf("%s\t%s\t%s\t%s\n",$1,$2,$3,$4*scale)
-        }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bed
+        }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bedgraph
     inputBinding:
         position: 1
 
@@ -93,14 +95,14 @@ outputs:
   sorted_bed:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.fragmentcounts.bed')
+      glob: $(inputs.output_prefix + '.fragmentcounts.bedgraph')
     doc: |
       Length filtered fragment bed file formatted from PE bam file.
 
   sorted_bed_scaled:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.fragmentcounts_scaled.bed')
+      glob: $(inputs.output_prefix + '.fragmentcounts_scaled.bedgraph')
     doc: |
       Spike-in scaled, length filtered fragment bed file formatted from PE bam file.
 
