@@ -879,7 +879,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: samtools_sort_index_after_rmdup/bambai_pair
+      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
       control_file: control_file
       nolambda:
         source: control_file
