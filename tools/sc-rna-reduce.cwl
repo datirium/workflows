@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.41
+  dockerPull: biowardrobe2/sc-tools:v0.0.42
 
 
 inputs:
@@ -147,13 +147,15 @@ inputs:
       confounding source of variation.
       Default: false
 
-  regress_genes:
+  remove_genes:
     type: string?
     inputBinding:
-      prefix: "--regressgenes"
+      prefix: "--removegenes"
     doc: |
-      Regex pattern to identify genes which expression should be
-      regressed as a confounding source of variation. Default: none
+      Regex pattern to identify the genes which should
+      be removed from the list of the most variable genes,
+      so they don't impact neither integration nor PCA.
+      Default: none
 
   regress_ccycle_full:
     type: boolean?
@@ -768,6 +770,14 @@ outputs:
       Tehcnical report.
       HTML format.
 
+  human_log:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
+    doc: |
+      Human readable error log.
+      TXT format.
+
   stdout_log:
     type: stdout
 
@@ -780,7 +790,7 @@ arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_reduce.R"]:"/usr/local/bin/sc_rna_reduce.R")
 
 
-stdout: sc_rna_reduce_stdout.log
+stdout: error_msg.txt
 stderr: sc_rna_reduce_stderr.log
 
 
@@ -845,7 +855,7 @@ s:about: |
                                         [--ntgrby [NTGRBY [NTGRBY ...]]]
                                         [--highvargenes HIGHVARGENES]
                                         [--regressmt]
-                                        [--regressgenes REGRESSGENES]
+                                        [--removegenes REMOVEGENES]
                                         [--regressccfull | --regressccdiff]
                                         [--dimensions DIMENSIONS]
                                         [--uspread USPREAD]
@@ -854,7 +864,7 @@ s:about: |
                                         [--umetric {euclidean,manhattan,chebyshev,minkowski,canberra,braycurtis,mahalanobis,wminkowski,seuclidean,cosine,correlation,haversine,hamming,jaccard,dice,russelrao,kulsinski,ll_dirichlet,hellinger,rogerstanimoto,sokalmichener,sokalsneath,yule}]
                                         [--umethod {uwot,uwot-learn,umap-learn}]
                                         [--pdf] [--verbose] [--h5seurat]
-                                        [--h5ad] [--scope] [--cbbuild]
+                                        [--h5ad] [--loupe] [--scope] [--cbbuild]
                                         [--lowmem] [--output OUTPUT]
                                         [--theme {gray,bw,linedraw,light,dark,minimal,classic,void}]
                                         [--cpus CPUS] [--memory MEMORY]
@@ -916,10 +926,11 @@ s:about: |
     --regressmt           Regress the percentage of RNA reads mapped to
                           mitochondrial genes as a confounding source of
                           variation. Default: false
-    --regressgenes REGRESSGENES
-                          Regex pattern to identify genes which expression
-                          should be regressed as a confounding source of
-                          variation. Default: none
+    --removegenes REMOVEGENES
+                          Regex pattern to identify the genes which should be
+                          removed from the list of the most variable genes, so
+                          they don't impact neither integration nor PCA.
+                          Default: none
     --regressccfull       Regress all signals associated with cell cycle phase.
                           Ignored if --cellcycle is not provided. Mutually
                           exclusive with --regressccdiff parameter. Default:
