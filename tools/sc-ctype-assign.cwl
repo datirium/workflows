@@ -875,7 +875,7 @@ arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_ctype_assign.R"]:"/usr/local/bin/sc_ctype_assign.R")
 
 
-stdout: sc_ctype_assign_stdout.log
+stdout: error_msg.txt
 stderr: sc_ctype_assign_stderr.log
 
 

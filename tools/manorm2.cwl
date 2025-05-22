@@ -546,7 +546,7 @@ outputs:
 
 baseCommand: ["run_manorm2.R"]
 stderr: manorm_stderr.log
-stdout: manorm_stdout.log
+stdout: error_msg.txt
 
 
 $namespaces:

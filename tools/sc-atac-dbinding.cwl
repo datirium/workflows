@@ -638,7 +638,7 @@ arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_atac_dbinding.R"]:"/usr/local/bin/sc_atac_dbinding.R")
 
 
-stdout: sc_atac_dbinding_stdout.log
+stdout: error_msg.txt
 stderr: sc_atac_dbinding_stderr.log
 
 

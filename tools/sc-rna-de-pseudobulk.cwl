@@ -579,7 +579,7 @@ baseCommand: ["Rscript"]
 arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_de_pseudobulk.R"]:"/usr/local/bin/sc_rna_de_pseudobulk.R")
 
-stdout: sc_rna_de_pseudobulk_stdout.log
+stdout: error_msg.txt
 stderr: sc_rna_de_pseudobulk_stderr.log
 
 

@@ -790,7 +790,7 @@ arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_reduce.R"]:"/usr/local/bin/sc_rna_reduce.R")
 
 
-stdout: sc_rna_reduce_stdout.log
+stdout: error_msg.txt
 stderr: sc_rna_reduce_stderr.log
 
 

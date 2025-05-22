@@ -445,7 +445,7 @@ baseCommand: ["Rscript"]
 arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_da_cells.R"]:"/usr/local/bin/sc_rna_da_cells.R")
 
-stdout: sc_rna_da_cells_stdout.log
+stdout: error_msg.txt
 stderr: sc_rna_da_cells_stderr.log
 
 
