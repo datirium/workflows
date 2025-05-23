@@ -143,7 +143,7 @@ inputs:
       position: 14
       prefix: "-5"
     doc: |
-      Calculate coverage of 5" positions (instead of entire interval)
+      Calculate coverage of 5-end positions (instead of entire interval)
 
   m3:
     type: boolean?
@@ -151,7 +151,7 @@ inputs:
       position: 15
       prefix: "-3"
     doc: |
-      Calculate coverage of 3" positions (instead of entire interval)
+      Calculate coverage of 3-end positions (instead of entire interval)
 
   output_filename:
     type: string?

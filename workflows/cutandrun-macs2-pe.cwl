@@ -761,7 +761,7 @@ steps:
     run: ../tools/samtools-rmdup.cwl
     in:
       trigger: remove_duplicates
-      bam_file: samtools_sort_index/bam_bai_pair
+      bam_file: samtools_sort_index_filtered/bam_bai_pair
     out: [rmdup_output, rmdup_log]
 
   samtools_sort_index_after_rmdup:
@@ -879,7 +879,7 @@ steps:
       transcription factor binding sites.
     run: ../tools/macs2-callpeak-biowardrobe-only.cwl
     in:
-      treatment_file: fragment_counts/sorted_bed_scaled
+      treatment_file: samtools_sort_index_after_rmdup/bam_bai_pair
       control_file: control_file
       nolambda:
         source: control_file
