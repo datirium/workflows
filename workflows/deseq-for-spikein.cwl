@@ -616,6 +616,8 @@ doc: |
 
   DESeq estimates variance-mean dependence in count data from high-throughput sequencing assays, then tests for DGE based on a model which assumes a negative binomial distribution of gene expression (aligned read count per gene).
 
+  In this pipeline we also use ERCC (External RNA Controls Consortium) synthetic RNA sequences. These spike-ins are added into the sample at known concentrations and serve as external references to assess technical variability, normalization, and accuracy of quantification. DESeq2 uses the expression levels (raw counts) of the ERCC spike-ins to estimate the size factor of all samples in the experiment. ERCC spike-ins are especially valuable in experiments involving complex samples or when comparing data across different platforms or conditions. Most importantly, the use of ERCC controls enable the detection of global changes in gene expression, involving a myriad of genes, and not just a few selected genes.
+
   ### Experimental Setup and Results Interpretation
 
   The workflow design uses as its fold change (FC) calculation: condition 1 (c1, e.g. treatment) over condition 2 (c2, e.g. control).
@@ -631,7 +633,7 @@ doc: |
   
   Next, threshold the p-adjusted values with your FDR (false discovery rate) cutoff to determine if the change may be considered significant or not.
 
-  It is important to note when DESeq1 or DESeq2 is used in our DGE analysis workflow. If a user inputs only a single sample per condition DESeq1 is used for calculating DGE. In this experimental setup, there are no repeated measurements per gene per condition, therefore biological variability in each condition cannot be captured so the output p-values are assumed to be purely "technical". On the other hand, if >1 sample(s) are input per condition DESeq2 is used. In this case, biological variability per gene within each condition is available to be incorporated into the model, and resulting p-values are assumed to be "biological". Additionally, DESeq2 fold change is "shrunk" to account for sample variability, and as Michael Love (DESeq maintainer) puts it, "it looks at the largest fold changes that are not due to low counts and uses these to inform a prior distribution. So the large fold changes from genes with lots of statistical information are not shrunk, while the imprecise fold changes are shrunk. This allows you to compare all estimated LFC across experiments, for example, which is not really feasible without the use of a prior".
+  In a typical gene expression analysis experiment, DESeq2 calaculates biological variability per gene within each condition is available to be incorporated into the model, and resulting p-values are assumed to be "biological". Additionally, DESeq2 fold change is "shrunk" to account for sample variability, and as Michael Love (DESeq maintainer) puts it, "it looks at the largest fold changes that are not due to low counts and uses these to inform a prior distribution. So the large fold changes from genes with lots of statistical information are not shrunk, while the imprecise fold changes are shrunk. This allows you to compare all estimated LFC across experiments, for example, which is not really feasible without the use of a prior".
 
   In either case, the null hypothesis (H0) tested is that there are no significantly differentially expressed genes between conditions, therefore a smaller p-value indicates a lower probability of the H0 occurring by random chance and therefore, below a certain threshold (traditionally <0.05), H0 should be rejected. Additionally, due to the many thousands of independent hypotheses being tested (each gene representing an independent test), the p-values attained by the Wald test are adjusted using the Benjamini and Hochberg method by default. These "padj" values should be used for determination of significance (a reasonable value here would be <0.10, i.e. below a 10% FDR).
 
@@ -639,7 +641,7 @@ doc: |
 
   ### DESeq1
 
-  High-throughput sequencing assays such as RNA-Seq, ChIP-Seq or barcode counting provide quantitative readouts in the form of count data. To infer differential signal in such data correctly and with good statistical power, estimation of data variability throughout the dynamic range and a suitable error model are required. Simon Anders and Wolfgang Huber propose a method based on the negative binomial distribution, with variance and mean linked by local regression and present an implementation, [DESeq](http://www.bioconductor.org/packages/3.8/bioc/html/DESeq.html), as an R/Bioconductor package.
+  Support for DESeq1 was dropped in the current version of this pipeline, such that experiment with only one replicate per sample cannot be analysed. 
 
   ### DESeq2
 
@@ -648,3 +650,4 @@ doc: |
   ### __References__
     - Anders S, Huber W (2010). “Differential expression analysis for sequence count data.” Genome Biology, 11, R106. doi: 10.1186/gb-2010-11-10-r106, http://genomebiology.com/2010/11/10/R106/.
     - Love MI, Huber W, Anders S (2014). “Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2.” Genome Biology, 15, 550. doi: 10.1186/s13059-014-0550-8.
+    - Lovén J, Orlando DA, Sigova AA, Lin CY, Rahl PB, Burge CB, Levens DL, Lee TI, Young RA. Revisiting global gene expression analysis. Cell. 2012 Oct 26;151(3):476-82. doi: 10.1016/j.cell.2012.10.012. PMID: 23101621; PMCID: PMC3505597.
