@@ -806,15 +806,15 @@ steps:
   seacr_callpeak_relaxed: 
     run: ../tools/seacr.cwl
     in:
-      treatment_bedgraph: fragment_counts/sorted_bed_scaled
+      treatment_bedgraph: fragment_counts/sorted_bedgraph
       numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
         default: "relaxed"
       output_prefix:
-        source: fragment_counts/sorted_bed_scaled
-        valueFrom: $(get_root(self.basename)+"_scaled")
+        source: fragment_counts/sorted_bedgraph
+        valueFrom: $(get_root(self.basename))#+"_scaled")
     out: [peak_tsv_file, log_file_stderr, log_file_stdout]
 
   convert_bed_to_xls_relaxed:
@@ -833,15 +833,15 @@ steps:
   seacr_callpeak_stringent:
     run: ../tools/seacr.cwl
     in:
-      treatment_bedgraph: fragment_counts/sorted_bed_scaled
+      treatment_bedgraph: fragment_counts/sorted_bedgraph
       numeric_threshold: numeric_threshold
       norm_control_to_treatment:
         default: "non"
       peakcalling_mode:
         default: "stringent"
       output_prefix:
-        source: fragment_counts/sorted_bed_scaled
-        valueFrom: $(get_root(self.basename)+"_scaled")
+        source: fragment_counts/sorted_bedgraph
+        valueFrom: $(get_root(self.basename))#+"_scaled")
     out: [peak_tsv_file, log_file_stderr, log_file_stdout]
     doc: |
       Sparse Enrichment Analysis. Input is normalized depth data using spike-in mapped reads (E. coli by default).
