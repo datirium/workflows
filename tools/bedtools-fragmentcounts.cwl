@@ -92,14 +92,14 @@ inputs:
 
 outputs:
 
-  sorted_bed:
+  sorted_bedgraph:
     type: File
     outputBinding:
       glob: $(inputs.output_prefix + '.fragmentcounts.bedgraph')
     doc: |
       Length filtered fragment bed file formatted from PE bam file.
 
-  sorted_bed_scaled:
+  sorted_bedgraph_scaled:
     type: File
     outputBinding:
       glob: $(inputs.output_prefix + '.fragmentcounts_scaled.bedgraph')
