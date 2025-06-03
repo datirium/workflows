@@ -45,7 +45,7 @@ inputs:
       # apply scale for normalization to spike-in (or ecoli mapped read count by default)
       awk -F'\t' -v scale=$scale '{
         printf("%s\t%s\t%s\t%s\n",$1,$2,$3,$4*scale)
-        }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bedgraph
+        }' $prefix.fragmentcounts.bedgraph > $prefix.fragmentcounts_scaled.bedgraph
     inputBinding:
         position: 1
 
