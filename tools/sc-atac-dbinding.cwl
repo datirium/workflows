@@ -116,11 +116,11 @@ inputs:
       Column from the Seurat object metadata to split cells
       into two groups to run --second vs --first
       differential accessibility analysis. If --test
-      parameter is set to manorm2-full or manorm2-half, the
-      --splitby shouldn't put cells from the same dataset
-      into the different comparison groups. May be one of
-      the extra metadata columns added with --metadata or
-      --barcodes parameters.
+      parameter is set to any of the manorm2 or diffbind
+      methods, the --splitby shouldn't put cells from the
+      same dataset into the different comparison groups. May
+      be one of the extra metadata columns added with
+      --metadata or --barcodes parameters.
 
   first_cond:
     type: string
@@ -151,17 +151,20 @@ inputs:
       - "mast"                       # (MAST) MAST package (use FindMarkers with peaks from Seurat object)
       - "manorm2-full"               # call peaks for each dataset with MACS2, then run MAnorm2 with datasets
       - "manorm2-half"               # call peaks for each comparison group with MACS2, then run MAnorm2 with datasets
+      - "diffbind-deseq-full"        # call peaks for each dataset with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-deseq-half"        # call peaks for each comparison group with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-edger-full"        # call peaks for each dataset with MACS2, then run DiffBind (EdgeR) with datasets
+      - "diffbind-edger-half"        # call peaks for each comparison group with MACS2, then run DiffBind (EdgeR) with datasets
     inputBinding:
       prefix: "--test"
     doc: |
       Test type to use in the differential accessibility
-      analysis. For all tests except manorm2-full and
-      manorm2-half, peaks already present in the loaded
-      Seurat object will be used. If manorm2-full or
-      manorm2-half test is selected, reads will be
-      aggregated to pseudo bulk form either by dataset or
-      comparison group and then peaks will be called with
-      MACS2 per dataset. Default: logistic-regression
+      analysis. For all test methods except manorm2 and
+      diffbind, peaks already present in the loaded Seurat
+      object will be used. Otherwise, peaks will be called
+      with MACS2 either per dataset (for methods ending with
+      -full) or by the comparison group (for meethods ending
+      with -half). Default: logistic-regression
 
   genome_type:
     type:
@@ -176,8 +179,8 @@ inputs:
       Genome type of the sequencing data loaded from the
       Seurat object. It will be used for effective genome
       size selection when calling peaks with MACS2. Ignored
-      if --test is not set to either manorm2-full or
-      manorm2-half. Default: hs (2.7e9)
+      if --test is not set to either manorm2 or diffbind
+      methods. Default: hs (2.7e9)
 
   minimum_qvalue:
     type: float?
@@ -185,8 +188,8 @@ inputs:
       prefix: "--qvalue"
     doc: |
       Minimum FDR (q-value) cutoff for MACS2 peak detection.
-      Ignored if --test is not set to either manorm2-full or
-      manorm2-half. Default: 0.05
+      Ignored if --test is not set to either manorm2 or
+      diffbind methods. Default: 0.05
 
   minimum_peak_gap:
     type: int?
@@ -197,7 +200,7 @@ inputs:
       provided value they will be merged before splitting
       them into reference genomic bins of size --binsize.
       Ignored if --test is not set to either manorm2-full or
-      manorm2-half. Default: 150
+      manorm2-half methods. Default: 150
 
   bin_size:
     type: int?
@@ -206,8 +209,10 @@ inputs:
     doc: |
       The size of non-overlapping reference genomic bins
       used by MAnorm2 when generating a table of reads
-      counts per peaks. Ignored if --test is not set to
-      either manorm2-full or manorm2-half. Default: 1000
+      counts per peaks. Ignored if --test is not set to any
+      of the manorm2 methods. For diffbind methods binning
+      is disabled (the original peak sizes will be used
+      instead. Default: 1000
 
   minimum_overlap:
     type: float?
@@ -217,8 +222,9 @@ inputs:
       Keep only those reference genomic bins that are
       present in at least this fraction of datasets within
       each of the comparison groups. Used only when --test
-      is set to manorm2-full. For manorm2-half this
-      parameter will be automatically set to 1. Default: 0.5
+      is set to the methods ending with -full. For methods
+      ending with -half this parameter will be automatically
+      set to 1. Default: 0.5
 
   maximum_peaks:
     type: int?
@@ -228,7 +234,9 @@ inputs:
       The maximum number of the most significant (based on
       qvalue) peaks to keep from each group of cells when
       constructing reference genomic bins. Ignored if --test
-      is not set to either manorm2-full or manorm2-half.
+      is not set to either manorm2-full or manorm2-half
+      methods. For diffbind methods the minimum RPKM
+      threshold (by default equal to 1) is used instead.
       Default: keep all peaks
 
   blacklist_regions_file:
@@ -262,7 +270,7 @@ inputs:
       differential accessibility analysis. Any reference
       genomic bin overlapping a blacklist region will be
       removed from the output. Ignored if --test is not set
-      to either manorm2-full or manorm2-half.
+      to either manorm2-full or manorm2-half methods.
 
   maximum_padj:
     type: float?
@@ -478,7 +486,7 @@ outputs:
       log2FoldChange thresholds.
       BED format.
 
-  fragments_first_bigwig_file:
+  coverage_first_bigwig_file:
     type:
     - "null"
     - type: array
@@ -487,12 +495,14 @@ outputs:
       glob: "*_first.bigWig"
     doc: |
       Normalized genome coverage calculated
-      from the ATAC fragments split either
-      by dataset or tested condition.
-      First comparison group.
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The cells
+      were first split either by dataset or
+      tested condition, then aggregated to the
+      pseudobulk form. First comparison group.
       BigWig format.
 
-  fragments_second_bigwig_file:
+  coverage_second_bigwig_file:
     type:
     - "null"
     - type: array
@@ -501,9 +511,11 @@ outputs:
       glob: "*_second.bigWig"
     doc: |
       Normalized genome coverage calculated
-      from the ATAC fragments split either
-      by dataset or tested condition.
-      Second comparison group.
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The cells
+      were first split either by dataset or
+      tested condition, then aggregated to the
+      pseudobulk form. Second comparison group.
       BigWig format.
 
   peaks_first_bed_file:
@@ -704,7 +716,7 @@ s:about: |
                                           [--subset [SUBSET [SUBSET ...]]]
                                           --splitby SPLITBY --first FIRST
                                           --second SECOND
-                                          [--test {negative-binomial,poisson,logistic-regression,mast,manorm2-full,manorm2-half}]
+                                          [--test {negative-binomial,poisson,logistic-regression,mast,manorm2-full,manorm2-half,diffbind-deseq-full,diffbind-deseq-half,diffbind-edger-full,diffbind-edger-half}]
                                           [--genome {hs,mm}] [--qvalue QVALUE]
                                           [--minpeakgap MINPEAKGAP]
                                           [--binsize BINSIZE]
@@ -765,54 +777,58 @@ s:about: |
     --splitby SPLITBY     Column from the Seurat object metadata to split cells
                           into two groups to run --second vs --first
                           differential accessibility analysis. If --test
-                          parameter is set to manorm2-full or manorm2-half, the
-                          --splitby shouldn't put cells from the same dataset
-                          into the different comparison groups. May be one of
-                          the extra metadata columns added with --metadata or
-                          --barcodes parameters.
+                          parameter is set to any of the manorm2 or diffbind
+                          methods, the --splitby shouldn't put cells from the
+                          same dataset into the different comparison groups. May
+                          be one of the extra metadata columns added with
+                          --metadata or --barcodes parameters.
     --first FIRST         Value from the Seurat object metadata column set with
                           --splitby parameter to define the first group of cells
                           for differential accessibility analysis.
     --second SECOND       Value from the Seurat object metadata column set with
                           --splitby parameter to define the second group of
                           cells for differential accessibility analysis.
-    --test {negative-binomial,poisson,logistic-regression,mast,manorm2-full,manorm2-half}
+    --test {negative-binomial,poisson,logistic-regression,mast,manorm2-full,manorm2-half,diffbind-deseq-full,diffbind-deseq-half,diffbind-edger-full,diffbind-edger-half}
                           Test type to use in the differential accessibility
-                          analysis. For all tests except manorm2-full and
-                          manorm2-half, peaks already present in the loaded
-                          Seurat object will be used. If manorm2-full or
-                          manorm2-half test is selected, reads will be
-                          aggregated to pseudo bulk form either by dataset or
-                          comparison group and then peaks will be called with
-                          MACS2 per dataset. Default: logistic-regression
+                          analysis. For all test methods except manorm2 and
+                          diffbind, peaks already present in the loaded Seurat
+                          object will be used. Otherwise, peaks will be called
+                          with MACS2 either per dataset (for methods ending with
+                          -full) or by the comparison group (for meethods ending
+                          with -half). Default: logistic-regression
     --genome {hs,mm}      Genome type of the sequencing data loaded from the
                           Seurat object. It will be used for effective genome
                           size selection when calling peaks with MACS2. Ignored
-                          if --test is not set to either manorm2-full or
-                          manorm2-half. Default: hs (2.7e9)
+                          if --test is not set to either manorm2 or diffbind
+                          methods. Default: hs (2.7e9)
     --qvalue QVALUE       Minimum FDR (q-value) cutoff for MACS2 peak detection.
-                          Ignored if --test is not set to either manorm2-full or
-                          manorm2-half. Default: 0.05
+                          Ignored if --test is not set to either manorm2 or
+                          diffbind methods. Default: 0.05
     --minpeakgap MINPEAKGAP
                           If a distance between peaks is smaller than the
                           provided value they will be merged before splitting
                           them into reference genomic bins of size --binsize.
                           Ignored if --test is not set to either manorm2-full or
-                          manorm2-half. Default: 150
+                          manorm2-half methods. Default: 150
     --binsize BINSIZE     The size of non-overlapping reference genomic bins
                           used by MAnorm2 when generating a table of reads
-                          counts per peaks. Ignored if --test is not set to
-                          either manorm2-full or manorm2-half. Default: 1000
+                          counts per peaks. Ignored if --test is not set to any
+                          of the manorm2 methods. For diffbind methods binning
+                          is disabled (the original peak sizes will be used
+                          instead. Default: 1000
     --minoverlap MINOVERLAP
                           Keep only those reference genomic bins that are
                           present in at least this fraction of datasets within
                           each of the comparison groups. Used only when --test
-                          is set to manorm2-full. For manorm2-half this
-                          parameter will be automatically set to 1. Default: 0.5
+                          is set to the methods ending with -full. For methods
+                          ending with -half this parameter will be automatically
+                          set to 1. Default: 0.5
     --maxpeaks MAXPEAKS   The maximum number of the most significant (based on
                           qvalue) peaks to keep from each group of cells when
                           constructing reference genomic bins. Ignored if --test
-                          is not set to either manorm2-full or manorm2-half.
+                          is not set to either manorm2-full or manorm2-half
+                          methods. For diffbind methods the minimum RPKM
+                          threshold (by default equal to 1) is used instead.
                           Default: keep all peaks
     --blacklist BLACKLIST
                           Path to the optional BED file with the genomic
@@ -820,7 +836,7 @@ s:about: |
                           differential accessibility analysis. Any reference
                           genomic bin overlapping a blacklist region will be
                           removed from the output. Ignored if --test is not set
-                          to either manorm2-full or manorm2-half.
+                          to either manorm2-full or manorm2-half methods.
     --padj PADJ           In the exploratory visualization part of the analysis
                           output only differentially bound peaks with adjusted
                           P-value not bigger than this value. Default: 0.05

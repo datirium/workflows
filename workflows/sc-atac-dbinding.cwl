@@ -189,30 +189,34 @@ inputs:
     - "null"
     - type: enum
       symbols:
-      - "negative-binomial"                       # (negbinom) Negative Binomial Generalized Linear Model (use FindMarkers with peaks from Seurat object)
-      - "poisson"                                 # (poisson) Poisson Generalized Linear Model (use FindMarkers with peaks from Seurat object)
-      - "logistic-regression"                     # (LR) Logistic Regression (use FindMarkers with peaks from Seurat object)
-      - "mast"                                    # (MAST) MAST package (use FindMarkers with peaks from Seurat object)
-      - "manorm2-peaks-by-dataset"                # call peaks for each dataset with MACS2, then run MAnorm2 with datasets
-      - "manorm2-peaks-by-comparison-category"    # call peaks for each comparison group with MACS2, then run MAnorm2 with datasets
+      - "negative-binomial"                              # (negbinom) Negative Binomial Generalized Linear Model (use FindMarkers with peaks from Seurat object)
+      - "poisson"                                        # (poisson) Poisson Generalized Linear Model (use FindMarkers with peaks from Seurat object)
+      - "logistic-regression"                            # (LR) Logistic Regression (use FindMarkers with peaks from Seurat object)
+      - "mast"                                           # (MAST) MAST package (use FindMarkers with peaks from Seurat object)
+      - "manorm2-peaks-by-dataset"                       # call peaks for each dataset with MACS2, then run MAnorm2 with datasets
+      - "manorm2-peaks-by-comparison-category"           # call peaks for each comparison group with MACS2, then run MAnorm2 with datasets
+      - "diffbind-deseq-peaks-by-dataset"                # call peaks for each dataset with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-deseq-peaks-by-comparison-category"    # call peaks for each comparison group with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-edger-peaks-by-dataset"                # call peaks for each dataset with MACS2, then run DiffBind (EdgeR) with datasets
+      - "diffbind-edger-peaks-by-comparison-category"    # call peaks for each comparison group with MACS2, then run DiffBind (EdgeR) with datasets
     default: "logistic-regression"
     label: "Statistical test"
     doc: |
       Statistical test to use in the
       differential accessibility analysis.
       Chromatin accessibility data will first
-      be filtered to include fragments from
+      be filtered to include fragments from the
       cells retained in the loaded single-cell
-      datasets after optional filtering by
+      datasets after optional filtering by the
       "Subsetting category/values" and/or
       "Selected cell barcodes". The resulting
-      fragments will then be splitted by
+      fragments will then be splitted by the
       "Comparison category" and, if
-      "manorm2-peaks-by-dataset" or
-      "manorm2-peaks-by-comparison-category"
+      "*-peaks-by-dataset" or
+      "*-peaks-by-comparison-category"
       is selected, they will be aggregated to
       the pseudo bulk form for peak calling
-      with MACS2, either by dataset or
+      with MACS2, either by dataset or by
       comparison category, respectively.
       Othwerwise, the analysis will be run on
       the cells level using peaks already
@@ -285,13 +289,12 @@ inputs:
   minimum_qvalue:
     type: float?
     default: 0.05
-    label: "Minimum MACS2 peak calling FDR (ignored if statistical test is not using MAnorm2)"
+    label: "Minimum MACS2 peak calling FDR (ignored if statistical test is not using MAnorm2 or DiffBind)"
     doc: |
       Minimum FDR (q-value) cutoff for MACS2
       peak detection. Ignored if "Statistical
-      test" input is not set to
-      "manorm2-peaks-by-dataset" or
-      "manorm2-peaks-by-comparison-category".
+      test" input is not set to "manorm2-*"
+      or "diffbind-*" methods.
       Default: 0.05
     "sd:layout":
       advanced: true
@@ -353,16 +356,15 @@ inputs:
   minimum_overlap:
     type: float?
     default: 0.5
-    label: "Minimum overlap fraction between the datasets (ignored if statistical test is not using MAnorm2)"
+    label: "Minimum overlap fraction between the datasets (ignored if statistical test is not using MAnorm2 or DiffBind)"
     doc: |
       Keep only those reference genomic
       bins that are present in at least
       this fraction of datasets within
       each of the comparison groups.
       Ignored if "Statistical test"
-      input is not set to
-      "manorm2-peaks-by-dataset" or
-      "manorm2-peaks-by-comparison-category".
+      input is not set to "manorm2-*"
+      or "diffbind-*" methods.
       Default: 0.5
     "sd:layout":
       advanced: true
@@ -581,21 +583,23 @@ outputs:
       (optional)".
       TSV format.
 
-  fragments_first_bigwig_file:
+  coverage_first_bigwig_file:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_dbinding/fragments_first_bigwig_file
+    outputSource: sc_atac_dbinding/coverage_first_bigwig_file
     label: "Genome coverage (first)"
     doc: |
       Normalized genome coverage calculated
-      from the ATAC fragments split either
-      by dataset or by "Comparison category".
-      Optionally subsetted to include only
-      cells with "Subsetting values (optional)"
-      from the "Subsetting category (optional)".
-      First comparison group.
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The data
+      were first optionally subsetted to include
+      only cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)",
+      then split either by dataset or by the
+      "Comparison category" and aggregated to
+      the pseudobulk form. First comparison group.
       BigWig format.
     "sd:visualPlugins":
     - igvbrowser:
@@ -605,21 +609,23 @@ outputs:
         name: "Genome coverage (first)"
         height: 120
 
-  fragments_second_bigwig_file:
+  coverage_second_bigwig_file:
     type:
     - "null"
     - type: array
       items: File
-    outputSource: sc_atac_dbinding/fragments_second_bigwig_file
+    outputSource: sc_atac_dbinding/coverage_second_bigwig_file
     label: "Genome coverage (second)"
     doc: |
       Normalized genome coverage calculated
-      from the ATAC fragments split either
-      by dataset or by "Comparison category".
-      Optionally subsetted to include only
-      cells with "Subsetting values (optional)"
-      from the "Subsetting category (optional)".
-      Second comparison group.
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The data
+      were first optionally subsetted to include
+      only cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)",
+      then split either by dataset or by the
+      "Comparison category" and aggregated to
+      the pseudobulk form. Second comparison group.
       BigWig format.
     "sd:visualPlugins":
     - igvbrowser:
@@ -907,6 +913,14 @@ steps:
               return "manorm2-full";
             } else if (self == "manorm2-peaks-by-comparison-category") {
               return "manorm2-half";
+            } else if (self == "diffbind-deseq-peaks-by-dataset") {
+              return "diffbind-deseq-full";
+            } else if (self == "diffbind-deseq-peaks-by-comparison-category") {
+              return "diffbind-deseq-half";
+            } else if (self == "diffbind-edger-peaks-by-dataset") {
+              return "diffbind-edger-full";
+            } else if (self == "diffbind-edger-peaks-by-comparison-category") {
+              return "diffbind-edger-half";
             } else {
               return self;
             }
@@ -945,8 +959,8 @@ steps:
     - all_db_sites_tsv
     - all_db_sites_bed
     - fltr_db_sites_bed
-    - fragments_first_bigwig_file
-    - fragments_second_bigwig_file
+    - coverage_first_bigwig_file
+    - coverage_second_bigwig_file
     - peaks_first_bed_file
     - peaks_second_bed_file
     - peaks_first_xls_file
@@ -1031,98 +1045,7 @@ steps:
     - output_file
 
   extend_htmp:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/sc-tools:v0.0.42
-      - class: InitialWorkDirRequirement
-        listing:
-        - entryname: extend_htmp.R
-          entry: |
-            #!/usr/bin/env Rscript
-            options(warn=-1)
-            options("width"=200)
-            options(error=function(){traceback(3); quit(save="no", status=1, runLast=FALSE)})
-            suppressMessages(library(tools))
-            suppressMessages(library(modules))
-            suppressMessages(library(tidyverse))
-            suppressMessages(io <- modules::use("/usr/local/bin/modules/io.R"))
-            suppressMessages(graphics <- modules::use("/usr/local/bin/modules/graphics.R"))
-            args = commandArgs(trailingOnly=TRUE)
-            if(length(args) != 2){
-                print("Not enough input parameters. Exiting without throwing the error.")
-                quit(save="no", status=0, runLast=FALSE)
-            }
-            gct_location <- args[1]
-            metadata_location <- args[2]
-            gct_data <- morpheus::read.gct(gct_location)
-            metadata <- read.table(
-                            metadata_location,
-                            sep="\t",
-                            header=TRUE,
-                            check.names=FALSE,
-                            stringsAsFactors=FALSE,
-                            quote=""
-                        ) %>%
-                        mutate(label=paste(chr, paste(start, end, sep="-"), sep=":"))    # we need to overwrite the labels to include only chr:start-end 
-            row_metadata <- gct_data$rowAnnotations %>%
-                            select("regions_group") %>%                                  # this is the only column we don't have in the metadata
-                            rownames_to_column("label") %>%
-                            left_join(metadata, by="label") %>%
-                            remove_rownames() %>%
-                            column_to_rownames("label") %>%
-                            select(c("gene_id", "region", "log2FoldChange", "padj", "regions_group")) %>%
-                            rename(category = regions_group)
-            io$export_gct(
-                counts_mat=gct_data$data,
-                row_metadata=row_metadata,
-                col_metadata=gct_data$columnAnnotations,
-                location=basename(gct_location)
-            )
-            score_limits <- stats::quantile(
-                gct_data$data,
-                c(0.01, 0.98),
-                na.rm=TRUE, names=FALSE
-            )
-            graphics$morpheus_html_heatmap(
-                gct_location=basename(gct_location),
-                rootname=file_path_sans_ext(basename(gct_location)),
-                color_scheme=list(
-                    scalingMode="fixed",
-                    stepped=FALSE,
-                    values=as.list(score_limits),
-                    colors=c("white", "darkblue")
-                )
-            )
-            io$export_data(
-                row_metadata %>% tibble::rownames_to_column(var="feature"),
-                paste0(file_path_sans_ext(basename(gct_location)), ".tsv")
-            )
-      inputs:
-        gct_file:
-          type: File?
-          inputBinding:
-            position: 5
-        tsv_file:
-          type: File
-          inputBinding:
-            position: 7
-      outputs:
-        tag_dnst_htmp_gct:
-          type: File?
-          outputBinding:
-            glob: "*_tag_dnst_htmp.gct"
-        tag_dnst_htmp_html:
-          type: File?
-          outputBinding:
-            glob: "*_tag_dnst_htmp.html"
-        tag_dnst_htmp_tsv:
-          type: File?
-          outputBinding:
-            glob: "*_tag_dnst_htmp.tsv"
-      baseCommand: ["Rscript", "extend_htmp.R"]
+    run: ../tools/sc-utils-extend-htmp.cwl
     in:
       gct_file: sc_atac_dbinding/tag_dnst_htmp_gct
       tsv_file: add_label_column/output_file
@@ -1136,13 +1059,13 @@ steps:
     in:
       input_file:
         source:
-        - sc_atac_dbinding/fragments_first_bigwig_file
-        - sc_atac_dbinding/fragments_second_bigwig_file
+        - sc_atac_dbinding/coverage_first_bigwig_file
+        - sc_atac_dbinding/coverage_second_bigwig_file
         valueFrom: $(self.flat())
       param:
         source:
-        - sc_atac_dbinding/fragments_first_bigwig_file
-        - sc_atac_dbinding/fragments_second_bigwig_file
+        - sc_atac_dbinding/coverage_first_bigwig_file
+        - sc_atac_dbinding/coverage_second_bigwig_file
         valueFrom: $(self[0].length + "," + self[1].length)
       script:
         default: |
