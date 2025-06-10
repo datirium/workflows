@@ -22,34 +22,6 @@ eggs/
 # editor temp files
 .*.sw?
 
-#bioinformatics stuff
-*.bam
-*.sam
-*.bt2
-*.bai
-*.fa
-*.fastq
-*.fasta
-*.gtf
-*.tbi
-*.vcf
-*.fai
-*.bed
-*.bedGraph
-*.bw
-*.bigWig
-*.amb
-*.ann
-*.pac
-*.refmap
-
-#archives
-*.bz2
-*.gz
-*.zip
-*.tar
-*.Z
-
 # Logs
 logs
 *.log

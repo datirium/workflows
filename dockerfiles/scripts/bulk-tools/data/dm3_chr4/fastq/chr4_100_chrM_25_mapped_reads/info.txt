@@ -1,0 +1,4 @@
+Fastq files are made from BAM file mapped by STAR (RNA-Seq paired-end, BioWardrobe VM, SRR015084.sra).
+Includes only mapped reads:
+    chr4 - 100 reads
+    chrM - 25 reads
