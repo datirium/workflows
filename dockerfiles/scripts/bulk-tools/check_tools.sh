@@ -10,6 +10,7 @@ REQUIRED_TOOLS=(
   unzip
   bzip2
   file
+  samtools
 )
 
 MISSING=()
