@@ -1,5 +1,4 @@
 #!/bin/bash
-shopt -s nocaseglob
 set -euo pipefail
 
 usage() {
