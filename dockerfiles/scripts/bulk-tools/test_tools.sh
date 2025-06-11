@@ -9,6 +9,7 @@ declare -A TOOL_ENVS=(
   [macs3]=macs3
   [bedtools]=bedtools
   [bedGraphToBigWig]=ucsc
+  [fastx_quality_stats]=fastx
   [file]=utils
   [unzip]=utils
 )
