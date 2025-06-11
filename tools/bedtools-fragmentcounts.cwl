@@ -41,11 +41,11 @@ inputs:
       fi
       # sort and count per base coverage per genome
       cut -f 1,2,6 mapped_pairs.clean.bed | sort -k1,1 -k2,2n -k3,3n  > mapped_pairs.fragments.bed
-      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g $genome > $prefix.fragmentcounts.bedgraph
+      bedtools genomecov -bg -i mapped_pairs.fragments.bed -g $genome > $prefix.fragmentcounts.bed
       # apply scale for normalization to spike-in (or ecoli mapped read count by default)
       awk -F'\t' -v scale=$scale '{
         printf("%s\t%s\t%s\t%s\n",$1,$2,$3,$4*scale)
-        }' $prefix.fragmentcounts.bedgraph > $prefix.fragmentcounts_scaled.bedgraph
+        }' $prefix.fragmentcounts.bed > $prefix.fragmentcounts_scaled.bed
     inputBinding:
         position: 1
 
@@ -92,17 +92,17 @@ inputs:
 
 outputs:
 
-  sorted_bedgraph:
+  sorted_bed:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.fragmentcounts.bedgraph')
+      glob: $(inputs.output_prefix + '.fragmentcounts.bed')
     doc: |
       Length filtered fragment bed file formatted from PE bam file.
 
-  sorted_bedgraph_scaled:
+  sorted_bed_scaled:
     type: File
     outputBinding:
-      glob: $(inputs.output_prefix + '.fragmentcounts_scaled.bedgraph')
+      glob: $(inputs.output_prefix + '.fragmentcounts_scaled.bed')
     doc: |
       Spike-in scaled, length filtered fragment bed file formatted from PE bam file.
 
