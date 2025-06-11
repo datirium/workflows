@@ -1,80 +1,46 @@
 #########################################################################################################################
 # Build: docker build --platform linux/amd64 --no-cache --rm -t biowardrobe2/bulk-tools:v0.0.1 -f bulk-tools-Dockerfile .
 # Pull:  docker pull --platform linux/amd64 biowardrobe2/bulk-tools:v0.0.1
+# Run:   docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 /bin/bash
 # Test:  docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 test_extract_fastq.sh
-#        docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 check_tools.sh
+#        docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 test_tools.sh
 #
 # Installed tools:
 #   - bowtie2
-#   - fastqc
-#   - cutadapt
 #   - trim_galore
-#   - perl
-#   - unzip
-#   - bzip2
-#   - file
 #   - samtools
+#   - file
+#   - unzip
 # Installed custom scripts:
 #   - extract_fastq.sh
+#   - test_extract_fastq.sh
+#   - test_tools.sh
 #########################################################################################################################
 
-FROM ubuntu:24.04
+FROM condaforge/miniforge3:25.3.0-3
 LABEL maintainer="misha.kotliar@gmail.com"
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /tmp
 
 ENV BOWTIE2_VERSION=2.5.4
-ENV FASTQC_VERSION=0.12.1
 ENV TRIMGALORE_VERSION=0.6.10
 ENV SAMTOOLS_VERSION=1.22
+ENV FILE_VERSION=5.46
+ENV UNZIP_VERSION=6.0
 
 COPY ./scripts/bulk-tools/*.sh /usr/local/bin/
 COPY ./scripts/bulk-tools/data /usr/local/bin/data
 
-RUN apt-get update && \
-    apt-get install -y libtbb-dev libz-dev wget make g++ perl file bzip2 unzip \
-                       default-jre libbz2-dev liblzma-dev python3-pip vim \
-                       libcurl4-openssl-dev libncurses-dev && \
-    wget --no-check-certificate \
-    https://github.com/BenLangmead/bowtie2/archive/refs/tags/v${BOWTIE2_VERSION}.tar.gz -O bowtie2.tar.gz && \
-    tar -xzf bowtie2.tar.gz && \
-    cd bowtie2-${BOWTIE2_VERSION} && \
-    make -j 4 && \
-    make install && \
-    cd /tmp && \
-    wget --no-check-certificate \
-    https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v${FASTQC_VERSION}.zip -O fastqc.zip && \
-    unzip fastqc.zip -d /opt && \
-    ln -s /opt/FastQC/fastqc /usr/local/bin/fastqc && \
-    cd /tmp && \
-    pip3 install --no-cache-dir --break-system-packages cutadapt && \
-    cd /tmp && \
-    wget --no-check-certificate \
-    https://github.com/FelixKrueger/TrimGalore/archive/refs/tags/${TRIMGALORE_VERSION}.zip -O trim_galore.zip && \
-    unzip trim_galore.zip && \
-    mv TrimGalore-${TRIMGALORE_VERSION}/trim_galore /usr/local/bin/trim_galore && \
-    cd /tmp && \
-    wget --no-check-certificate \
-    https://github.com/samtools/htslib/releases/download/${SAMTOOLS_VERSION}/htslib-${SAMTOOLS_VERSION}.tar.bz2 -O htslib.tar.bz2 && \
-    tar -xjf htslib.tar.bz2 && \
-    cd htslib-${SAMTOOLS_VERSION} && \
-    ./configure --prefix=/usr/local/ && \
-    make -j 4 && \
-    make install && \
-    cd /tmp && \
-    wget --no-check-certificate \
-    https://github.com/samtools/samtools/releases/download/${SAMTOOLS_VERSION}/samtools-${SAMTOOLS_VERSION}.tar.bz2 -O samtools.tar.bz2 && \
-    tar -xjf samtools.tar.bz2 && \
-    cd samtools-${SAMTOOLS_VERSION} && \
-    ./configure --prefix=/usr/local/ && \
-    make -j 4 && \
-    make install && \
-    chmod +x /usr/local/bin/fastqc && \
-    chmod +x /usr/local/bin/trim_galore && \
+RUN mamba create -y -n bowtie2 bioconda::bowtie2=${BOWTIE2_VERSION} && \
+    mamba create -y -n trim_galore bioconda::trim-galore=${TRIMGALORE_VERSION} && \
+    mamba create -y -n samtools bioconda::samtools=${SAMTOOLS_VERSION} && \
+    mamba create -y -n utils conda-forge::file=${FILE_VERSION} && \
+    mamba install -y -n utils conda-forge::unzip=${UNZIP_VERSION} && \
     chmod +x /usr/local/bin/extract_fastq.sh && \
     chmod +x /usr/local/bin/test_extract_fastq.sh && \
-    chmod +x /usr/local/bin/check_tools.sh && \
+    chmod +x /usr/local/bin/test_tools.sh && \
+    mamba clean -a && \
     apt-get clean && \
     apt-get purge && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* && \

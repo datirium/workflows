@@ -38,10 +38,10 @@ for FILE in "${FILES[@]}"; do
     echo "Error: input file does not exist: $FILE" >&2
     exit 1
   fi
-  case "$(file -b --mime-type "$FILE")" in
+  case "$(mamba run -n utils file -b --mime-type "$FILE")" in
     application/gzip)    gunzip -c "$FILE" >> "$OUT" ;;
     application/x-bzip2) bzcat "$FILE" >> "$OUT" ;;
-    application/zip)     unzip -p "$FILE" >> "$OUT" ;;
+    application/zip)     mamba run -n utils unzip -p "$FILE" >> "$OUT" ;;
     text/plain)          cat "$FILE" >> "$OUT" ;;
     *)                   echo "Unknown file type: $FILE" >&2; exit 1 ;;
   esac
