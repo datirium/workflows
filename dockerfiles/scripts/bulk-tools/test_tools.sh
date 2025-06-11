@@ -5,6 +5,10 @@ declare -A TOOL_ENVS=(
   [bowtie2]=bowtie2
   [trim_galore]=trim_galore
   [samtools]=samtools
+  [preseq]=preseq
+  [macs3]=macs3
+  [bedtools]=bedtools
+  [bedGraphToBigWig]=ucsc
   [file]=utils
   [unzip]=utils
 )
@@ -13,7 +17,7 @@ MISSING=()
 
 for TOOL in "${!TOOL_ENVS[@]}"; do
   ENV_NAME="${TOOL_ENVS[$TOOL]}"
-  if ! mamba run -n "$ENV_NAME" "$TOOL" --help >/dev/null 2>&1; then
+  if ! mamba run -n "$ENV_NAME" which "$TOOL" >/dev/null 2>&1; then
     MISSING+=("$TOOL ($ENV_NAME)")
   fi
 

@@ -9,6 +9,10 @@
 #   - bowtie2
 #   - trim_galore
 #   - samtools
+#   - preseq
+#   - macs3
+#   - bedtools
+#   - bedGraphToBigWig
 #   - file
 #   - unzip
 # Installed custom scripts:
@@ -26,6 +30,10 @@ WORKDIR /tmp
 ENV BOWTIE2_VERSION=2.5.4
 ENV TRIMGALORE_VERSION=0.6.10
 ENV SAMTOOLS_VERSION=1.22
+ENV PRESEQ_VERSION=3.2.0
+ENV MACS3_VERSION=3.0.3
+ENV BEDTOOLS_VERSION=2.31.1
+ENV UCSC_APPS_VERSION=481
 ENV FILE_VERSION=5.46
 ENV UNZIP_VERSION=6.0
 
@@ -35,6 +43,10 @@ COPY ./scripts/bulk-tools/data /usr/local/bin/data
 RUN mamba create -y -n bowtie2 bioconda::bowtie2=${BOWTIE2_VERSION} && \
     mamba create -y -n trim_galore bioconda::trim-galore=${TRIMGALORE_VERSION} && \
     mamba create -y -n samtools bioconda::samtools=${SAMTOOLS_VERSION} && \
+    mamba create -y -n preseq bioconda::preseq=${PRESEQ_VERSION} && \
+    mamba create -y -n macs3 bioconda::macs3=${MACS3_VERSION} && \
+    mamba create -y -n bedtools bioconda::bedtools=${BEDTOOLS_VERSION} && \
+    mamba create -y -n ucsc bioconda::ucsc-bedgraphtobigwig=${UCSC_APPS_VERSION} && \
     mamba create -y -n utils conda-forge::file=${FILE_VERSION} && \
     mamba install -y -n utils conda-forge::unzip=${UNZIP_VERSION} && \
     chmod +x /usr/local/bin/extract_fastq.sh && \
