@@ -10,18 +10,30 @@ declare -A TOOL_ENVS=(
   [bedtools]=bedtools
   [bedGraphToBigWig]=ucsc
   [fastx_quality_stats]=fastx
+  [Rscript]=r_base
   [file]=utils
   [unzip]=utils
 )
 
 MISSING=()
+declare -A ENV_SIZES=()
 
 for TOOL in "${!TOOL_ENVS[@]}"; do
   ENV_NAME="${TOOL_ENVS[$TOOL]}"
   if ! mamba run -n "$ENV_NAME" which "$TOOL" >/dev/null 2>&1; then
     MISSING+=("$TOOL ($ENV_NAME)")
   fi
+  if [[ -z "${ENV_SIZES[$ENV_NAME]:-}" ]]; then
+    if [ -d "/opt/conda/envs/$ENV_NAME" ]; then
+      SIZE=$(du -sh "/opt/conda/envs/$ENV_NAME" 2>/dev/null | awk '{print $1}')
+      ENV_SIZES[$ENV_NAME]="$SIZE"
+    fi
+  fi
+done
 
+echo -e "\nMamba environment sizes:" >&2
+for ENV in "${!ENV_SIZES[@]}"; do
+  echo "  $ENV: ${ENV_SIZES[$ENV]}" >&2
 done
 
 if [ ${#MISSING[@]} -eq 0 ]; then
