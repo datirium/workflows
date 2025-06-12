@@ -1,19 +1,12 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
-
 requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
-
-
 hints:
 - class: DockerRequirement
   dockerPull: robertplayer/scidap-ubuntu22:v1.0.0
-
-
 inputs:
-
   script_command:
     type: string?
     default: |
@@ -85,102 +78,46 @@ inputs:
       cat genelist-filtered-set.bed >> genelist-filtered-set-w-header.bed
     inputBinding:
       position: 1
-
   filtered_list_A:
     type: File
     inputBinding:
       position: 2
     doc: |
       filtered differential genelist from DESeq or diffbind pipelines
-
   filtered_list_B_group:
     type: File[]
     inputBinding:
       position: 3
-      itemSeparator: ","
+      itemSeparator: ','
     doc: |
       filtered differential genelist from DESeq or diffbind pipelines
-
   set_operation:
     type: string
     inputBinding:
       position: 4
     doc: |
       user selected set operation to perform and return
-
-
 outputs:
-
   genelist_filtered_set:
     type: File
     outputBinding:
       glob: genelist-filtered-set.bed
     doc: |
       filtered gene list based on set operator chosen, formatted as headerless BED file with [chrom start end name score strand]
-
   genelist_filtered_set_with_header:
     type: File
     outputBinding:
       glob: genelist-filtered-set-w-header.bed
     doc: |
       filtered gene list based on set operator chosen, formatted as headered bed file for scidap table interface [chrom start end name score strand]
-
   log_file_stdout:
     type: stdout
-
   log_file_stderr:
     type: stderr
-
-
-baseCommand: ["bash", "-c"]
+baseCommand:
+- bash
+- -c
 stdout: genelists-sets_stdout.log
 stderr: genelists-sets_stderr.log
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "Genelists Set Operations"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/genelists-sets.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
-
-doc: |
-  This tool takes as input 2 filtered genelists samples and performs the user input set operation on them.
-  The output is a single filtered gene list in the same format as the input files (headerless BED file with [chrom start end name score strand]).
-  The returned score value (column 5) is always derived from file A.
-      
+doc: "This tool takes as input 2 filtered genelists samples and performs the user input set operation on them.\nThe output is a single filtered gene list in the same format as the input files (headerless BED file with [chrom start end name score strand]).\nThe returned score value (column 5) is always derived from file A.\n    "
+label: Genelists Set Operations

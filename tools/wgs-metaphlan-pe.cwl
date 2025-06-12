@@ -1,21 +1,15 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
-
 requirements:
-  - class: ShellCommandRequirement
-  - class: InlineJavascriptRequirement
-  - class: ResourceRequirement
-    ramMin: 30510
-    coresMin: 8
-
+- class: ShellCommandRequirement
+- class: InlineJavascriptRequirement
+- class: ResourceRequirement
+  ramMin: 30510
+  coresMin: 8
 hints:
 - class: DockerRequirement
   dockerPull: robertplayer/scidap-metaphlan:v1.0.0
-
-
 inputs:
-
   script_command:
     type: string?
     default: |
@@ -43,110 +37,54 @@ inputs:
       rm combined.fq
       printf "END OF SCRIPT\n"
     inputBinding:
-        position: 1
-
+      position: 1
   read1file:
     type: File
-    label: "R1 fastq"
+    label: R1 fastq
     inputBinding:
       position: 6
-    doc: "FASTQ file 1 of paired end read data."
-
+    doc: FASTQ file 1 of paired end read data.
   read2file:
     type: File
-    label: "R2 fastq"
+    label: R2 fastq
     inputBinding:
       position: 7
-    doc: "FASTQ file 2 of paired end read data."
-
-
+    doc: FASTQ file 2 of paired end read data.
 outputs:
-
   classification_alignments_bowtie2:
     type: File
     outputBinding:
-      glob: "metagenome.bowtie2.bz2"
-
+      glob: metagenome.bowtie2.bz2
   abundance_profile:
     type: File
     outputBinding:
-      glob: "profiled_metagenome.txt"
-
+      glob: profiled_metagenome.txt
   abundance_profile_scidap:
     type: File
     outputBinding:
-      glob: "profiled_metagenome_scidap.txt"
-
+      glob: profiled_metagenome_scidap.txt
   abundance_table:
     type: File
     outputBinding:
-      glob: "merged_abundance_table.txt"
-
+      glob: merged_abundance_table.txt
   abundance_table_species:
     type: File
     outputBinding:
-      glob: "merged_abundance_table_species.txt"
-
+      glob: merged_abundance_table_species.txt
   stdout_log:
     type: stdout
-
   stderr_log:
     type: stderr
-
-
-baseCommand: ["bash", "-c"]
+baseCommand:
+- bash
+- -c
 stdout: log.stdout
 stderr: log.stderr
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "metaphlan4"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/wgs-metaphlan-pe.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
 doc: |
-    Tool runs metaphlan4 for metagenomic classification of metagenomic data sets.
+  Tool runs metaphlan4 for metagenomic classification of metagenomic data sets.
 
-    MetaPhlAn runs reads against the "latest" database:
-        The database contains genomes from about 1 million microbial genomes, including 236,600 microbial isolates
-        and 771,500 metagenomic assembled genomes. The database is used by the MetaPhlAn 4 computational tool to
-        profile the composition of microbial communities.
-
-
-
+  MetaPhlAn runs reads against the "latest" database:
+      The database contains genomes from about 1 million microbial genomes, including 236,600 microbial isolates
+      and 771,500 metagenomic assembled genomes. The database is used by the MetaPhlAn 4 computational tool to
+      profile the composition of microbial communities.
+label: metaphlan4

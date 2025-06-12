@@ -1,84 +1,62 @@
 cwlVersion: v1.0
 class: Workflow
-
-
 requirements:
-  - class: StepInputExpressionRequirement
-  - class: InlineJavascriptRequirement
-
-
+- class: StepInputExpressionRequirement
+- class: InlineJavascriptRequirement
 inputs:
-
   bam_file:
     type: File
-    label: "Input BAM file"
-    doc: "Input BAM file, sorted by coordinates"
-
+    label: Input BAM file
+    doc: Input BAM file, sorted by coordinates
   chrom_length_file:
     type: File
-    doc: "Tab delimited chromosome length file: <chromName><TAB><chromSize>"
-
+    doc: 'Tab delimited chromosome length file: <chromName><TAB><chromSize>'
   scale:
     type: float?
-    doc: "Coefficient to scale the genome coverage by a constant factor"
-
+    doc: Coefficient to scale the genome coverage by a constant factor
   mapped_reads_number:
     type: int?
     doc: |
       Parameter to calculate scale as 1000000/mapped_reads_number. Ignored by bedtools-genomecov.cwl in
       bam_to_bedgraph step if scale is provided
-
   pairchip:
     type: boolean?
-    doc: "Enable paired-end genome coverage calculation"
-
+    doc: Enable paired-end genome coverage calculation
   fragment_size:
     type: int?
-    doc: "Set fixed fragment size for genome coverage calculation"
-
+    doc: Set fixed fragment size for genome coverage calculation
   strand:
     type: string?
-    doc: "Calculate genome coverage of intervals from a specific strand"
-
+    doc: Calculate genome coverage of intervals from a specific strand
   bigwig_filename:
     type: string?
-    doc: "Output filename for generated bigWig"
-
+    doc: Output filename for generated bigWig
   bedgraph_filename:
     type: string?
-    doc: "Output filename for generated bedGraph"
-
+    doc: Output filename for generated bedGraph
   split:
     type: boolean?
-    doc: "Calculate genome coverage for each part of the splitted by 'N' and 'D' read"
-
+    doc: Calculate genome coverage for each part of the splitted by 'N' and 'D' read
   dutp:
     type: boolean?
-    doc: "Change strand af the mate read, so both reads come from the same strand"
-
-
+    doc: Change strand af the mate read, so both reads come from the same strand
 outputs:
-
   bigwig_file:
     type: File
     outputSource: sorted_bedgraph_to_bigwig/bigwig_file
-    doc: "Output bigWig file"
-
+    doc: Output bigWig file
   bedgraph_file:
     type: File
     outputSource: sort_bedgraph/sorted_file
-    label: "bedGraph output file"
-    doc: "Output bedGraph file"
-
-
+    label: bedGraph output file
+    doc: Output bedGraph file
 steps:
-
   bam_to_bedgraph:
     run: ../tools/bedtools-genomecov.cwl
     in:
       input_file: bam_file
       depth:
-        default: "-bg"
+        default: -bg
       split:
         source: split
         valueFrom: |
@@ -96,70 +74,27 @@ steps:
       mapped_reads_number: mapped_reads_number
       strand: strand
       du: dutp
-    out: [genome_coverage_file]
-
+    out:
+    - genome_coverage_file
   sort_bedgraph:
     run: ../tools/linux-sort.cwl
     in:
       unsorted_file: bam_to_bedgraph/genome_coverage_file
       key:
-        default: ["1,1","2,2n"]
-    out: [sorted_file]
-
+        default:
+        - 1,1
+        - 2,2n
+    out:
+    - sorted_file
   sorted_bedgraph_to_bigwig:
     run: ../tools/ucsc-bedgraphtobigwig.cwl
     in:
       bedgraph_file: sort_bedgraph/sorted_file
       chrom_length_file: chrom_length_file
       output_filename: bigwig_filename
-    out: [bigwig_file]
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "bam-bedgraph-bigwig"
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-      - class: s:Person
-        s:name: Andrey Kartashov
-        s:email: mailto:Andrey.Kartashov@cchmc.org
-        s:sameAs:
-        - id: http://orcid.org/0000-0001-9102-5681
-
-doc: |
+    out:
+    - bigwig_file
+doc: |-
   Workflow converts input BAM file into bigWig and bedGraph files.
 
   Input BAM file should be sorted by coordinates (required by `bam_to_bedgraph` step).
@@ -176,3 +111,5 @@ doc: |
 
   All workflow inputs and outputs don't have `format` field to avoid format incompatibility errors when workflow is used
   as subworkflow.
+sd:version: 100
+label: bam-bedgraph-bigwig

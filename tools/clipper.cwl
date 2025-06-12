@@ -1,77 +1,42 @@
-
-### doc: "clipper cwl tool (https://github.com/yeolab/clipper)" ###
-
 cwlVersion: v1.0
 class: CommandLineTool
-
 requirements:
-  - class: InlineJavascriptRequirement
-  - class: ResourceRequirement
-    coresMin: 8
-    coresMax: 16
-    ramMin: 32000
-
+- class: InlineJavascriptRequirement
+- class: ResourceRequirement
+  coresMin: 8
+  coresMax: 16
+  ramMin: 32000
 hints:
-  - class: DockerRequirement
-    dockerPull: scidap/clipper:v0.2.0
-
-baseCommand: [clipper]
-
-
+- class: DockerRequirement
+  dockerPull: scidap/clipper:v0.2.0
+baseCommand:
+- clipper
 inputs:
-
   species:
     type: string
-    # default: hg19
     inputBinding:
       position: 0
       prefix: --species
-    doc: "species: one of ce10 ce11 dm3 hg19 GRCh38 mm9 mm10"
-
+    doc: 'species: one of ce10 ce11 dm3 hg19 GRCh38 mm9 mm10'
   input_file:
     type: File
-    # format: http://edamontology.org/format_2572
     inputBinding:
       position: 1
       prefix: --bam
-    #secondaryFiles:
-    #  - ".bai"
-
-  # timeout can not be omitted, default value of None in clipper creates error
-  # timeout:
-  #   type: string
-  #   # 600 seconds, 10 minutes
-  #   # default: "600"
-  #   # 100 hours, > 4 days
-  #   default: "3600000"
-  #   inputBinding:
-  #     position: 7
-  #     prefix: --timeout
-
-  # maxgenes:
-  #   type: string
-  #   #default: "2100"
-  #   default: "1000000"
-  #   inputBinding:
-  #     position: 8
-  #     prefix: --maxgenes
-
   gene:
     type: string?
     inputBinding:
       position: 8
       prefix: --gene
-
   savepickle:
     type: boolean
     default: true
     inputBinding:
       position: 9
       prefix: --save-pickle
-
   outfile:
     type: string
-    default: ""
+    default: ''
     inputBinding:
       position: 10
       prefix: --outfile
@@ -84,7 +49,6 @@ inputs:
             return inputs.outfile;
           }
         }
-
 outputs:
   output_tsv:
     type: File
@@ -100,7 +64,6 @@ outputs:
         }
   output_bed:
     type: File
-    # format: http://edamontology.org/format_3003
     outputBinding:
       glob: |
         ${
@@ -123,8 +86,7 @@ outputs:
             return inputs.outfile + ".pickle";
           }
         }
-
-doc: |
+doc: |-
   CLIPper is a tool to define peaks in your CLIP-seq dataset.
   CLIPper was developed in the Yeo Lab at the University of California, San Diego.
     Usage: clipper --bam CLIP-seq_reads.srt.bam --species hg19 --outfile CLIP-seq_reads.srt.peaks.bed

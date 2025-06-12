@@ -1,22 +1,12 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var default_output_name_prefix = function() {
-        if (Array.isArray(inputs.readFilesIn) && inputs.readFilesIn.length > 0){
-          return inputs.readFilesIn[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".";
-        } else {
-          return inputs.readFilesIn.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+".";
-        }
-    };
-
+  - var default_output_name_prefix = function() { if (Array.isArray(inputs.readFilesIn) && inputs.readFilesIn.length > 0){ return inputs.readFilesIn[0].location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"."; } else { return inputs.readFilesIn.location.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')+"."; } };
 hints:
 - class: DockerRequirement
   dockerPull: scidap/star:v2.7.5c
-
-
 inputs:
   winBinNbits:
     type: int?
@@ -27,7 +17,6 @@ inputs:
       16
       int>0: =log2(winBin), where winBin is the size of the bin for the windows/clustering,
       each window will occupy an integer number of bins.
-
   outFilterMatchNmin:
     type: int?
     inputBinding:
@@ -37,7 +26,6 @@ inputs:
       0
       int: alignment will be output only if the number of matched bases is higher
       than this value
-
   outSAMattributes:
     type: string?
     inputBinding:
@@ -50,7 +38,6 @@ inputs:
       Standard   ... NH HI AS nM
       All        ... NH HI AS nM NM MD jM jI ch
       None       ... no attributes
-
   outSAMheaderPG:
     type: boolean?
     inputBinding:
@@ -59,7 +46,6 @@ inputs:
     doc: |
       -
       strings: extra @PG (software) line of the SAM header (in addition to STAR)
-
   clip3pAdapterMMp:
     type: float?
     inputBinding:
@@ -68,7 +54,6 @@ inputs:
     doc: |
       double(s): max proportion of mismatches for 3p adpater clipping for each
       mate.  If one value is given, it will be assumed the same for both mates.
-
   clip3pAfterAdapterNbases:
     type: int?
     inputBinding:
@@ -78,7 +63,6 @@ inputs:
       int(s): number of bases to clip from 3p of each mate after the adapter
       clipping. If one value is given, it will be assumed the same for both
       mates.
-
   scoreGapNoncan:
     type: int?
     inputBinding:
@@ -87,7 +71,6 @@ inputs:
     doc: |
       -8
       int: non-canonical junction penalty (in addition to scoreGap)
-
   outMultimapperOrder:
     type: string?
     inputBinding:
@@ -98,7 +81,6 @@ inputs:
       string: order of multimapping alignments in the output files
       Old_2.4             ... quasi-random order used before 2.5.0
       Random              ... random order of alignments for each multi-mapper. Read mates (pairs) are always adjacent, all alignment for each read stay together. This option will become default in the future releases.
-
   quantTranscriptomeBan:
     type: string?
     inputBinding:
@@ -109,7 +91,6 @@ inputs:
       string: prohibit various alignment type
       IndelSoftclipSingleend  ... prohibit indels, soft clipping and single-end alignments - compatible with RSEM
       Singleend               ... prohibit single-end alignments
-
   alignSJstitchMismatchNmax:
     type: int?
     inputBinding:
@@ -119,7 +100,6 @@ inputs:
       0 -1 0 0
       4*int>=0: maximum number of mismatches for stitching of the splice junctions (-1: no limit).
       (1) non-canonical motifs, (2) GT/AG and CT/AC motif, (3) GC/AG and CT/GC motif, (4) AT/AC and GT/AT motif.
-
   twopassMode:
     type: string?
     inputBinding:
@@ -130,7 +110,6 @@ inputs:
       string: 2-pass mapping mode.
       None        ... 1-pass mapping
       Basic       ... basic 2-pass mapping, with all 1st pass junctions inserted into the genome indices on the fly
-
   outSAMorder:
     type: string?
     inputBinding:
@@ -141,7 +120,6 @@ inputs:
       string: type of sorting for the SAM output
       Paired: one mate after the other for all paired alignments
       PairedKeepInputOrder: one mate after the other for all paired alignments, the order is kept the same as in the input FASTQ files
-
   outSJfilterDistToOtherSJmin:
     type: boolean?
     inputBinding:
@@ -151,7 +129,6 @@ inputs:
       10  0   5   10
       4 integers>=0: minimum allowed distance to other junctions' donor/acceptor
       does not apply to annotated junctions
-
   parametersFiles:
     type: string?
     inputBinding:
@@ -160,7 +137,6 @@ inputs:
     doc: |
       string: name of a user-defined parameters file, "-": none. Can only be
       defined on the command line.
-
   limitSjdbInsertNsj:
     type: int?
     inputBinding:
@@ -171,7 +147,6 @@ inputs:
       int>=0: maximum number of junction to be inserted to the genome on the fly at
       the mapping stage, including those from annotations and those detected in the
       1st step of the 2-pass run
-
   seedSearchLmax:
     type: int?
     inputBinding:
@@ -180,7 +155,6 @@ inputs:
     doc: |
       0
       int>=0: defines the maximum length of the seeds, if =0 max seed lengthis infinite
-
   bamRemoveDuplicatesMate2basesN:
     type: int?
     inputBinding:
@@ -189,7 +163,6 @@ inputs:
     doc: |
       int>0: number of bases from the 5' of mate 2 to use in collapsing (e.g. for
       RAMPAGE)
-
   alignTranscriptsPerWindowNmax:
     type: int?
     inputBinding:
@@ -198,7 +171,6 @@ inputs:
     doc: |
       100
       int>0: max number of transcripts per window
-
   outFilterIntronMotifs:
     type: string?
     inputBinding:
@@ -210,7 +182,6 @@ inputs:
       None                           ... no filtering
       RemoveNoncanonical             ... filter out alignments that contain non-canonical junctions
       RemoveNoncanonicalUnannotated  ... filter out alignments that contain non-canonical unannotated junctions when using annotated splice junctions database. The annotated non-canonical junctions will be kept.
-
   winAnchorDistNbins:
     type: int?
     inputBinding:
@@ -220,7 +191,6 @@ inputs:
       9
       int>0: max number of bins between two anchors that allows aggregation of anchors
       into one window
-
   chimScoreDropMax:
     type: int?
     inputBinding:
@@ -230,7 +200,6 @@ inputs:
       20
       int>=0: max drop (difference) of chimeric score (the sum of scores of all chimeric
       segements) from the read length
-
   outSAMattrRGline:
     type: string?
     inputBinding:
@@ -242,7 +211,6 @@ inputs:
       xxx will be added as RG tag to each output alignment. Any spaces in the tag values have to be double quoted.
       Comma separated RG lines correspons to different (comma separated) input files in --readFilesIn. Commas have to be surrounded by spaces, e.g.
       --outSAMattrRGline ID:xxx , ID:zzz "DS:z z" , ID:yyy DS:yyyy
-
   chimOutType:
     type: string?
     inputBinding:
@@ -256,7 +224,6 @@ inputs:
       2nd word:
       WithinBAM HardClip  ... hard-clipping in the CIGAR for supplemental chimeric alignments (defaultif no 2nd word is present)
       WithinBAM SoftClip  ... soft-clipping in the CIGAR for supplemental chimeric alignments
-
   runDirPerm:
     type: string?
     inputBinding:
@@ -267,7 +234,6 @@ inputs:
       string: permissions for the directories created at the run-time.
       User_RWX ... user-read/write/execute
       All_RWX  ... all-read/write/execute (same as chmod 777)
-
   chimMainSegmentMultNmax:
     type: int?
     inputBinding:
@@ -275,7 +241,6 @@ inputs:
       prefix: --chimMainSegmentMultNmax
     doc: |
       int>=1: maximum number of multi-alignments for the main chimeric segment. =1 will prohibit multimapping main segments.
-
   outQSconversionAdd:
     type: int?
     inputBinding:
@@ -283,7 +248,6 @@ inputs:
       prefix: --outQSconversionAdd
     doc: |
       int: add this number to the quality score (e.g. to convert from Illumina to Sanger, use -31)
-
   outSAMattrIHstart:
     type: int?
     inputBinding:
@@ -293,7 +257,6 @@ inputs:
       1
       int>=0:                     start value for the IH attribute. 0 may be required
       by some downstream software, such as Cufflinks or StringTie.
-
   chimSegmentMin:
     type: int?
     inputBinding:
@@ -302,7 +265,6 @@ inputs:
     doc: |
       0
       int>=0: minimum length of chimeric segment length, if ==0, no chimeric output
-
   scoreGapATAC:
     type: boolean?
     inputBinding:
@@ -311,7 +273,6 @@ inputs:
     doc: |
       -8
       AT/AC  and GT/AT junction penalty  (in addition to scoreGap)
-
   readMatesLengthsIn:
     type: string?
     inputBinding:
@@ -320,7 +281,6 @@ inputs:
     doc: |
       string: Equal/NotEqual - lengths of names,sequences,qualities for both
       mates are the same  / not the same. NotEqual is safe in all situations.
-
   seedPerReadNmax:
     type: int?
     inputBinding:
@@ -329,7 +289,6 @@ inputs:
     doc: |
       1000
       int>0: max number of seeds per read
-
   outWigType:
     type: string?
     inputBinding:
@@ -345,7 +304,6 @@ inputs:
       2nd word:
       read1_5p   ... signal from only 5' of the 1st read, useful for CAGE/RAMPAGE etc
       read2      ... signal from only 2nd read
-
   winFlankNbins:
     type: int?
     inputBinding:
@@ -355,7 +313,6 @@ inputs:
       4
       int>0: log2(winFlank), where win Flank is the size of the left and right flanking
       regions for each window
-
   sjdbGTFfeatureExon:
     type: string?
     inputBinding:
@@ -365,7 +322,6 @@ inputs:
       exon
       string: feature type in GTF file to be used as exons for building
       transcripts
-
   genomeDir:
     type: Directory
     inputBinding:
@@ -373,7 +329,6 @@ inputs:
       prefix: --genomeDir
     doc: |
       string: path to the directory where genome files are stored
-
   chimFilter:
     type: string?
     inputBinding:
@@ -384,7 +339,6 @@ inputs:
       string(s): different filters for chimeric alignments
       None ... no filtering
       banGenomicN ... Ns are not allowed in the genome sequence around the chimeric junction
-
   outSAMunmapped:
     type: string?
     inputBinding:
@@ -398,7 +352,6 @@ inputs:
         2nd word:
           KeepPairs ... record unmapped mate for each alignment, and, in case of unsorted output, keep it adjacent to its mapped mate.
           Only affects multi-mapping reads
-
   seedSearchStartLmax:
     type: int?
     inputBinding:
@@ -408,7 +361,6 @@ inputs:
       50
       int>0: defines the search start point through the read - the read is split into
       pieces no longer than this value
-
   limitIObufferSize:
     type: int?
     inputBinding:
@@ -417,7 +369,6 @@ inputs:
     doc: |
       150000000
       int>0: max available buffers size (bytes) for input/output, per thread
-
   sjdbScore:
     type: int?
     inputBinding:
@@ -426,7 +377,6 @@ inputs:
     doc: |
       2
       int: extra alignment score for alignmets that cross database junctions
-
   alignSJDBoverhangMin:
     type: int?
     inputBinding:
@@ -435,7 +385,6 @@ inputs:
     doc: |
       3
       int>0: minimum overhang (i.e. block size) for annotated (sjdb) spliced alignments
-
   outSAMstrandField:
     type: string?
     inputBinding:
@@ -446,7 +395,6 @@ inputs:
       string: Cufflinks-like strand field flag
       None        ... not used
       intronMotif ... strand derived from the intron motif. Reads with inconsistent and/or non-canonical introns are filtered out.
-
   alignMatesGapMax:
     type: int?
     inputBinding:
@@ -455,7 +403,6 @@ inputs:
     doc: |
       0
       maximum gap between two mates, if 0, max intron gap will be determined by (2^winBinNbits)*winAnchorDistNbins
-
   clip3pNbases:
     type: int?
     inputBinding:
@@ -464,7 +411,6 @@ inputs:
     doc: |
       int(s): number(s) of bases to clip from 3p of each mate. If one value is
       given, it will be assumed the same for both mates.
-
   outFilterMultimapNmax:
     type: int?
     inputBinding:
@@ -475,7 +421,6 @@ inputs:
       the read maps to no more loci than this value.
       Otherwise no alignments will be output, and the read will be counted as "mapped to too many loci"
       in the Log.final.out.
-
   outFileNamePrefix:
     type: string?
     inputBinding:
@@ -489,11 +434,10 @@ inputs:
               return self;
             }
         }
-    default: ""
+    default: ''
     doc: |
       string: output files name prefix (including full or relative path). Can
       only be defined on the command line.
-
   quantMode:
     type: string?
     inputBinding:
@@ -505,7 +449,6 @@ inputs:
       -                ... none
       TranscriptomeSAM ... output SAM/BAM alignments to transcriptome into a separate file
       GeneCounts       ... count reads per gene
-
   outFilterMismatchNoverLmax:
     type: float?
     inputBinding:
@@ -513,7 +456,6 @@ inputs:
       prefix: --outFilterMismatchNoverLmax
     doc: |
       float: alignment will be output only if its ratio of mismatches to *mapped* length is less than or equal to this value.
-
   sjdbGTFchrPrefix:
     type: string?
     inputBinding:
@@ -522,7 +464,6 @@ inputs:
     doc: |
       string: prefix for chromosome names in a GTF file (e.g. 'chr' for using
       ENSMEBL annotations with UCSC geneomes)
-
   clip3pAdapterSeq:
     type: string?
     inputBinding:
@@ -531,7 +472,6 @@ inputs:
     doc: |
       string(s): adapter sequences to clip from 3p of each mate.  If one value is
       given, it will be assumed the same for both mates.
-
   outBAMsortingThreadN:
     type: int?
     inputBinding:
@@ -540,7 +480,6 @@ inputs:
     doc: |
       int: >=0: number of threads for BAM sorting. 0 will default to
       min(6,--runThreadN).
-
   twopass1readsN:
     type: int?
     inputBinding:
@@ -549,7 +488,6 @@ inputs:
     doc: |
       int: number of reads to process for the 1st step. Use very large number (or
       default -1) to map all reads in the first step.
-
   outSJfilterIntronMaxVsReadN:
     type: boolean?
     inputBinding:
@@ -560,7 +498,6 @@ inputs:
       N integers>=0: maximum gap allowed for junctions supported by 1,2,3,,,N reads
       i.e. by default junctions supported by 1 read can have gaps <=50000b, by 2 reads: <=100000b, by 3 reads: <=200000. by >=4 reads any gap <=alignIntronMax
       does not apply to annotated junctions
-
   outSAMfilter:
     type: string?
     inputBinding:
@@ -571,7 +508,6 @@ inputs:
       string(s): filter the output into main SAM/BAM files
       KeepOnlyAddedReferences ... only keep the reads for which all alignments are to the extra reference sequences added with --genomeFastaFiles at the mapping stage.
       KeepAllAddedReferences ...  keep all alignments to the extra reference sequences added with --genomeFastaFiles at the mapping stage.
-
   outSAMheaderHD:
     type: boolean?
     inputBinding:
@@ -580,7 +516,6 @@ inputs:
     doc: |
       -
       strings: @HD (header) line of the SAM header
-
   chimScoreMin:
     type: int?
     inputBinding:
@@ -589,7 +524,6 @@ inputs:
     doc: |
       0
       int>=0: minimum total (summed) score of the chimeric segments
-
   outSJfilterOverhangMin:
     type: boolean?
     inputBinding:
@@ -599,7 +533,6 @@ inputs:
       30  12  12  12
       4 integers:    minimum overhang length for splice junctions on both sides for: (1) non-canonical motifs, (2) GT/AG and CT/AC motif, (3) GC/AG and CT/GC motif, (4) AT/AC and GT/AT motif. -1 means no output for that motif
       does not apply to annotated junctions
-
   scoreStitchSJshift:
     type: boolean?
     inputBinding:
@@ -608,7 +541,6 @@ inputs:
     doc: |
       1
       maximum score reduction while searching for SJ boundaries inthe stitching step
-
   readNameSeparator:
     type: string?
     inputBinding:
@@ -617,7 +549,6 @@ inputs:
     doc: |
       string(s): character(s) separating the part of the read names that will be
       trimmed in output (read name after space is always trimmed)
-
   scoreGapGCAG:
     type: boolean?
     inputBinding:
@@ -626,7 +557,6 @@ inputs:
     doc: |
       -4
       GC/AG and CT/GC junction penalty (in addition to scoreGap)
-
   scoreInsBase:
     type: boolean?
     inputBinding:
@@ -635,7 +565,6 @@ inputs:
     doc: |
       -2
       insertion extension penalty per base (in addition to scoreInsOpen)
-
   quantTranscriptomeBAMcompression:
     type: int?
     inputBinding:
@@ -644,7 +573,6 @@ inputs:
     doc: |
       int: -1 to 10  transcriptome BAM compression level, -1=default compression
       (6?), 0=no compression, 10=maximum compression
-
   seedMultimapNmax:
     type: int?
     inputBinding:
@@ -654,7 +582,6 @@ inputs:
       10000
       int>0: only pieces that map fewer than this value are utilized in the stitching
       procedure
-
   genomeLoad:
     type: string?
     inputBinding:
@@ -668,7 +595,6 @@ inputs:
       LoadAndExit     ... load genome into shared memory and exit, keeping the genome in memory for future runs
       Remove          ... do not map anything, just remove loaded genome from memory
       NoSharedMemory  ... do not use shared memory, each job will have its own private copy of the genome
-
   chimScoreJunctionNonGTAG:
     type: int?
     inputBinding:
@@ -677,7 +603,6 @@ inputs:
     doc: |
       -1
       int: penalty for a non-GT/AG chimeric junction
-
   sjdbInsertSave:
     type: string?
     inputBinding:
@@ -688,7 +613,6 @@ inputs:
       string: which files to save when sjdb junctions are inserted on the fly at the mapping step
       Basic ... only small junction / transcript files
       All   ... all files including big Genome, SA and SAindex - this will create a complete genome directory
-
   sjdbFileChrStartEnd:
     type: string?
     inputBinding:
@@ -698,7 +622,6 @@ inputs:
       string(s): path to the files with genomic coordinates (chr <tab> start <tab>
       end <tab> strand) for the splice junction introns. Multiple files can be supplied
       wand will be concatenated.
-
   genomeChrBinNbits:
     type: int?
     inputBinding:
@@ -707,18 +630,16 @@ inputs:
     doc: |
       int: =log2(chrBin), where chrBin is the size of the bins for genome
       storage: each chromosome will occupy an integer number of bins
-
   readFilesIn:
     type:
-      - File
-      - type: array
-        items: File
+    - File
+    - type: array
+      items: File
     inputBinding:
       position: 1
       prefix: --readFilesIn
     doc: |
       string(s): paths to files that contain input read1 (and, if needed,  read2)
-
   genomeSAsparseD:
     type: int?
     inputBinding:
@@ -727,7 +648,6 @@ inputs:
     doc: |
       int>0: suffux array sparsity, i.e. distance between indices: use bigger
       numbers to decrease needed RAM at the cost of mapping speed reduction
-
   scoreDelOpen:
     type: boolean?
     inputBinding:
@@ -736,7 +656,6 @@ inputs:
     doc: |
       -2
       deletion open penalty
-
   outSAMflagAND:
     type: int?
     inputBinding:
@@ -747,7 +666,6 @@ inputs:
       int: 0 to 65535: sam FLAG will be bitwise AND''d with this value, i.e. FLAG=FLAG
       & outSAMflagOR. This is applied after all flags have been set by STAR, but before
       outSAMflagOR. Can be used to unset specific bits that are not set otherwise.
-
   outSAMmultNmax:
     type: int?
     inputBinding:
@@ -758,7 +676,6 @@ inputs:
       int: max number of multiple alignments for a read that will be output to the
       SAM/BAM files. -1 ... all alignments (up to --outFilterMultimapNmax) will be
       output
-
   limitGenomeGenerateRAM:
     type: int?
     inputBinding:
@@ -767,7 +684,6 @@ inputs:
     doc: |
       31000000000
       int>0: maximum available RAM (bytes) for genome generation
-
   clip5pNbases:
     type: int?
     inputBinding:
@@ -776,7 +692,6 @@ inputs:
     doc: |
       int(s): number(s) of bases to clip from 5p of each mate. If one value is
       given, it will be assumed the same for both mates.
-
   outWigReferencesPrefix:
     type: string?
     inputBinding:
@@ -785,7 +700,6 @@ inputs:
     doc: |
       string: prefix matching reference names to include in the output wiggle
       file, e.g. "chr", default "-" - include all references
-
   alignTranscriptsPerReadNmax:
     type: int?
     inputBinding:
@@ -794,7 +708,6 @@ inputs:
     doc: |
       10000
       int>0: max number of different alignments per read to consider
-
   outFilterScoreMinOverLread:
     type: float?
     inputBinding:
@@ -804,7 +717,6 @@ inputs:
       0.66
       float: outFilterScoreMin normalized to read length (sum of mates'' lengths for
       paired-end reads)
-
   outSAMreadID:
     type: string?
     inputBinding:
@@ -815,7 +727,6 @@ inputs:
       string: read ID record type
       Standard ... first word (until space) from the FASTx read ID line, removing /1,/2 from the end
       Number   ... read number (index) in the FASTx file
-
   scoreDelBase:
     type: boolean?
     inputBinding:
@@ -824,7 +735,6 @@ inputs:
     doc: |
       -2
       deletion extension penalty per base (in addition to scoreDelOpen)
-
   readMapNumber:
     type: int?
     inputBinding:
@@ -834,7 +744,6 @@ inputs:
       -1
       int: number of reads to map from the beginning of the file
       -1: map all reads
-
   inputBAMfile:
     type: File?
     inputBinding:
@@ -843,7 +752,6 @@ inputs:
     doc: |
       string: path to BAM input file, to be used with --runMode
       inputAlignmentsFromBAM
-
   outSAMflagOR:
     type: int?
     inputBinding:
@@ -854,7 +762,6 @@ inputs:
       FLAG=FLAG | outSAMflagOR. This is applied after all flags have been set by
       STAR, and after outSAMflagAND. Can be used to set specific bits that are
       not set otherwise.
-
   sjdbGTFtagExonParentTranscript:
     type: string?
     inputBinding:
@@ -864,7 +771,6 @@ inputs:
       transcript_id
       string: tag name to be used as exons' transcript-parents (default
       "transcript_id" works for GTF files)
-
   alignEndsType:
     type: string?
     inputBinding:
@@ -877,7 +783,6 @@ inputs:
       EndToEnd        ... force end-to-end read alignment, do not soft-clip
       Extend5pOfRead1 ... fully extend only the 5p of the read1, all other ends: local alignment
       Extend5pOfReads12 ... fully extend only the 5p of the both read1 and read2, all other ends: local alignment
-
   winReadCoverageRelativeMin:
     type: float?
     inputBinding:
@@ -885,7 +790,6 @@ inputs:
       prefix: --winReadCoverageRelativeMin
     doc: |
       float>=0: minimum relative coverage of the read sequence by the seeds in a window, for STARlong algorithm only.
-
   winReadCoverageBasesMin:
     type: int?
     inputBinding:
@@ -893,7 +797,6 @@ inputs:
       prefix: --winReadCoverageBasesMin
     doc: |
       int>0: minimum number of bases covered by the seeds in a window , for STARlong algorithm only.
-
   alignEndsProtrude:
     type: string?
     inputBinding:
@@ -907,7 +810,6 @@ inputs:
         2nd word: string:
           ConcordantPair ... report alignments with non-zero protrusion as concordant pairs
           DiscordantPair ... report alignments with non-zero protrusion as discordant pairs
-
   sjdbGTFtagExonParentGene:
     type: string?
     inputBinding:
@@ -917,7 +819,6 @@ inputs:
       gene_id
       string: tag name to be used as exons'' gene-parents (default "gene_id" works
       for GTF files)
-
   outFilterMatchNminOverLread:
     type: float?
     inputBinding:
@@ -927,7 +828,6 @@ inputs:
       0.66
       float: outFilterMatchNmin normalized to read length (sum of mates'' lengths
       for paired-end reads)
-
   alignSplicedMateMapLminOverLmate:
     type: float?
     inputBinding:
@@ -936,7 +836,6 @@ inputs:
     doc: |
       0.66
       float>0: alignSplicedMateMapLmin normalized to mate length
-
   outSJfilterReads:
     type: string?
     inputBinding:
@@ -947,7 +846,6 @@ inputs:
       string: which reads to consider for collapsed splice junctions output
       All: all reads, unique- and multi-mappers
       Unique: uniquely mapping reads only
-
   scoreGap:
     type: int?
     inputBinding:
@@ -956,7 +854,6 @@ inputs:
     doc: |
       0
       int: splice junction penalty (independent on intron motif)
-
   outWigNorm:
     type: string?
     inputBinding:
@@ -967,7 +864,6 @@ inputs:
       string: type of normalization for the signal
       RPM    ... reads per million of mapped reads
       None   ... no normalization, "raw" counts
-
   threads:
     type: int?
     inputBinding:
@@ -976,7 +872,6 @@ inputs:
     doc: |
       1
       int: number of threads to run STAR
-
   outSAMprimaryFlag:
     type: string?
     inputBinding:
@@ -987,7 +882,6 @@ inputs:
       string: which alignments are considered primary - all others will be marked with 0x100 bit in the FLAG
       OneBestScore ... only one alignment with the best score is primary
       AllBestScore ... all alignments with the best score are primary
-
   alignSJoverhangMin:
     type: int?
     inputBinding:
@@ -996,7 +890,6 @@ inputs:
     doc: |
       5
       int>0: minimum overhang (i.e. block size) for spliced alignments
-
   chimJunctionOverhangMin:
     type: int?
     inputBinding:
@@ -1005,7 +898,6 @@ inputs:
     doc: |
       20
       int>=0: minimum overhang for a chimeric junction
-
   bamRemoveDuplicatesType:
     type: string?
     inputBinding:
@@ -1016,7 +908,6 @@ inputs:
       -                       ... no duplicate removal/marking
       UniqueIdentical         ... mark all multimappers, and duplicate unique mappers. The coordinates, FLAG, CIGAR must be identical
       UniqueIdenticalNotMulti  ... mark duplicate unique mappers but not multimappers.
-
   seedNoneLociPerWindow:
     type: int?
     inputBinding:
@@ -1025,7 +916,6 @@ inputs:
     doc: |
       10
       nint>0: max number of one seed loci per window
-
   sjdbGTFfile:
     type: File?
     inputBinding:
@@ -1033,7 +923,6 @@ inputs:
       prefix: --sjdbGTFfile
     doc: |
       string: path to the GTF file with annotations
-
   alignWindowsPerReadNmax:
     type: int?
     inputBinding:
@@ -1042,7 +931,6 @@ inputs:
     doc: |
       10000
       int>0: max number of windows per read
-
   sysShell:
     type: string?
     inputBinding:
@@ -1051,7 +939,6 @@ inputs:
     doc: |
       string: path to the shell binary, preferrably bash, e.g. /bin/bash.
       - ... the default shell is executed, typically /bin/sh. This was reported to fail on some Ubuntu systems - then you need to specify path to bash.
-
   outSJfilterCountUniqueMin:
     type: boolean?
     inputBinding:
@@ -1063,7 +950,6 @@ inputs:
       motif, (4) AT/AC and GT/AT motif. -1 means no output for that motif\nJunctions
       are output if one of outSJfilterCountUniqueMin OR outSJfilterCountTotalMin
       conditions are satisfied\ndoes not apply to annotated junctions
-
   outFilterMultimapScoreRange:
     type: int?
     inputBinding:
@@ -1072,7 +958,6 @@ inputs:
     doc: |
       1
       int: the score range below the maximum score for multimapping alignments
-
   alignSoftClipAtReferenceEnds:
     type: string?
     inputBinding:
@@ -1083,7 +968,6 @@ inputs:
       string: allow the soft-clipping of the alignments past the end of the chromosomes
       Yes ... allow
       No  ... prohibit, useful for compatibility with Cufflinks
-
   outSAMmode:
     type: string
     default: Full
@@ -1095,7 +979,6 @@ inputs:
       None ... no SAM output
       Full ... full SAM output
       NoQS ... full SAM but without quality scores
-
   outFilterType:
     type: string?
     inputBinding:
@@ -1106,7 +989,6 @@ inputs:
       string: type of filtering
       Normal  ... standard filtering using only current alignment
       BySJout ... keep only those reads that contain junctions that passed filtering into SJ.out.tab
-
   alignIntronMin:
     type: int?
     inputBinding:
@@ -1116,7 +998,6 @@ inputs:
       21
       minimum intron size: genomic gap is considered intron if its length>=alignIntronMin,
       otherwise it is considered Deletion
-
   sjdbOverhang:
     type: int?
     inputBinding:
@@ -1126,7 +1007,6 @@ inputs:
       100
       int>0: length of the donor/acceptor sequence on each side of the junctions,
       ideally = (mate_length - 1)
-
   alignIntronMax:
     type: int?
     inputBinding:
@@ -1135,7 +1015,6 @@ inputs:
     doc: |
       0
       maximum intron size, if 0, max intron size will be determined by (2^winBinNbits)*winAnchorDistNbins
-
   limitOutSJcollapsed:
     type: int?
     inputBinding:
@@ -1144,12 +1023,13 @@ inputs:
     doc: |
       1000000
       int>0: max number of collapsed junctions
-
   outSAMtype:
     type:
       type: array
       items: string
-    default: [BAM, Unsorted]
+    default:
+    - BAM
+    - Unsorted
     inputBinding:
       position: 1
       prefix: --outSAMtype
@@ -1162,7 +1042,6 @@ inputs:
       2nd, 3rd:
       Unsorted           ... standard unsorted
       SortedByCoordinate ... sorted by coordinate. This option will allocate extra memory for sorting which can be specified by --limitBAMsortRAM.
-
   scoreInsOpen:
     type: boolean?
     inputBinding:
@@ -1171,7 +1050,6 @@ inputs:
     doc: |
       -2
       insertion open penalty
-
   outSAMmapqUnique:
     type: int?
     inputBinding:
@@ -1180,7 +1058,6 @@ inputs:
     doc: |
       255
       int: 0 to 255: the MAPQ value for unique mappers
-
   genomeSAindexNbases:
     type: int?
     inputBinding:
@@ -1189,7 +1066,6 @@ inputs:
     doc: |
       int: length (bases) of the SA pre-indexing string. Typically between 10 and
       15. Longer strings will use much more memory, but allow faster searches.
-
   winAnchorMultimapNmax:
     type: int?
     inputBinding:
@@ -1198,7 +1074,6 @@ inputs:
     doc: |
       50
       int>0: max number of loci anchors are allowed to map to
-
   limitOutSAMoneReadBytes:
     type: int?
     inputBinding:
@@ -1207,7 +1082,6 @@ inputs:
     doc: |
       100000
       int>0: max size of the SAM record for one read. Recommended value: >(2*(LengthMate1+LengthMate2+100)*outFilterMultimapNmax
-
   seedPerWindowNmax:
     type: int?
     inputBinding:
@@ -1216,7 +1090,6 @@ inputs:
     doc: |
       50
       int>0: max number of seeds per window
-
   readFilesCommand:
     type: string?
     inputBinding:
@@ -1225,7 +1098,6 @@ inputs:
     doc: |
       string(s): command line to execute for each of the input file. This command should generate FASTA or FASTQ text and send it to stdout
       For example: zcat - to uncompress .gz files, bzcat - to uncompress .bz2 files, etc.
-
   outStd:
     type: string
     default: Log
@@ -1240,7 +1112,6 @@ inputs:
       BAM_Unsorted           ... alignments in BAM format, unsorted. Requires --outSAMtype BAM Unsorted
       BAM_SortedByCoordinate ... alignments in BAM format, unsorted. Requires --outSAMtype BAM SortedByCoordinate
       BAM_Quant              ... alignments to transcriptome in BAM format, unsorted. Requires --quantMode TranscriptomeSAM
-
   outSAMheaderCommentFile:
     type: string?
     inputBinding:
@@ -1249,7 +1120,6 @@ inputs:
     doc: |
       -
       string: path to the file with @CO (comment) lines of the SAM header
-
   outFilterMismatchNoverReadLmax:
     type: float?
     inputBinding:
@@ -1259,7 +1129,6 @@ inputs:
       1
       float: alignment will be output only if its ratio of mismatches to *read* length
       is less than this value
-
   outWigStrand:
     type: string?
     inputBinding:
@@ -1270,7 +1139,6 @@ inputs:
       string: strandedness of wiggle/bedGraph output
       Stranded   ...  separate strands, str1 and str2
       Unstranded ...  collapsed strands
-
   outSJfilterCountTotalMin:
     type: boolean?
     inputBinding:
@@ -1282,7 +1150,6 @@ inputs:
       GC/AG and CT/GC motif, (4) AT/AC and GT/AT motif. -1 means no output for that
       motif\nJunctions are output if one of outSJfilterCountUniqueMin OR outSJfilterCountTotalMin
       conditions are satisfied\ndoes not apply to annotated junctions
-
   scoreGenomicLengthLog2scale:
     type: boolean?
     inputBinding:
@@ -1291,7 +1158,6 @@ inputs:
     doc: |
       -0.25
       extra score logarithmically scaled with genomic length of the alignment: scoreGenomicLengthLog2scale*log2(genomicLength)
-
   limitOutSJoneRead:
     type: int?
     inputBinding:
@@ -1300,7 +1166,6 @@ inputs:
     doc: |
       1000
       int>0: max number of junctions for one read (including all multi-mappers)
-
   runRNGseed:
     type: int?
     inputBinding:
@@ -1309,7 +1174,6 @@ inputs:
     doc: |
       777
       int: random number generator seed.
-
   outTmpDir:
     type: string?
     inputBinding:
@@ -1318,7 +1182,6 @@ inputs:
     doc: |
       string: path to a directory that will be used as temporary by STAR. All contents of this directory will be removed!
       - the temp directory will default to outFileNamePrefix_STARtmp
-
   outFilterScoreMin:
     type: int?
     inputBinding:
@@ -1327,13 +1190,14 @@ inputs:
     doc: |
       0
       int: alignment will be output only if its score is higher than or equal to this value
-
   outReadsUnmapped:
     type:
-      - "null"
-      - type: enum
-        name: "unmapped"
-        symbols: ['None','Fastx']
+    - 'null'
+    - type: enum
+      name: unmapped
+      symbols:
+      - None
+      - Fastx
     inputBinding:
       position: 1
       prefix: --outReadsUnmapped
@@ -1342,7 +1206,6 @@ inputs:
       string: output of unmapped and partially mapped (i.e. mapped only one mate of a paired end read) reads in separate file(s).
       None    ... no output
       Fastx   ... output in separate fasta/fastq files, Unmapped.out.mate1/2
-
   outBAMcompression:
     type: int
     default: 10
@@ -1352,7 +1215,6 @@ inputs:
     doc: |
       int: -1 to 10  BAM compression level, -1=default compression (6?), 0=no
       compression, 10=maximum compression
-
   limitBAMsortRAM:
     type: int?
     inputBinding:
@@ -1362,7 +1224,6 @@ inputs:
       int>=0: maximum available RAM for sorting BAM. If =0, it will be set to the
       genome index size. 0 value can only be used with --genomeLoad
       NoSharedMemory option.
-
   seedSearchStartLmaxOverLread:
     type: float?
     inputBinding:
@@ -1372,7 +1233,6 @@ inputs:
       1.0
       float: seedSearchStartLmax normalized to read length (sum of mates'' lengths
       for paired-end reads)
-
   chimScoreSeparation:
     type: int?
     inputBinding:
@@ -1381,7 +1241,6 @@ inputs:
     doc: |
       int>=0: minimum difference (separation) between the best chimeric score and
       the next one
-
   outFilterMismatchNmax:
     type: int?
     inputBinding:
@@ -1390,7 +1249,6 @@ inputs:
     doc: |
       10
       int: alignment will be output only if it has no more mismatches than this value
-
   chimSegmentReadGapMax:
     type: int?
     inputBinding:
@@ -1399,7 +1257,6 @@ inputs:
     doc: |
       0
       int>=0: maximum gap in the read sequence between chimeric segments
-
   alignSplicedMateMapLmin:
     type: int?
     inputBinding:
@@ -1408,113 +1265,57 @@ inputs:
     doc: |
       0
       int>0: minimum mapped length for a read mate that is spliced
-
 outputs:
   aligned_file:
     type: File
     outputBinding:
-      glob: "*Aligned.out*"
-
+      glob: '*Aligned.out*'
   unmapped_mate_1_file:
     type: File?
     outputBinding:
-      glob: "*Unmapped.out.mate1*"
-
+      glob: '*Unmapped.out.mate1*'
   unmapped_mate_2_file:
     type: File?
     outputBinding:
-      glob: "*Unmapped.out.mate2*"
-
+      glob: '*Unmapped.out.mate2*'
   log_out:
     type: File?
     outputBinding:
-      glob: "*Log.out*"
-
+      glob: '*Log.out*'
   log_progress:
     type: File?
     outputBinding:
-      glob: "*Log.progress.out*"
-
+      glob: '*Log.progress.out*'
   log_std:
     type: File?
     outputBinding:
-      glob: "*Log.std.out*"
-
+      glob: '*Log.std.out*'
   log_final:
     type: File?
     outputBinding:
-      glob: "*Log.final.out*"
-
+      glob: '*Log.final.out*'
   log_sj:
     type: File?
     outputBinding:
-      glob: "*SJ.out.tab*"
-
+      glob: '*SJ.out.tab*'
   uniquely_mapped_reads_number:
     type: int?
     outputBinding:
       loadContents: true
-      glob: "*Log.final.out*"
+      glob: '*Log.final.out*'
       outputEval: |
         ${
           var uniquelyMappedReadsNumberRegex = /Uniquely mapped reads number.*/;
           return parseInt(self[0].contents.match(uniquelyMappedReadsNumberRegex)[0].split(/\|\t/g)[1]);
         }
-
-baseCommand: [STAR]
-arguments: ["--runMode", "alignReads"]
-
-
-$namespaces:
-  s: http://schema.org/
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "star-alignreads"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/star-alignreads.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:mainEntity:
-  $import: ./metadata/star-metadata.yaml
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-
+baseCommand:
+- STAR
+arguments:
+- --runMode
+- alignReads
 doc: |
   Tool runs STAR alignReads.
 
   `default_output_name_prefix` function returns output files prefix if `outFileNamePrefix` is not set. By default prefix
   is equal to basename of `readFilesIn`.
-
-s:about: |
-  Usage: STAR  [options]... --genomeDir REFERENCE   --readFilesIn R1.fq R2.fq
-
-
+label: star-alignreads

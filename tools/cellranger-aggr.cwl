@@ -1,15 +1,9 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
-
 requirements:
 - class: InlineJavascriptRequirement
   expressionLib:
-  - var get_label = function(input_array, i) {
-        var rootname = input_array[i].basename.split('.').slice(0,-1).join('.');
-        rootname = (rootname=="")?input_array[i].basename:rootname;
-        return inputs.gem_well_labels?inputs.gem_well_labels[i].replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"):rootname;
-    };
+  - var get_label = function(input_array, i) { var rootname = input_array[i].basename.split('.').slice(0,-1).join('.'); rootname = (rootname=="")?input_array[i].basename:rootname; return inputs.gem_well_labels?inputs.gem_well_labels[i].replace(/\t|\s|\[|\]|\>|\<|,|\./g, "_"):rootname; };
 - class: InitialWorkDirRequirement
   listing: |
     ${
@@ -51,70 +45,61 @@ requirements:
         }
       ];
     }
-
-
 hints:
 - class: DockerRequirement
   dockerPull: cumulusprod/cellranger:8.0.1
-
-
 inputs:
-  
   molecule_info_h5:
     type:
-    - "null"
-    -  File[]
+    - 'null'
+    - File[]
     doc: |
       Array of molecule-level information files in HDF5 format.
       Outputs from "cellranger count" command. Either
       molecule_info_h5 or filtered_data_folder should be
       provided. If both inputs are provided - use molecule_info_h5.
-
   filtered_data_folder:
     type:
-    - "null"
+    - 'null'
     - Directory[]
     doc: |
       Array of folders containing filtered data, i.e., only
       cell-associated barcodes. Outputs from "cellranger multi"
       command. Either molecule_info_h5 or filtered_data_folder should
       be provided. If both inputs are provided - use molecule_info_h5.
-
   gem_well_labels:
     type:
-    - "null"
+    - 'null'
     - string[]
     doc: |
       Array of GEM well identifiers to be used for labeling purposes only.
       If not provided use rootnames of files from the molecule_info_h5 or
       directories from filtered_data_folder inputs. If labels are not
       unique, cellranger will fails.
-
   normalization_mode:
     type:
-    - "null"
+    - 'null'
     - type: enum
-      name: "normalization"
+      name: normalization
       symbols:
-      - "none"
-      - "mapped"
+      - none
+      - mapped
     inputBinding:
       position: 5
-      prefix: "--normalize"
+      prefix: --normalize
     doc: |
       Library depth normalization mode: mapped, none.
       Default: mapped
-
   clonotype_grouping:
     type:
-    - "null"
+    - 'null'
     - type: enum
-      name: "clonotype_grouping"
+      name: clonotype_grouping
       symbols:
-      - "same_donor_different_origins"
-      - "same_donor_and_origin"
-      - "different_donors"
-    default: "different_donors"
+      - same_donor_different_origins
+      - same_donor_and_origin
+      - different_donors
+    default: different_donors
     doc: |
       When cellranger aggr is called with cellranger multi outputs, there are three
       ways it can process the datasets depending on the combination of donor and
@@ -133,201 +118,137 @@ inputs:
       3. If two cells came from different donors, then Cell Ranger will not put them in the
          same clonotype.
       Ignored if cellranger aggr is run with molecule_info_h5 inputs.
-
   threads:
     type: int?
     inputBinding:
       position: 6
-      prefix: "--localcores"
+      prefix: --localcores
     doc: |
       Set max cores the pipeline may request at one time.
       Default: all available
-
   memory_limit:
     type: int?
     inputBinding:
       position: 7
-      prefix: "--localmem"
+      prefix: --localmem
     doc: |
       Set max GB the pipeline may request at one time
       Default: all available
-
   virt_memory_limit:
     type: int?
     inputBinding:
       position: 8
-      prefix: "--localvmem"
+      prefix: --localvmem
     doc: |
       Set max virtual address space in GB for the pipeline
       Default: all available
-
-
 outputs:
-
   web_summary_report:
     type: File
     outputBinding:
-      glob: "aggregated/outs/web_summary.html"
+      glob: aggregated/outs/web_summary.html
     doc: |
       Aggregated run summary metrics and charts in HTML format
-
   metrics_summary_report_json:
     type: File
     outputBinding:
-      glob: "aggregated/outs/count/summary.json"
+      glob: aggregated/outs/count/summary.json
     doc: |
       Aggregated RNA run summary metrics in JSON format
-  
   secondary_analysis_report_folder:
     type: Directory
     outputBinding:
-      glob: "aggregated/outs/count/analysis"
+      glob: aggregated/outs/count/analysis
     doc: |
       Folder with secondary analysis of RNA data including dimensionality reduction,
       cell clustering, and differential expression
-
   filtered_feature_bc_matrix_folder:
     type: Directory
     outputBinding:
-      glob: "aggregated/outs/count/filtered_feature_bc_matrix"
+      glob: aggregated/outs/count/filtered_feature_bc_matrix
     doc: |
       Folder with aggregated filtered feature-barcode matrices
       containing only cellular barcodes in MEX format
-
   filtered_feature_bc_matrix_h5:
     type: File
     outputBinding:
-      glob: "aggregated/outs/count/filtered_feature_bc_matrix.h5"
+      glob: aggregated/outs/count/filtered_feature_bc_matrix.h5
     doc: |
       Filtered feature-barcode matrices containing only cellular
       barcodes in HDF5 format.
-
   aggregation_metadata:
     type: File
     outputBinding:
-      glob: "aggregated/outs/aggregation.csv"
+      glob: aggregated/outs/aggregation.csv
     doc: |
       Copy of the input aggregation CSV file
-
   grouping_data:
     type: File
     outputBinding:
-      glob: "grouping.tsv"
+      glob: grouping.tsv
     doc: |
       Example of TSV file to define datasets grouping
-
   loupe_browser_track:
     type: File
     outputBinding:
-      glob: "aggregated/outs/count/cloupe.cloupe"
+      glob: aggregated/outs/count/cloupe.cloupe
     doc: |
       Loupe Browser visualization and analysis file
-
   airr_rearrangement_tsv:
     type: File?
     outputBinding:
-      glob: "aggregated/outs/vdj_*/airr_rearrangement.tsv"
+      glob: aggregated/outs/vdj_*/airr_rearrangement.tsv
     doc: |
       Annotated contigs and consensus sequences of V(D)J
       rearrangements in the AIRR format. It includes only
       viable cells identified by both V(D)J and RNA algorithms.
-
   clonotypes_csv:
     type: File?
     outputBinding:
-      glob: "aggregated/outs/vdj_*/clonotypes.csv"
+      glob: aggregated/outs/vdj_*/clonotypes.csv
     doc: |
       CSV file with high-level descriptions of each clonotype
-
   consensus_sequences_fasta:
     type: File?
     outputBinding:
-      glob: "aggregated/outs/vdj_*/consensus.fasta"
+      glob: aggregated/outs/vdj_*/consensus.fasta
     doc: |
       The consensus sequence of each assembled contig.
-
   consensus_annotations_csv:
     type: File?
     outputBinding:
-      glob: "aggregated/outs/vdj_*/consensus_annotations.csv"
+      glob: aggregated/outs/vdj_*/consensus_annotations.csv
     doc: |
       CSV file with high-level and detailed annotations of each clonotype
       consensus sequence.
-
   filtered_contig_annotations_csv:
     type: File?
     outputBinding:
-      glob: "aggregated/outs/vdj_*/filtered_contig_annotations.csv"
+      glob: aggregated/outs/vdj_*/filtered_contig_annotations.csv
     doc: |
       CSV file with high-level annotations of each high-confidence contig from
       cell-associated barcodes
-
   loupe_vdj_browser_track:
     type: File?
     outputBinding:
-      glob: "aggregated/outs/vdj_*/vloupe.vloupe"
+      glob: aggregated/outs/vdj_*/vloupe.vloupe
     doc: |
       Loupe V(D)J Browser visualization and analysis file
-
   stdout_log:
     type: stdout
-
   stderr_log:
     type: stderr
-
-
-baseCommand: ["cellranger", "aggr", "--disable-ui", "--id", "aggregated", "--csv", "metadata.csv"]
-
-
+baseCommand:
+- cellranger
+- aggr
+- --disable-ui
+- --id
+- aggregated
+- --csv
+- metadata.csv
 stdout: cellranger_aggr_stdout.log
 stderr: cellranger_aggr_stderr.log
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-label: "Cell Ranger Aggregate (RNA, RNA+VDJ)"
-s:name: "Cell Ranger Aggregate (RNA, RNA+VDJ)"
-s:alternateName: "Combines outputs from multiple runs of either Cell Ranger Count (RNA) or Cell Ranger Count (RNA+VDJ) pipelines"
-
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/cellranger-aggr.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-
-
+label: Cell Ranger Aggregate (RNA, RNA+VDJ)
 doc: |
   Cell Ranger Aggregate (RNA, RNA+VDJ)
 
@@ -361,37 +282,3 @@ doc: |
   - Batch correction caused by different versions of the Single Cell Gene
     Expression chemistry is not supported as the generated metadata file
     for merging molecule_info_h5 inputs doesn't include "batch" field.
-
-
-s:about: |
-  Aggregate data from multiple Cell Ranger runs
-
-  Usage: cellranger aggr [OPTIONS] --id <ID> --csv <CSV>
-
-  Options:
-        --id <ID>               A unique run id and output folder name [a-zA-Z0-9_-]+
-        --description <TEXT>    Sample description to embed in output files [default: ]
-        --csv <CSV>             Path of CSV file enumerating 'cellranger count/vdj/multi' outputs
-        --normalize <MODE>      Library depth normalization mode [default: mapped] [possible values: mapped, none]
-        --nosecondary           Disable secondary analysis, e.g. clustering
-        --dry                   Do not execute the pipeline. Generate a pipeline invocation (.mro) file and stop
-        --min-crispr-umi <NUM>  Minimum CRISPR UMI threshold [default: 3]
-        --jobmode <MODE>        Job manager to use. Valid options: local (default), sge, lsf, slurm or path to a .template file.
-                                Search for help on "Cluster Mode" at support.10xgenomics.com for more details on configuring the
-                                pipeline to use a compute cluster
-        --localcores <NUM>      Set max cores the pipeline may request at one time. Only applies to local jobs
-        --localmem <NUM>        Set max GB the pipeline may request at one time. Only applies to local jobs
-        --localvmem <NUM>       Set max virtual address space in GB for the pipeline. Only applies to local jobs
-        --mempercore <NUM>      Reserve enough threads for each job to ensure enough memory will be available, assuming each core
-                                on your cluster has at least this much memory available. Only applies to cluster jobmodes
-        --maxjobs <NUM>         Set max jobs submitted to cluster at one time. Only applies to cluster jobmodes
-        --jobinterval <NUM>     Set delay between submitting jobs to cluster, in ms. Only applies to cluster jobmodes
-        --overrides <PATH>      The path to a JSON file that specifies stage-level overrides for cores and memory. Finer-grained
-                                than --localcores, --mempercore and --localmem. Consult https://support.10xgenomics.com/ for an
-                                example override file
-        --output-dir <PATH>     Output the results to this directory
-        --uiport <PORT>         Serve web UI at http://localhost:PORT
-        --disable-ui            Do not serve the web UI
-        --noexit                Keep web UI running after pipestance completes or fails
-        --nopreflight           Skip preflight checks
-    -h, --help                  Print help

@@ -1,15 +1,10 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
-
 requirements:
 - class: InlineJavascriptRequirement
 - class: DockerRequirement
   dockerPull: biowardrobe2/scidap:v0.0.3
-
-
 inputs:
-
   script:
     type: string?
     default: |
@@ -48,81 +43,31 @@ inputs:
       print TOTAL + "\t" + UNIQUE + "\t" + UNMAPPED + "\t" + MULTIMAPPED + "\t" + DISCARDED + "\t" + CPG + "\t" + CHG + "\t" + CHH + "\t" + ECPG + "\t" + ECHG + "\t" + ECHH
     inputBinding:
       position: 1
-    doc: "Python script to get TOTAL, ALIGNED, SUPPRESSED, USED values from log files"
-
+    doc: Python script to get TOTAL, ALIGNED, SUPPRESSED, USED values from log files
   alignment_report:
     type: File
     inputBinding:
       position: 6
-    doc: "Bismark generated alignment and methylation summary report"
-
+    doc: Bismark generated alignment and methylation summary report
   splitting_report:
     type: File
     inputBinding:
       position: 7
-    doc: "Bismark generated splitting report"
-
+    doc: Bismark generated splitting report
 outputs:
-
   collected_report_formatted:
     type: stdout
-    doc: "Combined Bismark alignment and splitting reports"
-
+    doc: Combined Bismark alignment and splitting reports
   mapped_reads:
     type: int
     outputBinding:
       loadContents: true
-      glob: "collected_report_formatted.tsv"
+      glob: collected_report_formatted.tsv
       outputEval: $(parseInt(self[0].contents.split('\n')[1].split('\t')[1]))
-
-
-stdout: "collected_report_formatted.tsv"
-baseCommand: [python, '-c']
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "python-get-stat-bismark"
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows/master/tools/python-get-stat-bismark.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-
+stdout: collected_report_formatted.tsv
+baseCommand:
+- python
+- -c
 doc: |
   Tool refactores Bismark alignment report to be displayed as Pie Chart
-
-s:about: |
-  Runs python code from the embeded script
+label: python-get-stat-bismark
