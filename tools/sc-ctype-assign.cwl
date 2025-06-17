@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.41
+  dockerPull: biowardrobe2/sc-tools:v0.0.42
 
 
 inputs:
@@ -721,6 +721,24 @@ outputs:
       Top gene markers.
       TSV format.
 
+  xpr_htmp_gct:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.gct"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      GCT format.
+
+  xpr_htmp_html:
+    type: File?
+    outputBinding:
+      glob: "*_xpr_htmp.html"
+    doc: |
+      Gene expression heatmap.
+      Top gene markers.
+      HTML format.
+
   gene_markers_tsv:
     type: File?
     outputBinding:
@@ -838,9 +856,9 @@ outputs:
       HTML format.
 
   human_log:
-    type: File
+    type: File?
     outputBinding:
-      glob: "*_hlog.txt"
+      glob: "error_report.txt"
     doc: |
       Human readable error log.
       TXT format.
@@ -857,7 +875,7 @@ arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_ctype_assign.R"]:"/usr/local/bin/sc_ctype_assign.R")
 
 
-stdout: sc_ctype_assign_stdout.log
+stdout: error_msg.txt
 stderr: sc_ctype_assign_stderr.log
 
 

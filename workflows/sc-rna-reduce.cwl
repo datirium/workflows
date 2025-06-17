@@ -168,15 +168,16 @@ inputs:
       cycle gene set is not provided.
       Default: "do not remove"
 
-  regress_genes:
+  remove_genes:
     type: string?
-    label: "Regress genes"
+    label: "Regex pattern to exclude genes from the list of most variable genes"
     default: null
     doc: |
-      Regex pattern to identify genes which
-      expression should be regressed as a
-      confounding source of variation.
-      Default: None
+      Regex pattern to identify the genes
+      which should be removed from the list
+      of the most variable genes, so they do
+      not impact neither integration nor PCA.
+      Default: none
 
   regress_mito_perc:
     type: boolean?
@@ -580,6 +581,14 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
+  sc_rna_reduce_human_log:
+    type: File?
+    outputSource: sc_rna_reduce/human_log
+    label: "Human readable error log"
+    doc: |
+      Human readable error log
+      from the sc_rna_reduce step.
+
   sc_rna_reduce_stdout_log:
     type: File
     outputSource: sc_rna_reduce/stdout_log
@@ -644,8 +653,8 @@ steps:
           }
       highly_var_genes_count: highly_var_genes_count
       regress_mito_perc: regress_mito_perc
-      regress_genes:
-        source: regress_genes
+      remove_genes:
+        source: remove_genes
         valueFrom: $(self==""?null:self)            # safety measure
       dimensions: dimensions
       verbose:
@@ -705,6 +714,7 @@ steps:
     - seurat_data_rds
     - seurat_data_cloupe
     - sc_report_html_file
+    - human_log
     - stdout_log
     - stderr_log
 

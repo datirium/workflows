@@ -26,7 +26,10 @@ requirements:
 
 "sd:upstream":
   sc_tools_sample:
+  - "sc-atac-reduce.cwl"
   - "sc-atac-cluster.cwl"
+  - "sc-rna-reduce.cwl"
+  - "sc-rna-cluster.cwl"
   - "sc-wnn-cluster.cwl"
   - "sc-ctype-assign.cwl"
   - "sc-rna-azimuth.cwl"
@@ -43,21 +46,41 @@ inputs:
 
   alias:
     type: string
-    label: "Experiment short name/alias"
+    label: "Analysis name"
     sd:preview:
       position: 1
 
   query_data_rds:
     type: File
-    label: "Experiment run through any pipeline related Single-cell ATAC-Seq"
+    label: "Single-cell Analysis with ATAC-Seq Datasets"
     doc: |
-      Path to the RDS file to load Seurat object from.
-      This file should include chromatin accessibility
-      information stored in the ATAC assay. Additionally
-      'rnaumap', and/or 'atacumap', and/or 'wnnumap'
-      dimensionality reductions should be present.
+      Analysis that includes single-cell
+      multiome RNA and ATAC-Seq or just
+      ATAC-Seq datasets run through either
+      "Single-Cell ATAC-Seq Dimensionality
+      Reduction Analysis", "Single-Cell
+      RNA-Seq Dimensionality Reduction
+      Analysis", "Single-Cell WNN Cluster
+      Analysis" or "Single-Cell RNA-Seq
+      Reference Mapping" pipeline at any
+      of the processing stages.
     "sd:upstreamSource": "sc_tools_sample/seurat_data_rds"
     "sd:localLabel": true
+
+  query_reduction:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "RNA"
+      - "ATAC"
+      - "WNN"
+      - "REF"                                # from the sc-rna-azimuth.cwl pipeline
+    default: "RNA"
+    label: "Dimensionality reduction"
+    doc: |
+      Dimensionality reduction to be used
+      for generating UMAP plots.
 
   atac_fragments_file:
     type: File
@@ -77,178 +100,298 @@ inputs:
 
   genome_type:
     type: string
-    label: "Genome"
+    label: "Genome type"
     doc: |
       Reference genome
     "sd:upstreamSource": "genome_indices/genome"
     "sd:localLabel": true
 
-  datasets_metadata:
-    type: File?
-    label: "Optional TSV/CSV file to extend metadata by dataset"
-    doc: |
-      Path to the TSV/CSV file to optionally extend Seurat
-      object metadata with categorical values using samples
-      identities. First column - 'library_id' should
-      correspond to all unique values from the 'new.ident'
-      column of the loaded Seurat object. If any of the
-      provided in this file columns are already present in
-      the Seurat object metadata, they will be overwritten.
-      When combined with --barcodes parameter, first the
-      metadata will be extended, then barcode filtering will
-      be applied. Default: no extra metadata is added
+  annotation_file:
+    type: File
+    "sd:upstreamSource": "genome_indices/annotation"
 
-  barcodes_data:
+  chrom_length_file:                                            # not used, but removing it prevents SciDAP from rerunning old samples. Keeping it for now.
     type: File?
-    label: "Optional TSV/CSV file to prefilter and extend metadata by barcodes. First column should be named as 'barcode'"
-    doc: |
-      Path to the TSV/CSV file to optionally prefilter and
-      extend Seurat object metadata by selected barcodes.
-      First column should be named as 'barcode'. If file
-      includes any other columns they will be added to the
-      Seurat object metadata ovewriting the existing ones if
-      those are present. Default: all cells used, no extra
-      metadata is added
+    "sd:upstreamSource": "genome_indices/chrom_length"
+
+  blacklist_regions_file:
+    type:
+      type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
+    "sd:upstreamSource": "genome_indices/genome"
 
   groupby:
     type: string?
     default: null
-    label: "Category to group cells for optional subsetting"
+    label: "Subsetting category (optional)"
     doc: |
-      Column from the Seurat object metadata to group cells
-      for optional subsetting when combined with --subset
-      parameter. May be one of the extra metadata columns
-      added with --metadata or --barcodes parameters.
-      Ignored if --subset is not set. Default: do not
-      subset, include all cells into analysis.
+      Single cell metadata column to group
+      cells for optional subsetting before
+      running differential accessibility analysis.
+      To group cells by dataset, use "dataset".
+      Custom groups can be defined based on
+      any single cell metadata added through
+      the "Datasets metadata (optional)" or
+      "Selected cell barcodes (optional)"
+      inputs. Default: do not subset cells
 
   subset:
     type: string?
     default: null
-    label: "List of values to subset cells from the selected category"
+    label: "Subsetting values (optional)"
     doc: |
-      Values from the column set with --groupby parameter to
-      subset cells before running differential binding
-      analysis. Ignored if --groupby is not provided.
-      Default: do not subset cells, include all of them.
+      Comma separated list of values from
+      the single cell metadata column
+      selected in "Subsetting category
+      (optional)" input. Ignored if grouping
+      category is not provided. Default: do
+      not subset cells
 
   splitby:
     type: string
-    label: "Category to split cell into two groups"
+    label: "Comparison category"
     doc: |
-      Column from the Seurat object metadata to split cells
-      into two groups to run --second vs --first
-      differential binding analysis. May be one of the extra
-      metadata columns added with --metadata or --barcodes
-      parameters.
+      Single cell metadata column to split
+      cells into two comparison groups before
+      running differential accessibility analysis.
+      To split cells by dataset, use "dataset".
+      Custom groups can be defined based on
+      any single cell metadata added through
+      the "Datasets metadata (optional)" or
+      "Selected cell barcodes (optional)"
+      inputs. The direction of comparison is
+      always "Second comparison group" vs
+      "First comparison group".
 
   first_cond:
     type: string
-    label: "Value from the selected category to define the first group of cells"
+    label: "First comparison group"
     doc: |
-      Value from the Seurat object metadata column set with
-      --splitby parameter to define the first group of cells
-      for differential binding analysis.
+      Value from the single cell metadata
+      column selected in "Comparison category"
+      input to define the first group of cells
+      for differential accessibility analysis.
 
   second_cond:
     type: string
-    label: "Value from the selected category to define the second group of cells"
+    label: "Second comparison group"
     doc: |
-      Value from the Seurat object metadata column set with
-      --splitby parameter to define the second group of
-      cells for differential binding analysis.
+      Value from the single cell metadata
+      column selected in "Comparison category"
+      input to define the second group of cells
+      for differential accessibility analysis.
 
   analysis_method:
     type:
     - "null"
     - type: enum
       symbols:
-      - "negative-binomial"          # (negbinom) Negative Binomial Generalized Linear Model (use FindMarkers with peaks from Seurat object)
-      - "poisson"                    # (poisson) Poisson Generalized Linear Model (use FindMarkers with peaks from Seurat object)
-      - "logistic-regression"        # (LR) Logistic Regression (use FindMarkers with peaks from Seurat object)
-      - "mast"                       # (MAST) MAST package (use FindMarkers with peaks from Seurat object)
-      - "manorm2"                    # call peaks for each group with MACS2, run MAnorm2
+      - "negative-binomial"                              # (negbinom) Negative Binomial Generalized Linear Model (use FindMarkers with peaks from Seurat object)
+      - "poisson"                                        # (poisson) Poisson Generalized Linear Model (use FindMarkers with peaks from Seurat object)
+      - "logistic-regression"                            # (LR) Logistic Regression (use FindMarkers with peaks from Seurat object)
+      - "mast"                                           # (MAST) MAST package (use FindMarkers with peaks from Seurat object)
+      - "manorm2-peaks-by-dataset"                       # call peaks for each dataset with MACS2, then run MAnorm2 with datasets
+      - "manorm2-peaks-by-comparison-category"           # call peaks for each comparison group with MACS2, then run MAnorm2 with datasets
+      - "diffbind-deseq-peaks-by-dataset"                # call peaks for each dataset with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-deseq-peaks-by-comparison-category"    # call peaks for each comparison group with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-edger-peaks-by-dataset"                # call peaks for each dataset with MACS2, then run DiffBind (EdgeR) with datasets
+      - "diffbind-edger-peaks-by-comparison-category"    # call peaks for each comparison group with MACS2, then run DiffBind (EdgeR) with datasets
     default: "logistic-regression"
-    label: "Test type to use in differential binding analysis"
+    label: "Statistical test"
     doc: |
-      Test type to use in differential binding analysis. For
-      all tests except manorm2, peaks present in the loaded
-      Seurat object will be used. If manorm2 test selected,
-      peaks will be called per group defined by --splitby
-      parameter. Default: logistic-regression
+      Statistical test to use in the
+      differential accessibility analysis.
+      Chromatin accessibility data will first
+      be filtered to include fragments from the
+      cells retained in the loaded single-cell
+      datasets after optional filtering by the
+      "Subsetting category/values" and/or
+      "Selected cell barcodes". The resulting
+      fragments will then be splitted by the
+      "Comparison category" and, if
+      "*-peaks-by-dataset" or
+      "*-peaks-by-comparison-category"
+      is selected, they will be aggregated to
+      the pseudo bulk form for peak calling
+      with MACS2, either by dataset or by
+      comparison category, respectively.
+      Othwerwise, the analysis will be run on
+      the cells level using peaks already
+      available in the loaded single-cell
+      datasets.
+      Default: logistic-regression
 
   maximum_padj:
     type: float?
     default: 0.05
-    label: "Maximum adjusted P-value to show in IGV"
+    label: "Maximum adjusted p-value"
     doc: |
-      In the exploratory visualization part of the analysis
-      output only differentially accessible regions with adjusted
-      P-value not bigger than this value. Default: 0.05
+      Maximum adjusted p-value threshold
+      for selecting differentially accessible
+      regions to be visualized on the heatmap.
+      Default: 0.05
 
   minimum_logfc:
     type: float?
     default: 1
-    label: "Maximum log2 Fold Change value to show in IGV"
+    label: "Minimum log2 fold change absolute value"
     doc: |
-      In the exploratory visualization part of the analysis
-      output only differentially accessible regions with log2 Fold
-      Change not smaller than this value. Default: 1.0
+      Minimum log2 fold change absolute value
+      for selecting differentially accessible
+      regions to be visualized on the heatmap.
+      Default: 1.0
 
-  blacklist_regions_file:
+  datasets_metadata:
     type: File?
-    label: "Optional BED file with the genomic blacklist regions (for manorm2)"
+    label: "Datasets metadata (optional)"
     doc: |
-      Path to the optional BED file with the genomic
-      blacklist regions to be filtered out before running
-      differential binding analysis. Any reference genomic
-      bin overlapping a blacklist region will be removed
-      from the output. Ignored if --test is not set to
-      manorm2.
+      If the selected single-cell analysis
+      includes multiple aggregated datasets,
+      each of them can be assigned to a
+      separate group by one or multiple
+      categories. This can be achieved by
+      providing a TSV/CSV file with
+      "library_id" as the first column and
+      any number of additional columns with
+      unique names, representing the desired
+      grouping categories. To obtain a proper
+      template of this file, download
+      "datasets_metadata.tsv" output from
+      the "Files" tab of either "Single-Cell
+      Multiome ATAC-Seq and RNA-Seq Filtering
+      Analysis" or "Single-Cell ATAC-Seq
+      Filtering Analysis" and add extra
+      columns as needed. The pipeline selection
+      depends on whether the "Single-cell
+      Analysis with ATAC-Seq Datasets" includes
+      both RNA and ATAC-Seq or only ATAC-Seq
+      datasets.
+
+  barcodes_data:
+    type: File?
+    label: "Selected cell barcodes (optional)"
+    doc: |
+      A TSV/CSV file to optionally prefilter
+      the single cell data by including only
+      the cells with the selected barcodes.
+      The provided file should include at
+      least one column named "barcode", with
+      one cell barcode per line. All other
+      columns, except for "barcode", will be
+      added to the single cell metadata loaded
+      from "Single-cell Analysis with ATAC-Seq
+      Datasets" and can be utilized in the
+      current or future steps of analysis.
 
   minimum_qvalue:
     type: float?
     default: 0.05
-    label: "Minimum FDR (q-value) cutoff for MACS2 peak detection (for manorm2)"
+    label: "Minimum MACS2 peak calling FDR (ignored if statistical test is not using MAnorm2 or DiffBind)"
     doc: |
-      Minimum FDR (q-value) cutoff for MACS2 peak detection.
-      Ignored if --test is not set to manorm2. Default: 0.05
-    "sd:layout":
-      advanced: true
-
-  minimum_peak_gap:
-    type: int?
-    default: 150
-    label: "Minimum distabce between the peaks to be merged (for manorm2)"
-    doc: |
-      If a distance between peaks is smaller than the
-      provided value they will be merged before splitting
-      them into reference genomic bins of size --binsize.
-      Ignored if --test is not set to manorm2. Default: 150
-    "sd:layout":
-      advanced: true
-
-  bin_size:
-    type: int?
-    default: 1000
-    label: "The size of non-overlapping reference genomic bins (for manorm2)"
-    doc: |
-      The size of non-overlapping reference genomic bins
-      used by MAnorm2 when generating a table of reads
-      counts per peaks. Ignored if --test is not set to
-      manorm2. Default: 1000
+      Minimum FDR (q-value) cutoff for MACS2
+      peak detection. Ignored if "Statistical
+      test" input is not set to "manorm2-*"
+      or "diffbind-*" methods.
+      Default: 0.05
     "sd:layout":
       advanced: true
 
   maximum_peaks:
     type: int?
     default: 0
-    label: "The maximum number of the most significant peaks to keep, 0 - keep all (for manorm2)"
+    label: "Maximum number of peaks to keep, set to 0 to keep all (ignored if statistical test is not using MAnorm2)"
     doc: |
-      The maximum number of the most significant (based on
-      qvalue) peaks to keep from each group of cells when
-      constructing reference genomic bins. Ignored if --test
-      is not set to manorm2. Default: keep all peaks
+      The maximum number of the most significant
+      peaks to select for each of the comparison
+      groups when constructing reference genomic
+      bins. The top significant peaks are selected
+      based on the score column which is calculated
+      by MACS2 as int(-10*log10qvalue). Ignored
+      if "Statistical test" input is not set to
+      "manorm2-peaks-by-dataset" or
+      "manorm2-peaks-by-comparison-category".
+      Default: 0 - keep all peaks.
+    "sd:layout":
+      advanced: true
+
+  minimum_peak_gap:
+    type: int?
+    default: 150
+    label: "Minimum distance for merging peaks (ignored if statistical test is not using MAnorm2)"
+    doc: |
+      Peaks remained after optional filtering
+      by the "Maximum number of peaks to keep"
+      will be merged if the distance between
+      them is smaller than the provided value.
+      Merging is first applied within comparison
+      group and then to all peaks together before
+      splitting them into the reference genomic
+      bins of the selected size. Ignored if
+      "Statistical test" input is not set to
+      "manorm2-peaks-by-dataset" or
+      "manorm2-peaks-by-comparison-category".
+      Default: 150
+    "sd:layout":
+      advanced: true
+
+  bin_size:
+    type: int?
+    default: 1000
+    label: "Bin size (ignored if statistical test is not using MAnorm2)"
+    doc: |
+      The size of non-overlapping reference
+      genomic bins used by MAnorm2 when
+      generating a table of reads per bins
+      counts. Ignored if "Statistical test"
+      input is not set to
+      "manorm2-peaks-by-dataset" or
+      "manorm2-peaks-by-comparison-category".
+      Default: 1000
+    "sd:layout":
+      advanced: true
+
+  minimum_overlap:
+    type: float?
+    default: 0.5
+    label: "Minimum overlap fraction between the datasets (ignored if statistical test is not using MAnorm2 or DiffBind)"
+    doc: |
+      Keep only those reference genomic
+      bins that are present in at least
+      this fraction of datasets within
+      each of the comparison groups.
+      Ignored if "Statistical test"
+      input is not set to "manorm2-*"
+      or "diffbind-*" methods.
+      Default: 0.5
+    "sd:layout":
+      advanced: true
+
+  promoter_dist:
+    type: int?
+    default: 1000
+    label: "Promoter distance, bp"
+    doc: |
+      Max distance from the gene TSS (in both
+      direction) overlapping which the
+      differentially accessible site will be
+      assigned to the promoter region.
+      Default: 1000 bp
+    "sd:layout":
+      advanced: true
+
+  upstream_dist:
+    type: int?
+    default: 20000
+    label: "Upstream distance, bp"
+    doc: |
+      Max distance from the promoter (only
+      in upstream direction) overlapping
+      which the differentially accessible site
+      will be assigned to the upstream region.
+      Default: 20,000 bp
     "sd:layout":
       advanced: true
 
@@ -286,332 +429,40 @@ inputs:
 
 outputs:
 
-  umap_rd_rnaumap_plot_png:
-    type: File?
-    outputSource: sc_atac_dbinding/umap_rd_rnaumap_plot_png
-    label: "Cells RNA UMAP split by selected criteria"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (rnaumap dim. reduction).
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Overall"
-        Caption: "Cells RNA UMAP split by selected criteria"
-
-  umap_rd_atacumap_plot_png:
-    type: File?
-    outputSource: sc_atac_dbinding/umap_rd_atacumap_plot_png
-    label: "Cells ATAC UMAP split by selected criteria"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (atacumap dim. reduction).
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Overall"
-        Caption: "Cells ATAC UMAP split by selected criteria"
-
-  umap_rd_wnnumap_plot_png:
-    type: File?
-    outputSource: sc_atac_dbinding/umap_rd_wnnumap_plot_png
-    label: "Cells WNN UMAP split by selected criteria"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (atacumap dim. reduction).
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Overall"
-        Caption: "Cells WNN UMAP split by selected criteria"
-
-  dbnd_vlcn_plot_png:
-    type: File?
-    outputSource: sc_atac_dbinding/dbnd_vlcn_plot_png
-    label: "Volcano plot of differentially accessible regions"
-    doc: |
-      Volcano plot of differentially accessible regions.
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Overall"
-        Caption: "Volcano plot of differentially accessible regions"
-
-  seurat_peaks_bigbed_file:
-    type: File
-    outputSource: sc_atac_dbinding/seurat_peaks_bigbed_file
-    label: "Peaks from the provided Seurat object"
-    doc: |
-      Peaks in bigBed format extracted
-      from the loaded from provided RDS
-      file Seurat object. 
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "annotation"
-        format: "bigbed"
-        name: "Seurat peaks"
-        height: 40
-
-  first_fragments_bigwig_file:
-    type: File
-    outputSource: sc_atac_dbinding/first_fragments_bigwig_file
-    label: "Genome coverage for ATAC fragments (first)"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
-      the group defined by the --first and
-      --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "wig"
-        name: "ATAC fragments coverage (first)"
-        height: 120
-
-  second_fragments_bigwig_file:
-    type: File
-    outputSource: sc_atac_dbinding/second_fragments_bigwig_file
-    label: "Genome coverage for ATAC fragments (second)"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
-      the group defined by the --second and
-      --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "wig"
-        name: "ATAC fragments coverage (second)"
-        height: 120
-
-  first_tn5ct_bigwig_file:
-    type: File?
-    outputSource: sc_atac_dbinding/first_tn5ct_bigwig_file
-    label: "Genome coverage for Tn5 cut sites (first)"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for Tn5 cut sites from the cells that belong
-      to the group defined by the --first and
-      --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "wig"
-        name: "Tn5 coverage (first)"
-        height: 120
-
-  second_tn5ct_bigwig_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_tn5ct_bigwig_file
-    label: "Genome coverage for Tn5 cut sites (second)"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for Tn5 cut sites from the cells that belong
-      to the group defined by the --second and
-      --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "wig"
-        name: "Tn5 coverage (second)"
-        height: 120
-
-  first_peaks_xls_file:
-    type: File?
-    outputSource: sc_atac_dbinding/first_peaks_xls_file
-    label: "MACS2 report in XLS format (first)"
-    doc: |
-      MACS2 report in XLS format for peaks
-      called from the Tn5 cut sites of the
-      cells that belong to the group defined
-      by the --first and --groupby parameters.
-
-  second_peaks_xls_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_peaks_xls_file
-    label: "MACS2 report in XLS format (second)"
-    doc: |
-      MACS2 report in XLS format for peaks
-      called from the Tn5 cut sites of the
-      cells that belong to the group defined
-      by the --second and --groupby parameters.
-
-  first_peaks_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/first_peaks_bed_file
-    label: "MACS2 peaks in narrowPeak format (first)"
-    doc: |
-      MACS2 peaks in narrowPeak format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --first
-      and --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "annotation"
-        name: "Called peaks (first)"
-        displayMode: "COLLAPSE"
-        height: 40
-
-  second_peaks_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_peaks_bed_file
-    label: "MACS2 peaks in narrowPeak format (second)"
-    doc: |
-      MACS2 peaks in narrowPeak format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --second
-      and --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "annotation"
-        name: "Called peaks (second)"
-        displayMode: "COLLAPSE"
-        height: 40
-
-  first_summits_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/first_summits_bed_file
-    label: "MACS2 peaks summits in BED format (first)"
-    doc: |
-      MACS2 peaks summits in BED format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --first
-      and --groupby parameters.
-
-  second_summits_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_summits_bed_file
-    label: "MACS2 peaks summits in BED format (second)"
-    doc: |
-      MACS2 peaks summits in BED format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --second
-      and --groupby parameters.
-
-  diff_bound_sites:
-    type: File
-    outputSource: sc_atac_dbinding/diff_bound_sites
-    label: "Differentially accessible regions"
-    doc: |
-      Not filtered differentially accessible regions
-      in TSV format
-    "sd:visualPlugins":
-    - syncfusiongrid:
-        tab: "Diff. accessible regions"
-        Title: "Differentially accessible regions. Not filtered"
-
-  diff_bound_sites_with_labels:
+  all_db_sites_tsv_with_labels:
     type: File
     outputSource: add_label_column/output_file
-    label: "Differentially accessible regions with labels"
+    label: "Differentially accessible regions with labels (not filtered)"
     doc: |
-      Not filtered differentially accessible regions
-      with labels in TSV format
-    'sd:visualPlugins':
+      Not filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute value"
+      differentially accessible regions with labels.
+      TSV format.
+    "sd:visualPlugins":
     - queryRedirect:
         tab: "Overview"
         label: "Volcano Plot"
         url: "https://scidap.com/vp/volcano"
-        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'diff_bound_sites_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
+        query_eval_string: "`data_file=${this.getSampleValue('outputs', 'all_db_sites_tsv_with_labels')}&data_col=label&x_col=log2FoldChange&y_col=padj`"
 
-  first_enrch_bigbed_file:
+  tag_dnst_htmp_html:
     type: File?
-    outputSource: sc_atac_dbinding/first_enrch_bigbed_file
-    label: "Significant differentially accessible regions (first)"
+    outputSource: extend_htmp/tag_dnst_htmp_html
+    label: "Tag Density Heatmap"
     doc: |
-      Peaks in bigBed format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --first and --groupby parameters.
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value"; optionally subsetted to include
+      only cells with "Subsetting values
+      (optional)" from the "Subsetting category
+      (optional)".
+      HTML format.
     "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "annotation"
-        format: "bigbed"
-        name: "Diff. accessible regions (first)"
-        height: 40
-
-  second_enrch_bigbed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_enrch_bigbed_file
-    label: "Significant differentially accessible regions (second)"
-    doc: |
-      Peaks in bigBed format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --second and --groupby parameters.
-    "sd:visualPlugins":
-    - igvbrowser:
-        tab: "Genome Browser"
-        id: "igvbrowser"
-        type: "annotation"
-        format: "bigbed"
-        name: "Diff. accessible regions (second)"
-        height: 40
-
-  first_enrch_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/first_enrch_bed_file
-    label: "Significant differentially accessible regions (first)"
-    doc: |
-      Peaks in BED format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --first and --groupby parameters.
-
-  second_enrch_bed_file:
-    type: File?
-    outputSource: sc_atac_dbinding/second_enrch_bed_file
-    label: "Significant differentially accessible regions (second)"
-    doc: |
-      Peaks in BED format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --second and --groupby parameters.
-
-  tag_density_matrix:
-    type: File
-    outputSource: compute_score_matrix/scores_matrix
-    label: "Score matrix for tag density heatmap"
-    doc: |
-      Scores matrix generated by
-      Deeptools with tag density
-      information around centers
-      of regions of interest.
-
-  tag_density_heatmap:
-    type: File
-    outputSource: make_heatmap/heatmap_file
-    label: "Tag density heatmap"
-    doc: |
-      Tag density heatmap around centers
-      of differentially accessible regions in
-      PNG format
-    "sd:visualPlugins":
-    - image:
-        tab: "Overall"
-        Caption: "Tag density heatmap around centers of diff. accessible regions"
-
-  pdf_plots:
-    type: File
-    outputSource: compress_pdf_plots/compressed_folder
-    label: "Compressed folder with all PDF plots"
-    doc: |
-      Compressed folder with all PDF plots.
+    - linkList:
+        tab: "Overview"
+        target: "_blank"
 
   sc_report_html_file:
     type: File?
@@ -625,19 +476,383 @@ outputs:
         tab: "Overview"
         target: "_blank"
 
+  experiment_info:
+    type: File
+    label: "Genome coverage tracks order"
+    doc: |
+      Markdown file to explain
+      the order of genome coverage
+      tracks in the IGV browser.
+    outputSource: create_metadata/output_file
+    "sd:visualPlugins":
+    - markdownView:
+        tab: "Overview"
+
+  cell_cnts_plot_png:
+    type: File?
+    outputSource: sc_atac_dbinding/cell_cnts_plot_png
+    label: "Number of cells per dataset or comparison group"
+    doc: |
+      Number of cells per dataset or comparison
+      group. Colored by "Comparison category";
+      optionally subsetted to include only cells
+      with "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "Number of cells per dataset or comparison group"
+
+  umap_spl_tst_plot_png:
+    type: File?
+    outputSource: sc_atac_dbinding/umap_spl_tst_plot_png
+    label: "UMAP colored by selected for analysis cells"
+    doc: |
+      UMAP colored by selected for analysis cells.
+      Split by the single cell metadata column
+      defined in the "Comparison category";
+      optionally subsetted to include only cells
+      with "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "QC"
+        Caption: "UMAP colored by selected for analysis cells"
+
+  vlcn_plot_png:
+    type: File?
+    outputSource: sc_atac_dbinding/vlcn_plot_png
+    label: "Volcano plot of differentially accessible regions"
+    doc: |
+      Volcano plot of differentially
+      accessible regions.
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Volcano plot"
+        Caption: "Volcano plot of differentially accessible regions"
+
+  tag_dnst_htmp_plot_png:
+    type: File?
+    outputSource: sc_atac_dbinding/tag_dnst_htmp_plot_png
+    label: "Tag density heatmap around the centers of filtered diff. accessible regions"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value"; optionally subsetted to include
+      only cells with "Subsetting values
+      (optional)" from the "Subsetting category
+      (optional)".
+      PNG format.
+    "sd:visualPlugins":
+    - image:
+        tab: "Heatmap"
+        Caption: "Tag density heatmap around the centers of filtered diff. accessible regions"
+
+  tag_dnst_htmp_gct:
+    type: File?
+    outputSource: extend_htmp/tag_dnst_htmp_gct
+    label: "Tag density heatmap around the centers of filtered diff. accessible regions"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value"; optionally subsetted to include
+      only cells with "Subsetting values
+      (optional)" from the "Subsetting category
+      (optional)".
+      GCT format.
+
+  tag_dnst_htmp_tsv:
+    type: File?
+    outputSource: extend_htmp/tag_dnst_htmp_tsv
+    label: "Tag density heatmap around the centers of filtered diff. accessible regions"
+    doc: |
+      Tag density heatmap around the centers
+      of differentially accessible regions.
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value"; optionally subsetted to include
+      only cells with "Subsetting values
+      (optional)" from the "Subsetting category
+      (optional)".
+      TSV format.
+
+  coverage_first_bigwig_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/coverage_first_bigwig_file
+    label: "Genome coverage (first)"
+    doc: |
+      Normalized genome coverage calculated
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The data
+      were first optionally subsetted to include
+      only cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)",
+      then split either by dataset or by the
+      "Comparison category" and aggregated to
+      the pseudobulk form. First comparison group.
+      BigWig format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "wig"
+        name: "Genome coverage (first)"
+        height: 120
+
+  coverage_second_bigwig_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/coverage_second_bigwig_file
+    label: "Genome coverage (second)"
+    doc: |
+      Normalized genome coverage calculated
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The data
+      were first optionally subsetted to include
+      only cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)",
+      then split either by dataset or by the
+      "Comparison category" and aggregated to
+      the pseudobulk form. Second comparison group.
+      BigWig format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "wig"
+        name: "Genome coverage (second)"
+        height: 120
+
+  peaks_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/peaks_first_bed_file
+    label: "Called peaks (first)"
+    doc: |
+      Peaks called by MACS2 from the Tn5 cut
+      sites split either by dataset or by
+      "Comparison category". Optionally
+      subsetted to include only cells with
+      "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      First comparison group.
+      NarrowPeak format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "Called peaks (first)"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  peaks_second_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/peaks_second_bed_file
+    label: "Called peaks (second)"
+    doc: |
+      Peaks called by MACS2 from the Tn5 cut
+      sites split either by dataset or by
+      "Comparison category". Optionally
+      subsetted to include only cells with
+      "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      Second comparison group.
+      NarrowPeak format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "Called peaks (second)"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  peaks_first_xls_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/peaks_first_xls_file
+    label: "Called peaks (first, xls format)"
+    doc: |
+      Peaks called by MACS2 from the Tn5 cut
+      sites split either by dataset or by
+      "Comparison category". Optionally
+      subsetted to include only cells with
+      "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      First comparison group.
+      XLS format.
+
+  peaks_second_xls_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/peaks_second_xls_file
+    label: "Called peaks (second, xls format)"
+    doc: |
+      Peaks called by MACS2 from the Tn5 cut
+      sites split either by dataset or by
+      "Comparison category". Optionally
+      subsetted to include only cells with
+      "Subsetting values (optional)" from
+      the "Subsetting category (optional)".
+      Second comparison group.
+      XLS format.
+
+  summits_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/summits_first_bed_file
+    label: "Peaks summits (first)"
+    doc: |
+      Summits of the peaks called by MACS2
+      from the Tn5 cut sites split either
+      by dataset or by "Comparison category".
+      Optionally subsetted to include only
+      cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)".
+      First comparison group.
+      BED format.
+
+  summits_second_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputSource: sc_atac_dbinding/summits_second_bed_file
+    label: "Peaks summits (second)"
+    doc: |
+      Summits of the peaks called by MACS2
+      from the Tn5 cut sites split either
+      by dataset or by "Comparison category".
+      Optionally subsetted to include only
+      cells with "Subsetting values (optional)"
+      from the "Subsetting category (optional)".
+      Second comparison group.
+      BED format.
+
+  dflt_peaks_bigbed_file:
+    type: File?
+    outputSource: sc_atac_dbinding/dflt_peaks_bigbed_file
+    label: "Seurat or Cell Ranger peaks"
+    doc: |
+      Peaks extracted from the loaded
+      "Single-cell Analysis with ATAC-Seq
+      Datasets".
+      BigBed format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        format: "bigbed"
+        name: "Seurat or Cell Ranger peaks"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  all_db_sites_tsv:
+    type: File
+    outputSource: restore_columns/output_file
+    label: "Differentially accessible regions (not filtered)"
+    doc: |
+      Not filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute value"
+      differentially accessible regions with the
+      nearest genes assigned.
+      TSV format.
+    "sd:visualPlugins":
+    - syncfusiongrid:
+        tab: "Diff. accessible regions"
+        Title: "Differentially accessible regions (not filtered)"
+
+  all_db_sites_bed:
+    type: File
+    outputSource: sc_atac_dbinding/all_db_sites_bed
+    label: "Differentially accessible regions (not filtered)"
+    doc: |
+      Not filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute value"
+      differentially accessible regions.
+      BED format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "Differentially accessible regions (not filtered)"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  fltr_db_sites_bed:
+    type: File?
+    outputSource: sc_atac_dbinding/fltr_db_sites_bed
+    label: "Differentially accessible regions (filtered)"
+    doc: |
+      Filtered by "Maximum adjusted p-value"
+      and "Minimum log2 fold change absolute
+      value" differentially accessible regions.
+      BED format.
+    "sd:visualPlugins":
+    - igvbrowser:
+        tab: "Genome Browser"
+        id: "igvbrowser"
+        type: "annotation"
+        name: "Differentially accessible regions (filtered)"
+        displayMode: "COLLAPSE"
+        height: 40
+
+  pdf_plots:
+    type: File
+    outputSource: compress_pdf_plots/compressed_folder
+    label: "Compressed folder with all PDF plots"
+    doc: |
+      Compressed folder with all PDF plots.
+
+  sc_atac_dbinding_human_log:
+    type: File?
+    outputSource: sc_atac_dbinding/human_log
+    label: "Human readable error log"
+    doc: |
+      Human readable error log
+      from the sc_atac_dbinding step.
+
   sc_atac_dbinding_stdout_log:
     type: File
     outputSource: sc_atac_dbinding/stdout_log
     label: "Output log"
     doc: |
-      Stdout log from the sc_atac_dbinding step.
+      Stdout log from the
+      sc_atac_dbinding step.
 
   sc_atac_dbinding_stderr_log:
     type: File
     outputSource: sc_atac_dbinding/stderr_log
     label: "Error log"
     doc: |
-      Stderr log from the sc_atac_dbinding step.
+      Stderr log from the
+      sc_atac_dbinding step.
 
 
 steps:
@@ -646,25 +861,77 @@ steps:
     run: ../tools/sc-atac-dbinding.cwl
     in:
       query_data_rds: query_data_rds
+      reduction:
+        source: query_reduction
+        valueFrom: |
+          ${
+            if (self == "RNA") {
+              return "rnaumap";
+            } else if (self == "ATAC") {
+              return "atacumap";
+            } else if (self == "WNN") {
+              return "wnnumap";
+            } else {
+              return "refumap";
+            }
+          }
       atac_fragments_file: atac_fragments_file
       datasets_metadata: datasets_metadata
       barcodes_data: barcodes_data
       groupby:
         source: groupby
-        valueFrom: $(self==""?null:self)                # safety measure
+        valueFrom: |
+          ${
+            if (self == "dataset") {
+              return "new.ident";
+            } else if (self == "") {
+              return null;
+            } else {
+              return self;
+            }
+          }
       subset:
         source: subset
         valueFrom: $(split_by_comma(self))
-      splitby: splitby
+      splitby:
+        source: splitby
+        valueFrom: |
+          ${
+            if (self == "dataset") {
+              return "new.ident";
+            } else {
+              return self;
+            }
+          }
       first_cond: first_cond
       second_cond: second_cond
-      analysis_method: analysis_method
+      analysis_method:
+        source: analysis_method
+        valueFrom: |
+          ${
+            if (self == "manorm2-peaks-by-dataset") {
+              return "manorm2-full";
+            } else if (self == "manorm2-peaks-by-comparison-category") {
+              return "manorm2-half";
+            } else if (self == "diffbind-deseq-peaks-by-dataset") {
+              return "diffbind-deseq-full";
+            } else if (self == "diffbind-deseq-peaks-by-comparison-category") {
+              return "diffbind-deseq-half";
+            } else if (self == "diffbind-edger-peaks-by-dataset") {
+              return "diffbind-edger-full";
+            } else if (self == "diffbind-edger-peaks-by-comparison-category") {
+              return "diffbind-edger-half";
+            } else {
+              return self;
+            }
+          }
       genome_type:
         source: genome_type
         valueFrom: $(self=="mm10"?"mm":"hs")
       minimum_qvalue: minimum_qvalue
       minimum_peak_gap: minimum_peak_gap
       bin_size: bin_size
+      minimum_overlap: minimum_overlap
       maximum_peaks:
         source: maximum_peaks
         valueFrom: $(self==0?null:self)                 # to return null for 0
@@ -684,31 +951,26 @@ steps:
         source: threads
         valueFrom: $(parseInt(self))
     out:
-    - umap_rd_rnaumap_plot_png
-    - umap_rd_atacumap_plot_png
-    - umap_rd_wnnumap_plot_png
-    - seurat_peaks_bigbed_file
-    - first_fragments_bigwig_file
-    - second_fragments_bigwig_file
-    - first_tn5ct_bigwig_file
-    - second_tn5ct_bigwig_file
-    - first_peaks_xls_file
-    - second_peaks_xls_file
-    - first_peaks_bed_file
-    - second_peaks_bed_file
-    - first_summits_bed_file
-    - second_summits_bed_file
-    - diff_bound_sites
-    - dbnd_vlcn_plot_png
-    - first_enrch_bigbed_file
-    - second_enrch_bigbed_file
-    - first_enrch_bed_file
-    - second_enrch_bed_file
-    - umap_rd_rnaumap_plot_pdf
-    - umap_rd_atacumap_plot_pdf
-    - umap_rd_wnnumap_plot_pdf
-    - dbnd_vlcn_plot_pdf
+    - umap_spl_tst_plot_png
+    - cell_cnts_plot_png
+    - vlcn_plot_png
+    - tag_dnst_htmp_plot_png
+    - tag_dnst_htmp_gct
+    - all_db_sites_tsv
+    - all_db_sites_bed
+    - fltr_db_sites_bed
+    - coverage_first_bigwig_file
+    - coverage_second_bigwig_file
+    - peaks_first_bed_file
+    - peaks_second_bed_file
+    - peaks_first_xls_file
+    - peaks_second_xls_file
+    - summits_first_bed_file
+    - summits_second_bed_file
+    - dflt_peaks_bigbed_file
+    - all_plots_pdf
     - sc_report_html_file
+    - human_log
     - stdout_log
     - stderr_log
 
@@ -717,10 +979,7 @@ steps:
     in:
       input_files:
         source:
-        - sc_atac_dbinding/umap_rd_rnaumap_plot_pdf
-        - sc_atac_dbinding/umap_rd_atacumap_plot_pdf
-        - sc_atac_dbinding/umap_rd_wnnumap_plot_pdf
-        - sc_atac_dbinding/dbnd_vlcn_plot_pdf
+        - sc_atac_dbinding/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
         default: "pdf_plots"
@@ -734,190 +993,99 @@ steps:
     out:
     - compressed_folder
 
-  add_label_column:
+  filter_columns:
     run: ../tools/custom-bash.cwl
     in:
-      input_file: sc_atac_dbinding/diff_bound_sites
+      input_file: sc_atac_dbinding/all_db_sites_tsv
       script:
-        default: |
-          HEADER=`head -n 1 $0`;
-          echo -e "label\t${HEADER}" > diff_sts_labeled.tsv;
-          cat "$0" | grep -v "start" | awk -F "\t" '{print $1":"$2"-"$3"-"$NF"\t"$0}' >> diff_sts_labeled.tsv
+        default: >
+          cat $0 | grep -v "start" | awk
+          'BEGIN {print "chr\tstart\tend\tlength\tabs_summit\tpileup\t-log10(pvalue)\tfold_enrichment\t-log10(qvalue)\tname"}
+          {print $1"\t"$2"\t"$3"\t"$3-$2+1"\t0\t"NR"\t0\t0\t0\t0"}' > `basename $0`
     out:
     - output_file
 
-  recenter_first_enrch_bed:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      requirements:
-      - class: InitialWorkDirRequirement
-        listing:
-        - entryname: dummy.csv
-          entry: |
-            chr1,1,10
-      inputs:
-        script:
-          type: string?
-          default: |
-            #!/bin/bash
-            cat "$0" | tr -d "\r" | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center+1}' > first_recentered.bed
-          inputBinding:
-            position: 1
-        regions_file:
-          type:
-          - "null"
-          - string
-          - File
-          inputBinding:
-            position: 5
-            valueFrom: $(self==""?"dummy.csv":self)
-          default: ""
-      outputs:
-        recentered_regions_file:
-          type: File
-          outputBinding:
-            glob: "first_recentered.bed"
-      baseCommand: [bash, '-c']
+  assign_genes:
+    run: ../tools/iaintersect.cwl
     in:
-      regions_file: sc_atac_dbinding/first_enrch_bed_file
+      input_filename: filter_columns/output_file
+      annotation_filename: annotation_file
+      promoter_bp: promoter_dist
+      upstream_bp: upstream_dist
     out:
-    - recentered_regions_file
+    - result_file
 
-  recenter_second_enrch_bed:
-    run:
-      cwlVersion: v1.0
-      class: CommandLineTool
-      hints:
-      - class: DockerRequirement
-        dockerPull: biowardrobe2/scidap:v0.0.3
-      requirements:
-      - class: InitialWorkDirRequirement
-        listing:
-        - entryname: dummy.csv
-          entry: |
-            chr1,1,10
-      inputs:
-        script:
-          type: string?
-          default: |
-            #!/bin/bash
-            cat "$0" | tr -d "\r" | tr "," "\t" | awk NF | sort -u -k1,1 -k2,2n -k3,3n | awk '{center=$2+int(($3-$2)/2); print $1"\t"center"\t"center+1}' > second_recentered.bed
-          inputBinding:
-            position: 1
-        regions_file:
-          type:
-          - "null"
-          - string
-          - File
-          inputBinding:
-            position: 5
-            valueFrom: $(self==""?"dummy.csv":self)
-          default: ""
-      outputs:
-        recentered_regions_file:
-          type: File
-          outputBinding:
-            glob: "second_recentered.bed"
-      baseCommand: [bash, '-c']
+  restore_columns:
+    run: ../tools/custom-bash.cwl
     in:
-      regions_file: sc_atac_dbinding/second_enrch_bed_file
+      input_file:
+      - assign_genes/result_file
+      - sc_atac_dbinding/all_db_sites_tsv
+      script:
+        default: |
+          cat $0 | grep -v "start" | sort -k 11n | cut -f 1-5,15 > tmp_iaintersect_result.tsv
+          cat $1 | grep -v "start" > tmp_sc_atac_dbinding_result.tsv
+          HEADER=`head -n 1 $1`;
+          echo -e "refseq_id\tgene_id\ttxStart\ttxEnd\tstrand\tregion\t${HEADER}" > `basename $1`;
+          cat tmp_iaintersect_result.tsv | paste - tmp_sc_atac_dbinding_result.tsv >> `basename $1`
+          rm tmp_iaintersect_result.tsv tmp_sc_atac_dbinding_result.tsv
     out:
-    - recentered_regions_file
+    - output_file
 
-  compute_score_matrix:
-    run: ../tools/deeptools-computematrix-referencepoint.cwl
+  add_label_column:
+    run: ../tools/custom-bash.cwl
     in:
-      score_files:
-        source:
-        - analysis_method
-        - sc_atac_dbinding/first_fragments_bigwig_file
-        - sc_atac_dbinding/second_fragments_bigwig_file
-        - sc_atac_dbinding/first_tn5ct_bigwig_file
-        - sc_atac_dbinding/second_tn5ct_bigwig_file
-        valueFrom: |
-          ${
-              if (self[0].analysis_method != "manorm2" ) {
-                return [self[1], self[2]];
-              } else {
-                return [self[3], self[4]];
-              }
-          }
-      regions_files:
-      - recenter_first_enrch_bed/recentered_regions_file
-      - recenter_second_enrch_bed/recentered_regions_file
-      reference_point: 
-        default: "TSS"                 # doesn't matter what we set here because we centered regions ourlselves
-      before_region_start_length:
-        default: 5000
-      after_region_start_length:
-        default: 5000
-      bin_size:
-        default: 10
-      sort_regions:
-        default: "descend"
-      samples_label:
-        source:
-        - first_cond
-        - second_cond
-        valueFrom: $(["Reads " + self[0], "Reads " + self[1]])
-      output_filename:
-        default: "score_matrix.gz"
-      missing_data_as_zero:
-        default: true
-      threads:
-        source: threads
-        valueFrom: $(parseInt(self))
+      input_file: restore_columns/output_file
+      script:
+        default: |
+          HEADER=`head -n 1 $0`;
+          echo -e "label\t${HEADER}" > sc_all_db_sites_labeled.tsv;
+          cat "$0" | grep -v "start" | awk -F "\t" '{print $7":"$8"-"$9" "$2" "$6"\t"$0}' >> sc_all_db_sites_labeled.tsv
     out:
-    - scores_matrix
-    - stdout_log
-    - stderr_log
+    - output_file
 
-  make_heatmap:
-    run: ../tools/deeptools-plotheatmap.cwl
+  extend_htmp:
+    run: ../tools/sc-utils-extend-htmp.cwl
     in:
-      plot_title:
-        default: "Tag density around peak centers"
-      scores_matrix: compute_score_matrix/scores_matrix
-      output_filename:
-        default: "tag_density_heatmap.png"
-      plot_type:
-        default: "lines"
-      sort_regions:
-        default: "descend"
-      average_type_summary_plot:
-        default: "mean"
-      what_to_show:
-        default: "plot, heatmap and colorbar"
-      ref_point_label:
-        default: "Peak Center"
-      regions_label:
-        source:
-        - first_cond
-        - second_cond
-        valueFrom: $(["Peaks " + self[0], "Peaks " + self[1]])
-      samples_label:
-        source:
-        - first_cond
-        - second_cond
-        valueFrom: $(["Reads " + self[0], "Reads " + self[1]])
-      x_axis_label:
-        default: "distance (bp)"
-      y_axisLabel:
-        default: "Signal mean"
-      per_group:
-        default: false
-      plot_file_format:
-        default: "png"
-      legend_location:
-        default: "upper-left"
+      gct_file: sc_atac_dbinding/tag_dnst_htmp_gct
+      tsv_file: add_label_column/output_file
     out:
-    - heatmap_file
-    - stdout_log
-    - stderr_log
+    - tag_dnst_htmp_gct
+    - tag_dnst_htmp_html
+    - tag_dnst_htmp_tsv
+
+  create_metadata:
+    run: ../tools/custom-bash.cwl
+    in:
+      input_file:
+        source:
+        - sc_atac_dbinding/coverage_first_bigwig_file
+        - sc_atac_dbinding/coverage_second_bigwig_file
+        valueFrom: $(self.flat())
+      param:
+        source:
+        - sc_atac_dbinding/coverage_first_bigwig_file
+        - sc_atac_dbinding/coverage_second_bigwig_file
+        valueFrom: $(self[0].length + "," + self[1].length)
+      script:
+        default: |
+          #!/bin/bash
+          set -- "$0" "$@"
+          IFS=',' read -r FIRST_N SECOND_N <<< "${!#}"
+          FILES=("${@:1:$(($#-1))}")
+          echo "| File | Position |" > experiment_info.md
+          echo "| :-- | --: |" >> experiment_info.md
+          echo "| _First comparison group_ | |" >> experiment_info.md
+          for ((i = 0; i < FIRST_N; i++)); do
+            echo "| $(basename "${FILES[i]}") | $((i+1)) |" >> experiment_info.md
+          done
+          echo "| _Second comparison group_ | |" >> experiment_info.md
+          for ((i = 0; i < SECOND_N; i++)); do
+            j=$((FIRST_N + i))
+            echo "| $(basename "${FILES[j]}") | $((i+1)) |" >> experiment_info.md
+          done
+    out:
+    - output_file
 
 
 $namespaces:
@@ -970,4 +1138,4 @@ doc: |
 
   Identifies differentially accessible regions between any
   two groups of cells, optionally aggregating chromatin
-  accessibility data from single-cell to pseudobulk form.
+  accessibility data from single-cell to pseudo bulk form.

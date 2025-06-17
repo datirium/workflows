@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.41
+  dockerPull: biowardrobe2/sc-tools:v0.0.42
 
 
 inputs:
@@ -427,9 +427,9 @@ outputs:
       HTML format.
 
   human_log:
-    type: File
+    type: File?
     outputBinding:
-      glob: "*_hlog.txt"
+      glob: "error_report.txt"
     doc: |
       Human readable error log.
       TXT format.
@@ -445,7 +445,7 @@ baseCommand: ["Rscript"]
 arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_rna_da_cells.R"]:"/usr/local/bin/sc_rna_da_cells.R")
 
-stdout: sc_rna_da_cells_stdout.log
+stdout: error_msg.txt
 stderr: sc_rna_da_cells_stderr.log
 
 

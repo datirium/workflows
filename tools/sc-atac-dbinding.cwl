@@ -11,7 +11,7 @@ requirements:
 
 hints:
 - class: DockerRequirement
-  dockerPull: biowardrobe2/sc-tools:v0.0.41
+  dockerPull: biowardrobe2/sc-tools:v0.0.42
 
 
 inputs:
@@ -21,11 +21,20 @@ inputs:
     inputBinding:
       prefix: "--query"
     doc: |
-      Path to the RDS file to load Seurat object from.
-      This file should include chromatin accessibility
-      information stored in the ATAC assay. Additionally
-      'rnaumap', and/or 'atacumap', and/or 'wnnumap'
-      dimensionality reductions should be present.
+      Path to the RDS file to load Seurat object
+      from. This file should include chromatin
+      accessibility information stored in the
+      ATAC assay. The dimensionality reductions
+      selected in the --reduction parameter should
+      be present in the loaded Seurat object.
+
+  reduction:
+    type: string
+    inputBinding:
+      prefix: "--reduction"
+    doc: |
+      Dimensionality reduction to be
+      used for generating UMAP plots.
 
   atac_fragments_file:
     type: File
@@ -34,50 +43,55 @@ inputs:
     inputBinding:
       prefix: "--fragments"
     doc: |
-      Count and barcode information for every ATAC fragment
-      used in the loaded Seurat object. File should be saved
-      in TSV format with tbi-index file.
+      Count and barcode information for every
+      ATAC fragment used in the loaded Seurat
+      object. File should be saved in TSV
+      format with tbi-index file.
 
   datasets_metadata:
     type: File?
     inputBinding:
       prefix: "--metadata"
     doc: |
-      Path to the TSV/CSV file to optionally extend Seurat
-      object metadata with categorical values using samples
-      identities. First column - 'library_id' should
-      correspond to all unique values from the 'new.ident'
-      column of the loaded Seurat object. If any of the
-      provided in this file columns are already present in
-      the Seurat object metadata, they will be overwritten.
-      When combined with --barcodes parameter, first the
-      metadata will be extended, then barcode filtering will
-      be applied. Default: no extra metadata is added
+      Path to the TSV/CSV file to optionally extend
+      Seurat object metadata with categorical values
+      using samples identities. First column -
+      library_id should correspond to all unique
+      values from the new.ident column of the loaded
+      Seurat object. If any of the provided in this
+      file columns are already present in the Seurat
+      object metadata, they will be overwritten. When
+      combined with --barcodes parameter, first the
+      metadata will be extended, then barcode filtering
+      will be applied.
+      Default: no extra metadata is added.
 
   barcodes_data:
     type: File?
     inputBinding:
       prefix: "--barcodes"
     doc: |
-      Path to the TSV/CSV file to optionally prefilter and
-      extend Seurat object metadata by selected barcodes.
-      First column should be named as 'barcode'. If file
-      includes any other columns they will be added to the
-      Seurat object metadata ovewriting the existing ones if
-      those are present. Default: all cells used, no extra
-      metadata is added
+      Path to the TSV/CSV file to optionally prefilter
+      and extend Seurat object metadata by selected
+      barcodes. First column should be named as barcode.
+      If file includes any other columns they will be
+      added to the Seurat object metadata ovewriting
+      the existing ones if those are present.
+      Default: all cells used, no extra metadata is added.
 
   groupby:
     type: string?
     inputBinding:
       prefix: "--groupby"
     doc: |
-      Column from the Seurat object metadata to group cells
-      for optional subsetting when combined with --subset
-      parameter. May be one of the extra metadata columns
-      added with --metadata or --barcodes parameters.
-      Ignored if --subset is not set. Default: do not
-      subset, include all cells into analysis.
+      Column from the Seurat object metadata to
+      group cells for optional subsetting when
+      combined with --subset parameter. May be
+      one of the extra metadata columns added
+      with --metadata or --barcodes parameters.
+      Ignored if --subset is not set.
+      Default: do not subset, include all
+      cells into analysis.
 
   subset:
     type:
@@ -87,10 +101,12 @@ inputs:
     inputBinding:
       prefix: "--subset"
     doc: |
-      Values from the column set with --groupby parameter to
-      subset cells before running differential binding
-      analysis. Ignored if --groupby is not provided.
-      Default: do not subset cells, include all of them.
+      Values from the column set with --groupby
+      parameter to subset cells before running
+      differential accessibility analysis.
+      Ignored if --groupby is not provided.
+      Default: do not subset cells, include
+      all of them.
 
   splitby:
     type: string
@@ -99,9 +115,12 @@ inputs:
     doc: |
       Column from the Seurat object metadata to split cells
       into two groups to run --second vs --first
-      differential binding analysis. May be one of the extra
-      metadata columns added with --metadata or --barcodes
-      parameters.
+      differential accessibility analysis. If --test
+      parameter is set to any of the manorm2 or diffbind
+      methods, the --splitby shouldn't put cells from the
+      same dataset into the different comparison groups. May
+      be one of the extra metadata columns added with
+      --metadata or --barcodes parameters.
 
   first_cond:
     type: string
@@ -110,7 +129,7 @@ inputs:
     doc: |
       Value from the Seurat object metadata column set with
       --splitby parameter to define the first group of cells
-      for differential binding analysis.
+      for differential accessibility analysis.
 
   second_cond:
     type: string
@@ -119,7 +138,7 @@ inputs:
     doc: |
       Value from the Seurat object metadata column set with
       --splitby parameter to define the second group of
-      cells for differential binding analysis.
+      cells for differential accessibility analysis.
 
   analysis_method:
     type:
@@ -130,15 +149,22 @@ inputs:
       - "poisson"                    # (poisson) Poisson Generalized Linear Model (use FindMarkers with peaks from Seurat object)
       - "logistic-regression"        # (LR) Logistic Regression (use FindMarkers with peaks from Seurat object)
       - "mast"                       # (MAST) MAST package (use FindMarkers with peaks from Seurat object)
-      - "manorm2"                    # call peaks for each group with MACS2, run MAnorm2
+      - "manorm2-full"               # call peaks for each dataset with MACS2, then run MAnorm2 with datasets
+      - "manorm2-half"               # call peaks for each comparison group with MACS2, then run MAnorm2 with datasets
+      - "diffbind-deseq-full"        # call peaks for each dataset with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-deseq-half"        # call peaks for each comparison group with MACS2, then run DiffBind (DESeq2) with datasets
+      - "diffbind-edger-full"        # call peaks for each dataset with MACS2, then run DiffBind (EdgeR) with datasets
+      - "diffbind-edger-half"        # call peaks for each comparison group with MACS2, then run DiffBind (EdgeR) with datasets
     inputBinding:
       prefix: "--test"
     doc: |
-      Test type to use in differential binding analysis. For
-      all tests except manorm2, peaks present in the loaded
-      Seurat object will be used. If manorm2 test selected,
-      peaks will be called per group defined by --splitby
-      parameter. Default: logistic-regression
+      Test type to use in the differential accessibility
+      analysis. For all test methods except manorm2 and
+      diffbind, peaks already present in the loaded Seurat
+      object will be used. Otherwise, peaks will be called
+      with MACS2 either per dataset (for methods ending with
+      -full) or by the comparison group (for meethods ending
+      with -half). Default: logistic-regression
 
   genome_type:
     type:
@@ -153,7 +179,8 @@ inputs:
       Genome type of the sequencing data loaded from the
       Seurat object. It will be used for effective genome
       size selection when calling peaks with MACS2. Ignored
-      if --test is not set to manorm2. Default: hs (2.7e9)
+      if --test is not set to either manorm2 or diffbind
+      methods. Default: hs (2.7e9)
 
   minimum_qvalue:
     type: float?
@@ -161,7 +188,8 @@ inputs:
       prefix: "--qvalue"
     doc: |
       Minimum FDR (q-value) cutoff for MACS2 peak detection.
-      Ignored if --test is not set to manorm2. Default: 0.05
+      Ignored if --test is not set to either manorm2 or
+      diffbind methods. Default: 0.05
 
   minimum_peak_gap:
     type: int?
@@ -171,7 +199,8 @@ inputs:
       If a distance between peaks is smaller than the
       provided value they will be merged before splitting
       them into reference genomic bins of size --binsize.
-      Ignored if --test is not set to manorm2. Default: 150
+      Ignored if --test is not set to either manorm2-full or
+      manorm2-half methods. Default: 150
 
   bin_size:
     type: int?
@@ -180,8 +209,22 @@ inputs:
     doc: |
       The size of non-overlapping reference genomic bins
       used by MAnorm2 when generating a table of reads
-      counts per peaks. Ignored if --test is not set to
-      manorm2. Default: 1000
+      counts per peaks. Ignored if --test is not set to any
+      of the manorm2 methods. For diffbind methods binning
+      is disabled (the original peak sizes will be used
+      instead. Default: 1000
+
+  minimum_overlap:
+    type: float?
+    inputBinding:
+      prefix: "--minoverlap"
+    doc: |
+      Keep only those reference genomic bins that are
+      present in at least this fraction of datasets within
+      each of the comparison groups. Used only when --test
+      is set to the methods ending with -full. For methods
+      ending with -half this parameter will be automatically
+      set to 1. Default: 0.5
 
   maximum_peaks:
     type: int?
@@ -191,37 +234,63 @@ inputs:
       The maximum number of the most significant (based on
       qvalue) peaks to keep from each group of cells when
       constructing reference genomic bins. Ignored if --test
-      is not set to manorm2. Default: keep all peaks
+      is not set to either manorm2-full or manorm2-half
+      methods. For diffbind methods the minimum RPKM
+      threshold (by default equal to 1) is used instead.
+      Default: keep all peaks
 
   blacklist_regions_file:
-    type: File?
+    type:
+    - "null"
+    - File
+    - type: enum
+      symbols:
+      - "hg19"
+      - "hg38"
+      - "mm10"
     inputBinding:
       prefix: "--blacklist"
+      valueFrom: |
+        ${
+          if (self.class && self.class == "File"){
+            return self;
+          } else if (self == "hg19") {
+            return "/opt/sc_tools/hg19-blacklist.v2.bed";
+          } else if (self == "hg38") {
+            return "/opt/sc_tools/hg38-blacklist.v2.bed";
+          } else if (self == "mm10") {
+            return "/opt/sc_tools/mm10-blacklist.v2.bed";
+          } else {
+            return null;
+          }
+        }
     doc: |
       Path to the optional BED file with the genomic
       blacklist regions to be filtered out before running
-      differential binding analysis. Any reference genomic
-      bin overlapping a blacklist region will be removed
-      from the output. Ignored if --test is not set to
-      manorm2.
+      differential accessibility analysis. Any reference
+      genomic bin overlapping a blacklist region will be
+      removed from the output. Ignored if --test is not set
+      to either manorm2-full or manorm2-half methods.
 
   maximum_padj:
     type: float?
     inputBinding:
       prefix: "--padj"
     doc: |
-      In the exploratory visualization part of the analysis
-      output only differentially accessible regions with adjusted
-      P-value not bigger than this value. Default: 0.05
+      In the exploratory visualization part of
+      the analysis output only differentially
+      accessible regions with adjusted P-value
+      not bigger than this value. Default: 0.05
 
   minimum_logfc:
     type: float?
     inputBinding:
       prefix: "--logfc"
     doc: |
-      In the exploratory visualization part of the analysis
-      output only differentially accessible regions with log2 Fold
-      Change not smaller than this value. Default: 1.0
+      In the exploratory visualization part of
+      the analysis output only differentially
+      accessible regions with log2 Fold Change
+      not smaller than this value. Default: 1.0
 
   export_pdf_plots:
     type: boolean?
@@ -247,9 +316,9 @@ inputs:
     inputBinding:
       prefix: "--theme"
     doc: |
-      Color theme for all generated plots. One of gray, bw,
-      linedraw, light, dark, minimal, classic, void.
-      Default: classic
+      Color theme for all generated plots.
+      One of gray, bw, linedraw, light, dark,
+      minimal, classic, void. Default: classic
 
   verbose:
     type: boolean?
@@ -280,7 +349,8 @@ inputs:
     inputBinding:
       prefix: "--memory"
     doc: |
-      Maximum memory in GB allowed to be shared between the workers
+      Maximum memory in GB allowed to
+      be shared between the workers
       when using multiple --cpus.
       Default: 32
 
@@ -288,7 +358,8 @@ inputs:
     type: int?
     default: 128
     doc: |
-      Maximum vector memory in GB allowed to be used by R.
+      Maximum vector memory in GB
+      allowed to be used by R.
       Default: 128
 
   threads:
@@ -310,238 +381,246 @@ inputs:
 
 outputs:
 
-  umap_rd_rnaumap_plot_png:
+  umap_spl_tst_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_rnaumap.png"
+      glob: "*_umap_spl_tst.png"
     doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (rnaumap dim. reduction).
+      UMAP colored by selected for analysis cells.
+      Split by tested condition. Optionally subsetted
+      to the specific group.
       PNG format.
 
-  umap_rd_rnaumap_plot_pdf:
+  cell_cnts_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_rnaumap.pdf"
+      glob: "*_cell_cnts.png"
     doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (rnaumap dim. reduction).
-      PDF format.
-
-  umap_rd_atacumap_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_atacumap.png"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (atacumap dim. reduction).
+      Number of cells per dataset or tested
+      condition. Colored by tested condition.
+      Optionally subsetted to the specific group.
       PNG format.
 
-  umap_rd_atacumap_plot_pdf:
+  vlcn_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_atacumap.pdf"
+      glob: "*_vlcn.png"
     doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (atacumap dim. reduction).
-      PDF format.
-
-  umap_rd_wnnumap_plot_png:
-    type: File?
-    outputBinding:
-      glob: "*_umap_rd_wnnumap.png"
-    doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (wnnumap dim. reduction).
+      Volcano plot of differentially
+      accessible regions.
       PNG format.
 
-  umap_rd_wnnumap_plot_pdf:
+  tag_dnst_htmp_plot_png:
     type: File?
     outputBinding:
-      glob: "*_umap_rd_wnnumap.pdf"
+      glob: "*_tag_dnst_htmp.png"
     doc: |
-      Cells UMAP split by selected criteria,
-      optionally subsetted to the specific
-      group (wnnumap dim. reduction).
-      PDF format.
+      Tag density around the centers of
+      differentially accessible regions,
+      sorted in descending order by the
+      mean value of each region. Optionally
+      subsetted to the specific group.
+      PNG format.
 
-  seurat_peaks_bigbed_file:
+  tag_dnst_htmp_gct:
     type: File?
     outputBinding:
-      glob: "*_seurat_peaks.bigBed"
+      glob: "*_tag_dnst_htmp.gct"
     doc: |
-      Peaks in bigBed format extracted
-      from the loaded from provided RDS
-      file Seurat object. 
+      Tag density around the centers of
+      differentially accessible regions,
+      sorted in descending order by the
+      mean value of each region. Optionally
+      subsetted to the specific group.
+      GCT format.
 
-  first_fragments_bigwig_file:
+  tag_dnst_htmp_html:
+    type: File?
+    outputBinding:
+      glob: "*_tag_dnst_htmp.html"
+    doc: |
+      Tag density around the centers of
+      differentially accessible regions,
+      sorted in descending order by the
+      mean value of each region. Optionally
+      subsetted to the specific group.
+      HTML format.
+
+  tag_dnst_htmp_tsv:
+    type: File?
+    outputBinding:
+      glob: "*_tag_dnst_htmp.tsv"
+    doc: |
+      Tag density around the centers of
+      differentially accessible regions,
+      sorted in descending order by the
+      mean value of each region. Optionally
+      subsetted to the specific group.
+      TSV format.
+
+  all_db_sites_tsv:
     type: File
+    outputBinding:
+      glob: "*_all_db_sites.tsv"
+    doc: |
+      Not filtered differentially
+      accessible regions.
+      TSV format.
+
+  all_db_sites_bed:
+    type: File
+    outputBinding:
+      glob: "*_all_db_sites.bed"
+    doc: |
+      Not filtered differentially
+      accessible regions.
+      BED format.
+
+  fltr_db_sites_bed:
+    type: File?
+    outputBinding:
+      glob: "*_fltr_db_sites.bed"
+    doc: |
+      Differentially accessible regions.
+      Filtered by adjusted p-value and
+      log2FoldChange thresholds.
+      BED format.
+
+  coverage_first_bigwig_file:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*_first.bigWig"
     doc: |
-      Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
-      the group defined by the --first and
-      --groupby parameters.
-      
-  second_fragments_bigwig_file:
-    type: File
+      Normalized genome coverage calculated
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The cells
+      were first split either by dataset or
+      tested condition, then aggregated to the
+      pseudobulk form. First comparison group.
+      BigWig format.
+
+  coverage_second_bigwig_file:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*_second.bigWig"
     doc: |
-      Genome coverage in bigWig format calculated
-      for ATAC fragments from the cells that belong to
-      the group defined by the --second and
-      --groupby parameters.
+      Normalized genome coverage calculated
+      from either ATAC fragments or extended
+      to 40bp lenght Tn5 cut sites. The cells
+      were first split either by dataset or
+      tested condition, then aggregated to the
+      pseudobulk form. Second comparison group.
+      BigWig format.
 
-  first_tn5ct_bigwig_file:
-    type: File?
-    outputBinding:
-      glob: "*_first_tn5ct.bigWig"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for Tn5 cut sites from the cells that belong
-      to the group defined by the --first and
-      --groupby parameters.
-
-  second_tn5ct_bigwig_file:
-    type: File?
-    outputBinding:
-      glob: "*_second_tn5ct.bigWig"
-    doc: |
-      Genome coverage in bigWig format calculated
-      for Tn5 cut sites from the cells that belong
-      to the group defined by the --second and
-      --groupby parameters.
-
-  first_peaks_xls_file:
-    type: File?
-    outputBinding:
-      glob: "*_first_peaks.xls"
-    doc: |
-      MACS2 report in XLS format for peaks
-      called from the Tn5 cut sites of the
-      cells that belong to the group defined
-      by the --first and --groupby parameters.
-
-  second_peaks_xls_file:
-    type: File?
-    outputBinding:
-      glob: "*_second_peaks.xls"
-    doc: |
-      MACS2 report in XLS format for peaks
-      called from the Tn5 cut sites of the
-      cells that belong to the group defined
-      by the --second and --groupby parameters.
-
-  first_peaks_bed_file:
-    type: File?
+  peaks_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*_first_peaks.narrowPeak"
     doc: |
-      MACS2 peaks in narrowPeak format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --first
-      and --groupby parameters.
+      Peaks called by MACS2 from the Tn5
+      cut sites split either by dataset
+      or tested condition.
+      First comparison group.
+      NarrowPeak format.
 
-  second_peaks_bed_file:
-    type: File?
+  peaks_second_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*_second_peaks.narrowPeak"
     doc: |
-      MACS2 peaks in narrowPeak format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --second
-      and --groupby parameters.
+      Peaks called by MACS2 from the Tn5
+      cut sites split either by dataset
+      or tested condition.
+      Second comparison group.
+      NarrowPeak format.
 
-  first_summits_bed_file:
-    type: File?
+  peaks_first_xls_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_first_peaks.xls"
+    doc: |
+      Peaks called by MACS2 from the Tn5
+      cut sites split either by dataset
+      or tested condition.
+      First comparison group.
+      XLS format.
+
+  peaks_second_xls_file:
+    type:
+    - "null"
+    - type: array
+      items: File
+    outputBinding:
+      glob: "*_second_peaks.xls"
+    doc: |
+      Peaks called by MACS2 from the Tn5
+      cut sites split either by dataset
+      or tested condition.
+      Second comparison group.
+      XLS format.
+
+  summits_first_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*_first_summits.bed"
     doc: |
-      MACS2 peaks summits in BED format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --first
-      and --groupby parameters.
+      Summits of the peaks called by MACS2
+      from the Tn5 cut sites split either
+      by dataset or tested condition.
+      First comparison group.
+      BED format.
 
-  second_summits_bed_file:
-    type: File?
+  summits_second_bed_file:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
       glob: "*_second_summits.bed"
     doc: |
-      MACS2 peaks summits in BED format called
-      from the Tn5 cut sites of the cells that
-      belong to the group defined by the --second
-      and --groupby parameters.
+      Summits of the peaks called by MACS2
+      from the Tn5 cut sites split either
+      by dataset or tested condition.
+      Second comparison group.
+      BED format.
 
-  diff_bound_sites:
-    type: File
-    outputBinding:
-      glob: "*_db_sites.tsv"
-    doc: |
-      Not filtered differentially accessible regions.
-      TSV format.
-
-  dbnd_vlcn_plot_png:
+  dflt_peaks_bigbed_file:
     type: File?
     outputBinding:
-      glob: "*_dbnd_vlcn.png"
+      glob: "*_dflt_peaks.bigBed"
     doc: |
-      Volcano plot of differentially accessible regions.
-      PNG format.
+      Peaks extracted from the
+      loaded Seurat object.
+      BigBed format.
 
-  dbnd_vlcn_plot_pdf:
-    type: File?
+  all_plots_pdf:
+    type:
+    - "null"
+    - type: array
+      items: File
     outputBinding:
-      glob: "*_dbnd_vlcn.pdf"
+      glob: "*.pdf"
     doc: |
-      Volcano plot of differentially accessible regions.
+      All generated plots.
       PDF format.
-
-  first_enrch_bigbed_file:
-    type: File?
-    outputBinding:
-      glob: "*_first_enrch.bigBed"
-    doc: |
-      Peaks in bigBed format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --first and --groupby parameters.
-      
-  second_enrch_bigbed_file:
-    type: File?
-    outputBinding:
-      glob: "*_second_enrch.bigBed"
-    doc: |
-      Peaks in bigBed format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --second and --groupby parameters.
-
-  first_enrch_bed_file:
-    type: File?
-    outputBinding:
-      glob: "*_first_enrch.bed"
-    doc: |
-      Peaks in BED format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --first and --groupby parameters.
-      
-  second_enrch_bed_file:
-    type: File?
-    outputBinding:
-      glob: "*_second_enrch.bed"
-    doc: |
-      Peaks in BED format filtered by
-      --padj and --logfc thresholds enriched
-      in the group of cells defined by the
-      --second and --groupby parameters.
 
   sc_report_html_file:
     type: File?
@@ -550,6 +629,14 @@ outputs:
     doc: |
       Tehcnical report.
       HTML format.
+
+  human_log:
+    type: File?
+    outputBinding:
+      glob: "error_report.txt"
+    doc: |
+      Human readable error log.
+      TXT format.
 
   stdout_log:
     type: stdout
@@ -563,7 +650,7 @@ arguments:
 - valueFrom: $(inputs.export_html_report?["/usr/local/bin/sc_report_wrapper.R", "/usr/local/bin/sc_atac_dbinding.R"]:"/usr/local/bin/sc_atac_dbinding.R")
 
 
-stdout: sc_atac_dbinding_stdout.log
+stdout: error_msg.txt
 stderr: sc_atac_dbinding_stderr.log
 
 
@@ -616,22 +703,24 @@ s:creator:
 doc: |
   Single-Cell ATAC-Seq Differential Accessibility Analysis
 
-  Identifies differentially accessible regions between two groups of cells
-  --tmpdir parameter is not exposed as input.
+  Identifies differentially accessible regions between two
+  groups of cells --tmpdir parameter is not exposed as input.
 
 
 s:about: |
-  usage: /usr/local/bin/sc_atac_dbinding.R [-h] --query QUERY --fragments
-                                          FRAGMENTS [--metadata METADATA]
+  usage: /usr/local/bin/sc_atac_dbinding.R [-h] --query QUERY --reduction
+                                          REDUCTION --fragments FRAGMENTS
+                                          [--metadata METADATA]
                                           [--barcodes BARCODES]
                                           [--groupby GROUPBY]
                                           [--subset [SUBSET [SUBSET ...]]]
                                           --splitby SPLITBY --first FIRST
                                           --second SECOND
-                                          [--test {negative-binomial,poisson,logistic-regression,mast,manorm2}]
+                                          [--test {negative-binomial,poisson,logistic-regression,mast,manorm2-full,manorm2-half,diffbind-deseq-full,diffbind-deseq-half,diffbind-edger-full,diffbind-edger-half}]
                                           [--genome {hs,mm}] [--qvalue QVALUE]
                                           [--minpeakgap MINPEAKGAP]
                                           [--binsize BINSIZE]
+                                          [--minoverlap MINOVERLAP]
                                           [--maxpeaks MAXPEAKS]
                                           [--blacklist BLACKLIST] [--padj PADJ]
                                           [--logfc LOGFC] [--pdf] [--verbose]
@@ -646,9 +735,13 @@ s:about: |
     -h, --help            show this help message and exit
     --query QUERY         Path to the RDS file to load Seurat object from. This
                           file should include chromatin accessibility
-                          information stored in the ATAC assay. Additionally
-                          'rnaumap', and/or 'atacumap', and/or 'wnnumap'
-                          dimensionality reductions should be present.
+                          information stored in the ATAC assay. The
+                          dimensionality reductions selected in the --reduction
+                          parameter should be present in the loaded Seurat
+                          object.
+    --reduction REDUCTION
+                          Dimensionality reduction to be used for generating
+                          UMAP plots.
     --fragments FRAGMENTS
                           Count and barcode information for every ATAC fragment
                           used in the loaded Seurat object. File should be saved
@@ -678,52 +771,72 @@ s:about: |
                           subset, include all cells into analysis.
     --subset [SUBSET [SUBSET ...]]
                           Values from the column set with --groupby parameter to
-                          subset cells before running differential binding
+                          subset cells before running differential accessibility
                           analysis. Ignored if --groupby is not provided.
                           Default: do not subset cells, include all of them.
     --splitby SPLITBY     Column from the Seurat object metadata to split cells
                           into two groups to run --second vs --first
-                          differential binding analysis. May be one of the extra
-                          metadata columns added with --metadata or --barcodes
-                          parameters.
+                          differential accessibility analysis. If --test
+                          parameter is set to any of the manorm2 or diffbind
+                          methods, the --splitby shouldn't put cells from the
+                          same dataset into the different comparison groups. May
+                          be one of the extra metadata columns added with
+                          --metadata or --barcodes parameters.
     --first FIRST         Value from the Seurat object metadata column set with
                           --splitby parameter to define the first group of cells
-                          for differential binding analysis.
+                          for differential accessibility analysis.
     --second SECOND       Value from the Seurat object metadata column set with
                           --splitby parameter to define the second group of
-                          cells for differential binding analysis.
-    --test {negative-binomial,poisson,logistic-regression,mast,manorm2}
-                          Test type to use in differential binding analysis. For
-                          all tests except manorm2, peaks present in the loaded
-                          Seurat object will be used. If manorm2 test selected,
-                          peaks will be called per group defined by --splitby
-                          parameter. Default: logistic-regression
+                          cells for differential accessibility analysis.
+    --test {negative-binomial,poisson,logistic-regression,mast,manorm2-full,manorm2-half,diffbind-deseq-full,diffbind-deseq-half,diffbind-edger-full,diffbind-edger-half}
+                          Test type to use in the differential accessibility
+                          analysis. For all test methods except manorm2 and
+                          diffbind, peaks already present in the loaded Seurat
+                          object will be used. Otherwise, peaks will be called
+                          with MACS2 either per dataset (for methods ending with
+                          -full) or by the comparison group (for meethods ending
+                          with -half). Default: logistic-regression
     --genome {hs,mm}      Genome type of the sequencing data loaded from the
                           Seurat object. It will be used for effective genome
                           size selection when calling peaks with MACS2. Ignored
-                          if --test is not set to manorm2. Default: hs (2.7e9)
+                          if --test is not set to either manorm2 or diffbind
+                          methods. Default: hs (2.7e9)
     --qvalue QVALUE       Minimum FDR (q-value) cutoff for MACS2 peak detection.
-                          Ignored if --test is not set to manorm2. Default: 0.05
+                          Ignored if --test is not set to either manorm2 or
+                          diffbind methods. Default: 0.05
     --minpeakgap MINPEAKGAP
                           If a distance between peaks is smaller than the
                           provided value they will be merged before splitting
                           them into reference genomic bins of size --binsize.
-                          Ignored if --test is not set to manorm2. Default: 150
+                          Ignored if --test is not set to either manorm2-full or
+                          manorm2-half methods. Default: 150
     --binsize BINSIZE     The size of non-overlapping reference genomic bins
                           used by MAnorm2 when generating a table of reads
-                          counts per peaks. Ignored if --test is not set to
-                          manorm2. Default: 1000
+                          counts per peaks. Ignored if --test is not set to any
+                          of the manorm2 methods. For diffbind methods binning
+                          is disabled (the original peak sizes will be used
+                          instead. Default: 1000
+    --minoverlap MINOVERLAP
+                          Keep only those reference genomic bins that are
+                          present in at least this fraction of datasets within
+                          each of the comparison groups. Used only when --test
+                          is set to the methods ending with -full. For methods
+                          ending with -half this parameter will be automatically
+                          set to 1. Default: 0.5
     --maxpeaks MAXPEAKS   The maximum number of the most significant (based on
                           qvalue) peaks to keep from each group of cells when
                           constructing reference genomic bins. Ignored if --test
-                          is not set to manorm2. Default: keep all peaks
+                          is not set to either manorm2-full or manorm2-half
+                          methods. For diffbind methods the minimum RPKM
+                          threshold (by default equal to 1) is used instead.
+                          Default: keep all peaks
     --blacklist BLACKLIST
                           Path to the optional BED file with the genomic
                           blacklist regions to be filtered out before running
-                          differential binding analysis. Any reference genomic
-                          bin overlapping a blacklist region will be removed
-                          from the output. Ignored if --test is not set to
-                          manorm2.
+                          differential accessibility analysis. Any reference
+                          genomic bin overlapping a blacklist region will be
+                          removed from the output. Ignored if --test is not set
+                          to either manorm2-full or manorm2-half methods.
     --padj PADJ           In the exploratory visualization part of the analysis
                           output only differentially bound peaks with adjusted
                           P-value not bigger than this value. Default: 0.05

@@ -13,6 +13,7 @@ requirements:
   deseq_experiment:
     - "deseq.cwl"
     - "deseq-for-spikein.cwl"
+    - "sc-rna-de-pseudobulk.cwl"
 
 
 inputs:
