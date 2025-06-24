@@ -13,6 +13,11 @@ declare -A TOOL_ENVS=(
   [Rscript]=r_base
   [file]=utils
   [unzip]=utils
+  [r::modules]=r_base
+  [r::future]=r_base
+  [r::argparse]=r_base
+  [r::ChIPseeker]=r_base
+  [r::txdbmaker]=r_base
 )
 
 MISSING=()
@@ -20,8 +25,15 @@ declare -A ENV_SIZES=()
 
 for TOOL in "${!TOOL_ENVS[@]}"; do
   ENV_NAME="${TOOL_ENVS[$TOOL]}"
-  if ! mamba run -n "$ENV_NAME" which "$TOOL" >/dev/null 2>&1; then
-    MISSING+=("$TOOL ($ENV_NAME)")
+  if [[ "$TOOL" == r::* ]]; then
+    PKG="${TOOL#r::}"
+    if ! mamba run -n "$ENV_NAME" Rscript -e "if (!requireNamespace('$PKG', quietly=TRUE)) quit(status=1)" >/dev/null 2>&1; then
+      MISSING+=("R package $PKG ($ENV_NAME)")
+    fi
+  else
+    if ! mamba run -n "$ENV_NAME" which "$TOOL" >/dev/null 2>&1; then
+      MISSING+=("$TOOL ($ENV_NAME)")
+    fi
   fi
   if [[ -z "${ENV_SIZES[$ENV_NAME]:-}" ]]; then
     if [ -d "/opt/conda/envs/$ENV_NAME" ]; then
@@ -37,9 +49,9 @@ for ENV in "${!ENV_SIZES[@]}"; do
 done
 
 if [ ${#MISSING[@]} -eq 0 ]; then
-  echo "All required tools are installed and available in their mamba environments."
+  echo "All required tools and R packages are installed and available in their mamba environments."
   exit 0
 else
-  echo "Missing tools: ${MISSING[*]}" >&2
+  echo "Missing tools or R packages: ${MISSING[*]}" >&2
   exit 1
 fi
