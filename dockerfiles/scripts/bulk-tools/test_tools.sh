@@ -13,11 +13,13 @@ declare -A TOOL_ENVS=(
   [Rscript]=r_base
   [file]=utils
   [unzip]=utils
-  [r::modules]=r_base
-  [r::future]=r_base
-  [r::argparse]=r_base
-  [r::ChIPseeker]=r_base
-  [r::txdbmaker]=r_base
+  [r_modules]=r_base
+  [r_future]=r_base
+  [r_argparse]=r_base
+  [r_knitr]=r_base
+  [r_forcats]=r_base
+  [r_ChIPseeker]=r_base
+  [r_txdbmaker]=r_base
 )
 
 MISSING=()
@@ -25,8 +27,8 @@ declare -A ENV_SIZES=()
 
 for TOOL in "${!TOOL_ENVS[@]}"; do
   ENV_NAME="${TOOL_ENVS[$TOOL]}"
-  if [[ "$TOOL" == r::* ]]; then
-    PKG="${TOOL#r::}"
+  if [[ "$TOOL" == r_* ]]; then
+    PKG="${TOOL#r_}"
     if ! mamba run -n "$ENV_NAME" Rscript -e "if (!requireNamespace('$PKG', quietly=TRUE)) quit(status=1)" >/dev/null 2>&1; then
       MISSING+=("R package $PKG ($ENV_NAME)")
     fi

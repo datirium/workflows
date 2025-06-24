@@ -20,6 +20,8 @@
 #       * argparse
 #       * ChIPseeker
 #       * txdbmaker
+#       * knitr
+#       * forcats
 #   - file
 #   - unzip
 # Installed custom scripts:
@@ -43,11 +45,13 @@ ENV BEDTOOLS_VERSION=2.31.1
 ENV UCSC_APPS_VERSION=481
 ENV FASTX_TOOLKIT_VERSION=0.0.14
 ENV R_BASE_VERSION=4.4.3
-ENV RMODULES_VERSION=0.13.0
-ENV RFUTURE_VERSION=1.58.0
-ENV RARGPARSE_VERSION=2.2.5
-ENV CHIPSEEKER_VERSION=1.42.0
-ENV TXDBMAKER_VERSION=1.2.0
+ENV R_MODULES_VERSION=0.13.0
+ENV R_FUTURE_VERSION=1.58.0
+ENV R_ARGPARSE_VERSION=2.2.5
+ENV R_KNITR_VERSION=1.50
+ENV R_FORCATS_VERSION=1.0.0
+ENV R_CHIPSEEKER_VERSION=1.42.0
+ENV R_TXDBMAKER_VERSION=1.2.0
 ENV FILE_VERSION=5.46
 ENV UNZIP_VERSION=6.0
 
@@ -63,11 +67,13 @@ RUN mamba create -y -n bowtie2 bioconda::bowtie2=${BOWTIE2_VERSION} && \
     mamba create -y -n ucsc bioconda::ucsc-bedgraphtobigwig=${UCSC_APPS_VERSION} && \
     mamba create -y -n fastx bioconda::fastx_toolkit=${FASTX_TOOLKIT_VERSION} && \
     mamba create -y -n r_base conda-forge::r-base=${R_BASE_VERSION} && \
-    mamba install -y -n r_base conda-forge::r-modules=${RMODULES_VERSION} && \
-    mamba install -y -n r_base conda-forge::r-future=${RFUTURE_VERSION} && \
-    mamba install -y -n r_base conda-forge::r-argparse=${RARGPARSE_VERSION} && \
-    mamba install -y -n r_base bioconda::bioconductor-chipseeker=${CHIPSEEKER_VERSION} && \
-    mamba install -y -n r_base bioconda::bioconductor-txdbmaker=${TXDBMAKER_VERSION} && \
+    mamba install -y -n r_base conda-forge::r-modules=${R_MODULES_VERSION} && \
+    mamba install -y -n r_base conda-forge::r-future=${R_FUTURE_VERSION} && \
+    mamba install -y -n r_base conda-forge::r-argparse=${R_ARGPARSE_VERSION} && \
+    mamba install -y -n r_base conda-forge::r-knitr=${R_KNITR_VERSION} && \
+    mamba install -y -n r_base conda-forge::r-forcats=${R_FORCATS_VERSION} && \
+    mamba install -y -n r_base bioconda::bioconductor-chipseeker=${R_CHIPSEEKER_VERSION} && \
+    mamba install -y -n r_base bioconda::bioconductor-txdbmaker=${R_TXDBMAKER_VERSION} && \
     mamba create -y -n utils conda-forge::file=${FILE_VERSION} && \
     mamba install -y -n utils conda-forge::unzip=${UNZIP_VERSION} && \
     chmod +x /usr/local/bin/extract_fastq.sh && \
