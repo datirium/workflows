@@ -24,6 +24,10 @@
 #       * forcats
 #   - file
 #   - unzip
+#   - make
+#   - qmake
+# Installed custom tools:
+#   - iaintersect
 # Installed custom scripts:
 #   - extract_fastq.sh
 #   - test_extract_fastq.sh
@@ -44,6 +48,11 @@ ENV MACS3_VERSION=3.0.3
 ENV BEDTOOLS_VERSION=2.31.1
 ENV UCSC_APPS_VERSION=481
 ENV FASTX_TOOLKIT_VERSION=0.0.14
+ENV GXX_VERSION=15.1.0
+ENV MAKE_VERSION=4.4.1
+ENV QT_VERSION=5.15.8
+ENV LIBGL_VERSION=18.3.4
+ENV BOOST_VERSION=1.88.0
 ENV R_BASE_VERSION=4.4.3
 ENV R_MODULES_VERSION=0.13.0
 ENV R_FUTURE_VERSION=1.58.0
@@ -54,11 +63,17 @@ ENV R_CHIPSEEKER_VERSION=1.42.0
 ENV R_TXDBMAKER_VERSION=1.2.0
 ENV FILE_VERSION=5.46
 ENV UNZIP_VERSION=6.0
+ENV IAINTERSECT_VERSION=0.0.2
 
 COPY ./scripts/bulk-tools/*.sh /usr/local/bin/
 COPY ./scripts/bulk-tools/data /usr/local/bin/data
 
-RUN mamba create -y -n bowtie2 bioconda::bowtie2=${BOWTIE2_VERSION} && \
+RUN mamba create -y -n compiler conda-forge::gxx=${GXX_VERSION} && \
+    mamba install -y -n compiler conda-forge::make=${MAKE_VERSION} && \
+    mamba install -y -n compiler conda-forge::qt=${QT_VERSION} && \
+    mamba install -y -n compiler conda-forge::mesa-libgl-devel-cos7-x86_64=${LIBGL_VERSION} && \
+    mamba install -y -n compiler conda-forge::libboost-devel=${BOOST_VERSION} && \
+    mamba create -y -n bowtie2 bioconda::bowtie2=${BOWTIE2_VERSION} && \
     mamba create -y -n trim_galore bioconda::trim-galore=${TRIMGALORE_VERSION} && \
     mamba create -y -n samtools bioconda::samtools=${SAMTOOLS_VERSION} && \
     mamba create -y -n preseq bioconda::preseq=${PRESEQ_VERSION} && \
@@ -76,6 +91,11 @@ RUN mamba create -y -n bowtie2 bioconda::bowtie2=${BOWTIE2_VERSION} && \
     mamba install -y -n r_base bioconda::bioconductor-txdbmaker=${R_TXDBMAKER_VERSION} && \
     mamba create -y -n utils conda-forge::file=${FILE_VERSION} && \
     mamba install -y -n utils conda-forge::unzip=${UNZIP_VERSION} && \
+    wget -q -O - "https://github.com/Barski-lab/iaintersect/archive/v${IAINTERSECT_VERSION}.tar.gz" | tar -zxv && \
+    cd "iaintersect-${IAINTERSECT_VERSION}" && \
+    mamba run -n compiler qmake && \
+    mamba run -n compiler make && \
+    cp ./iaintersect /usr/local/bin/ && cd ../ && \
     chmod +x /usr/local/bin/extract_fastq.sh && \
     chmod +x /usr/local/bin/test_extract_fastq.sh && \
     chmod +x /usr/local/bin/test_tools.sh && \

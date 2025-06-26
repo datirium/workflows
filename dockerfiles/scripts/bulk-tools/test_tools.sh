@@ -13,6 +13,9 @@ declare -A TOOL_ENVS=(
   [Rscript]=r_base
   [file]=utils
   [unzip]=utils
+  [make]=compiler
+  [qmake]=compiler
+  [iaintersect]=none
   [r_modules]=r_base
   [r_future]=r_base
   [r_argparse]=r_base
@@ -27,7 +30,11 @@ declare -A ENV_SIZES=()
 
 for TOOL in "${!TOOL_ENVS[@]}"; do
   ENV_NAME="${TOOL_ENVS[$TOOL]}"
-  if [[ "$TOOL" == r_* ]]; then
+  if [[ "$ENV_NAME" == "none" ]]; then
+    if ! command -v "$TOOL" >/dev/null 2>&1; then
+      MISSING+=("$TOOL (global)")
+    fi
+  elif [[ "$TOOL" == r_* ]]; then
     PKG="${TOOL#r_}"
     if ! mamba run -n "$ENV_NAME" Rscript -e "if (!requireNamespace('$PKG', quietly=TRUE)) quit(status=1)" >/dev/null 2>&1; then
       MISSING+=("R package $PKG ($ENV_NAME)")
