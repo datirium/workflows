@@ -2,7 +2,8 @@
 set -euo pipefail
 
 declare -A TOOL_ENVS=(
-  [bowtie2]=bowtie2
+  [bowtie2]=aligner
+  [STAR]=aligner
   [trim_galore]=trim_galore
   [samtools]=samtools
   [preseq]=preseq
