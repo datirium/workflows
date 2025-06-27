@@ -21,6 +21,8 @@ declare -A TOOL_ENVS=(
   [r_argparse]=r_base
   [r_knitr]=r_base
   [r_forcats]=r_base
+  [r_UpSetR]=r_base
+  [r_ggupset]=r_base
   [r_ChIPseeker]=r_base
   [r_txdbmaker]=r_base
 )
