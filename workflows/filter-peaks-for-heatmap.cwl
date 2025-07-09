@@ -214,9 +214,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Filter ChIP/ATAC/cut&run/diffbind peaks for Tag Density Profile or Motif Enrichment analyses"
-label: "Filter ChIP/ATAC/cut&run/diffbind peaks for Tag Density Profile or Motif Enrichment analyses"
-s:alternateName: "Filter ChIP/ATAC/cut&run/diffbind peaks for Tag Density Profile or Motif Enrichment analyses"
+s:name: "Filter ChIP/ATAC/cut&run peaks for Tag Density Profile or Motif Enrichment analyses"
+label: "Filter ChIP/ATAC/cut&run peaks for Tag Density Profile or Motif Enrichment analyses"
+s:alternateName: "Filter ChIP/ATAC/cut&run peaks for Tag Density Profile or Motif Enrichment analyses"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-peaks-for-heatmap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -254,8 +254,8 @@ s:creator:
 
 
 doc: |
-  Filters ChIP/ATAC/cut&run/diffbind peaks with the neatest genes assigned for Tag Density Profile or Motif Enrichment analyses
+  Filters ChIP/ATAC/cut&run peaks with the neatest genes assigned for Tag Density Profile or Motif Enrichment analyses
   ============================================================================================================
 
-  Tool filters output from any ChIP/ATAC/cut&run/diffbind pipeline to create a file with regions of interest for Tag Density
+  Tool filters output from any ChIP/ATAC/cut&run pipeline to create a file with regions of interest for Tag Density
   Profile or Motif Enrichment analyses. Peaks with duplicated coordinates are discarded.

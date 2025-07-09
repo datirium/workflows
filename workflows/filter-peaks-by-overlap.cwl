@@ -73,7 +73,7 @@ inputs:
     type: File
     format: "http://edamontology.org/format_3475"
     label: "Peak list A sample:"
-    doc: "Choose a sample to use for peak list A, from the ChIP, ATAC, C&R, or diffbind workflows."
+    doc: "Choose a sample to use for peak list A, from the ChIP, ATAC or C&R workflows."
     'sd:upstreamSource': "peaklist_A_samples/iaintersect_result"
     'sd:localLabel': true
     sd:preview:
@@ -83,7 +83,7 @@ inputs:
     type: File[]
     format: "http://edamontology.org/format_3475"
     label: "Peak list B sample(s):"
-    doc: "Select 1 or more samples for peak list group B, from the ChIP, ATAC, C&R, or diffbind workflows."
+    doc: "Select 1 or more samples for peak list group B, from the ChIP, ATAC or C&R workflows."
     'sd:upstreamSource': "peaklist_B_samples/iaintersect_result"
     'sd:localLabel': true
     sd:preview:
@@ -272,9 +272,9 @@ $namespaces:
 $schemas:
 - https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
 
-s:name: "Set Operations for Called Peaks (ChIP/ATAC/C&R/diffbind)"
-label: "Set Operations for Called Peaks (ChIP/ATAC/C&R/diffbind)"
-s:alternateName: "Set Operations for Called Peaks (ChIP/ATAC/C&R/diffbind)"
+s:name: "Set Operations for Called Peaks (ChIP/ATAC/C&R)"
+label: "Set Operations for Called Peaks (ChIP/ATAC/C&R)"
+s:alternateName: "Set Operations for Called Peaks (ChIP/ATAC/C&R)"
 
 s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/filter-peaks-by-overlap.cwl
 s:codeRepository: https://github.com/datirium/workflows
@@ -315,6 +315,6 @@ doc: |
   # Set Operations for Peaks
 
   This workflow takes as input multiple peak list TSV files (the `iaintersect_result.tsv` output under the
-  "Files" output tab) from the ChIP, ATAC, C&R, or diffbind workflows and performs the user-selected set
+  "Files" output tab) from the ChIP, ATAC or C&R workflows and performs the user-selected set
   operation on the group. Set operations include intersection, union, difference, and complement. See the
   tooltip for the `set_operator` input for more details.
