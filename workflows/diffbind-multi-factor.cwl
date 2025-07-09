@@ -329,7 +329,7 @@ inputs:
       - "3"
       - "4"
       - "5"
-      - "4"
+      - "6"
     default: "4"
     label: "Number of cores/cpus to use"
     doc: |
