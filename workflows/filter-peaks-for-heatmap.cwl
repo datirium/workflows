@@ -19,7 +19,6 @@ requirements:
     - "trim-atacseq-pe.cwl"
     - "cutandrun-macs2-pe.cwl"
     - "cutandrun-seacr-pe.cwl"
-    - "diffbind.cwl"
 
 
 inputs:
