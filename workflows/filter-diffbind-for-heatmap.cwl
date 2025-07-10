@@ -37,26 +37,25 @@ inputs:
       params:
         columns: ["Refseq_id", "Gene_id", "txStart", "txEnd", "Strand", "Region", "Chr", "Start", "End", "Conc", "Conc1", "Conc2", "Fold", "p-value", "FDR", "Called1", "Called2"]
         types:   ["string", "string", "number", "number", "string", "string", "string", "number", "number", "number", "number", "number", "number", "number", "number","number", "number"]
-                 
+
+  columns:
+    type:
+    - "null"
+    - type: enum
+      symbols:
+      - "genes coordinates"              # report "DISTINCT Chr AS chrom, txStart AS start, txEnd AS end, Gene_id AS name, Fold AS score, Strand AS strand"
+      - "peaks coordinates"            # report "DISTINCT Chr AS chrom, Start AS start, End AS end, Gene_id AS name, Fold AS score, Strand AS strand"
+    default: "genes coordinates"
+    label: "Coordinates to report"
+    doc: |
+      Coordinates to be reported in
+      the output file.
+
   header:
     type: boolean?
     default: false
     label: "Include header line"
     doc: "Print header line in the output file"
-    'sd:layout':
-      advanced: true
-
-  columns:
-    type:
-    - "null"
-    - string[]
-    default: ["Chr AS chrom", "txStart AS start", "txEnd AS end", "Gene_id AS name", "Fold AS score", "Strand AS strand"]
-    label: "Columns to print"
-    doc: |
-      List of columns to print (SELECT parameters for SQL query).
-      Need to have format [chrom start end name score strand]. No header.
-      4th columns should be unique, so we use GeneId for that.
-      5th columns will be ignored by Tag Density pipeline, so we use log2FoldChange.
     'sd:layout':
       advanced: true
 
@@ -120,7 +119,14 @@ steps:
       sql_query: sql_query
       columns:
         source: columns
-        valueFrom: $("DISTINCT " + self.join(", "))   # multiple peaks can have the same coordinates but different abssummit, so we need to use DISTINCT
+        valueFrom: |
+          ${
+            if (self == "genes coordinates") {
+              return "DISTINCT Chr AS chrom, txStart AS start, txEnd AS end, Gene_id AS name, Fold AS score, Strand AS strand";
+            } else {
+              return "DISTINCT Chr AS chrom, Start AS start, End AS end, Gene_id AS name, Fold AS score, Strand AS strand";
+            }
+          }
       header: header
     out:
     - filtered_file
