@@ -1,28 +1,17 @@
 cwlVersion: v1.0
 class: ExpressionTool
-
-
 requirements:
-  - class: InlineJavascriptRequirement
-
-
+- class: InlineJavascriptRequirement
 inputs:
-
   input_files:
     type:
-      - Directory
-      - File[]
-
+    - Directory
+    - File[]
   basename_regex:
     type: string
-
-
 outputs:
-
   selected_file:
     type: File?
-
-
 expression: |
   ${
     var patt = new RegExp(inputs.basename_regex);
@@ -42,7 +31,4 @@ expression: |
 
     return { "selected_file": null };
   }
-
-
-doc: |
-  Returns file the first file from input File[], that match input regex expression
+doc: Returns file the first file from input File[], that match input regex expression

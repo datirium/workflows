@@ -1,19 +1,12 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
-
 requirements:
 - class: ShellCommandRequirement
 - class: InlineJavascriptRequirement
-
-
 hints:
 - class: DockerRequirement
   dockerPull: biowardrobe2/samtools:v1.4
-
-
 inputs:
-
   script_command:
     type: string?
     default: |
@@ -56,130 +49,68 @@ inputs:
       printf "  mean maximum signal length: $mmpl\n" >> collected_statistics_report.yaml
       printf "  spike-in mapped read count (scaling_factor=10,000/x): $spikein\n" >> collected_statistics_report.yaml
     inputBinding:
-        position: 4
-
+      position: 4
   bam_file:
     type: File
-    label: "Input BAM file"
+    label: Input BAM file
     inputBinding:
       position: 5
-    doc: "Input BAM file, does not have to be coordinates sorted"
-
+    doc: Input BAM file, does not have to be coordinates sorted
   called_peaks_norm:
     type: File
     inputBinding:
       position: 12
-
   collected_statistics_md:
     type: File
     inputBinding:
       position: 20
-
   collected_statistics_tsv:
     type: File
     inputBinding:
       position: 21
-
   collected_statistics_yaml:
     type: File
     inputBinding:
       position: 22
-
   spikein_reads_mapped:
-      type: int
-      label: "spike-in mapped reads from get_spikein_bam_statistics"
-      inputBinding:
-          position: 50
-
+    type: int
+    label: spike-in mapped reads from get_spikein_bam_statistics
+    inputBinding:
+      position: 50
   peak_caller:
-      type: string
-      label: "specify either SEACR or MACS2 peak caller tool that was used, will change how input called peaks file is parsed"
-      inputBinding:
-          position: 60
-
-
+    type: string
+    label: specify either SEACR or MACS2 peak caller tool that was used, will change how input called peaks file is parsed
+    inputBinding:
+      position: 60
 outputs:
-
   modified_file_md:
     type: File
     outputBinding:
-      glob: "collected_statistics_report.md"
-
+      glob: collected_statistics_report.md
   modified_file_tsv:
     type: File
     outputBinding:
-      glob: "collected_statistics_report.tsv"
-
+      glob: collected_statistics_report.tsv
   modified_file_yaml:
     type: File
     outputBinding:
-      glob: "collected_statistics_report.yaml"
-
+      glob: collected_statistics_report.yaml
   log_file_stdout:
     type: File
     outputBinding:
-      glob: "collected_stats_for_vis.log.stdout"
+      glob: collected_stats_for_vis.log.stdout
     doc: |
       log for stdout
-
   log_file_stderr:
     type: File
     outputBinding:
-      glob: "collected_stats_for_vis.log.stderr"
+      glob: collected_stats_for_vis.log.stderr
     doc: |
       log for stderr
-
-
-baseCommand: ["bash", "-c"]
-stdout: 'collected_stats_for_vis.log.stdout'
-stderr: 'collected_stats_for_vis.log.stderr'
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "collect-statistics-frip"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/collect-statistics-frip.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
-doc: |
-    Tool processes BAM file and output from SEACR to produce the FRIP (fraction of
-    reads in peaks) and mean peak length statistics for ATAC-seq and cut&run type
-    sequencing experiments. These stats are calculated for spike-in normalized 
-    peak data, then concatentated to the *"_collected_statistics_report" files (md,
-    tsv, and yaml). Additionally, a re-formatted peakcalled bed file is produced
-    with headers per column, and "nearest gene" annotation per peak.
+baseCommand:
+- bash
+- -c
+stdout: collected_stats_for_vis.log.stdout
+stderr: collected_stats_for_vis.log.stderr
+doc: "Tool processes BAM file and output from SEACR to produce the FRIP (fraction of\nreads in peaks) and mean peak length statistics for ATAC-seq and cut&run type\nsequencing experiments. These stats are calculated for spike-in normalized \npeak data, then concatentated to the *\"_collected_statistics_report\" files (md,\ntsv, and yaml). Additionally, a re-formatted peakcalled bed file is produced\nwith headers per column, and \"nearest gene\" annotation per peak.\n"
+label: collect-statistics-frip

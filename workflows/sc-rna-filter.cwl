@@ -1,39 +1,28 @@
 cwlVersion: v1.1
 class: Workflow
-
-
 requirements:
-  - class: SubworkflowFeatureRequirement
-  - class: StepInputExpressionRequirement
-  - class: MultipleInputFeatureRequirement
-  - class: InlineJavascriptRequirement
-    expressionLib:
-    - var split_numbers = function(line) {
-          let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null;
-          return (splitted_line && !!splitted_line.length)?splitted_line:null;
-      };
-
-
-"sd:upstream":
+- class: SubworkflowFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: MultipleInputFeatureRequirement
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var split_numbers = function(line) { let splitted_line = line?line.split(/[\s,]+/).map(parseFloat):null; return (splitted_line && !!splitted_line.length)?splitted_line:null; };
+sd:upstream:
   sc_rna_sample:
-  - "cellranger-aggr.cwl"
-  - "single-cell-preprocess-cellranger.cwl"
-  - "cellranger-multi.cwl"
-  - "sc-format-transform.cwl"
-  - "sc-rna-load-rhapsody.cwl"
-
-
+  - cellranger-aggr.cwl
+  - single-cell-preprocess-cellranger.cwl
+  - cellranger-multi.cwl
+  - sc-format-transform.cwl
+  - sc-rna-load-rhapsody.cwl
 inputs:
-
   alias:
     type: string
-    label: "Analysis name"
+    label: Analysis name
     sd:preview:
       position: 1
-
   filtered_feature_bc_matrix_folder:
     type: File
-    label: "Cell Ranger RNA or RNA+VDJ Sample"
+    label: Cell Ranger RNA or RNA+VDJ Sample
     doc: |
       Any "Cell Ranger RNA or RNA+VDJ Sample"
       that produces gene expression data in
@@ -45,16 +34,14 @@ inputs:
       following pipelines: "Cell Ranger Count
       (RNA)", "Cell Ranger Count (RNA+VDJ)",
       or "Cell Ranger Aggregate (RNA, RNA+VDJ)"
-    "sd:upstreamSource": "sc_rna_sample/filtered_feature_bc_matrix_folder"
-    "sd:localLabel": true
-
+    sd:upstreamSource: sc_rna_sample/filtered_feature_bc_matrix_folder
+    sd:localLabel: true
   aggregation_metadata:
     type: File?
-    "sd:upstreamSource": "sc_rna_sample/aggregation_metadata"
-
+    sd:upstreamSource: sc_rna_sample/aggregation_metadata
   grouping_data:
     type: File?
-    label: "Datasets grouping (optional)"
+    label: Datasets grouping (optional)
     doc: |
       If the selected "Cell Ranger RNA or
       RNA+VDJ Sample" includes multiple
@@ -70,10 +57,9 @@ inputs:
       all columns except the "library_id".
       Add the group names for each dataset
       in a separate column named "condition".
-
   barcodes_data:
     type: File?
-    label: "Selected cell barcodes (optional)"
+    label: Selected cell barcodes (optional)
     doc: |
       A TSV/CSV file to optionally prefilter
       the single cell data by including only
@@ -86,22 +72,20 @@ inputs:
       from "Cell Ranger RNA or RNA+VDJ Sample"
       and can be utilized in the current or
       future steps of analysis.
-
   remove_doublets:
     type: boolean?
     default: false
-    label: "Remove doublets"
+    label: Remove doublets
     doc: |
       Quality control filtering parameter
       to remove cells identified as doublets.
       Default: do not remove
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   minimum_umis:
     type: string?
-    default: "500"
-    label: "Minimum number of RNA reads per cell"
+    default: '500'
+    label: Minimum number of RNA reads per cell
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
@@ -123,13 +107,12 @@ inputs:
       (median - 2.5 * MAD) calculated per
       dataset.
       Default: 500
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   minimum_genes:
     type: string?
-    default: "250"
-    label: "Minimum number of genes per cell"
+    default: '250'
+    label: Minimum number of genes per cell
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
@@ -150,13 +133,12 @@ inputs:
       the auto-estimated threshold (median -
       - 2.5 * MAD) calculated per dataset.
       Default: 250
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   maximum_genes:
     type: string?
-    default: "5000"
-    label: "Maximum number of genes per cell"
+    default: '5000'
+    label: Maximum number of genes per cell
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
@@ -177,24 +159,22 @@ inputs:
       the auto-estimated threshold (median +
       + 5 * MAD) calculated per dataset.
       Default: 5000
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   mito_pattern:
     type: string?
-    default: "^mt-|^MT-"
-    label: "Mitochondrial genes pattern"
+    default: ^mt-|^MT-
+    label: Mitochondrial genes pattern
     doc: |
       Regex pattern to identify mitochondrial
       genes based on their names.
       Default: "^mt-|^MT-"
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   maximum_mito_perc:
     type: float?
     default: 5
-    label: "Maximum mitochondrial percentage per cell"
+    label: Maximum mitochondrial percentage per cell
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
@@ -205,13 +185,12 @@ inputs:
       the maximum among (median + 2 * MAD)
       values calculated per dataset.
       Default: 5
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   minimum_novelty_score:
     type: string?
-    default: "0.8"
-    label: "Minimum novelty score per cell"
+    default: '0.8'
+    label: Minimum novelty score per cell
     doc: |
       Quality control filtering threshold
       to exclude from the analysis all
@@ -234,551 +213,503 @@ inputs:
       RNA+VDJ Sample" and accessible on the
       "Files" tab.
       tab. Default: 0.8
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   export_loupe_data:
     type: boolean?
     default: false
-    label: "Save raw counts to Loupe file. I confirm that data is generated by 10x technology and accept the EULA available at https://10xgen.com/EULA"
+    label: Save raw counts to Loupe file. I confirm that data is generated by 10x technology and accept the EULA available at https://10xgen.com/EULA
     doc: |
       Save raw counts from the RNA assay to Loupe file. By
       enabling this feature you accept the End-User License
       Agreement available at https://10xgen.com/EULA.
       Default: false
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   export_html_report:
     type: boolean?
     default: true
-    label: "Show HTML report"
+    label: Show HTML report
     doc: |
       Export tehcnical report in HTML format.
       Default: true
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   color_theme:
     type:
-    - "null"
+    - 'null'
     - type: enum
       symbols:
-      - "gray"
-      - "bw"
-      - "linedraw"
-      - "light"
-      - "dark"
-      - "minimal"
-      - "classic"
-      - "void"
-    default: "classic"
-    label: "Color theme for all generated plots"
+      - gray
+      - bw
+      - linedraw
+      - light
+      - dark
+      - minimal
+      - classic
+      - void
+    default: classic
+    label: Color theme for all generated plots
     doc: |
       Color theme for all generated plots. One of gray, bw, linedraw, light,
       dark, minimal, classic, void.
       Default: classic
-    "sd:layout":
+    sd:layout:
       advanced: true
-
   threads:
     type:
-    - "null"
+    - 'null'
     - type: enum
       symbols:
-      - "1"
-      - "2"
-      - "3"
-      - "4"
-      - "5"
-      - "6"
-    default: "4"
-    label: "Number of cores/cpus to use"
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+    default: '4'
+    label: Number of cores/cpus to use
     doc: |
       Parallelization parameter to define the
       number of cores/CPUs that can be utilized
       simultaneously.
       Default: 4
-    "sd:layout":
+    sd:layout:
       advanced: true
-
-
 outputs:
-
   raw_1_2_qc_mtrcs_pca_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_1_2_qc_mtrcs_pca_plot_png
-    label: "QC metrics PCA (unfiltered, PC1/PC2)"
+    label: QC metrics PCA (unfiltered, PC1/PC2)
     doc: |
       QC metrics PCA.
       Unfiltered; PC1/PC2.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "QC metrics PCA (unfiltered, PC1/PC2)"
-
+        tab: Unfiltered
+        Caption: QC metrics PCA (unfiltered, PC1/PC2)
   raw_2_3_qc_mtrcs_pca_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_2_3_qc_mtrcs_pca_plot_png
-    label: "QC metrics PCA (unfiltered, PC2/PC3)"
+    label: QC metrics PCA (unfiltered, PC2/PC3)
     doc: |
       QC metrics PCA.
       Unfiltered; PC2/PC3.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "QC metrics PCA (unfiltered, PC2/PC3)"
-
+        tab: Unfiltered
+        Caption: QC metrics PCA (unfiltered, PC2/PC3)
   raw_cell_cnts_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_cell_cnts_plot_png
-    label: "Number of cells per dataset (unfiltered)"
+    label: Number of cells per dataset (unfiltered)
     doc: |
       Number of cells per dataset.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Number of cells per dataset (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Number of cells per dataset (unfiltered)
   raw_umi_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_dnst_plot_png
-    label: "Distribution of RNA reads per cell (unfiltered)"
+    label: Distribution of RNA reads per cell (unfiltered)
     doc: |
       Distribution of RNA reads per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Distribution of RNA reads per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Distribution of RNA reads per cell (unfiltered)
   raw_gene_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_gene_dnst_plot_png
-    label: "Distribution of genes per cell (unfiltered)"
+    label: Distribution of genes per cell (unfiltered)
     doc: |
       Distribution of genes per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Distribution of genes per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Distribution of genes per cell (unfiltered)
   raw_gene_umi_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_gene_umi_plot_png
-    label: "Genes vs RNA reads per cell (unfiltered)"
+    label: Genes vs RNA reads per cell (unfiltered)
     doc: |
       Genes vs RNA reads per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Genes vs RNA reads per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Genes vs RNA reads per cell (unfiltered)
   raw_umi_mito_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_mito_plot_png
-    label: "RNA reads vs mitochondrial percentage per cell (unfiltered)"
+    label: RNA reads vs mitochondrial percentage per cell (unfiltered)
     doc: |
       RNA reads vs mitochondrial percentage
       per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "RNA reads vs mitochondrial percentage per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: RNA reads vs mitochondrial percentage per cell (unfiltered)
   raw_mito_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_mito_dnst_plot_png
-    label: "Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered)"
+    label: Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered)
     doc: |
       Distribution of RNA reads mapped
       to mitochondrial genes per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered)
   raw_nvlt_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_nvlt_dnst_plot_png
-    label: "Distribution of novelty score per cell (unfiltered)"
+    label: Distribution of novelty score per cell (unfiltered)
     doc: |
       Distribution of novelty score per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Distribution of novelty score per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Distribution of novelty score per cell (unfiltered)
   raw_qc_mtrcs_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_qc_mtrcs_dnst_plot_png
-    label: "Distribution of QC metrics per cell (unfiltered)"
+    label: Distribution of QC metrics per cell (unfiltered)
     doc: |
       Distribution of QC metrics per cell.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Distribution of QC metrics per cell (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Distribution of QC metrics per cell (unfiltered)
   raw_rnadbl_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_rnadbl_plot_png
-    label: "Percentage of RNA doublets (unfiltered)"
+    label: Percentage of RNA doublets (unfiltered)
     doc: |
       Percentage of RNA doublets.
       Unfiltered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered"
-        Caption: "Percentage of RNA doublets (unfiltered)"
-
+        tab: Unfiltered
+        Caption: Percentage of RNA doublets (unfiltered)
   raw_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_umi_dnst_spl_cnd_plot_png
-    label: "Distribution of RNA reads per cell (unfiltered, split by grouping condition)"
+    label: Distribution of RNA reads per cell (unfiltered, split by grouping condition)
     doc: |
       Distribution of RNA reads per cell.
       Unfiltered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered, split by group"
-        Caption: "Distribution of RNA reads per cell (unfiltered, split by grouping condition)"
-
+        tab: Unfiltered, split by group
+        Caption: Distribution of RNA reads per cell (unfiltered, split by grouping condition)
   raw_gene_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_gene_dnst_spl_cnd_plot_png
-    label: "Distribution of genes per cell (unfiltered, split by grouping condition)"
+    label: Distribution of genes per cell (unfiltered, split by grouping condition)
     doc: |
       Distribution of genes per cell.
       Unfiltered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered, split by group"
-        Caption: "Distribution of genes per cell (unfiltered, split by grouping condition)"
-
+        tab: Unfiltered, split by group
+        Caption: Distribution of genes per cell (unfiltered, split by grouping condition)
   raw_mito_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_mito_dnst_spl_cnd_plot_png
-    label: "Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered, split by grouping condition)"
+    label: Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered, split by grouping condition)
     doc: |
       Distribution of RNA reads mapped
       to mitochondrial genes per cell.
       Unfiltered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered, split by group"
-        Caption: "Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered, split by grouping condition)"
-
+        tab: Unfiltered, split by group
+        Caption: Distribution of RNA reads mapped to mitochondrial genes per cell (unfiltered, split by grouping condition)
   raw_nvlt_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/raw_nvlt_dnst_spl_cnd_plot_png
-    label: "Distribution of novelty score per cell (unfiltered, split by grouping condition)"
+    label: Distribution of novelty score per cell (unfiltered, split by grouping condition)
     doc: |
       Distribution of novelty score per cell.
       Unfiltered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Unfiltered, split by group"
-        Caption: "Distribution of novelty score per cell (unfiltered, split by grouping condition)"
-
+        tab: Unfiltered, split by group
+        Caption: Distribution of novelty score per cell (unfiltered, split by grouping condition)
   fltr_1_2_qc_mtrcs_pca_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_1_2_qc_mtrcs_pca_plot_png
-    label: "QC metrics PCA (filtered, PC1/PC2)"
+    label: QC metrics PCA (filtered, PC1/PC2)
     doc: |
       QC metrics PCA.
       Filtered; PC1/PC2.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "QC metrics PCA (filtered, PC1/PC2)"
-
+        tab: Filtered
+        Caption: QC metrics PCA (filtered, PC1/PC2)
   fltr_2_3_qc_mtrcs_pca_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_2_3_qc_mtrcs_pca_plot_png
-    label: "QC metrics PCA (filtered, PC2/PC3)"
+    label: QC metrics PCA (filtered, PC2/PC3)
     doc: |
       QC metrics PCA.
       Filtered; PC2/PC3.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "QC metrics PCA (filtered, PC2/PC3)"
-
+        tab: Filtered
+        Caption: QC metrics PCA (filtered, PC2/PC3)
   fltr_cell_cnts_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_cell_cnts_plot_png
-    label: "Number of cells per dataset (filtered)"
+    label: Number of cells per dataset (filtered)
     doc: |
       Number of cells per dataset.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Number of cells per dataset (filtered)"
-
+        tab: Filtered
+        Caption: Number of cells per dataset (filtered)
   fltr_umi_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_dnst_plot_png
-    label: "Distribution of RNA reads per cell (filtered)"
+    label: Distribution of RNA reads per cell (filtered)
     doc: |
       Distribution of RNA reads per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Distribution of RNA reads per cell (filtered)"
-
+        tab: Filtered
+        Caption: Distribution of RNA reads per cell (filtered)
   fltr_gene_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_gene_dnst_plot_png
-    label: "Distribution of genes per cell (filtered)"
+    label: Distribution of genes per cell (filtered)
     doc: |
       Distribution of genes per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Distribution of genes per cell (filtered)"
-
+        tab: Filtered
+        Caption: Distribution of genes per cell (filtered)
   fltr_gene_umi_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_gene_umi_plot_png
-    label: "Genes vs RNA reads per cell (filtered)"
+    label: Genes vs RNA reads per cell (filtered)
     doc: |
       Genes vs RNA reads per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Genes vs RNA reads per cell (filtered)"
-
+        tab: Filtered
+        Caption: Genes vs RNA reads per cell (filtered)
   fltr_umi_mito_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_mito_plot_png
-    label: "RNA reads vs mitochondrial percentage per cell (filtered)"
+    label: RNA reads vs mitochondrial percentage per cell (filtered)
     doc: |
       RNA reads vs mitochondrial percentage
       per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "RNA reads vs mitochondrial percentage per cell (filtered)"
-
+        tab: Filtered
+        Caption: RNA reads vs mitochondrial percentage per cell (filtered)
   fltr_mito_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_mito_dnst_plot_png
-    label: "Distribution of RNA reads mapped to mitochondrial genes per cell (filtered)"
+    label: Distribution of RNA reads mapped to mitochondrial genes per cell (filtered)
     doc: |
       Distribution of RNA reads mapped
       to mitochondrial genes per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Distribution of RNA reads mapped to mitochondrial genes per cell (filtered)"
-
+        tab: Filtered
+        Caption: Distribution of RNA reads mapped to mitochondrial genes per cell (filtered)
   fltr_nvlt_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_nvlt_dnst_plot_png
-    label: "Distribution of novelty score per cell (filtered)"
+    label: Distribution of novelty score per cell (filtered)
     doc: |
       Distribution of novelty score per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Distribution of novelty score per cell (filtered)"
-
+        tab: Filtered
+        Caption: Distribution of novelty score per cell (filtered)
   fltr_qc_mtrcs_dnst_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_qc_mtrcs_dnst_plot_png
-    label: "Distribution of QC metrics per cell (filtered)"
+    label: Distribution of QC metrics per cell (filtered)
     doc: |
       Distribution of QC metrics per cell.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Distribution of QC metrics per cell (filtered)"
-
+        tab: Filtered
+        Caption: Distribution of QC metrics per cell (filtered)
   fltr_rnadbl_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_rnadbl_plot_png
-    label: "Percentage of RNA doublets (filtered)"
+    label: Percentage of RNA doublets (filtered)
     doc: |
       Percentage of RNA doublets.
       Filtered.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered"
-        Caption: "Percentage of RNA doublets (filtered)"
-
+        tab: Filtered
+        Caption: Percentage of RNA doublets (filtered)
   fltr_umi_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_umi_dnst_spl_cnd_plot_png
-    label: "Distribution of RNA reads per cell (filtered, split by grouping condition)"
+    label: Distribution of RNA reads per cell (filtered, split by grouping condition)
     doc: |
       Distribution of RNA reads per cell.
       Filtered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered, split by group"
-        Caption: "Distribution of RNA reads per cell (filtered, split by grouping condition)"
-
+        tab: Filtered, split by group
+        Caption: Distribution of RNA reads per cell (filtered, split by grouping condition)
   fltr_gene_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_gene_dnst_spl_cnd_plot_png
-    label: "Distribution of genes per cell (filtered, split by grouping condition)"
+    label: Distribution of genes per cell (filtered, split by grouping condition)
     doc: |
       Distribution of genes per cell.
       Filtered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered, split by group"
-        Caption: "Distribution of genes per cell (filtered, split by grouping condition)"
-
+        tab: Filtered, split by group
+        Caption: Distribution of genes per cell (filtered, split by grouping condition)
   fltr_mito_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_mito_dnst_spl_cnd_plot_png
-    label: "Distribution of RNA reads mapped to mitochondrial genes per cell (filtered, split by grouping condition)"
+    label: Distribution of RNA reads mapped to mitochondrial genes per cell (filtered, split by grouping condition)
     doc: |
       Distribution of RNA reads mapped
       to mitochondrial genes per cell.
       Filtered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered, split by group"
-        Caption: "Distribution of RNA reads mapped to mitochondrial genes per cell (filtered, split by grouping condition)"
-
+        tab: Filtered, split by group
+        Caption: Distribution of RNA reads mapped to mitochondrial genes per cell (filtered, split by grouping condition)
   fltr_nvlt_dnst_spl_cnd_plot_png:
     type: File?
     outputSource: sc_rna_filter/fltr_nvlt_dnst_spl_cnd_plot_png
-    label: "Distribution of novelty score per cell (filtered, split by grouping condition)"
+    label: Distribution of novelty score per cell (filtered, split by grouping condition)
     doc: |
       Distribution of novelty score per cell.
       Filtered; split by grouping condition.
       PNG format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - image:
-        tab: "Filtered, split by group"
-        Caption: "Distribution of novelty score per cell (filtered, split by grouping condition)"
-
+        tab: Filtered, split by group
+        Caption: Distribution of novelty score per cell (filtered, split by grouping condition)
   ucsc_cb_html_data:
     type: Directory
     outputSource: sc_rna_filter/ucsc_cb_html_data
-    label: "UCSC Cell Browser (data)"
+    label: UCSC Cell Browser (data)
     doc: |
       UCSC Cell Browser html data.
-
   ucsc_cb_html_file:
     type: File
     outputSource: sc_rna_filter/ucsc_cb_html_file
-    label: "UCSC Cell Browser"
+    label: UCSC Cell Browser
     doc: |
       UCSC Cell Browser html index.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - linkList:
-        tab: "Overview"
-        target: "_blank"
-
+        tab: Overview
+        target: _blank
   seurat_data_rds:
     type: File
     outputSource: sc_rna_filter/seurat_data_rds
-    label: "Seurat object in RDS format"
+    label: Seurat object in RDS format
     doc: |
       Seurat object.
       RDS format.
-
   datasets_metadata:
     type: File
     outputSource: sc_rna_filter/datasets_metadata
-    label: "Example of datasets metadata"
+    label: Example of datasets metadata
     doc: |
       Example of datasets metadata file
       in TSV format
-
   seurat_data_cloupe:
     type: File?
     outputSource: sc_rna_filter/seurat_data_cloupe
-    label: "Seurat object in Loupe format"
+    label: Seurat object in Loupe format
     doc: |
       Seurat object.
       Loupe format.
-
   pdf_plots:
     type: File
     outputSource: compress_pdf_plots/compressed_folder
-    label: "Compressed folder with all PDF plots"
+    label: Compressed folder with all PDF plots
     doc: |
       Compressed folder with all PDF plots.
-
   sc_report_html_file:
     type: File?
     outputSource: sc_rna_filter/sc_report_html_file
-    label: "Analysis log"
+    label: Analysis log
     doc: |
       Tehcnical report.
       HTML format.
-    "sd:visualPlugins":
+    sd:visualPlugins:
     - linkList:
-        tab: "Overview"
-        target: "_blank"
-
+        tab: Overview
+        target: _blank
   sc_rna_filter_stdout_log:
     type: File
     outputSource: sc_rna_filter/stdout_log
-    label: "Output log"
+    label: Output log
     doc: |
       Stdout log from the sc_rna_filter step.
-
   sc_rna_filter_stderr_log:
     type: File
     outputSource: sc_rna_filter/stderr_log
-    label: "Error log"
+    label: Error log
     doc: |
       Stderr log from the sc_rna_filter step.
-
-
 steps:
-
   uncompress_feature_bc_matrices:
     doc: |
       Extracts the content of TAR file into a folder
@@ -787,7 +718,6 @@ steps:
       file_to_extract: filtered_feature_bc_matrix_folder
     out:
     - extracted_folder
-
   sc_rna_filter:
     doc: |
       Filters single-cell RNA-Seq datasets based on the common QC metrics
@@ -802,7 +732,7 @@ steps:
       minimum_genes:
         source: minimum_genes
         valueFrom: $(split_numbers(self))
-      maximum_genes: 
+      maximum_genes:
         source: maximum_genes
         valueFrom: $(split_numbers(self))
       minimum_umis:
@@ -870,7 +800,6 @@ steps:
     - sc_report_html_file
     - stdout_log
     - stderr_log
-
   folder_pdf_plots:
     run: ../tools/files-to-folder.cwl
     in:
@@ -879,64 +808,17 @@ steps:
         - sc_rna_filter/all_plots_pdf
         valueFrom: $(self.flat().filter(n => n))
       folder_basename:
-        default: "pdf_plots"
+        default: pdf_plots
     out:
     - folder
-
   compress_pdf_plots:
     run: ../tools/tar-compress.cwl
     in:
       folder_to_compress: folder_pdf_plots/folder
     out:
     - compressed_folder
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-label: "Single-Cell RNA-Seq Filtering Analysis"
-s:name: "Single-Cell RNA-Seq Filtering Analysis"
-s:alternateName: "Single-Cell RNA-Seq Filtering Analysis"
-
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/sc-rna-filter.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows-datirium
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-
-
-doc: |
+label: Single-Cell RNA-Seq Filtering Analysis
+doc: |-
   Single-Cell RNA-Seq Filtering Analysis
 
   Removes low-quality cells from the outputs of the “Cell
@@ -944,3 +826,4 @@ doc: |
   “Cell Ranger Aggregate (RNA, RNA+VDJ)” pipelines. The
   results of this workflow are used in the “Single-Cell
   RNA-Seq Dimensionality Reduction Analysis” pipeline.
+sd:version: 100

@@ -1,316 +1,272 @@
 cwlVersion: v1.0
 class: Workflow
-
-
 requirements:
-  - class: StepInputExpressionRequirement
-  - class: InlineJavascriptRequirement
-
-'sd:serviceTag': "Analysis"
-
-'sd:upstream':
+- class: StepInputExpressionRequirement
+- class: InlineJavascriptRequirement
+sd:serviceTag: Analysis
+sd:upstream:
   biological_condition1:
-   - "bismark-methylation-pe.cwl"
-   - "bismark-methylation-se.cwl"
+  - bismark-methylation-pe.cwl
+  - bismark-methylation-se.cwl
   biological_condition2:
-   - "bismark-methylation-pe.cwl"
-   - "bismark-methylation-se.cwl"
+  - bismark-methylation-pe.cwl
+  - bismark-methylation-se.cwl
   genome_indices:
-   - "bismark-index.cwl"
-
-
+  - bismark-index.cwl
 inputs:
-
   alias:
     type: string
-    label: "Experiment short name/Alias"
+    label: Experiment short name/Alias
     sd:preview:
       position: 1
-
   c1_name:
     type: string
-    default: "condition1"
-    label: "Condition 1 name, single word with letters and numbers only"
-    doc: "Condition 1 name, single word with letters and numbers only"
-
+    default: condition1
+    label: Condition 1 name, single word with letters and numbers only
+    doc: Condition 1 name, single word with letters and numbers only
   c2_name:
     type: string
-    default: "condition2"
-    label: "Condition 2 name, single word with letters and numbers only"
-    doc: "Condition 2 name, single word with letters and numbers only"
-
+    default: condition2
+    label: Condition 2 name, single word with letters and numbers only
+    doc: Condition 2 name, single word with letters and numbers only
   c1_files:
     type: File[]
-    format: "http://edamontology.org/format_3003"
-    'sd:upstreamSource': "biological_condition1/bismark_coverage_file"
-    label: "Bismark coverage files for condition1 (minumum of 2):"
-    'sd:localLabel': true
-    doc: "Array of input coverage files from Bismark workflow."
-
+    format: http://edamontology.org/format_3003
+    sd:upstreamSource: biological_condition1/bismark_coverage_file
+    label: 'Bismark coverage files for condition1 (minumum of 2):'
+    sd:localLabel: true
+    doc: Array of input coverage files from Bismark workflow.
   c2_files:
     type: File[]
-    format: "http://edamontology.org/format_3003"
-    'sd:upstreamSource': "biological_condition2/bismark_coverage_file"
-    label: "Bismark coverage files for condition2 (minumum of 2):"
-    'sd:localLabel': true
-    doc: "Array of input coverage files from Bismark workflow."
-
+    format: http://edamontology.org/format_3003
+    sd:upstreamSource: biological_condition2/bismark_coverage_file
+    label: 'Bismark coverage files for condition2 (minumum of 2):'
+    sd:localLabel: true
+    doc: Array of input coverage files from Bismark workflow.
   c1_methperc_bigwigs:
     type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Methylation statuses bigWig coverage file"
-    doc: "bigWig file summarising cytosine methylation as a percent in bigWig format"
-    'sd:upstreamSource': "biological_condition1/bigwig_coverage_file"
-
+    format: http://edamontology.org/format_3006
+    label: Methylation statuses bigWig coverage file
+    doc: bigWig file summarising cytosine methylation as a percent in bigWig format
+    sd:upstreamSource: biological_condition1/bigwig_coverage_file
   c2_methperc_bigwigs:
     type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "Methylation statuses bigWig coverage file"
-    doc: "bigWig file summarising cytosine methylation as a percent in bigWig format"
-    'sd:upstreamSource': "biological_condition2/bigwig_coverage_file"
-
+    format: http://edamontology.org/format_3006
+    label: Methylation statuses bigWig coverage file
+    doc: bigWig file summarising cytosine methylation as a percent in bigWig format
+    sd:upstreamSource: biological_condition2/bigwig_coverage_file
   c1_aliases:
     type: string[]
-    'sd:upstreamSource': "biological_condition1/alias"
-    doc: "Array of input coverage files from Bismark workflow."
-
+    sd:upstreamSource: biological_condition1/alias
+    doc: Array of input coverage files from Bismark workflow.
   c2_aliases:
     type: string[]
-    'sd:upstreamSource': "biological_condition2/alias"
-    doc: "Array of input coverage files from Bismark workflow."
-
+    sd:upstreamSource: biological_condition2/alias
+    doc: Array of input coverage files from Bismark workflow.
   genome:
     type:
-    - "null"
+    - 'null'
     - type: enum
-      name: "genomes"
+      name: genomes
       symbols:
       - hg19
       - hg38
       - mm9
       - mm10
       - rn5
-    default: "hg38"
-    label: "Sample genome:"
-    'sd:localLabel': true
-    doc: "Sample genomes available: hg19, hg38, mm9, mm10, rn5"
-
+    default: hg38
+    label: 'Sample genome:'
+    sd:localLabel: true
+    doc: 'Sample genomes available: hg19, hg38, mm9, mm10, rn5'
   threads:
     type: int
     default: 4
-    label: "Number of threads for parallel processing:"
-    'sd:localLabel': true
-    doc: "Number of threads for parallel processing"
-
+    label: 'Number of threads for parallel processing:'
+    sd:localLabel: true
+    doc: Number of threads for parallel processing
   annotation_file:
     type: File
-    label: "Annotation file"
-    format: "http://edamontology.org/format_3475"
-    doc: "Tab-separated annotation file"
-    'sd:upstreamSource': "genome_indices/annotation"
-
-
+    label: Annotation file
+    format: http://edamontology.org/format_3475
+    doc: Tab-separated annotation file
+    sd:upstreamSource: genome_indices/annotation
 outputs:
-
   c1_bismark_meth_perc:
     type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "percent methylation per site for biological condition 1"
-    doc: "percent methylation bigWig file(s) for biological condition 1"
+    format: http://edamontology.org/format_3006
+    label: percent methylation per site for biological condition 1
+    doc: percent methylation bigWig file(s) for biological condition 1
     outputSource: run_rnbeads_diff/c1_bigwigs
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "cond1:%meth"
+        tab: IGV Genome Browser
+        id: igvbrowser
+        type: wig
+        name: cond1:%meth
         height: 120
-
   c2_bismark_meth_perc:
     type: File[]
-    format: "http://edamontology.org/format_3006"
-    label: "percent methylation per site for biological condition 2"
-    doc: "percent methylation bigWig file(s) for biological condition 2"
+    format: http://edamontology.org/format_3006
+    label: percent methylation per site for biological condition 2
+    doc: percent methylation bigWig file(s) for biological condition 2
     outputSource: run_rnbeads_diff/c2_bigwigs
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'wig'
-        name: "cond2:%meth"
+        tab: IGV Genome Browser
+        id: igvbrowser
+        type: wig
+        name: cond2:%meth
         height: 120
-
   samplesheet_csv:
     type: File
-    label: "Samplesheet with condition labels"
-    doc: "Samplesheet with condition labels"
+    label: Samplesheet with condition labels
+    doc: Samplesheet with condition labels
     outputSource: run_rnbeads_diff/samplesheet
-
   samplesheet_md:
     type: File
-    label: "Samplesheet with condition labels"
-    doc: "Samplesheet with condition labels"
+    label: Samplesheet with condition labels
+    doc: Samplesheet with condition labels
     outputSource: run_rnbeads_diff/samplesheet_overview
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - markdownView:
-        tab: 'Overview'
-
+        tab: Overview
   report_tar:
     type: File
-    label: "Compressed TAR with RnBeads reports"
-    doc: "Compressed TAR with RnBeads reports"
+    label: Compressed TAR with RnBeads reports
+    doc: Compressed TAR with RnBeads reports
     outputSource: run_rnbeads_diff/report_tar
-
   report_directory:
     type: Directory
-    label: "Output directory for all rnbeads results, preserves structure for html references"
-    doc: "Output directory for all rnbeads results, preserves structure for html references"
+    label: Output directory for all rnbeads results, preserves structure for html references
+    doc: Output directory for all rnbeads results, preserves structure for html references
     outputSource: run_rnbeads_diff/report_directory
-
   stdout_log:
     type: File
-    format: "http://edamontology.org/format_2330"
-    label: "stdout log"
-    doc: "stdout log"
+    format: http://edamontology.org/format_2330
+    label: stdout log
+    doc: stdout log
     outputSource: run_rnbeads_diff/stdout_log
-
   stderr_log:
     type: File
-    format: "http://edamontology.org/format_2330"
-    label: "stderr log"
-    doc: "stderr log"
+    format: http://edamontology.org/format_2330
+    label: stderr log
+    doc: stderr log
     outputSource: run_rnbeads_diff/stderr_log
-
   report_data_import_html:
     type: File
-    label: "Data Import HTML report"
-    doc: "Data Import HTML report"
+    label: Data Import HTML report
+    doc: Data Import HTML report
     outputSource: run_rnbeads_diff/report_data_import_html
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
+        tab: Overview
+        target: _blank
   report_qc_html:
     type: File
-    label: "Quality Control HTML report"
-    doc: "Quality Control HTML report"
+    label: Quality Control HTML report
+    doc: Quality Control HTML report
     outputSource: run_rnbeads_diff/report_qc_html
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
+        tab: Overview
+        target: _blank
   report_preprocessing_html:
     type: File
-    label: "Preprocessing HTML report"
-    doc: "Preprocessing HTML report"
+    label: Preprocessing HTML report
+    doc: Preprocessing HTML report
     outputSource: run_rnbeads_diff/report_preprocessing_html
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
+        tab: Overview
+        target: _blank
   report_differential_methylation_html:
     type: File
-    label: "Differential methylation HTML report"
-    doc: "Differential methylation HTML report"
+    label: Differential methylation HTML report
+    doc: Differential methylation HTML report
     outputSource: run_rnbeads_diff/report_differential_methylation_html
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - linkList:
-        tab: 'Overview'
-        target: "_blank"
-
+        tab: Overview
+        target: _blank
   meth_stats_genes:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM genes"
-    doc: "DM genes"
+    format: http://edamontology.org/format_3475
+    label: DM genes
+    doc: DM genes
     outputSource: run_rnbeads_diff/meth_stats_genes
-
   meth_stats_promoters:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM genes"
-    doc: "DM genes"
+    format: http://edamontology.org/format_3475
+    label: DM genes
+    doc: DM genes
     outputSource: run_rnbeads_diff/meth_stats_promoters
-
   meth_stats_cpg:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM CpGs"
-    doc: "DM CpGs"
+    format: http://edamontology.org/format_3475
+    label: DM CpGs
+    doc: DM CpGs
     outputSource: run_rnbeads_diff/meth_stats_cpg
-
   meth_stats_tiling:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM tiling"
-    doc: "DM tiling"
+    format: http://edamontology.org/format_3475
+    label: DM tiling
+    doc: DM tiling
     outputSource: run_rnbeads_diff/meth_stats_tiling
-
   meth_stats_sites:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "DM sites"
-    doc: "DM sites"
+    format: http://edamontology.org/format_3475
+    label: DM sites
+    doc: DM sites
     outputSource: run_rnbeads_diff/meth_stats_sites
-
   sig_dm_sites_annotated_table:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "gene annotation for sig diff meth sites"
-    doc: "gene annotation for sig diff meth sites"
+    format: http://edamontology.org/format_3475
+    label: gene annotation for sig diff meth sites
+    doc: gene annotation for sig diff meth sites
     outputSource: run_rnbeads_diff/sig_dm_sites_annotated
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - syncfusiongrid:
-        tab: 'Diff Meth Sites'
-        Title: 'Table of differentially methylated sites with closest gene annotations.'
-
+        tab: Diff Meth Sites
+        Title: Table of differentially methylated sites with closest gene annotations.
   sig_dm_sites_igvtrack:
     type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bed track for sig diffmeth sites"
-    doc: "bed track for sig diffmeth sites, see workflow docs for format details"
+    format: http://edamontology.org/format_3003
+    label: bed track for sig diffmeth sites
+    doc: bed track for sig diffmeth sites, see workflow docs for format details
     outputSource: run_rnbeads_diff/sig_dm_sites_igvtrack
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "sigDiffMeth Sites"
+        tab: IGV Genome Browser
+        id: igvbrowser
+        type: bed
+        name: sigDiffMeth Sites
         height: 40
-
   sig_dm_cpg_annotated_table:
     type: File
-    format: "http://edamontology.org/format_3475"
-    label: "gene annotation for sig diff meth cpgs"
-    doc: "gene annotation for sig diff meth cpgs"
+    format: http://edamontology.org/format_3475
+    label: gene annotation for sig diff meth cpgs
+    doc: gene annotation for sig diff meth cpgs
     outputSource: run_rnbeads_diff/sig_dm_cpg_annotated
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - syncfusiongrid:
-        tab: 'Diff Meth CpG Islands'
-        Title: 'Table of differentially methylated CpG Islands with closest gene annotations.'
-
+        tab: Diff Meth CpG Islands
+        Title: Table of differentially methylated CpG Islands with closest gene annotations.
   sig_dm_cpg_igvtrack_bed:
     type: File
-    format: "http://edamontology.org/format_3003"
-    label: "bed track for sig diffmeth CpG Islands"
-    doc: "bed track for sig diffmeth CpG Islands, see workflow docs for format details"
+    format: http://edamontology.org/format_3003
+    label: bed track for sig diffmeth CpG Islands
+    doc: bed track for sig diffmeth CpG Islands, see workflow docs for format details
     outputSource: run_rnbeads_diff/sig_dm_cpg_igvtrack
-    'sd:visualPlugins':
+    sd:visualPlugins:
     - igvbrowser:
-        tab: 'IGV Genome Browser'
-        id: 'igvbrowser'
-        type: 'bed'
-        name: "sigDiffMeth CpG Islands"
+        tab: IGV Genome Browser
+        id: igvbrowser
+        type: bed
+        name: sigDiffMeth CpG Islands
         height: 40
-
-
 steps:
-
   run_rnbeads_diff:
-    label: "Run wrapper for RnBeads differential methylation pipeline, with downstream processing for tables and IGV"
+    label: Run wrapper for RnBeads differential methylation pipeline, with downstream processing for tables and IGV
     doc: |
       Runs differential methylation analysis using 2 or more BismarkCov formatted bed files per
       condition. Outputs a compressed tar of standard RnBeads reports directory.
@@ -330,75 +286,29 @@ steps:
       condition2_aliases: c2_aliases
       refgene_annotations: annotation_file
     out:
-      - c1_bigwigs
-      - c2_bigwigs
-      - samplesheet
-      - samplesheet_overview
-      - report_tar
-      - report_directory
-      - report_data_import_html
-      - report_qc_html
-      - report_preprocessing_html
-      - report_differential_methylation_html
-      - meth_stats_genes
-      - meth_stats_promoters
-      - meth_stats_cpg
-      - meth_stats_tiling
-      - meth_stats_sites
-      - sig_dm_sites_igvtrack
-      - sig_dm_sites_annotated
-      - sig_dm_cpg_igvtrack
-      - sig_dm_cpg_annotated
-      - stdout_log
-      - stderr_log
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "Differential Methylation Workflow"
-label: "Differential Methylation Workflow"
-s:alternateName: "Differential Methylation using RnBeads with BismarkCov outputs"
-
-s:downloadUrl: https://github.com/datirium/workflows/tree/master/workflows/workflows/diffmeth.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
-
-doc: |
+    - c1_bigwigs
+    - c2_bigwigs
+    - samplesheet
+    - samplesheet_overview
+    - report_tar
+    - report_directory
+    - report_data_import_html
+    - report_qc_html
+    - report_preprocessing_html
+    - report_differential_methylation_html
+    - meth_stats_genes
+    - meth_stats_promoters
+    - meth_stats_cpg
+    - meth_stats_tiling
+    - meth_stats_sites
+    - sig_dm_sites_igvtrack
+    - sig_dm_sites_annotated
+    - sig_dm_cpg_igvtrack
+    - sig_dm_cpg_annotated
+    - stdout_log
+    - stderr_log
+label: Differential Methylation Workflow
+doc: |-
   A basic differential methylation analysis workflow using BismarkCov formatted bed files as input to the RnBeads tool. Analysis is conducted on region and sites levels according to the sample groups specified by user (limited to 2 conditions in this workflow implementation). See report html files for detailed descriptions of analyses and results interpretation.
 
   ### __Inputs__
@@ -482,3 +392,4 @@ doc: |
     - Makambi, K. (2003) Weighted inverse chi-square method for correlated significance tests. Journal of Applied Statistics, 30(2), 225234
     - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4216143/
     - Assenov Y, Müller F, Lutsik P, Walter J, Lengauer T, Bock C. Comprehensive analysis of DNA methylation data with RnBeads. Nat Methods. 2014 Nov;11(11):1138-1140. doi: 10.1038/nmeth.3115. Epub 2014 Sep 28. PMID: 25262207; PMCID: PMC4216143.
+sd:version: 100

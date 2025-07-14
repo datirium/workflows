@@ -1,19 +1,12 @@
 cwlVersion: v1.0
 class: CommandLineTool
-
-
 requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
-
-
 hints:
 - class: DockerRequirement
   dockerPull: robertplayer/scidap-tgif:v1.0.0
-
-
 inputs:
-
   script:
     type: string?
     default: |
@@ -46,90 +39,36 @@ inputs:
       printf "Total probable insertion sites founds\t$insertions_filtered\n" >> reportsummary.tsv
       # generate formatted markdown table
       Rscript /usr/local/bin/run_tsv_to_kable.R reportsummary.tsv reportsummary.md
-
     inputBinding:
-        position: 1
-
+      position: 1
   tgif_ncats_log_file:
     type: File
     inputBinding:
       position: 2
-    doc: "log file from tgif-ncats.sh script"
-
+    doc: log file from tgif-ncats.sh script
   insertions_all:
     type: File
     inputBinding:
       position: 3
-    doc: "file with all insertion sites from tgif-ncats.sh script"
-
+    doc: file with all insertion sites from tgif-ncats.sh script
   insertions_filtered:
     type: File
     inputBinding:
       position: 4
-    doc: "file with filtered insertion sites from tgif-ncats.sh script"
-
-
+    doc: file with filtered insertion sites from tgif-ncats.sh script
 outputs:
-
   summary_file:
     type: File?
     outputBinding:
-      glob: "reportsummary.md"
-
+      glob: reportsummary.md
   stdout_log:
     type: stdout
-
   stderr_log:
     type: stderr
-
-
-baseCommand: ["bash", "-c"]
-
+baseCommand:
+- bash
+- -c
 stdout: tgif-summary_stdout.log
 stderr: tgif-summary_stderr.log
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "tgif-summary"
-s:downloadUrl: https://github.com/datirium/workflows/blob/master/tools/tgif-summary.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Datirium LLC"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: ""
-    s:streetAddress: ""
-    s:telephone: ""
-  s:logo: "https://avatars.githubusercontent.com/u/33202955?s=200&v=4"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Datirium LLC"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Bioinformatics"
-      s:member:
-      - class: s:Person
-        s:name: Robert Player
-        s:email: mailto:support@datirium.com
-        s:sameAs:
-        - id: https://orcid.org/0000-0001-5872-259X
-
-
-doc: |
-  Tool runs simple bash commands to format a report tsv file for translation to md with kableExtra in R.
+doc: Tool runs simple bash commands to format a report tsv file for translation to md with kableExtra in R.
+label: tgif-summary

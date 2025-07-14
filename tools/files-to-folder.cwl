@@ -1,10 +1,8 @@
 cwlVersion: v1.0
 class: ExpressionTool
-
 requirements:
-  - class: InlineJavascriptRequirement
-
-id: "files_to_folder"
+- class: InlineJavascriptRequirement
+id: files_to_folder
 inputs:
   input_files:
     type:
@@ -12,7 +10,7 @@ inputs:
     - File
   folder_basename:
     type: string?
-    default: ""
+    default: ''
 outputs:
   folder: Directory
 expression: |
@@ -38,7 +36,6 @@ expression: |
     }
     return { "folder": folder };
   }
-
-doc: |
+doc: |-
   Returns Directory object with a listing set from File or File[]. Only one nested level of secondaryFiles
   is supported

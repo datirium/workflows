@@ -1,10 +1,8 @@
 cwlVersion: v1.0
 class: ExpressionTool
-
 requirements:
-  - class: InlineJavascriptRequirement
-
-id: "fastqc_results_trigger"
+- class: InlineJavascriptRequirement
+id: fastqc_results_trigger
 inputs:
   summary_file:
     type: File
@@ -12,10 +10,10 @@ inputs:
       loadContents: true
   criteria:
     type: string?
-    default: ".*Per base sequence quality.*|.*Per sequence quality scores.*|.*Overrepresented sequences.*|.*Adapter Content.*"
+    default: .*Per base sequence quality.*|.*Per sequence quality scores.*|.*Overrepresented sequences.*|.*Adapter Content.*
 outputs:
   trigger: boolean
-expression: |
+expression: |-
   ${
     var re = new RegExp(inputs.criteria, "g");
     var criteria_array = inputs.summary_file.contents.match(re);
