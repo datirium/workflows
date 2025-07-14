@@ -11,12 +11,14 @@ declare -A TOOL_ENVS=(
   [bedtools]=bedtools
   [bedGraphToBigWig]=ucsc
   [fastx_quality_stats]=fastx
-  [Rscript]=r_base
   [file]=utils
   [unzip]=utils
   [make]=compiler
   [qmake]=compiler
-  [iaintersect]=none
+  [python3]=python
+  [p_pandas]=python
+  [p_yaml]=python
+  [Rscript]=r_base
   [r_modules]=r_base
   [r_future]=r_base
   [r_argparse]=r_base
@@ -26,6 +28,10 @@ declare -A TOOL_ENVS=(
   [r_ggupset]=r_base
   [r_ChIPseeker]=r_base
   [r_txdbmaker]=r_base
+  [iaintersect]=none
+  [extract_fastq.sh]=none
+  [test_extract_fastq.sh]=none
+  [collect_stats_dna.sh]=none
 )
 
 MISSING=()
@@ -41,6 +47,11 @@ for TOOL in "${!TOOL_ENVS[@]}"; do
     PKG="${TOOL#r_}"
     if ! mamba run -n "$ENV_NAME" Rscript -e "if (!requireNamespace('$PKG', quietly=TRUE)) quit(status=1)" >/dev/null 2>&1; then
       MISSING+=("R package $PKG ($ENV_NAME)")
+    fi
+  elif [[ "$TOOL" == p_* ]]; then
+    PKG="${TOOL#p_}"
+    if ! mamba run -n "$ENV_NAME" python3 -c "import $PKG" >/dev/null 2>&1; then
+      MISSING+=("Python module $PKG ($ENV_NAME)")
     fi
   else
     if ! mamba run -n "$ENV_NAME" which "$TOOL" >/dev/null 2>&1; then

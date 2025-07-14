@@ -2,20 +2,18 @@
 # Build: docker build --platform linux/amd64 --no-cache --rm -t biowardrobe2/bulk-tools:v0.0.1 -f bulk-tools-Dockerfile .
 # Pull:  docker pull --platform linux/amd64 biowardrobe2/bulk-tools:v0.0.1
 # Run:   docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 /bin/bash
-# Test:  docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 test_extract_fastq.sh
-#        docker run --platform linux/amd64 --rm -ti biowardrobe2/bulk-tools:v0.0.1 test_tools.sh
 #
-# Installed tools:
-#   - bowtie2
-#   - STAR
-#   - trim_galore
-#   - samtools
-#   - preseq
-#   - macs3
-#   - bedtools
-#   - bedGraphToBigWig
-#   - fastx_quality_stats
-#   - Rscript
+# Accessbile from the specific virtual environment:
+#   - bowtie2             (aligner)
+#   - STAR                (aligner)
+#   - trim_galore         (trim_galore)
+#   - samtools            (samtools)
+#   - preseq              (preseq)
+#   - macs3               (macs3)
+#   - bedtools            (bedtools)
+#   - bedGraphToBigWig    (ucsc)
+#   - fastx_quality_stats (fastx)
+#   - Rscript             (r_base)
 #       * modules
 #       * future
 #       * argparse
@@ -25,14 +23,23 @@
 #       * forcats
 #       * UpSetR
 #       * ggupset
-#   - file
-#   - unzip
-#   - make
-#   - qmake
-# Installed custom tools:
+#   - python3             (python)
+#       * pandas
+#       * yaml            (pyyaml)
+#   - file                (utils)
+#   - unzip               (utils)
+#   - make                (compiler)
+#   - qmake               (compiler)
+#
+# Accessbile globally:
 #   - iaintersect
-# Installed custom scripts:
 #   - extract_fastq.sh
+#   - collect_stats_dna.sh
+#
+# Should NOT be run directly:
+#   - collect_stats_dna.py (use collect_stats_dna.sh instead)
+#
+# Tests:
 #   - test_extract_fastq.sh
 #   - test_tools.sh
 #########################################################################################################################
@@ -70,8 +77,12 @@ ENV R_TXDBMAKER_VERSION=1.2.0
 ENV FILE_VERSION=5.46
 ENV UNZIP_VERSION=6.0
 ENV IAINTERSECT_VERSION=0.0.2
+ENV PYTHON_VERSION=3.13.5
+ENV PYTHON_PANDAS_VERSION=2.3.1
+ENV PYTHON_PYYAML_VERSION=6.0.2
 
 COPY ./scripts/bulk-tools/*.sh /usr/local/bin/
+COPY ./scripts/bulk-tools/*.py /usr/local/bin/
 COPY ./scripts/bulk-tools/data /usr/local/bin/data
 
 RUN mamba create -y -n compiler conda-forge::gxx=${GXX_VERSION} && \
@@ -88,6 +99,9 @@ RUN mamba create -y -n compiler conda-forge::gxx=${GXX_VERSION} && \
     mamba create -y -n bedtools bioconda::bedtools=${BEDTOOLS_VERSION} && \
     mamba create -y -n ucsc bioconda::ucsc-bedgraphtobigwig=${UCSC_APPS_VERSION} && \
     mamba create -y -n fastx bioconda::fastx_toolkit=${FASTX_TOOLKIT_VERSION} && \
+    mamba create -y -n python conda-forge::python=${PYTHON_VERSION} && \
+    mamba install -y -n python conda-forge::pandas=${PYTHON_PANDAS_VERSION} && \
+    mamba install -y -n python conda-forge::pyyaml=${PYTHON_PYYAML_VERSION} && \
     mamba create -y -n r_base conda-forge::r-base=${R_BASE_VERSION} && \
     mamba install -y -n r_base conda-forge::r-modules=${R_MODULES_VERSION} && \
     mamba install -y -n r_base conda-forge::r-future=${R_FUTURE_VERSION} && \
@@ -107,6 +121,7 @@ RUN mamba create -y -n compiler conda-forge::gxx=${GXX_VERSION} && \
     cp ./iaintersect /usr/local/bin/ && cd ../ && \
     chmod +x /usr/local/bin/extract_fastq.sh && \
     chmod +x /usr/local/bin/test_extract_fastq.sh && \
+    chmod +x /usr/local/bin/collect_stats_dna.sh && \
     chmod +x /usr/local/bin/test_tools.sh && \
     mamba clean -a && \
     apt-get clean && \
