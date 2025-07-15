@@ -85,7 +85,9 @@ COPY ./scripts/bulk-tools/*.sh /usr/local/bin/
 COPY ./scripts/bulk-tools/*.py /usr/local/bin/
 COPY ./scripts/bulk-tools/data /usr/local/bin/data
 
-RUN mamba create -y -n compiler conda-forge::gxx=${GXX_VERSION} && \
+RUN apt-get update && \
+    apt-get install vim -y && \
+    mamba create -y -n compiler conda-forge::gxx=${GXX_VERSION} && \
     mamba install -y -n compiler conda-forge::make=${MAKE_VERSION} && \
     mamba install -y -n compiler conda-forge::qt=${QT_VERSION} && \
     mamba install -y -n compiler conda-forge::mesa-libgl-devel-cos7-x86_64=${LIBGL_VERSION} && \
