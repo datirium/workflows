@@ -332,8 +332,18 @@ def process_preseq_results(filepath, collected_results, header, threashold=0.001
                 break
 
 
+def add_summary(collected_results):
+    collected_results["summary"] = {
+        "tags total": collected_results["alignment statistics"]["total reads/pairs processed"],
+        "mapped": collected_results["BAM statistics after filtering"]["reads/pairs mapped"],
+        "multi-mapped": collected_results["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0),
+        "unmapped": collected_results["alignment statistics"]["reads/pairs unmapped"],
+        "filtered": collected_results["BAM statistics"]["reads/pairs mapped"] - collected_results["BAM statistics after filtering"]["reads/pairs mapped"],
+    }
+
+
 def collect_stats(args):
-    collected_results = {}
+    collected_results = {"summary":{}}   # we want to have summary at the top of the dict
     if args.trim1:
         process_trimgalore_report(args.trim1, collected_results)
     if args.trim2:
@@ -346,6 +356,7 @@ def collect_stats(args):
     process_atdp_results(args.atdp, collected_results, "average tag density")
     if args.preseq:
         process_preseq_results(args.preseq, collected_results, "library preparation")
+    add_summary(collected_results)
     return (collected_results)
 
 
@@ -371,11 +382,6 @@ def export_results_markdown(collected_data, filepath):
 
 def export_results_table(collected_data, filepath):
     with open(filepath+".tsv", 'w') as output_stream:
-        total = collected_data["alignment statistics"]["total reads/pairs processed"]
-        mapped = collected_data["BAM statistics after filtering"]["reads/pairs mapped"]
-        multimapped = collected_data["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0)
-        unmapped = collected_data["alignment statistics"]["reads/pairs unmapped"]
-        filtered = collected_data["BAM statistics"]["reads/pairs mapped"] - collected_data["BAM statistics after filtering"]["reads/pairs mapped"]
         header = [
                     "Tags total",
                     "Mapped",
@@ -440,18 +446,16 @@ def export_results_table(collected_data, filepath):
         output_stream.write("\t".join(header)+"\n")
 
         data = [
-                total,
-                mapped,
-                multimapped,
-                unmapped,
-                filtered,
-
+                collected_data["summary"]["tags total"],
+                collected_data["summary"]["mapped"],
+                collected_data["summary"]["multi-mapped"],
+                collected_data["summary"]["unmapped"],
+                collected_data["summary"]["filtered"],
                 "",
                 collected_data["alignment statistics"]["total reads/pairs processed"],
                 collected_data["alignment statistics"]["reads/pairs with at least one reported alignment"],
                 collected_data["alignment statistics"].get("reads/pairs suppressed due to multimapping", 0),
                 collected_data["alignment statistics"]["reads/pairs unmapped"],
-                
                 "",
                 collected_data["BAM statistics"]["total reads/pairs"],
                 collected_data["BAM statistics"]["reads/pairs mapped"],
@@ -462,7 +466,6 @@ def export_results_table(collected_data, filepath):
                 collected_data["BAM statistics"]["reads average length"],
                 collected_data["BAM statistics"]["reads average quality"],
                 collected_data["BAM statistics"]["reads maximum length"],
-                
                 "",
                 collected_data["BAM statistics after filtering"]["total reads/pairs"],
                 collected_data["BAM statistics after filtering"]["reads/pairs mapped"],
@@ -473,7 +476,6 @@ def export_results_table(collected_data, filepath):
                 collected_data["BAM statistics after filtering"]["reads average length"],
                 collected_data["BAM statistics after filtering"]["reads average quality"],
                 collected_data["BAM statistics after filtering"]["reads maximum length"],
-                
                 "",
                 collected_data["peak calling statistics"]["number of peaks called"],
                 collected_data["peak calling statistics"]["mean peak size"],
@@ -481,7 +483,6 @@ def export_results_table(collected_data, filepath):
                 collected_data["peak calling statistics"]["reads/pairs after filtering in treatment"],
                 collected_data["peak calling statistics"]["redundant rate in treatment"],
                 collected_data["peak calling statistics"]["fraction of reads in peaks"],
-
                 "",
                 collected_data["average tag density"]["maximum"]]
 
