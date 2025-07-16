@@ -23,7 +23,6 @@ inputs:
 
   feature_file:
     type: File
-    format: "http://edamontology.org/format_3475"
     label: "Differential Binding Analysis experiment"
     doc: "Differential binding analysis results exported as TSV"
     'sd:upstreamSource': "sample_to_filter/diffbind_report_file"
@@ -35,7 +34,7 @@ inputs:
     doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
-        columns: ["Refseq_id", "Gene_id", "txStart", "txEnd", "Strand", "Region", "Chr", "Start", "End", "Conc", "Conc1", "Conc2", "Fold", "p-value", "FDR", "Called1", "Called2"]
+        columns: ["Refseq_id", "Gene_id", "txStart", "txEnd", "Strand", "Region", "Chr", "Start", "End", "Conc", "Conc1", "Conc2", "Fold", "pvalue", "FDR", "Called1", "Called2"]
         types:   ["string", "string", "number", "number", "string", "string", "string", "number", "number", "number", "number", "number", "number", "number", "number","number", "number"]
 
   columns:
@@ -64,14 +63,12 @@ outputs:
 
   filtered_file:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Filtered regions"
     doc: "Filtered regions of interest by default formatted as headerless BED file with [Chr Start End]"
     outputSource: feature_select/filtered_file
 
   filtered_file_w_header:
     type: File
-    format: "http://edamontology.org/format_3003"
     label: "Filtered differentially expressed genes"
     doc: "Regions of interest formatted as headered BED file with [chrom start end name score strand]"
     outputSource: add_header/filtered_file_with_header
@@ -82,14 +79,12 @@ outputs:
 
   filtering_stdout_log:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "Filtering stdout log"
     doc: "Filtering stdout log"
     outputSource: feature_select/stdout_log
 
   filtering_stderr_log:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "Filtering stderr log"
     doc: "Filtering stderr log"
     outputSource: feature_select/stderr_log
@@ -103,9 +98,9 @@ steps:
       input_file: feature_file
       script:
         default: |
-          echo "Replacing header to include Conc1 and Conc2 instead of Conc_[group1] and Conc_[group2]"
+          echo "Replacing header to include Conc1 and Conc2 instead of Conc_[group1] and Conc_[group2], also renaming p-value with pvalue"
           cat "$0" | grep -v "Refseq_id" | cut -f 1-17 > headerless_report.tsv
-          echo -e "Refseq_id\tGene_id\ttxStart\ttxEnd\tStrand\tRegion\tChr\tStart\tEnd\tConc\tConc1\tConc2\tFold\tp-value\tFDR\tCalled1\tCalled2" > `basename $0`
+          echo -e "Refseq_id\tGene_id\ttxStart\ttxEnd\tStrand\tRegion\tChr\tStart\tEnd\tConc\tConc1\tConc2\tFold\tpvalue\tFDR\tCalled1\tCalled2" > `basename $0`
           cat headerless_report.tsv >> `basename $0`
           rm -f headerless_report.tsv
           head `basename $0`
@@ -163,52 +158,7 @@ steps:
     out:
     - filtered_file_with_header
 
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "Filter differentially bound sites for heatmap analysis"
 label: "Filter differentially bound sites for heatmap analysis"
-s:alternateName: "Filter differentially bound sites from DiffBind analysis to be used with deepTools heatmap analysis"
-
-s:downloadUrl: https://raw.githubusercontent.com/Barski-lab/workflows-datirium/master/workflows/filter-diffbind-for-heatmap.cwl
-s:codeRepository: https://github.com/Barski-lab/workflows-datirium
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-- class: s:Organization
-  s:legalName: "Cincinnati Children's Hospital Medical Center"
-  s:location:
-  - class: s:PostalAddress
-    s:addressCountry: "USA"
-    s:addressLocality: "Cincinnati"
-    s:addressRegion: "OH"
-    s:postalCode: "45229"
-    s:streetAddress: "3333 Burnet Ave"
-    s:telephone: "+1(513)636-4200"
-  s:logo: "https://www.cincinnatichildrens.org/-/media/cincinnati%20childrens/global%20shared/childrens-logo-new.png"
-  s:department:
-  - class: s:Organization
-    s:legalName: "Allergy and Immunology"
-    s:department:
-    - class: s:Organization
-      s:legalName: "Barski Research Lab"
-      s:member:
-      - class: s:Person
-        s:name: Michael Kotliar
-        s:email: mailto:misha.kotliar@gmail.com
-        s:sameAs:
-        - id: http://orcid.org/0000-0002-6486-3898
-
-
 doc: |
   Filter DiffBind results for deepTools heatmap analysis
   ======================================================
