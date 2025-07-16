@@ -35,7 +35,7 @@ inputs:
     doc: "Filtering parameters (WHERE parameters for SQL query)"
     'sd:filtering':
       params:
-        columns: ["Refseq_id", "Gene_id", "txStart", "txEnd", "Strand", "Region", "Chr", "Start", "End", "Conc", "Conc1", "Conc2", "Fold", "p-value", "FDR", "Called1", "Called2"]
+        columns: ["Refseq_id", "Gene_id", "txStart", "txEnd", "Strand", "Region", "Chr", "Start", "End", "Conc", "Conc1", "Conc2", "Fold", "pvalue", "FDR", "Called1", "Called2"]
         types:   ["string", "string", "number", "number", "string", "string", "string", "number", "number", "number", "number", "number", "number", "number", "number","number", "number"]
 
   columns:
@@ -103,9 +103,9 @@ steps:
       input_file: feature_file
       script:
         default: |
-          echo "Replacing header to include Conc1 and Conc2 instead of Conc_[group1] and Conc_[group2]"
+          echo "Replacing header to include Conc1 and Conc2 instead of Conc_[group1] and Conc_[group2], also renaming p-value with pvalue"
           cat "$0" | grep -v "Refseq_id" | cut -f 1-17 > headerless_report.tsv
-          echo -e "Refseq_id\tGene_id\ttxStart\ttxEnd\tStrand\tRegion\tChr\tStart\tEnd\tConc\tConc1\tConc2\tFold\tp-value\tFDR\tCalled1\tCalled2" > `basename $0`
+          echo -e "Refseq_id\tGene_id\ttxStart\ttxEnd\tStrand\tRegion\tChr\tStart\tEnd\tConc\tConc1\tConc2\tFold\tpvalue\tFDR\tCalled1\tCalled2" > `basename $0`
           cat headerless_report.tsv >> `basename $0`
           rm -f headerless_report.tsv
           head `basename $0`
