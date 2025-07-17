@@ -993,3 +993,5 @@ doc: |
   -------------------------------------
   Ross-Innes CS, Stark R, Teschendorff AE, Holmes KA, Ali HR, Dunning MJ, Brown GD, Gojis O, Ellis IO, Green AR, Ali S, Chin S, Palmieri C, Caldas C, Carroll JS (2012).
   “Differential oestrogen receptor binding is associated with clinical outcome in breast cancer.” Nature, 481, -4.
+
+sd:version: 100

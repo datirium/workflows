@@ -262,3 +262,5 @@ doc: |
   "Files" output tab) from the ChIP, ATAC or C&R workflows and performs the user-selected set
   operation on the group. Set operations include intersection, union, difference, and complement. See the
   tooltip for the `set_operator` input for more details.
+
+sd:version: 100

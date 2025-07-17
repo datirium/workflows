@@ -208,3 +208,5 @@ doc: |
 
   Tool filters output from any ChIP/ATAC/cut&run pipeline to create a file with regions of interest for Tag Density
   Profile or Motif Enrichment analyses. Peaks with duplicated coordinates are discarded.
+
+sd:version: 100
