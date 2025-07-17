@@ -45,7 +45,6 @@ inputs:
     - "null"
     - File[]
     default: null
-    format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by isoforms (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_isoforms"
@@ -56,7 +55,6 @@ inputs:
     - "null"
     - File[]
     default: null
-    format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by genes (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_genes"
@@ -66,7 +64,6 @@ inputs:
     - "null"
     - File[]
     default: null
-    format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 1, aka 'untreated')"
     doc: "CSV/TSV input files grouped by common TSS (condition 1, aka 'untreated')"
     'sd:upstreamSource': "rnaseq_cond_1/rpkm_common_tss"
@@ -76,7 +73,6 @@ inputs:
     - "null"
     - File[]
     default: null
-    format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by isoforms (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_isoforms"
@@ -87,7 +83,6 @@ inputs:
     - "null"
     - File[]
     default: null
-    format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by genes (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_genes"
@@ -97,7 +92,6 @@ inputs:
     - "null"
     - File[]
     default: null
-    format: "http://edamontology.org/format_3752"
     label: "RNA-Seq experiments (condition 2, aka 'treated')"
     doc: "CSV/TSV input files grouped by common TSS (condition 2, aka 'treated')"
     'sd:upstreamSource': "rnaseq_cond_2/rpkm_common_tss"
@@ -115,7 +109,6 @@ inputs:
     type: File?
     default: null
     label: "Headerless TSV/CSV file for multi-factor analysis. First column - experiments' names from condition 1 and 2, second column - batch name"
-    format: "http://edamontology.org/format_2330"
     doc: |
       Metadata file for multi-factor analysis. Headerless TSV/CSV file.
       First column - names from --ua and --ta, second column - batch name.
@@ -301,7 +294,6 @@ outputs:
   diff_expr_file:
     type: File
     label: "Differentially expressed features grouped by isoforms, genes or common TSS"
-    format: "http://edamontology.org/format_3475"
     doc: "DESeq generated file of differentially expressed features grouped by isoforms, genes or common TSS in TSV format"
     outputSource: deseq/diff_expr_file
     'sd:visualPlugins':
@@ -333,21 +325,18 @@ outputs:
   read_counts_file:
     type: File
     label: "Normalized read counts in GCT format no padj filtering. Compatible with GSEA"
-    format: "http://edamontology.org/format_3709"
     doc: "DESeq generated file of all normalized read counts in GCT format. Compatible with GSEA"
     outputSource: deseq/read_counts_file_all
 
   read_counts_file_filtered:
-    type: File
+    type: File?
     label: "Normalized read counts in GCT format filtered by padj. Compatible with Morpheus heatmap"
-    format: "http://edamontology.org/format_3709"
     doc: "DESeq generated file of padjfiltered normalized read counts in GCT format. Compatible with Morpheus heatmap"
     outputSource: deseq/read_counts_file_filtered
 
   phenotypes_file:
     type: File
     label: "Phenotype data file in CLS format. Compatible with GSEA"
-    format: "http://edamontology.org/format_2330"
     doc: "DESeq generated file with phenotypes in CLS format. Compatible with GSEA"
     outputSource: deseq/phenotypes_file
 
@@ -366,7 +355,6 @@ outputs:
   plot_lfc_vs_mean:
     type: File?
     label: "Plot of normalised mean versus log2 fold change"
-    format: "http://edamontology.org/format_3603"
     doc: |
       Plot of the log2 fold changes attributable to a given variable
       over the mean of normalized counts for all the samples
@@ -379,7 +367,6 @@ outputs:
   gene_expr_heatmap:
     type: File?
     label: "Heatmap of the 30 most highly expressed features"
-    format: "http://edamontology.org/format_3603"
     doc: |
       Heatmap showing the expression data of the 30 most highly expressed features grouped by
       isoforms, genes or common TSS, based on the variance stabilisation transformed data
@@ -392,7 +379,6 @@ outputs:
   plot_pca:
     type: File?
     label: "PCA plot for variance stabilized count data"
-    format: "http://edamontology.org/format_3603"
     doc: |
       PCA plot for variance stabilized count data. Values are now approximately
       homoskedastic (have constant variance along the range of mean values)
@@ -405,7 +391,6 @@ outputs:
   plot_lfc_vs_mean_pdf:
     type: File?
     label: "Plot of normalised mean versus log2 fold change"
-    format: "http://edamontology.org/format_3508"
     doc: |
       Plot of the log2 fold changes attributable to a given variable
       over the mean of normalized counts for all the samples
@@ -414,7 +399,6 @@ outputs:
   gene_expr_heatmap_pdf:
     type: File?
     label: "Heatmap of the 30 most highly expressed features"
-    format: "http://edamontology.org/format_3508"
     doc: |
       Heatmap showing the expression data of the 30 most highly expressed features grouped by
       isoforms, genes or common TSS, based on the variance stabilisation transformed data
@@ -423,7 +407,6 @@ outputs:
   plot_pca_pdf:
     type: File?
     label: "PCA plot for variance stabilized count data"
-    format: "http://edamontology.org/format_3508"
     doc: |
       PCA plot for variance stabilized count data. Values are now approximately
       homoskedastic (have constant variance along the range of mean values)
@@ -478,14 +461,12 @@ outputs:
 
   deseq_stdout_log:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "DESeq stdout log"
     doc: "DESeq stdout log"
     outputSource: deseq/stdout_log
 
   deseq_stderr_log:
     type: File
-    format: "http://edamontology.org/format_2330"
     label: "DESeq stderr log"
     doc: "DESeq stderr log"
     outputSource: deseq/stderr_log
@@ -622,43 +603,7 @@ steps:
     - stderr_log
 
 
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-- https://github.com/schemaorg/schemaorg/raw/main/data/releases/11.01/schemaorg-current-http.rdf
-
-s:name: "DESeq - differential gene expression analysis"
 label: "DESeq - differential gene expression analysis"
-s:alternateName: "Differential gene expression analysis based on the negative binomial distribution"
-
-s:downloadUrl: https://raw.githubusercontent.com/datirium/workflows/master/workflows/deseq.cwl
-s:codeRepository: https://github.com/datirium/workflows
-s:license: http://www.apache.org/licenses/LICENSE-2.0
-
-s:isPartOf:
-  class: s:CreativeWork
-  s:name: Common Workflow Language
-  s:url: http://commonwl.org/
-
-s:creator:
-  - class: s:Organization
-    s:legalName: "Datirium, LLC"
-    s:member:
-      - class: s:Person
-        s:name: Artem BArski
-        s:email: mailto:Artem.Barski@datirum.com
-      - class: s:Person
-        s:name: Andrey Kartashov
-        s:email: mailto:Andrey.Kartashov@datirium.com
-        s:sameAs:
-          - id: http://orcid.org/0000-0001-9102-5681
-
-
-# doc:
-#   $include: ../descriptions/deseq.md
-
-
 doc: |
   Differential gene expression analysis
   =====================================
